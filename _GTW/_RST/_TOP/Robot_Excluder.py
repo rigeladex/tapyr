@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,7 @@
 # Revision Dates
 #    24-Jul-2012 (CT) Creation
 #    19-Feb-2014 (CT) Add `extra_excludes`
+#    22-Apr-2015 (CT) Change `extra_excludes` to "/media/pdf" (was "/media")
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ class Robot_Excluder (_Ancestor) :
     """Page providing a /robots.txt file."""
 
     exclude_robots             = False
-    extra_excludes             = ["/media"]
+    extra_excludes             = ["/media/pdf"]
     hidden                     = True
     ignore_picky_accept        = True
     implicit                   = False
