@@ -51,6 +51,7 @@
 ##                     + Add guard for `contents` to `rel_link`
 ##    16-Apr-2015 (CT) Add `rel` attribute to `rel_next`, `rel_prev`
 ##                     + Add `kwargs` to `rel_link`
+##    22-Apr-2015 (CT) Change `sitemap` macros to use `GTW.RST.TOP.Sitemap`
 ##    ««revision-date»»···
 ##--
 #}
@@ -292,49 +293,45 @@
   {%- endif %}
 {%- endmacro -%} {# section #}
 
-{%- macro sitemap (links = None) -%}
-  {%- if not links -%}
-    {%- set links = page.top.own_links -%}
-  {%- endif -%}
-  {{ sitemap_level (links) }}
+{%- macro sitemap (sitemap) -%}
+  {{ sitemap_level (sitemap) }}
 {%- endmacro -%} {#- sitemap -#}
 
-{%- macro sitemap_entry (link) -%}
-  {% if NAV.permissive or (NAV.allow (link, request.user) and not link.hidden) %}
-    <li class="nav-link">
-      <a href="{{ link.permalink}}"
-         {% if link.title %} title="{{ link.title }}"{% endif %}
-      >{{ link.short_title|safe }}</a>
-      {% if request.verbose and request.user.authenticated %}
-        <div class="nav-link-details">
-          {% if link.creator %}<p>Creator: {{ link.creator }}</p>{% endif %}
-          {% if link.date %}<p>Date: {{ link.date }}</p>{% endif %}
-          <p>Url: {{ link.href }}</p>
-          <p>Permalink: {{ link.permalink }}</p>
-          <p>Name: {{ link.name }}</p>
-          <p>Prefix: {{ link.prefix }}</p>
-          <p>Short-Title: {{ link.short_title }}</p>
-          <p>Desc: {{ link.desc }}</p>
-          <p>Template: {{ link.template }}</p>
-          <p>Type: {{ link.Type }}</p>
-          <p>Target: {{ link.target }}</p>
-          <p>Object: {{ link.obj }}</p>
-          {% if link.pictures %}
-            <p>Picture Url: {{ link.pictures [0].href }}</p>
-            <p>Picture permalink: {{ link.pictures [0].permalink }}</p>
-          {% endif %}
-        </div>
-      {% endif %}
-      {{ sitemap_level (link.own_links) }}
-    </li>
-  {% endif %}
+{%- macro sitemap_entry (sitemap, link) -%}
+  <li class="nav-link">
+    <a href="{{ link.permalink}}"
+       {% if link.title %} title="{{ link.title }}"{% endif %}
+    >{{ link.short_title|safe }}</a>
+    {% if request.verbose and request.user.authenticated %}
+      <div class="nav-link-details">
+        {% if link.creator %}<p>Creator: {{ link.creator }}</p>{% endif %}
+        {% if link.date %}<p>Date: {{ link.date }}</p>{% endif %}
+        <p>Url: {{ link.href }}</p>
+        <p>Permalink: {{ link.permalink }}</p>
+        <p>Name: {{ link.name }}</p>
+        <p>Prefix: {{ link.prefix }}</p>
+        <p>Short-Title: {{ link.short_title }}</p>
+        <p>Desc: {{ link.desc }}</p>
+        <p>Template: {{ link.template }}</p>
+        <p>Type: {{ link.Type }}</p>
+        <p>Target: {{ link.target }}</p>
+        <p>Object: {{ link.obj }}</p>
+        {% if link.pictures %}
+          <p>Picture Url: {{ link.pictures [0].href }}</p>
+          <p>Picture permalink: {{ link.pictures [0].permalink }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+    {{ sitemap_level (sitemap, link) }}
+  </li>
 {%- endmacro -%} {#- sitemap_entry -#}
 
-{%- macro sitemap_level (links) -%}
+{%- macro sitemap_level (sitemap, resource = None) -%}
+  {%- set links = sitemap.resources (resource, request.user) %}
   {%- if links %}
     <ul>
       {%- for link in links  %}
-        {{ sitemap_entry (link) }}
+        {{ sitemap_entry (sitemap, link) }}
       {% endfor -%}
     </ul>
   {% endif -%}

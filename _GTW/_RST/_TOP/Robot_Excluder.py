@@ -19,7 +19,8 @@
 #    24-Jul-2012 (CT) Creation
 #    19-Feb-2014 (CT) Add `extra_excludes`
 #    22-Apr-2015 (CT) Change `extra_excludes` to "/media/pdf" (was "/media")
-#    22-Apr-2015 (CT) Factor `.Literal.TXT`
+#    22-Apr-2015 (CT) Factor `.Literal.TXT`; add `skip_etag`
+#    22-Apr-2015 (CT) Add `Sitemap` to `contents`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ class Robot_Excluder (_Ancestor) :
     hidden                     = True
     ignore_picky_accept        = True
     implicit                   = False
+    skip_etag                  = True
 
     def __init__ (self, ** kw) :
         self.__super.__init__ (name = "robots", ** kw)
@@ -52,16 +54,25 @@ class Robot_Excluder (_Ancestor) :
 
     @Once_Property
     def contents (self) :
+        top     = self.top
         dis_fmt = "Disallow: %s"
         exclude = list \
-            (   dis_fmt % (r.abs_href, )
-            for r in self.top.own_links if r.exclude_robots
-            )
+            (dis_fmt % (r.abs_href,) for r in top.own_links if r.exclude_robots)
         extra  = list (dis_fmt % x for x in self.extra_excludes)
         result = ""
         if exclude :
             result = "\n".join \
                 (iter_chain (["User-agent: *"], exclude, extra))
+        sitemap = getattr (top.SC, "Sitemap", None)
+        if sitemap is not None :
+            request = getattr (top, "request", None)
+            if request is not None :
+                site   = request.host_url.rstrip ("/")
+                result = "\n".join \
+                    ( ( result
+                      , "".join (("Sitemap: ", site, sitemap.permalink, ".txt"))
+                      )
+                    )
         return result
     # end def contents
 
