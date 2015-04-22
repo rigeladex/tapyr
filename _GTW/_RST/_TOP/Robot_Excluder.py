@@ -19,6 +19,7 @@
 #    24-Jul-2012 (CT) Creation
 #    19-Feb-2014 (CT) Add `extra_excludes`
 #    22-Apr-2015 (CT) Change `extra_excludes` to "/media/pdf" (was "/media")
+#    22-Apr-2015 (CT) Factor `.Literal.TXT`
 #    ««revision-date»»···
 #--
 
@@ -28,13 +29,13 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST.Mime_Type
-import _GTW._RST._TOP.Page
+import _GTW._RST._TOP.Literal
 
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   itertools                import chain as iter_chain
 
-_Ancestor = GTW.RST.TOP.Page
+_Ancestor = GTW.RST.TOP.Literal.TXT
 
 class Robot_Excluder (_Ancestor) :
     """Page providing a /robots.txt file."""
@@ -44,17 +45,6 @@ class Robot_Excluder (_Ancestor) :
     hidden                     = True
     ignore_picky_accept        = True
     implicit                   = False
-
-    class Robot_Excluder_GET (_Ancestor.GET) :
-
-        _real_name             = "GET"
-        _renderers             = (GTW.RST.Mime_Type.TXT, )
-
-        def _response_body (self, resource, request, response) :
-            return resource.contents
-        # end def _response_body
-
-    GET = Robot_Excluder_GET # end class Robot_Excluder_GET
 
     def __init__ (self, ** kw) :
         self.__super.__init__ (name = "robots", ** kw)
