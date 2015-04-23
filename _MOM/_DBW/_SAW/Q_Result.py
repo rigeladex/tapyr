@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -57,6 +57,7 @@
 #     7-May-2014 (CT) Add guard against `None` to `_Base_._get_xs`
 #    12-Sep-2014 (CT) Use `A_Join.key`, not `A_Join.table`, for `joined` set
 #     9-Oct-2014 (CT) Use `portable_repr`
+#    23-Apr-2015 (CT) Change `formatted` to include `bvar_man.bindings`
 #    ««revision-date»»···
 #--
 
@@ -230,11 +231,12 @@ class _Base_ (TFL.Meta.Object) :
         result = [portable_repr (self)]
         sq     = self.sa_query
         cq     = sq.compile ()
-        if cq.params :
+        params = dict (cq.params or {}, ** self.bvar_man.bindings)
+        if params :
             result.append ("Parameters:")
             result.extend \
                 (   ("     %-20s : %s" % (k, portable_repr (v)))
-                for k, v in sorted (pyk.iteritems (cq.params))
+                for k, v in sorted (pyk.iteritems (params))
                 )
         return "\n".join (result)
     # end def formatted
