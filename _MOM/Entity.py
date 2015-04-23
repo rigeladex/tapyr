@@ -286,6 +286,9 @@
 #    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine`,
 #                     as metaclass
 #    13-Apr-2015 (CT) Add `_json_encode`, `__json_encode_FO_`
+#    23-Apr-2015 (CT) Add `Id_Entity.use_indices` with: `last_cid`
+#    23-Apr-2015 (CT) Add `MD_Change.use_indices` with: `parent_cid`, `pid`,
+#                     and `(type_name, cid)`
 #    ««revision-date»»···
 #--
 
@@ -1098,6 +1101,7 @@ class Id_Entity \
     spk                   = TFL.Meta.Alias_Property ("pid")
     spk_attr_name         = "pid" ### Name of `surrogate primary key` attribute
     tutorial              = None
+    use_indices           = ["last_cid"]
 
     ### Thanks to `Alias_Property`, `uniqueness_dbw` and `uniqueness_ems` are
     ### accessible for both  the instances and the class
@@ -1965,6 +1969,7 @@ class MD_Change (_Ancestor_Essence) :
     sorted_by             = TFL.Sorted_By ("-cid")
     spk                   = TFL.Meta.Alias_Property ("cid")
     spk_attr_name         = "cid" ### Name of `surrogate primary key` attribute
+    use_indices           = ["parent_cid", "pid", ("type_name", "-cid")]
     _sig_attr_names       = ("kind", "time", "user")
 
     class _Attributes (_Ancestor_Essence._Attributes) :
