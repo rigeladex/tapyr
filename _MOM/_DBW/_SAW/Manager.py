@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -42,6 +42,7 @@
 #    26-Sep-2013 (CT) Add `reset_cache`
 #     4-Jul-2014 (CT) Add table-name to name of `UniqueConstraint`
 #     2-Sep-2014 (CT) Add `no_identifier_pat`
+#    23-Apr-2015 (CT) Change `_add_user_defined_indices` to support DESC indices
 #    ««revision-date»»···
 #--
 
@@ -66,7 +67,7 @@ import _MOM._SCM.Change
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch_Method
 from   _TFL.Regexp                import Regexp, re
 
-import itertools
+from   itertools                  import chain as ichain
 
 class _Reload_Mixin_ (object) :
     """Mixin which triggers a reload of an entity from the database on any
@@ -120,7 +121,7 @@ class App_Type_Wrapper (TFL.Meta.Object) :
 
     def finalize (self) :
         tn_map = self.tn_map
-        names  = itertools.chain ([""], sorted (self.et_map))
+        names  = ichain ([""], sorted (self.et_map))
         for tid, tn in enumerate (names) :
             tn_map.update (((tid, tn), (tn, tid)))
     # end def finalize
@@ -282,14 +283,24 @@ class _M_SAW_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _add_check_constraints
 
     def _add_user_defined_indices (cls, e_type, ETW, sa_table) :
+        def _gen (sa_table, col_names) :
+            for cn in col_names :
+                n = cn.lstrip ("-")
+                c = getattr (sa_table.c, n)
+                if cn != n :
+                    c = c.desc ()
+                yield c
         for col_names in e_type.use_indices :
             if not isinstance (col_names, (tuple, list)) :
                 col_names = (col_names, )
-            col_names     = list (col_names)
-            columns       = [getattr (sa_table.c, cn) for cn in col_names]
-            ### add the table name to ensure uniqueness of the index name
-            col_names.insert (0, sa_table.name)
-            SA.schema.Index ("__".join (col_names), * columns)
+            name = "__".join \
+                ( ichain
+                    ( [sa_table.name] ### ensure uniqueness of the index' name
+                    , (cn.lstrip ("-") for cn in col_names)
+                    )
+                )
+            columns = tuple (_gen (sa_table, col_names))
+            SA.schema.Index (name, * columns)
     # end def _add_user_defined_indices
 
     def _create_meta_table (cls, atw, t_name) :
