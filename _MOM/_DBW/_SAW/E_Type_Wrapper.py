@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -74,6 +74,8 @@
 #    26-Sep-2013 (CT) Add `reset_cache`
 #     2-Sep-2014 (CT) Quote table name if it's not a valid SQL identifier
 #    12-Sep-2014 (CT) Factor `etw_alias`
+#    23-Apr-2015 (CT) Add `pid_query`, `pid_query_stmt`, `type_name_select_stmt`
+#                     + plus `_pid_query_direct`, `_pid_query_indirect`
 #    ««revision-date»»···
 #--
 
@@ -412,6 +414,27 @@ class _E_Type_Wrapper_ (_E_Type_Wrapper_Base_) :
     # end def key_p
 
     @TFL.Meta.Once_Property
+    def pid_query (self) :
+        if self.e_type.is_partial :
+            return self._pid_query_indirect
+        else :
+            return self._pid_query_direct
+    # end def pid_query
+
+    @TFL.Meta.Once_Property
+    def pid_query_stmt (self) :
+        return self.Q_Result.filter (Q.pid == Q.BVAR.pid).limit (1)
+    # end def pid_query_stmt
+
+    @TFL.Meta.Once_Property
+    def type_name_select_stmt (self) :
+        pid_col = self.root_table.c.pid
+        tn_col  = self.type_name_col
+        return SA.sql.select \
+            ([tn_col]).where (pid_col == SA.sql.bindparam ("pid")).limit (1)
+    # end def type_name_select_stmt
+
+    @TFL.Meta.Once_Property
     def q_able_attrs_i (self) :
         p = self.parent
         if p :
@@ -517,6 +540,19 @@ class _E_Type_Wrapper_ (_E_Type_Wrapper_Base_) :
             return p.unique
         return ()
     # end def unique
+
+    def _pid_query_direct (self, session, pid) :
+        result = first (self.pid_query_stmt.bind (session, pid = pid))
+        return result
+    # end def _pid_query_direct
+
+    def _pid_query_indirect (self, session, pid) :
+        pqs = self.pid_query_stmt
+        tnq = session.connection.execute (self.type_name_select_stmt, pid = pid)
+        tn  = first (tnq) [0]
+        ETW = session.scope.entity_type (tn)._SAW
+        return ETW._pid_query_direct (session, pid)
+    # end def _pid_query_indirect
 
     def __repr__ (self) :
         tns = list (str (t) for t in reversed (self.sa_tables_strict or ()))

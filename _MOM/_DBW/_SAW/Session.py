@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -48,6 +48,8 @@
 #                     scopes which have an old meta data structure
 #    11-Dec-2013 (CT) Change `load_info` to preserve `dbid`
 #    15-Oct-2014 (CT) Pass `db_meta_data` to `Incompatible_DB_Version`
+#    23-Apr-2015 (CT) Change `pid_query` to use optimized `ETW.pid_query`
+#                     - remove `Id_Entity_Query_pid`
 #    ««revision-date»»···
 #--
 
@@ -164,11 +166,6 @@ class _Session_ (TFL.Meta.Object) :
         Id_Entity = self.scope.entity_type ("MOM.Id_Entity")
         return self.Q_Result (Id_Entity).order_by (Q.pid)
     # end def Id_Entity_Query
-
-    @TFL.Meta.Once_Property
-    def Id_Entity_Query_pid (self) :
-        return self.Id_Entity_Query.filter (Q.pid == Q.BVAR.pid)
-    # end def Id_Entity_Query_pid
 
     @property
     def max_cid (self) :
@@ -503,11 +500,13 @@ class Session_S (_Session_) :
     # end def load_root
 
     def pid_query (self, pid, Type = None) :
-        result = self._pid_map.get (pid)
+        result  = self._pid_map.get (pid)
         if result is None :
+            tn  = "MOM.Id_Entity" if Type is None else Type.type_name
+            ETW = self.scope.entity_type (tn)._SAW
             try :
-                result = self.Id_Entity_Query_pid.bind (pid = pid).one ()
-            except Exception as exc :
+                result = ETW.pid_query (self, pid = pid)
+            except IndexError as exc :
                 raise LookupError \
                     ("No object with pid `%d` found" % (pid, ))
         if Type is not None and not isinstance (result, Type.Essence) :
