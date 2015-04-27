@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -100,6 +100,7 @@
 #                     `Kind_Wrapper_C._setup_attrs` and `._setup_alias_attrs`
 #    11-Jul-2014 (CT) Fix `_saw_column_type` for `if pts._Pickler_Type`
 #    12-Sep-2014 (CT) Add `A_Join.key` including `t_col`
+#    27-Apr-2015 (CT) Add `unique_p`, `use_index` to `_saw_one_typed_column`
 #    ««revision-date»»···
 #--
 
@@ -680,6 +681,11 @@ def _saw_column_name (self) :
 @TFL.Add_To_Class ("_saw_one_typed_column", MOM.Attr.A_Attr_Type)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_one_typed_column (self, DBW, wrapper, col_type, * args, ** kw) :
+    attr = wrapper.attr
+    if attr.unique_p :
+        kw.setdefault ("unique", True)
+    if attr.use_index :
+        kw.setdefault ("index",  True)
     col = self.SAW_Column_Type (wrapper.ckd_name, col_type, * args, ** kw)
     col.MOM_Is_Raw  = False
     col.MOM_Kind    = wrapper.kind

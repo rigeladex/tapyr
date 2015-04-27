@@ -350,6 +350,7 @@
 #    27-Feb-2015 (CT) Change `_A_Composite_.cooked` to try downcast
 #    27-Mar-2015 (CT) Add `on` to `Table_X` of `A_Boolean`, `A_Confirmation`
 #    16-Apr-2015 (CT) Add `max_rev_ref`, `min_rev_ref`
+#    27-Apr-2015 (CT) Add `unique_p`, `use_index`
 #    ««revision-date»»···
 #--
 
@@ -518,6 +519,9 @@ class A_Attr_Type \
     ui_name_short       = TFL.Meta.Class_and_Instance_Once_Property \
         (lambda s : s.ui_name)
     ui_rank             = 0
+    unique_p            = False ### True indicates that value is unique over
+                                ### all instances of E_Type
+    use_index           = False
 
     _t_rank             = 0
 
@@ -695,7 +699,15 @@ class A_Attr_Type \
     @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
         max_length = getattr (self, "max_length", 0)
-        return (self.typ, self.db_sig_version, max_length, self.needs_raw_value)
+        result     = \
+            ( self.typ
+            , self.db_sig_version
+            , max_length
+            , self.needs_raw_value
+            , self.unique_p
+            , self.use_index
+            )
+        return result
     # end def db_sig
 
     def epk_def_set_ckd (self) :
@@ -2679,6 +2691,8 @@ class A_Link_Role \
     E_Type = P_Type     = TFL.Meta.Alias_Property ("role_type")
     ### by default, don't allow creation of new object for this attribute
     ui_allow_new        = False
+    ### by default, use an index for role attributes
+    use_index           = True
 
     _t_rank                   = -100
 
@@ -2706,6 +2720,11 @@ class A_Link_Role \
         else :
             return self.__super.ui_name
     # end def ui_name
+
+    @TFL.Meta.Class_and_Instance_Once_Property
+    def unique_p (self) :
+        return self.max_links == 1
+    # end def unique_p
 
 # end class A_Link_Role
 

@@ -289,6 +289,7 @@
 #    23-Apr-2015 (CT) Add `Id_Entity.use_indices` with: `last_cid`
 #    23-Apr-2015 (CT) Add `MD_Change.use_indices` with: `parent_cid`, `pid`,
 #                     and `(type_name, cid)`
+#    27-Apr-2015 (CT) Use `use_index`, not `use_indices`, where possible
 #    ««revision-date»»···
 #--
 
@@ -1101,7 +1102,6 @@ class Id_Entity \
     spk                   = TFL.Meta.Alias_Property ("pid")
     spk_attr_name         = "pid" ### Name of `surrogate primary key` attribute
     tutorial              = None
-    use_indices           = ["last_cid"]
 
     ### Thanks to `Alias_Property`, `uniqueness_dbw` and `uniqueness_ems` are
     ### accessible for both  the instances and the class
@@ -1233,6 +1233,7 @@ class Id_Entity \
             default            = 0
             hidden_nested      = 1
             record_changes     = False
+            use_index          = True
 
         # end class last_cid
 
@@ -1969,7 +1970,7 @@ class MD_Change (_Ancestor_Essence) :
     sorted_by             = TFL.Sorted_By ("-cid")
     spk                   = TFL.Meta.Alias_Property ("cid")
     spk_attr_name         = "cid" ### Name of `surrogate primary key` attribute
-    use_indices           = ["parent_cid", "pid", ("type_name", "-cid")]
+    use_indices           = [("type_name", "-cid")]
     _sig_attr_names       = ("kind", "time", "user")
 
     class _Attributes (_Ancestor_Essence._Attributes) :
@@ -2039,6 +2040,7 @@ class MD_Change (_Ancestor_Essence) :
             """Cid of parent change, if any."""
 
             hidden_nested      = 1
+            use_index          = True
 
             def computed (self, obj) :
                 parent = obj.scm_change.parent
@@ -2059,6 +2061,7 @@ class MD_Change (_Ancestor_Essence) :
             """Permanent id of the entity that was changed, if any."""
 
             hidden_nested      = 1
+            use_index          = True
 
         # end class pid
 
