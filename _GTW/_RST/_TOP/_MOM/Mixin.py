@@ -35,6 +35,7 @@
 #                     `_renderer_template_iter` from `Admin.E_Type`
 #    10-Feb-2015 (CT) Factor `Renderer_Mixin`
 #    16-Apr-2015 (CT) Pass `default` to `getattr_safe` for `fields_default`
+#    27-Apr-2015 (CT) Factor `E_Type_Mixin_Base._default_title`
 #    ««revision-date»»···
 #--
 
@@ -368,12 +369,13 @@ class TOP_MOM_E_Type_Mixin_Base \
         self.pop_to_self (kw, "ETM", prefix = "_")
         E_Type      = self.E_Type
         name        = kw.pop  ("name", E_Type.ui_name)
-        title       = kw.pop  ("title", _T (E_Type.__doc__))
         a           = "a" ### Fool Babel extract
         short_title = kw.pop  \
             ( "short_title"
             , _T (name.capitalize () if name [0] >= a else name)
             )
+        title       = kw.pop ("title", None) \
+            or self._default_title (E_Type, name, short_title)
         self.__super.__init__ \
             ( name          = TFL.Ascii.sanitized_filename
                 (pyk.text_type (name))
@@ -382,6 +384,10 @@ class TOP_MOM_E_Type_Mixin_Base \
             , ** kw
             )
     # end def __init__
+
+    def _default_title (self, E_Type, name, short_title) :
+        return _T (self.E_Type.__doc__)
+    # end def _default_title
 
     def __getattr__ (self, name) :
         if self.attr_mapper :

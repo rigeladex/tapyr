@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -32,6 +32,7 @@
 #     5-Feb-2014 (CT) Call `_add_other_entries` in `_E_Type_Archive_.entries`
 #    14-May-2014 (CT) Add `sort_key` to `_E_Type_Archive_.Year`
 #    25-Jun-2014 (CT) Factor `referral_query` and friends to `...Mixin`
+#    27-Apr-2015 (CT) Redefine `_E_Type_Archive_.Year._default_title`
 #    ««revision-date»»···
 #--
 
@@ -184,6 +185,11 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
                 + self.__super.query_filters_s
                 )
         # end def query_filters_s
+
+        def _default_title (self, E_Type, name, short_title) :
+            return "%s %s" % \
+                (self.__super._default_title (E_Type, name, short_title), name)
+        # end def _default_title
 
     # end class Year
 
