@@ -81,9 +81,10 @@
 //    27-Mar-2015 (CT) Factor `serialized_form`, add `:checkbox:not(:checked)`
 //    31-Mar-2015 (CT) Use `fit`, not `flipfit`, for `collision`
 //                     (`flipfit` truncates on the left of completion info)
+//    28-Apr-2015 (CT) Add guards for undefined `af_map [label]`
+//                     to `attr_select` and`order_by`
 //    ««revision-date»»···
 //--
-
 ( function ($, undefined) {
     "use strict";
 
@@ -331,9 +332,11 @@
                                 if (! a$.hasClass ("disabled")) {
                                     var label = v$.html ();
                                     if (label) {
-                                        var af = af_map [label];
+                                        var af    = af_map [label];
+                                        var name  = (af === undefined) ?
+                                                label : af.q_name;
                                         labels.push (label);
-                                        values.push (af.q_name);
+                                        values.push (name);
                                     };
                                 };
                             }
@@ -416,14 +419,15 @@
                   var attrs$  = as_widget$.find (S.attr_select_attributes);
                   var but$    = as_widget$.find (S.add_button);
                   var menu$   = but$.data ("gtw_qr_menu$").element;
-                  var af, a$;
+                  var af, a$, label;
                   for (var i = 0, li = choices.length, choice; i < li; i++) {
                       choice = $.trim (choices [i]);
                       if (choice.length) {
-                          af = af_map [choice];
-                          a$ = attr_select.new_attr (af.label);
+                          af    = af_map [choice];
+                          label = (af === undefined) ? choice : af.label;
+                          a$    = attr_select.new_attr (label);
                           attrs$.append (a$);
-                          attr_select.toggle (menu$, af.label, true);
+                          attr_select.toggle (menu$, label, true);
                       };
                   };
               }
@@ -762,8 +766,10 @@
                                             (fa_icons.icon_class.SORT_DESC);
                                         var sign  = desc ? "-" : "";
                                         var af    = af_map [label];
+                                        var name  = (af === undefined) ?
+                                                label : af.q_name;
                                         labels.push (sign + label);
-                                        values.push (sign + af.q_name);
+                                        values.push (sign + name);
                                     };
                                 };
                             }
