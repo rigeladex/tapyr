@@ -49,6 +49,7 @@
 #    12-Dec-2014 (CT) Add `HTTP_POST_CRSF_Mixin`
 #                     (factored from `GTW.RST.TOP.Auth._Form_Cmd_.POST`)
 #    20-Mar-2015 (CT) Use `request.language` in `render_context`
+#    28-Apr-2015 (CT) Skip `hidden`  entries in `Index.next`, `.prev`
 #    ««revision-date»»···
 #--
 
@@ -207,9 +208,15 @@ class _TOP_Base_ (_Ancestor) :
             if i >= len (entries) and self.wrap :
                 i = 0
             try :
-                return entries [i]
+                result = entries [i]
             except IndexError :
                 pass
+            else :
+                while result.hidden and i+1 < len (entries) :
+                    i += 1
+                    result = entries [i]
+                if not result.hidden :
+                    return result
         # end def next
 
         def prev (self, resource) :
@@ -217,9 +224,15 @@ class _TOP_Base_ (_Ancestor) :
             entries = resource.parent.proper_entries
             if i >= 0 or self.wrap :
                 try :
-                    return entries [i]
+                    result = entries [i]
                 except IndexError :
                     pass
+                else :
+                    while result.hidden and i > 0 :
+                        i -= 1
+                        result = entries [i]
+                    if not result.hidden :
+                        return result
         # end def prev
 
     # end class Index
