@@ -2353,6 +2353,7 @@ _test_entity_attr = """
     ....SRM.Link2
     .....SRM.Boat_in_Regatta
         _crew                               query      SRM.Sailor                SRM.Crew_Member
+        crew                                computed   SRM.Sailor
         left                                primary    SRM.Boat                  SRM.Boat_in_Regatta
         race_results                        query      SRM.Race_Result           SRM.Race_Result
         right                               primary    SRM.Regatta               SRM.Boat_in_Regatta

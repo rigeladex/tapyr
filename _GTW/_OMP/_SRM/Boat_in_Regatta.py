@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -37,6 +37,7 @@
 #    13-May-2013 (CT) Use `query`, not `r_query`
 #    30-Jan-2014 (CT) Add attribute `ranking_list_points_lp`
 #    17-Aug-2014 (CT) Remove attribute `ranking_list_points_lp`
+#    28-Apr-2015 (CT) Add `_A_Id_Entity_List_` to bases of `crew`
 #    ««revision-date»»···
 #--
 
@@ -82,9 +83,10 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         ### Non-primary attributes
 
-        class crew (A_Blob) :
+        class crew (MOM.Attr._A_Id_Entity_List_, A_Blob) :
 
             kind               = Attr.Computed
+            P_Type             = GTW.OMP.SRM.Sailor
 
             def computed (self, obj) :
                 scope = obj.home_scope

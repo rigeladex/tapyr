@@ -351,6 +351,8 @@
 #    27-Mar-2015 (CT) Add `on` to `Table_X` of `A_Boolean`, `A_Confirmation`
 #    16-Apr-2015 (CT) Add `max_rev_ref`, `min_rev_ref`
 #    27-Apr-2015 (CT) Add `unique_p`, `use_index`
+#    28-Apr-2015 (CT) Add `portable_repr` to `FO_nested`
+#                     of `_A_Id_Entity_Collection_`
 #    ««revision-date»»···
 #--
 
@@ -1971,14 +1973,13 @@ class _A_Id_Entity_Collection_ (_A_Typed_Collection_) :
                         raise AttributeError \
                             ("Can't FO-access `.%s` of %r" % (k, v))
                     yield v
-            return None, None, tuple (_gen (values, names, default))
         else :
-            def _gen (values, default) :
+            def _gen (values, names, default) :
                 for v in values :
                     if isinstance (v, MOM.Entity) :
                         v = pyk.text_type (v.FO)
                     yield v
-            return None, None, tuple (_gen (values, default))
+        return None, None, portable_repr (tuple (_gen (values, names, default)))
     # end def FO_nested
 
 # end class _A_Id_Entity_Collection_

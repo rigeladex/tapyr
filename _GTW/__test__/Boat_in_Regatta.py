@@ -543,7 +543,7 @@ _test_code = r"""
     `boat.b_class.max_crew`. (number_of_crew < boat.b_class.max_crew)
         boat = Optimist, AUT 1107
         boat.b_class.max_crew = 1
-        crew = [SRM.Sailor (('tanzer', 'laurens', '', ''), 'AUT', None, '')]
+        crew = ('Tanzer Laurens, AUT',)
         number_of_crew = 1 << len (crew)
 
     >>> print (bir.skipper)
