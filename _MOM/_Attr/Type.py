@@ -353,6 +353,7 @@
 #    27-Apr-2015 (CT) Add `unique_p`, `use_index`
 #    28-Apr-2015 (CT) Add `portable_repr` to `FO_nested`
 #                     of `_A_Id_Entity_Collection_`
+#    28-Apr-2015 (CT) Fix `A_Link_Role.unique_p` (only for unary links)
 #    ««revision-date»»···
 #--
 
@@ -2724,7 +2725,7 @@ class A_Link_Role \
 
     @TFL.Meta.Class_and_Instance_Once_Property
     def unique_p (self) :
-        return self.max_links == 1
+        return self.max_links == 1 and self.e_type.number_of_roles == 1
     # end def unique_p
 
 # end class A_Link_Role

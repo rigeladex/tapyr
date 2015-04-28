@@ -866,13 +866,13 @@ _test_element = """
     , 'pid' : 1
     , 'sid' : 0
     , 'sigs' :
-        { 'Z-26' : 'Qfm0kbG33t0XhvLHc1aYHZdE9Pd9hTpWivzGag'
-        , 'Z-26:phones/1' : 'GbmCvUJt5Ixph-ZDYNj0hGPqLSWPLhdRr7AAuw'
-        , 'Z-26:phones/2' : '5-DSgxDTnk1Yzn_nmIrjvwoZOsC40LzdUxMj4A'
-        , 'Z-26:phones::right/1' : 'BgWLM31XXWun6yJDA_3AXlMaiHUAjwdxLHSbVA'
-        , 'Z-26:phones::right/2' : 'cmGSVky4H1a7OhoCcqQfs7z8EFoYepLpMoRvqA'
-        , 'Z-26:phones::right@3' : '2dAR3NOAdwkIKpWXrMjrtCU-q8xq-eMoe2zqEQ'
-        , 'Z-26:phones@3' : '7H8oP-_wkfkuOBM9XvtQdqJQ_656ORgty4fvWg'
+        { 'Z-26' : '_hEg-sePfhfkRLEUj0IYJiL6BgDVhbE-vKI0jQ'
+        , 'Z-26:phones/1' : 'Ey4qGGMaPKObwCJSprKazgyxU28RRfckYn3fMA'
+        , 'Z-26:phones/2' : 'AmzZA4Wi0lga01gC23mXxOzfEpea_0f99pvNkg'
+        , 'Z-26:phones::right/1' : '-NIR3kDY6KpYQ04FZFu0TFyL5oWn1TwnIWSo6Q'
+        , 'Z-26:phones::right/2' : 'g-au0oO4kLINj7o8KxeSNvSNQwX1ikWkbRSUWg'
+        , 'Z-26:phones::right@3' : 'i_q6IXEtx7CRu21Zrp2TgloeU-dHn8wQCHlgfw'
+        , 'Z-26:phones@3' : 'LFkeOzL88mhsuqsPe93gQrPgcQUXVi-jdWlfwQ'
         }
     }
 
