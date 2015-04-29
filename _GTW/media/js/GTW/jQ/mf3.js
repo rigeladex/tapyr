@@ -58,6 +58,9 @@
 //                     + add optional arg `ft` to `field_type.normal.reset`
 //    14-Apr-2015 (CT) Use `response ["entity_p"]` in `completer.select_cb`,
 //                     not `f_completer ["entity_p"]`
+//    29-Apr-2015 (CT) Add `aside .error-msg` to `form_errors`
+//    29-Apr-2015 (CT) Change `form_errors.display` to focus on first entry
+//                     field with error
 //    ««revision-date»»···
 //--
 
@@ -769,11 +772,13 @@
                 if (! result.length) {
                     $("h1", form$).first ().after ($( L (S.form_errors)));
                     result = $(S.form_errors, form$);
-                }
+                };
                 return result;
               }
             , display : function display (errors) {
                 var errs$ = form_errors.container ();
+                var form$ = options.form$;
+                $("aside .error-msg", form$).remove ();
                 errs$.html
                     ($(L ("h1", { html : translated ("Form errors")})));
                 for (var i = 0, li = errors.length, err; i < li; i++) {
@@ -782,21 +787,22 @@
                 };
                 $(err_ref, errs$).addClass ("pure-button");
                 errs$.show ();
+                $(err_ref, errs$).first ().trigger ("click");
                 //$GTW.show_message ("Submit errors: ", errors);
               }
             , display_1 : function display_1 (errs$, err) {
                 var S      = options.selectors;
                 var ent$   = $("[id=\"" + err.entity + "\"]");
                 var err$   = $(L (S.err_msg));
-                var f$, r$;
+                var a$, f$, r$, desc;
                 if (ent$.length) {
                     ent$.closest (S.closable).removeClass ("closed");
                 };
                 errs$.append (err$);
                 err$.append  ($( L ( "h2", { html : err.head })));
                 if ("description" in err) {
-                    err$.append
-                        ($(L ("p.description", { html : err.description })));
+                    desc = err.description;
+                    err$.append ($(L ("p.description", { html : desc })));
                 };
                 if ("explanation" in err) {
                     err$.append
@@ -812,6 +818,10 @@
                         ( "title"
                         , translated ("Correct field") + " " + f.label
                         );
+                    if (desc) {
+                        a$ = f$.siblings ().filter ($("aside"));
+                        a$.append ($(L ("p.error-msg", { html : desc })));
+                    };
                 }
               }
             , goto_field : function goto_field (ev) {

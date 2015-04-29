@@ -29,6 +29,7 @@
 #    24-Mar-2015 (CT) Add rule for `form .pure-form label > b`
 #     1-Apr-2015 (CT) Add `background_color` to rule for `... input.bad:focus`
 #    16-Apr-2015 (CT) Add rule for vertical alignment of `input[type=checkbox]`
+#    29-Apr-2015 (CT) Add rule for `aside .error-msg`
 #    ««revision-date»»···
 #--
 
@@ -328,6 +329,17 @@ style_sheet = Style_Sheet \
                                 ( "open"
                                 , display              = "block"
                                 , visibility           = "visible"
+                                )
+                            , Rule
+                                ( ".error-msg"
+                                , background_color = P.color_status_bad
+                                , border           =
+                                    "1px solid " + P.color_status_bad
+                                , border_radius    = Em (1/2)
+                                , color            = P.text_color
+                                , font_weight      = 600
+                                , margin           = TRBL (Rem (0.5), 0)
+                                , padding          = TRBL (Rem (0.5))
                                 )
                             ]
                         )

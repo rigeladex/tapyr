@@ -42,6 +42,8 @@
 ##    24-Mar-2015 (CT) Add `<b>*</b>` to `label` for required elements
 ##                     (that aren't also prefilled)
 ##    16-Apr-2015 (CT) Add guard for `add_rev_ref` button
+##    29-Apr-2015 (CT) Change `do_description` to always add `aside` element,
+##                     even if empty
 ##    ««revision-date»»···
 ##--
 #}
@@ -63,12 +65,12 @@
   {%- set desc = GTW._T (elem.ui_description or elem.description) %}
   {%- if desc -%}
     {%- set labl = GTW._T (elem.label) %}
-    {%- if desc != labl %}
-      {%- set expl = GTW._T (elem.explanation) %}
-      <aside class="Desc" {%- if expl %} title="{{ expl|safe }}"{% endif -%}>
+    {%- set expl = GTW._T (elem.explanation) %}
+    <aside class="Desc" {%- if expl %} title="{{ expl|safe }}"{% endif -%}>
+      {%- if desc != labl %}
         {{- desc|safe -}}
-      </aside>
-    {% endif -%}
+      {% endif -%}
+    </aside>
   {%- endif -%}
 {%- endmacro -%} {#- do_description -#}
 
