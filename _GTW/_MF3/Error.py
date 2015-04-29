@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.MF3.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -21,6 +21,10 @@
 #     2-Jul-2014 (CT) Continue creation..
 #    29-Aug-2014 (CT) Add `guard` for `e.attributes` to `finish`
 #    30-Aug-2014 (CT) Use `b"..."` for `__repr__` formats
+#    29-Apr-2015 (CT) Change `fields` to try canonical attribute name
+#    29-Apr-2015 (CT) Change `_error_as_json_cargo` to use
+#                     `MOM.Error.as_json_cargo`
+#    29-Apr-2015 (CT) Add optional arguments `errors` to `List.__init__`
 #    ««revision-date»»···
 #--
 
@@ -149,8 +153,13 @@ class Wrapper (TFL.Meta.Object) :
                 try :
                     f = entity [a]
                 except KeyError :
-                    pass
-                else :
+                    ### try to use canonical attribute name, if any
+                    try :
+                        aq = getattr (self.entity.AQ, a, None)
+                        f  = entity  [aq._q_name]
+                    except (KeyError, AttributeError) :
+                        f  = None
+                if f is not None :
                     yield f
         return sorted (_gen (self.entity, self.error), key = Q.po_index)
     # end def fields
@@ -168,10 +177,7 @@ class Wrapper (TFL.Meta.Object) :
 
     @Single_Dispatch_Method
     def _error_as_json_cargo (self, error) :
-        return dict \
-            ( description = html_escape (pyk.text_type (error))
-            , head        = error.__class__.__name__
-            )
+        return MOM.Error.as_json_cargo (error)
     # end def _error_as_json_cargo
 
     @_error_as_json_cargo.add_type (MOM.Error.Error)
@@ -235,9 +241,9 @@ class Wrapper (TFL.Meta.Object) :
 class List (TFL.Meta.Object) :
     """Manage a list of errors for a specific MF3 entity element."""
 
-    def __init__ (self, entity) :
+    def __init__ (self, entity, errors = None) :
         self.entity          = entity
-        self._raw_errors     = []
+        self._raw_errors     = [] if errors is None else list (errors)
         self._wrapped_errors = None
     # end def __init__
 

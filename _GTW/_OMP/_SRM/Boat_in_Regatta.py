@@ -38,6 +38,7 @@
 #    30-Jan-2014 (CT) Add attribute `ranking_list_points_lp`
 #    17-Aug-2014 (CT) Remove attribute `ranking_list_points_lp`
 #    28-Apr-2015 (CT) Add `_A_Id_Entity_List_` to bases of `crew`
+#    29-Apr-2015 (CT) Change `crew_number_valid` to use `_crew`, not `crew`
 #    ««revision-date»»···
 #--
 
@@ -175,9 +176,9 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
             kind                 = Pred.Region
             assertion            = "number_of_crew < boat.b_class.max_crew"
-            attributes           = ("boat.b_class.max_crew", "crew")
+            attributes           = ("boat.b_class.max_crew", "_crew")
             bindings             = dict \
-                ( number_of_crew = "len (this.crew)"
+                ( number_of_crew = "len (_crew)"
                 )
 
         # end class crew_number_valid

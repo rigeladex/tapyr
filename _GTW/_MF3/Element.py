@@ -89,6 +89,7 @@
 #     3-Apr-2015 (CT) Change `Field_Entity.__call__` to handle `pid == -1`
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #    16-Apr-2015 (CT) Take default of `max_rev_ref` from `.attr`
+#    29-Apr-2015 (CT) Add `record_commit_errors`
 #    ««revision-date»»···
 #--
 
@@ -1232,6 +1233,13 @@ class Entity (_Entity_) :
                     pn (cargo)
             e.reset_once_properties ()
     # end def populate_new
+
+    def record_commit_errors (self, scope, exc) :
+        for e in self.entity_elements :
+            errors = e.essence and e.essence.errors
+            if errors :
+                e._commit_errors = GTW.MF3.Error.List (e, errors)
+    # end def record_commit_errors
 
     def set_request_defaults (self, req_data, scope) :
         AQ = self.E_Type.AQ

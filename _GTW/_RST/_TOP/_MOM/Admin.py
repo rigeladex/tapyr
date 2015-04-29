@@ -117,6 +117,7 @@
 #    11-Feb-2015 (CT) Change `E_Type_Alias` to refer to `.target.ETM.ui_name_T`,
 #                     not `.target.ETM.type_name`
 #     2-Apr-2015 (CT) Add `feedback` to `_rendered_completions_a`
+#    29-Apr-2015 (CT) Factor `record_commit_errors` to `GTW.MF3.Element.Entity`
 #    ««revision-date»»···
 #--
 
@@ -629,16 +630,13 @@ class _Changer_ (_Ancestor) :
                       )
                     )
                 return result
-            errors = fv.submission_errors
-            if not errors :
+            if not fv.submission_errors :
                 try :
                     self._commit_scope_fv (scope, fv, request, response)
                 except Exception as exc :
-                    for e in fv.entity_elements :
-                        if e.essence :
-                            errors.extend (e.essence.errors)
+                    fv.record_commit_errors (scope, exc)
             result.update (fv.as_json_cargo)
-            if errors :
+            if fv.errors :
                 self._call_submit_callback \
                     ( self.submit_error_callback
                     , request, response, scope, fv, result
