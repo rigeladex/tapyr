@@ -50,6 +50,7 @@
 #    11-Feb-2015 (CT) Remove `sail_number_head`, `sail_number_tail`
 #    26-Feb-2015 (CT) Change `_Sail_Number_Polisher_` to override `__call__`,
 #                     not `_polish`
+#    29-Apr-2015 (CT) Remove obsolete predicate `valid_vintage`
 #    ««revision-date»»···
 #--
 
@@ -191,18 +192,6 @@ class Boat (_Ancestor_Essence) :
             attributes         = ("nation", "sail_number", "sail_number_x")
 
         # end class valid_sail_number_x
-
-        class valid_vintage (Pred.Condition) :
-            """`vintage` must not lie in the future."""
-
-            kind               = Pred.Object
-            assertion          = "vintage <= current_year"
-            attributes         = ("vintage",)
-            bindings           = dict \
-                ( current_year = "datetime.datetime.now ().year"
-                )
-
-        # end class valid_vintage
 
     # end class _Predicates
 
