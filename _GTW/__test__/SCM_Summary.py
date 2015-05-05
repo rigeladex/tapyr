@@ -25,6 +25,7 @@
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    15-Apr-2013 (CT) Adapt to change of `MOM.Attr.Kind.reset`
 #    24-Apr-2013 (CT) Add test `no_net`; adapt to change of `MOM.SCM.Summary`
+#     5-May-2015 (CT) Add tests for `as_json_cargo`
 #    ««revision-date»»···
 #--
 
@@ -33,7 +34,28 @@ from   __future__                    import print_function, unicode_literals
 from   _GTW.__test__.model           import *
 from   _GTW.__test__.Boat_in_Regatta import clean_change, show_change
 
+from   _TFL.Regexp                   import Multi_Re_Replacer, Re_Replacer, re
+
 import datetime
+
+time_cleaner = Multi_Re_Replacer \
+    ( Re_Replacer
+        ( r"'c_time' : '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+'"
+        , r"'c_time' : <datetime>"
+        )
+    , Re_Replacer
+        ( r"'c_time' : datetime.datetime\(\d+, \d+, \d+, \d+, \d+, \d+, \d+\)"
+        , r"'c_time' : <datetime>"
+        )
+    , Re_Replacer
+        ( r"'time' : '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+'"
+        , r"'time' : <datetime>"
+        )
+    , Re_Replacer
+        ( r"'time' : datetime.datetime\(\d+, \d+, \d+, \d+, \d+, \d+, \d+\)"
+        , r"'time' : <datetime>"
+        )
+    )
 
 _basic = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -269,6 +291,77 @@ _basic = r"""
     <Change Summary for pid 42: newborn>
         <Create EVT.Event_occurs ((('event-1-text', 'SWP.Page'), (('start', '2010-08-18'),), '', '', 'EVT.Event'), '2010-10-08', '', 'EVT.Event_occurs'), new-values = {'last_cid' : '<n>'}>
 
+    >>> print (time_cleaner (formatted (ucc [0].as_json_cargo)))
+    ( '_MOM._SCM.Change'
+    , 'Create'
+    , { '_new_attr' : {'max_crew' : '1'}
+      , 'c_time' : <datetime>
+      , 'c_user' : None
+      , 'cid' : 1
+      , 'epk' :
+          ( 'Optimist'
+          , 'SRM.Boat_Class'
+          )
+      , 'epk_pid' :
+          ( 'Optimist'
+          , 'SRM.Boat_Class'
+          )
+      , 'old_attr' : {}
+      , 'pickle_cargo' :
+          ( 'SRM.Boat_Class'
+          , { 'beam' : (None,  )
+            , 'electric' : (False,  )
+            , 'last_cid' : (0,  )
+            , 'loa' : (None,  )
+            , 'max_crew' : (1,  )
+            , 'name' :
+                ( 'optimist'
+                , 'Optimist'
+                )
+            , 'pid' : (1,  )
+            , 'sail_area' : (None,  )
+            , 'type_name' : ('SRM.Boat_Class',  )
+            , 'x_locked' : (False,  )
+            }
+          , 1
+          )
+      , 'pid' : 1
+      , 'time' : <datetime>
+      , 'tool_version' :
+          ( 'MOM-Test'
+          , ( 0
+            , 1
+            , 2
+            )
+          )
+      , 'type_name' : 'SRM.Boat_Class'
+      , 'user' : None
+      }
+    , []
+    )
+
+    >>> ucc_json_cargo = ucc.as_json_cargo
+    >>> ucc_restored   = MOM.SCM.Summary.from_json_cargo (ucc_json_cargo)
+    >>> ucc is not ucc_restored
+    True
+    >>> not any (a is b for a, b in zip (ucc.changes, ucc_restored.changes))
+    True
+    >>> len (ucc) == len (ucc_restored)
+    True
+    >>> set (ucc.by_pid) == set (ucc_restored.by_pid)
+    True
+    >>> ucc.changed_attrs == ucc_restored.changed_attrs
+    True
+
+    >>> cjc = ucc_json_cargo [0]
+    >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
+    ...     MOM.SCM.Change._Change_.from_json_cargo ((cjc [0], "Foo") + cjc [2:])
+    AttributeError: Module '_MOM._SCM.Change' doesn't provide Change class 'Foo' for restoring change from json-cargo ...
+
+    >>> with expect_except (ImportError) : # doctest:+ELLIPSIS
+    ...     MOM.SCM.Change._Change_.from_json_cargo (("_GTW._OMP.Change", ) + cjc [1:])
+    ImportError: No module named '_GTW._OMP.Change' for restoring Change class 'Create' from json-cargo ...
+
     >>> for pid, csp in sorted (pyk.iteritems (ucc.by_pid)) : ### 2
     ...   if csp :
     ...     print (csp.pid, clean_change (sorted (pyk.iteritems (csp.attribute_changes))))
@@ -485,6 +578,43 @@ _basic = r"""
     <Change Summary for pid 15: just died>
         <Destroy SRM.Race_Result (((('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat'), (('Himmelfahrt', (('finish', '2010-05-13'), ('start', '2010-05-13')), 'SRM.Regatta_Event'), ('Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), '2', 'SRM.Race_Result'), old-values = {'last_cid' : '<n>', 'points' : '4'}>
 
+    >>> print (time_cleaner (formatted (ucc [0].as_json_cargo)))
+    ( '_MOM._SCM.Change'
+    , 'Destroy'
+    , { '_new_attr' : {}
+      , 'cid' : 110
+      , 'epk' :
+          ( ( 'Optimist'
+            , 'SRM.Boat_Class'
+            )
+          , '1134'
+          , 'AUT'
+          , ''
+          , 'SRM.Boat'
+          )
+      , 'epk_pid' :
+          ( 1
+          , '1134'
+          , 'AUT'
+          , ''
+          , 'SRM.Boat'
+          )
+      , 'old_attr' : {'last_cid' : '8'}
+      , 'pid' : 7
+      , 'time' : <datetime>
+      , 'tool_version' :
+          ( 'MOM-Test'
+          , ( 0
+            , 1
+            , 2
+            )
+          )
+      , 'type_name' : 'SRM.Boat'
+      , 'user' : None
+      }
+    , []
+    )
+
     >>> for pid, csp in sorted (pyk.iteritems (ucc.by_pid)) : ### 6
     ...     print (csp.pid, clean_change (sorted (pyk.iteritems (csp.attribute_changes))))
     6 [('last_cid', (old = '6', new = None))]
@@ -507,6 +637,45 @@ _basic = r"""
     <Change Summary for pid 8: 2 changes>
         <Modify/C PAP.Person.lifetime ('Tanzer', 'Laurens', 'William', 'Mr.', 'PAP.Person'), old-values = {'last_cid' : '32', 'start' : ''}, new-values = {'last_cid' : '115', 'start' : '1997-11-16'}>
         <Modify/C PAP.Person.lifetime ('Tanzer', 'Laurens', 'William', 'Mr.', 'PAP.Person'), old-values = {'finish' : '', 'last_cid' : '115'}, new-values = {'finish' : '2007-11-30', 'last_cid' : '116'}>
+
+    >>> print (time_cleaner (formatted (ucc [0].as_json_cargo)))
+    ( '_MOM._SCM.Change'
+    , 'Attr_Composite'
+    , { '_new_attr' : {'start' : '1997-11-16'}
+      , 'attr_name' : 'lifetime'
+      , 'cid' : 115
+      , 'epk' :
+          ( 'Tanzer'
+          , 'Laurens'
+          , 'William'
+          , 'Mr.'
+          , 'PAP.Person'
+          )
+      , 'epk_pid' :
+          ( 'Tanzer'
+          , 'Laurens'
+          , 'William'
+          , 'Mr.'
+          , 'PAP.Person'
+          )
+      , 'old_attr' :
+          { 'last_cid' : '32'
+          , 'start' : ''
+          }
+      , 'pid' : 8
+      , 'time' : <datetime>
+      , 'tool_version' :
+          ( 'MOM-Test'
+          , ( 0
+            , 1
+            , 2
+            )
+          )
+      , 'type_name' : 'PAP.Person'
+      , 'user' : None
+      }
+    , []
+    )
 
     >>> for pid, csp in sorted (pyk.iteritems (ucc.by_pid)) : ### 8
     ...     print (csp.pid, clean_change (sorted (pyk.iteritems (csp.attribute_changes))))

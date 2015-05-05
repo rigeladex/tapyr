@@ -541,10 +541,10 @@ _test_code = r"""
     ...     scope.commit ()
     Invariants: Condition `crew_number_valid` : The number of crew members must be less than
     `boat.b_class.max_crew`. (number_of_crew < boat.b_class.max_crew)
+        _crew = ('Tanzer Laurens, AUT',)
         boat = Optimist, AUT 1107
         boat.b_class.max_crew = 1
-        crew = ('Tanzer Laurens, AUT',)
-        number_of_crew = 1 << len (crew)
+        number_of_crew = 1 << len (_crew)
 
     >>> print (bir.skipper)
     (('tanzer', 'christian', '', ''), 'AUT', 29676, '')

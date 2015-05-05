@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.SCM.
@@ -39,6 +39,8 @@
 #    24-Apr-2013 (CT) Don't add `new` for `is_dead` to `attribute_changes`
 #    24-Apr-2013 (CT) Add `Summary.entity_changes`
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
+#     5-May-2015 (CT) Add `as_json_cargo`, `from_pickle_cargo`;
+#                     add `json_encode_change` to `TFL.json_dump.default`
 #    ««revision-date»»···
 #--
 
@@ -54,6 +56,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Accessor
 import _TFL.defaultdict
+import _TFL.json_dump
 import _TFL.predicate
 import _TFL.Undef
 
@@ -371,6 +374,11 @@ class Summary (TFL.Meta.Object) :
     # end def __init__
 
     @property
+    def as_json_cargo (self) :
+        return list (c.as_json_cargo for c in self._changes)
+    # end def as_json_cargo
+
+    @property
     def by_pid (self) :
         result = self._by_pid
         if result is None :
@@ -392,6 +400,14 @@ class Summary (TFL.Meta.Object) :
     def changes (self) :
         return self._changes
     # end def changes
+
+    @classmethod
+    def from_json_cargo (cls, cargo) :
+        result = cls ()
+        fjc    = MOM.SCM.Change._Change_.from_json_cargo
+        result._changes = list (fjc (c) for c in cargo)
+        return result
+    # end def from_json_cargo
 
     def add (self, c) :
         self._changes.append (c)
@@ -502,6 +518,11 @@ class Summary (TFL.Meta.Object) :
     # end def __bool__
 
 # end class Summary
+
+@TFL.json_dump.default.add_type (Summary)
+def json_encode_change (s) :
+    return s.as_json_cargo
+# end def json_encode_change
 
 if __name__ != "__main__" :
     MOM.SCM._Export ("Summary")

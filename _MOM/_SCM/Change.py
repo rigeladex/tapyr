@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -82,6 +82,9 @@
 #    27-Nov-2013 (MG) Fix `Create` change to allow migration of older scopes
 #    27-Nov-2013 (CT) Fix `_pickle_attrs` migration of `c_user`
 #     9-Oct-2014 (CT) Use `portable_repr`
+#     5-May-2015 (CT) Add `as_json_cargo`, `from_pickle_cargo`;
+#                     add `json_encode_change` to `TFL.json_dump.default`;
+#                     factor `_from_cargo`
 #    ««revision-date»»···
 #--
 
@@ -98,6 +101,8 @@ from   _TFL.portable_repr    import portable_repr
 
 import _TFL._Meta.Property
 import _TFL._Meta.Once_Property
+import _TFL.import_module
+import _TFL.json_dump
 
 import datetime
 import itertools
@@ -133,6 +138,16 @@ class _Change_ (MOM.SCM.History_Mixin) :
         self.__super.add_change (child)
     # end def add_change
 
+    @property
+    def as_json_cargo (self) :
+        return \
+            ( self.__class__.__module__
+            , self.__class__.__name__
+            , self._pickle_attrs ()
+            , [c.as_json_cargo for c in self.children]
+            )
+    # end def as_json_cargo
+
     def as_pickle (self, transitive = False) :
         cargo = self.as_pickle_cargo (transitive)
         return pickle.dumps (cargo, pickle.HIGHEST_PROTOCOL)
@@ -153,6 +168,31 @@ class _Change_ (MOM.SCM.History_Mixin) :
     # end def do_callbacks
 
     @classmethod
+    def from_json_cargo (cls, cargo, parent = None) :
+        CM, CN, attrs, children = cargo
+        preprs = lambda CM, CN, cargo : \
+            (portable_repr (CM), portable_repr (CN), portable_repr (cargo))
+        try :
+            module = TFL.import_module (CM)
+        except ImportError as exc :
+            raise ImportError \
+                ( "No module named %s for restoring Change class %s "
+                  "from json-cargo %s"
+                % preprs (CM, CN, cargo)
+                )
+        try :
+            Class = getattr (module, CN)
+        except AttributeError :
+            raise AttributeError \
+                ( "Module %s doesn't provide Change class %s "
+                  "for restoring change from json-cargo %s"
+                % preprs (CM, CN, cargo)
+                )
+        return cls._from_cargo \
+            (Class, attrs, children, cls.from_json_cargo, parent)
+    # end def from_json_cargo
+
+    @classmethod
     def from_pickle (cls, string, parent = None) :
         return cls.from_pickle_cargo (pickle.loads (string), parent)
     # end def from_pickle
@@ -160,14 +200,9 @@ class _Change_ (MOM.SCM.History_Mixin) :
     @classmethod
     def from_pickle_cargo (cls, cargo, parent = None) :
         Class, attrs, children = cargo
-        result                 = MOM.SCM.History_Mixin ()
-        result.__class__       = Class
-        result.parent          = parent
-        result.children        = \
-            [cls.from_pickle_cargo (c, result) for c in children]
-        result.__dict__.update (attrs)
-        return result
-    # end def from_pickle
+        return cls._from_cargo \
+            (Class, attrs, children, cls.from_pickle_cargo, parent)
+    # end def from_pickle_cargo
 
     def redo (self, scope) :
         for c in self.children :
@@ -182,6 +217,16 @@ class _Change_ (MOM.SCM.History_Mixin) :
         for c in self.children :
             c.restore (scope)
     # end def restore
+
+    @classmethod
+    def _from_cargo (cls, Class, attrs, children, c_converter, parent) :
+        result                 = MOM.SCM.History_Mixin ()
+        result.__class__       = Class
+        result.parent          = parent
+        result.children        = [c_converter (c, result) for c in children]
+        result.__dict__.update (attrs)
+        return result
+    # end def _from_cargo
 
     def _pickle_attrs (self) :
         return dict \
@@ -636,6 +681,16 @@ class Attr_Composite (_Attr_) :
     # end def _update_entity
 
 # end class Attr_Composite
+
+@TFL.json_dump.default.add_type (_Change_)
+def json_encode_change (c) :
+    return c.as_json_cargo
+# end def json_encode_change
+
+@TFL.json_dump.default.add_type (datetime.datetime)
+def json_encode_datetime (dt) :
+    return dt.strftime ("%Y-%m-%dT%H:%M:%S.%f")
+# end def json_encode_datetime
 
 if __name__ != "__main__" :
     MOM.SCM._Export_Module ()
