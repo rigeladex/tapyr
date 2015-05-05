@@ -26,6 +26,7 @@
 #    15-Apr-2013 (CT) Adapt to change of `MOM.Attr.Kind.reset`
 #    24-Apr-2013 (CT) Add test `no_net`; adapt to change of `MOM.SCM.Summary`
 #     5-May-2015 (CT) Add tests for `as_json_cargo`
+#     5-May-2015 (CT) Add test for `scope.add_after_commit_callback`
 #    ««revision-date»»···
 #--
 
@@ -57,9 +58,15 @@ time_cleaner = Multi_Re_Replacer \
         )
     )
 
+def log_commits (scope, change_summary) :
+    print ("Commited %s changes" % len (change_summary))
+# end def log_commits
+
 _basic = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
+
+    >>> scope.add_after_commit_callback (log_commits)
 
     >>> PAP   = scope.PAP
     >>> SRM   = scope.SRM
@@ -424,6 +431,7 @@ _basic = r"""
     42 ['last_cid']
 
     >>> scope.commit ()
+    Commited 65 changes
 
     >>> print (rs1.attr_as_code())
     (('event-1-text', ), ('2010-08-18', ), (), ''), dates = "'2010-09-08','2010-10-08'", date_exceptions = "'2010-08-15'"
@@ -555,6 +563,7 @@ _basic = r"""
     60 ['last_cid']
 
     >>> scope.commit ()
+    Commited 43 changes
 
     >>> SRM.Boat.query (sail_number = 1134).one ().destroy ()
     >>> b.destroy ()
@@ -627,6 +636,7 @@ _basic = r"""
     ...     print (pid, sorted (ca))
 
     >>> scope.commit ()
+    Commited 2 changes
 
     >>> _ = p.lifetime.set (start = "1997-11-16")
     >>> _ = p.lifetime.set (finish = "2007-11-30")
@@ -784,7 +794,7 @@ _more = dict \
 
 Scaffold.Backend_Default_Path ["SQL"] = "'test.sqlite'"
 
-__test__ = dict \
+__XXX__test__ = dict \
     ( Scaffold.create_test_dict (_more, ignore = ("HPS", "SQL"))
     , ** Scaffold.create_test_dict (_basic)
     )

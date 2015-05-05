@@ -110,6 +110,7 @@
 #    25-Aug-2013 (CT) Add `reserve_surrogates`
 #    12-Jun-2014 (CT) Add `_cleaned_url` and use in `Scope.__str__`
 #     5-May-2015 (CT) Remove obsolete class variable `is_universe`
+#     5-May-2015 (CT) Add `after_commit_callback`
 #    ««revision-date»»···
 #--
 
@@ -197,6 +198,7 @@ class Scope (TFL.Meta.Object) :
     ilk                    = "S"
     Table                  = {}
 
+    after_commit_callback  = TFL.Ordered_Set ()
     init_callback          = TFL.Ordered_Set ()
     kill_callback          = TFL.Ordered_Set ()
 
@@ -317,8 +319,6 @@ class Scope (TFL.Meta.Object) :
         self.bname          = "__".join (str (e) for e in root_epk)
         self.qname          = self.bname or app_type.name
         self.id             = self._new_id ()
-        self.init_callback  = self.init_callback [:] ### copy from cls to self
-        self.kill_callback  = self.kill_callback [:] ###
         self.root           = None
         self.historian      = MOM.SCM.Tracker (self)
         self.db_errors      = []
@@ -326,6 +326,10 @@ class Scope (TFL.Meta.Object) :
         self._etm           = {}
         self._roots         = {}
         self._setup_pkg_ns  (app_type)
+        ### copy `*_callback` from cls to self
+        self.after_commit_callback = self.after_commit_callback.copy ()
+        self.init_callback         = self.init_callback.copy         ()
+        self.kill_callback         = self.kill_callback.copy         ()
         old_active = Scope.active
         try :
             Scope.active = self
@@ -388,6 +392,16 @@ class Scope (TFL.Meta.Object) :
     # end def add_from_pickle_cargo
 
     @TFL.Meta.Class_and_Instance_Method
+    def add_after_commit_callback (soc, * callbacks) :
+        """Add all `callbacks` to `after_commit_callback`. These
+           callbacks are executed after each `.commit` of a scope
+           (the scope and the MOM.SCM.Summary instance of the just commited
+           changes are passed as arguments to each callback).
+        """
+        soc.after_commit_callback.extend (callbacks)
+    # end def add_after_commit_callback
+
+    @TFL.Meta.Class_and_Instance_Method
     def add_init_callback (soc, * callbacks) :
         """Add all `callbacks` to `init_callback`. These
            callbacks are executed whenever a scope is
@@ -429,6 +443,8 @@ class Scope (TFL.Meta.Object) :
                     exc = MOM.Error.Invariants (errs.errors)
                     raise exc
             ems.commit ()
+            for cb in self.after_commit_callback :
+                cb (self, ucc)
     # end def commit
 
     @TFL.Meta.Lazy_Method_RLV
@@ -916,6 +932,10 @@ Class `MOM.Scope`
     .. automethod:: load
 
     .. automethod:: new
+
+    **`Scope` provides the class and instance methods:**
+
+    .. automethod:: add_after_commit_callback
 
     .. automethod:: add_init_callback
 
