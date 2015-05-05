@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -109,6 +109,7 @@
 #     5-Aug-2013 (CT) Use `with ems.save_point ()` in `add` and `record_change`
 #    25-Aug-2013 (CT) Add `reserve_surrogates`
 #    12-Jun-2014 (CT) Add `_cleaned_url` and use in `Scope.__str__`
+#     5-May-2015 (CT) Remove obsolete class variable `is_universe`
 #    ««revision-date»»···
 #--
 
@@ -198,7 +199,7 @@ class Scope (TFL.Meta.Object) :
 
     init_callback          = TFL.Ordered_Set ()
     kill_callback          = TFL.Ordered_Set ()
-    is_universe            = False
+
     _cleaned_url           = Re_Replacer (r"(://\w+:)(\w+)@", r"\1<elided>@")
     _deprecated_type_names = {}
     _pkg_ns                = None

@@ -226,6 +226,7 @@
 #     7-Apr-2015 (CT) Factor `_m_default_ui_name`
 #                     + remove spurious redefinitions of `ui_display`
 #    13-Apr-2015 (CT) Add `_json_encode` to `m_setup_etypes`
+#     5-May-2015 (CT) Remove obsolete methods `_m_entity_type`, `_m_scope`
 #    ««revision-date»»···
 #--
 
@@ -1096,12 +1097,6 @@ class M_E_Type (M_E_Mixin) :
         return result
     # end def _m_call
 
-    def _m_entity_type (cls, scope = None) :
-        scope = cls._m_scope (scope)
-        if scope is not None :
-            return scope.entity_type (cls)
-    # end def _m_entity_type
-
     def _m_finish_init (cls) :
         with TFL.Context.attr_let (M_E_Type, type_name = cls._type_name) :
             ### temporarily disable metaclass property `type_name` to allow
@@ -1122,14 +1117,6 @@ class M_E_Type (M_E_Mixin) :
     def _m_fix_refuse_links (cls, app_type) :
         pass
     # end def _m_fix_refuse_links
-
-    def _m_scope (cls, scope = None, ** kw) :
-        if scope is None :
-            scope = MOM.Scope.active
-            if scope.is_universe :
-                scope = None
-        return scope
-    # end def _m_scope
 
     def _m_setup_attributes (cls) :
         cls.AQ = MOM.Attr.Querier.E_Type (cls)
