@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #    31-Mar-2008 (CT) `__init__` changed to dereference `_body` if necessary
 #     3-May-2011 (CT) `_init_kw` added and used for `__repr__`
 #    29-Mar-2012 (CT) Add `_xtra_arg_names` and `_xtra_kw` (to support `tzinfo`)
+#     6-May-2015 (CT) Add `_import_cb_json_dump`
 #    ««revision-date»»···
 #--
 
@@ -205,6 +206,17 @@ class _Mutable_DTW_ (TFL.Meta.Object) :
     __str__ = property (lambda s : s._wrapped.__str__)
 
 # end class _Mutable_DTW_
+
+@TFL._Add_Import_Callback ("_TFL.json_dump")
+def _import_cb_json_dump (module) :
+    @module.default.add_type (_DTW_, _Mutable_DTW_)
+    def json_encode_cal (o) :
+        try :
+            encoder = o._body.isoformat
+        except AttributeError :
+            encoder = o.__str__
+        return encoder ()
+# end def _import_cb_json_dump
 
 if __name__ != "__main__" :
     CAL._Export ("_DTW_", "_Mutable_DTW_")

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -60,6 +60,7 @@
 #    16-Jun-2010 (CT) Encode holiday names with `TFL.I18N.Config.encoding`
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #    28-Feb-2014 (CT) Use future `print_function`
+#     6-May-2015 (CT) Add `_import_cb_json_dump`
 #    ««revision-date»»···
 #--
 
@@ -448,6 +449,13 @@ class Year (TFL.Meta.Object) :
     # end def __str__
 
 # end class Year
+
+@TFL._Add_Import_Callback ("_TFL.json_dump")
+def _import_cb_json_dump (module) :
+    @module.default.add_type (_Ordinal_, Year)
+    def json_encode_ordinal_or_year (o) :
+        return pyk.text_type (o)
+# end def _import_cb_json_dump
 
 def create_diary (Y, path) :
     for m in Y.months :

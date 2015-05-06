@@ -20,6 +20,7 @@
 #     3-May-2013 (CT) Add `Requester.add_cookies`
 #     3-May-2013 (CT) Add exception handler to `Resource._json`
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
+#     6-May-2015 (CT) Use `TFL.json_dump.to_string`
 #    ««revision-date»»···
 #--
 
@@ -101,11 +102,10 @@ class _Entity_ (TFL.Meta.Object) :
 
     def PUT (self) :
         if self._changed_p :
-            cargo = json.dumps \
+            cargo = TFL.json_dump.to_string \
                 ( { self._ad_name : self._attrs
                   , "cid"         : self._json ["cid"]
                   }
-                , default = TFL.json_dump.default
                 )
             return self._requester.put (self._url, data = cargo)
     # end def PUT

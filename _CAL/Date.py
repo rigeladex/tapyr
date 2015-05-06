@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -55,6 +55,7 @@
 #     4-Jan-2010 (CT) `_Date_Arg_` based on `TFL.CAO` added, `Date_Opt` removed
 #    28-Feb-2014 (CT) Use future `print_function`
 #     4-Mar-2014 (CT) Add subtraction test cases for `Month_Delta`
+#     6-May-2015 (CT) Add tests for `jsonified`
 #    ««revision-date»»···
 #--
 
@@ -160,6 +161,10 @@ class Date (CAL._DTW_) :
        2004-10-31
        >>> print (Date.from_string ("Oct 5, 2004"))
        2004-10-05
+
+       >>> from _TFL.json_dump import to_string as jsonified
+       >>> print (jsonified ([d]))
+       ["2004-01-31"]
 
        >>> mjd_epoch = Date (1858, 11, 17)
        >>> tjd_epoch = Date (1968,  5, 24)

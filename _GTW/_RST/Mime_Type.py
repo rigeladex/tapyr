@@ -28,6 +28,7 @@
 #    14-Jun-2013 (CT) Add default implementation for `CSV.rendered`
 #    15-Jun-2013 (CT) Guard `CSV.rendered` against empty `body`
 #    30-Jan-2014 (CT) Add exception information to `CSV.rendered`
+#     6-May-2015 (CT) Use `TFL.json_dump.to_string`
 #    ««revision-date»»···
 #--
 
@@ -228,14 +229,12 @@ class RST_JSON (_Base_) :
 
     _real_name                 = "JSON"
     force_charset              = "utf-8"
-    json_dump_kw               = dict \
-        ( default              = TFL.json_dump.default
-        )
+    json_dump_kw               = {}
     mime_types                 = ("application/json", )
 
     def rendered (self, request, response, body) :
         if isinstance (body, (dict, list, tuple)) :
-            result = json.dumps (body, ** self.json_dump_kw)
+            result = TFL.json_dump.to_string (body, ** self.json_dump_kw)
             return result
     # end def rendered
 

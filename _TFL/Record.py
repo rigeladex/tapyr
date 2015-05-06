@@ -40,6 +40,7 @@
 #    15-Oct-2014 (CT) Add `_portable_repr_Record`, protect against recursion
 #    23-Jan-2015 (CT) Add support for dotted names to `__setattr__`
 #    13-Apr-2015 (CT) Add `_import_cb_json_dump`
+#     6-May-2015 (CT) Use `TFL.json_dump.jsonified`
 #    ««revision-date»»···
 #--
 
@@ -70,8 +71,8 @@ class Record (TFL.Meta.Object) :
     >>> r
     Record (kw = {'foo' : 42}, x = 'y')
 
-    >>> from _TFL.json_dump import json
-    >>> json.dumps (r, default = TFL.json_dump.default, sort_keys = True)
+    >>> from _TFL.json_dump import to_string as jsonified
+    >>> jsonified (r)
     '{"kw": {"foo": 42}, "x": "y"}'
 
     """
@@ -188,8 +189,8 @@ class Record_S (Record) :
     >>> o
     Record_S (a = 42, b = Record_S (a = 137, b = 'foo', c = Record_S (x = 1)))
 
-    >>> from _TFL.json_dump import json
-    >>> json.dumps (o, default = TFL.json_dump.default, sort_keys = True)
+    >>> from _TFL.json_dump import to_string as jsonified
+    >>> jsonified (o)
     '{"a": 42, "b": {"a": 137, "b": "foo", "c": {"x": 1}}}'
 
     >>> c.y = o
@@ -200,7 +201,7 @@ class Record_S (Record) :
     >>> o
     Record_S (a = 42, b = Record_S (a = 137, b = 'foo', c = Record_S (x = 1, y = Record_S (...))))
 
-    >>> json.dumps (o, default = TFL.json_dump.default, sort_keys = True)
+    >>> jsonified (o)
     Traceback (most recent call last):
     ...
     ValueError: Circular reference detected

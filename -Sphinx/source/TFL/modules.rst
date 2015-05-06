@@ -43,6 +43,9 @@ Modules of Package-NS `TFL`
 .. automodule:: _TFL.Undef
    :members:
 
+.. automodule:: _TFL.json_dump
+   :members:
+
 .. automodule:: _TFL.predicate
    :members:
 

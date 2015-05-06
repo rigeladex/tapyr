@@ -90,6 +90,7 @@
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #    16-Apr-2015 (CT) Take default of `max_rev_ref` from `.attr`
 #    29-Apr-2015 (CT) Add `record_commit_errors`
+#     6-May-2015 (CT) Use `TFL.json_dump.to_string`
 #    ««revision-date»»···
 #--
 
@@ -297,10 +298,6 @@ class _Base_ (TFL.Meta.Object) :
     completer           = None
     id_sep              = "."
     index_sep           = "/"
-    json_dump_kw        = dict \
-        ( default       = TFL.json_dump.default
-        , sort_keys     = True
-        )
     name                = None
     parent              = None
     pid_sep             = "@"
@@ -1185,7 +1182,7 @@ class Entity (_Entity_) :
     @TFL.Meta.Once_Property
     def as_json (self) :
         cargo = self.as_json_cargo
-        return json.dumps (cargo, ** self.json_dump_kw)
+        return TFL.json_dump.to_string (cargo)
     # end def as_json
 
     @TFL.Meta.Once_Property

@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    28-Jan-2015 (CT) Creation
+#     6-May-2015 (CT) Add tests for `jsonified`
 #    ««revision-date»»···
 #--
 
@@ -41,9 +42,13 @@ import _TFL._Meta.Once_Property
 class Quarter (_Ordinal_) :
     """Model a calendary quarter.
 
+    >>> from _TFL.json_dump import to_string as jsonified
     >>> q = Quarter (2000, 1)
     >>> print (q, q.days, q.start, q.finis)
     2000/Q1 91 2000-01-01 2000-03-31
+
+    >>> print (jsonified ([q]))
+    ["2000/Q1"]
 
     >>> for i in range (8) :
     ...     r = q + i

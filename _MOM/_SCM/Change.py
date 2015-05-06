@@ -687,10 +687,7 @@ def json_encode_change (c) :
     return c.as_json_cargo
 # end def json_encode_change
 
-@TFL.json_dump.default.add_type (datetime.datetime)
-def json_encode_datetime (dt) :
-    return dt.strftime ("%Y-%m-%dT%H:%M:%S.%f")
-# end def json_encode_datetime
+TFL.json_dump.add_date_time_serializers ()
 
 if __name__ != "__main__" :
     MOM.SCM._Export_Module ()

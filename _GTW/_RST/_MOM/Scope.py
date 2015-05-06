@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -67,9 +67,7 @@ class _RST_MOM_Scope_ (_Ancestor) :
         if json_indent or self.DEBUG :
             import _GTW._RST.Mime_Type
             GTW.RST.Mime_Type.JSON.json_dump_kw.update \
-                ( indent    = json_indent or 2
-                , sort_keys = True
-                )
+                (indent = json_indent or 2)
     # end def __init__
 
     def href_e_type (self, e_type) :

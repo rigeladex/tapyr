@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,8 +32,11 @@
 #                     `CAL.Time._from_string_match_kw`
 #    15-Sep-2014 (CT) Add `_Date_Time_Arg_` to `CAO` as `[Arg|Opt].Date_Time`
 #    19-Sep-2014 (CT) Add `from_string_x`
+#     6-May-2015 (CT) Add tests for `jsonified`
 #    ««revision-date»»···
 #--
+
+from   __future__               import print_function
 
 from   _TFL                     import TFL
 from   _CAL                     import CAL
@@ -52,9 +55,13 @@ class Date_Time (CAL.Date, CAL.Time) :
     """Model a (gregorian) date plus time.
 
        >>> from _CAL.Delta import Date_Time_Delta as Delta
+       >>> from _TFL.json_dump import to_string as jsonified
        >>> d = Date_Time (2004, 10, 15, 16,  3, 14)
-       >>> pyk.fprint (d)
+       >>> print (d)
        2004-10-15 16:03:14
+       >>> print (jsonified ([d, Delta (3)]))
+       ["2004-10-15T16:03:14", "3 days, 0:00:00"]
+
        >>> d.year, d.month, d.day, d.datetime, d.week, d.weekday, d.ordinal
        (2004, 10, 15, datetime.datetime(2004, 10, 15, 16, 3, 14), 42, 4, 731869)
        >>> d.month_name
@@ -71,10 +78,13 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> d1 += 1
        >>> id (d1) == id (d2)
        False
-       >>> pyk.fprint (d2 - d1)
+       >>> print (d2 - d1)
        -1 day, 0:00:00
 
        >>> d = Date_Time (2006, 12, 10, 12, 26, 30)
+       >>> print (jsonified ([d1, d, d - d1]))
+       ["2004-10-16T16:03:14", "2006-12-10T12:26:30", "784 days, 20:23:16"]
+
        >>> d.TJD, d.TJS
        (14079.518402777778, 1216470390)
        >>> d
@@ -122,6 +132,9 @@ class Date_Time (CAL.Date, CAL.Time) :
 
        >>> td = Date_Time (2014, 9, 19, 17, 23, 42)
        >>> tt = CAL.Time  (17, 23, 42)
+
+       >>> print (jsonified ((td, tt)))
+       ["2014-09-19T17:23:42", "17:23:42"]
 
        >>> Date_Time.from_string_x ("2017/09/19 17:42:23")
        Date_Time (2017, 9, 19, 17, 42, 23, 0)
@@ -323,16 +336,20 @@ class Date_Time (CAL.Date, CAL.Time) :
 class Date_Time_M (CAL._Mutable_DTW_) :
     """Mutable datetime object
 
+       >>> from _TFL.json_dump import to_string as jsonified
        >>> d1 = d2 = Date_Time_M (2004, 10, 15, 16,  3, 14)
-       >>> pyk.fprint (d1, d2)
+       >>> print (d1, d2)
        2004-10-15 16:03:14 2004-10-15 16:03:14
        >>> id (d1) == id (d2)
        True
        >>> d1 += 1
-       >>> pyk.fprint (d1, d2)
+       >>> print (d1, d2)
        2004-10-16 16:03:14 2004-10-16 16:03:14
        >>> id (d1) == id (d2)
        True
+       >>> print (jsonified ((d1, d2)))
+       ["2004-10-16T16:03:14", "2004-10-16T16:03:14"]
+
     """
 
     Class = Date_Time

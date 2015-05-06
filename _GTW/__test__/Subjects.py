@@ -351,11 +351,11 @@ _test_json = r"""
     >>> pg  = PAP.Person ("Glück", "Martin")
     >>> php = PAP.Person_has_Phone  (pg, PAP.Phone ("43", "1", "234567", raw = True))
 
-    >>> from _TFL.json_dump import json
-    >>> prepr(json.dumps ({ "obj" : pg.FO}, default = TFL.json_dump.default, sort_keys = True))
+    >>> from _TFL.json_dump import to_string as jsonified
+    >>> prepr(jsonified ({ "obj" : pg.FO}))
     '{"obj": "Gl\\u00fcck Martin"}'
 
-    >>> prepr (json.dumps (pg, default = TFL.json_dump.default, sort_keys = True))
+    >>> prepr (jsonified (pg))
     '{"display": "Gl\\u00fcck Martin", "pid": 1}'
 
 """

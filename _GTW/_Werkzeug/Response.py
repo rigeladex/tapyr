@@ -20,6 +20,7 @@
 #     2-Mar-2013 (CT) Add `add_header` and `set_header` (both encode `key`)
 #    14-Mar-2014 (CT) Add `encoded_url`
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
+#     6-May-2015 (CT) Use `TFL.json_dump.to_string`
 #    ««revision-date»»···
 #--
 
@@ -88,7 +89,7 @@ class _WZG_Response_ \
         if __data is not None :
             data.update (__data)
         self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
-        self.write      (json.dumps (data, default = TFL.json_dump.default))
+        self.write      (TFL.json_dump.to_string (data))
     # end def write_json
 
 Response = _WZG_Response_ # end class

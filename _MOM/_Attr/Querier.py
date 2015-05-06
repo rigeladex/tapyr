@@ -74,6 +74,7 @@
 #     6-May-2014 (CT) Add `Show_in_UI_Selector`
 #    23-Jan-2015 (CT) Add `_ui_name_short_T`
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
+#     6-May-2015 (CT) Use `TFL.json_dump.to_string`
 #    ««revision-date»»···
 #--
 
@@ -871,12 +872,7 @@ class E_Type (_Container_) :
 
     @property
     def As_Json (self) :
-        import json
-        return json.dumps \
-            ( self.As_Json_Cargo
-            , default   = TFL.json_dump.default
-            , sort_keys = True
-            )
+        return TFL.json_dump.to_string (self.As_Json_Cargo)
     # end def as_json
 
     @property    ### depends on currently selected language (I18N/L10N)
