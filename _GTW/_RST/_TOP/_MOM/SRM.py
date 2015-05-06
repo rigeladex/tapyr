@@ -56,6 +56,7 @@
 #                       somebody visits the `bir_admin`
 #    11-Mar-2015 (CT) Add `register` to `Regatta`
 #    16-Apr-2015 (CT) Factor `mf3_attr_spec_r`
+#     6-May-2015 (CT) Add "boat.b_class" to `Registration.list_display`
 #    ««revision-date»»···
 #--
 
@@ -595,6 +596,7 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
 
         list_display        = \
             ( "boat_index"
+            , "boat.b_class"
             , "boat_sail_number"
             , "skipper_crew_person"
             , "skipper_crew_club"
