@@ -41,6 +41,7 @@
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #     5-May-2015 (CT) Add `as_json_cargo`, `from_pickle_cargo`;
 #                     add `json_encode_change` to `TFL.json_dump.default`
+#     6-May-2015 (CT) Add `redo`, `restore`, `undo`
 #    ««revision-date»»···
 #--
 
@@ -455,6 +456,21 @@ class Summary (TFL.Meta.Object) :
             c = by_pid [e.pid]
             yield e, c.attribute_changes
     # end def entity_changes
+
+    def redo (self, scope) :
+        for c in self :
+            c.redo (scope)
+    # end def redo
+
+    def restore (self, scope) :
+        for c in self :
+            c.restore (scope)
+    # end def restore
+
+    def undo (self, scope) :
+        for c in reversed (self) :
+            c.undo (scope)
+    # end def undo
 
     def _add_to_by_pid (self, changes) :
         by_pid = self._by_pid
