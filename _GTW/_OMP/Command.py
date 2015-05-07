@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.
@@ -50,6 +50,7 @@
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
 #    22-Sep-2014 (CT) Redefine `_Script_`, `_handle_script_globals`
 #    17-Oct-2014 (CT) Pass globals to `py_shell`
+#     7-May-2015 (CT) Remove obsolete redefinition of `_handle_shell`
 #    ««revision-date»»···
 #--
 
@@ -257,15 +258,6 @@ class GTW_Command (MOM.Command) :
             , ** kw
             )
     # end def _handle_script_globals
-
-    def _handle_shell (self, cmd) :
-        scope = self._handle_load (cmd)
-        if cmd.wsgi :
-            wsgi = self._handle_wsgi (cmd)
-            root = top = self.root
-        globs = self._handle_script_globals (cmd = cmd, scope = scope)
-        TFL.Environment.py_shell (globs)
-    # end def _handle_shell
 
     def _handle_wsgi (self, cmd) :
         raise NotImplementedError
