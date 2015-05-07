@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -67,6 +67,8 @@
 #    12-Oct-2014 (CT) Add option `-sha` with default `sha224`
 #    14-Oct-2014 (CT) Add sub-command `version_hash`
 #    17-Oct-2014 (CT) Pass globals to `py_shell`
+#     7-May-2015 (CT) Fix initialization of `scope` in `_handle_script`
+#     7-May-2015 (CT) Add options `-journal_dir`, `-keep_journal`
 #    ««revision-date»»···
 #--
 
@@ -90,9 +92,11 @@ import _TFL.Context
 import _TFL.Environment
 import _TFL.Filename
 import _TFL.Secure_Hash
+import _TFL.Undef
 import _TFL._Meta.Once_Property
 
 import contextlib
+import logging
 import stat
 
 _cleaned_url = Re_Replacer (r"(://\w+:)(\w+)@", r"\1<elided>@")
@@ -135,6 +139,7 @@ class MOM_Command (TFL.Command.Root_Command) :
     DB_Man                  = MOM.DB_Man
     nick                    = "NN"
     Scope                   = MOM.Scope
+    undef                   = TFL.Undef ()
 
     _buns                   = \
         ( TFL.CAO.Bundle
@@ -171,6 +176,14 @@ class MOM_Command (TFL.Command.Root_Command) :
         , "-Engine_Echo:B"
              "?Set the echo flag of the database engine, if appropriate for "
              "the backend"
+        , TFL.CAO.Abs_Path
+            ( name        = "journal_dir"
+            , description =
+                "Directory where journal of database changes is kept "
+                "if enabled by `-keep_journal`"
+            , max_number  = 1
+            )
+        , "-keep_journal:B?Keep a journal of database changes"
         , TFL.CAO.Abs_Path
             ( name        = "mig_auth_file"
             , description = "Default name of auth migration file"
@@ -323,6 +336,7 @@ class MOM_Command (TFL.Command.Root_Command) :
               , create       = True
               , verbose      = False
               , engine_echo  = False
+              , journal_dir  = None
               ) :
         apt, url = self.app_type_and_url (db_url, default_path)
         if engine_echo :
@@ -336,18 +350,21 @@ class MOM_Command (TFL.Command.Root_Command) :
         if create :
             if verbose :
                 print ("Creating new scope", apt, url.path or "in memory")
-            scope = self._create_scope (apt, url, verbose)
+            scope = self._create_scope (apt, url, verbose, journal_dir)
         else :
             if verbose :
                 print ("Loading scope", apt, _cleaned_url (str (url)))
-            scope = self._load_scope (apt, url)
+            scope = self._load_scope (apt, url, journal_dir)
         return scope
     # end def scope
 
-    def _create_scope (self, apt, url, verbose = False) :
+    def _create_scope (self, apt, url, verbose = False, journal_dir = None) :
         if url :
             apt.delete_database (url)
-        return self.Scope.new (apt, url)
+        result = self.Scope.new (apt, url)
+        if journal_dir :
+            self._setup_journal (result, journal_dir)
+        return result
     # end def _create_scope
 
     @TFL.Contextmanager
@@ -374,7 +391,7 @@ class MOM_Command (TFL.Command.Root_Command) :
 
     def _handle_auth_mig (self, cmd) :
         try :
-            scope = self._handle_load (cmd)
+            scope = self._handle_load (cmd, journal_dir = None)
             mig   = pyk.pickle.dumps  (scope.Auth.Account.migration ())
             with open (cmd.mig_auth_file, "wb") as f :
                 sos.fchmod (f.fileno (), stat.S_IRUSR | stat.S_IWUSR)
@@ -394,6 +411,7 @@ class MOM_Command (TFL.Command.Root_Command) :
             , create      = True
             , verbose     = cmd.verbose
             , engine_echo = cmd.Engine_Echo
+            , journal_dir = cmd.keep_journal and cmd.journal_dir
             )
         if cmd.Auth_Migrate :
             self._read_auth_mig (cmd, scope)
@@ -439,11 +457,14 @@ class MOM_Command (TFL.Command.Root_Command) :
         db_man.destroy   ()
     # end def _handle_info
 
-    def _handle_load (self, cmd, url = None) :
+    def _handle_load (self, cmd, url = None, journal_dir = undef) :
+        if TFL.is_undefined (journal_dir) :
+            journal_dir = cmd.keep_journal and cmd.journal_dir
         return self.scope \
             ( url or cmd.db_url, cmd.db_name
             , create      = False
             , engine_echo = cmd.Engine_Echo
+            , journal_dir = journal_dir
             )
     # end def _handle_load
 
@@ -492,8 +513,7 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _handle_readonly
 
     def _handle_script (self, cmd) :
-        if cmd.load :
-            scope = self._handle_load (cmd)
+        scope = self._handle_load (cmd) if cmd.load else None
         globs = self._handle_script_globals (cmd = cmd, scope = scope)
         for script_path in cmd.argv :
             local  = {}
@@ -532,8 +552,11 @@ class MOM_Command (TFL.Command.Root_Command) :
         TFL.Environment.py_shell (globs)
     # end def _handle_shell
 
-    def _load_scope (self, apt, url) :
-        return self.Scope.load (apt, url)
+    def _load_scope (self, apt, url, journal_dir = None) :
+        result = self.Scope.load (apt, url)
+        if journal_dir :
+            self._setup_journal (result, journal_dir)
+        return result
     # end def _load_scope
 
     def _print_info (self, apt, url, dbmd, indent = "") :
@@ -567,6 +590,17 @@ class MOM_Command (TFL.Command.Root_Command) :
             if cmd.verbose :
                 print ("Loaded authorization objects from", mig_auth_file)
     # end def _read_auth_mig
+
+    def _setup_journal (self, scope, journal_dir) :
+        try :
+            import _MOM._SCM.Journal
+            journal = MOM.SCM.Journal (journal_dir, scope = scope)
+        except Exception as exc :
+            logging.exception \
+                ("Error setting up journal of scope %s in %r"
+                % (scope, journal_dir)
+                )
+    # end def _setup_journal
 
 Command = MOM_Command # end class
 

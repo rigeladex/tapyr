@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -73,6 +73,7 @@
 #     9-Jul-2014 (CT) Add `_template_prefixes`
 #    20-Aug-2014 (CT) Remove `_GTW._AFS._MOM.Form_Cache`
 #    21-Aug-2014 (CT) Reify `after_app_type` as method of `RST_App`, `TOP_App`
+#     7-May-2015 (CT) Add support for `journal_dir`
 #    ««revision-date»»···
 #--
 
@@ -288,8 +289,8 @@ class GT2W_Command (GTW.OMP.Command) :
             )
     # end def nav_admin_group
 
-    def _create_scope (self, apt, url, verbose = False) :
-        result = self.__super._create_scope (apt, url, verbose)
+    def _create_scope (self, apt, url, verbose = False, journal_dir = None) :
+        result = self.__super._create_scope (apt, url, verbose, journal_dir)
         self.fixtures (result)
         return result
     # end def _create_scope
@@ -326,14 +327,16 @@ class GT2W_Command (GTW.OMP.Command) :
                       "Using default `cookie_salt`!"
                     , UserWarning
                     )
-            UTP     = cmd.UTP
+            UTP = cmd.UTP
             UTP.do_import ()
-            cachers = UTP.cachers (self, cmd)
-            result  = self.root = UTP.create \
+            cachers       = UTP.cachers (self, cmd)
+            journal_dir   = cmd.keep_journal and cmd.journal_dir
+            result        = self.root = UTP.create \
                 ( self, cmd
                 , ACAO                = cmd.ACAO
                 , App_Type            = apt
-                , Create_Scope        = self._load_scope
+                , Create_Scope        = lambda apt, url :
+                    self._load_scope (apt, url, journal_dir)
                 , DB_Url              = url
                 , DEBUG               = cmd.debug
                 , HTTP                = cmd.HTTP
