@@ -299,8 +299,7 @@ _basic = r"""
         <Create EVT.Event_occurs ((('event-1-text', 'SWP.Page'), (('start', '2010-08-18'),), '', '', 'EVT.Event'), '2010-10-08', '', 'EVT.Event_occurs'), new-values = {'last_cid' : '<n>'}>
 
     >>> print (time_cleaner (formatted (ucc [0].as_json_cargo)))
-    ( '_MOM._SCM.Change'
-    , 'Create'
+    ( 'Create'
     , { '_new_attr' : {'max_crew' : '1'}
       , 'c_time' : <datetime>
       , 'c_user' : None
@@ -361,13 +360,9 @@ _basic = r"""
     True
 
     >>> cjc = ucc_json_cargo [0]
-    >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
-    ...     MOM.SCM.Change._Change_.from_json_cargo ((cjc [0], "Foo") + cjc [2:])
-    AttributeError: Module '_MOM._SCM.Change' doesn't provide Change class 'Foo' for restoring change from json-cargo ...
-
-    >>> with expect_except (ImportError) : # doctest:+ELLIPSIS
-    ...     MOM.SCM.Change._Change_.from_json_cargo (("_GTW._OMP.Change", ) + cjc [1:])
-    ImportError: No module named '_GTW._OMP.Change' for restoring Change class 'Create' from json-cargo ...
+    >>> with expect_except (TypeError) : # doctest:+ELLIPSIS
+    ...     MOM.SCM.Change._Change_.from_json_cargo (("Foo", ) + cjc [1:])
+    TypeError: Unknown Change class 'Foo' for restoring change from json-cargo ...
 
     >>> for pid, csp in sorted (pyk.iteritems (ucc.by_pid)) : ### 2
     ...   if csp :
@@ -588,8 +583,7 @@ _basic = r"""
         <Destroy SRM.Race_Result (((('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat'), (('Himmelfahrt', (('finish', '2010-05-13'), ('start', '2010-05-13')), 'SRM.Regatta_Event'), ('Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), '2', 'SRM.Race_Result'), old-values = {'last_cid' : '<n>', 'points' : '4'}>
 
     >>> print (time_cleaner (formatted (ucc [0].as_json_cargo)))
-    ( '_MOM._SCM.Change'
-    , 'Destroy'
+    ( 'Destroy'
     , { '_new_attr' : {}
       , 'cid' : 110
       , 'epk' :
@@ -649,8 +643,7 @@ _basic = r"""
         <Modify/C PAP.Person.lifetime ('Tanzer', 'Laurens', 'William', 'Mr.', 'PAP.Person'), old-values = {'finish' : '', 'last_cid' : '115'}, new-values = {'finish' : '2007-11-30', 'last_cid' : '116'}>
 
     >>> print (time_cleaner (formatted (ucc [0].as_json_cargo)))
-    ( '_MOM._SCM.Change'
-    , 'Attr_Composite'
+    ( 'Attr_Composite'
     , { '_new_attr' : {'start' : '1997-11-16'}
       , 'attr_name' : 'lifetime'
       , 'cid' : 115

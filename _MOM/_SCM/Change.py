@@ -82,9 +82,11 @@
 #    27-Nov-2013 (MG) Fix `Create` change to allow migration of older scopes
 #    27-Nov-2013 (CT) Fix `_pickle_attrs` migration of `c_user`
 #     9-Oct-2014 (CT) Use `portable_repr`
-#     5-May-2015 (CT) Add `as_json_cargo`, `from_pickle_cargo`;
+#     5-May-2015 (CT) Add `as_json_cargo`, `from_json_cargo`;
 #                     add `json_encode_change` to `TFL.json_dump.default`;
 #                     factor `_from_cargo`
+#     8-May-2015 (CT) Add `M_Change` managing `M_Table`,
+#                     remove `module` from `as_json_cargo`, `from_json_cargo`
 #    ««revision-date»»···
 #--
 
@@ -110,7 +112,35 @@ import weakref
 
 pickle = pyk.pickle
 
-class _Change_ (MOM.SCM.History_Mixin) :
+_Ancestor = MOM.SCM.History_Mixin
+
+class M_Change (_Ancestor.__class__) :
+    """Meta class for `_Change_` and descendents"""
+
+    ### map class name to class
+    M_Table = {}
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        k  = cls.__name__
+        MT = cls.M_Table
+        if not k.startswith ("_") :
+            if k in MT :
+                raise TypeError \
+                    ( "Name conflict between SCM.Change classes: "
+                      "Name of %r clashes with existing %r"
+                    % (cls, MT [k])
+                    )
+            MT [k] = cls
+    # end def __init__
+
+    def __getitem__ (cls, key) :
+        return cls.M_Table [key]
+    # end def __getitem__
+
+# end class M_Change
+
+class _Change_ (TFL.Meta.BaM (_Ancestor, metaclass = M_Change)) :
     """Model a change of a MOM Scope"""
 
     kind               = "Composite"
@@ -141,8 +171,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
     @property
     def as_json_cargo (self) :
         return \
-            ( self.__class__.__module__
-            , self.__class__.__name__
+            ( self.__class__.__name__
             , self._pickle_attrs ()
             , [c.as_json_cargo for c in self.children]
             )
@@ -169,24 +198,14 @@ class _Change_ (MOM.SCM.History_Mixin) :
 
     @classmethod
     def from_json_cargo (cls, cargo, parent = None) :
-        CM, CN, attrs, children = cargo
-        preprs = lambda CM, CN, cargo : \
-            (portable_repr (CM), portable_repr (CN), portable_repr (cargo))
+        CN, attrs, children = cargo
         try :
-            module = TFL.import_module (CM)
-        except ImportError as exc :
-            raise ImportError \
-                ( "No module named %s for restoring Change class %s "
-                  "from json-cargo %s"
-                % preprs (CM, CN, cargo)
-                )
-        try :
-            Class = getattr (module, CN)
-        except AttributeError :
-            raise AttributeError \
-                ( "Module %s doesn't provide Change class %s "
+            Class = cls [CN]
+        except KeyError :
+            raise TypeError \
+                ( "Unknown Change class %s "
                   "for restoring change from json-cargo %s"
-                % preprs (CM, CN, cargo)
+                % (portable_repr (CN), portable_repr (cargo))
                 )
         return cls._from_cargo \
             (Class, attrs, children, cls.from_json_cargo, parent)
