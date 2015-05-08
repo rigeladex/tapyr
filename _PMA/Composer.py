@@ -50,6 +50,8 @@
 #     4-Nov-2014 (CT) Add `-attach` options, factor `_process_attachement`
 #     2-Apr-2015 (CT) Add option `-Bcc`, alias expansion for it
 #     2-Apr-2015 (CT) Add option `-Debug`
+#     8-May-2015 (CT) Pass encoded string to `Lib.message_from_string`
+#                     in `_as_html`
 #    ««revision-date»»···
 #--
 
@@ -319,7 +321,7 @@ class Composer (TFL.Meta.Object) :
               )
             )
         html_buffer = "\n\n".join ((head, html))
-        result = Lib.message_from_string (html_buffer)
+        result = Lib.message_from_string (pyk.encoded (html_buffer, encoding))
         del result [self._rest2html_header]
         del result ["Content-type"]
         result ["Content-type"] = "text/html; charset=%s" % encoding
