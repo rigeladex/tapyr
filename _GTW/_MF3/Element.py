@@ -91,6 +91,7 @@
 #    16-Apr-2015 (CT) Take default of `max_rev_ref` from `.attr`
 #    29-Apr-2015 (CT) Add `record_commit_errors`
 #     6-May-2015 (CT) Use `TFL.json_dump.to_string`
+#    11-May-2015 (CT) Add `completer_choose_value_iter`
 #    ««revision-date»»···
 #--
 
@@ -537,6 +538,14 @@ class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
         return tuple (e for e in _gen (self) if not e.skip)
     # end def field_elements
 
+    def completer_choose_value_iter (self, value, seen) :
+        """Generate `id, value` pair for `self` if not in `seen`"""
+        id = self.id
+        if id not in seen :
+            seen.add (id)
+            yield self.id, value
+    # end def completer_choose_value_iter
+
     @classmethod
     def _add_auto_attributes (cls, E_Type, ** kw) :
         kw.pop ("parent", None)
@@ -614,6 +623,19 @@ class _Entity_Mixin_ (_Base_) :
                 if not errors :
                     errors.append (exc)
     # end def __call__
+
+    def completer_choose_value_iter (self, value, seen) :
+        """Generate `id, value` pairs for all nested elements and `self`."""
+        if value is not None :
+            AQ = self.E_Type.AQ
+            for e in self.elements :
+                q  = getattr (AQ, e.name).QR
+                ev = q (value)
+                for i, v in e.completer_choose_value_iter (ev, seen) :
+                    yield i, v
+        for i, v in self.__super.completer_choose_value_iter (value, seen) :
+            yield i, v
+    # end def completer_choose_value_iter
 
     @classmethod
     def _auto_attributes (cls, E_Type) :

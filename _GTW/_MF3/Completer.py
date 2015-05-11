@@ -43,6 +43,9 @@
 #                       `_q_e_as_json`
 #                     + Add `feedback` for non-matching single field to
 #                       `_q_a_as_json`
+#    11-May-2015 (CT) Change `choose` to use `completer_choose_value_iter`
+#                     + To include all field values for completed entity
+#                       and nested entity fields
 #    ««revision-date»»···
 #--
 
@@ -256,18 +259,26 @@ class _MF3_Completer_ (TFL.Meta.Object) :
         anchor = self.anchor
         AQ     = ETM.E_Type.AQ
         fs     = tuple (getattr (AQ, n).QR for n in self.attr_names)
-        ids    = self.field_ids
         obj    = pid_query_request (json ["pid"], E_Type)
-        def _gen_values (obj, fs) :
-            for f in fs :
-                v = f (obj)
-                yield v
-            yield dict (display = obj.ui_display, pid = obj.pid)
-        result = dict \
+        def _gen (obj, elems, fs) :
+            seen = set ([anchor.id]) ### anchor.id must be last
+            for e, f in zip (elems, fs) :
+                v  = f (obj)
+                ### yield nested field values of `e`, if any, and value of `e`
+                for i, o in e.completer_choose_value_iter (v, seen) :
+                    yield i, o
+            if self.entity_p :
+                ### yield un-seen nested field values of Field_Entity `anchor`
+                for i, o in anchor.completer_choose_value_iter (obj, seen) :
+                    yield i, o
+                ### yield value of `anchor` last
+                yield anchor.id, obj
+        fids, vals = zip (* tuple (_gen (obj, self.elems, fs)))
+        result     = dict \
             ( completions  = 1
-            , fields       = len  (fs)                  + 1
-            , field_ids    = list (ids)                 + [anchor.id]
-            , values       = list (_gen_values (obj, fs))
+            , fields       = len (fids)
+            , field_ids    = fids
+            , values       = vals
             )
         if self.entity_p :
             result ["anchor"] = anchor.id
