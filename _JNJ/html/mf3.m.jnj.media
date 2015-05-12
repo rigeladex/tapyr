@@ -30,6 +30,7 @@
 #     1-Apr-2015 (CT) Add `background_color` to rule for `... input.bad:focus`
 #    16-Apr-2015 (CT) Add rule for vertical alignment of `input[type=checkbox]`
 #    29-Apr-2015 (CT) Add rule for `aside .error-msg`
+#    12-May-2015 (CT) Add children `good/missing/bad` to `form ... label > b`
 #    ««revision-date»»···
 #--
 
@@ -125,6 +126,20 @@ style_sheet = Style_Sheet \
                         , font_size        = Em (1.25)
                         , margin_left      = Em (0.25)
                         , position         = "absolute"
+                        , children          =
+                            [ Rule_Class
+                                ( "good"
+                                , color  = P.color_status_good
+                                )
+                            , Rule_Class
+                                ( "missing"
+                                , color  = P.color_status_bad
+                                )
+                            , Rule_Class
+                                ( "bad"
+                                , color  = P.color_status_bad
+                                )
+                            ]
                         )
                     ]
                 )

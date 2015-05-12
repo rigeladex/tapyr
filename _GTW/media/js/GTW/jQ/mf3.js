@@ -61,6 +61,7 @@
 //    29-Apr-2015 (CT) Add `aside .error-msg` to `form_errors`
 //    29-Apr-2015 (CT) Change `form_errors.display` to focus on first entry
 //                     field with error
+//    12-May-2015 (CT) Change `selectors.status` to `b` [used to be `b.Status`]
 //    ««revision-date»»···
 //--
 
@@ -93,7 +94,7 @@
               , id_field                 : ".Field :input[id]"
               , input_field              :
                   ".Field :input[id]:not(.prefilled):not(.readonly)"
-              , status                   : "b.Status"
+              , status                   : "b"
               , submit                   : "[type=submit]"
               }
             , opts && opts ["selectors"] || {}
