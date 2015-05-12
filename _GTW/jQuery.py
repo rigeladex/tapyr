@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -63,6 +63,7 @@
 #    30-Oct-2014 (CT) Add dependencies to `GTW_button_pure`
 #    31-Oct-2014 (CT) Fix typo that fails in jQuery 1.11.1
 #    10-Dec-2014 (CT) Remove dependencies to `GTW_buttonify`
+#    12-May-2015 (CT) Add missing dependency `GTW_L` to `query_restriction`
 #    ««revision-date»»···
 #--
 
@@ -250,6 +251,7 @@ GTW.Script \
         , GTW.Script._.GTW_e_type_selector
         , GTW.Script._.GTW_jq_util
         , GTW.Script._.GTW_util
+        , GTW.Script._.GTW_L
         )
     )
 
