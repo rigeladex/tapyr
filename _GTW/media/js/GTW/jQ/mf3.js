@@ -62,6 +62,7 @@
 //    29-Apr-2015 (CT) Change `form_errors.display` to focus on first entry
 //                     field with error
 //    12-May-2015 (CT) Change `selectors.status` to `b` [used to be `b.Status`]
+//    12-May-2015 (CT) Add `need_blur` to fix `polisher` breaking `completer`
 //    ««revision-date»»···
 //--
 
@@ -445,6 +446,12 @@
                         (f$, f_completer, answer, true, cargo);
                 };
                 if (! item.disabled) {
+                    // avoid `field_blur_cb` stomping over the new values
+                    //
+                    // for some reason, `field_blur_cb` doesn't see the
+                    // values `completer.put_values` puts from `response`
+                    // into the input fields
+                    f$.data ("need_blur", false);
                     completer.put_values (response, match, cargo);
                     if (response.partial) {
                         if (! response.finished) {
@@ -522,22 +529,32 @@
         var field_blur_cb = function field_blur_cb (ev) {
             var S         = options.selectors;
             var f$        = $(this);
-            var a$        = f$.siblings  ().filter ($("aside"));
-            var c$        = f$.closest   (S.composite_field);
-            var ft        = f$.data      ("field_type");
-            var old_value = f$.data      ("old_value");
-            var polisher  = f$.data      ("polisher");
-            var new_value = ft.get_input (f$);
-            if (  polisher
-               && new_value !== ""
-               && ((! old_value) || old_value != new_value)
-               ) {
-                setTimeout
-                    ( function () {
-                        polish_field (f$, f$.prop ("id"), new_value)
-                      }
-                    , 0
-                    );
+            var a$        = f$.siblings ().filter ($("aside"));
+            var c$        = f$.closest  (S.composite_field);
+            var ft        = f$.data     ("field_type");
+            var need_blur = f$.data     ("need_blur");
+            var old_value = f$.data     ("old_value");
+            var polisher  = f$.data     ("polisher");
+            var new_value;
+            f$.removeData ("need_blur");
+            // only proceed if `need_blur` is set
+            // * after completion, `polisher` isn't necessary and shouldn't run
+            //   - for some reason, `field_blur_cb` sees the old input values,
+            //     not the ones filled in by completion
+            // * `completer.select_cb` sets `need_blur` to `false`
+            if (need_blur) {
+                new_value = ft.get_input (f$);
+                if (  polisher
+                   && new_value !== ""
+                   && ((! old_value) || old_value != new_value)
+                   ) {
+                    setTimeout
+                        ( function () {
+                            polish_field (f$, f$.prop ("id"), new_value)
+                          }
+                        , 0
+                        );
+                };
             };
         };
         var field_change_cb = function field_change_cb (ev) {
@@ -582,7 +599,8 @@
             var F_id      = f$.prop ("id");
             var ft        = f$.data ("field_type");
             var fv        = values [F_id];
-            f$.data ("old_value", ft.get_cargo (fv));
+            f$.data ("old_value", ft.get_cargo (fv))
+              .data ("need_blur", true);
             // hide `aside` elements of field that had focus before
             // + this is done here, not in `field_blur_cb`, to avoid
             //   unnecessary layout changes
