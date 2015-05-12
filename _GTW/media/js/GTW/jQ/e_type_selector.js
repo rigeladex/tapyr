@@ -82,6 +82,9 @@
 //                     `autocomplete.css`
 //     1-Apr-2015 (CT) Mark non-matching input with class `bad`
 //     2-Apr-2015 (CT) Add `feedback` to `get_ccb`
+//    12-May-2015 (CT) Rename `inputs$` to `user_inputs$`
+//    12-May-2015 (CT) Change `clear_cb` to use `user_inputs$`,
+//                     not home-grown code; put focus on `input1$`
 //    ««revision-date»»···
 //--
 
@@ -178,7 +181,7 @@
               } else if (! self.widget) {
                   self.widget = self.setup_widget (self.ajax_response);
               };
-              input1$ = self.inputs$.eq (0);
+              input1$ = self.user_inputs$.eq (0);
               input1$.focus ();
               if (self.options.treshold === 0) {
                   val1 = input1$.val ();
@@ -217,11 +220,13 @@
               };
           }
         , clear_cb              : function clear_cb (ev) {
-              var self     = (ev && "data" in ev) ? ev.data || this : this;
-              var S        = self.options.selectors;
-              var ab$      = self.a_form$.find (S.apply_button);
+              var self    = (ev && "data" in ev) ? ev.data || this : this;
+              var S       = self.options.selectors;
+              var ab$     = self.a_form$.find (S.apply_button);
+              var input1$ = self.user_inputs$.eq (0);
               // clear all input fields
-              self.a_form$.find (":input").not ("button, .hidden").each
+              self.user_inputs$
+                  .each
                   ( function () {
                       $(this).val ("");
                     }
@@ -231,6 +236,7 @@
               // will be cleared
               ab$.gtw_button_pure ("option", "disabled", false);
               self.widget.data    ("gtw_ets_completed_response", null);
+              input1$.focus       ();
           }
         , close                 : function close (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
@@ -306,6 +312,8 @@
               var trigger  = inp$.prop ("id");
               var values   = {}, n = 0;
               self.completion_data = self.get_completion_data ();
+              // don't use `self.user_inputs$` because we need
+              // inputs with `[type=hidden]`, too, here
               self.a_form$.find (":input").not ("button, .hidden").each
                   ( function () {
                       var i$ = $(this);
@@ -360,7 +368,7 @@
                               , 1
                               );
                       } else {
-                          self.inputs$.eq (item.index + 1).focus ();
+                          self.user_inputs$.eq (item.index + 1).focus ();
                       };
                   } else {
                       $.gtw_ajax_2json
@@ -381,23 +389,23 @@
               };
           }
         , setup_form            : function setup_form (form$) {
-              var self     = this;
-              var options  = self.options;
-              var S        = options.selectors;
-              var inputs$  = form$.find
+              var self         = this;
+              var options      = self.options;
+              var S            = options.selectors;
+              var user_inputs$ = form$.find
                   (":input:not([type=hidden]):not(button):not(.hidden)");
-              var height   = $(window).height ();
-              var width    = $(window).width  ();
-              var css_spec =
+              var height       = $(window).height ();
+              var width        = $(window).width  ();
+              var css_spec     =
                   { "max-height" : height * 0.6
                   , "max-width"  : width  * 0.8
                   , "min-width"  : width  * (width < 680 ? 0.8 : 0.5)
                   };
               if (this.a_form$ !== form$) {
-                  this.a_form$ = form$;
-                  this.inputs$ = inputs$;
+                  this.a_form$      = form$;
+                  this.user_inputs$ = user_inputs$;
                   form$.submit (self, self.apply_cb);
-                  inputs$.each
+                  user_inputs$.each
                       ( function () {
                           var inp$ = $(this);
                           inp$.gtw_autocomplete
