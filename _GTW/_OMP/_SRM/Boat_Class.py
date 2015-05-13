@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -22,6 +22,7 @@
 #     2-Mar-2012 (CT) Set `name.ignore_case` to `True`
 #    19-Mar-2012 (CT) Factor `_Boat_Class_`, add `Handicap`
 #     7-Aug-2012 (CT) Add `example`
+#    13-May-2015 (CT) Change `max_crew` to `Optional`, not `Required`
 #    ««revision-date»»···
 #--
 
@@ -105,7 +106,8 @@ class Boat_Class (_Ancestor_Essence) :
         class max_crew (A_Int) :
             """Maximum number of crew for this class of sailboats."""
 
-            kind               = Attr.Required
+            kind               = Attr.Optional
+            default            = 4
             example            = 1
             max_value          = 4
             min_value          = 1
