@@ -32,6 +32,7 @@
 #     4-Feb-2015 (CT) Add argument `renderer` to `as_html`, `value`
 #     4-Feb-2015 (CT) Add `Index`
 #    14-May-2015 (CT) Add guard for `is_undefined` to property `attr`
+#    14-May-2015 (CT) Add `HTML_Link_Set.max_links`
 #    ««revision-date»»···
 #--
 
@@ -507,6 +508,8 @@ class HTML_Link (TFL.Meta.BaM (AQ, metaclass = M_HTML_Link)) :
 class HTML_Link_Set (HTML_Link) :
     """Field comprising a set of `HTML_Link` values."""
 
+    max_links = 0
+
     def as_html (self, o, renderer) :
         def _gen (self, o, renderer) :
             o_set   = self._value_getter (o)
@@ -516,8 +519,11 @@ class HTML_Link_Set (HTML_Link) :
                 setattr (oo, self.name, elem)
                 vv  = self._as_html_value (oo, renderer)
                 yield vv, as_html (oo, renderer)
-        return "<br>".join \
-            (html for vv, html in sorted (_gen (self, o, renderer)))
+        links = sorted (_gen (self, o, renderer))
+        max_l = self.max_links
+        if max_l and max_l > 0 :
+            links = links [:max_l]
+        return "<br>".join (html for vv, html in links)
     # end def as_html
 
 # end class HTML_Link_Set
