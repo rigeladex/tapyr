@@ -31,6 +31,7 @@
 #     3-Feb-2015 (CT) Add `css_class_dyn`
 #     4-Feb-2015 (CT) Add argument `renderer` to `as_html`, `value`
 #     4-Feb-2015 (CT) Add `Index`
+#    14-May-2015 (CT) Add guard for `is_undefined` to property `attr`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,7 @@ from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import filtered_join
 from   _TFL.pyk                 import pyk
+from   _TFL.Undef               import is_undefined
 
 import _TFL._Meta.Object
 import _TFL.Accessor
@@ -90,8 +92,9 @@ class Base (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Field)) :
     @Once_Property
     @getattr_safe
     def attr (self) :
-        if self.aq is not None :
-            return self.aq._attr
+        aq = self.aq
+        if aq is not None and not is_undefined (aq) :
+            return aq._attr
     # end def attr
 
     @Once_Property
