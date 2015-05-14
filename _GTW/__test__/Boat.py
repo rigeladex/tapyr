@@ -179,7 +179,7 @@ _test_code = """
 
     >>> with expect_except (MOM.Error.Invariant) :
     ...     b.b_class.max_crew = 0
-    Invariant: Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    Invariant: Condition `AC_check_max_crew_0` : 1 <= max_crew <= 4
         max_crew = 0
     >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `setattr`
     [('object', []), ('region', []), ('system', []), ('uniqueness', [])]
@@ -188,20 +188,20 @@ _test_code = """
     >>> errors = []
     >>> with expect_except (MOM.Error.Invariants) :
     ...     b.b_class.set (max_crew = 0)
-    Invariants: Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    Invariants: Condition `AC_check_max_crew_0` : 1 <= max_crew <= 4
         max_crew = 0
     >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `.set (max_crew = 0)`
-    [('object', [<Invariant: SRM.Boat_Class ('Optimist',), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    [('object', [<Invariant: SRM.Boat_Class ('Optimist',), Condition `AC_check_max_crew_0` : 1 <= max_crew <= 4
         max_crew = 0>]), ('region', []), ('system', []), ('uniqueness', [])]
     >>> errors
     []
     >>> b.b_class.set (max_crew = 5, on_error = errors.append)
     0
     >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `.set (max_crew = 5)`
-    [('object', [<Invariant: SRM.Boat_Class ('Optimist',), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    [('object', [<Invariant: SRM.Boat_Class ('Optimist',), Condition `AC_check_max_crew_0` : 1 <= max_crew <= 4
         max_crew = 5>]), ('region', []), ('system', []), ('uniqueness', [])]
     >>> errors
-    [<Invariants: <Invariant: SRM.Boat_Class ('Optimist',), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    [<Invariants: <Invariant: SRM.Boat_Class ('Optimist',), Condition `AC_check_max_crew_0` : 1 <= max_crew <= 4
         max_crew = 5>>]
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
     [ { 'attributes' : ['max_crew']
@@ -211,29 +211,8 @@ _test_code = """
             )
           ]
       , 'head' : '1 <= max_crew <= 4'
-      , 'is_required' : True
       }
     ]
-
-    >>> with expect_except (MOM.Error.Invariants) :
-    ...     b.b_class.set (max_crew = None)
-    Invariants: Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
-        max_crew = None
-    >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `.set (max_crew = None)`
-    [('object', [<Required_Empty: SRM.Boat_Class ('Optimist',), Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
-        max_crew = None>]), ('region', []), ('system', []), ('uniqueness', [])]
-
-    >>> with expect_except (MOM.Error.Required_Empty) :
-    ...     b.b_class.max_crew = None
-    Required_Empty: Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
-        max_crew = None
-
-    >>> errors = []
-    >>> with expect_except (MOM.Error.Invariants) :
-    ...     SRM.Boat_Class ("Seascape 18", on_error = errors.append)
-    Invariants: Boat_Class needs the attributes: ('name', 'max_crew'); Instead it got: (name = 'Seascape 18')
-    >>> errors
-    [<Required_Missing: (Boat_Class needs the attributes: ('name', 'max_crew'); Instead it got: (name = 'Seascape 18')>]
 
     >>> errors = []
     >>> with expect_except (MOM.Error.Invariants) :
@@ -261,15 +240,12 @@ _test_code = """
     >>> errors = []
     >>> with expect_except (MOM.Error.Invariants) :
     ...     SRM.Boat_Class (on_error = errors.append)
-    Invariants: Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
-        max_crew = None
-      Condition `name_not_empty` : The attribute name needs a non-empty value
+    Invariants: Condition `name_not_empty` : The attribute name needs a non-empty value
         name = None
       Boat_Class needs the attribute: ('name',); Instead it got: ()
 
     >>> errors
-    [<Required_Missing: (Boat_Class needs the attribute: ('name',); Instead it got: ()>, <Invariants: <Required_Empty: SRM.Boat_Class ('',), Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
-        max_crew = None>; <Required_Empty: SRM.Boat_Class ('',), Condition `name_not_empty` : The attribute name needs a non-empty value
+    [<Required_Missing: (Boat_Class needs the attribute: ('name',); Instead it got: ()>, <Invariants: <Required_Empty: SRM.Boat_Class ('',), Condition `name_not_empty` : The attribute name needs a non-empty value
         name = None>>]
 
     >>> errors = []
@@ -290,12 +266,7 @@ _test_code = """
       , 'explanation' : 'All required attributes must be supplied'
       , 'head' : "Boat needs the attributes: ('left', 'sail_number')"
       , 'is_required' : True
-      , 'missing_t' :
-          { 'left' :
-              [ 'name'
-              , 'max_crew'
-              ]
-          }
+      , 'missing_t' : {'left' : ['name']}
       }
     ]
 
@@ -320,12 +291,7 @@ _test_code = """
       , 'explanation' : 'All required attributes must be supplied'
       , 'head' : "Boat needs the attributes: ('left', 'sail_number')"
       , 'is_required' : True
-      , 'missing_t' :
-          { 'left' :
-              [ 'name'
-              , 'max_crew'
-              ]
-          }
+      , 'missing_t' : {'left' : ['name']}
       }
     , { 'attributes' : ['sail_number']
       , 'bindings' :

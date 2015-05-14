@@ -457,9 +457,9 @@ _test_code = """
     left                2
       left                2
         name                3
-        max_crew            0
         beam                0
         loa                 0
+        max_crew            0
         sail_area           0
       sail_number         4
       nation              0
@@ -569,9 +569,9 @@ _test_code = """
           year                0
         boat_class          2
           name                3
-          max_crew            0
           beam                0
           loa                 0
+          max_crew            0
           sail_area           0
         discards            0
         is_cancelled        1
@@ -618,9 +618,9 @@ _test_code = """
     ...     show_QUA (pka)
     Boat `left`
         String `name` left.left.name
-        Int `max_crew` left.left.max_crew
         Float `beam` left.left.beam
         Float `loa` left.left.loa
+        Int `max_crew` left.left.max_crew
         Float `sail_area` left.left.sail_area
         Int `sail_number` left.sail_number
         Nation `nation` left.nation
@@ -785,9 +785,9 @@ _test_code = """
         String `perma_name` teams.left.left.perma_name
         Int `year` teams.left.left.year
         String `name` teams.left.boat_class.name
-        Int `max_crew` teams.left.boat_class.max_crew
         Float `beam` teams.left.boat_class.beam
         Float `loa` teams.left.boat_class.loa
+        Int `max_crew` teams.left.boat_class.max_crew
         Float `sail_area` teams.left.boat_class.sail_area
         Int `discards` teams.left.discards
         Boolean `is_cancelled` teams.left.is_cancelled

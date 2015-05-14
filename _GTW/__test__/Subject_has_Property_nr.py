@@ -844,7 +844,7 @@ _test_attr_wrappers = """
       Kind_Wrapper : Float `loa`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Int `max_crew`
-          Required, _Required_Mixin_, _User_, _DB_Attr_
+          Optional, _User_, _DB_Attr_
       Kind_Wrapper : Float `sail_area`
           Optional, _User_, _DB_Attr_
     SRM.Handicap <-- SRM._Boat_Class_
@@ -11213,7 +11213,7 @@ _test_tables = """
     SRM.Boat_Class (SRM._Boat_Class_) SRM._Boat_Class_ <Table srm_boat_class>
         Column beam                      : Float                Optional Float beam
         Column loa                       : Float                Optional Float loa
-        Column max_crew                  : Smallint             Required Int max_crew
+        Column max_crew                  : Smallint             Optional Int max_crew
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('srm__boat_class_.pid')
         Column sail_area                 : Float                Optional Float sail_area
     SRM.Handicap (SRM._Boat_Class_) SRM._Boat_Class_ <Table srm_handicap>

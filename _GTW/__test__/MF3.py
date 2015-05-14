@@ -1369,7 +1369,6 @@ _test_element = """
     F_E     R-107:left                      R-107
     F_E     R-107:left.left                 R-107:left
     F       R-107:left.left.name            R-107:left.left
-    F       R-107:left.left.max_crew        R-107:left.left
     F       R-107:left.sail_number          R-107:left
     F       R-107:left.nation               R-107:left
     F       R-107:left.sail_number_x        R-107:left
@@ -1401,7 +1400,6 @@ _test_element = """
     F_E     left                      left           SRM.Boat
     F_E     left.left                 left           SRM.Boat_Class
     F       left.left.name            name           SRM.Boat_Class
-    F       left.left.max_crew        max_crew       SRM.Boat_Class
     F       left.sail_number          sail_number    SRM.Boat
     F       left.nation               nation         SRM.Boat
     F       left.sail_number_x        sail_number_x  SRM.Boat
@@ -1432,7 +1430,6 @@ _test_element = """
     E       None                 None
     F_E     SRM.Boat_in_Regatta  SRM.Boat_in_Regatta
     F_E     SRM.Boat             SRM.Boat
-    F       SRM.Boat_Class       SRM.Boat_Class
     F       SRM.Boat_Class       SRM.Boat_Class
     F       SRM.Boat             SRM.Boat
     F       SRM.Boat             SRM.Boat
@@ -1859,9 +1856,8 @@ _test_element = """
     ===========================================================================================================================================================================================
     E       None                      (<Field_Entity R-107:left>, <Field_Entity R-107:right>, <Field_Entity R-107:skipper>, <Field R-107:place>, <Field R-107:points>)
     F_E     left                      (<Field_Entity R-107:left.left>, <Field R-107:left.sail_number>, <Field R-107:left.nation>, <Field R-107:left.sail_number_x>)
-    F_E     left.left                 (<Field R-107:left.left.name>, <Field R-107:left.left.max_crew>)
+    F_E     left.left                 (<Field R-107:left.left.name>,)
     F       left.left.name            ()
-    F       left.left.max_crew        ()
     F       left.sail_number          ()
     F       left.nation               ()
     F       left.sail_number_x        ()
@@ -1951,7 +1947,6 @@ _test_single_primary = r"""
     { 'cargo' :
         { 'field_values' :
             { 'S-78:left' : {'init' : {}}
-            , 'S-78:left.max_crew' : {}
             , 'S-78:left.name' : {}
             , 'S-78:name' : {}
             , 'S-78:nation' : {}
@@ -1960,8 +1955,8 @@ _test_single_primary = r"""
             }
         , 'sid' : 0
         , 'sigs' :
-            { 'S-78' : 'uMWq7TsTbjCRFCsOi5jnayARrDazsIcAZ8b_Og'
-            , 'S-78:left' : 'F5uYa_AzR1ye0_akrknWSiJULO0UIQx4GISOTQ'
+            { 'S-78' : 'nBHmtRfh0gecdAyXDOjeL0qFzVO8zCJXv8BPmg'
+            , 'S-78:left' : 'vFCTr5suihkuI3ZJ7r0t8KaN6GMyXMlhIEfDOA'
             }
         }
     , 'checkers' : {}
@@ -2046,7 +2041,6 @@ _test_single_primary = r"""
     <Entity S-78> <Entity S-78>
     <Field_Entity S-78:left> <Entity S-78>
     <Field S-78:left.name> <Field_Entity S-78:left>
-    <Field S-78:left.max_crew> <Field_Entity S-78:left>
     <Field S-78:sail_number> <Entity S-78>
     <Field S-78:nation> <Entity S-78>
     <Field S-78:sail_number_x> <Entity S-78>
@@ -2061,7 +2055,7 @@ _test_single_primary = r"""
     <Field S_r-78:name> <Entity S_r-78>
 
     >>> sorted (f_b_r ["S_r-78:left"].attr_map.items ())
-    [('max_crew', <Field S_r-78:left.max_crew>), ('name', <Field S_r-78:left.name>)]
+    [('name', <Field S_r-78:left.name>)]
 
     >>> f_b_r_l_n = f_b_r ["S_r-78:left.name"]
     >>> f_b_r_l_n.attr.completer.MF3 (f_b_r_l_n)

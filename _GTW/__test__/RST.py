@@ -401,7 +401,7 @@ _test_cqf = r"""
     PAP-Url    (Url `value`, String `desc`)
     PAP-_MOM_Link_n_    (Left `left`, Right `right`)
     SRM-Boat    (Boat_Class `left`, Int `sail_number`, Nation `nation`, String `sail_number_x`, String `name`)
-    SRM-Boat_Class    (String `name`, Int `max_crew`, Float `beam`, Float `loa`, Float `sail_area`)
+    SRM-Boat_Class    (String `name`, Float `beam`, Float `loa`, Int `max_crew`, Float `sail_area`)
     SRM-Boat_in_Regatta    (Boat `left`, Regatta `right`, Entity `skipper`, Int `place`, Int `points`)
     SRM-Club    (String `name`, String `long_name`)
     SRM-Crew_Member    (Boat_in_Regatta `left`, Sailor `right`, Int `key`, String `role`)

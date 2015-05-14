@@ -193,9 +193,9 @@ _test_code = r"""
     (<left.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Boat')
     (<left.left.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Boat_Class')
     (<left.left.name.AQ [Attr.Type.Querier String]>, '-----')
-    (<left.left.max_crew.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<left.left.beam.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<left.left.loa.AQ [Attr.Type.Querier Ckd]>, '-----')
+    (<left.left.max_crew.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<left.left.sail_area.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<left.sail_number.AQ [Attr.Type.Querier Raw]>, '-----')
     (<left.nation.AQ [Attr.Type.Querier Ckd]>, '-----')
@@ -305,9 +305,9 @@ _test_code = r"""
     (<teams.left.left.year.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<teams.left.boat_class.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Boat_Class')
     (<teams.left.boat_class.name.AQ [Attr.Type.Querier String]>, '-----')
-    (<teams.left.boat_class.max_crew.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<teams.left.boat_class.beam.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<teams.left.boat_class.loa.AQ [Attr.Type.Querier Ckd]>, '-----')
+    (<teams.left.boat_class.max_crew.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<teams.left.boat_class.sail_area.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<teams.left.discards.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<teams.left.is_cancelled.AQ [Attr.Type.Querier Boolean]>, '-----')
@@ -347,9 +347,9 @@ _test_code = r"""
     >>> for aq in BiR.AQ.Atoms :
     ...     print (aq._id)
     left__left__name
-    left__left__max_crew
     left__left__beam
     left__left__loa
+    left__left__max_crew
     left__left__sail_area
     left__sail_number
     left__nation
@@ -430,9 +430,9 @@ _test_code = r"""
     teams__left__left__perma_name
     teams__left__left__year
     teams__left__boat_class__name
-    teams__left__boat_class__max_crew
     teams__left__boat_class__beam
     teams__left__boat_class__loa
+    teams__left__boat_class__max_crew
     teams__left__boat_class__sail_area
     teams__left__discards
     teams__left__is_cancelled

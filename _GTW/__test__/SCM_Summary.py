@@ -122,7 +122,7 @@ _basic = r"""
     <Create SRM.Boat_Class ('Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '<n>', 'max_crew' : '1'}>
     <Create SRM.Boat_Class ('420er', 'SRM.Boat_Class'), new-values = {'last_cid' : '<n>', 'max_crew' : '2'}>
     <Create SRM.Boat_Class ('Laser', 'SRM.Boat_Class'), new-values = {'last_cid' : '<n>', 'max_crew' : '1'}>
-    <Create SRM.Boat_Class ('Seascape 18', 'SRM.Boat_Class'), new-values = {'last_cid' : '<n>', 'max_crew' : '4'}>
+    <Create SRM.Boat_Class ('Seascape 18', 'SRM.Boat_Class'), new-values = {'last_cid' : '<n>'}>
     <Create SRM.Handicap ('Yardstick', 'SRM.Handicap'), new-values = {'last_cid' : '<n>'}>
     <Create SRM.Boat (('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat'), new-values = {'last_cid' : '<n>'}>
     <Copy SRM.Boat (('Optimist', 'SRM.Boat_Class'), '1134', 'AUT', '', 'SRM.Boat'), new-values = {'last_cid' : '<n>'}>
@@ -153,7 +153,7 @@ _basic = r"""
     <Modify PAP.Person ('Tanzer', 'Laurens', 'William', 'Mr.', 'PAP.Person'), old-values = {'last_cid' : '<n>', 'middle_name' : '', 'title' : ''}, new-values = {'last_cid' : '<n>', 'middle_name' : 'William', 'title' : 'Mr.'}>
     <Modify SRM.Race_Result (((('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat'), (('Himmelfahrt', (('finish', '2010-05-13'), ('start', '2010-05-13')), 'SRM.Regatta_Event'), ('Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), '1', 'SRM.Race_Result'), old-values = {'discarded' : 'no', 'last_cid' : '<n>'}, new-values = {'discarded' : 'yes', 'last_cid' : '<n>'}>
     <Modify SRM.Regatta_Event ('Himmelfahrt', (('finish', '2010-05-14'), ('start', '2010-05-13')), 'SRM.Regatta_Event'), old-values = {'date' : (('finish', '2010-05-13'), ('start', '2010-05-13')), 'last_cid' : '<n>'}, new-values = {'date' : (('finish', '2010-05-14'), ('start', '2010-05-13')), 'last_cid' : '<n>'}>
-    <Destroy SRM.Boat_Class ('Seascape 18', 'SRM.Boat_Class'), old-values = {'last_cid' : '<n>', 'max_crew' : '4'}>
+    <Destroy SRM.Boat_Class ('Seascape 18', 'SRM.Boat_Class'), old-values = {'last_cid' : '<n>'}>
     <Modify/C SRM.Regatta_Event.date ('Himmelfahrt', (('finish', '2010-05-13'), ('start', '2010-05-13')), 'SRM.Regatta_Event'), old-values = {'finish' : '2010-05-14', 'last_cid' : '<n>'}, new-values = {'finish' : '2010-05-13', 'last_cid' : '<n>'}>
     <Modify EVT.Recurrence_Spec ((('event-1-text', 'SWP.Page'), (('start', '2010-08-18'),), '', '', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : '', 'last_cid' : '<n>'}, new-values = {'dates' : '2010-09-08', 'last_cid' : '<n>'}>
     <Destroy EVT.Event_occurs ((('event-1-text', 'SWP.Page'), (('start', '2010-08-18'),), '', '', 'EVT.Event'), '2010-08-01', '', 'EVT.Event_occurs'), old-values = {'last_cid' : '<n>'}>
@@ -196,8 +196,8 @@ _basic = r"""
     <Change Summary for pid 3: newborn>
         <Create SRM.Boat_Class ('Laser', 'SRM.Boat_Class'), new-values = {'last_cid' : '<n>', 'max_crew' : '1'}>
     <Change Summary for pid 4: newborn, just died>
-        <Create SRM.Boat_Class ('Seascape 18', 'SRM.Boat_Class'), new-values = {'last_cid' : '<n>', 'max_crew' : '4'}>
-        <Destroy SRM.Boat_Class ('Seascape 18', 'SRM.Boat_Class'), old-values = {'last_cid' : '<n>', 'max_crew' : '4'}>
+        <Create SRM.Boat_Class ('Seascape 18', 'SRM.Boat_Class'), new-values = {'last_cid' : '<n>'}>
+        <Destroy SRM.Boat_Class ('Seascape 18', 'SRM.Boat_Class'), old-values = {'last_cid' : '<n>'}>
     <Change Summary for pid 5: newborn>
         <Create SRM.Handicap ('Yardstick', 'SRM.Handicap'), new-values = {'last_cid' : '<n>'}>
     <Change Summary for pid 6: newborn>
