@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -28,6 +28,7 @@
 #    16-Mar-2009 (CT) `tax_brackets` for `2009` changed to final version of law
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #     7-Jan-2010 (CT) Use `TFL.CAO.Arg.EUC` instead of `TFL.CAO.Arg.Money`
+#    20-May-2015 (CT) Add `2016` to `tax_brackets`
 #    ««revision-date»»···
 #--
 
@@ -70,12 +71,22 @@ def tax_brackets (year) :
             , (EUR (     26000), 0.436)
             , (EUR (2000000000), 0.50)
             )
-    else :
+    elif year < 2016 :
         return \
             ( (EUR (     11000), 0.000)
             , (EUR (     14000), 0.3635)
             , (EUR (     35000), 0.4321429)
             , (EUR (2000000000), 0.500)
+            )
+    else :
+        return \
+            ( (EUR (     11000), 0.000)
+            , (EUR (      7000), 0.250)
+            , (EUR (     14000), 0.350)
+            , (EUR (     29000), 0.420)
+            , (EUR (     30000), 0.480)
+            , (EUR (    910000), 0.500)
+            , (EUR (2000000000), 0.550) ### as of 2015, applies up to 2020
             )
 # end def tax_brackets
 
