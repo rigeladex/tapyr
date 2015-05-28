@@ -22,59 +22,50 @@
 ##     4-Feb-2015 (CT) Factor `E_Type_caption`, `E_Type_tail`
 ##     4-Feb-2015 (CT) Pass `renderer` to `as_html`, `css_class_dyn`
 ##     5-Feb-2015 (CT) Factor `E_Type_actions`, add `actions_at_top`
+##    28-May-2015 (CT) Add `data-href` to `Instance`
+##     2-Jun-2015 (CT) Factor and simplify `AB.action_button`
 ##    ««revision-date»»···
 ##--
 #}
 
+{%- import "html/action_button.m.jnj" as AB with context %}
 {%- import "STD::html/navigation.jnj" as NT with context %}
 
 {%- macro action_button
     ( renderer, action
-    , a_action    = None
-    , a_cls       = None
-    , href        = None
-    , i_add_cls   = None
-    , text        = ""
     , title       = ""
+    , text        = ""
+    , i_add_cls   = None
     )
 -%}
-  {%- set i_cls = GTW.filtered_join
-        (" ", ("fa", "fa-%s" % (action.icon, ), i_add_cls))
-  -%}
-  {%- set kw = GTW.filtered_dict
-        ( kwargs
-        , { "data-action" : a_action or action.action }
-        , class = GTW.filtered_join
-            (" ", (a_cls, action.css_class, "pure-button"))
-        , href  = href or action.href
-        , title = (title or renderer.action_title (action)).strip ()
+  {{- AB.action_button
+        ( action    = action.action
+        , icon_name = action.icon
+        , title     = title or renderer.action_title (action)
+        , text      = text  or action.text
+        , i_add_cls = i_add_cls
+        , a_cls     = action.css_class
+        , tabindex  = None
+        , ** kwargs
         )
-  -%}
-  <a{{ kw|xmlattr }}><i class="{{ i_cls }}"></i>{#- -#}
-    <b>{{ (text or action.text).strip () }}</b>{#- -#}
-  </a>​{{- GTW.html_char_ref (GTW.Dingbats.zero_width_space) -}}
+  -}}
 {%- endmacro -%} {#- action_button -#}
 
 {%- macro action_button_create
     ( renderer, action
-    , a_action    = None
-    , a_cls       = None
-    , href        = None
-    , i_add_cls   = None
-    , text        = ""
     , title       = ""
+    , text        = ""
+    , i_add_cls   = None
     )
 -%}
   {#- XXX add support for partial types... -#}
   {{- GTW.call_macro
         ( "action_button", renderer, action
-        , a_action    = a_action
-        , a_cls       = a_cls
-        , href        = href
-        , i_add_cls   = i_add_cls
-        , text        = text or renderer.action_title (action)
         , title       = title
+        , text        = text or renderer.action_title (action)
+        , i_add_cls   = i_add_cls
         , templ_name  = action.template_module or renderer.template_module
+        , ** kwargs
         )
   -}}
 {%- endmacro -%} {#- action_button_create -#}
@@ -84,6 +75,7 @@
     {{- GTW.call_macro
         ( action.template_macro, renderer, action
         , templ_name = action.template_module or renderer.template_module
+        , ** kwargs
         )
     -}}
   {%- endfor -%}
@@ -123,11 +115,10 @@
         {%- if renderer.Actions_I %}
           <th class="action">
             {%- if renderer.actions %}
-              {%- set a1 = renderer.actions [0] %}
               {{- GTW.call_macro
-                  ( a1.template_macro, renderer, a1
+                  ( "actions", renderer, renderer.actions [:1]
                   , text       = " "
-                  , templ_name = a1.template_module or renderer.template_module
+                  , templ_name = renderer.template_module
                   )
               -}}
             {% endif -%}
@@ -186,7 +177,7 @@
 
 {%- macro Instance (renderer) -%}
   {%- set obj = renderer.obj %}
-  <tr{{ GTW.filtered_dict (class = renderer.css_class, id = renderer.css_id)|xmlattr}}>
+  <tr{{ GTW.filtered_dict ({"data-href" : renderer.obj_href}, class = renderer.css_class, id = renderer.css_id)|xmlattr}}>
     {%- for field in renderer.fields %}
       {%- for f in field.td_cols %}
         <td{{ GTW.filtered_dict (class = f.css_class_dyn (obj, renderer))|xmlattr }}>

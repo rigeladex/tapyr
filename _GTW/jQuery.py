@@ -64,6 +64,7 @@
 #    31-Oct-2014 (CT) Fix typo that fails in jQuery 1.11.1
 #    10-Dec-2014 (CT) Remove dependencies to `GTW_buttonify`
 #    12-May-2015 (CT) Add missing dependency `GTW_L` to `query_restriction`
+#     2-Jun-2015 (CT) Remove `GTW_postify_a`
 #    ««revision-date»»···
 #--
 
@@ -222,16 +223,6 @@ GTW.Script \
     )
 
 GTW.Script \
-    ( src      = "/media/GTW/js/GTW/jQ/postify_a.js"
-    , name     = "GTW_postify_a"
-    , requires = (GTW.Script._.jQuery, GTW.Script._.GTW_jq_util)
-    )
-GTW.JS_On_Ready \
-    ( """$("a.delete").gtw_postify_a ();"""
-    , name = "GTW_postify_a"
-    )
-
-GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/e_type_selector.js"
     , name     = "GTW_e_type_selector"
     , requires =
@@ -260,7 +251,6 @@ GTW.Script \
     , name     = "GTW_e_type_admin"
     , requires =
         ( GTW.Script._.jQuery_UI
-        , GTW.Script._.GTW_postify_a
         , GTW.Script._.GTW_query_restriction
         )
     )

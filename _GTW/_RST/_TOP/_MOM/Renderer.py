@@ -20,6 +20,8 @@
 #    27-Jan-2015 (CT) Change `fields` to fall back on `resource.fields_default`
 #    27-Jan-2015 (CT) Add `template_module_iter`
 #     4-Feb-2015 (CT) Add `index` to `Instance`
+#    28-May-2015 (CT) Add `Instance.obj_href`
+#     1-Jun-2015 (CT) Add guard for `admin` to `Instance.obj_href`
 #    ««revision-date»»···
 #--
 
@@ -215,6 +217,18 @@ class Instance (_Renderer_) :
         except AttributeError :
             pass
     # end def css_id
+
+    @Once_Property
+    @getattr_safe
+    def obj_href (self) :
+        obj      = self.obj
+        resource = self.resource
+        admin    = resource.top.ET_Map [obj.type_name].admin
+        if admin is None :
+            admin = resource.top.ET_Map [resource.type_name].admin
+        if admin is not None :
+            return admin.href_instance (obj)
+    # end def obj_href
 
     @Once_Property
     @getattr_safe

@@ -118,6 +118,10 @@
 #                     not `.target.ETM.type_name`
 #     2-Apr-2015 (CT) Add `feedback` to `_rendered_completions_a`
 #    29-Apr-2015 (CT) Factor `record_commit_errors` to `GTW.MF3.Element.Entity`
+#    28-May-2015 (CT) Add `E_Type_Mixin.href_instance`
+#    29-May-2015 (CT) Factor `_rendered_delete`, add `result ["undo"]`
+#    29-May-2015 (CT) Add `Undoer`, `E_Type_Mixin.href_undo`
+#     1-Jun-2015 (CT) Add guard for `admin` to `_rendered_delete`
 #    ««revision-date»»···
 #--
 
@@ -234,6 +238,29 @@ class _Action_ (_Ancestor) :
         error = _T ("Not authorized for this page")
         raise self.top.Status.Forbidden (error)
     # end def _raise_403
+
+    def _rendered_delete (self, request, response, obj) :
+        self._check_readonly (request)
+        scope  = self.top.scope
+        etn    = obj.type_name
+        uid    = obj.ui_display
+        result = dict (feedback = _T ("""Object "%s" deleted""") % (uid, ))
+        obj.destroy ()
+        admin  = self.top.ET_Map [etn].admin
+        if admin is None :
+            admin = self.top.ET_Map [self.type_name].admin
+        if admin is not None :
+            change = scope.uncommitted_changes [-1]
+            result.update \
+                ( undo = dict
+                    ( cid   = change.cid
+                    , pid   = change.pid
+                    , title = _T ("Undo deletion of object %s" % (uid, ))
+                    , url   = admin.href_undo (change)
+                    )
+                )
+        return result
+    # end def _rendered_delete
 
 # end class _Action_
 
@@ -685,16 +712,11 @@ class Instance (_Changer_) :
         _real_name             = "DELETE"
 
         def _response_body (self, resource, request, response) :
-            resource._check_readonly (request)
-            obj    = resource.obj
-            result = {}
+            obj = resource.obj
             if obj is None :
                 raise resource.Status.Not_Found ()
-            ### XXX confirm deleting links to `obj`
-            result ["replacement"] = _T \
-                ("""Object "%s" deleted""") % (obj.ui_display, )
-            obj.destroy ()
-            return result
+            else :
+                return resource._rendered_delete (request, response, obj)
         # end def _response_body
 
     DELETE = _MF3_Delete_ # end class
@@ -771,40 +793,14 @@ class Deleter (_JSON_Action_PO_) :
     _auth_required       = True
 
     def _rendered_post (self, request, response) :
-        self._check_readonly (request)
-        args = self.args
-        if args and args [0] :
-            E_Type       = self.E_Type
-            pid          = args [0]
-            obj          = self.pid_query_request (pid, E_Type)
-            sra          = self._set_result_args
-        else :
-            sra            = self._set_result_json
-            form, field  = self._get_form_field (request, request.json)
-            obj          = field.essence
+        form, field  = self._get_form_field (request, request.json)
+        obj          = field.essence
         if obj is not None :
-            result       = {}
-            sra          (obj, request, response, result)
-            obj.destroy  ()
-            return result
+            return self._rendered_delete (request, response, obj)
         else :
             error = _T ("You need to specify a pid!")
             raise self.top.Status.Bad_Request (error)
     # end def _rendered_post
-
-    def _set_result_args (self, obj, request, response, result) :
-        result ["replacement"] = dict \
-            ( html = """<td colspan="6">%s</td>"""
-              % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
-            )
-    # end def _set_result_args
-
-    def _set_result_json (self, obj, request, response, result) :
-        result ["html"] = \
-            ( """<h6>%s</h6>"""
-                % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
-            )
-    # end def _set_result_json
 
 # end class Deleter
 
@@ -1002,6 +998,39 @@ class QX_Select_Attr_Form (_JSON_Action_PO_) :
 
 # end class QX_Select_Attr_Form
 
+class Undoer (_JSON_Action_PO_) :
+    """Undo a change"""
+
+    argn            = 0
+    name            = "undo"
+    _auth_required  = True
+
+    def _rendered_post (self, request, response) :
+        scope  = self.top.scope
+        undo   = TFL.Record (request.json)
+        result = {}
+        try :
+            change = scope.query_changes (cid = undo.cid, pid = undo.pid).one ()
+        except Exception as exc :
+            error = _T ("You need to specify valid undo information: %s" % exc)
+            raise self.top.Status.Bad_Request (error)
+        later = scope.query_changes (Q.cid > undo.cid, pid = undo.pid)
+        if later :
+            result ["error"] = _T \
+                ( "Cannot undo a change if %s later changes exist for "
+                  "the same object"
+                % (later.count ())
+                )
+        else :
+            change.undo (scope)
+            obj = scope.pid_query (undo.pid)
+            result ["feedback"] = _T \
+                ("Successfully revived object %s" % (obj.ui_display, ))
+        return result
+    # end def _rendered_post
+
+# end class Undoer
+
 class _NC_Mixin_ (TFL.Meta.Object) :
 
     _v_entry_type_list  = ()
@@ -1097,7 +1126,7 @@ class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
 
     _v_entry_type_list            = \
         ( Add_Rev_Ref, Completed, Completer, Creator, Deleter, Displayer
-        , Instance, Polisher
+        , Instance, Polisher, Undoer
         , _QX_Dispatcher_E_Type_Mixin_
         )
 
@@ -1227,6 +1256,10 @@ class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
         return result
     # end def href_delete
 
+    def href_instance (self, obj) :
+        return pp_join (self.abs_href, str (obj.pid))
+    # end def href_instance
+
     def href_polisher (self) :
         return pp_join (self.abs_href, "polish")
     # end def href_polisher
@@ -1242,6 +1275,10 @@ class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
     def href_qx_esf (self) :
         return pp_join (self.abs_href, self.qx_prefix, "esf")
     # end def href_qx_esf
+
+    def href_undo (self, change) :
+        return pp_join (self.abs_href, "undo")
+    # end def href_undo
 
     def is_current_dir (self, page) :
         if not self.hidden :

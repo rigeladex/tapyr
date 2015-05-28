@@ -31,6 +31,7 @@
 #    16-Apr-2015 (CT) Add rule for vertical alignment of `input[type=checkbox]`
 #    29-Apr-2015 (CT) Add rule for `aside .error-msg`
 #    12-May-2015 (CT) Add children `good/missing/bad` to `form ... label > b`
+#     1-Jun-2015 (CT) Add rules for `.Field-Entity.removed`
 #    ««revision-date»»···
 #--
 
@@ -250,6 +251,58 @@ style_sheet = Style_Sheet \
                                 , position         = "absolute"
                                 , right            = Em (1)
                                 , visibility       = "visible"
+                                )
+                            , Rule_Class
+                                ( "removed"
+                                , children         =
+                                    [ Rule_Child
+                                        ( "div.action-button"
+                                        , "div.Display.Field"
+                                        , "fieldset"
+                                        , display              = "none"
+                                        , visibility           = "hidden"
+                                        )
+                                    , Rule_Child
+                                        ( ".feedback"
+                                        , display              = "block"
+                                        , margin               = TRBL
+                                            (0, Em (1.0))
+                                        , max_width            = Percent (100)
+                                        , visibility           = "visible"
+                                        , children             =
+                                            [ Rule
+                                                ( "a[data-action]"
+                                                , display          = "block"
+                                                , float            = "left"
+                                                , height           = Em (1.5)
+                                                , margin_right     = Em (0.5)
+                                                , padding          = TRBL
+                                                    ( Em (0.675)
+                                                    , Em (0.5)
+                                                    , Em (0.25)
+                                                    )
+                                                , vertical_align   = "middle"
+                                                , width            = Em (1.5)
+                                                )
+                                            , Rule
+                                                ( "b"
+                                                , background_color =
+                                                    P.color_status_good
+                                                , display          = "block"
+                                                , padding          = TRBL (Em (0.5))
+                                                , vertical_align   = "middle"
+                                                )
+                                            , Rule
+                                                ( ".fa"
+                                                , color            =
+                                                    P.color.m_orange
+                                                , font_size        = Em (1.25)
+                                                , height           = Em (1.0)
+                                                , width            = Em (1.0)
+                                                )
+                                            ]
+                                        )
+                                    ]
                                 )
                             , Rule_Sibling
                                 ( ".Field"

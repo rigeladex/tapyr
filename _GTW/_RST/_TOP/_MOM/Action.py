@@ -17,6 +17,8 @@
 #
 # Revision Dates
 #    20-Jan-2015 (CT) Creation
+#    28-May-2015 (CT) Add action to `Change`, `Delete`;
+#                     remove `css_class`, `href` from `Change`, `Delete`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +43,7 @@ class M_Action (TFL.Meta.Object.__class__) :
         name = cls.__name__ ### allow for `_real_name`
         if not (name.startswith ("_") or getattr (cls, "name", None)) :
             cls.name = name.lower ()
-            if not cls.css_class :
+            if cls.css_class is None :
                 cls.css_class = cls.name
     # end def __init__
 
@@ -98,14 +100,20 @@ class Create (_Action_) :
 
 class Change (_Action_) :
 
+    action          = "change"
+    css_class       = ""
     description     = _ ("Change %(tn)s %(obj)s")
+    href            = None
     icon            = "pencil"
 
 # end class Change
 
 class Delete (_Action_) :
 
+    action          = "remove"
+    css_class       = ""
     description     = _ ("Delete %(tn)s %(obj)s")
+    href            = None
     icon            = "trash-o"
 
 # end class Delete

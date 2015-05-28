@@ -63,6 +63,7 @@
 //                     field with error
 //    12-May-2015 (CT) Change `selectors.status` to `b` [used to be `b.Status`]
 //    12-May-2015 (CT) Add `need_blur` to fix `polisher` breaking `completer`
+//     1-Jun-2015 (CT) Add `remove_undo`, adapt `action_callback.remove`
 //    ««revision-date»»···
 //--
 
@@ -137,7 +138,8 @@
                         $GTW.inspect.update_transitive (form_spec, fsu);
                         new$ = c$.children ().last ();
                         setup_sub_form (new$);
-                        rr$ = c$.children (S.container_rev_ref);
+                        rr$ = c$.children
+                            (S.container_rev_ref).not (".removed");
                         if (rr$.length >= max_rr) {
                             ab$ = $("[data-action=\"add_rev_ref\"]", c$);
                             ab$.hide ();
@@ -184,38 +186,67 @@
                 return false;
               }
             , remove : function remove (ev) {
-                var S          = options.selectors;
-                var a$         = $(this);
-                var c$         = a$.closest (S.closable);
-                var p$         = c$.closest (S.entity_list);
-                var d$         = $(S.display_id_ref, c$).first ();
-                var i$         = $(S.hidden_id_ref,  c$).first ();
-                var elem_pid   = i$.val ();
-                var form_spec  = options.form_spec;
-                var cargo      = form_spec.cargo;
-                var f_values   = cargo.field_values;
-                var sigs       = cargo.sigs;
-                var F_id       = d$.prop ("id");
-                var max_rr     = p$.data ("max-rev-ref");
-                var url        = options.url.remove;
-                var cleanup    = function cleanup (msg) {
-                    delete f_values [elem_pid];
-                    delete sigs     [elem_pid];
+                var S            = options.selectors;
+                var a$           = $(this);
+                var c$           = a$.closest (S.closable);
+                var p$           = c$.closest (S.entity_list);
+                var d$           = $(S.display_id_ref, c$).first ();
+                var i$           = $(S.hidden_id_ref,  c$).first ();
+                var elem_pid     = i$.val ();
+                var form_spec    = options.form_spec;
+                var cargo        = form_spec.cargo;
+                var remove_cache = { vals : {}, sigs : {}};
+                var f_values     = cargo.field_values;
+                var sigs         = cargo.sigs;
+                var F_id         = d$.prop ("id");
+                var max_rr       = p$.data ("max-rev-ref");
+                var url          = options.url.remove;
+                var cleanup_one  = function cleanup_one (id) {
+                    remove_cache.vals [id] = f_values [id];
+                    remove_cache.sigs [id] = sigs     [id];
+                    delete f_values [id];
+                    delete sigs     [id];
+                };
+                var cleanup    = function cleanup (answer) {
+                    var feedback, undo_p;
                     var rr$, ab$;
+                    cleanup_one (elem_pid);
                     $(":input[id]", c$).each
                         ( function (n) {
                             var f$   = $(this);
                             var F_id = f$.prop ("id");
-                            delete f_values [F_id];
-                            delete sigs     [F_id];
+                            cleanup_one (F_id);
                           }
                         );
-                    if (msg) {
-                        c$.html (msg);
+                    if (answer) {
+                        undo_p   = "undo" in answer;
+                        feedback =
+                            ( "<p class=\"feedback\">"
+                            + ( undo_p
+                                  ? ( "<a class=\"pure-button\""
+                                    +   " data-action=\"remove_undo\""
+                                    +   " title=\"" + answer.undo.title + "\""
+                                    + ">"
+                                    + "<i class=\"fa fa-undo\"></i>"
+                                    + "</a>"
+                                    )
+                                  : ""
+                              )
+                            + "<b>"
+                            + answer.feedback
+                            + "</b>"
+                            + "</p>"
+                            );
+                        c$  .addClass ("removed")
+                            .data     ("remove_cache", remove_cache)
+                            .append   (feedback);
+                        if (undo_p) {
+                            c$.data   ("remove_undo",  answer.undo);
+                        };
                     } else {
                         c$.remove ();
                     };
-                    rr$ = p$.children (S.container_rev_ref);
+                    rr$ = p$.children (S.container_rev_ref).not (".removed");
                     if (rr$.length < max_rr) {
                         ab$ = $("[data-action=\"add_rev_ref\"]", p$);
                         ab$.show ();
@@ -232,7 +263,7 @@
                         }
                     success_cb = function success_cb (answer, status, xhr) {
                         if (! answer ["error"]) {
-                            cleanup (answer ["html"]);
+                            cleanup (answer);
                         } else {
                             $GTW.show_message
                                 ("Ajax completion error: ", answer.error);
@@ -888,6 +919,46 @@
                 , "Polish"
                 );
         };
+        var remove_undo_cb = function remove_undo_cb (ev) {
+            var S            = options.selectors;
+            var a$           = $(ev.currentTarget);
+            var c$           = a$.closest (S.closable);
+            var p$           = c$.closest (S.entity_list);
+            var remove_cache = c$.data    ("remove_cache");
+            var undo         = c$.data    ("remove_undo");
+            var max_rr       = p$.data ("max-rev-ref");
+            var form_spec    = options.form_spec;
+            var cargo        = form_spec.cargo;
+            var f_values     = cargo.field_values;
+            var sigs         = cargo.sigs;
+            var success_cb   = function success_cb (response, status) {
+                var rr$, ab$;
+                if (! response ["error"]) {
+                    $.extend         (cargo.field_values, remove_cache.vals);
+                    $.extend         (cargo.sigs,         remove_cache.sigs);
+                    c$  .data        ("remove_cache",     undefined)
+                        .data        ("remove_undo",      undefined)
+                        .removeClass ("removed");
+                    $("p.feedback", c$).remove ();
+                    rr$ = c$.children (S.container_rev_ref).not (".removed");
+                    if (rr$.length >= max_rr) {
+                        ab$ = $("[data-action=\"add_rev_ref\"]", c$);
+                        ab$.hide ();
+                    };
+                } else {
+                    $GTW.show_message ("Ajax Error: " + response ["error"]);
+                };
+            };
+            $.gtw_ajax_2json
+                ( { type        : "POST"
+                  , data        : undo
+                  , success     : success_cb
+                  , url         : undo.url
+                  }
+                , "Undo"
+                );
+            return false;
+        };
         var setup_entity_display = function setup_entity_display (n) {
             var S  = options.selectors;
             var f$ = $(this);
@@ -1038,6 +1109,7 @@
         this.delegate  (selectors.submit, "click", submit_cb);
         this.submit    (function (ev) { return false; });
         setup_sub_form (this);
+        $(this).on ("click", "[data-action=\"remove_undo\"]", remove_undo_cb);
         return this;
     };
   } (jQuery)

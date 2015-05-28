@@ -19,6 +19,7 @@
 #    29-Apr-2013 (CT) Creation (factored from e_type_admin.jnj.media)
 #    22-Jan-2015 (CT) Adapt to change of `.Object-List` table
 #     5-Feb-2015 (CT) Remove rule for `caption`
+#     1-Jun-2015 (CT) Add rule for `data-action=undo`
 #    ««revision-date»»···
 #--
 
@@ -117,6 +118,11 @@ style_sheet = Style_Sheet \
                                         ( ".fa"
                                         , height            = Em (1)
                                         , width             = Em (1)
+                                        )
+                                    , Rule_Attr
+                                        ( "[data-action=undo] .fa"
+                                        , color        = P.color.m_orange
+                                        , width        = Em (3.5)
                                         )
                                     , P.Rule.hover_rev
                                     ]

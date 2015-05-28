@@ -18,80 +18,157 @@
 //    19-Apr-2012 (CT) Add `options.postify_options.hidden_selector`
 //    11-Mar-2014 (CT) Add hasClass `link` to `gtw_e_type_admin_linkify `
 //    22-Jan-2015 (CT) Adapt to change of `.Object-List` table
+//    28-May-2015 (CT) Revamp action handling, remove use of `gtw_postify_a`
+//    29-May-2015 (CT) Add `action_callback.undo`,
+//                     add `undo` to `action_callback.remove`
+//    29-May-2015 (CT) Factor `setup_action_callbacks`, `setup_obj_row`
 //    ««revision-date»»···
 //--
 
 ( function ($) {
     "use strict";
-    var L = $GTW.L;
-    $.fn.gtw_e_type_admin_postify = function gtw_e_type_admin_postify (opts) {
-        var options  = $.extend
-            ( { hidden_selector : "a"
-              , parent_selector : "tr"
+    $.fn.gtw_e_type_admin_table = function gtw_e_type_admin_table (opts) {
+        var action;
+        var selectors       = $.extend
+            ( { obj_col            : "td:not(.action):not(.link)"
+              , obj_row            : "tr[id]"
+              }
+            , opts && opts ["selectors"] || {}
+            );
+        var options         = $.extend
+            ( { tr_class    : "active"
               }
             , opts || {}
-            );
-        $(this).gtw_postify_a (options);
-        return this;
-    };
-    $.fn.gtw_e_type_admin_linkify = function gtw_e_type_admin_linkify (opts) {
-        var options  = $.extend
-            ( { a_selector  : "a.change"
-              , new_window  : false
-              , td_selector : "td"
-              , tr_class    : "active"
+            , { selectors : selectors
               }
-            , opts || {}
             );
-        $(this).each
-            ( function () {
-                var tr$  = $(this);
-                var ac$  = tr$.find (options.a_selector);
-                var href = ac$.attr ("href");
-                if (href) {
-                    tr$
-                      .addClass (options.tr_class)
-                      .attr ("title", ac$.attr ("title"))
-                      .find (options.td_selector).each
-                        ( function () {
-                            var td$ = $(this);
-                            var inner_html = td$.html ();
-                            if (! ( td$.hasClass ("action")
-                                  || td$.hasClass ("link")
-                                  )
-                               ) {
-                              td$.html
-                                  ($(L ("a", {href: href, html: inner_html})))
-                                 .click // increase target size
-                                  ( function () {
-                                      window.location.href = href;
-                                    }
-                                  );
-                            };
-                          }
-                        );
+        var pat_pid         = new RegExp ("^([^-]+)-(\\d+)$");
+        var action_callback =
+            { change : function change (ev) {
+                var obj = obj_of_row (this);
+                var url = obj.url;
+                setTimeout
+                    ( function () {
+                        window.location.href = url;
+                      }
+                    , 0
+                    );
+                return false;
+              }
+            , remove : function remove (ev) {
+                var obj = obj_of_row (this);
+                var success_cb  = function success_cb (response, status) {
+                    var row$ = obj.row$;
+                    var cs   = $("td",        row$).length;
+                    var csa  = $("td.action", row$).length;
+                    var repl, undo_p;
+                    if (! response ["error"]) {
+                        undo_p = "undo" in response;
+                        repl   =
+                            ( "<td class=\"feedback\" colspan=\""
+                            + (undo_p ? cs - csa : cs)
+                            + "\">"
+                            + response.feedback
+                            + "</td>"
+                            );
+                        if (undo_p) {
+                            row$.data ("deleted", row$.html ());
+                            row$.data ("undo",    response.undo);
+                            repl =
+                                ( repl
+                                + "<td class=\"action\">"
+                                + "<a class=\"pure-button\" data-action=\"undo\""
+                                + "title=\"" + response.undo.title + "\""
+                                + ">"
+                                + "<i class=\"fa fa-undo\"></i>"
+                                + "</a>"
+                                + "</td>"
+                                );
+                        };
+                        row$.html (repl);
+                        row$.prop ("title", "");
+                        setup_action_callbacks (row$);
+                    } else {
+                        $GTW.show_message ("Ajax Error: " + response ["error"]);
+                    };
                 };
+                $.gtw_ajax_2json
+                    ( { type        : "DELETE"
+                      , success     : success_cb
+                      , url         : obj.url
+                      }
+                    , "Delete"
+                    );
+                return false;
               }
-            );
+            , undo : function undo (ev) {
+                var obj  = obj_of_row (this);
+                var row$ = obj.row$;
+                var rest = row$.data ("deleted");
+                var undo = row$.data ("undo");
+                var success_cb = function success_cb (response, status) {
+                    if (! response ["error"]) {
+                        row$.html     (rest);
+                        row$.data     ("deleted", undefined);
+                        row$.data     ("undo",    undefined);
+                        setup_obj_row (row$);
+                    } else {
+                        $GTW.show_message ("Ajax Error: " + response ["error"]);
+                    };
+                };
+                $.gtw_ajax_2json
+                    ( { type        : "POST"
+                      , data        : undo
+                      , success     : success_cb
+                      , url         : undo.url
+                      }
+                    , "Undo"
+                    );
+                return false;
+              }
+            };
+        var obj_of_row  = function obj_of_row (self) {
+            var result  = {};
+            var row$    = $(self).closest  (selectors.obj_row)
+            result.row$ = row$;
+            result.rid  = row$.prop        ("id");
+            result.pid  = pid_of_obj_id    (result.rid);
+            result.url  = row$.data        ("href");
+            return result;
+        };
+        var pid_of_obj_id = function pid_of_obj_id (id) {
+            var groups = id.match (pat_pid);
+            return groups [2];
+        };
+        var setup_action_callbacks = function setup_action_callbacks (self) {
+            for (action in action_callback) {
+                if (action_callback.hasOwnProperty (action)) {
+                    $("[data-action=\"" + action + "\"]", self)
+                        .on ("click", action_callback [action]);
+                };
+            };
+        };
+        var setup_obj_row = function setup_obj_row (self) {
+            var ac$  = self.find ("[data-action=\"change\"]");
+            setup_action_callbacks (self);
+            if (ac$.length) {
+                self.addClass (options.tr_class)
+                   .attr ("title", ac$.attr ("title"));
+                $(selectors.obj_col, self).click (action_callback.change);
+            };
+        };
+        $(selectors.obj_row, this).each
+            (function () { setup_obj_row ($(this)); });
         return this;
     };
     ( function () {
         var setup_obj_list = function setup_obj_list () {
             var options = $GTW.ETA$.options;
-            $(options.obj_list_selector + " " + options.postify_selector)
-                .gtw_e_type_admin_postify (options ["postify_options"]);
-            $(options.obj_list_selector + " " + options.linkify_selector)
-                .gtw_e_type_admin_linkify (options ["linkify_options"]);
+            $(options.obj_list_selector).gtw_e_type_admin_table ();
         };
         $GTW.ETA$ = new $GTW.Module (
             { options            :
-                { linkify_selector    : "tbody tr[id]"
-                , obj_list_selector   : ".Object-List"
-                , postify_options     :
-                    { display_value   : "inline-block"
-                    , hidden_selector : "a"
-                    }
-                , postify_selector    : "a.delete"
+                { obj_list_selector   : ".Object-List"
                 }
             , setup_obj_list     : setup_obj_list
             }
