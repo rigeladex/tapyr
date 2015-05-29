@@ -41,6 +41,7 @@
 #    23-Jan-2015 (CT) Add support for dotted names to `__setattr__`
 #    13-Apr-2015 (CT) Add `_import_cb_json_dump`
 #     6-May-2015 (CT) Use `TFL.json_dump.jsonified`
+#    29-May-2015 (CT) Add `* ds` to `Record.__init__`
 #    ««revision-date»»···
 #--
 
@@ -79,13 +80,17 @@ class Record (TFL.Meta.Object) :
 
     _properties = ()
 
-    def __init__ (self, ** kw) :
-        assert "_kw"           not in kw
-        assert "copy"          not in kw
-        assert "_formatted_kw" not in kw
-        assert "_properties"   not in kw
-        assert not any (p in kw for p in self._properties)
-        self.__dict__ ["_kw"] = kw.copy ()
+    def __init__ (self, * ds, ** kw) :
+        _kw = dict ()
+        for d in ds :
+            _kw.update (d)
+        _kw.update (kw)
+        assert "_kw"           not in _kw
+        assert "copy"          not in _kw
+        assert "_formatted_kw" not in _kw
+        assert "_properties"   not in _kw
+        assert not any (p in _kw for p in self._properties)
+        self.__dict__ ["_kw"] = _kw
     # end def __init__
 
     def copy (self, ** kw) :
