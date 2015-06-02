@@ -24,6 +24,7 @@
 ##     5-Feb-2015 (CT) Factor `E_Type_actions`, add `actions_at_top`
 ##    28-May-2015 (CT) Add `data-href` to `Instance`
 ##     2-Jun-2015 (CT) Factor and simplify `AB.action_button`
+##     2-Jun-2015 (CT) Add `zero_width_space` to `action_button`
 ##    ««revision-date»»···
 ##--
 #}
@@ -48,7 +49,7 @@
         , tabindex  = None
         , ** kwargs
         )
-  -}}
+  -}}{{- GTW.html_char_ref (GTW.Dingbats.zero_width_space) -}}
 {%- endmacro -%} {#- action_button -#}
 
 {%- macro action_button_create

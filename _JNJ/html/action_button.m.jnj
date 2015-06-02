@@ -18,6 +18,7 @@
 ##
 ## Revision Dates
 ##     2-Jun-2015 (CT) Creation (factored from mf3.m.jnj, ETR/table.m.jnj)
+##     2-Jun-2015 (CT) Remove `zero_width_space` from `action_button`
 ##    ««revision-date»»···
 ##--
 #}
@@ -45,7 +46,7 @@
   -%}
   <a{{ akw|xmlattr }}><i{{ ikw|xmlattr }}></i>{#- -#}
     <b>{{ text.strip () }}</b>{#- -#}
-  </a>{{- GTW.html_char_ref (GTW.Dingbats.zero_width_space) -}}
+  </a>{#- -#}
 {%- endmacro -%} {#- action_button -#}
 
 {#- __END__ jinja template: html/action_button.m.jnj -#}
