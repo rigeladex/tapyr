@@ -158,6 +158,8 @@
 #                     customization of calculation method
 #     4-Dec-2014 (CT) Remove debug output for `calculation_method`
 #    17-Feb-2015 (CT) Move values for `ignore` to `Config`, out of `__init__`
+#     2-Jun-2015 (CT) Add dictionary `vat_privat` index by account,
+#                     rename `vat_private` to `vat_privat_default`
 #    ««revision-date»»···
 #--
 
@@ -434,15 +436,20 @@ class Account (_Base_):
 
     Entry          = Account_Entry
 
-    ignore         = ()
-    gewerbe_anteil = 0
-    privat         = {}
+    ### The following class variables can be overriden in a config file
+    ### (e.g., ATAX.config)
+    ignore             = ()
+    gewerbe_anteil     = 0
+    privat             = {}
+    vat_privat         = {}   ### VAT rate per account in `.privat`
+    vat_privat_default = 1.20 ### default VAT rate applicable for private part
 
     def __init__ (self, name = "", vst_korrektur = 1.0) :
         self.name           = name
         self.vst_korrektur  = vst_korrektur
         self.entries        = []
         self.privat         = dict (self.privat)
+        self.vat_privat     = dict (self.vat_privat)
         self.ignore         = set  (self.__class__.ignore)
         self._finished      = False
     # end def __init__
@@ -487,7 +494,7 @@ class Account (_Base_):
             line = perl_dict_pat.sub ("""["\\1"]""", line)
         ### use temporary dict for exec
         ### (`locals ()' cannot be changed by `exec')
-        tmp  = { "privat" : {}, "ignore" : {}}
+        tmp  = { "privat" : {}, "vat_privat" : {}, "ignore" : {}}
         try :
             ### `tmp' must be passed to the local-dict argument because
             ### Python adds some junk to the global-dict argument of `exec'
@@ -495,9 +502,11 @@ class Account (_Base_):
             if "source_currency" in tmp :
                 self.source_currency = EUC.Table [tmp ["source_currency"]]
                 del tmp ["source_currency"]
-            self.privat.update (tmp ["privat"])
-            self.ignore.update (tmp ["ignore"])
+            self.privat.update     (tmp ["privat"])
+            self.vat_privat.update (tmp ["vat_privat"])
+            self.ignore.update     (tmp ["ignore"])
             del tmp ["privat"]
+            del tmp ["vat_privat"]
             del tmp ["ignore"]
             try :
                 for k, v in tmp.items () :
@@ -525,7 +534,6 @@ class V_Account (Account) :
 
     ### The following class variables can be overriden in a config file
     ### (e.g., ATAX.config)
-    vat_private = 1.20 ### VAT rate applicable for private part
     kz_add      = \
         { "????"  : ("027", "In 060/065 enthaltene Vorsteuern betreffend KFZ")
         }
@@ -673,18 +681,21 @@ class V_Account (Account) :
     def finish (self) :
         if not self._finished :
             self._finished = True
-            netto = EUR (0)
-            p_vat = EUR (0)
-            vat_p = self.vat_private
+            netto  = defaultdict (EUR)
+            p_vat  = defaultdict (EUR)
+            vat_p  = self.vat_privat
+            vat_pd = self.vat_privat_default
             for entry in self.vorsteuer_entries :
                 k = entry.konto
                 if k in self.privat and entry.netto > 0 :
-                    factor = self.privat [k] / 100.0
-                    corr   = entry.netto * factor
-                    netto += corr
-                    p_vat += corr * (vat_p - 1.00)
-            if netto :
-                self._add_umsatz (netto, p_vat, vat_p)
+                    vat_p.setdefault (k, vat_pd)
+                    factor      = self.privat [k] / 100.0
+                    corr        = entry.netto * factor
+                    netto  [k] += corr
+                    p_vat  [k] += corr * (vat_p [k] - 1.00)
+            for k, n in pyk.iteritems (netto) :
+                if n :
+                    self._add_umsatz (n, p_vat [k], vat_p [k])
     # end def finish
 
     def header_string (self) :
@@ -1236,7 +1247,7 @@ class T_Account (Account) :
                     self.einnahmen  [k] *= (1 - factor)
                     self.konto_desc [k]  = "%s (abz. %s)" % \
                         (k_desc, p_entry.desc)
-                    p_vat = p_soll * 0.20
+                    p_vat = p_soll * (self.vat_privat [k] - 1.00)
                     self._fix_ust_privat (k, k_desc, p_vat, p_entry.desc)
                 else :
                     for ke in self.k_entries [k] :
