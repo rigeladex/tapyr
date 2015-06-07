@@ -83,6 +83,7 @@
 ##    20-Feb-2014 (CT) Remove `level-0`
 ##     7-May-2014 (CT) Don't generate empty `action` for `form`
 ##    13-Mar-2015 (CT) Pass `action` to `anti_csrf_token`
+##     7-Jun-2015 (CT) Change `maxlength` of `username` from `30` to `80`
 ##    ««revision-date»»···
 ##--
 #}
@@ -342,7 +343,7 @@
           {{ X.input.email
               ( id            = "F_username"
               , name          = "username"
-              , maxlength     = "30"
+              , maxlength     = "80"
               , value         = username
               )
           }}
