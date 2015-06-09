@@ -25,6 +25,7 @@
 ##    28-May-2015 (CT) Add `data-href` to `Instance`
 ##     2-Jun-2015 (CT) Factor and simplify `AB.action_button`
 ##     2-Jun-2015 (CT) Add `zero_width_space` to `action_button`
+##     9-Jun-2015 (CT) Re-add `href` to `action_button_create`
 ##    ««revision-date»»···
 ##--
 #}
@@ -62,6 +63,7 @@
   {#- XXX add support for partial types... -#}
   {{- GTW.call_macro
         ( "action_button", renderer, action
+        , href        = action.href
         , title       = title
         , text        = text or renderer.action_title (action)
         , i_add_cls   = i_add_cls
