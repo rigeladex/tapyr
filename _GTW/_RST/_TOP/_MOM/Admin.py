@@ -122,6 +122,7 @@
 #    29-May-2015 (CT) Factor `_rendered_delete`, add `result ["undo"]`
 #    29-May-2015 (CT) Add `Undoer`, `E_Type_Mixin.href_undo`
 #     1-Jun-2015 (CT) Add guard for `admin` to `_rendered_delete`
+#     9-Jun-2015 (CT) Add guard for `renderer` to `_Changer_.renderer`
 #    ««revision-date»»···
 #--
 
@@ -561,7 +562,8 @@ class _Changer_ (_Ancestor) :
         except AttributeError :
             pass
         with self.LET (form = form, referrer = referrer) :
-            if response.renderer.name == "JSON" :
+            renderer = response.renderer
+            if renderer is not None and renderer.name == "JSON" :
                 t      = self.top.Templateer.get_template (form.template_module)
                 result = dict \
                     (form = t.call_macro ("main", self, form))
