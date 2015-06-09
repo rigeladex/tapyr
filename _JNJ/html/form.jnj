@@ -84,6 +84,7 @@
 ##     7-May-2014 (CT) Don't generate empty `action` for `form`
 ##    13-Mar-2015 (CT) Pass `action` to `anti_csrf_token`
 ##     7-Jun-2015 (CT) Change `maxlength` of `username` from `30` to `80`
+##     9-Jun-2015 (CT) Add class `internal` to login button
 ##    ««revision-date»»···
 ##--
 #}
@@ -333,7 +334,7 @@
       {% endif -%}
       {%- if really_link_only %}
         <li title="{{- GTW._T ("Log into %s") % page.s_domain -}}">
-          <a href="{{ page.login_url }}" class="button">
+          <a href="{{ page.login_url }}" class="button internal">
             {{- GTW._T ("Login") -}}
           </a>
         </li>

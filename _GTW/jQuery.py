@@ -65,6 +65,7 @@
 #    10-Dec-2014 (CT) Remove dependencies to `GTW_buttonify`
 #    12-May-2015 (CT) Add missing dependency `GTW_L` to `query_restriction`
 #     2-Jun-2015 (CT) Remove `GTW_postify_a`
+#     9-Jun-2015 (CT) Add `.not ("a.internal")` to `GTW_Externalize`
 #    ««revision-date»»···
 #--
 
@@ -173,12 +174,12 @@ GTW.Script \
         )
     )
 GTW.JS_On_Ready \
-    ( """$("a[href^='http://'], a[href^='https://'], a[href^='//']").gtw_externalize ();"""
+    ( """$("a[href^='http://'], a[href^='https://'], a[href^='//']").not ("a.internal").gtw_externalize ();"""
     , name = "GTW_Externalize"
     )
 
 GTW.JS_On_Ready \
-    ( """$("form a").not ("a.ui-icon, a.button, a.pure-button").gtw_externalize ();"""
+    ( """$("form a").not ("a.button, a.internal, a.pure-button, a.ui-icon").gtw_externalize ();"""
     , name = "GTW_Form_Externalize"
     )
 
