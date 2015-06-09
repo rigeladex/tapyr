@@ -27,6 +27,7 @@
 #    12-Dec-2014 (CT) Increase `max_age` of session cookie to `1<<31`
 #    13-Mar-2015 (CT) Change `anti_csrf_token` to method with arg `form_action`
 #    17-Mar-2015 (CT) Signify `Anti_CSRF` in `session`
+#     9-Jun-2015 (CT) Add guard `self._request.user` to `username`
 #    ««revision-date»»···
 #--
 
@@ -56,7 +57,10 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
 
     @property
     def username (self) :
-        return self.session.username
+        if self._request.user :
+            ### for anonymous edit sessions there is a random `username` that
+            ### doesn't correspond to a user: don't return that!
+            return self.session.username
     # end def username
 
     @username.setter
