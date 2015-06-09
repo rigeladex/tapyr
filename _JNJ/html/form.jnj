@@ -85,6 +85,7 @@
 ##    13-Mar-2015 (CT) Pass `action` to `anti_csrf_token`
 ##     7-Jun-2015 (CT) Change `maxlength` of `username` from `30` to `80`
 ##     9-Jun-2015 (CT) Add class `internal` to login button
+##     9-Jun-2015 (CT) Remove `user.name` from `Logout` button
 ##    ««revision-date»»···
 ##--
 #}
@@ -407,8 +408,7 @@
       <li>
         {{ X.input.submit
             ( title = (GTW._T ("Logout %s") % (request.user.name, ))
-            , value = (GTW._T ("Logout %s") %
-                (request.user.name.split ("@") [0], ))
+            , value = (GTW._T ("Logout"))
             )
         }}
         {{ X.input.hidden (name  = "next", value = next) }}
