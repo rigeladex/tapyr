@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -29,6 +29,7 @@
 #     2-May-2013 (CT) Add argument `resource` to `_http_response_finish`...
 #    10-Dec-2013 (CT) Add `href_login`; add `s_domain` to `login_url`
 #    11-Dec-2013 (CT) Add default for `csrf_check_p`
+#    10-Jun-2015 (CT) Use `response.indicate_notifications`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -153,15 +154,9 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     # end def _http_response
 
     def _http_response_finish (self, resource, request, response) :
-        notifications = response.session.notifications
-        if notifications and notifications.Cached :
-            ### this response contains notifications ->
-            ### clear the Etag and the last_modified to prevent caching of
-            ### responses with notifications
-            response.set_etag        ("")
-            response.last_modified = datetime.datetime.utcfromtimestamp (0)
-        response._set_session_cookie ()
-        response.session.save        ()
+        response.indicate_notifications ()
+        response._set_session_cookie    ()
+        response.session.save           ()
         scope = self.scope
         if scope :
             scope.commit ()

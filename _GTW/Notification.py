@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -19,10 +19,14 @@
 #    20-Feb-2010 (MG) Creation
 #    17-Aug-2012 (MG) Add new `Cached` property and adapt pickle behavior
 #    18-Aug-2012 (MG) Fix `discarge` to avoid `empty` head/tail result
-#    24-Oct-2014 (CT) Add `Notification_Collection.__repr__`, use `portable_repr`
+#    24-Oct-2014 (CT) Add `Notification_Collection.__repr__`,
+#                     use `portable_repr`
 #    24-Oct-2014 (CT) Fix spelling: s/discarge/disgorge/g
 #    11-Dec-2014 (CT) Add `Notification_Collection.__bool__`
 #    16-Dec-2014 (CT) Add missing import for `TFL.Meta.Once_Property`
+#    10-Jun-2015 (CT) Add `Notification_Collection.__len__`, `.disgorged`;
+#                     remove `Notification_Collection.Cached`
+#    10-Jun-2015 (CT) Add `Notification` arg `css_class`, property `datetime`
 #    ««revision-date»»···
 #--
 """
@@ -63,6 +67,7 @@ from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+import _TFL.Accessor
 
 import  datetime
 
@@ -95,20 +100,15 @@ class Notification_Collection \
         self._notifications.append (arg)
     # end def append
 
-    @TFL.Meta.Once_Property
-    def Cached (self) :
-        return tuple (self)
-    # end def Cached
-
     def disgorge (self, head = "", joiner = "\n", tail = "") :
-        self.Cached = items = tuple (self._notifications)
-        result      = []
+        items  = tuple (self._notifications)
+        result = []
         if items :
             result.append (head)
             result.append \
                 ( joiner.join
                     (  pyk.text_type (s)
-                    for s in sorted (items, key = lambda n : n.time)
+                    for s in sorted (items, key = TFL.Getter.time)
                     )
                 )
             result.append (tail)
@@ -116,18 +116,26 @@ class Notification_Collection \
         return "".join (result)
     # end def disgorge
 
+    def disgorged (self) :
+        result, self._notifications = self._notifications, []
+        return sorted (result, key = TFL.Getter.time)
+    # end def disgorged
+
     def __bool__ (self) :
         return bool (self._notifications)
     # end def __bool__
 
     def __getstate__ (self) :
-        self.__dict__.pop ("Cached", ())
         return self.__dict__
     # end def __getstate__
 
     def __iter__ (self) :
         return iter (self._notifications)
     # end def __iter__
+
+    def __len__ (self) :
+        return len (self._notifications)
+    # end def __len__
 
     def __repr__ (self) :
         return portable_repr (self._notifications)
@@ -139,10 +147,18 @@ class Notification_Collection \
 class Notification (TFL.Meta.Object) :
     """A notification based on plain text."""
 
-    def __init__ (self, message, time = None) :
-        self.message = message
-        self.time    = time or datetime.datetime.now ()
+    def __init__ (self, message, time = None, css_class = None) :
+        self.message   = message
+        self.time      = time or datetime.datetime.now ()
+        self.css_class = css_class
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def datetime (self) :
+        dt = self.time
+        if isinstance (dt, datetime.datetime) :
+            return dt.strftime ("%Y-%m-%d %H:%M:%S")
+    # end def datetime
 
     def __repr__ (self) :
         return pyk.reprify \

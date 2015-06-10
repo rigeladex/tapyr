@@ -58,6 +58,7 @@
 #     2-Dec-2014 (CT) Add `setattr`
 #    21-Jan-2015 (CT) Add `filtered_dict`
 #    23-Jan-2015 (CT) Add `html_char_ref`
+#    10-Jun-2015 (CT) Add `uuid`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,7 @@ import _TFL.Accessor
 import _TFL.Sorted_By
 
 import itertools
+import uuid
 
 class GTW (TFL.Meta.Object) :
     """Provide additional global functions for Jinja templates."""
@@ -297,6 +299,10 @@ class GTW (TFL.Meta.Object) :
             result = HTML.obfuscator [scheme] (result)
         return result
     # end def uri
+
+    def uuid (self) :
+        return uuid.uuid1 ().hex
+    # end def uuid
 
     vimeo_video   = staticmethod (HTML.vimeo_video)
     youtube_video = staticmethod (HTML.youtube_video)

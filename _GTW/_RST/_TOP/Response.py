@@ -28,6 +28,9 @@
 #    13-Mar-2015 (CT) Change `anti_csrf_token` to method with arg `form_action`
 #    17-Mar-2015 (CT) Signify `Anti_CSRF` in `session`
 #     9-Jun-2015 (CT) Add guard `self._request.user` to `username`
+#    10-Jun-2015 (CT) Add `indicate_notifications`, `notifications_added`
+#    10-Jun-2015 (CT) Use `GTW.Notification_Collection` in `add_notification`,
+#                     not `_set_session_cookie`
 #    ««revision-date»»···
 #--
 
@@ -43,12 +46,15 @@ import _GTW._RST.Response
 import _GTW._RST.Signed_Token
 
 import base64
+import datetime
 import time
 
 class _RST_TOP_Response_ (GTW.RST.Response) :
     """Extend GTW.RST.Response with session handling."""
 
-    _own_vars = ("username", )
+    _own_vars           = ("notifications_added", "username")
+
+    notifications_added = 0
 
     @Once_Property
     def session (self) :
@@ -72,11 +78,12 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
     # end def username
 
     def add_notification (self, noti) :
-        notifications = self.session.notifications
+        notifications = GTW.Notification_Collection (self.session)
         if notifications is not None :
             if not isinstance (noti, GTW.Notification) :
                 noti = GTW.Notification (noti)
             notifications.append (noti)
+            self.notifications_added += 1
     # end def add_notification
 
     def anti_csrf_token (self, form_action = None) :
@@ -87,13 +94,24 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
         return result
     # end def anti_csrf_token
 
+    def indicate_notifications (self) :
+        added = self.notifications_added
+        if added :
+            notifications = GTW.Notification_Collection (self.session)
+            if len (notifications) :
+                ### `notifications` got disgorged
+                ### -> this response contains embedded notifications
+                ### -> clear the Etag and the last_modified to prevent caching
+                self.set_etag ("")
+                self.last_modified = datetime.datetime.utcfromtimestamp (0)
+    # end def indicate_notifications
+
     def _set_session_cookie (self) :
         request = self._request
         session = self.session
         name    = request.session_cookie_name
         value   = request.new_secure_cookie (session.sid)
         cookie  = self.set_secure_cookie (name, value, max_age = 1<<31)
-        GTW.Notification_Collection (session)
         return cookie
     # end def _set_session_cookie
 

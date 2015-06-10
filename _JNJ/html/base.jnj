@@ -1,6 +1,6 @@
 {#- jinja template: html/base.jnj -#}
 {#
-## Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -41,13 +41,15 @@
 ##    20-Feb-2014 (CT) Add `nav_off_canvas`
 ##     9-Apr-2014 (CT) Add `width=device-width` to `viewport`
 ##    20-Jun-2014 (CT) Add blocks `body_main` and `body_document`
+##    10-Jun-2015 (CT) Factor `page_notifications.render`
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- import (html_version or "html/5.jnj") as X -%}
-{%- import "html/media_fragments.jnj" as MF with context %}
-{%- import "html/navigation.jnj"      as NF with context %}
+{%- import (html_version or "html/5.jnj")   as X -%}
+{%- import "html/media_fragments.jnj"       as MF with context %}
+{%- import "html/navigation.jnj"            as NF with context %}
+{%- import "html/page_notifications.m.jnj"  as PN with context %}
 
 {%- call X.html (lang = page.language|default ("en")) -%}
   {%- if not page -%}{%- set page = NAV -%}{%- endif -%}
@@ -102,13 +104,9 @@
         </p>
         {%- block body_document -%}
           <div id="document" class="pg_body">
-            {%- block notifications -%}
-              {%- if notifications %}
-                <div class="notifications">
-                  {{- notifications.disgorge ("<p>", "</p><p>", "</p>") -}}
-                </div>
-              {% endif -%}
-            {%- endblock notifications -%}
+            {%- block page_notifications -%}
+              {{ PN.render (notifications) }}
+            {%- endblock page_notifications -%}
             {%- block body_headline %}
               {%- if page.head_line %}
                 <h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.head_line|safe }}</h1>
