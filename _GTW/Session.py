@@ -52,6 +52,7 @@
 #    26-Jan-2015 (CT) Derive `M_Session` from `M_Auto_Update_Combined`,
 #                     not `M_Auto_Combine_Sets`
 #    13-Mar-2015 (CT) Don't return False from `username`
+#    10-Jun-2015 (CT) Import `M_Auto_Update_Combined`, not `M_Auto_Combine_Sets`
 #    ««revision-date»»···
 #--
 
@@ -63,7 +64,7 @@ from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
-import _TFL._Meta.M_Auto_Combine_Sets
+import _TFL._Meta.M_Auto_Update_Combined
 import _TFL.User_Config
 
 import base64

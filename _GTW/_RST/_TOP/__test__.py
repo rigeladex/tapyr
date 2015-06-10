@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -85,7 +85,7 @@ __doc__ = """
     (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>, <Auth Auth: /Auth>, <L10N L10N: /L10N>, <_Language_ de: /L10N/de>, <_Language_ en: /L10N/en>)
 
     >>> print (portable_repr (sorted (root3._template_names)))
-    ['account_change_email', 'account_change_password', 'account_make_cert', 'account_register', 'account_reset_password', 'calendar', 'calendar_day', 'console', 'e_type_admin', 'e_type_aggregator', 'e_type_display', 'e_type_mf3', 'gallery', 'login', 'photo', 'regatta_calendar', 'regatta_page', 'regatta_registration', 'regatta_result', 'regatta_result_teamrace', 'site_admin']
+    ['account_change_email', 'account_change_password', 'account_make_cert', 'account_register', 'account_reset_password', 'calendar', 'calendar_day', 'console', 'e_type_admin', 'e_type_aggregator', 'e_type_display', 'e_type_mf3', 'gallery', 'login', 'photo', 'regatta_calendar', 'regatta_page', 'regatta_page_r', 'site_admin']
 
     >>> auth = root3.SC.Auth
     >>> auth

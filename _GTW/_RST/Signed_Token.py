@@ -22,6 +22,8 @@
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    12-Dec-2014 (CT) Add `request.path` to `Anti_CSRF.secrets`
 #    13-Mar-2015 (CT) Add `form_action` to `Anti_CSRF`
+#    10-Jun-2015 (CT) Adapt doctest to `form_action`, `request.path`
+#                     in `Anti_CSRF`
 #    ««revision-date»»···
 #--
 
@@ -275,6 +277,7 @@ __doc__ = r"""
     ...     , current_time = 1234.56789
     ...     , host         = "localhost"
     ...     , host_url     = "http://localhost/"
+    ...     , path         = None
     ...     , remote_addr  = "111.222.333.444"
     ...     , root         = Record
     ...         ( HTTP     = Werkzeug
@@ -293,13 +296,13 @@ __doc__ = r"""
 
     >>> cookie = Cookie (req, "<session-id-value>")
     >>> print (cookie.value)
-    PHNlc3Npb24taWQtdmFsdWU+|MTIzNA==|d86a6ebf40fcb2884b60c0c0674de840231f17addc909d697417feba
+    PHNlc3Npb24taWQtdmFsdWU+|MTIzNA==|4340000bee991260b760b1e6460dcea2774d30fa66cca990ab3c9e07
 
     >>> cr = Cookie.recover (req, cookie.value, ttl_s = 3600)
     >>> cr
     Cookie: '<session-id-value>', ('<some-salt>', 'http://localhost/')
     >>> print (cr.value)
-    PHNlc3Npb24taWQtdmFsdWU+|MTIzNA==|d86a6ebf40fcb2884b60c0c0674de840231f17addc909d697417feba
+    PHNlc3Npb24taWQtdmFsdWU+|MTIzNA==|4340000bee991260b760b1e6460dcea2774d30fa66cca990ab3c9e07
 
     >>> cookie == cr
     True
@@ -327,18 +330,18 @@ __doc__ = r"""
 
     >>> act = Anti_CSRF (req, "<form-id?>")
     >>> print (act.value)
-    PGZvcm0taWQ/Pg==|MTIzNA==|0462529fc8a3cea02e9053552c2f8e8badba5cf11910d4151198642d
+    PGZvcm0taWQ/Pg==|MTIzNA==|801bcb45abeae2881e0c0b47031739128692ce4358602ba736b70f50
 
     >>> ar = Anti_CSRF.recover (req, act.value, ttl_s = 3600)
     >>> ar
-    Anti_CSRF: '<form-id?>', ('<some-salt>', 4711, 'localhost')
+    Anti_CSRF: '<form-id?>', ('<some-salt>', 4711, 'localhost', None)
 
     >>> act == ar
     True
 
     >>> rat = REST_Auth (req, "<user-x>")
     >>> print (rat.value)
-    PHVzZXIteD4=|MTIzNA==|cf2dcc90a30f621611d73920f31e24f4cc344e9b53a43596106d0560
+    PHVzZXIteD4=|MTIzNA==|908a81969010fb575ef4305b8a1e2d267e6470a145404f6187e73ea4
 
     >>> rr = REST_Auth.recover (req, rat.value, ttl_s = 3600)
     >>> rr
