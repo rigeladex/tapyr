@@ -1,8 +1,0 @@
-======================
-Title of the Test Page
-======================
-
-My Test Page in ReST
---------------------
-
-This is a test page.
