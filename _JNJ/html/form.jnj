@@ -87,454 +87,74 @@
 ##     9-Jun-2015 (CT) Add class `internal` to login button
 ##     9-Jun-2015 (CT) Remove `user.name` from `Logout` button
 ##    11-Jun-2015 (CT) Try to avoid `autocomplete` for `password_change`
+##    11-Jun-2015 (CT) Remove obsolete macros for object forms
+##    11-Jun-2015 (CT) Simplify signature of `form`, add `form_pure`
+##    11-Jun-2015 (CT) Remove `login_inline`
+##    12-Jun-2015 (CT) Remove `logout_inline`, `password_change`,
+##                     `display_errors`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
 
-{%- macro aid_div_seq (pfo, aid, widget_type = None) -%}
-  {%- set fo = aid.form -%}
-  {%- onion aid.legend %}
-    {%- head %}
-      <fieldset class="inline-form {{ aid.form_cls.form_path_css }}">
-        <legend title="{{ GTW._T (aid.name)|capitalize|safe }}">
-          {{ GTW._T (aid.legend)|safe }}
-        </legend>
-    {%- else %}
-      <div class="inline-form {{ aid.name }}">
-    {%- body %}
-      {%- for h in pfo.hidden_fields %}
-        {{ GTW.call_macro (h.widget, pfo, h) }}
-      {% endfor -%}
-      {%- for fg in fo.field_groups %}
-        {{ GTW.call_macro (fg.widget, fo, fg)}}
-      {% endfor -%}
-    {%- tail %}
-      </fieldset>
-    {%- else %}
-      </div>
-  {%- endonion %}
-{%- endmacro -%} {#- aid_div_seq -#}
-
-{%- macro fg_div_seq (fo, fg, widget_type = None) -%}
-  {%- for fi in fo.fields_of_field_group (fg) %}
-    {%- set desc = GTW._T (fi.description)|safe %}
-    <div class="Field Field-{{ fi.name }}" title="{{ desc }}">
-      {%- for hf in fo.hidden_fields %}
-        {{ GTW.call_macro (hf.widget, fo, hf) }}
-      {% endfor -%}
-      {%- if desc %}<span class="Field-Help">{{ desc }}</span>{% endif -%}
-      {{ GTW.call_macro (fi.widget.field_label, fo, fi) }}
-      {{ GTW.call_macro (fi.widget, fo, fi) }}
-      {{ GTW.call_macro (fi.widget.field_error, fo, fi) }}
-    </div>
-  {% endfor -%}
-{%- endmacro -%} {#- fg_div_seq -#}
-
-{%- macro field_groups (fo, widget_type = None) -%}
-    {%- for fg in fo.field_groups %}
-      {%- if fo.get_errors () %}
-        {{ GTW.call_macro (fo.widget.non_field_errors, fo, None) }}
-      {% endif -%}
-      <div class="Formset {{ fg.css_class }}"
-       {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}
-      >
-     {{ GTW.call_macro (fg.widget, fo, fg, widget_type = widget_type) }}
-      </div>
-    {% endfor -%}
-{%- endmacro -%} {#- field_groups -#}
-
 {%- macro form
         ( action        = ""
-        , cancel_kw     = {}
         , method        = "post"
-        , next_form_kw  = {}
-        , reset_kw      = {}
-        , submit_kws    = []
         , include_ACT   = True
+        , next          = None
         )
 -%}
-  <form {%- if action %} action="{{ action }}"{% endif %} method="{{ method }}"{{ kwargs|xmlattr }}>
+  {%- set fkw = GTW.filtered_dict
+      ( action = action
+      , method = method
+      , ** kwargs
+      )
+  -%}
+  <form{{ fkw|xmlattr }}>
     {{ caller () }}
-    {%- if next_form_kw %}
-      {{ X.input.hidden (** next_form_kw) }}
-    {% endif -%}
     {%- set anti_csrf_token =
           include_ACT and response and response.anti_csrf_token (action)
     %}
     {%- if anti_csrf_token %}
       {{ X.input.hidden (name = "F_ACT", value = anti_csrf_token) }}
     {% endif -%}
-    {%- if submit_kws or reset_kw or cancel_kw %}
-      <div class="buttons">
-        {%- for submit_kw in submit_kws %}
-          {%- if submit_kw %}
-            {{ X.input.submit (** submit_kw) }}
-          {% endif -%}
-        {% endfor -%}
-        {%- if reset_kw %}
-          {{ X.input.reset  (** reset_kw) }}
-        {% endif -%}
-        {%- if cancel_kw %}
-          {%- set ckw = cancel_kw %}
-          {{ X.input.submit
-              ( name  = "cancel"
-              , title = ckw.title or GTW._T ("Discard all changes and leave form")
-              , value = ckw.name  or GTW._T ("Cancel")
-              )
-          }}
-        {% endif -%}
-      </div>
+    {%- if next %}
+      {{ X.input.hidden (name = "next", value = next) }}
     {% endif -%}
   </form>
 {%- endmacro -%} {#- form -#}
 
-{%- macro form_tr (fo, widget_type, class = "") -%}
-  <tr{%- if class %} class="{{class}}"{% endif -%}>
-    {%- for fg in fo.field_groups %}
-      {%- if fo.get_errors () %}
-        {{ GTW.call_macro (fo.widget.non_field_errors, fo, None) }}
-      {% endif -%}
-     {{ GTW.call_macro (fg.widget, fo, fg, widget_type = widget_type) }}
-    {% endfor -%}
-  </tr>
-{%- endmacro -%} {#- form_tr -#}
-
-{%- macro fg_tr_head (fo, fg, widget_type = None) -%}
-  {%- for fi in fo.fields_of_field_group (fg) %}
-    {% call GTW.call_macro (fi.widget.th_onion, fo, fi, widget_type) %}
-      {{ GTW.call_macro (fi.widget.field_label, fo, fi) }}
-    {% endcall %}
-  {% endfor -%}
-{%- endmacro -%} {#- fg_tr_head -#}
-
-{%- macro fg_tr_body (fo, fg, widget_type = None) -%}
-  {%- if fo.hidden_fields %}
-    <td class="ui-helper-hidden">
-    {%- for h in fo.hidden_fields %}
-      {{ GTW.call_macro (h.widget, fo, h) }}
-    {% endfor -%}
-    </td>
-  {% endif -%}
-  {%- for fi in fo.fields_of_field_group (fg) %}
-    {% call GTW.call_macro (fi.widget.td_onion, fo, fi, widget_type) %}
-      {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
-    {% endcall %}
-  {% endfor -%}
-{%- endmacro -%} {#- fg_tr_body -#}
-
-{%- macro th_onion (fo, fi, widget_type) -%}
-  <th>{{ caller() }}</th>
-{%- endmacro -%} {#- th_onion -#}
-
-{%- macro td_onion (fo, fi, widget_type) -%}
-  <td>{{ caller() }}</td>
-{%- endmacro -%} {#- td_onion -#}
-
-{%- macro th_onion_aid (fo, fi, widget_type, caller = None) -%}
-  {%- for fg in fi.form.field_groups %}
-    {{ fg_tr_head (fi.form, fg, "fg_tr_head") }}
-  {% endfor -%}
-{%- endmacro -%} {#- th_onion_aid -#}
-
-{%- macro td_onion_aid (fo, fi, widget_type, caller = None) -%}
-  {%- for fg in fi.form.field_groups %}
-    {{ fg_tr_body (fi.form, fg, "fg_tr_body") }}
-  {% endfor -%}
-{%- endmacro -%} {#- td_onion_aid -#}
-
-{%- macro fg_as_table (fo, fg, widget_type = None, css_class = "") -%}
-  <table class="field_group-Horizontal">
-    <thead>
-      <tr>{{ fg_tr_head (fo, fg) }}</tr>
-    </thead>
-    <tbody>
-      <tr{%- if css_class %} class="{{ css_class }}"{% endif -%}>
-        {{- fg_tr_body (fo, fg) -}}
-      </tr>
-    </tbody>
-  </table>
-  <div class="field_group-Horizontal-Help-Table">
-    {%- for fi in fg.fields %}
-      {%- set desc = GTW._T (fi.description)|safe %}
-      {%- if fi.description %}
-        <span class="Field-Help Field-Help-{{ fi.name }}">{{ desc }}</span>
-      {% endif -%}
-    {% endfor -%}
-  </div>
-{%- endmacro -%} {#- fg_as_table -#}
-
-{%- macro inlines_as_table (form, inline) -%}
-  {%- set proto = inline.prototype_form -%}
-  {%- if inline.forms %}
-    {%- set fform = inline.forms [0] -%}
-  {%- else %}
-    {%- set fform = proto -%}
-  {% endif -%}
-  <fieldset class="inline-form-table {{ inline.form_cls.form_name }}">
-    {%- if inline.legend %}
-      <legend title="{{ inline.name|capitalize }}">{{ GTW._T (inline.legend)|safe }}</legend>
-    {% endif -%}
-    {{- X.input.hidden
-        ( class = " many-2-many-range"
-        , value = "%s:%s:%s"|format
-            (inline.min_required, inline.form_count, inline.max_count)
-        , name  = inline.range_field_name
-        , id    = "F_%s"|format (inline.range_field_name)
+{%- macro form_pure
+        ( method        = "post"
+        , include_ACT   = True
+        , next          = None
+        , aligned       = False
+        , stacked       = False
         )
-    -}}
-  <table class="field_group-Horizontal">
-    <thead>{{- form_tr (fform, "fg_tr_head")-}}</thead>
-    <tbody>
-      {{- form_tr
-            (proto, "fg_tr_body", class = "inline-instance inline-prototype")
-      -}}
-      {%- for iform in inline.forms %}
-        {{- form_tr ( iform, "fg_tr_body", class = "inline-instance") -}}
-      {% endfor -%}
-    </tbody>
-  </table>
-  </fieldset>
-{%- endmacro -%} {#- inlines_as_table -#}
-
-{%- macro display_errors (errors, field_name) -%}
-      {%- for err in errors.get (field_name, ()) %}
-        <li class="Error-Message">
-          {{ err }}
-        </li>
-      {% endfor -%}
-{%- endmacro -%} {#- display_errors -#}
-
-{%- macro login_inline (page, request, un_tag = "Username", pw_tag = "Password", allow_register = False, link_only = False) -%}
-  {%- set Auth     = page.SC.Auth -%}
-  {%- set cc_href  = page.cc_href %}
-  {%- set l_caller = kwargs.pop ("caller",   None) -%}
-  {%- set action   = kwargs.pop ("action",   Auth.href_login) -%}
-  {%- set next     = kwargs.pop ("next",     request.path_x or request.path) -%}
-  {%- set errors   = kwargs.pop ("errors",   {}) -%}
-  {%- set username = kwargs.pop ("username", None) -%}
-  {%- set allow_new_pass   = kwargs.pop ("allow_new_password", True) -%}
-  {%- set really_link_only =
-        link_only or not (page.TEST or request.is_secure)
+-%}
+  {%- set form_caller = kwargs.pop ("caller", None) -%}
+  {%- set class =  GTW.filtered_join
+      ( " "
+      , ( "pure-form"
+        , "pure-form-aligned" if aligned else ""
+        , "pure-form-stacked" if stacked else ""
+        , kwargs.pop ("class", "")
+        )
+      )
   %}
-  {%- if (not next) or next.split ("?") [0].endswith (Auth.href_login) -%}
-    {%- set next = page.top.abs_href -%}
-  {%- endif -%}
   {% call form
-      (action = action, include_ACT = not really_link_only, ** kwargs)
-  -%}
-    {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
-    <ul>
-      {{- display_errors (errors, None) -}}
-      {%- if cc_href %}
-        <li title="{{ GTW._T ("Login with a previously created client certificate") }}">
-          <a href="{{ cc_href }}" class="button">
-            {{- GTW._T ("Certificate login") -}}
-          </a>
-        </li>
-      {% endif -%}
-      {%- if really_link_only %}
-        <li title="{{- GTW._T ("Log into %s") % page.s_domain -}}">
-          <a href="{{ page.login_url }}" class="button internal">
-            {{- GTW._T ("Login") -}}
-          </a>
-        </li>
-      {%- else %}
-        <li><label for="F_username">{{ GTW._T (un_tag) }}</label></li>
-        <li>
-          {{ X.input.email
-              ( id            = "F_username"
-              , name          = "username"
-              , maxlength     = "80"
-              , value         = username
-              )
-          }}
-        </li>
-        {{- display_errors (errors, "username") -}}
-        <li><label for="F_password">{{ GTW._T (pw_tag) }}</label></li>
-        <li>
-          {{ X.input.password
-              ( id            = "F_password"
-              , name          = "password"
-              )
-          }}
-        </li>
-        {{- display_errors (errors, "password") -}}
-        <li>
-          {{ X.input.submit
-              ( title = GTW._T ("Log into website or go to account page")
-              , value = GTW._T ("Login")
-              , name  = "Submit"
-              )
-          }}
-          {{ X.input.hidden (name  = "next", value = next) }}
-        </li>
-        {%- if allow_new_pass %}
-          <li>
-            {{ X.input.submit
-                ( title = GTW._T ("Get a new password for the username specified")
-                , value = GTW._T ("New password")
-                , name  = "Reset"
-                )
-            }}
-          </li>
-        {% endif -%}
-        {%- if allow_register %}
-          <li class="nav-link">
-            <a href="{{ Auth.href_register }}" class="button"
-              title="{{ GTW._T ("Register a new account") }}"
-            >{{ GTW._T ("Register") }}</a>
-          </li>
-        {% endif -%}
-      {% endif -%}
-    </ul>
-  {% endcall %} {# form #}
-{%- endmacro -%} {#- login_inline -#}
-
-{%- macro logout_inline (page, request) -%}
-  {%- set Auth     = page.SC.Auth %}
-  {%- set l_caller = kwargs.pop ("caller", None) -%}
-  {%- set action   = kwargs.pop ("action", Auth.href_logout) -%}
-  {%- set next     = kwargs.pop ("next",   request.referrer) -%}
-  {%- set allow_change_email = kwargs.pop ("allow_change_email", True) %}
-  {%- set allow_register     = kwargs.pop ("allow_register", True) %}
-  {%- set cert_auth_path     = page.cert_auth_path %}
-  {%- if (not next) or next.split ("?") [0].endswith (Auth.href_logout) -%}
-    {%- set next = page.top.abs_href -%}
-  {%- endif -%}
-  {% call form (action = action, ** kwargs) -%}
-    {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
-    <ul>
-      <li>
-        {{ X.input.submit
-            ( title = (GTW._T ("Logout %s") % (request.user.name, ))
-            , value = (GTW._T ("Logout"))
-            )
-        }}
-        {{ X.input.hidden (name  = "next", value = next) }}
-      </li>
-      {%- if allow_change_email %}
-        <li>
-          <a href="{{ Auth.href_change_email (request.user) }}" class="button"
-            title="{{ GTW._T ("Change email of account %s") % request.user.name }}"
-          >{{ GTW._T ("Change email") }}</a>
-        </li>
-      {% endif -%}
-      {%- if allow_register %}
-        <li>
-          <a href="{{ Auth.href_change_pass (request.user) }}" class="button"
-            title="{{ GTW._T ("Change password of account %s") % request.user.name }}"
-          >{{ GTW._T ("Change password") }}</a>
-        </li>
-      {% endif -%}
-      {%- if cert_auth_path %}
-        <li>
-          <a href="{{ Auth.href_make_cert (request.user) }}" class="button"
-            title="{{ GTW._T ("Make a client certificate for account %s") % request.user.name }}"
-          >
-            {{- GTW._T ("Make client certificate") -}}
-          </a>
-        </li>
-      {% endif -%}
-    </ul>
-  {% endcall %} {# form #}
-{%- endmacro -%} {#- logout_inline -#}
-
-{%- macro password_change (page, request, action) -%}
-  {%- set Auth     = page.SC.Auth -%}
-  {%- set l_caller = kwargs.pop ("caller", None) -%}
-  {%- set next     = kwargs.pop ("next",   request.path_x or request.path) -%}
-  {%- set errors   = kwargs.pop ("errors", {}) -%}
-  {%- if (not next) or next.split ("?") [0].endswith (page.abs_href) %}
-    {%- set next = page.top.abs_href %}
-  {% endif -%}
-  {% call form (action = action, autocomplete = "off", ** kwargs) -%}
-    {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
-    <ul>
-      <li class="account-name">{{ account.name }}</li>
-      {{- display_errors (errors, None) -}}
-
-      <li><label for="F_current">{{ GTW._T ("Current Password") }}</label></li>
-      <li>
-        {{- X.input.password
-            ( id           = "F_current"
-            , name         = "current"
-            , autocomplete = "off"
-            )
-        -}}
-      </li>
-      {{- display_errors (errors, "password") -}}
-
-      <li><label for="F_npassword">{{ GTW._T ("New Password") }}</label></li>
-      <li>{{ X.input.password (id = "F_npassword", name = "npassword") }}</li>
-      {{- display_errors (errors, "npassword") -}}
-
-      <li><label for="F_vpassword">{{ GTW._T ("Repeat Password") }}</label></li>
-      <li>{{ X.input.password (id = "F_vpassword", name = "vpassword") }}</li>
-      {{- display_errors (errors, "vpassword") -}}
-
-      <li>
-        {{ X.input.submit
-            ( title = (GTW._T ("Update password"))
-            , value = (GTW._T ("Update password"))
-            )
-        }}
-        {{ X.input.hidden (name  = "next",     value = next        ) }}
-        {{ X.input.hidden (name  = "username", value = account.name) }}
-      </li>
-    </ul>
-  {% endcall %} {# form #}
-{%- endmacro -%} {#- password_change -#}
-
-{%- macro object (fo) -%}
-  {#- Create a form for a form-object `fo` -#}
-  {%- set object_caller = kwargs.pop ("caller", None) -%}
-  {%- set cancel_href   = kwargs.pop ("cancel_href", fo.kw.cancel_href) -%}
-  {%- set cancel_kw     = dict
-        ( href  = cancel_href
-        , title = GTW._T ("Discard all changes and leave form")
-        ) if cancel_href else {}
-  -%}
-  {%- set submit_kws    = kwargs.pop ("submit_kws", None) %}
-  {% call form
-      ( action     = fo.action
-      , class      = fo.css_class
-      , cancel_kw  = cancel_kw
-      , reset_kw   = dict
-          ( title  = GTW._T ("Discard all changes")
-          , value  = GTW._T ("Reset")
-          )
-      , submit_kws = submit_kws or
-          [ dict
-              ( title = GTW._T ("Send form data to server and leave form")
-              , value = GTW._T ("Submit")
-              )
-          ]
+      ( method        = method
+      , include_ACT   = include_ACT
+      , next          = next
+      , class         = class
       , ** kwargs
       )
   -%}
-    {{ field_groups (fo) }}
-    {%- if object_caller %}
-      {{ object_caller () }}
+    {%- if form_caller %}
+      {{ form_caller () }}
     {% endif -%}
   {% endcall %} {# form #}
-{%- endmacro -%} {#- object -#}
-
-{%- macro field_error (fo, fi) -%}
-  {%- set field, nid = fo.next_erroneous_field (fi) %}
-  {%- set fe = fo.get_errors (fi) -%}
-  {{ GTW.call_macro (fe.widget, fe, nid) }}
-{%- endmacro -%} {#- field_error -#}
-
-{%- macro field_help (fo, fi) -%}
-  {%- if fi.description -%}
-    <span class="Field-Help">{{ GTW._T (fi.description)|safe }}</span>
-  {%- endif -%}
-{%- endmacro -%} {#- field_help -#}
-
-{%- macro field_label (fo, fi) -%}
-  <label for="F_{{ fo.get_id (fi) }}">{{ GTW._T (fi.ui_name) }}</label>
-{%- endmacro -%} {#- field_label -#}
+{%- endmacro -%} {#- form_pure -#}
 
 {#- __END__ jinja template: form.jnj -#}

@@ -1,7 +1,7 @@
 {%- extends "email/email.jnj" %}
-{#- jinja template: verify_new_email.jnj -#}
+{#- jinja template: email/verify_new_email.jnj -#}
 {#
-## Copyright (C) 2010 Martin Glueck All rights reserved
+## Copyright (C) 2010-2015 Martin Glueck All rights reserved
 ## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -12,10 +12,10 @@
 ##
 ##++
 ## Name
-##    verify_new_email
+##    email/verify_new_email.jnj
 ##
 ## Purpose
-##    Email sent to the user to confirm a change of the user's email address
+##    Email sent to the user's new email address to confirm the change of email address
 ##
 ## Revision Dates
 ##    21-Feb-2010 (MG) Creation
@@ -33,4 +33,4 @@
 
 {%- endblock body -%}
 
-{#- __END__ jinja template: verify_new_email.jnj -#}
+{#- __END__ jinja template: email/verify_new_email.jnj -#}

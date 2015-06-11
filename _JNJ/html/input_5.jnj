@@ -1,6 +1,6 @@
 {#- jinja template:  html/input_5.jnj -#}
 {#
-## Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -36,6 +36,7 @@
 ##    26-Jun-2014 (CT) Change `_input` to remove empty `pattern` from `kw`
 ##    23-Oct-2014 (CT) Add `button`, `button_pure`; factor `with_opts_kw`
 ##    21-Nov-2014 (CT) Add `hd_input`
+##    11-Jun-2015 (CT) Add optional keyword argument `primary` to `button_pure`
 ##    ««revision-date»»···
 ##--
 #}
@@ -103,6 +104,7 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
       ( " "
       , ( "pure-button"
         , "pure-button-disabled" if kwargs.get ("disabled") else ""
+        , "pure-button-primary"  if kwargs.get ("primary")  else ""
         , kwargs.pop ("class", "")
         )
       )

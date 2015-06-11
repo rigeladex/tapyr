@@ -83,6 +83,8 @@
 #    21-Jan-2015 (CT) Add `ETR_table`
 #    11-Feb-2015 (CT) Factor `SRM` template declarations,
 #                     remove obsolete templates
+#    12-Jun-2015 (CT) Add `account_change_email_info`,
+#                     `account_change_password_info`
 #    ««revision-date»»···
 #--
 
@@ -548,7 +550,9 @@ error_templates = \
     ]
 
 Template ("account_change_email",         "html/change_email.jnj")
+Template ("account_change_email_info",    "email/change_email_info.jnj")
 Template ("account_change_password",      "html/change_password.jnj")
+Template ("account_change_password_info", "email/change_password_info.jnj")
 Template ("account_make_cert",            "html/make_client_cert.jnj")
 Template ("account_register",             "html/register.jnj")
 Template ("account_reset_password",       "html/reset_password.jnj")

@@ -1,0 +1,480 @@
+{#- jinja template: auth.m.jnj -#}
+{#
+## Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is licensed under the terms of the BSD 3-Clause License
+## <http://www.c-tanzer.at/license/bsd_3c.html>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/auth.m.jnj
+##
+## Purpose
+##    Template macros for rendering authentication widgets
+##
+## Revision Dates
+##    11-Jun-2015 (CT) Creation
+##    12-Jun-2015 (CT) Continue creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import "html/form.jnj" as Form with context %}
+
+{%- macro cc_login_button (page, cc_href, tag = "div", tag_class = None) -%}
+  {%- if cc_href %}
+    <{{ tag }} title="{{ GTW._T ("Login with a previously created client certificate") }}" {# -#}
+      {{ GTW.filtered_dict (class = tag_class, ** kwargs)|xmlattr}}{# -#}
+    >
+      <a class="pure-button" href="{{ cc_href }}">{# -#}
+        <i class="fa fa-certificate"></i>
+        {{ GTW._T ("Certificate login") -}}
+      </a>{# -#}
+    </{{ tag }}>
+  {% endif -%}
+{%- endmacro -%} {#- cc_login_button -#}
+
+{%- macro change_email_form (page, username) -%}
+  {%- set Auth       = page.SC.Auth -%}
+  {%- set request    = page.request -%}
+  {%- set user       = request.user %}
+  {%- set action     = kwargs.pop ("action", request.path) -%}
+  {%- set class      = kwargs.pop ("class", "Auth Email Change") %}
+  {%- set errors     = kwargs.pop ("errors", {}) -%}
+  {%- set lf_caller  = kwargs.pop ("caller", None) -%}
+  {%- set next       = kwargs.pop ("next", request.referrer) %}
+  {%- set title      = kwargs.pop ("title", None) -%}
+  {%- set un_label   = kwargs.pop ("un_label", "Current email") %}
+  {%- if (not next) or next.split ("?") [0].endswith (action.split ("?") [0]) -%}
+    {%- set next     = page.top.abs_href -%}
+  {%- endif -%}
+  {% call Form.form_pure
+      ( action           = action
+      , aligned          = True
+      , class            = class
+      , include_ACT      = True
+      , method           = "post"
+      , next             = next
+      , ** kwargs
+      )
+  -%}
+    {%- if lf_caller -%}{{- lf_caller () -}}{%- endif -%}
+    <fieldset>
+      {%- if title %}
+        <legend>
+          {{ title }}
+        </legend>
+      {% endif -%}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, None) -}}
+      </div>
+      {{ email_input (page, username, un_label = un_label, readonly = True) }}
+      {{ password_input (page) }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, "password") -}}
+      </div>
+      {{ email_input
+          ( page
+          , field_name   = "nemail"
+          , un_label     = "New email"
+          , title        = "New email for your account"
+          )
+      }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, "nemail") -}}
+      </div>
+      {{ email_input
+          ( page
+          , field_name   = "vemail"
+          , un_label     = "Repeat email"
+          , title        = "Repeat new email for your account"
+          )
+      }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, "nemail") -}}
+      </div>
+      <div class="pure-controls">
+        {{- X.input.button_pure
+            ( icon_name    = "check"
+            , name         = "submit"
+            , primary      = True
+            , text         = GTW._T ("Update email")
+            , title        = GTW._T ("Submit new email")
+            , type         = "submit"
+            )
+        -}}
+      </div>
+    </fieldset>
+  {% endcall %} {# Form.form_pure #}
+{%- endmacro -%} {#- change_email_form -#}
+
+{%- macro change_email_link (page, tag = "li") -%}
+  {%- set Auth = page.SC.Auth -%}
+  {%- set user = page.request.user %}
+  <{{ tag }} title="{{- GTW._T ("Change email of account %s") % user.name -}}">
+      <a href="{{ Auth.href_change_email (user) }}" class="button">
+        {{- GTW._T ("Change email") -}}
+      </a>
+  </{{ tag }}>
+{%- endmacro -%} {#- change_email_link -#}
+
+{%- macro change_password_form (page, username = None) -%}
+  {%- set Auth       = page.SC.Auth -%}
+  {%- set request    = page.request -%}
+  {%- set user       = request.user %}
+  {%- set action     = kwargs.pop ("action", request.path) -%}
+  {%- set class      = kwargs.pop ("class", "Auth Password Change") %}
+  {%- set errors     = kwargs.pop ("errors", {}) -%}
+  {%- set lf_caller  = kwargs.pop ("caller", None) -%}
+  {%- set next       = kwargs.pop ("next", request.referrer) %}
+  {%- set pw_label   = kwargs.pop ("pw_label", "Current password") %}
+  {%- set title      = kwargs.pop ("title", None) -%}
+  {%- set email      = username or (account and account.name) %}
+  {%- if (not next) or next.split ("?") [0].endswith (action.split ("?") [0]) -%}
+    {%- set next     = page.top.abs_href -%}
+  {%- endif -%}
+  {% call Form.form_pure
+      ( action           = action
+      , aligned          = True
+      , autocomplete     = "off"
+      , class            = class
+      , include_ACT      = True
+      , method           = "post"
+      , next             = next
+      , ** kwargs
+      )
+  -%}
+    {%- if lf_caller -%}{{- lf_caller () -}}{%- endif -%}
+    <fieldset>
+      {%- if title %}
+        <legend>
+          {{- title -}}
+        </legend>
+      {% endif -%}
+      {{ email_input (page, email, readonly = True) }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, None) -}}
+      </div>
+      {{ password_input
+          ( page
+          , autocomplete = "off"
+          , field_name   = "current"
+          , pw_label     = pw_label
+          , required     = True
+          )
+      }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, "password") -}}
+      </div>
+      {{ password_input
+          ( page
+          , autocomplete = "off"
+          , field_name   = "npassword"
+          , pw_label     = "New password"
+          , required     = True
+          , title        = "New password for your account"
+          )
+      }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, "npassword") -}}
+      </div>
+      {{ password_input
+          ( page
+          , autocomplete = "off"
+          , field_name   = "vpassword"
+          , pw_label     = "Repeat password"
+          , required     = True
+          , title        = "Repeat new password for your account"
+          )
+      }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, "vpassword") -}}
+      </div>
+      <div class="pure-controls">
+        {{- X.input.button_pure
+            ( icon_name    = "check"
+            , name         = "submit"
+            , primary      = True
+            , text         = GTW._T ("Update password")
+            , title        = GTW._T ("Submit new password")
+            , type         = "submit"
+            )
+        -}}
+      </div>
+    </fieldset>
+  {% endcall %} {# Form.form_pure #}
+{%- endmacro -%} {#- change_password_form -#}
+
+{%- macro change_password_link (page, tag = "li") -%}
+  {%- set Auth = page.SC.Auth -%}
+  {%- set user = page.request.user %}
+  <{{ tag }} title="{{- GTW._T ("Change password of account %s") % user.name -}}">
+      <a href="{{ Auth.href_change_pass (user) }}" class="button">
+        {{- GTW._T ("Change password") -}}
+      </a>
+  </{{ tag }}>
+{%- endmacro -%} {#- change_password_link -#}
+
+{%- macro display_errors (errors, field_name) -%}
+  {%- if errors %}
+    {%- for err in errors.get (field_name, ()) %}
+      <p class="Error-Message">
+        {{- err -}}
+      </p>
+    {% endfor -%}
+  {% endif -%}
+{%- endmacro -%} {#- display_errors -#}
+
+{%- macro email_input (page, username = None, field_name = "username", un_label = "Email") -%}
+  {%- set id    = "F_" + field_name %}
+  {%- set title = kwargs.pop ("title", "Email address of your account") %}
+  <div class="pure-control-group" title="{{ GTW._T (title) }}">
+    <label for="{{ id }}">{{ GTW._T (un_label) }}</label>
+    {{ X.input.email
+        ( id            = id
+        , name          = field_name
+        , maxlength     = "80"
+        , required      = True
+        , value         = username
+        , ** kwargs
+        )
+    }}
+  </div>
+{%- endmacro -%} {#- email_input -#}
+
+{%- macro login_form
+        ( page
+        , un_label       = "Email"
+        , pw_label       = "Password"
+        , allow_register = False
+        )
+-%}
+  {%- set Auth           = page.SC.Auth -%}
+  {%- set request        = page.request -%}
+  {%- set action         = kwargs.pop ("action", Auth.href_login) -%}
+  {%- set aligned        = kwargs.pop ("aligned", True) -%}
+  {%- set allow_new_pass = kwargs.pop ("allow_new_password", True) -%}
+  {%- set class          = kwargs.pop ("class", "Auth Login") %}
+  {%- set errors         = kwargs.pop ("errors", errors) %}
+  {%- set lf_caller      = kwargs.pop ("caller", None) -%}
+  {%- set next           = kwargs.pop ("next", request.path_x or request.path) %}
+  {%- set title          = kwargs.pop ("title", login_title (page)) -%}
+  {%- set username       = kwargs.pop ("username", None) -%}
+  {%- if (not next) or next.split ("?") [0].endswith (Auth.href_login) -%}
+    {%- set next         = page.top.abs_href -%}
+  {%- endif -%}
+  {% call Form.form_pure
+      ( action           = action
+      , aligned          = aligned
+      , class            = class
+      , include_ACT      = True
+      , method           = "post"
+      , next             = next
+      , ** kwargs
+      )
+  -%}
+    {%- if lf_caller -%}{{- lf_caller () -}}{%- endif -%}
+    <fieldset>
+      {%- if title %}
+        <legend>
+          {{ title }}
+        </legend>
+      {% endif -%}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, None) -}}
+      </div>
+      {{ cc_login_button (page, page.cc_href, tag_class = "pure-controls") }}
+      {{ email_input (page, username, un_label = un_label) }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, "username") -}}
+      </div>
+      {{ password_input (page, pw_label = pw_label) }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, "password") -}}
+      </div>
+      <div class="pure-controls">
+        {{- X.input.button_pure
+            ( icon_name    = "sign-in"
+            , name         = "submit"
+            , primary      = True
+            , text         = GTW._T ("Login")
+            , title        = GTW._T ("Log into website")
+            , type         = "submit"
+            )
+        -}}
+      </div>
+      {%- if allow_new_pass %}
+        <div class="pure-controls">
+          {{- X.input.button_pure
+              ( icon_name    = "frown-o"
+              , name         = "Reset"
+              , tabindex     = -1
+              , text         = GTW._T ("I forgot my password")
+              , title        = GTW._T
+                ("I forgot my password; send me a temporary one to my email address")
+              , type         = "submit"
+              , value        = "reset"
+              )
+          -}}
+        </div>
+      {% endif -%}
+      {%- if allow_register %}
+        <div class="pure-controls">
+          <a class="pure-button" href="{{ Auth.href_register }}" {# -#}
+            title="{{ GTW._T ("Register a new account") }}"{# -#}
+          >{# -#}
+            <i class="fa fa-pencil"></i>{# -#}
+            {{ GTW._T ("Register") -}}
+          </a>{# -#}
+        </div>
+      {% endif -%}
+    </fieldset>
+  {% endcall %} {# Form.form_pure #}
+{%- endmacro -%} {#- login_form -#}
+
+{%- macro login_link (page, tag = "li") -%}
+  {%- set Auth = page.SC.Auth -%}
+  {%- set host = page.s_domain or page.request.host %}
+  {{ cc_login_button (page, page.cc_href, tag = tag) }}
+  <{{ tag }} title="{{- GTW._T ("Log into %s") % host -}}">
+    <a href="{{ Auth.href_login }}" class="button internal">
+      <i class="fa fa-sign-in"></i>
+      <b>{{- GTW._T ("Login") -}}</b>
+    </a>
+  </{{ tag }}>
+{%- endmacro -%} {#- login_link -#}
+
+{%- macro login_title (page) -%}
+  {{- GTW._T ("Login for %s" % page.request.host) -}}
+{%- endmacro -%} {#- login_title -#}
+
+{%- macro logout_button (page) -%}
+  {%- set next       = logout_next (page) -%}
+  {{- X.input.button_pure
+      ( class        = "Logout"
+      , icon_name    = "sign-out"
+      , name         = "submit"
+      , text         = GTW._T ("Logout")
+      , title        = logout_title (page)
+      , type         = "submit"
+      )
+  }}
+  {{ X.input.hidden (name  = "next", value = next) }}
+{%- endmacro -%} {#- logout_button -#}
+
+{%- macro logout_form (page) -%}
+  {%- set class      = kwargs.pop ("class", "Auth Logout") %}
+  {%- set lf_caller  = kwargs.pop ("caller", None) -%}
+  {% call Form.form_pure
+      ( action       = page.SC.Auth.href_logout
+      , class        = class
+      , include_ACT  = False
+      , method       = "post"
+      , ** kwargs
+      )
+  -%}
+    {%- if lf_caller -%}
+      {{- lf_caller () -}}
+    {%- else -%}
+      {{- logout_button (page) -}}
+    {%- endif -%}
+  {% endcall %} {# Form.form_pure #}
+{%- endmacro -%} {#- logout_form -#}
+
+{%- macro logout_next (page) -%}
+  {%- set Auth       = page.SC.Auth -%}
+  {%- set next_page  = page if not page.auth_required else page.top -%}
+  {%- set next       = kwargs.pop ("next", None) or
+        (next_page.abs_href if not next_page.auth_required else Auth.href_login)
+  -%}
+  {%- if (not next) or next.split ("?") [0].endswith (Auth.href_logout) -%}
+    {%- set next = page.top.abs_href -%}
+  {%- endif -%}
+  {{- next -}}
+{%- endmacro -%} {#- logout_next -#}
+
+{%- macro logout_title (page) -%}
+  {{- GTW._T ("Logout %s") % (page.user.FO, ) -}}
+{%- endmacro -%} {#- logout_title -#}
+
+{%- macro make_client_certifiate_link (page, tag = "li") -%}
+  {%- set Auth = page.SC.Auth -%}
+  {%- set user = page.request.user %}
+  <{{ tag }} title="{{- GTW._T ("Make a client certificate for account %s") % user.name -}}">
+      <a href="{{ Auth.href_make_cert (user) }}" class="button">
+        {{- GTW._T ("Make client certificate") -}}
+      </a>
+  </{{ tag }}>
+{%- endmacro -%} {#- make_client_certifiate_link -#}
+
+{%- macro password_input (page, field_name = "password", pw_label = "Password") -%}
+  {%- set id    = "F_" + field_name %}
+  {%- set title = kwargs.pop ("title", "Password of your account") %}
+  <div class="pure-control-group" title="{{ GTW._T (title) }}">
+    <label for="{{ id }}">{{ GTW._T (pw_label) }}</label>
+    {{ X.input.password
+        ( id            = id
+        , name          = field_name
+        , ** kwargs
+        )
+    }}
+  </div>
+{%- endmacro -%} {#- password_input -#}
+
+{%- macro reset_password_form (page, username = None) -%}
+  {%- set Auth       = page.SC.Auth -%}
+  {%- set request    = page.request -%}
+  {%- set user       = request.user %}
+  {%- set action     = kwargs.pop ("action", request.path) -%}
+  {%- set class      = kwargs.pop ("class", "Auth Password Reset") %}
+  {%- set errors     = kwargs.pop ("errors", {}) -%}
+  {%- set lf_caller  = kwargs.pop ("caller", None) -%}
+  {%- set next       = kwargs.pop ("next", request.referrer) %}
+  {%- set title      = kwargs.pop ("title", None) -%}
+  {%- set email      = username or (account and account.name) %}
+  {%- if (not next) or next.split ("?") [0].endswith (action.split ("?") [0]) -%}
+    {%- set next     = page.top.abs_href -%}
+  {%- endif -%}
+  {% call Form.form_pure
+      ( action           = action
+      , aligned          = True
+      , autocomplete     = "off"
+      , class            = class
+      , include_ACT      = True
+      , method           = "post"
+      , next             = next
+      , ** kwargs
+      )
+  -%}
+    {%- if lf_caller -%}{{- lf_caller () -}}{%- endif -%}
+    <fieldset>
+      {%- if title %}
+        <legend>
+          {{- title -}}
+        </legend>
+      {% endif -%}
+      {{ email_input (page, email, readonly = GTW.bool (email)) }}
+      <div class="Errors pure-controls">
+        {{- display_errors (errors, None) -}}
+      </div>
+      <div class="pure-controls">
+        {{- X.input.button_pure
+            ( icon_name    = "frown-o"
+            , name         = "Reset"
+            , text         = GTW._T ("I forgot my password")
+            , title        = GTW._T
+              ("I forgot my password; send me a temporary one to my email address")
+            , type         = "submit"
+            , value        = "reset"
+            )
+        -}}
+      </div>
+    </fieldset>
+  {% endcall %} {# Form.form_pure #}
+{%- endmacro -%} {#- reset_password_form -#}
+
+{#- __END__ jinja template: html/auth.m.jnj -#}

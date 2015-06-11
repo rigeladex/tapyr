@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: login.jnj -#}
 {#
-## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -25,27 +25,26 @@
 ##     9-Oct-2012 (CT) Pass `class` and `username` to `Form.login_inline`
 ##    14-Sep-2013 (MG) Fix import of `form.jnj` (missing `with context`)
 ##     4-Dec-2013 (CT) Add class `Auth` to `form`
+##    11-Jun-2015 (CT) Switch to `AT.login_form`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
-{%- import "STD::html/form.jnj" as Form with context %}
+{%- import "html/auth.m.jnj"              as AT with context %}
 
-{%- set title = GTW._T ("Login for") + " " + request.host %}
+{%- set title = AT.login_title (page) %}
 
 {%- block title -%}
   <title>{{ title }}</title>
 {%- endblock -%}
 
 {%- block document -%}
-  <h1>{{ title }}</h1>
-
-  {{ Form.login_inline
-      ( page, request
-      , class    = "Auth Login"
+  {{ AT.login_form
+      ( page
       , next     = next
       , errors   = errors
+      , title    = title
       , username = username
       )
   }}

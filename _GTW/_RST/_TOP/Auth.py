@@ -58,6 +58,9 @@
 #    11-Jun-2015 (CT) Add `description` guard to `_Activate_.GET._response_body`
 #    11-Jun-2015 (CT) Add `field_name_password = current` to
 #                     `_Activate_.POST._response_body`
+#    12-Jun-2015 (CT) Add argument `account` to `_send_notification`
+#    12-Jun-2015 (CT) Add `new_email_template` to
+#                     `_Change_Email_.POST._response_body`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +86,7 @@ from   _TFL.pyk                 import pyk
 from   posixpath                import join  as pp_join
 
 import datetime
+import logging
 import time
 
 urlparse = pyk.urlparse
@@ -164,7 +168,7 @@ class _Action_ (_Ancestor) :
 
     class _Action__GET_ (_Ancestor.GET) :
 
-        ### actions are handle by GET because the links are sent to the user
+        ### actions are handled by GET because the links are sent to the user
         ### as email's and they should only click these links !
 
         _real_name             = "GET"
@@ -183,7 +187,9 @@ class _Action_ (_Ancestor) :
                     next        = action.handle (resource)
                     if description :
                         response.add_notification \
-                            (GTW.Notification (_T (description)))
+                            ( GTW.Notification
+                                (" ".join (( _T (description), account.name)))
+                            )
                     raise HTTP_Status.See_Other (next)
                 except GTW.OMP.Auth.Action_Expired :
                     action.destroy      ()
@@ -216,9 +222,13 @@ class _Activate_ (_Ancestor) :
         return True
     # end def _check_account
 
-    def _send_notification (self, response) :
+    def _send_notification (self, response, account) :
         response.add_notification \
-            (GTW.Notification (_T ("Activation successful.")))
+            ( GTW.Notification
+                ( _T ("Activation of account %s successful.")
+                % (account.name, )
+                )
+            )
     # end def _send_notification
 
     class _Activate__GET_ (_Ancestor.GET) :
@@ -238,10 +248,13 @@ class _Activate_ (_Ancestor) :
                 account = getattr (response, "account", None)
                 if not account :
                     raise HTTP_Status.Not_Found ()
-                result ["account"] = account
             else :
                 if not resource._check_account (account, None) :
                     raise HTTP_Status.Forbidden ()
+            result.update \
+                ( account  = account
+                , username = account.name
+                )
             return result
         # end def _render_context
 
@@ -277,7 +290,7 @@ class _Activate_ (_Ancestor) :
                 response.username = account.name
                 account.change_password     (new_password, suspended = False)
                 top.scope.commit            ()
-                resource._send_notification (response)
+                resource._send_notification (response, account)
                 raise HTTP_Status.See_Other (next)
         # end def _response_body
 
@@ -316,31 +329,38 @@ class _Change_Email_ (_Ancestor) :
         # end def get_email
 
         def _response_body (self, resource, request, response) :
-            debug       = getattr (resource.top, "DEBUG", False)
-            req_data    = request.req_data
-            top         = resource.top
-            HTTP_Status = top.Status
-            self.errors = Errors ()
-            self._credentials_validation (resource, request, debug = debug)
-            new_email   = self.get_email (request)
+            debug         = getattr (resource.top, "DEBUG", False)
+            req_data      = request.req_data
+            top           = resource.top
+            HTTP_Status   = top.Status
+            self.errors   = Errors ()
+            old_email, _  = self._credentials_validation \
+                (resource, request, debug = debug)
+            new_email     = self.get_email (request)
             if not self.errors :
-                account = self.account
-                next    = req_data.get ("next", "/")
-                host    = request.host
-                token   = account.change_email_prepare (new_email)
-                link    = resource.parent.href_action  (account, token, request)
+                account   = self.account
+                next      = req_data.get ("next", "/")
+                host      = request.host
+                token     = account.change_email_prepare (new_email)
+                link      = resource.parent.href_action  \
+                    (account, token, request)
                 top.scope.commit ()
+                subject   = \
+                    (_T ( "Confirmation for change of email "
+                          "for account %s to %s for website %s"
+                        )
+                    % (old_email, new_email, host)
+                    )
                 try :
                     resource.send_email \
                         ( resource.new_email_template
-                        , email_to      = new_email
-                        , email_subject =
-                            _T ("Email confirmation for %s") % (host, )
-                        , email_from    = resource.email_from
-                        , link          = link
                         , NAV           = top
-                        , page          = resource
+                        , email_from    = resource.email_from
+                        , email_subject = subject
+                        , email_to      = new_email
                         , host          = host
+                        , link          = link
+                        , page          = resource
                         )
                 except Exception as exc :
                     self.errors [None].append (str (exc))
@@ -350,9 +370,24 @@ class _Change_Email_ (_Ancestor) :
                             (_T ( "A confirmation email has been sent to "
                                   "the new email address."
                                 )
+                            + " " + new_email
                             )
                         )
-                    ### XXX Send info email to old email
+                    try :
+                        resource.send_email \
+                            ( resource.old_email_template
+                            , NAV           = top
+                            , email_from    = resource.email_from
+                            , email_subject = subject
+                            , email_to      = old_email
+                            , host          = host
+                            , new_email     = new_email
+                            , old_email     = old_email
+                            , page          = resource
+                            , request       = request
+                            )
+                    except Exception as exc :
+                        logging.exception ("Exception during Change-Email")
                     raise HTTP_Status.See_Other (next)
             response.errors  = self.errors
             response.account = self.account
@@ -370,6 +405,7 @@ _Ancestor = _Activate_
 class _Change_Password_ (_Ancestor) :
 
     active_account_required = True
+    new_password_template   = "account_change_password_info"
     _action_kind            = _ ("Change")
     _auth_required          = True
 
@@ -382,9 +418,25 @@ class _Change_Password_ (_Ancestor) :
         return True
     # end def _check_account
 
-    def _send_notification (self, response) :
+    def _send_notification (self, response, account) :
         response.add_notification \
             (GTW.Notification (_T ("The password has been changed.")))
+        try :
+            request = response._request
+            self.send_email \
+                ( self.new_password_template
+                , NAV           = self.top
+                , account_name  = account.name
+                , email_from    = self.email_from
+                , email_subject = _T \
+                    ("Password change for account %s" % (account.name, ))
+                , email_to      = account.name
+                , host          = request.host
+                , page          = self
+                , request       = request
+                )
+        except Exception as exc :
+            logging.exception ("Exception during Change-Password")
     # end def _send_notification
 
 # end class _Change_Password_

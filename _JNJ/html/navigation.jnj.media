@@ -27,12 +27,14 @@
 #    ««revision-date»»···
 #--
 
+from   __future__ import division
+
 style_sheet = Style_Sheet \
     ( Rule
         ( ".pg_nav"
         , children =
             [ Rule
-                ( "input"
+                ( "input", "button"
                 , background_color = P.nav_col.background_color
                 , border           = P.border_simple
                 , display          = "block"
@@ -40,24 +42,19 @@ style_sheet = Style_Sheet \
                 , children         =
                     [ Rule_Attr
                         ( "[type=submit]", "[type=reset]"
-                        , width    = P.nav_col.width * 0.975
-                        , children =
+                        , border_radius    = Px (10)
+                        , width            = P.nav_col.width * 0.975
+                        , children         =
                             [ P.Rule.hover
-                            , Rule_Class
-                                ( "reset-passwd"
-                                , Border
-                                    ( color        = "#1798DD"
-                                    , radius       = Em (1)
-                                    , style        = "solid"
-                                    , width        = Px (1)
-                                    )
-                                , background_color = "#1798DD"
-                                , color            = "white"
-                                , display          = "inline"
-                                , font_weight      = "bold"
-                                , margin           = TRBL0 (l = Em (0.2))
-                                , padding          = TRBL0 ()
-                                , width            = Em    (2.0)
+                            , Rule
+                                ( "b"
+                                , font_weight      = "normal"
+                                )
+                            , Rule
+                                ( "i.fa"
+                                , float            = "left"
+                                , margin           =
+                                    TRBL0 (l = Em (1/2), t = Em (3/16))
                                 )
                             ]
                         , ** P.nav_col.button_spec
@@ -276,6 +273,15 @@ style_sheet = Style_Sheet \
                 , padding  = P.input_padding
                 , children =
                     [ P.Rule.hover
+                    , Rule
+                        ( "b"
+                        , font_weight      = "normal"
+                        )
+                    , Rule
+                        ( "i.fa"
+                        , float            = "left"
+                        , margin           = TRBL0 (l = Em (1/2), t = Em (3/16))
+                        )
                     ]
                 , ** P.nav_col.button_spec
                 )

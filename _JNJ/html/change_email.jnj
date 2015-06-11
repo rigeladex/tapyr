@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: change_email.jnj -#}
 {#
-## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -21,58 +21,29 @@
 ##    27-Jan-2010 (CT) Creation
 ##    16-Aug-2012 (MG) Adapt to formless new GTW.RST.TOP.Auth
 ##     4-Dec-2013 (CT) Add class `Auth` to `form`, fix class of `account.name`
+##    12-Jun-2015 (CT) Use `AT.change_email_form`, not home-grown code
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
-{%- import "STD::html/form.jnj" as Form with context %}
+{%- import "html/auth.m.jnj"              as AT with context %}
 
-{%- set title = GTW._T ("Change email for") + " " + account.name %}
+{%- set title = GTW._T ("Change email for %s") % (account.name, ) %}
 
 {%- block title -%}
-  <title>{{ title|safe }}</title>
+  <title>{{ title }}</title>
 {%- endblock -%}
 
 {%- block document -%}
-  <h1>{{ title|safe }}</h1>
-
-  {%- set Auth     = page.SC.Auth -%}
-  {% call Form.form
-       ( action = Auth.href_change_email (account)
-       , class  = "Auth Email-Change"
-       )
-  -%}
-    <ul>
-      <li class="account-name">{{ account.name }}</li>
-      {{- Form.display_errors (errors, None) -}}
-
-      <li>
-        <label for="F_password">{{- GTW._T ("Current Password") }}</label>
-      </li>
-      <li>{{ X.input.password (id = "F_password", name = "password") }}</li>
-      {{- Form.display_errors (errors, "password") -}}
-
-      <li><label for="F_nemail">{{ GTW._T ("New Email") }}</label></li>
-      <li>{{ X.input.email (id = "F_nemail", name = "nemail") }}</li>
-      {{- Form.display_errors (errors, "nemail") -}}
-
-      <li><label for="F_vemail">{{ GTW._T ("Repeat Email") }}</label></li>
-      <li>{{ X.input.password (id = "F_vemail", name = "vemail") }}</li>
-      {{- Form.display_errors (errors, "vemail") -}}
-
-      <li>
-        {{ X.input.submit
-            ( title = (GTW._T ("Update Email"))
-            , value = (GTW._T ("Update Email"))
-            )
-        }}
-        {{ X.input.hidden (name  = "next",     value = next        ) }}
-        {{ X.input.hidden (name  = "username", value = account.name) }}
-      </li>
-    </ul>
-  {% endcall %} {# form #}
-
+  {{ AT.change_email_form
+      ( page
+      , next     = next
+      , errors   = errors
+      , title    = title
+      , username = account.name
+      )
+  }}
 {%- endblock document -%}
 
 {#- __END__ jinja template: change_email.jnj -#}

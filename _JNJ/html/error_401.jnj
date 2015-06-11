@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: 401.jnj -#}
 {#
-## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -26,28 +26,23 @@
 ##--
 #}
 
-{%- from "html/form.jnj" import login_inline with context -%}
+{%- import (html_version or "html/5.jnj") as X -%}
+{%- import "html/auth.m.jnj"              as Auth with context %}
 
 {%- block title %}<title>{{ GTW._T ("Login required") }}</title>{% endblock -%}
 
 {%- block document %}
   {% if request.Error %}
-    <p class="Error-Message">
-      {{ GTW._T (request.Error) }}
-    </p>
+    {%- set err_msg = GTW._T (request.Error) %}
   {% else %}
-    <h1 class="Error-Message">
-      {{ GTW._T ("You need to be logged in to access the page %s")
+    {%- set err_msg =
+        ( GTW._T ("You need to be logged in to access the page %s")
         % (request.path, )
-      }}
-    </h1>
+        )
+    -%}
   {% endif %}
-  {{ login_inline
-      ( page, request
-      , allow_new_password = False
-      , class              = "Auth Login"
-      )
-  }}
+  {%- set errors = { None : [err_msg]} %}
+  {{ Auth.login_form (page, errors = errors) }}
 {% endblock document -%}
 
 {#- __END__ jinja template: 401.jnj -#}

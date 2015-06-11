@@ -52,6 +52,8 @@
 ##    16-Apr-2015 (CT) Add `rel` attribute to `rel_next`, `rel_prev`
 ##                     + Add `kwargs` to `rel_link`
 ##    22-Apr-2015 (CT) Change `sitemap` macros to use `GTW.RST.TOP.Sitemap`
+##    11-Jun-2015 (CT) Use `Auth.login_link`, not `Form.login_inline`
+##    12-Jun-2015 (CT) Use `logged_in_form`, not `Form.logout_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -185,20 +187,42 @@
   {% endif -%}
 {%- endmacro -%} {#- language_section -#}
 
+{%- macro logged_in_form (page, AT) -%}
+  {%- set allow_change_email = kwargs.pop ("allow_change_email",    True) %}
+  {%- set allow_change_passw = kwargs.pop ("allow_change_password", True) %}
+  {%- set cert_auth_path     = page.cert_auth_path %}
+  {% call AT.logout_form (page, class = None, ** kwargs) -%}
+    <ul>
+      <li>
+        {{- AT.logout_button (page) -}}
+      </li>
+      {%- if allow_change_email %}
+        {{ AT.change_email_link (page) }}
+      {% endif -%}
+      {%- if allow_change_passw %}
+        {{ AT.change_password_link (page) }}
+      {% endif -%}
+      {%- if cert_auth_path %}
+        {{ AT.make_client_certifiate_link (page) }}
+      {% endif -%}
+    </ul>
+  {% endcall %} {# form #}
+{%- endmacro -%} {#- logged_in_form -#}
+
 {%- macro login_section (page, request, allow_register = False) -%}
   {% call X.section (class="login") -%}
-      {%- import "STD::html/form.jnj" as Form with context %}
-      {%- if request.user.authenticated %}
-        <h1 title="{{ GTW._T ("Logged in as %s") % (request.user.name, ) }}">
-          {{- GTW._T ("Logged in") -}}
-        </h1>
-        {{ Form.logout_inline (page, request) }}
-      {%- else -%}
-        <h1>
-          {{- GTW._T ("Login") -}}
-        </h1>
-        {{ Form.login_inline (page, request, allow_register = allow_register, link_only = True) }}
-      {% endif -%}
+    {%- import "html/auth.m.jnj"    as AT   with context %}
+    {%- if request.user.authenticated %}
+      <h1 title="{{ GTW._T ("Logged in as %s") % (request.user.name, ) }}">
+        {{- GTW._T ("Logged in") -}}
+      </h1>
+      {{ logged_in_form (page, AT) }}
+    {%- else -%}
+      <h1>
+        {{- GTW._T ("Login") -}}
+      </h1>
+      {{ AT.login_link (page) }}
+    {% endif -%}
   {% endcall %} {#  #}
 {%- endmacro -%} {#- login_section -#}
 
