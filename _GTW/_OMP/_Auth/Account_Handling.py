@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -32,6 +32,7 @@
 #    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
 #    10-May-2013 (CT) Add `_Account_Action_.show_in_ui_T = False`
 #    13-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
+#    11-Jun-2015 (CT) Move `description.default` to `Account_EMail_Verification`
 #    ««revision-date»»···
 #--
 
@@ -165,7 +166,6 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
         class description (A_String) :
 
             kind               = Attr.Const
-            default            = "Email verification successful."
             max_length         = 100
 
         # end class description
@@ -194,6 +194,12 @@ class Account_EMail_Verification (_Ancestor_Essence) :
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
+
+        class description (_Ancestor.description) :
+
+            default            = "Email verification successful."
+
+        # end class description
 
         class new_email (A_Email) :
             """The new email address for the linked account."""

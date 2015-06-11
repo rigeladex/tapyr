@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -55,6 +55,9 @@
 #     3-Sep-2014 (CT) Add message to `Forbidden` of `_skip_render`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    12-Dec-2014 (CT) Factor `HTTP_POST_CRSF_Mixin`
+#    11-Jun-2015 (CT) Add `description` guard to `_Activate_.GET._response_body`
+#    11-Jun-2015 (CT) Add `field_name_password = current` to
+#                     `_Activate_.POST._response_body`
 #    ««revision-date»»···
 #--
 
@@ -178,8 +181,9 @@ class _Action_ (_Ancestor) :
                 try :
                     description = action.description
                     next        = action.handle (resource)
-                    response.add_notification \
-                        (GTW.Notification (_T (description)))
+                    if description :
+                        response.add_notification \
+                            (GTW.Notification (_T (description)))
                     raise HTTP_Status.See_Other (next)
                 except GTW.OMP.Auth.Action_Expired :
                     action.destroy      ()
@@ -253,7 +257,11 @@ class _Activate_ (_Ancestor) :
             top          = resource.top
             HTTP_Status  = top.Status
             self.errors  = Errors ()
-            self._credentials_validation (resource, request, debug = debug)
+            self._credentials_validation \
+                ( resource, request
+                , field_name_password = "current"
+                , debug               = debug
+                )
             new_password = self.get_password \
                 (request, "npassword", verify_field = "vpassword")
             account      = self.account

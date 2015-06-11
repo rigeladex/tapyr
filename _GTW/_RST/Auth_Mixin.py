@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,7 @@
 # Revision Dates
 #     1-May-2013 (CT) Creation
 #     6-May-2013 (CT) Change error format in `_authenticate`
+#    11-Jun-2015 (CT) Improve argument names of `_credentials_validation`
 #    ««revision-date»»···
 #--
 
@@ -121,12 +122,12 @@ class Auth_Mixin (TFL.Meta.Object) :
 
         def _credentials_validation \
                 ( self, resource, request
-                , username = "username"
-                , password = "password"
-                , debug    = False
+                , field_name_username = "username"
+                , field_name_password = "password"
+                , debug               = False
                 ) :
-            username     = self.get_username (request, username)
-            password     = self.get_password (request, password)
+            username     = self.get_username (request, field_name_username)
+            password     = self.get_password (request, field_name_password)
             error_add    = lambda e : self.errors [None].append (e)
             if not username :
                 error_add (_T ("Please enter a username"))

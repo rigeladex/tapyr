@@ -86,6 +86,7 @@
 ##     7-Jun-2015 (CT) Change `maxlength` of `username` from `30` to `80`
 ##     9-Jun-2015 (CT) Add class `internal` to login button
 ##     9-Jun-2015 (CT) Remove `user.name` from `Logout` button
+##    11-Jun-2015 (CT) Try to avoid `autocomplete` for `password_change`
 ##    ««revision-date»»···
 ##--
 #}
@@ -448,14 +449,21 @@
   {%- if (not next) or next.split ("?") [0].endswith (page.abs_href) %}
     {%- set next = page.top.abs_href %}
   {% endif -%}
-  {% call form (action = action, ** kwargs) -%}
+  {% call form (action = action, autocomplete = "off", ** kwargs) -%}
     {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
     <ul>
       <li class="account-name">{{ account.name }}</li>
       {{- display_errors (errors, None) -}}
 
-      <li><label for="F_password">{{ GTW._T ("Current Password") }}</label></li>
-      <li>{{ X.input.password (id = "F_password", name = "password") }}</li>
+      <li><label for="F_current">{{ GTW._T ("Current Password") }}</label></li>
+      <li>
+        {{- X.input.password
+            ( id           = "F_current"
+            , name         = "current"
+            , autocomplete = "off"
+            )
+        -}}
+      </li>
       {{- display_errors (errors, "password") -}}
 
       <li><label for="F_npassword">{{ GTW._T ("New Password") }}</label></li>
