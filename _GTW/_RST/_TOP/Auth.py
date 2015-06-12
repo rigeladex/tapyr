@@ -61,6 +61,8 @@
 #    12-Jun-2015 (CT) Add argument `account` to `_send_notification`
 #    12-Jun-2015 (CT) Add `new_email_template` to
 #                     `_Change_Email_.POST._response_body`
+#    12-Jun-2015 (CT) Factor `_account_query`, convert `PAP.Person_has_Account`
+#                     instances to `Auth.Account` instances
 #    ««revision-date»»···
 #--
 
@@ -123,6 +125,19 @@ class _Cmd_ (_Ancestor) :
 
     GET = _Cmd__GET_ # end class
 
+    def _account_query (self, pid, response = None) :
+        scope       = self.scope
+        try :
+            result  = scope.pid_query (pid)
+        except LookupError :
+            ### if this called from a POST handler,
+            ### the account is set on the response cobject
+            result  = getattr (response, "account", None)
+        if isinstance (result, scope.PAP.Person_has_Account) :
+            result = result.account
+        return result
+    # end def _account_query
+
 # end class _Cmd_
 
 class _Form_Cmd_ (GTW.RST.Auth_Mixin, _Cmd_) :
@@ -134,11 +149,8 @@ class _Form_Cmd_ (GTW.RST.Auth_Mixin, _Cmd_) :
         _real_name             = "GET"
 
         def _render_context (self, resource, request, response, ** kw) :
-            pid         = int (request.req_data.get ("p", "-1"))
-            try :
-                account = resource.scope.pid_query (pid)
-            except LookupError :
-                account = getattr (response, "account", None)
+            pid     = int (request.req_data.get ("p", "-1"))
+            account = resource._account_query (pid, response)
             return self.__super._render_context \
                 ( resource, request, response
                 , account  = account
@@ -240,17 +252,11 @@ class _Activate_ (_Ancestor) :
                 (resource, request, response, **kw)
             HTTP_Status = resource.top.Status
             pid         = int (request.req_data.get ("p", "-1"))
-            try :
-                account = resource.scope.pid_query (pid)
-            except LookupError :
-                ### if this called from the post, the account is set on the
-                ### response cobject
-                account = getattr (response, "account", None)
-                if not account :
-                    raise HTTP_Status.Not_Found ()
-            else :
-                if not resource._check_account (account, None) :
-                    raise HTTP_Status.Forbidden ()
+            account     = resource._account_query (pid, response)
+            if account is None :
+                raise HTTP_Status.Not_Found ()
+            elif not resource._check_account (account, None) :
+                raise HTTP_Status.Forbidden ()
             result.update \
                 ( account  = account
                 , username = account.name
