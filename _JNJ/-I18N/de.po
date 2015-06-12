@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-04-08 13:11+0200\n"
+"POT-Creation-Date: 2015-06-12 19:33+0200\n"
 "PO-Revision-Date: 2012-05-23 11:37+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Add"
 msgstr "Erzeuge"
 
-#: _JNJ/html/mf3.m.jnj:333
+#: _JNJ/html/mf3.m.jnj:329
 #, python-format
 msgid "Add a %s"
 msgstr "Gib %s dazu"
@@ -81,8 +81,8 @@ msgid "Bad request"
 msgstr "Fehlerhafte Abfrage"
 
 #: _JNJ/html/e_type.m.jnj:93 _JNJ/html/e_type.m.jnj:179
-#: _JNJ/html/e_type.m.jnj:242 _JNJ/html/form.jnj:180 _JNJ/html/mf3.m.jnj:156
-#: _JNJ/html/rform.jnj:250 _JNJ/html/rform.jnj:448
+#: _JNJ/html/e_type.m.jnj:242 _JNJ/html/mf3.m.jnj:151 _JNJ/html/rform.jnj:250
+#: _JNJ/html/rform.jnj:448
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -90,28 +90,29 @@ msgstr "Abbrechen"
 msgid "Cannot be changed"
 msgstr "Kann nicht geändert werden."
 
-#: _JNJ/html/form.jnj:329
+#: _JNJ/html/auth.m.jnj:35
 msgid "Certificate login"
 msgstr "Zertifikat-Login"
 
-#: _JNJ/html/form.jnj:418
+#: _JNJ/html/auth.m.jnj:120
 msgid "Change email"
 msgstr "Ändere Email"
 
-#: _JNJ/html/change_email.jnj:31
-msgid "Change email for"
-msgstr "Ändere Email für"
+#: _JNJ/html/change_email.jnj:32
+#, python-format
+msgid "Change email for %s"
+msgstr "Ändere Email für %s"
 
-#: _JNJ/html/form.jnj:417
+#: _JNJ/html/auth.m.jnj:118
 #, python-format
 msgid "Change email of account %s"
 msgstr "Ändere Email für Benutzerkonto %s"
 
-#: _JNJ/html/form.jnj:425
+#: _JNJ/html/auth.m.jnj:217
 msgid "Change password"
 msgstr "Ändere Kennwort"
 
-#: _JNJ/html/form.jnj:424
+#: _JNJ/html/auth.m.jnj:215
 #, python-format
 msgid "Change password of account %s"
 msgstr "Ändere Kennwort für Benutzerkonto %s"
@@ -121,7 +122,7 @@ msgstr "Ändere Kennwort für Benutzerkonto %s"
 msgid "Clear"
 msgstr "Lösche"
 
-#: _JNJ/html/mf3.m.jnj:182
+#: _JNJ/html/mf3.m.jnj:177
 msgid "Clear values of all fields"
 msgstr "Lösche die Werte in allen Eingabefeldern"
 
@@ -133,6 +134,10 @@ msgstr "Verweis auf das erste fehlerhafte Eingabefeld."
 msgid "Click to jump to the next error"
 msgstr "Verweis auf das nächste fehlerhafte Eingabefeld."
 
+#: _JNJ/html/page_notifications.m.jnj:30 _JNJ/html/page_notifications.m.jnj:36
+msgid "Click to remove notifications"
+msgstr "Anklicken entfernt die Meldung"
+
 #: _JNJ/html/e_type_q.m.jnj:165
 msgid "Config"
 msgstr "Konfiguriere"
@@ -141,7 +146,7 @@ msgstr "Konfiguriere"
 msgid "Confirm new email address"
 msgstr "Bestätigung der neuen Email Adresse"
 
-#: _JNJ/html/mf3.m.jnj:357
+#: _JNJ/html/mf3.m.jnj:354
 msgid "Correct field"
 msgstr "Korrigiere Eingabefeld"
 
@@ -158,15 +163,11 @@ msgstr "Sende Anfrage für Zertifikat"
 msgid "Create certificate request for user %s"
 msgstr "Sende Anfrage für Zertifikat für Anwender %s"
 
-#: _JNJ/html/change_email.jnj:51 _JNJ/html/form.jnj:455
-msgid "Current Password"
-msgstr "Aktuelles Kennwort"
-
 #: _JNJ/html/cal/wr_body.jnj:40
 msgid "Currently selected day"
 msgstr "Gegenwärtig ausgewählter Tag"
 
-#: _JNJ/html/navigation.jnj:150
+#: _JNJ/html/navigation.jnj:170
 #, python-format
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
@@ -179,12 +180,11 @@ msgstr "Delta"
 msgid "Disable"
 msgstr "Schalte aus"
 
-#: _JNJ/html/form.jnj:495 _JNJ/html/rform.jnj:422
+#: _JNJ/html/rform.jnj:422
 msgid "Discard all changes"
 msgstr "Verwerfen aller Änderungen"
 
-#: _JNJ/html/form.jnj:179 _JNJ/html/form.jnj:486 _JNJ/html/mf3.m.jnj:153
-#: _JNJ/html/rform.jnj:249 _JNJ/html/rform.jnj:413
+#: _JNJ/html/mf3.m.jnj:148 _JNJ/html/rform.jnj:249 _JNJ/html/rform.jnj:413
 msgid "Discard all changes and leave form"
 msgstr "Verwerfen aller Änderungen und Verlassen des Formulars"
 
@@ -264,7 +264,7 @@ msgstr[1] "Fehler"
 
 #: _JNJ/html/ETR/regatta_register.m.jnj:36
 msgid "Export as CSV-file"
-msgstr ""
+msgstr "Export als CSV-Datei"
 
 #: _JNJ/html/e_type_q.m.jnj:241
 msgid "Field(s) to display for each entity"
@@ -279,11 +279,11 @@ msgid "Fields"
 msgstr "Felder"
 
 #: _JNJ/html/e_type_q.m.jnj:96 _JNJ/html/gallery.jnj:42
-#: _JNJ/html/navigation.jnj:191
+#: _JNJ/html/navigation.jnj:233
 msgid "First"
 msgstr "Erstes"
 
-#: _JNJ/html/navigation.jnj:198
+#: _JNJ/html/navigation.jnj:240
 msgid "First entry"
 msgstr "Erster Eintrag"
 
@@ -295,38 +295,44 @@ msgstr "Erstes Bild"
 msgid "Gallery"
 msgstr "Gallerie"
 
-#: _JNJ/html/form.jnj:372
-msgid "Get a new password for the username specified"
-msgstr "Setze ein neues Kennwort für das angegebene Benutzerkonto"
-
-#: _JNJ/html/navigation.jnj:196
+#: _JNJ/html/navigation.jnj:238
 msgid "Goto first entry"
 msgstr "Geh zum ersten Eintrag"
 
-#: _JNJ/html/navigation.jnj:189
+#: _JNJ/html/navigation.jnj:231
 msgid "Goto first page"
 msgstr "Geh zur ersten Seite"
 
-#: _JNJ/html/navigation.jnj:203
+#: _JNJ/html/navigation.jnj:245
 msgid "Goto last page"
 msgstr "Geh zur letzten Seite"
 
-#: _JNJ/html/navigation.jnj:241
+#: _JNJ/html/navigation.jnj:288
 msgid "Goto next page"
 msgstr "Geh zur nächsten Seite"
 
-#: _JNJ/html/navigation.jnj:248
+#: _JNJ/html/navigation.jnj:295
 msgid "Goto parent page"
 msgstr "Goto zur übergeordneten Seite"
 
-#: _JNJ/html/navigation.jnj:255
+#: _JNJ/html/navigation.jnj:302
 msgid "Goto previous page"
 msgstr "Geh zur vorherigen Seite"
 
-#: _JNJ/html/mf3.m.jnj:175
+#: _JNJ/html/mf3.m.jnj:170
 #, python-format
 msgid "Hide fields of %s"
 msgstr "Verbirg Eingabefelder von %s"
+
+#: _JNJ/html/auth.m.jnj:316 _JNJ/html/auth.m.jnj:468
+msgid "I forgot my password"
+msgstr "Kennwort vergessen"
+
+#: _JNJ/html/auth.m.jnj:318 _JNJ/html/auth.m.jnj:470
+msgid "I forgot my password; send me a temporary one to my email address"
+msgstr ""
+"I habe mein Kennwort vergessen; schick mir ein vorübergehendes Kennwort "
+"an meine Emailadresse"
 
 #: _JNJ/html/error_404.jnj:44
 #, python-format
@@ -345,17 +351,17 @@ msgstr "Für diese Seite wird Javascript benötigt."
 msgid "Keysize"
 msgstr "Schlüsselgrösse"
 
-#: _JNJ/html/navigation.jnj:146
+#: _JNJ/html/navigation.jnj:166
 msgid "Language"
 msgstr "Sprache"
 
-#: _JNJ/html/navigation.jnj:145
+#: _JNJ/html/navigation.jnj:165
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr "Sprachen, die für %s ausgewählt werden können"
 
 #: _JNJ/html/e_type_q.m.jnj:107 _JNJ/html/gallery.jnj:46
-#: _JNJ/html/navigation.jnj:205
+#: _JNJ/html/navigation.jnj:247
 msgid "Last"
 msgstr "Letztes"
 
@@ -382,51 +388,57 @@ msgstr "Verlasse das Formular ohne %s auszuwählen "
 msgid "Limit number of entities displayed per page"
 msgstr "Beschränke die Anzahl der pro Seite dargestellten Entitäten"
 
-#: _JNJ/html/form.jnj:334
+#: _JNJ/html/auth.m.jnj:343
 #, python-format
 msgid "Log into %s"
 msgstr "Melde bei %s an"
 
-#: _JNJ/html/form.jnj:362
-msgid "Log into website or go to account page"
-msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
+#: _JNJ/html/auth.m.jnj:305
+msgid "Log into website"
+msgstr "Anmeldung bei Internetseite"
 
-#: _JNJ/html/navigation.jnj:175
+#: _JNJ/html/navigation.jnj:217
 msgid "Logged in"
 msgstr "Angemeldet"
 
-#: _JNJ/html/navigation.jnj:174
+#: _JNJ/html/navigation.jnj:216
 #, python-format
 msgid "Logged in as %s"
 msgstr "Angemeldet als %s"
 
-#: _JNJ/html/form.jnj:336 _JNJ/html/form.jnj:363 _JNJ/html/navigation.jnj:180
+#: _JNJ/html/auth.m.jnj:304 _JNJ/html/auth.m.jnj:346
+#: _JNJ/html/navigation.jnj:222
 msgid "Login"
 msgstr "Anmelden"
 
-#: _JNJ/html/login.jnj:35
-msgid "Login for"
-msgstr "Anmeldung für"
+#: _JNJ/html/auth.m.jnj:352
+#, python-format
+msgid "Login for %s"
+msgstr "Anmeldung für %s"
 
-#: _JNJ/html/error_401.jnj:31
+#: _JNJ/html/error_401.jnj:32
 msgid "Login required"
 msgstr "Anmeldung erforderlich"
 
-#: _JNJ/html/form.jnj:327
+#: _JNJ/html/auth.m.jnj:30
 msgid "Login with a previously created client certificate"
 msgstr "Anmelden mit einem früher erzeugten Zertifikat"
 
-#: _JNJ/html/form.jnj:407 _JNJ/html/form.jnj:408
+#: _JNJ/html/auth.m.jnj:361
+msgid "Logout"
+msgstr "Abmeldung"
+
+#: _JNJ/html/auth.m.jnj:401
 #, python-format
 msgid "Logout %s"
 msgstr "Melde %s ab"
 
-#: _JNJ/html/form.jnj:431
+#: _JNJ/html/auth.m.jnj:407
 #, python-format
 msgid "Make a client certificate for account %s"
 msgstr "Erzeuge ein Zertifikat für Benutzerkonto %s"
 
-#: _JNJ/html/form.jnj:433
+#: _JNJ/html/auth.m.jnj:409
 msgid "Make client certificate"
 msgstr "Erzeuge Zertifikat"
 
@@ -454,16 +466,12 @@ msgstr "Mehr"
 msgid "Move calendar display by delta units"
 msgstr "Verschiebe die Kalenderansicht um `delta` Einheiten"
 
-#: _JNJ/html/change_email.jnj:56
-msgid "New Email"
-msgstr "Neue Emailadresse"
-
-#: _JNJ/html/form.jnj:459 _JNJ/html/register.jnj:49
+#: _JNJ/html/register.jnj:49
 msgid "New Password"
 msgstr "Neues Kennwort"
 
 #: _JNJ/html/e_type_q.m.jnj:118 _JNJ/html/gallery.jnj:45
-#: _JNJ/html/navigation.jnj:243
+#: _JNJ/html/navigation.jnj:290
 msgid "Next"
 msgstr "Nächstes"
 
@@ -487,7 +495,7 @@ msgstr "Anzahl der dargestellten Wochen"
 msgid "Only during initialization"
 msgstr "Nur während Erzeugung"
 
-#: _JNJ/html/mf3.m.jnj:115
+#: _JNJ/html/mf3.m.jnj:110
 #, python-format
 msgid "Open fields of %s for editing"
 msgstr "Öffne Eingabefelder von %s für Eingabe"
@@ -512,14 +520,18 @@ msgstr "Seite existiert nicht"
 msgid "Page doesn't exist anymore"
 msgstr "Seite existiert nicht mehr"
 
-#: _JNJ/html/navigation.jnj:250
+#: _JNJ/html/navigation.jnj:297
 msgid "Parent"
 msgstr ""
 
-#: _JNJ/email/reset_password.jnj:27
+#: _JNJ/email/reset_password.jnj:28
 #, python-format
 msgid "Password of %s reset"
 msgstr "Kennwort für %s zurückgesetzt"
+
+#: _JNJ/html/navigation.jnj:108
+msgid "Permalink of current page"
+msgstr "Permanenter Verweis auf diese Seite"
 
 #: _JNJ/html/news.jnj:42
 msgid "Permanent link"
@@ -529,7 +541,7 @@ msgstr "Dauerhafter Verweis"
 msgid "Play"
 msgstr "Lauf"
 
-#: _JNJ/email/reset_password.jnj:34
+#: _JNJ/email/reset_password.jnj:35
 msgid ""
 "Please click the following link to change the temporary password to a new"
 " value"
@@ -542,7 +554,7 @@ msgid "Please try again later. "
 msgstr "Bitte versichen Sie es später nochmals."
 
 #: _JNJ/html/e_type_q.m.jnj:129 _JNJ/html/gallery.jnj:43
-#: _JNJ/html/navigation.jnj:257
+#: _JNJ/html/navigation.jnj:304
 msgid "Prev"
 msgstr "Voriges"
 
@@ -562,11 +574,11 @@ msgstr "Lies den vollständigen Bericht unter"
 msgid "Reenable"
 msgstr "Schalte ein"
 
-#: _JNJ/html/form.jnj:383
+#: _JNJ/html/auth.m.jnj:331
 msgid "Register"
 msgstr "Registrieren"
 
-#: _JNJ/html/form.jnj:382
+#: _JNJ/html/auth.m.jnj:328
 msgid "Register a new account"
 msgstr "Registrieren eines neuen Benutzerkontos"
 
@@ -579,16 +591,12 @@ msgstr "Registrieren eines neuen Benutzerkontos für "
 msgid "Register for regatta %s"
 msgstr "Melde für Regatta %s"
 
-#: _JNJ/html/mf3.m.jnj:189
+#: _JNJ/html/mf3.m.jnj:184
 #, python-format
 msgid "Remove %s from form and database"
 msgstr "Entferne %s aus dem Formular und aus der Datenbank"
 
-#: _JNJ/html/change_email.jnj:60
-msgid "Repeat Email"
-msgstr "Wiederhole Emailadresse"
-
-#: _JNJ/html/form.jnj:463 _JNJ/html/register.jnj:53
+#: _JNJ/html/register.jnj:53
 msgid "Repeat Password"
 msgstr "Wiederhole Kennwort"
 
@@ -596,11 +604,7 @@ msgstr "Wiederhole Kennwort"
 msgid "Request Timeout"
 msgstr "Zeitüberschreitung"
 
-#: _JNJ/html/reset_password.jnj:63 _JNJ/html/reset_password.jnj:64
-msgid "Request password reset"
-msgstr "Setze Kennwort zurück"
-
-#: _JNJ/html/mf3.m.jnj:196
+#: _JNJ/html/mf3.m.jnj:191
 msgid "Reset all fields to initial values"
 msgstr "Setze alle Eingabefelder auf Startwerte zurück"
 
@@ -616,11 +620,12 @@ msgstr "Setze das Formular auf Ausgangswerte zurück"
 msgid "Reset order-by criteria"
 msgstr "Entferne alle dargestellten Ordnungskriterien aus dem Formular"
 
-#: _JNJ/html/reset_password.jnj:34
-msgid "Reset password"
-msgstr "Setze Kennwort zurück"
+#: _JNJ/html/reset_password.jnj:37
+#, python-format
+msgid "Reset password for %s"
+msgstr "Setze Kennwort für %s zurück"
 
-#: _JNJ/html/mf3.m.jnj:148 _JNJ/html/rform.jnj:442
+#: _JNJ/html/mf3.m.jnj:143 _JNJ/html/rform.jnj:442
 msgid "Save"
 msgstr "Sichern"
 
@@ -648,7 +653,7 @@ msgstr "Wähle %s für Attribut %s aus"
 msgid "Select a %s"
 msgstr "Wähle %s aus"
 
-#: _JNJ/html/navigation.jnj:157
+#: _JNJ/html/navigation.jnj:177
 #, python-format
 msgid "Select language %s"
 msgstr "Wähle Sprache '%s' aus"
@@ -667,7 +672,7 @@ msgstr "Wähle die dargestellten Felder, Ordnungskriterien und Filterkriterien a
 msgid "Selected picture"
 msgstr "Ausgewähltes Bild"
 
-#: _JNJ/html/form.jnj:500 _JNJ/html/mf3.m.jnj:145 _JNJ/html/rform.jnj:427
+#: _JNJ/html/mf3.m.jnj:140 _JNJ/html/rform.jnj:427
 msgid "Send form data to server and leave form"
 msgstr "Schicke Daten an den Server und beende das Formular"
 
@@ -683,7 +688,7 @@ msgstr "Momentan nicht verfügbar"
 msgid "Service is temporarily unavailable. "
 msgstr "Die Dienstleistung ist momentan nicht verfügbar."
 
-#: _JNJ/html/base.jnj:99
+#: _JNJ/html/base.jnj:101
 msgid "Show navigation"
 msgstr "Zeige Navigation"
 
@@ -691,14 +696,31 @@ msgstr "Zeige Navigation"
 msgid "Slide show"
 msgstr "Dia show"
 
-#: _JNJ/html/form.jnj:501 _JNJ/html/rform.jnj:428
+#: _JNJ/html/rform.jnj:428
 msgid "Submit"
 msgstr "Absenden"
+
+#: _JNJ/html/auth.m.jnj:106
+msgid "Submit new email"
+msgstr "Schicke neue Emailadresse ab"
+
+#: _JNJ/html/auth.m.jnj:203
+msgid "Submit new password"
+msgstr "Schicke neues Kennwort ab"
 
 #: _JNJ/html/error_405.jnj:39
 #, python-format
 msgid "The HTTP method `%s` isn't supported by page %s"
 msgstr "Die HTTP-Methode `%s` wird von der Seite %s nicht unterstützt"
+
+#: _JNJ/email/change_email_info.jnj:29
+#, python-format
+msgid ""
+"The email address for your account %s on website %s is about to be "
+"changed to %s due to a request from %s to %s."
+msgstr ""
+"Die Emailadresse des Benutzerkontos %s auf der Internetseite %s wird "
+"gerade auf %s geändert, nach einer Anforderung von %s auf der Seite %s."
 
 #: _JNJ/html/error_500.jnj:37
 msgid "The error was reported to the webmaster. "
@@ -708,6 +730,15 @@ msgstr "Der Fehler wurde an den Webmaster gemeldet."
 #, python-format
 msgid "The object referred to by the web address %s was deleted"
 msgstr "Das durch die Adresse %s referenzierte Objekt existiert nicht mehr"
+
+#: _JNJ/email/change_password_info.jnj:29
+#, python-format
+msgid ""
+"The password for your account %s on website %s was changed due to a "
+"request from %s to %s."
+msgstr ""
+"Das Kennwort für das Benutzerkonto %s auf der Internetseite %s wurde "
+"geändert, nach einer Anforderung von %s auf der Seite %s."
 
 #: _JNJ/html/ETR/regatta_register.m.jnj:29
 #, python-format
@@ -738,12 +769,15 @@ msgstr "Heute"
 msgid "Units for `delta` movement of calendar display"
 msgstr "Einheiten für die Verschiebung der Kalenderansicht um `delta`"
 
-#: _JNJ/html/change_email.jnj:66 _JNJ/html/change_email.jnj:67
 #: _JNJ/html/register.jnj:59 _JNJ/html/register.jnj:60
 msgid "Update Email"
 msgstr "Ändere Email"
 
-#: _JNJ/html/form.jnj:469 _JNJ/html/form.jnj:470
+#: _JNJ/html/auth.m.jnj:105
+msgid "Update email"
+msgstr "Ändere Email"
+
+#: _JNJ/html/auth.m.jnj:202
 msgid "Update password"
 msgstr "Ändere Kennwort"
 
@@ -803,7 +837,7 @@ msgstr "Keine Berechtigung zum Zugriff auf die Seite "
 msgid "You are not authorized to access this page"
 msgstr "Keine Berechtigung zum Zugriff auf diese Seite"
 
-#: _JNJ/html/error_401.jnj:40
+#: _JNJ/html/error_401.jnj:39
 #, python-format
 msgid "You need to be logged in to access the page %s"
 msgstr "Ein Zugriff auf die Seite %s ist nur nach Anmeldung möglich"
@@ -816,7 +850,7 @@ msgstr "Sie versuchten auf eine nicht mehr existierende Seite zuzugreifen: "
 msgid "You requested a page that doesn't exist: "
 msgstr "Sie versuchten auf eine nicht existierende Seite zuzugreifen: "
 
-#: _JNJ/email/reset_password.jnj:29
+#: _JNJ/email/reset_password.jnj:30
 msgid "Your password was reset to the temporary value"
 msgstr "Ihr Kennwort wurde auf einen temporären Wert zurückgesetzt"
 
@@ -832,7 +866,7 @@ msgstr "Tag"
 msgid "fields"
 msgstr "Felder"
 
-#: _JNJ/html/mf3.m.jnj:358
+#: _JNJ/html/mf3.m.jnj:355
 msgid "form errors: please correct"
 msgstr "Fehler im Formular: bitte korrigieren"
 
@@ -872,6 +906,10 @@ msgstr "Woche"
 #: _JNJ/html/cal/wr.jnj:159
 msgid "year"
 msgstr "Jahr"
+
+#: _JNJ/html/reset_password.jnj:37
+msgid "your account"
+msgstr "das Benutzerkonto"
 
 #~ msgid "Change"
 #~ msgstr "Ändern"
@@ -980,4 +1018,25 @@ msgstr "Jahr"
 
 #~ msgid "Select one of the types below"
 #~ msgstr "Wähle einen der folgenden Typen aus"
+
+#~ msgid "Current Password"
+#~ msgstr "Aktuelles Kennwort"
+
+#~ msgid "Get a new password for the username specified"
+#~ msgstr "Setze ein neues Kennwort für das angegebene Benutzerkonto"
+
+#~ msgid "Log into website or go to account page"
+#~ msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
+
+#~ msgid "New Email"
+#~ msgstr "Neue Emailadresse"
+
+#~ msgid "Repeat Email"
+#~ msgstr "Wiederhole Emailadresse"
+
+#~ msgid "Request password reset"
+#~ msgstr "Setze Kennwort zurück"
+
+#~ msgid "Login for"
+#~ msgstr "Anmeldung für"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-04-08 13:11+0200\n"
+"POT-Creation-Date: 2015-06-12 19:32+0200\n"
 "PO-Revision-Date: 2014-08-31 11:29+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -687,10 +687,6 @@ msgstr "`sail_number_x` muss von `nation` und `sail_number` verschieden sein."
 msgid "`start` and `finish` date of regatta"
 msgstr "Anfangs- und End-Datum der Regatta"
 
-#: _GTW._OMP._SRM.Boat:0
-msgid "`vintage` must not lie in the future."
-msgstr "Das Baujahr kann nicht in der Zukunft liegen."
-
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "crew_number_valid"
 msgstr "Gültige Anzahl an Crewmitgliedern"
@@ -711,10 +707,6 @@ msgstr "Gültige Regatta"
 msgid "valid_sail_number_x"
 msgstr "Gültiger Segelnummerprefix"
 
-#: _GTW._OMP._SRM.Boat:0
-msgid "valid_vintage"
-msgstr "Gültiges Baujahr"
-
 #~ msgid "Ranking list factor"
 #~ msgstr "Ranglistenfaktor"
 
@@ -729,32 +721,9 @@ msgstr "Gültiges Baujahr"
 #~ msgstr[0] "Klub"
 #~ msgstr[1] ""
 
-#~ msgid "Kind"
+#~ msgid "`vintage` must not lie in the future."
 #~ msgstr ""
 
-#~ msgid "Race"
+#~ msgid "valid_vintage"
 #~ msgstr ""
 
-#~ msgid "Regatta"
-#~ msgstr ""
-
-#~ msgid "Regattas"
-#~ msgstr ""
-
-#~ msgid "Sailor"
-#~ msgstr ""
-
-#~ msgid "Sailors"
-#~ msgstr ""
-
-#~ msgid "Boat_in_Regatta"
-#~ msgstr "Klubs"
-
-#~ msgid "Boat_in_Regattas"
-#~ msgstr "Art"
-
-#~ msgid "Team_has_Boat_in_Regatta"
-#~ msgstr "Wettfahrt"
-
-#~ msgid "Team_has_Boat_in_Regattas"
-#~ msgstr "Regatta"

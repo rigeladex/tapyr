@@ -349,7 +349,7 @@
 {%- endmacro -%} {#- login_link -#}
 
 {%- macro login_title (page) -%}
-  {{- GTW._T ("Login for %s" % page.request.host) -}}
+  {{- GTW._T ("Login for %s") % (page.request.host, ) -}}
 {%- endmacro -%} {#- login_title -#}
 
 {%- macro logout_button (page) -%}

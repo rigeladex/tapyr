@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-04-08 13:11+0200\n"
+"POT-Creation-Date: 2015-06-12 19:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -681,10 +681,6 @@ msgstr ""
 msgid "`start` and `finish` date of regatta"
 msgstr ""
 
-#: _GTW._OMP._SRM.Boat:0
-msgid "`vintage` must not lie in the future."
-msgstr ""
-
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "crew_number_valid"
 msgstr ""
@@ -703,9 +699,5 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_sail_number_x"
-msgstr ""
-
-#: _GTW._OMP._SRM.Boat:0
-msgid "valid_vintage"
 msgstr ""
 

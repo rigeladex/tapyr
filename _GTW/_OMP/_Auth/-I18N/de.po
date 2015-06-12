@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-04-08 13:11+0200\n"
+"POT-Creation-Date: 2015-06-12 19:32+0200\n"
 "PO-Revision-Date: 2014-08-31 11:27+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -238,3 +238,4 @@ msgstr "Gültigkeitsintervall"
 #: _GTW._OMP._Auth.Certificate:0
 msgid "valid_revocation_date"
 msgstr ""
+

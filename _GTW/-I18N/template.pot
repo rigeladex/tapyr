@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-04-08 13:11+0200\n"
+"POT-Creation-Date: 2015-06-12 19:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: _GTW/_RST/_TOP/Auth.py:369
+#: _GTW/_RST/_TOP/Auth.py:419
 #, python-format
 msgid "%s Password for %s on website %s"
 msgstr ""
@@ -54,20 +54,20 @@ msgstr ""
 msgid "%s: regatta registration"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:807
+#: _GTW/_RST/_TOP/_MOM/SRM.py:816
 #, python-format
 msgid "%s: regatta registration %s"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:181 _GTW/_RST/_TOP/Auth.py:342
+#: _GTW/_NAV/Auth.py:181 _GTW/_RST/_TOP/Auth.py:376
 msgid "A confirmation email has been sent to the new email address."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:318 _GTW/_RST/_TOP/Auth.py:649
+#: _GTW/_NAV/Auth.py:318 _GTW/_RST/_TOP/Auth.py:715
 msgid "A confirmation has been sent to your email address."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:70 _GTW/_Form/Auth.py:226 _GTW/_RST/Auth_Mixin.py:101
+#: _GTW/_Form/Auth.py:70 _GTW/_Form/Auth.py:226 _GTW/_RST/Auth_Mixin.py:102
 msgid "A user name is required to login."
 msgstr ""
 
@@ -82,28 +82,33 @@ msgid ""
 " separated by commas; got `%s` instead"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:685
+#: _GTW/_RST/_TOP/Auth.py:751
 msgid "Account could not be found"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:619
+#: _GTW/_RST/_TOP/Auth.py:685
 msgid "Account with this Email address already registered"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:202
+#: _GTW/_RST/_TOP/Auth.py:224
 #, python-format
 msgid "Activate account for %s on website %s"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:134 _GTW/_RST/_TOP/Auth.py:217
+#: _GTW/_RST/_TOP/Auth.py:240
+#, python-format
+msgid "Activation of account %s successful."
+msgstr ""
+
+#: _GTW/_NAV/Auth.py:134
 msgid "Activation successful."
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Manager.py:156 _GTW/_RST/_TOP/_MOM/Display.py:148
+#: _GTW/_NAV/_E_Type/Manager.py:156 _GTW/_RST/_TOP/_MOM/Display.py:149
 msgid "Admin"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Display.py:151
+#: _GTW/_RST/_TOP/_MOM/Display.py:152
 msgid "Administration"
 msgstr ""
 
@@ -116,7 +121,7 @@ msgid "April"
 msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:325 _GTW/_NAV/_E_Type/Admin.py:1097
-#: _GTW/_RST/_TOP/_MOM/Admin.py:217
+#: _GTW/_RST/_TOP/_MOM/Admin.py:223
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr ""
 
@@ -136,15 +141,20 @@ msgstr ""
 msgid "Authorization and Account handling"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:1121
+#: _GTW/_RST/_TOP/_MOM/SRM.py:1130
 msgid "Cancelled"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:365
+#: _GTW/_RST/_TOP/_MOM/Admin.py:1024
+#, python-format
+msgid "Cannot undo a change if %s later changes exist for the same object"
+msgstr ""
+
+#: _GTW/_RST/_TOP/Auth.py:415
 msgid "Change"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Action.py:101
+#: _GTW/_RST/_TOP/_MOM/Action.py:105
 #, python-format
 msgid "Change %(tn)s %(obj)s"
 msgstr ""
@@ -153,24 +163,29 @@ msgstr ""
 msgid "Choice of language used for localization"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:177 _GTW/_RST/_TOP/_MOM/SRM.py:1091
+#: _GTW/_RST/_TOP/_MOM/SRM.py:179 _GTW/_RST/_TOP/_MOM/SRM.py:1100
 msgid "Class"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:331
+#: _GTW/_RST/_TOP/_MOM/SRM.py:333
 msgid "Club"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Action.py:87
+#: _GTW/_RST/_TOP/Auth.py:355
+#, python-format
+msgid "Confirmation for change of email for account %s to %s for website %s"
+msgstr ""
+
+#: _GTW/_RST/_TOP/_MOM/Action.py:89
 #, python-format
 msgid "Create a new %(tn)s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:323
+#: _GTW/_RST/_TOP/_MOM/Field.py:327
 msgid "Created"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:317
+#: _GTW/_RST/_TOP/_MOM/Field.py:321
 msgid "Date of creation."
 msgstr ""
 
@@ -182,12 +197,12 @@ msgstr ""
 msgid "December"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Action.py:108
+#: _GTW/_RST/_TOP/_MOM/Action.py:115
 #, python-format
 msgid "Delete %(tn)s %(obj)s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Action.py:115
+#: _GTW/_RST/_TOP/_MOM/Action.py:123
 #, python-format
 msgid "Display details of %(tn)s %(obj)s"
 msgstr ""
@@ -207,18 +222,17 @@ msgid ""
 "request."
 msgstr ""
 
-#: _GTW/Session.py:213
+#: _GTW/Session.py:214
 #, python-format
 msgid "Edit session expired since %s"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:169 _GTW/_NAV/Auth.py:307 _GTW/_RST/_TOP/Auth.py:330
-#: _GTW/_RST/_TOP/Auth.py:638
+#: _GTW/_NAV/Auth.py:169 _GTW/_NAV/Auth.py:307 _GTW/_RST/_TOP/Auth.py:704
 #, python-format
 msgid "Email confirmation for %s"
 msgstr ""
 
-#: _GTW/_RST/Signed_Token.py:117
+#: _GTW/_RST/Signed_Token.py:119
 #, python-format
 msgid "Expired %s '%s' older then %s seconds"
 msgstr ""
@@ -231,7 +245,7 @@ msgstr ""
 msgid "February"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Admin.py:866
+#: _GTW/_RST/_TOP/_MOM/Admin.py:862
 #, python-format
 msgid "Field %s doesn't have a polisher"
 msgstr ""
@@ -263,12 +277,12 @@ msgstr ""
 msgid "Image Selection"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Base.py:338
+#: _GTW/_RST/_TOP/Base.py:351
 #, python-format
 msgid "Incorrect origin `%s` for request, expected `%r`"
 msgstr ""
 
-#: _GTW/_RST/Signed_Token.py:101
+#: _GTW/_RST/Signed_Token.py:103
 #, python-format
 msgid "Invalid %s signature for '%s'"
 msgstr ""
@@ -302,7 +316,7 @@ msgstr ""
 msgid "June"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:1116
+#: _GTW/_RST/_TOP/_MOM/SRM.py:1125
 msgid "Kind"
 msgstr ""
 
@@ -315,24 +329,24 @@ msgstr ""
 msgid "Language %s selected"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:156 _GTW/_RST/_TOP/_MOM/SRM.py:897
+#: _GTW/_NAV/_E_Type/SRM.py:156 _GTW/_RST/_TOP/_MOM/SRM.py:906
 msgid "List of participants for"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:273 _GTW/_RST/_TOP/Auth.py:462
+#: _GTW/_NAV/Auth.py:273 _GTW/_RST/_TOP/Auth.py:528
 msgid "Logout successful."
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:343
+#: _GTW/_RST/_TOP/_MOM/SRM.py:345
 msgid "MNA-Number"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:581
+#: _GTW/_RST/_TOP/_MOM/Field.py:590
 #, python-format
 msgid "Make phone call to %s"
 msgstr ""
 
-#: _GTW/_RST/Signed_Token.py:87
+#: _GTW/_RST/Signed_Token.py:89
 #, python-format
 msgid "Malformed %s value '%s'"
 msgstr ""
@@ -350,7 +364,7 @@ msgstr ""
 msgid "May"
 msgstr ""
 
-#: _GTW/_RST/Signed_Token.py:89
+#: _GTW/_RST/Signed_Token.py:91
 #, python-format
 msgid "Missing %s%s"
 msgstr ""
@@ -363,7 +377,7 @@ msgstr ""
 msgid "Monday"
 msgstr ""
 
-#: _GTW/_MF3/Completer.py:302 _GTW/_RST/_TOP/_MOM/Admin.py:424
+#: _GTW/_MF3/Completer.py:333 _GTW/_RST/_TOP/_MOM/Admin.py:453
 #, python-format
 msgid "More than %s matches"
 msgstr ""
@@ -381,15 +395,15 @@ msgstr ""
 msgid "New password"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:210
+#: _GTW/_RST/_TOP/Auth.py:232
 msgid "No activation request for this account"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:357 _GTW/_RST/_TOP/_MOM/Admin.py:233
+#: _GTW/_NAV/_E_Type/Admin.py:357 _GTW/_RST/_TOP/_MOM/Admin.py:239
 msgid "Not authorized for this page"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:349 _GTW/_RST/_TOP/_MOM/Admin.py:228
+#: _GTW/_NAV/_E_Type/Admin.py:349 _GTW/_RST/_TOP/_MOM/Admin.py:234
 msgid "Not logged in or login-session is expired"
 msgstr ""
 
@@ -401,14 +415,13 @@ msgstr ""
 msgid "November"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:409
+#: _GTW/_RST/_TOP/_MOM/Field.py:413
 #, python-format
 msgid "Number of %s belonging to %s"
 msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:764 _GTW/_NAV/_E_Type/Admin.py:791
-#: _GTW/_RST/_TOP/_MOM/Admin.py:697 _GTW/_RST/_TOP/_MOM/Admin.py:800
-#: _GTW/_RST/_TOP/_MOM/Admin.py:807
+#: _GTW/_RST/_TOP/_MOM/Admin.py:248
 #, python-format
 msgid "Object \"%s\" deleted"
 msgstr ""
@@ -425,7 +438,7 @@ msgstr ""
 msgid "One of the passwords is incorrect"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:129 _GTW/_RST/_TOP/_MOM/SRM.py:863
+#: _GTW/_NAV/_E_Type/SRM.py:129 _GTW/_RST/_TOP/_MOM/SRM.py:872
 msgid "Participants"
 msgstr ""
 
@@ -433,7 +446,12 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:360 _GTW/_RST/_TOP/Auth.py:703
+#: _GTW/_RST/_TOP/Auth.py:438
+#, python-format
+msgid "Password change for account %s"
+msgstr ""
+
+#: _GTW/_NAV/Auth.py:360 _GTW/_RST/_TOP/Auth.py:769
 #, python-format
 msgid "Password reset for user %s on website %s"
 msgstr ""
@@ -442,17 +460,17 @@ msgstr ""
 msgid "Passwords don't match."
 msgstr ""
 
-#: _GTW/_RST/Auth_Mixin.py:132
+#: _GTW/_RST/Auth_Mixin.py:133
 msgid "Please enter a username"
 msgstr ""
 
-#: _GTW/_MF3/Error.py:219
+#: _GTW/_MF3/Error.py:225
 msgid "Please enter a value for the missing attribute"
 msgid_plural "Please enter values for the missing attributes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_RST/_TOP/_MOM/Admin.py:628
+#: _GTW/_RST/_TOP/_MOM/Admin.py:658
 msgid "Please reload the page"
 msgstr ""
 
@@ -470,35 +488,35 @@ msgstr ""
 msgid "Query restriction triggered error: %s '%s'"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:312
+#: _GTW/_RST/_TOP/_MOM/SRM.py:314
 msgid "Race"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:1069
+#: _GTW/_RST/_TOP/_MOM/SRM.py:1078
 msgid "Regatta"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:1041
+#: _GTW/_RST/_TOP/_MOM/SRM.py:1050
 #, python-format
 msgid "Regatta Events %(year)s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:419
+#: _GTW/_RST/_TOP/_MOM/SRM.py:421
 #, python-format
 msgid "Register %s for %s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:855
+#: _GTW/_RST/_TOP/_MOM/SRM.py:864
 #, python-format
 msgid "Register an entry for %s at %s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:413
+#: _GTW/_RST/_TOP/_MOM/SRM.py:415
 #, python-format
 msgid "Register for regatta %(tn)s"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:161 _GTW/_RST/_TOP/_MOM/SRM.py:902
+#: _GTW/_NAV/_E_Type/SRM.py:161 _GTW/_RST/_TOP/_MOM/SRM.py:911
 msgid "Registration list"
 msgstr ""
 
@@ -506,36 +524,36 @@ msgstr ""
 msgid "Repeat new password"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:302
+#: _GTW/_RST/_TOP/Auth.py:329
 msgid "Repeat the EMail for verification."
 msgstr ""
 
-#: _GTW/_RST/Auth_Mixin.py:114
+#: _GTW/_RST/Auth_Mixin.py:115
 msgid "Repeat the password for verification."
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:732
+#: _GTW/_RST/_TOP/Auth.py:798
 msgid "Reset"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Action.py:122
+#: _GTW/_RST/_TOP/_MOM/Action.py:130
 #, python-format
 msgid "Restrict to objects belonging to %(tn)s %(obj)s"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:130 _GTW/_RST/_TOP/_MOM/SRM.py:864
+#: _GTW/_NAV/_E_Type/SRM.py:130 _GTW/_RST/_TOP/_MOM/SRM.py:873
 msgid "Results"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:152 _GTW/_RST/_TOP/_MOM/SRM.py:894
+#: _GTW/_NAV/_E_Type/SRM.py:152 _GTW/_RST/_TOP/_MOM/SRM.py:903
 msgid "Results for"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:165
+#: _GTW/_RST/_TOP/_MOM/SRM.py:167
 msgid "Sail-No."
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:356
+#: _GTW/_RST/_TOP/_MOM/SRM.py:358
 msgid "Sailor"
 msgstr ""
 
@@ -547,7 +565,7 @@ msgstr ""
 msgid "Saturday"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:565
+#: _GTW/_RST/_TOP/_MOM/Field.py:574
 #, python-format
 msgid "Send email to %s"
 msgstr ""
@@ -560,8 +578,13 @@ msgstr ""
 msgid "September"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:357
+#: _GTW/_RST/_TOP/_MOM/SRM.py:359
 msgid "Skipper/Crew"
+msgstr ""
+
+#: _GTW/_RST/_TOP/_MOM/Admin.py:1030
+#, python-format
+msgid "Successfully revived object %s"
 msgstr ""
 
 #: _GTW/_NAV/Calendar.py:77 _GTW/_RST/_TOP/Calendar.py:294
@@ -572,11 +595,11 @@ msgstr ""
 msgid "Sunday"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:298
+#: _GTW/_RST/_TOP/Auth.py:325
 msgid "The Email is required."
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:306
+#: _GTW/_RST/_TOP/Auth.py:333
 msgid "The Email's don't match."
 msgstr ""
 
@@ -600,13 +623,13 @@ msgstr ""
 msgid "The old password is required."
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:535
+#: _GTW/_RST/_TOP/Auth.py:601
 msgid ""
 "The parameter `SPKAC` is missing from the request. Normally, the web "
 "browser should supply that parameter automatically."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:216 _GTW/_RST/_TOP/Auth.py:379
+#: _GTW/_NAV/Auth.py:216 _GTW/_RST/_TOP/Auth.py:429
 msgid "The password has been changed."
 msgstr ""
 
@@ -614,19 +637,19 @@ msgstr ""
 msgid "The password is incorrect"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:72 _GTW/_Form/Auth.py:198 _GTW/_RST/Auth_Mixin.py:110
+#: _GTW/_Form/Auth.py:72 _GTW/_Form/Auth.py:198 _GTW/_RST/Auth_Mixin.py:111
 msgid "The password is required."
 msgstr ""
 
-#: _GTW/_RST/Auth_Mixin.py:118
+#: _GTW/_RST/Auth_Mixin.py:119
 msgid "The passwords don't match."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:372 _GTW/_RST/_TOP/Auth.py:715
+#: _GTW/_NAV/Auth.py:372 _GTW/_RST/_TOP/Auth.py:781
 msgid "The reset password instructions have been sent to your email address."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:78 _GTW/_RST/Auth_Mixin.py:137
+#: _GTW/_Form/Auth.py:78 _GTW/_RST/Auth_Mixin.py:138
 msgid "This account is currently inactive"
 msgstr ""
 
@@ -646,7 +669,7 @@ msgstr ""
 msgid "Thursday"
 msgstr ""
 
-#: _GTW/_RST/Signed_Token.py:125
+#: _GTW/_RST/Signed_Token.py:127
 #, python-format
 msgid "Time-travelling %s '%s' [%s seconds ahead]"
 msgstr ""
@@ -657,6 +680,11 @@ msgstr ""
 
 #: _GTW/_NAV/Calendar.py:80 _GTW/_RST/_TOP/Calendar.py:297
 msgid "Tuesday"
+msgstr ""
+
+#: _GTW/_RST/_TOP/_MOM/Admin.py:259
+#, python-format
+msgid "Undo deletion of object %s"
 msgstr ""
 
 #: _GTW/_RST/_TOP/_MOM/Doc.py:265
@@ -684,7 +712,7 @@ msgstr ""
 msgid "Unknown type %s for attribute %s.%s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:104
+#: _GTW/_RST/_TOP/Auth.py:113
 #, python-format
 msgid "Unless run in TEST mode, access to %s is only allowed over https!"
 msgstr ""
@@ -693,7 +721,7 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:76 _GTW/_RST/Auth_Mixin.py:135
+#: _GTW/_Form/Auth.py:76 _GTW/_RST/Auth_Mixin.py:136
 msgid "Username or password incorrect"
 msgstr ""
 
@@ -705,14 +733,19 @@ msgstr ""
 msgid "Wednesday"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:253 _GTW/_RST/_TOP/Auth.py:441
+#: _GTW/_NAV/Auth.py:253 _GTW/_RST/_TOP/Auth.py:507
 #, python-format
 msgid "Welcome %s."
 msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:771 _GTW/_NAV/_E_Type/Admin.py:799
-#: _GTW/_RST/_TOP/_MOM/Admin.py:793
+#: _GTW/_RST/_TOP/_MOM/Admin.py:803
 msgid "You need to specify a pid!"
+msgstr ""
+
+#: _GTW/_RST/_TOP/_MOM/Admin.py:1017
+#, python-format
+msgid "You need to specify valid undo information: %s"
 msgstr ""
 
 #: _GTW/_RST/_MOM/Mixin.py:403
