@@ -28,8 +28,8 @@ style_sheet = Style_Sheet \
         , children             =
             [ Rule
                 ( "button[type=submit]"
-                , border_radius    = Em ( 1/4)
-                , margin_left      = Em ( 1.5)
+                , border_radius    = Em (1/4)
+                , margin_left      = Em (1.5)
                 , children         =
                     [ Rule
                         ( "b"
@@ -48,9 +48,14 @@ style_sheet = Style_Sheet \
             , Rule
                 ( ".Error-Message"
                 , P.color_spec_error
-                , font_weight    = "bold"
-                , max_width      = Em (40)
-                , padding        = TRBL (Em (0.2), Em (0.5))
+                , font_weight      = "bold"
+                , margin           = TRBL (Em (-1/4), 0, Em (1.0), Em (1.0))
+                , max_width        = Em (40)
+                , padding          = TRBL (Em (0.2), Em (0.5))
+                )
+            , Rule
+                ( ".Errors"
+                , margin_top       = "inherit"
                 )
             , Rule
                 ( "legend"
@@ -83,7 +88,7 @@ style_sheet = Style_Sheet \
                 ( "form.Auth"
                 , children             =
                     [ Rule
-                        ( "button[type=submit]"
+                        ( "button[type=submit]", ".Error-Message"
                         , margin_left      = 0
                         )
                     ]

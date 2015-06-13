@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Martin Glueck All rights reserved
+# Copyright (C) 2012-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -27,13 +27,14 @@
 #    11-Dec-2013 (CT) Factor `-TEST` to `Auth_Test_Command._defaults`
 #    11-Dec-2013 (CT) Add `CSRF_check = "no"` to `_defaults`
 #    26-Jun-2014 (CT) Factor `show_errors`, apply `sorted`
+#    12-Jun-2015 (CT) Adapt to changes of authentication templates
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
 def show_errors (resp) :
-    errors = sorted (resp.PQ (b"li.Error-Message"), key = TFL.Getter.sourceline)
+    errors = sorted (resp.PQ (b".Error-Message"), key = TFL.Getter.sourceline)
     print ("".join (e.string for e in errors))
 # end def show_errors
 
@@ -47,32 +48,23 @@ _login_logout = r"""
     >>> Auth   = scope.Auth
     >>> resp   = Scaffold.test_post ("/Auth/login.html")
     >>> show_errors (resp) ### 1
-    <li class="Error-Message">
-              Please enter a username
-            </li>
-            <li class="Error-Message">
-              A user name is required to login.
-            </li>
-            <li class="Error-Message">
-              The password is required.
-            </li>
+    <p class="Error-Message">Please enter a username</p>
+        <p class="Error-Message">A user name is required to login.</p>
+        <p class="Error-Message">The password is required.</p>
+    <BLANKLINE>
 
     >>> data   = dict (username = "a1@foo.bar")
     >>> resp   = Scaffold.test_post ("/Auth/login.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-              Username or password incorrect
-            </li>
-            <li class="Error-Message">
-              The password is required.
-            </li>
+    <p class="Error-Message">Username or password incorrect</p>
+        <p class="Error-Message">The password is required.</p>
+    <BLANKLINE>
 
     >>> data ["password"] = "p2"
     >>> resp   = Scaffold.test_post ("/Auth/login.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          Username or password incorrect
-        </li>
+    <p class="Error-Message">Username or password incorrect</p>
+    <BLANKLINE>
 
     >>> data ["password"] = "p1"
     >>> data ["next"]     = "/after/login"
@@ -92,9 +84,8 @@ _login_logout = r"""
     >>> data ["password"] = "p3"
     >>> resp   = Scaffold.test_post ("/Auth/login.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          This account is currently inactive
-        </li>
+    <p class="Error-Message">This account is currently inactive</p>
+    <BLANKLINE>
 
     >>> a2 = Auth.Account.query (name = "a2@foo.bar").one ()
     >>> a2.password_change_required
@@ -124,54 +115,49 @@ _activate        = r"""
     >>> scope.commit ()
 
     >>> resp   = Scaffold.test_get ("/Auth/activate.html", query_string = "p=%%d" %% (a2.pid, ))
-    >>> print ("".join (t.string for t in resp.PQ (b"li.account-name")))
-    <li class="account-name">a2@foo.bar</li>
+    >>> print ("".join (t.string for t in resp.PQ (b"legend")))
+    <legend>Activate account for a2@foo.bar on website localhost</legend>
+    <BLANKLINE>
 
     >>> data   = dict (username = a2.name)
-    >>> resp   = Scaffold.test_post ("/Auth/activate.html", data = data)
+    >>> resp   = Scaffold.test_post ("/Auth/activate.html", data = data) # doctest:+ELLIPSIS
     >>> show_errors (resp)
-    <li class="Error-Message">
-              Username or password incorrect
-            </li>
-          <li class="Error-Message">
-              The password is required.
-            </li>
-          <li class="Error-Message">
-              The password is required.
-            </li>
-          <li class="Error-Message">
-              Repeat the password for verification.
-            </li>
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">Repeat the password for verification.</p>
     <BLANKLINE>
 
     >>> data ["password"] = passwd
     >>> resp   = Scaffold.test_post ("/Auth/activate.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-              The password is required.
-            </li>
-          <li class="Error-Message">
-              Repeat the password for verification.
-            </li>
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">Repeat the password for verification.</p>
     <BLANKLINE>
 
     >>> data ["npassword"] = "P2"
     >>> resp   = Scaffold.test_post ("/Auth/activate.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          Repeat the password for verification.
-        </li>
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">Repeat the password for verification.</p>
+    <BLANKLINE>
 
     >>> data ["vpassword"] = "p2"
     >>> resp   = Scaffold.test_post ("/Auth/activate.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          The passwords don't match.
-        </li>
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">The passwords don't match.</p>
+    <BLANKLINE>
 
     >>> data ["vpassword"] = "P2"
     >>> resp   = Scaffold.test_post ("/Auth/activate.html", data = data)
     >>> show_errors (resp)
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
     <BLANKLINE>
 """
 
@@ -182,55 +168,38 @@ _register        = r"""
     >>> Auth   = scope.Auth
     >>> resp   = Scaffold.test_get ("/Auth/register.html")
     >>> print ("\n".join (str (sorted (t.items ())) for t in resp.PQ (b"input"))) # doctest:+ELLIPSIS
-    [('id', 'F_username'), ('name', 'username'), ('type', 'text')]
-    [('id', 'F_npassword'), ('name', 'npassword'), ('type', 'password')]
-    [('id', 'F_vpassword'), ('name', 'vpassword'), ('type', 'password')]
-    [('title', 'Update Email'), ('type', 'submit'), ('value', 'Update Email')]
-    [('name', 'next'), ('type', 'hidden')]
-    [('name', 'F_ACT'), ('type', 'hidden'), ('value', '...')]
+    [('id', 'F_username'), ('maxlength', '80'), ('name', 'username'), ('required', ''), ('type', 'email')]
+    [('id', 'F_npassword'), ('name', 'npassword'), ('required', ''), ('type', 'password')]
+    [('autocomplete', 'off'), ('id', 'F_vpassword'), ('name', 'vpassword'), ('required', ''), ('type', 'password')]
+    ...
 
     >>> data   = dict ()
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-              A user name is required to login.
-            </li>
-          <li class="Error-Message">
-              The password is required.
-            </li>
-          <li class="Error-Message">
-              Repeat the password for verification.
-            </li>
-    <BLANKLINE>
+    <p class="Error-Message">A user name is required to login.</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">Repeat the password for verification.</p>
 
     >>> data ["username"] = "a2@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-              Account with this Email address already registered
-            </li>
-          <li class="Error-Message">
-              The password is required.
-            </li>
-          <li class="Error-Message">
-              Repeat the password for verification.
-            </li>
+    <p class="Error-Message">Account with this Email address already registered</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">Repeat the password for verification.</p>
     <BLANKLINE>
 
     >>> data ["username"] = "new-account@foo.bar"
     >>> data ["npassword"] = "new-pass"
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          Repeat the password for verification.
-        </li>
+    <p class="Error-Message">Repeat the password for verification.</p>
+    <BLANKLINE>
 
     >>> data ["vpassword"] = "newpass"
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          The passwords don't match.
-        </li>
+    <p class="Error-Message">The passwords don't match.</p>
+    <BLANKLINE>
 
     >>> data ["vpassword"] = "new-pass"
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data) # doctest:+ELLIPSIS
@@ -276,62 +245,45 @@ _change_email    = r"""
     >>> login (Scaffold, a2, passwd)
     True
     >>> resp   = Scaffold.test_get ("/Auth/change_email.html", query_string = "p=%%d" %% (a2.pid, ))
-    >>> print ("".join (t.string for t in resp.PQ (b"li.account-name")))
-    <li class="account-name">a2@foo.bar</li>
+    >>> print ("".join (t.string for t in resp.PQ (b".account-name")))
+    <BLANKLINE>
 
     >>> data   = dict (username = a2.name)
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-              Username or password incorrect
-            </li>
-          <li class="Error-Message">
-              The password is required.
-            </li>
-          <li class="Error-Message">
-              The Email is required.
-            </li>
-          <li class="Error-Message">
-              Repeat the EMail for verification.
-            </li>
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">The Email is required.</p>
+          <p class="Error-Message">Repeat the EMail for verification.</p>
     <BLANKLINE>
 
     >>> data ["password"] = passwd
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-              The Email is required.
-            </li>
-          <li class="Error-Message">
-              Repeat the EMail for verification.
-            </li>
+    <p class="Error-Message">The Email is required.</p>
+          <p class="Error-Message">Repeat the EMail for verification.</p>
     <BLANKLINE>
 
     >>> data ["nemail"] = "new-email@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          Repeat the EMail for verification.
-        </li>
+    <p class="Error-Message">Repeat the EMail for verification.</p>
+    <BLANKLINE>
 
     >>> data ["vemail"] = "newemail@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          The Email's don't match.
-        </li>
+    <p class="Error-Message">The Email's don't match.</p>
+    <BLANKLINE>
 
     >>> data ["vemail"] = "new-email@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data) # doctest:+ELLIPSIS
     Email via localhost from webmaster@ to ['new-email@foo.bar']
-    Content-type: text/plain; charset=utf-8
     ...
-    Subject: Email confirmation for localhost
-    To: new-email@foo.bar
-    From: webmaster@
-    <BLANKLINE>
-    Confirm new email address new-email@foo.bar
+    Subject: Confirmation for change of email for account a2@foo.bar to
     ...
+    The email address for your account a2@foo.bar on website localhost is about to be changed to new-email@foo.bar due to a request from None to /Auth/change_email.html.
+
     >>> show_errors (resp)
     <BLANKLINE>
 
@@ -358,54 +310,49 @@ _change_password = r"""
     >>> login (Scaffold, a2, passwd)
     True
     >>> resp   = Scaffold.test_get ("/Auth/change_password.html", query_string = "p=%%d" %% (a2.pid, ))
-    >>> print ("".join (t.string for t in resp.PQ (b"li.account-name")))
-    <li class="account-name">a2@foo.bar</li>
+    >>> print ("".join (t.string for t in resp.PQ (b"legend")))
+    <legend>Change Password for a2@foo.bar on website localhost</legend>
+    <BLANKLINE>
 
     >>> data   = dict (username = a2.name)
     >>> resp   = Scaffold.test_post ("/Auth/change_password.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-              Username or password incorrect
-            </li>
-          <li class="Error-Message">
-              The password is required.
-            </li>
-          <li class="Error-Message">
-              The password is required.
-            </li>
-          <li class="Error-Message">
-              Repeat the password for verification.
-            </li>
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">Repeat the password for verification.</p>
     <BLANKLINE>
 
     >>> data ["password"] = passwd
     >>> resp   = Scaffold.test_post ("/Auth/change_password.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-              The password is required.
-            </li>
-          <li class="Error-Message">
-              Repeat the password for verification.
-            </li>
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">Repeat the password for verification.</p>
     <BLANKLINE>
 
     >>> data ["npassword"] = "P2"
     >>> resp   = Scaffold.test_post ("/Auth/change_password.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          Repeat the password for verification.
-        </li>
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">Repeat the password for verification.</p>
+    <BLANKLINE>
 
     >>> data ["vpassword"] = "p2"
     >>> resp   = Scaffold.test_post ("/Auth/change_password.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          The passwords don't match.
-        </li>
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
+          <p class="Error-Message">The passwords don't match.</p>
+    <BLANKLINE>
 
     >>> data ["vpassword"] = "P2"
     >>> resp   = Scaffold.test_post ("/Auth/change_password.html", data = data)
     >>> show_errors (resp)
+    <p class="Error-Message">Username or password incorrect</p>
+          <p class="Error-Message">The password is required.</p>
     <BLANKLINE>
 """
 
@@ -417,16 +364,13 @@ _password_reset  = r"""
     >>> data   = dict ()
     >>> resp   = Scaffold.test_post ("/Auth/request_reset_password.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          A user name is required to login.
-        </li>
+    <BLANKLINE>
 
     >>> data ["username"]= "a5@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/request_reset_password.html", data = data)
     >>> show_errors (resp)
-    <li class="Error-Message">
-          Account could not be found
-        </li>
+    <p class="Error-Message">Account could not be found</p>
+    <BLANKLINE>
 
     >>> data ["username"]= "a2@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/request_reset_password.html", data = data)# doctest:+ELLIPSIS

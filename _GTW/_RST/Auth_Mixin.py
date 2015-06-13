@@ -19,6 +19,7 @@
 #     1-May-2013 (CT) Creation
 #     6-May-2013 (CT) Change error format in `_authenticate`
 #    11-Jun-2015 (CT) Improve argument names of `_credentials_validation`
+#    13-Jun-2015 (CT) Add `fn_username` and/or `fn_password` to signatures
 #    ««revision-date»»···
 #--
 
@@ -55,14 +56,18 @@ class Auth_Mixin (TFL.Meta.Object) :
         _real_name             = "POST"
         account                 = None
 
-        def get_account (self, resource, username, debug = False) :
+        def get_account \
+              ( self, resource, username
+              , fn_username = "username"
+              , debug       = False
+              ) :
             try :
                 self.account = resource.account_manager.query \
                     (name = username).one ()
             except IndexError :
                 self.account = None
                 if debug :
-                    self.errors ["username"].append \
+                    self.errors [fn_username].append \
                         ( "No account with username `%s` found"
                         % (username, )
                         )
@@ -71,13 +76,18 @@ class Auth_Mixin (TFL.Meta.Object) :
                 return True
         # end def get_account
 
-        def _authenticate (self, resource, username, password, debug = False) :
+        def _authenticate \
+                ( self, resource, username, password
+                , fn_username = "username"
+                , fn_password = "password"
+                , debug       = False
+                ) :
             result = False
-            self.get_account (resource, username, debug)
+            self.get_account (resource, username, fn_username, debug)
             if password and self.account :
                 result = self.account.verify_password (password)
                 if not result and debug :
-                    self.errors ["password"].append \
+                    self.errors [fn_password].append \
                         ( "Password is wrong:\n"
                                "  'password' : '%s'\n"
                                "  hash db `%s`\n"
@@ -122,17 +132,19 @@ class Auth_Mixin (TFL.Meta.Object) :
 
         def _credentials_validation \
                 ( self, resource, request
-                , field_name_username = "username"
-                , field_name_password = "password"
-                , debug               = False
+                , fn_username = "username"
+                , fn_password = "password"
+                , debug       = False
                 ) :
-            username     = self.get_username (request, field_name_username)
-            password     = self.get_password (request, field_name_password)
+            username     = self.get_username (request, fn_username)
+            password     = self.get_password (request, fn_password)
             error_add    = lambda e : self.errors [None].append (e)
             if not username :
                 error_add (_T ("Please enter a username"))
             elif not self._authenticate \
-                   (resource, username, password, debug) :
+                   ( resource, username, password
+                   , fn_username, fn_password, debug
+                   ) :
                 error_add (_T ("Username or password incorrect"))
             elif resource.active_account_required and not self.account.active :
                 error_add (_T ("This account is currently inactive"))

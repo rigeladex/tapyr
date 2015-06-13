@@ -92,11 +92,18 @@
 ##    11-Jun-2015 (CT) Remove `login_inline`
 ##    12-Jun-2015 (CT) Remove `logout_inline`, `password_change`,
 ##                     `display_errors`
+##    13-Jun-2015 (CT) Add `button_control`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
+
+{%- macro button_control () -%}
+  <div class="pure-controls">
+    {{ X.input.button_pure (** kwargs) }}
+  </div>
+{%- endmacro -%} {#- button_control -#}
 
 {%- macro form
         ( action        = ""

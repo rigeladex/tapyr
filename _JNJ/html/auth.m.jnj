@@ -19,6 +19,11 @@
 ## Revision Dates
 ##    11-Jun-2015 (CT) Creation
 ##    12-Jun-2015 (CT) Continue creation
+##    13-Jun-2015 (CT) Factor `input_widget`, `label_input_group`,
+##                     `Form.button_control`;
+##                     rename `display_errors` to `errors_display`
+##    13-Jun-2015 (CT) Add `register_form`, `make_client_cert_form`,
+##                     `keygen_input`, and `text_input`
 ##    ««revision-date»»···
 ##--
 #}
@@ -69,45 +74,37 @@
           {{ title }}
         </legend>
       {% endif -%}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, None) -}}
-      </div>
-      {{ email_input (page, username, un_label = un_label, readonly = True) }}
-      {{ password_input (page) }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, "password") -}}
-      </div>
-      {{ email_input
-          ( page
+      {{- errors_display (errors, None) -}}
+      {{ email_input  (page, username, label = un_label, readonly = True) }}
+      {{ input_widget
+          ( page, password_input, errors
+          , field_name   = "password"
+          , required     = True
+          )
+      }}
+      {{ input_widget
+          ( page, email_input, errors
           , field_name   = "nemail"
-          , un_label     = "New email"
+          , label        = "New email"
           , title        = "New email for your account"
           )
       }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, "nemail") -}}
-      </div>
-      {{ email_input
-          ( page
+      {{ input_widget
+          ( page, email_input, errors
           , field_name   = "vemail"
-          , un_label     = "Repeat email"
+          , label        = "Repeat email"
           , title        = "Repeat new email for your account"
           )
       }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, "nemail") -}}
-      </div>
-      <div class="pure-controls">
-        {{- X.input.button_pure
-            ( icon_name    = "check"
-            , name         = "submit"
-            , primary      = True
-            , text         = GTW._T ("Update email")
-            , title        = GTW._T ("Submit new email")
-            , type         = "submit"
-            )
-        -}}
-      </div>
+      {{- Form.button_control
+          ( icon_name    = "check"
+          , name         = "submit"
+          , primary      = True
+          , text         = GTW._T ("Update email")
+          , title        = GTW._T ("Submit new email")
+          , type         = "submit"
+          )
+      -}}
     </fieldset>
   {% endcall %} {# Form.form_pure #}
 {%- endmacro -%} {#- change_email_form -#}
@@ -156,55 +153,42 @@
         </legend>
       {% endif -%}
       {{ email_input (page, email, readonly = True) }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, None) -}}
-      </div>
-      {{ password_input
-          ( page
+      {{- errors_display (errors, None) -}}
+      {{ input_widget
+          ( page, password_input, errors
           , autocomplete = "off"
           , field_name   = "current"
-          , pw_label     = pw_label
+          , label        = pw_label
           , required     = True
           )
       }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, "password") -}}
-      </div>
-      {{ password_input
-          ( page
+      {{ input_widget
+          ( page, password_input, errors
           , autocomplete = "off"
           , field_name   = "npassword"
-          , pw_label     = "New password"
+          , label        = "New password"
           , required     = True
           , title        = "New password for your account"
           )
       }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, "npassword") -}}
-      </div>
-      {{ password_input
-          ( page
+      {{ input_widget
+          ( page, password_input, errors
           , autocomplete = "off"
           , field_name   = "vpassword"
-          , pw_label     = "Repeat password"
+          , label        = "Repeat password"
           , required     = True
           , title        = "Repeat new password for your account"
           )
       }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, "vpassword") -}}
-      </div>
-      <div class="pure-controls">
-        {{- X.input.button_pure
-            ( icon_name    = "check"
-            , name         = "submit"
-            , primary      = True
-            , text         = GTW._T ("Update password")
-            , title        = GTW._T ("Submit new password")
-            , type         = "submit"
-            )
-        -}}
-      </div>
+      {{- Form.button_control
+          ( icon_name    = "check"
+          , name         = "submit"
+          , primary      = True
+          , text         = GTW._T ("Update password")
+          , title        = GTW._T ("Submit new password")
+          , type         = "submit"
+          )
+      -}}
     </fieldset>
   {% endcall %} {# Form.form_pure #}
 {%- endmacro -%} {#- change_password_form -#}
@@ -219,32 +203,57 @@
   </{{ tag }}>
 {%- endmacro -%} {#- change_password_link -#}
 
-{%- macro display_errors (errors, field_name) -%}
-  {%- if errors %}
-    {%- for err in errors.get (field_name, ()) %}
-      <p class="Error-Message">
-        {{- err -}}
-      </p>
-    {% endfor -%}
-  {% endif -%}
-{%- endmacro -%} {#- display_errors -#}
+{%- macro errors_display (errors, field_name) -%}
+  <aside class="Errors pure-controls">
+    {%- if errors %}
+      {%- for err in errors.get (field_name, ()) %}
+        <p class="Error-Message">
+          {{- err -}}
+        </p>
+      {% endfor -%}
+    {% endif -%}
+  </aside>
+{%- endmacro -%} {#- errors_display -#}
 
-{%- macro email_input (page, username = None, field_name = "username", un_label = "Email") -%}
-  {%- set id    = "F_" + field_name %}
-  {%- set title = kwargs.pop ("title", "Email address of your account") %}
-  <div class="pure-control-group" title="{{ GTW._T (title) }}">
-    <label for="{{ id }}">{{ GTW._T (un_label) }}</label>
-    {{ X.input.email
-        ( id            = id
-        , name          = field_name
-        , maxlength     = "80"
-        , required      = True
-        , value         = username
-        , ** kwargs
-        )
-    }}
-  </div>
+{%- macro email_input
+      (page, username = None, field_name = "username", label = None)
+-%}
+  {{- label_input_group
+      ( page, X.input.email, field_name
+      , label     = label or GTW._T ("Email")
+      , maxlength = "80"
+      , required  = True
+      , title     = kwargs.pop
+          ("title", GTW._T ("Email address of your account"))
+      , value     = username
+      , ** kwargs
+      )
+  -}}
 {%- endmacro -%} {#- email_input -#}
+
+{%- macro keygen_input (page, challenge, field_name = "SPKAC", label = None) -%}
+  {{- label_input_group
+      ( page, X.input.keygen, field_name
+      , challenge = challenge
+      , label     = label or GTW._T ("Keysize")
+      , title     = kwargs.pop ("title", None)
+      , ** kwargs
+      )
+  -}}
+{%- endmacro -%} {#- keygen_input -#}
+
+{%- macro label_input_group (page, X_input, field_name, label, title) -%}
+  {%- set id = "F_" + field_name %}
+  <div class="pure-control-group" title="{{ title }}">
+    <label for="{{ id }}">{{ label }}</label>
+    {{ X_input (id = id, name = field_name, ** kwargs) }}
+  </div>
+{%- endmacro -%} {#- label_input_group -#}
+
+{%- macro input_widget (page, input_macro, errors, field_name) -%}
+  {{ input_macro    (page,   field_name = field_name, ** kwargs) }}
+  {{ errors_display (errors, field_name) }}
+{%- endmacro -%} {#- input_widget -#}
 
 {%- macro login_form
         ( page
@@ -268,12 +277,12 @@
     {%- set next         = page.top.abs_href -%}
   {%- endif -%}
   {% call Form.form_pure
-      ( action           = action
-      , aligned          = aligned
-      , class            = class
-      , include_ACT      = True
-      , method           = "post"
-      , next             = next
+      ( action             = action
+      , aligned            = aligned
+      , class              = class
+      , include_ACT        = True
+      , method             = "post"
+      , next               = next
       , ** kwargs
       )
   -%}
@@ -284,43 +293,42 @@
           {{ title }}
         </legend>
       {% endif -%}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, None) -}}
-      </div>
+      {{- errors_display (errors, None) -}}
       {{ cc_login_button (page, page.cc_href, tag_class = "pure-controls") }}
-      {{ email_input (page, username, un_label = un_label) }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, "username") -}}
-      </div>
-      {{ password_input (page, pw_label = pw_label) }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, "password") -}}
-      </div>
-      <div class="pure-controls">
-        {{- X.input.button_pure
-            ( icon_name    = "sign-in"
-            , name         = "submit"
-            , primary      = True
-            , text         = GTW._T ("Login")
-            , title        = GTW._T ("Log into website")
+      {{ input_widget
+          ( page, email_input, errors
+          , field_name     = "username"
+          , username       = username
+          , label          = un_label
+          )
+      }}
+      {{ input_widget
+          ( page, password_input, errors
+          , field_name     = "password"
+          , label          = pw_label
+          )
+      }}
+      {{ Form.button_control
+          ( icon_name      = "sign-in"
+          , name           = "submit"
+          , primary        = True
+          , text           = GTW._T ("Login")
+          , title          = GTW._T ("Log into website")
+          , type           = "submit"
+          )
+      }}
+      {%- if allow_new_pass %}
+        {{- Form.button_control
+            ( icon_name    = "frown-o"
+            , name         = "Reset"
+            , tabindex     = -1
+            , text         = GTW._T ("I forgot my password")
+            , title        = GTW._T
+              ("I forgot my password; send me a temporary one to my email address")
             , type         = "submit"
+            , value        = "reset"
             )
         -}}
-      </div>
-      {%- if allow_new_pass %}
-        <div class="pure-controls">
-          {{- X.input.button_pure
-              ( icon_name    = "frown-o"
-              , name         = "Reset"
-              , tabindex     = -1
-              , text         = GTW._T ("I forgot my password")
-              , title        = GTW._T
-                ("I forgot my password; send me a temporary one to my email address")
-              , type         = "submit"
-              , value        = "reset"
-              )
-          -}}
-        </div>
       {% endif -%}
       {%- if allow_register %}
         <div class="pure-controls">
@@ -411,19 +419,142 @@
   </{{ tag }}>
 {%- endmacro -%} {#- make_client_certifiate_link -#}
 
-{%- macro password_input (page, field_name = "password", pw_label = "Password") -%}
-  {%- set id    = "F_" + field_name %}
-  {%- set title = kwargs.pop ("title", "Password of your account") %}
-  <div class="pure-control-group" title="{{ GTW._T (title) }}">
-    <label for="{{ id }}">{{ GTW._T (pw_label) }}</label>
-    {{ X.input.password
-        ( id            = id
-        , name          = field_name
-        , ** kwargs
-        )
-    }}
-  </div>
+{%- macro make_client_cert_form (page, challenge, title, username) -%}
+  {%- set Auth           = page.SC.Auth -%}
+  {%- set request        = page.request -%}
+  {%- set action         = kwargs.pop ("action", page.abs_href) -%}
+  {%- set aligned        = kwargs.pop ("aligned", True) -%}
+  {%- set class          = kwargs.pop ("class", "Auth Client-Cert") %}
+  {%- set errors         = kwargs.pop ("errors", errors) %}
+  {%- set next           = kwargs.pop ("next", request.path_x or request.path) %}
+  {%- if (not next) or next.split ("?") [0].endswith (page.abs_href) -%}
+    {%- set next         = page.top.abs_href -%}
+  {%- endif -%}
+  {% call Form.form_pure
+      ( action             = action
+      , aligned            = aligned
+      , class              = class
+      , include_ACT        = True
+      , method             = "post"
+      , next               = next
+      , ** kwargs
+      )
+  -%}
+    <fieldset>
+      {%- if title %}
+        <legend>
+          {{ title }}
+        </legend>
+      {% endif -%}
+      {{- errors_display (errors, None) -}}
+      {{ email_input
+          ( page
+          , username       = username
+          , label          = GTW._T ("Email")
+          , readonly       = True
+          )
+      }}
+      {{ keygen_input (page, challenge) }}
+      {{ text_input
+          ( page
+          , field_name     = "desc"
+          , label          = GTW._T ("Description")
+          , title          = GTW._T
+              ("Optional descritpion for client certificate")
+          )
+      }}
+      {{ Form.button_control
+          ( icon_name      = "check"
+          , name           = "submit"
+          , primary        = True
+          , text           = GTW._T ("Create certificate request")
+          , title          = GTW._T
+              ("Create certificate request for account %s") % username
+          , type           = "submit"
+          )
+      }}
+    </fieldset>
+  {% endcall %} {# Form.form_pure #}
+{%- endmacro -%} {#- make_client_cert_form -#}
+
+{%- macro password_input (page, field_name = "password", label = None) -%}
+  {{- label_input_group
+      ( page, X.input.password, field_name
+      , label     = label or GTW._T ("Password")
+      , title     = kwargs.pop ("title", GTW._T ("Password of your account"))
+      , ** kwargs
+      )
+  -}}
 {%- endmacro -%} {#- password_input -#}
+
+{%- macro register_form (page, title)
+-%}
+  {%- set Auth           = page.SC.Auth -%}
+  {%- set request        = page.request -%}
+  {%- set action         = kwargs.pop ("action", Auth.href_register) -%}
+  {%- set aligned        = kwargs.pop ("aligned", True) -%}
+  {%- set class          = kwargs.pop ("class", "Auth Register") %}
+  {%- set errors         = kwargs.pop ("errors", errors) %}
+  {%- set lf_caller      = kwargs.pop ("caller", None) -%}
+  {%- set next           = kwargs.pop ("next", request.path_x or request.path) %}
+  {%- if (not next) or next.split ("?") [0].endswith (Auth.href_register) -%}
+    {%- set next         = page.top.abs_href -%}
+  {%- endif -%}
+  {% call Form.form_pure
+      ( action           = action
+      , aligned          = aligned
+      , class            = class
+      , include_ACT      = True
+      , method           = "post"
+      , next             = next
+      , ** kwargs
+      )
+  -%}
+    <fieldset>
+      {%- if title %}
+        <legend>
+          {{ title }}
+        </legend>
+      {% endif -%}
+      {{- errors_display (errors, None) -}}
+      {{ input_widget
+          ( page, email_input, errors
+          , field_name     = "username"
+          , title          =
+              GTW._T ("Email address used as username for your new account")
+          , label          = GTW._T ("Email address")
+          )
+      }}
+      {{ input_widget
+          ( page, password_input, errors
+          , field_name     = "npassword"
+          , label          = GTW._T ("New Passowrd")
+          , required       = True
+          , title          = GTW._T ("Password for your new account")
+          )
+      }}
+      {{ input_widget
+          ( page, password_input, errors
+          , autocomplete   = "off"
+          , field_name     = "vpassword"
+          , label          = GTW._T ("New password")
+          , required       = True
+          , title          = GTW._T ("Repeat new password for your account")
+          )
+      }}
+      {%- if lf_caller -%}{{- lf_caller () -}}{%- endif -%}
+      {{ Form.button_control
+          ( icon_name      = "sign-in"
+          , name           = "submit"
+          , primary        = True
+          , text           = GTW._T ("Register")
+          , title          = GTW._T ("Submit registration information")
+          , type           = "submit"
+          )
+      }}
+    </fieldset>
+  {% endcall %} {# Form.form_pure #}
+{%- endmacro -%} {#- register_form -#}
 
 {%- macro reset_password_form (page, username = None) -%}
   {%- set Auth       = page.SC.Auth -%}
@@ -458,23 +589,28 @@
         </legend>
       {% endif -%}
       {{ email_input (page, email, readonly = GTW.bool (email)) }}
-      <div class="Errors pure-controls">
-        {{- display_errors (errors, None) -}}
-      </div>
-      <div class="pure-controls">
-        {{- X.input.button_pure
-            ( icon_name    = "frown-o"
-            , name         = "Reset"
-            , text         = GTW._T ("I forgot my password")
-            , title        = GTW._T
-              ("I forgot my password; send me a temporary one to my email address")
-            , type         = "submit"
-            , value        = "reset"
-            )
-        -}}
-      </div>
+      {{- errors_display (errors, None) -}}
+      {{- Form.button_control
+          ( icon_name    = "frown-o"
+          , name         = "Reset"
+          , text         = GTW._T ("I forgot my password")
+          , title        = GTW._T
+            ("I forgot my password; send me a temporary one to my email address")
+          , type         = "submit"
+          , value        = "reset"
+          )
+      -}}
     </fieldset>
   {% endcall %} {# Form.form_pure #}
 {%- endmacro -%} {#- reset_password_form -#}
 
+{%- macro text_input (page, field_name, label, title) -%}
+  {{- label_input_group
+      ( page, X.input.text, field_name
+      , label     = label
+      , title     = title
+      , ** kwargs
+      )
+  -}}
+{%- endmacro -%} {#- text_input -#}
 {#- __END__ jinja template: html/auth.m.jnj -#}

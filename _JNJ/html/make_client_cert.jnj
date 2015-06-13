@@ -1,11 +1,11 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: make_client_cert.jnj -#}
 {#
-## Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This module is part of the package JNJ.
-## 
+##
 ## This module is licensed under the terms of the BSD 3-Clause License
 ## <http://www.c-tanzer.at/license/bsd_3c.html>.
 ## #*** </License> ***********************************************************#
@@ -24,48 +24,32 @@
 ##     6-Oct-2013 (CT) Add `with context` to import of `form.jnj`
 ##     4-Dec-2013 (CT) Add class `Auth Client-Cert` to `form`;
 ##                     use `<li>`, not `<p>`
+##    12-Jun-2015 (CT) Use `AT.make_client_cert_form`, not home-grown code
 ##    ««revision-date»»···
 ##--
 #}
 {%- import (html_version or "html/5.jnj") as X -%}
-{%- import "html/form.jnj" as Form with context %}
+{%- import "html/auth.m.jnj"              as AT with context %}
+
+{%- set title = GTW._T
+    ( "Make client certificate for account %s on %s"
+    ) % (account.name, request.host)
+-%}
+
+{%- block title -%}
+  <title>{{ title }}</title>
+{%- endblock -%}
 
 {%- block document -%}
-  {% call Form.form (class  = "Auth Client-Cert") -%}
-    <ul>
-      <li class="account-name">{{ account.name }}</li>
-      {{- Form.display_errors (errors, None) -}}
-
-      <li>
-        <label for="F_challenge">
-          {{- GTW._T ("Keysize") }}:
-          <keygen id="F_challenge" name="SPKAC" challenge="{{ challenge }}">
-          {#- -#}
-        </label>
-      </li>
-      <li>
-        <label for="F_desc">
-          {{- GTW._T ("Description") }}:
-          {{ X.input.text
-              ( title = GTW._T ("Optional descritpion for client certificate")
-              , id    = "F_desc"
-              , name  = "desc"
-              )
-          -}}
-        </label>
-      </li>
-      <li>
-        {{ X.input.submit
-            ( title =
-                ( GTW._T ("Create certificate request for user %s")
-                % (request.user.name, )
-                )
-            , value = GTW._T ("Create certificate request")
-            )
-        }}
-      </li>
-    </ul>
-  {% endcall %} {# form #}
+  {{ AT.make_client_cert_form
+      ( page
+      , challenge  = challenge
+      , next       = next
+      , errors     = errors
+      , title      = title
+      , username   = account.name
+      )
+  }}
 {%- endblock document -%}
 
 {#- __END__ jinja template: make_client_cert.jnj -#}

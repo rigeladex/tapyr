@@ -63,6 +63,8 @@
 #                     `_Change_Email_.POST._response_body`
 #    12-Jun-2015 (CT) Factor `_account_query`, convert `PAP.Person_has_Account`
 #                     instances to `Auth.Account` instances
+#    12-Jun-2015 (CT) Add guard for `scope.PAP` (doesn't exist in all apps)
+#    13-Jun-2015 (CT) Add `_Change_Email_.get_title`
 #    ««revision-date»»···
 #--
 
@@ -133,7 +135,8 @@ class _Cmd_ (_Ancestor) :
             ### if this called from a POST handler,
             ### the account is set on the response cobject
             result  = getattr (response, "account", None)
-        if isinstance (result, scope.PAP.Person_has_Account) :
+        PAP = getattr (scope, "PAP", None)
+        if PAP is not None and isinstance (result, PAP.Person_has_Account) :
             result = result.account
         return result
     # end def _account_query
@@ -278,8 +281,8 @@ class _Activate_ (_Ancestor) :
             self.errors  = Errors ()
             self._credentials_validation \
                 ( resource, request
-                , field_name_password = "current"
-                , debug               = debug
+                , fn_password = "current"
+                , debug       = debug
                 )
             new_password = self.get_password \
                 (request, "npassword", verify_field = "vpassword")
@@ -403,6 +406,11 @@ class _Change_Email_ (_Ancestor) :
         # end def _response_body
 
     POST = _Change_Email__POST_ # end class
+
+    def get_title (self, account, request) :
+        return _T ("Change email for %s on website %s") \
+            % (account.name, request.host)
+    # end def get_title
 
 # end class _Change_Email_
 

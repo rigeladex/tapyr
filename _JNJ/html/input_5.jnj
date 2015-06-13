@@ -37,6 +37,7 @@
 ##    23-Oct-2014 (CT) Add `button`, `button_pure`; factor `with_opts_kw`
 ##    21-Nov-2014 (CT) Add `hd_input`
 ##    11-Jun-2015 (CT) Add optional keyword argument `primary` to `button_pure`
+##    13-Jun-2015 (CT) Add `keygen`
 ##    ««revision-date»»···
 ##--
 #}
@@ -151,6 +152,12 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 {%- macro hidden () -%}
   {{ _input ("hidden", kwargs) }}
 {%- endmacro -%}
+
+{%- macro keygen () -%}
+  {% call(opts, kw) with_opts_kw (kwargs) -%}
+    <keygen {{ kw|xmlattr }}{% if opts %} {{ opts }}{% endif -%}>
+  {% endcall %} {# with_opts_kw #}
+{%- endmacro -%} {#- keygen -#}
 
 {%- macro month () -%}
   {{ _input_c ("month", kwargs) }}

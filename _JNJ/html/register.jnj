@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: register.jnj -#}
 {#
-## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -21,50 +21,28 @@
 ##    21-Feb-2010 (MG) Creation
 ##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
 ##    16-Aug-2012 (MG) Adapt to formless new GTW.RST.TOP.Auth
+##    12-Jun-2015 (CT) Use `AT.register_form`, not home-grown code
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
-{%- import "STD::html/form.jnj" as Form with context %}
+{%- import "html/auth.m.jnj"              as AT with context %}
 
-{%- set title = GTW._T ("Register a new account for ") + " " + request.host %}
+{%- set title = GTW._T ("Register a new account for %s") % (request.host, ) %}
 
 {%- block title -%}
-  <title>{{ title|safe }}</title>
+  <title>{{ title }}</title>
 {%- endblock -%}
 
 {%- block document -%}
-  <h1>{{ title|safe }}</h1>
-
-  {%- set Auth     = page.SC.Auth -%}
-  {% call Form.form (action = Auth.href_register) -%}
-    <ul>
-      {{- Form.display_errors (errors, None) -}}
-
-      <li><label for="F_password">{{ GTW._T ("Email address") }}</label></li>
-      <li>{{ X.input.text (id = "F_username", name = "username") }}</li>
-      {{- Form.display_errors (errors, "username") -}}
-
-      <li><label for="F_npassword">{{ GTW._T ("New Password") }}</label></li>
-      <li>{{ X.input.password (id = "F_npassword", name = "npassword") }}</li>
-      {{- Form.display_errors (errors, "npassword") -}}
-
-      <li><label for="F_vpassword">{{ GTW._T ("Repeat Password") }}</label></li>
-      <li>{{ X.input.password (id = "F_vpassword", name = "vpassword") }}</li>
-      {{- Form.display_errors (errors, "vpassword") -}}
-
-      <li>
-        {{ X.input.submit
-            ( title = (GTW._T ("Update Email"))
-            , value = (GTW._T ("Update Email"))
-            )
-        }}
-        {{ X.input.hidden (name  = "next",     value = next        ) }}
-      </li>
-    </ul>
-  {% endcall %} {# form #}
-
+  {{ AT.register_form
+      ( page
+      , next     = next
+      , errors   = errors
+      , title    = title
+      )
+  }}
 {%- endblock document -%}
 
 {#- __END__ jinja template: register.jnj -#}
