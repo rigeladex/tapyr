@@ -74,6 +74,7 @@
 #    20-Aug-2014 (CT) Remove `_GTW._AFS._MOM.Form_Cache`
 #    21-Aug-2014 (CT) Reify `after_app_type` as method of `RST_App`, `TOP_App`
 #     7-May-2015 (CT) Add support for `journal_dir`
+#    14-Jun-2015 (CT) Add `-force_HSTS` to enable Strict Transport Security
 #    ««revision-date»»···
 #--
 
@@ -196,7 +197,12 @@ class GT2W_Command (GTW.OMP.Command) :
             , "-CSRF_check:B?Perform checks to protect against CSRF"
             , "-external_media_path:P"
                 "?Path where the /media/X url should be bound to"
+            , "-force_HSTS:B?Include HSTS header"
             , "-host:S?Host name or IP-Address the server should be bound to"
+            , "-max_age_HSTS:I=31557600"
+                "?The time, in seconds, that the browser should remember "
+                "that this site is only to be accessed using HTTPS "
+                "(default: one year [86400 * 365.25 seconds])"
             , "-load_I18N:B"
                 "?Load the translation files during startup"
             , "-log_level:I?Verbosity of logging"
@@ -459,6 +465,12 @@ class GT2W_Command (GTW.OMP.Command) :
         self._load_I18N (cmd)
         sf_app = self._static_file_app (cmd)
         result = root = self._get_root (cmd, apt, url, static_handler = sf_app)
+        if cmd.force_HSTS :
+            GTW.RST.Response._auto_headers.update \
+                ( { "Strict-Transport-Security"
+                  : "max-age=%d; includeSubDomains;" % cmd.max_age_HSTS
+                  }
+                )
         if cmd.serve_static_files :
             sf_app.wrap = root
             result      = sf_app
