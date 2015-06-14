@@ -27,6 +27,7 @@
 #    31-Aug-2012 (CT) Add property `Color.no_alpha`
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    11-Feb-2015 (CT) Add `Color.with_alpha`
+#    14-Jun-2015 (CT) Add `HUSL`; change signature and internals of `Value`
 #    ««revision-date»»···
 #--
 
@@ -36,105 +37,135 @@ from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.predicate           import identity
 
 import _TFL._Meta.Object
+import _TFL._Meta.Property
 import _TFL.Regexp
 
-from   collections import namedtuple
+from   collections              import namedtuple
 
-RGB_Value = namedtuple ("RGB", ("red", "green", "blue"))
-HSL_Value = namedtuple ("HSL", ("hue", "saturation", "lightness"))
+RGB_Value   = namedtuple ("RGB", ("red", "green", "blue"))
+HSL_Value   = namedtuple ("HSL", ("hue", "saturation", "lightness"))
+Value_Types = HSL_Value, RGB_Value
+
+try :
+    import husl
+except ImportError :
+    HUSL_Value  = husl = None
+else :
+    HUSL_Value  = namedtuple ("HUSL", ("hue", "saturation", "lightness"))
+    Value_Types = (HUSL_Value, ) + Value_Types
+
+for _T in Value_Types :
+    _T.name = _T.__name__.lower ()
 
 class Value (TFL.Meta.Object) :
     """Model an immutable color value.
 
-    >>> white_1 = Value (rgb = (1.0, 1.0, 1.0))
+    >>> white_1 = Value.from_rgb ((1.0, 1.0, 1.0))
     >>> white_1.rgb, white_1.hsl
     (RGB(red=1.0, green=1.0, blue=1.0), HSL(hue=0.0, saturation=0.0, lightness=1.0))
 
-    >>> white_2 = Value (hsl = (0.0, 0.0, 1.0))
+    >>> white_2 = Value.from_hsl ((0.0, 0.0, 1.0))
     >>> white_2.rgb, white_2.hsl
     (RGB(red=1.0, green=1.0, blue=1.0), HSL(hue=0.0, saturation=0.0, lightness=1.0))
 
     >>> white_1 == white_2
     True
 
-    >>> grey50 = Value (rgb = (0.5, 0.5, 0.5))
+    >>> grey50 = Value.from_rgb ((0.5, 0.5, 0.5))
     >>> grey50.rgb, grey50.hsl
     (RGB(red=0.5, green=0.5, blue=0.5), HSL(hue=0.0, saturation=0.0, lightness=0.5))
 
-    >>> black = Value (rgb = (0.0, 0.0, 0.0))
+    >>> black = Value.from_rgb ((0.0, 0.0, 0.0))
     >>> black.rgb, black.hsl
     (RGB(red=0.0, green=0.0, blue=0.0), HSL(hue=0.0, saturation=0.0, lightness=0.0))
 
-    >>> red = Value (hsl = (0.0, 1.0, 0.5))
+    >>> red = Value.from_hsl ((0.0, 1.0, 0.5))
     >>> red.rgb, red.hsl
     (RGB(red=1.0, green=0.0, blue=0.0), HSL(hue=0.0, saturation=1.0, lightness=0.5))
 
-    >>> Value (rgb = (0.750, 0.750, 0.000)) == Value (hsl = ( 60.0, 1.000, 0.375))
+    >>> Value.from_rgb ((0.750, 0.750, 0.000)) == Value.from_hsl (( 60.0, 1.000, 0.375))
     True
-    >>> Value (rgb = (0.000, 0.500, 0.000)) == Value (hsl = (120.0, 1.000, 0.250))
+    >>> Value.from_rgb ((0.000, 0.500, 0.000)) == Value.from_hsl ((120.0, 1.000, 0.250))
     True
-    >>> Value (rgb = (0.500, 1.000, 1.000)) == Value (hsl = (180.0, 1.000, 0.750))
+    >>> Value.from_rgb ((0.500, 1.000, 1.000)) == Value.from_hsl ((180.0, 1.000, 0.750))
     True
-    >>> Value (rgb = (0.500, 0.500, 1.000)) == Value (hsl = (240.0, 1.000, 0.750))
+    >>> Value.from_rgb ((0.500, 0.500, 1.000)) == Value.from_hsl ((240.0, 1.000, 0.750))
     True
-    >>> Value (rgb = (0.750, 0.250, 0.750)) == Value (hsl = (300.0, 0.500, 0.500))
+    >>> Value.from_rgb ((0.750, 0.250, 0.750)) == Value.from_hsl ((300.0, 0.500, 0.500))
     True
+
+    >>> for i in range (12) :
+    ...     h = i * 30
+    ...     v = Value.from_husl ((h, 0.9, 0.6))
+    ...     print (i, v, v.hex)
+    0 Value (husl = (0, 0.9, 0.6)) #F65682
+    1 Value (husl = (30, 0.9, 0.6)) #DD742B
+    2 Value (husl = (60, 0.9, 0.6)) #B18B2B
+    3 Value (husl = (90, 0.9, 0.6)) #90962B
+    4 Value (husl = (120, 0.9, 0.6)) #55A22A
+    5 Value (husl = (150, 0.9, 0.6)) #2CA375
+    6 Value (husl = (180, 0.9, 0.6)) #2EA095
+    7 Value (husl = (210, 0.9, 0.6)) #309DAE
+    8 Value (husl = (240, 0.9, 0.6)) #3398D5
+    9 Value (husl = (270, 0.9, 0.6)) #9180F3
+    10 Value (husl = (300, 0.9, 0.6)) #DE51F3
+    11 Value (husl = (330, 0.9, 0.6)) #F549C1
 
     """
 
-    Table_HSL = {}
-    Table_RGB = {}
+    Types = Value_Types
 
-    _hsl      = None
-    _rgb      = None
-
-    def __new__ (cls, rgb = None, hsl = None) :
-        if rgb is None :
-            result = cls.from_hsl (hsl)
-        else :
-            assert hsl is None
-            if isinstance (rgb, HSL_Value) :
-                result = cls.from_hsl (rgb)
-            else :
-                result = cls.from_rgb (rgb)
-        return result
-    # end def __new__
+    def __init__ (self, v) :
+        if not isinstance (v, self.Types) :
+            raise TypeError \
+                ( "Need one of %s, got %s %s instead"
+                % (self.Types, type (v), v)
+                )
+        self.__super.__init__ ()
+        self._vmap = {v.name : v}
+    # end def __init__
 
     @classmethod
-    def clear (cls) :
-        """Clear the caches `Table_HSL` and `Table_RGB`."""
-        cls.Table_HSL.clear ()
-        cls.Table_RGB.clear ()
-    # end def clear
-
-    @classmethod
-    def from_hsl (cls, hsl) :
-        assert hsl
-        hsl = HSL_Value (* hsl)
-        assert 0.0 <= hsl.hue        <  360.0
-        assert 0.0 <= hsl.saturation <= 1.0
-        assert 0.0 <= hsl.lightness  <= 1.0
-        if hsl in cls.Table_HSL :
-            result = cls.Table_HSL [hsl]
-        else :
-            result = cls.Table_HSL [hsl] = cls.__c_super.__new__ (cls)
-            result._hsl = hsl
-        return result
+    def from_hsl (cls, vs) :
+        assert vs
+        v = HSL_Value (* vs)
+        assert 0.0 <= v.hue        <  360.0, str (vs)
+        assert 0.0 <= v.saturation <=   1.0, str (vs)
+        assert 0.0 <= v.lightness  <=   1.0, str (vs)
+        return cls (v)
     # end def from_hsl
 
     @classmethod
-    def from_rgb (cls, rgb) :
-        assert rgb
-        rgb = RGB_Value (* rgb)
-        assert all (0.0 <= v <= 1.0 for v in rgb), str (rgb)
-        if rgb in cls.Table_RGB :
-            result = cls.Table_RGB [rgb]
-        else :
-            result = cls.Table_RGB [rgb] = cls.__c_super.__new__ (cls)
-            result._rgb = rgb
-        return result
+    def from_husl (cls, vs) :
+        assert vs
+        v = cls.HUSL_Value (* vs)
+        assert 0.0 <= v.hue        <  360.0, str (vs)
+        assert 0.0 <= v.saturation <=   1.0, str (vs)
+        assert 0.0 <= v.lightness  <=   1.0, str (vs)
+        return cls (v)
+    # end def from_husl
+
+    if HUSL_Value is None :
+        @TFL.Meta.Class_Property
+        def HUSL_Value (cls) :
+            raise ImportError \
+                ("Module `husl` no installed; try: `pip install husl`")
+        # end def HUSL_Value
+    else :
+        @TFL.Meta.Class_Property
+        def HUSL_Value (cls) :
+            return HUSL_Value
+        # end def HUSL_Value
+
+    @classmethod
+    def from_rgb (cls, vs) :
+        assert vs
+        v = RGB_Value (* vs)
+        assert all (0.0 <= x <= 1.0 for x in v), str (vs)
+        return cls (v)
     # end def from_rgb
 
     @Once_Property
@@ -153,8 +184,10 @@ class Value (TFL.Meta.Object) :
 
     @Once_Property
     def hsl (self) :
-        if self._hsl is None :
-            r, g, b   = rgb = self._rgb
+        _vmap  = self._vmap
+        result = _vmap.get ("hsl")
+        if result is None :
+            r, g, b = rgb = self.rgb
             M  = max (rgb)
             m  = min (rgb)
             c  = M - m
@@ -171,37 +204,65 @@ class Value (TFL.Meta.Object) :
             h  = h6 * 60.0
             l  = (M + m) / 2.0
             s  = c / (1.0 - abs (2.0 * l - 1.0)) if (c != 0) else 0.0
-            self._hsl = hsl = HSL_Value (h, s, l)
-            self.Table_HSL [hsl] = self
-        return self._hsl
+            result = _vmap ["hsl"] = HSL_Value (h, s, l)
+        return result
     # end def hsl
 
     @Once_Property
+    def husl (self) :
+        HUSL_Value  = self.HUSL_Value
+        _vmap       = self._vmap
+        result      = _vmap.get ("husl")
+        if result is None :
+            h, s, l = husl.rgb_to_husl (* self.rgb)
+            result  = _vmap ["husl"] = HUSL_Value (h, s / 100., l / 100.)
+        return result
+    # end def husl
+
+    @Once_Property
     def rgb (self) :
-        if self._rgb is None :
-            h, s, l   = self._hsl
-            c  = (1.0 - abs (2.0 * l - 1.0)) * s
-            h6 = h / 60.0
-            x  = c * (1 - abs (h6 % 2 - 1))
-            m  = l - 0.5 * c
-            if h6 < 1 :
-                r, g, b = c, x, 0
-            elif h6 < 2 :
-                r, g, b = x, c, 0
-            elif h6 < 3 :
-                r, g, b = 0, c, x
-            elif h6 < 4 :
-                r, g, b = 0, x, c
-            elif h6 < 5 :
-                r, g, b = x, 0, c
-            elif h6 < 6 :
-                r, g, b = c, 0, x
-            else :
-                raise ValueError ("Invalid hue: %s" % h)
-            self._rgb = rgb = RGB_Value (r + m, g + m, b + m)
-            self.Table_RGB [rgb] = self
-        return self._rgb
+        _vmap  = self._vmap
+        result = _vmap.get ("rgb")
+        if result is None :
+            v = self.preferred_value
+            if husl is not None and isinstance (v, HUSL_Value) :
+                h, s, l = v
+                result  = RGB_Value \
+                    (* husl.husl_to_rgb (float (h), s * 100., l * 100.))
+            elif isinstance (v, HSL_Value) :
+                h, s, l   = _vmap ["hsl"]
+                c  = (1.0 - abs (2.0 * l - 1.0)) * s
+                h6 = h / 60.0
+                x  = c * (1 - abs (h6 % 2 - 1))
+                m  = l - 0.5 * c
+                if h6 < 1 :
+                    r, g, b = c, x, 0
+                elif h6 < 2 :
+                    r, g, b = x, c, 0
+                elif h6 < 3 :
+                    r, g, b = 0, c, x
+                elif h6 < 4 :
+                    r, g, b = 0, x, c
+                elif h6 < 5 :
+                    r, g, b = x, 0, c
+                elif h6 < 6 :
+                    r, g, b = c, 0, x
+                else :
+                    raise ValueError ("Invalid hue: %s" % h)
+                result = RGB_Value (r + m, g + m, b + m)
+            _vmap ["rgb"] = result
+        return result
     # end def rgb
+
+    @property
+    def preferred_value (self) :
+        _vmap = self._vmap
+        for T in self.Types :
+            try :
+                return _vmap [T.name]
+            except KeyError :
+                pass
+    # end def preferred_value
 
     def __eq__ (self, rhs) :
         return self.rgb == getattr (rhs, "rgb", None)
@@ -212,12 +273,10 @@ class Value (TFL.Meta.Object) :
     # end def __hash__
 
     def __repr__ (self) :
-        if self._hsl :
-            name, value = "hsl", self._hsl
-        else :
-            name, value = "rgb", self._rgb
-        return "%s (%s = (%s))" % \
-            (self.__class__.__name__, name, ", ".join (str (s) for s in value))
+        v  = self.preferred_value
+        vs = ", ".join (str (s) for s in v)
+        vs = ", ".join ("%g" % (s, ) for s in v)
+        return "%s (%s = (%s))" % (self.__class__.__name__, v.name, vs)
     # end def __repr__
 
 # end class Value
@@ -235,7 +294,7 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
 
     def __init__ (self, values, alpha = None) :
         if not isinstance (values, Value) :
-            values = Value (** {self.name : tuple (float (v) for v in values)})
+            values = Value (self.P_Type (* (float (v) for v in values)))
         self.value = values
         if alpha is not None :
             assert 0.0 <= alpha <= 1.0
@@ -268,6 +327,11 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     # end def as_HSL
 
     @property
+    def as_HUSL (self) :
+        return HUSL.cast (self)
+    # end def as_HUSL
+
+    @property
     def as_RGB (self) :
         return RGB.cast (self)
     # end def as_RGB
@@ -296,7 +360,7 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     def blue (self, value) :
         assert 0.0 <= value <= 1.0
         r, g, b = self.value.rgb
-        self.value = Value (rgb = (r, g, float (value)))
+        self.value = Value.from_rgb ((r, g, float (value)))
     # end def blue
 
     @property
@@ -308,7 +372,7 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     def green (self, value) :
         assert 0.0 <= value <= 1.0
         r, g, b = self.value.rgb
-        self.value = Value (rgb = (r, float (value), b))
+        self.value = Value.from_rgb ((r, float (value), b))
     # end def green
 
     @property
@@ -319,7 +383,7 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     @hsl.setter
     def hsl (self, value) :
         if not isinstance (value, Value) :
-            value  = Value (rgb = value)
+            value  = Value.from_hsl (value)
         self.value = value
     # end def hsl
 
@@ -332,8 +396,20 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     def hue (self, value) :
         assert 0.0 <= value < 360.0
         h, s, l = self.value.hsl
-        self.value = Value (hsl = (float (value), s, l))
+        self.value = Value.from_hsl ((float (value), s, l))
     # end def hue
+
+    @property
+    def husl (self) :
+        return self.value.husl
+    # end def husl
+
+    @hsl.setter
+    def husl (self, value) :
+        if not isinstance (value, Value) :
+            value  = Value.from_husl (value)
+        self.value = value
+    # end def husl
 
     @property
     def lightness (self) :
@@ -344,7 +420,7 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     def lightness (self, value) :
         assert 0.0 <= value <= 1.0
         h, s, l = self.value.hsl
-        self.value = Value (hsl = (h, s, float (value)))
+        self.value = Value.from_hsl ((h, s, float (value)))
     # end def lightness
 
     @property
@@ -362,7 +438,7 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     def red (self, value) :
         assert 0.0 <= value <= 1.0
         r, g, b = self.value.rgb
-        self.value = Value (rgb = (float (value), g, b))
+        self.value = Value.from_rgb ((float (value), g, b))
     # end def red
 
     @property
@@ -373,7 +449,7 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     @rgb.setter
     def rgb (self, value) :
         if not isinstance (value, Value) :
-            value  = Value (rgb = value)
+            value  = Value.from_rgb (value)
         self.value = value
     # end def rgb
 
@@ -386,7 +462,7 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     def saturation (self, value) :
         assert 0.0 <= value <= 1.0
         h, s, l = self.value.hsl
-        self.value = Value (hsl = (h, float (value), l))
+        self.value = Value.from_hsl ((h, float (value), l))
     # end def saturation
 
     def formatted (self) :
@@ -424,13 +500,13 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
 
     def __invert__ (self) :
         return self.__class__.from_value \
-            (Value (rgb = tuple (1.0 - v for v in self.rgb)), self.alpha)
+            (Value.from_rgb (tuple (1.0 - v for v in self.rgb)), self.alpha)
     # end def __invert__
 
     def __mul__ (self, rhs) :
         assert 0.0 <= rhs
         return self.__class__.from_value \
-            ( Value (rgb = tuple (min (v * rhs, 1.0) for v in self.rgb))
+            ( Value.from_rgb (tuple (min (v * rhs, 1.0) for v in self.rgb))
             , self.alpha
             )
     # end def __mul__
@@ -446,7 +522,8 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
 class HSL (_Color_) :
     """Model a color specified by hue/saturation/lightness values."""
 
-    name = "hsl"
+    name   = "hsl"
+    P_Type = HSL_Value
 
     def __init__ (self, hue, saturation, lightness, alpha = None) :
         hue = (((hue % 360.0) + 360.0) % 360.0)
@@ -466,10 +543,43 @@ class HSL (_Color_) :
 
 # end class HSL
 
+class HUSL (_Color_) :
+    """Model a color specified by human-friendly hue/saturation/lightness values.
+
+       http://www.husl-colors.org/
+    """
+
+    name   = "husl"
+    P_Type = HUSL_Value
+
+    def __init__ (self, hue, saturation, lightness, alpha = None) :
+        hue = (((hue % 360.0) + 360.0) % 360.0)
+        self.__super.__init__ \
+            ((hue, saturation / 100.0, lightness / 100.0), alpha)
+    # end def __init__
+
+    @TFL.Meta.Class_Property
+    def HUSL_Value (cls) :
+        return Value.HUSL_Value
+    # end def HUSL_Value
+
+    @property
+    def as_HUSL (self) :
+        return self
+    # end def as_HUSL
+
+    def _formatted_values (self) :
+        h, s, l = self.value.husl
+        return "%d, %d%%, %d%%" % (h, s * 100, l * 100)
+    # end def _formatted_values
+
+# end class HUSL
+
 class RGB (_Color_) :
     """Model a color specified by red/green/blue values."""
 
-    name = "rgb"
+    name   = "rgb"
+    P_Type = RGB_Value
 
     def __init__ (self, red, green, blue, alpha = None) :
         self.__super.__init__ ((red, green, blue), alpha)
@@ -774,48 +884,53 @@ Classes modelling various color representations::
 
     >>> c = RGB_8 (255, 0, 0)
     >>> d = c.as_RGB_X
-    >>> h = d.as_HSL
-    >>> print (c, d, h)
-    rgb(255, 0, 0) #F00 hsl(0, 100%, 50%)
+    >>> h = c.as_HSL
+    >>> u = c.as_HUSL
+    >>> print (c, d, h, u)
+    rgb(255, 0, 0) #F00 hsl(0, 100%, 50%) husl(12, 100%, 53%)
 
     >>> cn = ~ c
     >>> hn = ~ h
-    >>> print (cn, hn)
-    rgb(0, 255, 255) hsl(180, 100%, 50%)
+    >>> un = ~ u
+    >>> print (cn, hn, un)
+    rgb(0, 255, 255) hsl(180, 100%, 50%) husl(192, 99%, 91%)
 
     >>> ca = RGB (* c.rgb, alpha = 0.25).as_RGB_8
     >>> da = ca.as_RGB_X
-    >>> ha = da.as_HSL
-    >>> print (ca, da, ha)
-    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0, 100%, 50%, 0.25)
+    >>> ha = ca.as_HSL
+    >>> ua = ca.as_HUSL
+    >>> print (ca, da, ha, ua)
+    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0, 100%, 50%, 0.25) husla(12, 100%, 53%, 0.25)
 
     >>> b  = RGB (0, 0, 0)
     >>> hb = b.as_HSL
+    >>> ub = b.as_HUSL
     >>> w  = RGB (1, 1, 1)
     >>> hw = w.as_HSL
-    >>> print (b, ~b, hb, ~hb)
-    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
-    >>> print (~w, w, ~hw, hw)
-    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
+    >>> uw = w.as_HUSL
+    >>> print (b, ~b, hb, ~hb, ub, ~ub)
+    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%) husl(0, 0%, 0%) husl(19, 0%, 100%)
+    >>> print (~w, w, ~hw, hw, uw, ~ uw)
+    rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%) husl(19, 0%, 100%) husl(0, 0%, 0%)
 
     >>> print (c * 0.5, w * 0.8)
     rgb(127, 0, 0) rgb(80%, 80%, 80%)
 
     >>> _Color_.formatter = RGB_X
-    >>> print (b, ~b, hb, ~hb)
-    #000 #FFF #000 #FFF
-    >>> print (cn, hn)
-    #0FF #0FF
-    >>> print (ca, da, ha)
-    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25)
+    >>> print (b, ~b, hb, ~hb, ub, ~ub)
+    #000 #FFF #000 #FFF #000 #FFF
+    >>> print (cn, hn, un)
+    #0FF #0FF #0FF
+    >>> print (ca, da, ha, ua)
+    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25)
 
     >>> _Color_.formatter = HSL
-    >>> print (b, ~b, hb, ~hb)
-    hsl(0, 0%, 0%) hsl(0, 0%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
-    >>> print (cn, hn)
-    hsl(180, 100%, 50%) hsl(180, 100%, 50%)
-    >>> print (ca, da, ha)
-    hsla(0, 100%, 50%, 0.25) hsla(0, 100%, 50%, 0.25) hsla(0, 100%, 50%, 0.25)
+    >>> print (b, ~b, hb, ~hb, ub, ~ub)
+    hsl(0, 0%, 0%) hsl(0, 0%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
+    >>> print (cn, hn, un)
+    hsl(180, 100%, 50%) hsl(180, 100%, 50%) hsl(180, 100%, 50%)
+    >>> print (ca, da, ha, ua)
+    hsla(0, 100%, 50%, 0.25) hsla(0, 100%, 50%, 0.25) hsla(0, 100%, 50%, 0.25) hsla(0, 100%, 50%, 0.25)
 
     >>> _Color_.formatter = RGB_X
     >>> print (SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5))
