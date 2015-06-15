@@ -23,6 +23,7 @@
 #    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
 #    16-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
 #    17-Apr-2012 (CT) Add test for `as_json_cargo (* errors)`
+#    15-Jun-2015 (CT) Add tests where `None` is passed for primary attribute
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,20 @@ _test_code = r"""
     []
     >>> print (PAP.Person.count)
     0
+
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     PAP.Person (last_name = None, first_name = None, raw = True)
+    Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
+        first_name = None
+      Condition `last_name_not_empty` : The attribute last_name needs a non-empty value
+        last_name = None
+
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     PAP.Person (last_name = None, first_name = None)
+    Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
+        first_name = None
+      Condition `last_name_not_empty` : The attribute last_name needs a non-empty value
+        last_name = None
 
     >>> with expect_except (MOM.Error.Invariants) :
     ...     PAP.Person \

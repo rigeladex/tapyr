@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -125,6 +125,7 @@
 #    30-Aug-2014 (CT) Add `dict` to `isinstance` check in `Link._cooked_role`
 #    26-Sep-2014 (CT) Change `_epkified` to use `_kw_polished`, if possible
 #    26-Sep-2014 (CT) Use `_kw_polished` for `raw` only
+#    15-Jun-2015 (CT) Add guard for `None` to `_cooked_role`
 #    ««revision-date»»···
 #--
 
@@ -628,7 +629,7 @@ class Link (Id_Entity) :
 
     def _cooked_role (self, r, v) :
         result = v
-        if not isinstance (result, MOM.Entity) :
+        if v is not None and not isinstance (result, MOM.Entity) :
             if not isinstance (v, (dict, tuple, list, int)) :
                 if not (v.startswith ("(") and v.endswith (")")) :
                     v = (v, )

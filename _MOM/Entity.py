@@ -290,6 +290,7 @@
 #    23-Apr-2015 (CT) Add `MD_Change.use_indices` with: `parent_cid`, `pid`,
 #                     and `(type_name, cid)`
 #    27-Apr-2015 (CT) Use `use_index`, not `use_indices`, where possible
+#    15-Jun-2015 (CT) Change `_kw_raw_check_predicates` to add `None` to `ckd_kw`
 #    ««revision-date»»···
 #--
 
@@ -791,7 +792,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
                             )
                     to_do.append ((attr, u"", None))
                 except Exception as exc :
-                    if 0:
+                    if __debug__ :
                         logging.exception \
                         ( "\n    %s %s, attribute conversion error %s: %s [%s]"
                         , self.type_name, self, name, val, type (val)
@@ -800,6 +801,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
                     to_do.append ((attr, val, ckd_val))
             else :
                 to_do.append ((attr, u"", None))
+                ckd_kw [name] = None
         if errors :
             on_error (MOM.Error.Invariants (errors))
         result = self._kw_check_predicates (on_error = on_error, ** ckd_kw)
