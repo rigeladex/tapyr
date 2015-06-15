@@ -92,6 +92,8 @@
 #    29-Apr-2015 (CT) Add `record_commit_errors`
 #     6-May-2015 (CT) Use `TFL.json_dump.to_string`
 #    11-May-2015 (CT) Add `completer_choose_value_iter`
+#    15-Jun-2015 (CT) Add all invariants in `_Entity_Mixin_._create_instance`
+#                     * remove the guard `not exc.any_required_empty`
 #    ««revision-date»»···
 #--
 
@@ -758,8 +760,7 @@ class _Entity_Mixin_ (_Base_) :
                 if error is not None and error is not self.undef :
                     on_error (error)
         except MOM.Error.Invariants as exc :
-            if not exc.any_required_empty :
-                on_error (exc)
+            on_error (exc)
         else :
             self._submitted_value = result
             if result is not self.undef :
