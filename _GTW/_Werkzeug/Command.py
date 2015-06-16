@@ -75,6 +75,8 @@
 #    21-Aug-2014 (CT) Reify `after_app_type` as method of `RST_App`, `TOP_App`
 #     7-May-2015 (CT) Add support for `journal_dir`
 #    14-Jun-2015 (CT) Add `-force_HSTS` to enable Strict Transport Security
+#    16-Jun-2015 (CT) Change default of `webmaster`
+#                     (`@gmail.com` was a bad choice)
 #    ««revision-date»»···
 #--
 
@@ -212,7 +214,7 @@ class GT2W_Command (GTW.OMP.Command) :
             , "-watch_media_files:B"
                 "?Add the .media files to list files watched by "
                 "automatic reloader"
-            , "-webmaster:S=christian.tanzer@gmail.com"
+            , "-webmaster:S=tanzer@swing.co.at"
             , TFL.CAO.Opt.Key
                 ( name        = "UTP"
                 , dct         = dict
