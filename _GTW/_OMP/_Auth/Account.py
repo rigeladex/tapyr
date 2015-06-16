@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This package is part of the package GTW.
@@ -59,6 +59,7 @@
 #    26-May-2013 (CT) Add `Account_Manager.apply_migration`, `.migration`
 #    27-May-2013 (CT) Make `create_new_account_x` argument `password` optional
 #     5-Jun-2013 (CT) Set `password.q_able` to `False`
+#    16-Jun-2015 (CT) Change `random_password` to start with letter or digit
 #    ««revision-date»»···
 #--
 
@@ -271,13 +272,13 @@ class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
 class Account (_Ancestor_Essence) :
     """An acount which uses passwords for authorization."""
 
-    Manager     = Account_Manager
-    charset     = \
+    Manager         = Account_Manager
+    pw_charset      = \
         ( "abcdefghijklmnopqrstuvwxyz"
           "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
           "0123456789"
-          "!#$%&()*+,-./:;<=>?@[]^_{|}~"
         )
+    pw_charset_full = "".join ((pw_charset, "$&*+,/:;=?@_"))
     default_ph_name = TFL.Password_Hasher.default.name
 
     class _Attributes (_Ancestor_Essence._Attributes) :
@@ -347,10 +348,13 @@ class Account (_Ancestor_Essence) :
 
     @classmethod
     def random_password (cls, length = 16) :
-        from   random import choice
-        import string
-        chars = cls.charset
-        return "".join (choice (chars) for i in range (length))
+        def _gen (cls, length) :
+            from   random import choice
+            chars = cls.pw_charset_full
+            yield choice (cls.pw_charset)
+            for i in range (length - 1) :
+                yield choice (chars)
+        return "".join (_gen (cls, length))
     # end def random_password
 
     @classmethod
