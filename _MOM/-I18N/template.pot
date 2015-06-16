@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-06-12 19:32+0200\n"
+"POT-Creation-Date: 2015-06-16 12:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: _MOM/Entity.py:1566
+#: _MOM/Entity.py:1568
 #, python-format
 msgid "%s needs the arguments %s, got %s instead"
 msgstr ""
@@ -396,7 +396,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: _MOM/Entity.py:1299
+#: _MOM/Entity.py:1301
 #, python-format
 msgid "Necessary attribute %s is not defined"
 msgstr ""

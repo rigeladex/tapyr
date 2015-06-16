@@ -65,6 +65,7 @@
 #                     instances to `Auth.Account` instances
 #    12-Jun-2015 (CT) Add guard for `scope.PAP` (doesn't exist in all apps)
 #    13-Jun-2015 (CT) Add `_Change_Email_.get_title`
+#    16-Jun-2015 (CT) Improve notifications by including email address
 #    ««revision-date»»···
 #--
 
@@ -377,9 +378,9 @@ class _Change_Email_ (_Ancestor) :
                     response.add_notification \
                         ( GTW.Notification
                             (_T ( "A confirmation email has been sent to "
-                                  "the new email address."
+                                  "the new email address %s."
                                 )
-                            + " " + new_email
+                            % (new_email, )
                             )
                         )
                     try :
@@ -721,8 +722,9 @@ class _Register_ (_Ancestor) :
                 else :
                     response.add_notification \
                         (_T ( "A confirmation has been sent to your email "
-                              "address."
+                              "address %s."
                             )
+                        % (username, )
                         )
                     raise top.Status.See_Other (next)
             response.username = None
@@ -787,8 +789,9 @@ class _Request_Reset_Password_ (_Ancestor) :
                 response.add_notification \
                     ( GTW.Notification
                         (_T ( "The reset password instructions have been "
-                              "sent to your email address."
+                              "sent to your email address %s."
                             )
+                        % (username, )
                         )
                     )
                 raise top.Status.See_Other (next)
