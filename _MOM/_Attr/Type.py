@@ -354,6 +354,7 @@
 #    28-Apr-2015 (CT) Add `portable_repr` to `FO_nested`
 #                     of `_A_Id_Entity_Collection_`
 #    28-Apr-2015 (CT) Fix `A_Link_Role.unique_p` (only for unary links)
+#    18-Jun-2015 (CT) Add guard for `P_Type` to `_A_Composite_.from_string`
 #    ««revision-date»»···
 #--
 
@@ -1026,14 +1027,18 @@ class _A_Composite_ \
     @TFL.Meta.Class_and_Instance_Method
     def from_string (soc, s, obj = None, glob = {}, locl = {}) :
         P_Type = soc.P_Type
-        t = s or {}
-        if isinstance (t, tuple) :
-            try :
-                t = dict (t)
-            except (TypeError, ValueError) :
-                t = P_Type.args_as_kw (* t)
-        t.setdefault ("raw", True)
-        return P_Type (** t)
+        if isinstance (s, P_Type) :
+            result = s
+        else :
+            t = s or {}
+            if isinstance (t, tuple) :
+                try :
+                    t = dict (t)
+                except (TypeError, ValueError) :
+                    t = P_Type.args_as_kw (* t)
+            t.setdefault ("raw", True)
+            result = P_Type (** t)
+        return result
     # end def from_string
 
     def _checkers (self, e_type, kind) :
