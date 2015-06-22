@@ -57,6 +57,7 @@
 #    11-Mar-2015 (CT) Add `register` to `Regatta`
 #    16-Apr-2015 (CT) Factor `mf3_attr_spec_r`
 #     6-May-2015 (CT) Add "boat.b_class" to `Registration.list_display`
+#    22-Jun-2015 (CT) Add `sort_key` for `_crew` fields
 #    ««revision-date»»···
 #--
 
@@ -211,6 +212,7 @@ class _Regatta_Page_ \
 
         attr_name  = "_crew"
         attr_names = ("club", )
+        sort_key   = TFL.Sorted_By ("key", "pid")
 
     # end class Field__Crew_Club_
 
@@ -218,6 +220,7 @@ class _Regatta_Page_ \
 
         attr_name  = "_crew"
         attr_names = ("mna_number", )
+        sort_key   = TFL.Sorted_By ("key", "pid")
 
     # end class Field__Crew_MNA_Number
 
@@ -225,6 +228,7 @@ class _Regatta_Page_ \
 
         attr_name  = "_crew"
         attr_names = ("_crew_person_set", )
+        sort_key   = TFL.Sorted_By ("key", "pid")
 
     # end class Field__Crew_Person
 
