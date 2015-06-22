@@ -33,6 +33,8 @@
 #     4-Feb-2015 (CT) Add `Index`
 #    14-May-2015 (CT) Add guard for `is_undefined` to property `attr`
 #    14-May-2015 (CT) Add `HTML_Link_Set.max_links`
+#    22-Jun-2015 (CT) Change `_set_as_html` to avoid empty elements
+#                     (use `&nbsp;` in place of nothing)
 #    ««revision-date»»···
 #--
 
@@ -211,7 +213,7 @@ class Base (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Field)) :
         ts_head   = "<%s>"  % tag_set  if tag_set  else ""
         ts_tail   = "</%s>" % tag_set  if tag_set  else ""
         result    = self.html_sep.join \
-            ("%s%s%s" % (ti_head, v, ti_tail) for v in values)
+            ("%s%s%s" % (ti_head, v or "&nbsp;", ti_tail) for v in values)
         result = "".join ([ts_head, result, ts_tail])
         return result
     # end def _set_as_html
