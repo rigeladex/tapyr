@@ -22,6 +22,7 @@
 #     4-Feb-2015 (CT) Add `index` to `Instance`
 #    28-May-2015 (CT) Add `Instance.obj_href`
 #     1-Jun-2015 (CT) Add guard for `admin` to `Instance.obj_href`
+#    22-Jun-2015 (CT) Add guard for `obj ` type to `Instance.obj_href`
 #    ««revision-date»»···
 #--
 
@@ -221,9 +222,11 @@ class Instance (_Renderer_) :
     @Once_Property
     @getattr_safe
     def obj_href (self) :
-        obj      = self.obj
-        resource = self.resource
-        admin    = resource.top.ET_Map [obj.type_name].admin
+        admin     = None
+        obj       = self.obj
+        resource  = self.resource
+        if isinstance (obj, MOM.Id_Entity) :
+            admin = resource.top.ET_Map [obj.type_name].admin
         if admin is None :
             admin = resource.top.ET_Map [resource.type_name].admin
         if admin is not None :
