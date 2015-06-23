@@ -1,5 +1,5 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -24,6 +24,7 @@
 //    30-Nov-2011 (CT) Use `return false` instead of `.preventDefault`
 //     8-Apr-2014 (CT) Remove `css` rule to hide `overflow` to `th_div$`
 //     5-Dec-2014 (CT) Add `gallery$`, click-binding for `photo_selector`
+//    23-Jun-2015 (CT) Use `pure-button` with font-awesome icons
 //    ««revision-date»»···
 //--
 
@@ -92,23 +93,21 @@
         var start = function (event) {
             options.play_cb = window.setInterval (next, options.delay);
             $(options.controls.play, gallery$)
-                .addClass (options.play_class)
                 .unbind   ("click")
                 .click    (stop)
-                .button
-                    ({ icons : { primary : "ui-icon-pause" }, text : false });
+                .find     (".fa")
+                    .addClass     ("fa-stop")
+                    .removeClass  ("fa-play");
             next ();
         };
         var stop = function (event) {
-            if ($(options.controls.play).hasClass (options.play_class)) {
-                window.clearInterval (options.play_cb);
-                $(options.controls.play, gallery$)
-                    .unbind      ("click")
-                    .click       (start)
-                    .removeClass (options.play_class)
-                    .button
-                        ({ icons: { primary: "ui-icon-play" }, text: false });
-            };
+            window.clearInterval (options.play_cb);
+            $(options.controls.play, gallery$)
+                .unbind   ("click")
+                .click    (start)
+                .find     (".fa")
+                    .addClass     ("fa-play")
+                    .removeClass  ("fa-stop");
         };
         var gallery$        = this.closest (options.gallery_selector);
         options.current     = 0;
@@ -124,24 +123,15 @@
                   }
                 );
         $(options.controls.next, gallery$)
-            .click (function (ev) { stop (ev); return next (ev); })
-            .button
-                ({ icons : { primary : "ui-icon-seek-next" }, text : false });
+            .click (function (ev) { stop (ev); return next (ev); });
         $(options.controls.prev, gallery$)
-            .click (function (ev) { stop (ev); return prev (ev); })
-            .button
-                ({ icons : { primary : "ui-icon-seek-prev" }, text : false });
+            .click (function (ev) { stop (ev); return prev (ev); });
         $(options.controls.head, gallery$)
-            .click (function (ev) { stop (ev); return show (0, ev); })
-            .button
-                ({ icons : { primary : "ui-icon-seek-start" }, text : false });
+            .click (function (ev) { stop (ev); return show (0, ev); });
         $(options.controls.tail, gallery$)
-            .click (function (ev) { stop (ev); return show (-1, ev); })
-            .button
-                ({ icons : { primary : "ui-icon-seek-end" }, text : false });
+            .click (function (ev) { stop (ev); return show (-1, ev); });
         $(options.controls.play, gallery$)
-            .click  (start)
-            .button ({ icons : { primary : "ui-icon-play" }, text : false });
+            .click (start);
         $(options.photo_selector, gallery$)
             .click (function (ev) { stop (ev); return next (ev); });
         $(options.inline_selector, gallery$).show ();

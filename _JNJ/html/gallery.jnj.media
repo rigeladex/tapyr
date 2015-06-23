@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -20,15 +20,34 @@
 #    17-Nov-2011 (CT) Add `Script` and `JS_On_Ready`
 #     8-Apr-2014 (CT) Add `max_width` for `.inline .photo`;
 #                     remove `max_width` from `.inline .photo-nav`
+#    23-Jun-2015 (CT) Change rule for `button` for font-awesome icons
 #    ««revision-date»»···
 #--
+
+from   __future__ import division
 
 style_sheet = Style_Sheet \
     ( Rule
         ( ".gallery"
         , width                    = Percent (100)
         , children                 =
-            [ Rule ("button", min_width = 0)
+            [ Rule
+                ( "button"
+                , display          = "inline-block"
+                , padding          = 0
+                , margin           = TRBL (Em (0.5), Em (0.25))
+                , min_width        = 0
+                , children         =
+                    [ P.Rule.hover
+                    , Rule
+                        ( "i.fa"
+                        , color            = P.color.m_orange
+                        , height           = Em (1.0)
+                        , padding          = Em (1)
+                        , width            = Em (1.0)
+                        )
+                    ]
+                )
             , Rule
                 ( "h1", "h2"
                 , margin_bottom    = Px (10)
