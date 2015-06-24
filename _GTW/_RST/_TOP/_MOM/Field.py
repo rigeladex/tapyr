@@ -35,6 +35,7 @@
 #    14-May-2015 (CT) Add `HTML_Link_Set.max_links`
 #    22-Jun-2015 (CT) Change `_set_as_html` to avoid empty elements
 #                     (use `&nbsp;` in place of nothing)
+#    24-Jun-2015 (CT) Add `zero_width_space` to `Creation.as_html`
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,7 @@ import _MOM._Attr.Type
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Alias_Property
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.Dingbats            import zero_width_space
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import filtered_join
 from   _TFL.pyk                 import pyk
@@ -328,6 +330,12 @@ class Created (AQ) :
     def ui_name (self) :
         return _T ("Created")
     # end def ui_name
+
+    def as_html (self, o, renderer) :
+        result = self.__super.as_html (o, renderer)
+        result = result.replace ("-", zero_width_space + "-")
+        return result
+    # end def as_html
 
     def value (self, o, renderer) :
         return self.__super.value (o, renderer).split (" ") [0]
