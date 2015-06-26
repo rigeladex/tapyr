@@ -51,6 +51,7 @@
 #                     * On my machine, _GTW/__test__/NAV.py runs in:
 #                       -  5 seconds with rcssmin, rjsmin
 #                       - 37 seconds with cssmin,  jsmin
+#    26-Jun-2015 (CT) Add trailing `;` to `JS_On_Ready.code`, if missing
 #    ««revision-date»»···
 #--
 
@@ -233,6 +234,9 @@ class JS_On_Ready \
             code       = code.code
         elif rank is self.default_rank :
             rank       = 0
+        code           = code.strip ()
+        if not code.endswith (";") :
+            code      += ";"
         self.code      = code
         if self.rank :
             self.rank  = rank

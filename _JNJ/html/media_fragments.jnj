@@ -1,6 +1,6 @@
 {#- jinja template: media_fragments.jnj -#}
 {#
-## Copyright (C) 2011-2012 Martin Glueck All rights reserved
+## Copyright (C) 2011-2015 Martin Glueck All rights reserved
 ## Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -22,6 +22,8 @@
 ##    14-Dec-2011 (CT) Change `link_rel` to access `rel_links`, not `Rel_Links`
 ##     5-Jan-2012 (CT) Change `scripts` to just pass `jsl`, not `jsl.src` and
 ##                     `jsl.body`
+##    26-Jun-2015 (CT) Rename argument from `media` to `template`
+##    26-Jun-2015 (CT) Improve whitespace of `js_on_ready`
 ##    ««revision-date»»···
 ##--
 #}
@@ -47,33 +49,33 @@
    </style>
 {%- endmacro -%} {#- inline_CSS -#}
 
-{%- macro link_css (media) -%}
-  {%- for cssl in media.css_links %}
+{%- macro link_css (template) -%}
+  {%- for cssl in template.css_links %}
     {% call media_item (cssl) -%}
       {{ X.link_stylesheet (cssl.href, media=cssl.media_type) }}
     {% endcall %} {# media_item #}
   {% endfor -%}
 {%- endmacro -%} {#- link_css -#}
 
-{%- macro link_rel (media) -%}
-  {%- for rl in media.rel_links %}
+{%- macro link_rel (template) -%}
+  {%- for rl in template.rel_links %}
     <link {{ rl.attrs ()|safe }} />
   {% endfor -%}
 {%- endmacro -%} {#- link_rel -#}
 
-{%- macro scripts (media) -%}
-  {%- for jsl in media.scripts %}
+{%- macro scripts (template) -%}
+  {%- for jsl in template.scripts %}
     {% call media_item (jsl) -%}
       {{ X.script (src = jsl) }}
     {% endcall %} {# media_item #}
   {% endfor -%}
 {%- endmacro -%} {#- scripts -#}
 
-{%- macro js_on_ready (media) -%}
-  {%- if media.js_on_ready %}
+{%- macro js_on_ready (template) -%}
+  {%- if template.js_on_ready %}
     {% call X.script () -%}
       $(function () {# -#}
-        { {% for jsor in media.js_on_ready %}{{ jsor|safe }}{% endfor %} } {# -#}
+        { {% for jsor in template.js_on_ready %}{{ jsor|safe }} {% endfor %}}{# -#}
        );
     {% endcall %} {# X.script #}
   {% endif -%}
