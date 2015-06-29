@@ -77,6 +77,7 @@
 #    14-Jun-2015 (CT) Add `-force_HSTS` to enable Strict Transport Security
 #    16-Jun-2015 (CT) Change default of `webmaster`
 #                     (`@gmail.com` was a bad choice)
+#    29-Jun-2015 (CT) Add `preload` to `Strict Transport Security` header
 #    ««revision-date»»···
 #--
 
@@ -470,7 +471,7 @@ class GT2W_Command (GTW.OMP.Command) :
         if cmd.force_HSTS :
             GTW.RST.Response._auto_headers.update \
                 ( { "Strict-Transport-Security"
-                  : "max-age=%d; includeSubDomains;" % cmd.max_age_HSTS
+                  : "max-age=%d; includeSubDomains;preload;" % cmd.max_age_HSTS
                   }
                 )
         if cmd.serve_static_files :
