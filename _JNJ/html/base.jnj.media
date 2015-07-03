@@ -58,6 +58,7 @@
 #     2-Feb-2015 (CT) Add `.col-set` rules
 #    11-Feb-2015 (CT) Add rule for `td .link .a`
 #    15-Feb-2015 (CT) Add rules for `.menu-icon`
+#     3-Jul-2015 (CT) Add rule for `a[data-action]`
 #    ««revision-date»»···
 #--
 
@@ -312,7 +313,10 @@ style_sheet = Style_Sheet \
         , clear          = "both"
         , text_align     = "center"
         )
-    , Rule (".clickable",     cursor     = "pointer")
+    , Rule
+        ( ".clickable", "a[data-action]"
+        , cursor             = "pointer"
+        )
     , Rule
         ( ".added"
         , border             = P.border_added
