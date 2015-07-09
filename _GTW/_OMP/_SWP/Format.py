@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -23,6 +23,7 @@
 #    22-Mar-2011 (CT) `M_Format.__str__` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    12-Oct-2014 (CT) Adapt `HTML` to `GTW.HTML.Cleaner` using BeautifulSoup4
+#     9-Jul-2015 (CT) Add `_fix_unitless_number` to `ReST.convert`
 #    ««revision-date»»···
 #--
 
@@ -40,8 +41,11 @@ import _ReST.To_Html
 
 from   _TFL.I18N              import _, _T, _Tn
 from   _TFL.pyk               import pyk
+from   _TFL.Regexp            import Regexp, Re_Replacer, re
 
 import _TFL._Meta.Object
+
+import logging
 
 class M_Format (TFL.Meta.Object.__class__) :
     """Meta class for formatter classes"""
@@ -104,9 +108,30 @@ class HTML (_Format_) :
 class ReST (_Format_) :
     """Formatter for re-structured text"""
 
+    _fix_unitless_number = Re_Replacer \
+        ( Regexp (r"^ +:(width|height): \d+ *$", re.MULTILINE)
+        , lambda m : m.group (0).rstrip () + "px"
+        )
+
     @classmethod
     def convert (cls, text) :
-        return RST.to_html (text, encoding = "utf8")
+        ###  9-Jul-2015 18:35
+        ### * As of today, docutils raises an exception when a unitless
+        ###   number is specified for :width: in an ..image directive
+        ### * This used to work, but now fails for docutils
+        ###   versions 0.10 and 0.8.1
+        f_txt = cls._fix_unitless_number (text)
+        try :
+            return RST.to_html (f_txt, encoding = "utf8")
+        except Exception as exc :
+            msg = \
+                ( _T ( "Conversion from re-structured text to html "
+                       "failed with exception:\    %s"
+                     )
+                % (exc, )
+                )
+            logging.exception (msg + "\n\n  Offending text:" + text)
+            raise ValueError (msg)
     # end def convert
 
 # end class ReST
