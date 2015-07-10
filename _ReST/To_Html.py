@@ -19,8 +19,12 @@
 #    17-Mar-2010 (CT) Creation
 #    22-Feb-2012 (CT) Import `_ReST.Directives`
 #    21-Apr-2015 (CT) Disable `file_insertion_enabled`, `raw_enabled`
+#    10-Jul-2015 (CT) Add `logging` for exceptions raised by docutils
+#    10-Jul-2015 (CT) Patch `get_measure` broken in docutils versions < 0.11
 #    ««revision-date»»···
 #--
+
+from   __future__               import unicode_literals
 
 from   _ReST                    import ReST
 from   _TFL                     import TFL
@@ -35,6 +39,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 
 import itertools
+import logging
 
 class To_Html (TFL.Meta.Object) :
     """Convert re-structured text to HTML."""
@@ -63,18 +68,29 @@ class To_Html (TFL.Meta.Object) :
         self.settings  = dict   (self.settings, ** kw)
     # end def __init__
 
-    def __call__ (self, text, encoding = "utf8", language = "en", include = None, ** kw) :
+    def __call__ (self, txt, encoding = "utf8", language = "en", include = None, ** kw) :
         settings = dict \
             ( self.settings
             , output_encoding = encoding
             , language_code   = language
             , ** kw
             )
-        parts = self._publish_parts \
-            ( source             = pyk.decoded (text)
-            , writer_name        = "html4css1"
-            , settings_overrides = settings
-            )
+        try :
+            text  = pyk.decoded (txt)
+            parts = self._publish_parts \
+                ( source             = text
+                , writer_name        = "html4css1"
+                , settings_overrides = settings
+                )
+        except Exception as exc :
+            msg = \
+                ( _T ( "Conversion from re-structured text to html "
+                       "failed with exception:\n    %s"
+                     )
+                % (exc, )
+                )
+            logging.exception (msg + "\n\n  Offending text:" + text)
+            raise ValueError  (msg)
         if include is None :
             include = self.include
         result = "\n".join (p for p in (parts [i] for i in include) if p)
@@ -92,10 +108,33 @@ class To_Html (TFL.Meta.Object) :
     def _publish_parts (self) :
         import _ReST.Roles
         from   docutils.core import publish_parts
+        _patch_get_measure ()
         return publish_parts
     # end def _publish_parts
 
 # end class To_Html
+
+def _patch_get_measure () :
+    import docutils
+    du_version = tuple (int (i) for i in docutils.__version__.split ("."))
+    if du_version < (0, 11) :
+        ### before 0.11, docutils.parsers.rst.directives.get_measure was broken
+        ### for python runs with `-O` because it depended on an `assert`
+        ### statement that was optimized away
+        ### --> fix this here
+        from docutils.parsers.rst import directives
+        broken_get_measure = directives.get_measure
+        def get_measure (argument, units) :
+            try :
+                return broken_get_measure (argument, units)
+            except AttributeError :
+                raise ValueError \
+                    ( 'not a positive measure of one of the following units'
+                      ':\n%s'
+                    % ' '.join(['"%s"' % i for i in units])
+                    )
+        directives.get_measure = get_measure
+# end def _patch_get_measure
 
 to_html = To_Html ()
 
@@ -128,6 +167,17 @@ __doc__ = """
     <p>With another paragraph.</p>
     <p>The end...</p>
     </div>
+
+    >>> img_text = '''
+    ... .. image:: /some/where/pic.jpg
+    ...  :alt: Some description
+    ...  :class: align-right
+    ...  :width: 160
+    ...  :target: /some/where/else/target.html
+    ... '''
+    >>> print ReST.to_html (img_text, encoding = "utf-8")
+    <a class="reference external image-reference" href="/some/where/else/target.html"><img alt="Some description" class="align-right" src="/some/where/pic.jpg" style="width: 160px;" /></a>
+    <BLANKLINE>
 
 """
 
