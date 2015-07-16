@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,6 +30,7 @@
 #    17-Dec-2007 (CT) `write_plan` changed to use `Date_Time` instead of
 #                     `Date` to calculate `today`
 #    15-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
+#    16-Jul-2015 (CT) Replace `raise StopIteration` by `return` (PEP 0479)
 #    ««revision-date»»···
 #--
 
@@ -102,7 +103,7 @@ def _day_generator (pat_match, day, month, year, Y) :
             d = Y.months [month - 1].days [day].number
         D = Y.dmap.get ((year, month, d))
         if not D :
-            raise StopIteration
+            return
         yield D
         if unit == "m" :
             month += delta
@@ -110,7 +111,7 @@ def _day_generator (pat_match, day, month, year, Y) :
             D = D.date + delta
             day, month = D.day, D.month
             if D.year != year :
-                raise StopIteration
+                return
 # end def _day_generator
 
 def _date_time (Y, pat_match) :

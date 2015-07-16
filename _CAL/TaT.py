@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -25,6 +25,7 @@
 #                     `conditioner` (and doctest for this added)
 #    28-Oct-2004 (CT) `TaT` changed to allow multiple deltas
 #    11-Aug-2007 (CT) Imports corrected
+#    16-Jul-2015 (CT) Replace `raise StopIteration` by `return` (PEP 0479)
 #    ««revision-date»»···
 #--
 
@@ -65,7 +66,7 @@ class TaT_Shifter (TFL.Meta.Object) :
         while True :
             next  = next + delta
             if abs (next - date) > max_delta :
-                raise StopIteration
+                return
             yield next
     # end def __call__
 
