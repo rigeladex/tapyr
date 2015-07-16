@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -56,6 +56,7 @@
 #     3-Oct-2013 (CT) Add `allow_duplicates` to `attr`, `attrs` (default False)
 #     9-Oct-2013 (CT) Use `adapt__bool__` (3-compatibility)
 #     4-Apr-2014 (CT) Use `TFL.Q`, not `TFL.Attr_Query ()`
+#    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #    ««revision-date»»···
 #--
 
@@ -103,9 +104,8 @@ Provide filtering and ordering functions over query result::
     [0, 6]
     >>> qt.first ()
     0
-    >>> qt.one ()
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (IndexError) :
+    ...     qt.one ()
     IndexError: Query result contains 2 entries
     >>> qu = qt.limit (1)
     >>> qu.all ()

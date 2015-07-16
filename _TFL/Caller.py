@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -52,6 +52,7 @@
 #    11-Sep-2009 (CT) `Object_Scope_Mutable` added
 #    31-Jan-2012 (CT) Change `Object_Scope.__init__` to pass
 #                     `object.__dict__` through `dict` (to allow classes, too)
+#    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #    ««revision-date»»···
 #--
 
@@ -264,9 +265,8 @@ class Object_Scope_Mutable (Object_Scope) :
        >>> t = Object_Scope (o, {})
        >>> t.a
        42
-       >>> t ["a"] = 666
-       Traceback (most recent call last):
-         ...
+       >>> with expect_except (TypeError) :
+       ...     t ["a"] = 666
        TypeError: 'Object_Scope' object does not support item assignment
     """
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -50,7 +50,6 @@ from   _MOM.Product_Version     import Product_Version, IV_Number
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Class_Property
-from   _TFL.CAO                 import expect_except
 from   _TFL.formatted_repr      import formatted_repr as formatted
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.portable_repr       import portable_repr

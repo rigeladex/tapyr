@@ -411,8 +411,6 @@ class Match (TFL.Meta.Object) :
 # end class Match
 
 _test_country_match = r"""
-    >>> from _TFL.CAO import expect_except
-
     >>> AT = Country (43)
     >>> AT
     Country (43)

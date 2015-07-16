@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -26,7 +26,7 @@ from   __future__  import print_function, unicode_literals
 
 from   _GTW.__test__.MOM import \
     ( dt_form, MOM, BMT, show, NL, sos, last_change
-    , expect_except, portable_repr, prepr, pyk
+    , portable_repr, prepr, pyk
     )
 from   _MOM.inspect import show_children, show_ref_map, show_ref_maps
 

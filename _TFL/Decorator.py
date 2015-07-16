@@ -51,6 +51,7 @@
 #    16-Oct-2014 (CT)  Change `dict_from_class` to return real `dict`,
 #                      remove thunder properties from its result
 #     5-Feb-2015 (CT) Add `default` to `getattr_safe`; factor `_update_wrapper`
+#    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #    ««revision-date»»···
 #--
 
@@ -151,11 +152,10 @@ def Annotated (RETURN = _AR_undefined, ** kw) :
            >>> sorted (foo.func_annotations.items ())
            [('bar', 'Arg 1'), ('baz', 42), ('return', None)]
 
-           >>> @TFL.Annotated (bar = "Arg 1", baz = 42, qux = None)
-           ... def foo (bar, baz) : pass
+           >>> with expect_except (TypeError) :
+           ...     @TFL.Annotated (bar = "Arg 1", baz = 42, qux = None)
+           ...     def foo (bar, baz) : pass
            ...
-           Traceback (most recent call last):
-             ...
            TypeError: Function `foo` doesn't have an argument named `qux`
     """
     def decorator (f) :

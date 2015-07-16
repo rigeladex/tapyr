@@ -563,8 +563,6 @@ BMT._Export ("*", "Version")
 
 NL = chr (10)
 
-from _TFL.CAO import expect_except
-
 ### «text»
 
 dt_form = \

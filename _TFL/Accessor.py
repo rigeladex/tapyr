@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,10 +31,12 @@
 #                     callable results (breaks too many users)
 #    16-Aug-2012 (CT) Simplify `_Getter_`: get rid of `_Getter_[01n]_`
 #    22-Feb-2013 (CT) Remove legacy spellings `Attribute` and `Item`
+#    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   _TFL              import TFL
+
 import _TFL._Meta.Object
 
 import operator
@@ -65,9 +67,8 @@ class _Getter_ (TFL.Meta.Object) :
        'howdi'
 
        >>> s = Record (x = 0, y = 1)
-       >>> g1 (s)
-       Traceback (most recent call last):
-         ...
+       >>> with expect_except (AttributeError) :
+       ...    g1 (s)
        AttributeError: foo
 
        >>> last = Getter [-1]
@@ -76,12 +77,12 @@ class _Getter_ (TFL.Meta.Object) :
        >>> last (range (5))
        4
        >>> third = Getter [3]
-       >>> third (range (2))# doctest:+ELLIPSIS
-       Traceback (most recent call last):
-         ...
+       >>> with expect_except (IndexError) :
+       ...    third (range (2))# doctest:+ELLIPSIS
        IndexError: ... index out of range
        >>> third (range (5))
        3
+
     """
 
     def __init__ (self, getters = None, doc = None) :
@@ -131,9 +132,8 @@ class _Method_ (TFL.Meta.Object) :
        >>> lower = Method.lower
        >>> lower ("abCDe")
        'abcde'
-       >>> lower (1)
-       Traceback (most recent call last):
-         ...
+       >>> with expect_except (AttributeError) :
+       ...     lower (1)
        AttributeError: 'int' object has no attribute 'lower'
     """
 

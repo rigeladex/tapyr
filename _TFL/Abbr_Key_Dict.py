@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,7 +32,6 @@
 #--
 
 """
->>> from _TFL.CAO import expect_except
 >>> d = Abbr_Key_Dict (a = 1, ab = 2, abc = 3, bertie = 4, bingo = 5)
 >>> d ["a"], d ["ab"], d ["abc"]
 (1, 2, 3)

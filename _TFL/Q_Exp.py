@@ -71,6 +71,7 @@
 #    11-Sep-2014 (CT) Add `Q.APPLY`
 #    11-Sep-2014 (CT) Add `_Distributive_` as mixin for `_Bool_Bin_Op_`, `_Get_`
 #    27-Feb-2015 (CT) Add `Q.DATE`, `Q.DATE_TIME`, `Q.TIME`, and `_Date_.NOW`
+#    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #    ««revision-date»»···
 #--
 
@@ -145,9 +146,8 @@ This module implements a query expression language::
     >>> QQ = Q.__class__ (Ignore_Exception = (AttributeError, ))
     >>> QQ.qux.predicate (r1) is QQ.undef
     True
-    >>> Q.qux.predicate (r1) is Q.undef
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (AttributeError) :
+    ...     Q.qux.predicate (r1) is Q.undef
     AttributeError: qux
 
     >>> q7 = QQ.qux.CONTAINS ("bc")
@@ -206,9 +206,8 @@ This module implements a query expression language::
     False
     >>> Q.d.D.QUARTER (4, 2010) (r2)
     True
-    >>> Q.dt.D.QUARTER (4, 2010) (r2)
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (TypeError) :
+    ...     Q.dt.D.QUARTER (4, 2010) (r2)
     TypeError: can't compare datetime.datetime to datetime.date
     >>> Q.dt.DT.QUARTER (4, 2010) (r2)
     True
@@ -234,17 +233,15 @@ no way to simulate this by defining operator methods. Therefore,
 `_Bin_.__nonzero__` raises a TypeError to signal that an expression like
 `Q.a < Q.b < Q.c` isn't possible::
 
-    >>> Q.a < Q.b < Q.c # doctest:+ELLIPSIS
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (TypeError) :
+    ...     Q.a < Q.b < Q.c # doctest:+ELLIPSIS
     TypeError: ...
 
 Query operators with boolean results, i.e., equality and ordering operators,
 cannot be used with any operators except `==` and `!=`::
 
-    >>> (Q.a < Q.b) < Q.c
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (TypeError) :
+    ...     (Q.a < Q.b) < Q.c
     TypeError: Operator `<` not applicable to boolean result of `Q.a < Q.b`, rhs: `Q.c`
 
     >>> Q.a < Q.b + Q.c
@@ -265,9 +262,8 @@ cannot be used with any operators except `==` and `!=`::
 
 But explicit parenthesis are necessary in some cases::
 
-    >>> Q.a < Q.b == Q.a % 2 # doctest:+ELLIPSIS
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (TypeError) :
+    ...     Q.a < Q.b == Q.a % 2 # doctest:+ELLIPSIS
     TypeError: ...
 
 Queries for nested attributes are also possible::

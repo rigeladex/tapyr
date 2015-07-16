@@ -164,7 +164,6 @@ class SN (_E164_Polisher_) :
 # end class SN
 
 _test_fixtures_ = """
-    >>> from _TFL.CAO import expect_except
     >>> from _TFL.Record import Record
 
     >>> def show (v, attr, polisher, picky = False, ** kw) :

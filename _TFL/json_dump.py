@@ -19,6 +19,7 @@
 #    13-Apr-2015 (CT) Creation
 #     6-May-2015 (CT) Add `to_file`, `to_open_file`, `to_string`
 #     6-May-2015 (CT) Add `add_date_time_serializers`
+#    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #    ««revision-date»»···
 #--
 
@@ -124,9 +125,8 @@ Examples::
     >>> import datetime
     >>> dt = datetime.datetime (2015, 5, 6, 12, 50)
 
-    >>> print (to_string (dt))
-    Traceback (most recent call last):
-    ...
+    >>> with expect_except (TypeError) :
+    ...     print (to_string (dt))
     TypeError: datetime.datetime(2015, 5, 6, 12, 50) is not JSON serializable
 
     >>> add_date_time_serializers ()

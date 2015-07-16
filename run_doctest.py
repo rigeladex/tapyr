@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -53,6 +53,7 @@
 #     9-Dec-2013 (CT) Add call to `logging.disable`
 #     9-Dec-2013 (CT) Use `utf-8`, not `latin-1`
 #    31-Jan-2014 (CT) Use `sos.python_options` for spawned python interpreter
+#    16-Jul-2015 (CT) Add `expect_except` to `module` before testing
 #    ««revision-date»»···
 #--
 
@@ -160,7 +161,7 @@ def _main (cmd) :
         f  = Filename (a)
         m  = f.base
         sys.path [0:0] = cmd_path
-        mod_path = f.directory if f.directory else "./"
+        mod_path       = f.directory if f.directory else "./"
         if sos.path.exists \
                (Filename ("__init__.py", default_dir = mod_path).name) :
             sys.path [0:0] = [sos.path.join (mod_path, "..")]
@@ -172,6 +173,7 @@ def _main (cmd) :
             logging.disable (logging.WARNING)
             start  = _timer ()
             module = __import__ (m)
+            module.expect_except = TFL.CAO.expect_except
             cases  = len (getattr (module, "__test__", ())) or 1
             f, t   = doctest.testmod \
                 ( module

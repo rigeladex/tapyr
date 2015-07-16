@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #     4-Dec-2009 (CT) `Sorted_By_Strict` added
 #     4-Dec-2009 (CT) `Sorted_By.__call__` and `Desc_Getter.__call__` changed
 #                     to allow comparison of unequal types in Python 3.x
+#    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #    ««revision-date»»···
 #--
 
@@ -214,13 +215,11 @@ class Sorted_By (TFL.Meta.Object) :
            (a = 1, b = 2, c = 'efg', d = 42)
            (a = 2, b = 1, c = ' xyzz')
            (a = 2, b = 1, c = '  xyzzz')
-           >>> show (l, Sorted_By_Strict ("d"))
-           Traceback (most recent call last):
-             ...
+           >>> with expect_except (AttributeError) :
+           ...     show (l, Sorted_By_Strict ("d"))
            AttributeError: d
-           >>> show (l, Sorted_By_Strict ("-d"))
-           Traceback (most recent call last):
-             ...
+           >>> with expect_except (AttributeError) :
+           ...     show (l, Sorted_By_Strict ("-d"))
            AttributeError: d
 
     """

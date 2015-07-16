@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -269,7 +269,6 @@ class TLS_Periodic (TFL.Meta.Object) :
 class Timeline (TFL.Meta.Object) :
     """Timeline for scheduling.
 
-       >>> from _TFL.CAO import expect_except
        >>> S  = Timeline.Span
        >>> tl = Timeline (0, 1000)
        >>> tl.free

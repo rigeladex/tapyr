@@ -74,7 +74,6 @@ from   _MOM._Attr.Number_Interval import A_Float_Interval
 from   _MOM._Attr.Number_Interval import A_Int_Interval_C
 from   _MOM._Attr.Date_Time_Delta import A_Date_Time_Delta
 
-from   _TFL.CAO                   import expect_except
 from   _MOM.inspect               import show_children
 from   _MOM.Product_Version       import Product_Version, IV_Number
 from   _TFL.Package_Namespace     import Derived_Package_Namespace
