@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-06-16 12:09+0200\n"
+"POT-Creation-Date: 2015-07-23 11:06+0200\n"
 "PO-Revision-Date: 2012-05-23 11:37+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -281,7 +281,7 @@ msgstr "Felder, die zur Sortierung verwendet werden"
 msgid "Fields"
 msgstr "Felder"
 
-#: _JNJ/html/e_type_q.m.jnj:96 _JNJ/html/gallery.jnj:42
+#: _JNJ/html/e_type_q.m.jnj:96 _JNJ/html/gallery.jnj:43
 #: _JNJ/html/navigation.jnj:233
 msgid "First"
 msgstr "Erstes"
@@ -290,11 +290,11 @@ msgstr "Erstes"
 msgid "First entry"
 msgstr "Erster Eintrag"
 
-#: _JNJ/html/gallery.jnj:42 _JNJ/html/photo.jnj:38
+#: _JNJ/html/gallery.jnj:43 _JNJ/html/photo.jnj:38
 msgid "First picture"
 msgstr "Erstes Bild"
 
-#: _JNJ/html/gallery.jnj:40 _JNJ/html/photo.jnj:36
+#: _JNJ/html/gallery.jnj:41 _JNJ/html/photo.jnj:36
 msgid "Gallery"
 msgstr "Gallerie"
 
@@ -363,12 +363,12 @@ msgstr "Sprache"
 msgid "Languages that can be selected for %s"
 msgstr "Sprachen, die für %s ausgewählt werden können"
 
-#: _JNJ/html/e_type_q.m.jnj:107 _JNJ/html/gallery.jnj:46
+#: _JNJ/html/e_type_q.m.jnj:107 _JNJ/html/gallery.jnj:47
 #: _JNJ/html/navigation.jnj:247
 msgid "Last"
 msgstr "Letztes"
 
-#: _JNJ/html/gallery.jnj:46 _JNJ/html/photo.jnj:42
+#: _JNJ/html/gallery.jnj:47 _JNJ/html/photo.jnj:42
 msgid "Last picture"
 msgstr "Letztes Bild"
 
@@ -478,7 +478,7 @@ msgstr "Verschiebe die Kalenderansicht um `delta` Einheiten"
 msgid "New Passowrd"
 msgstr "Neues Kennwort"
 
-#: _JNJ/html/e_type_q.m.jnj:118 _JNJ/html/gallery.jnj:45
+#: _JNJ/html/e_type_q.m.jnj:118 _JNJ/html/gallery.jnj:46
 #: _JNJ/html/navigation.jnj:290
 msgid "Next"
 msgstr "Nächstes"
@@ -487,7 +487,7 @@ msgstr "Nächstes"
 msgid "Next error"
 msgstr "Nächster Fehler"
 
-#: _JNJ/html/gallery.jnj:45 _JNJ/html/photo.jnj:41
+#: _JNJ/html/gallery.jnj:46 _JNJ/html/photo.jnj:41
 msgid "Next picture"
 msgstr "Nächstes Bild"
 
@@ -553,7 +553,7 @@ msgstr "Permanenter Verweis auf diese Seite"
 msgid "Permanent link"
 msgstr "Dauerhafter Verweis"
 
-#: _JNJ/html/gallery.jnj:44
+#: _JNJ/html/gallery.jnj:45
 msgid "Play"
 msgstr "Lauf"
 
@@ -569,12 +569,12 @@ msgstr ""
 msgid "Please try again later. "
 msgstr "Bitte versichen Sie es später nochmals."
 
-#: _JNJ/html/e_type_q.m.jnj:129 _JNJ/html/gallery.jnj:43
+#: _JNJ/html/e_type_q.m.jnj:129 _JNJ/html/gallery.jnj:44
 #: _JNJ/html/navigation.jnj:304
 msgid "Prev"
 msgstr "Voriges"
 
-#: _JNJ/html/gallery.jnj:43 _JNJ/html/photo.jnj:39
+#: _JNJ/html/gallery.jnj:44 _JNJ/html/photo.jnj:39
 msgid "Previous picture"
 msgstr "Voriges Bild"
 
@@ -685,7 +685,7 @@ msgid ""
 " used to select the objects to be displayed."
 msgstr "Wähle die dargestellten Felder, Ordnungskriterien und Filterkriterien aus."
 
-#: _JNJ/html/gallery.jnj:57
+#: _JNJ/html/gallery.jnj:58
 msgid "Selected picture"
 msgstr "Ausgewähltes Bild"
 
@@ -709,7 +709,7 @@ msgstr "Die Dienstleistung ist momentan nicht verfügbar."
 msgid "Show navigation"
 msgstr "Zeige Navigation"
 
-#: _JNJ/html/gallery.jnj:44
+#: _JNJ/html/gallery.jnj:45
 msgid "Slide show"
 msgstr "Dia show"
 
@@ -1065,3 +1065,4 @@ msgstr "das Benutzerkonto"
 
 #~ msgid "Update Email"
 #~ msgstr "Ändere Email"
+

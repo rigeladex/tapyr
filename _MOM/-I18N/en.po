@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-06-16 12:09+0200\n"
+"POT-Creation-Date: 2015-07-23 11:06+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgid ""
 "2 weeks -3 days<br>    +1 month, 15 days<br>    +2w3d"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2752
+#: _MOM/_Attr/Type.py:2757
 msgid ""
 "A name must start with a letter or underscore and continue with letters, "
 "digits, and underscores."
@@ -70,7 +70,7 @@ msgid_plural "An_Entitys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:2067
+#: _MOM/_Attr/Type.py:2072
 msgid "Angle"
 msgstr ""
 
@@ -91,15 +91,15 @@ msgstr ""
 msgid "Attributes given: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2114
+#: _MOM/_Attr/Type.py:2119
 msgid "Binary_Pickled"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2121
+#: _MOM/_Attr/Type.py:2126
 msgid "Blob"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2162
+#: _MOM/_Attr/Type.py:2167
 msgid "Boolean"
 msgstr ""
 
@@ -107,11 +107,11 @@ msgstr ""
 msgid "CONTAINS"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2186
+#: _MOM/_Attr/Type.py:2191
 msgid "Cached_Role"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2206
+#: _MOM/_Attr/Type.py:2211
 msgid "Cached_Role_Set"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgstr ""
 msgid "Cannot create more than %d objects of %s"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2224
+#: _MOM/_Attr/Type.py:2229
 msgid "Character"
 msgstr ""
 
@@ -148,7 +148,7 @@ msgstr ""
 msgid "Condition"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2233
+#: _MOM/_Attr/Type.py:2238
 msgid "Confirmation"
 msgstr ""
 
@@ -157,19 +157,19 @@ msgstr ""
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
 
-#: _MOM/_Attr/Date_Delta_Interval.py:47 _MOM/_Attr/Type.py:2261
+#: _MOM/_Attr/Date_Delta_Interval.py:47 _MOM/_Attr/Type.py:2266
 msgid "Date"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2312
+#: _MOM/_Attr/Type.py:2317
 msgid "Date-Slug"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2333
+#: _MOM/_Attr/Type.py:2338
 msgid "Date-Time"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2383 _MOM/_Attr/Type.py:2385
+#: _MOM/_Attr/Type.py:2388 _MOM/_Attr/Type.py:2390
 #, python-format
 msgid "Date/time expected, got %r"
 msgstr ""
@@ -192,15 +192,15 @@ msgid_plural "Date_Interval_Ns"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:2302
+#: _MOM/_Attr/Type.py:2307
 msgid "Date_List"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2406
+#: _MOM/_Attr/Type.py:2411
 msgid "Date_Time_List"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1268 _MOM/_Attr/Type.py:2534
+#: _MOM/_Attr/Type.py:1273 _MOM/_Attr/Type.py:2539
 msgid "Decimal"
 msgstr ""
 
@@ -208,7 +208,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2439
+#: _MOM/_Attr/Type.py:2444
 msgid "Directory"
 msgstr ""
 
@@ -221,11 +221,11 @@ msgstr ""
 msgid "ENDSWITH"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2459
+#: _MOM/_Attr/Type.py:2464
 msgid "Email"
 msgstr ""
 
-#: _MOM.Entity:0 _MOM/_Attr/Type.py:2782
+#: _MOM.Entity:0 _MOM/_Attr/Type.py:2787
 msgid "Entity"
 msgid_plural "Entitys"
 msgstr[0] ""
@@ -248,7 +248,7 @@ msgstr ""
 msgid "File `%s` not found"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2574
+#: _MOM/_Attr/Type.py:2579
 msgid "Filename"
 msgstr ""
 
@@ -264,11 +264,11 @@ msgstr ""
 msgid "Finish time of interval"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1302
+#: _MOM/_Attr/Type.py:1307
 msgid "Float"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2596
+#: _MOM/_Attr/Type.py:2601
 msgid "Frequency"
 msgstr ""
 
@@ -294,15 +294,15 @@ msgstr ""
 msgid "Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1311
+#: _MOM/_Attr/Type.py:1316
 msgid "Int"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2616
+#: _MOM/_Attr/Type.py:2621
 msgid "Int_List"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2055
+#: _MOM/_Attr/Type.py:2060
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
@@ -311,15 +311,15 @@ msgstr ""
 msgid "Invariant error"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1341
+#: _MOM/_Attr/Type.py:1346
 msgid "L_Middle"
 msgstr ""
 
-#: _MOM.Link:0 _MOM/_Attr/Type.py:1331
+#: _MOM.Link:0 _MOM/_Attr/Type.py:1336
 msgid "Left"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2624
+#: _MOM/_Attr/Type.py:2629
 msgid "Length"
 msgstr ""
 
@@ -350,11 +350,11 @@ msgid_plural "Link3s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:2656
+#: _MOM/_Attr/Type.py:2661
 msgid "Link_Ref"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2666
+#: _MOM/_Attr/Type.py:2671
 msgid "Link_Ref_List"
 msgstr ""
 
@@ -384,7 +384,7 @@ msgstr ""
 msgid "Meta-data about changes of the object model."
 msgstr ""
 
-#: _MOM.Link:0 _MOM/_Attr/Type.py:1351
+#: _MOM.Link:0 _MOM/_Attr/Type.py:1356
 msgid "Middle"
 msgstr ""
 
@@ -396,7 +396,7 @@ msgstr ""
 msgid "Model a time interval (start, finish)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2748
+#: _MOM/_Attr/Type.py:2753
 msgid "Name"
 msgstr ""
 
@@ -405,7 +405,7 @@ msgstr ""
 msgid "Necessary attribute %s is not defined"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1578
+#: _MOM/_Attr/Type.py:1583
 #, python-format
 msgid "No object of type %s with epk %s in scope %s"
 msgstr ""
@@ -414,7 +414,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2763
+#: _MOM/_Attr/Type.py:2768
 msgid "Numeric_String"
 msgstr ""
 
@@ -447,27 +447,27 @@ msgstr ""
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1361
+#: _MOM/_Attr/Type.py:1366
 msgid "R_Middle"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2790
+#: _MOM/_Attr/Type.py:2795
 msgid "Rev_Ref"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2799
+#: _MOM/_Attr/Type.py:2804
 msgid "Rev_Ref_Set"
 msgstr ""
 
-#: _MOM.Link:0 _MOM/_Attr/Type.py:1371
+#: _MOM.Link:0 _MOM/_Attr/Type.py:1376
 msgid "Right"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2821
+#: _MOM/_Attr/Type.py:2826
 msgid "Role_Ref"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2837
+#: _MOM/_Attr/Type.py:2842
 msgid "Role_Ref_Set"
 msgstr ""
 
@@ -561,11 +561,11 @@ msgstr ""
 msgid "Start time of interval"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2852
+#: _MOM/_Attr/Type.py:2857
 msgid "String"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2861
+#: _MOM/_Attr/Type.py:2866
 msgid "Surrogate"
 msgstr ""
 
@@ -593,7 +593,7 @@ msgstr ""
 msgid "TU"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2878
+#: _MOM/_Attr/Type.py:2883
 msgid "Text"
 msgstr ""
 
@@ -617,7 +617,7 @@ msgid ""
 " allowed for %s."
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2887
+#: _MOM/_Attr/Type.py:2892
 msgid "Time"
 msgstr ""
 
@@ -625,7 +625,7 @@ msgstr ""
 msgid "Time Delta"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2910 _MOM/_Attr/Type.py:2912
+#: _MOM/_Attr/Type.py:2915 _MOM/_Attr/Type.py:2917
 #, python-format
 msgid "Time expected, got %r"
 msgstr ""
@@ -641,7 +641,7 @@ msgstr[1] ""
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2927
+#: _MOM/_Attr/Type.py:2932
 msgid "Url"
 msgstr ""
 
@@ -649,12 +649,12 @@ msgstr ""
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:108 _MOM/_Attr/Type.py:1004
+#: _MOM/_Attr/Recurrence_Rule.py:108 _MOM/_Attr/Type.py:1005
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1106
+#: _MOM/_Attr/Type.py:1111
 msgid "Value must not be in the future"
 msgstr ""
 
@@ -662,11 +662,11 @@ msgstr ""
 msgid "WE"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2952
+#: _MOM/_Attr/Type.py:2957
 msgid "Year"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2247
+#: _MOM/_Attr/Type.py:2252
 msgid "You must confirm this attribute"
 msgstr ""
 
@@ -710,7 +710,7 @@ msgstr ""
 msgid "finish_after_start"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2890
+#: _MOM/_Attr/Type.py:2895
 msgid "hh:mm:ss, the seconds `ss` are optional"
 msgstr ""
 
@@ -727,7 +727,7 @@ msgstr ""
 msgid "new definition of %s `%s` clashes with existing %s %s"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2165
+#: _MOM/_Attr/Type.py:2170
 msgid "no"
 msgstr ""
 
@@ -755,15 +755,15 @@ msgstr ""
 msgid "required"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2166
+#: _MOM/_Attr/Type.py:2171
 msgid "yes"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2265
+#: _MOM/_Attr/Type.py:2270
 msgid "yyyy-mm-dd"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:2336
+#: _MOM/_Attr/Type.py:2341
 msgid "yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional"
 msgstr ""
 

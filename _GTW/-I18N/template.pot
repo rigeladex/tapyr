@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-06-16 12:09+0200\n"
+"POT-Creation-Date: 2015-07-23 11:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "%s: regatta registration"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:816
+#: _GTW/_RST/_TOP/_MOM/SRM.py:820
 #, python-format
 msgid "%s: regatta registration %s"
 msgstr ""
@@ -151,7 +151,7 @@ msgstr ""
 msgid "Authorization and Account handling"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:1130
+#: _GTW/_RST/_TOP/_MOM/SRM.py:1134
 msgid "Cancelled"
 msgstr ""
 
@@ -178,11 +178,11 @@ msgstr ""
 msgid "Choice of language used for localization"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:179 _GTW/_RST/_TOP/_MOM/SRM.py:1100
+#: _GTW/_RST/_TOP/_MOM/SRM.py:180 _GTW/_RST/_TOP/_MOM/SRM.py:1104
 msgid "Class"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:333
+#: _GTW/_RST/_TOP/_MOM/SRM.py:337
 msgid "Club"
 msgstr ""
 
@@ -196,11 +196,11 @@ msgstr ""
 msgid "Create a new %(tn)s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:327
+#: _GTW/_RST/_TOP/_MOM/Field.py:331
 msgid "Created"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:321
+#: _GTW/_RST/_TOP/_MOM/Field.py:325
 msgid "Date of creation."
 msgstr ""
 
@@ -331,7 +331,7 @@ msgstr ""
 msgid "June"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:1125
+#: _GTW/_RST/_TOP/_MOM/SRM.py:1129
 msgid "Kind"
 msgstr ""
 
@@ -344,7 +344,7 @@ msgstr ""
 msgid "Language %s selected"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:156 _GTW/_RST/_TOP/_MOM/SRM.py:906
+#: _GTW/_NAV/_E_Type/SRM.py:156 _GTW/_RST/_TOP/_MOM/SRM.py:910
 msgid "List of participants for"
 msgstr ""
 
@@ -352,11 +352,11 @@ msgstr ""
 msgid "Logout successful."
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:345
+#: _GTW/_RST/_TOP/_MOM/SRM.py:349
 msgid "MNA-Number"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:590
+#: _GTW/_RST/_TOP/_MOM/Field.py:600
 #, python-format
 msgid "Make phone call to %s"
 msgstr ""
@@ -430,7 +430,7 @@ msgstr ""
 msgid "November"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:413
+#: _GTW/_RST/_TOP/_MOM/Field.py:423
 #, python-format
 msgid "Number of %s belonging to %s"
 msgstr ""
@@ -453,7 +453,7 @@ msgstr ""
 msgid "One of the passwords is incorrect"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:129 _GTW/_RST/_TOP/_MOM/SRM.py:872
+#: _GTW/_NAV/_E_Type/SRM.py:129 _GTW/_RST/_TOP/_MOM/SRM.py:876
 msgid "Participants"
 msgstr ""
 
@@ -503,35 +503,35 @@ msgstr ""
 msgid "Query restriction triggered error: %s '%s'"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:314
+#: _GTW/_RST/_TOP/_MOM/SRM.py:318
 msgid "Race"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:1078
+#: _GTW/_RST/_TOP/_MOM/SRM.py:1082
 msgid "Regatta"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:1050
+#: _GTW/_RST/_TOP/_MOM/SRM.py:1054
 #, python-format
 msgid "Regatta Events %(year)s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:421
+#: _GTW/_RST/_TOP/_MOM/SRM.py:425
 #, python-format
 msgid "Register %s for %s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:864
+#: _GTW/_RST/_TOP/_MOM/SRM.py:868
 #, python-format
 msgid "Register an entry for %s at %s"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:415
+#: _GTW/_RST/_TOP/_MOM/SRM.py:419
 #, python-format
 msgid "Register for regatta %(tn)s"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:161 _GTW/_RST/_TOP/_MOM/SRM.py:911
+#: _GTW/_NAV/_E_Type/SRM.py:161 _GTW/_RST/_TOP/_MOM/SRM.py:915
 msgid "Registration list"
 msgstr ""
 
@@ -556,19 +556,19 @@ msgstr ""
 msgid "Restrict to objects belonging to %(tn)s %(obj)s"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:130 _GTW/_RST/_TOP/_MOM/SRM.py:873
+#: _GTW/_NAV/_E_Type/SRM.py:130 _GTW/_RST/_TOP/_MOM/SRM.py:877
 msgid "Results"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:152 _GTW/_RST/_TOP/_MOM/SRM.py:903
+#: _GTW/_NAV/_E_Type/SRM.py:152 _GTW/_RST/_TOP/_MOM/SRM.py:907
 msgid "Results for"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:167
+#: _GTW/_RST/_TOP/_MOM/SRM.py:168
 msgid "Sail-No."
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:358
+#: _GTW/_RST/_TOP/_MOM/SRM.py:362
 msgid "Sailor"
 msgstr ""
 
@@ -580,7 +580,7 @@ msgstr ""
 msgid "Saturday"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/Field.py:574
+#: _GTW/_RST/_TOP/_MOM/Field.py:584
 #, python-format
 msgid "Send email to %s"
 msgstr ""
@@ -593,7 +593,7 @@ msgstr ""
 msgid "September"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:359
+#: _GTW/_RST/_TOP/_MOM/SRM.py:363
 msgid "Skipper/Crew"
 msgstr ""
 

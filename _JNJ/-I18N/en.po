@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-06-16 12:09+0200\n"
+"POT-Creation-Date: 2015-07-23 11:06+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -275,7 +275,7 @@ msgstr ""
 msgid "Fields"
 msgstr ""
 
-#: _JNJ/html/e_type_q.m.jnj:96 _JNJ/html/gallery.jnj:42
+#: _JNJ/html/e_type_q.m.jnj:96 _JNJ/html/gallery.jnj:43
 #: _JNJ/html/navigation.jnj:233
 msgid "First"
 msgstr ""
@@ -284,11 +284,11 @@ msgstr ""
 msgid "First entry"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:42 _JNJ/html/photo.jnj:38
+#: _JNJ/html/gallery.jnj:43 _JNJ/html/photo.jnj:38
 msgid "First picture"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:40 _JNJ/html/photo.jnj:36
+#: _JNJ/html/gallery.jnj:41 _JNJ/html/photo.jnj:36
 msgid "Gallery"
 msgstr ""
 
@@ -355,12 +355,12 @@ msgstr ""
 msgid "Languages that can be selected for %s"
 msgstr ""
 
-#: _JNJ/html/e_type_q.m.jnj:107 _JNJ/html/gallery.jnj:46
+#: _JNJ/html/e_type_q.m.jnj:107 _JNJ/html/gallery.jnj:47
 #: _JNJ/html/navigation.jnj:247
 msgid "Last"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:46 _JNJ/html/photo.jnj:42
+#: _JNJ/html/gallery.jnj:47 _JNJ/html/photo.jnj:42
 msgid "Last picture"
 msgstr ""
 
@@ -468,7 +468,7 @@ msgstr ""
 msgid "New Passowrd"
 msgstr ""
 
-#: _JNJ/html/e_type_q.m.jnj:118 _JNJ/html/gallery.jnj:45
+#: _JNJ/html/e_type_q.m.jnj:118 _JNJ/html/gallery.jnj:46
 #: _JNJ/html/navigation.jnj:290
 msgid "Next"
 msgstr ""
@@ -477,7 +477,7 @@ msgstr ""
 msgid "Next error"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:45 _JNJ/html/photo.jnj:41
+#: _JNJ/html/gallery.jnj:46 _JNJ/html/photo.jnj:41
 msgid "Next picture"
 msgstr ""
 
@@ -543,7 +543,7 @@ msgstr ""
 msgid "Permanent link"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:44
+#: _JNJ/html/gallery.jnj:45
 msgid "Play"
 msgstr ""
 
@@ -557,12 +557,12 @@ msgstr ""
 msgid "Please try again later. "
 msgstr ""
 
-#: _JNJ/html/e_type_q.m.jnj:129 _JNJ/html/gallery.jnj:43
+#: _JNJ/html/e_type_q.m.jnj:129 _JNJ/html/gallery.jnj:44
 #: _JNJ/html/navigation.jnj:304
 msgid "Prev"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:43 _JNJ/html/photo.jnj:39
+#: _JNJ/html/gallery.jnj:44 _JNJ/html/photo.jnj:39
 msgid "Previous picture"
 msgstr ""
 
@@ -673,7 +673,7 @@ msgid ""
 " used to select the objects to be displayed."
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:57
+#: _JNJ/html/gallery.jnj:58
 msgid "Selected picture"
 msgstr ""
 
@@ -697,7 +697,7 @@ msgstr ""
 msgid "Show navigation"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:44
+#: _JNJ/html/gallery.jnj:45
 msgid "Slide show"
 msgstr ""
 

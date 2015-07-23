@@ -1,5 +1,5 @@
 # English translations for MOM/GTW/JNJ.
-# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2015 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
@@ -621,4 +621,3 @@ msgstr ""
 
 #~ msgid "Phone number proper (without country code, area code, extension)"
 #~ msgstr ""
-

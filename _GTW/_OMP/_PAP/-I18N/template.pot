@@ -579,4 +579,3 @@ msgstr ""
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code of address"
 msgstr ""
-
