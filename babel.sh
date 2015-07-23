@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This script is part of the Christian Tanzer's python package set.
@@ -23,13 +23,14 @@
 #    19-Feb-2014 (CT) Use `python -m` to run `_TFL.Babel`
 #     4-Jul-2014 (CT) Add `_GTW/_MF3` and `_GTW/_RST*`
 #    31-Aug-2014 (CT) Add argument for `PYTHONPATH` to `compile`
+#    31-Jul-2015 (CT) Add `_GTW/_OMP/_PAP/_E164`
 #    ««revision-date»»···
 #--
 
 cmd=${1:?"Specify a command: extract | language | compile"}; shift
 
 default_langs="en,de"
-default_dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _GTW/_MF3 _GTW/_RST _GTW/_RST/_TOP _GTW/_RST/_TOP/_MOM _JNJ _ReST"
+default_dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_PAP/_E164 _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _GTW/_MF3 _GTW/_RST _GTW/_RST/_TOP _GTW/_RST/_TOP/_MOM _JNJ _ReST"
 lib=$(dirname $(python -c 'from _TFL import sos; print sos.path.dirname (sos.__file__)'))
 
 ### `python -m _TFL.Babel` won't add `.../_TFL` to `sys.path`

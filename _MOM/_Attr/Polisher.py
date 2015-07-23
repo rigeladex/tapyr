@@ -25,6 +25,9 @@
 #                     factor, add patterns to, and improve `_phone_multi_regexp`
 #    15-Apr-2015 (CT) Add `compress_spaces` and capitalize+compress combos
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    30-Jul-2015 (CT) Add arguments `essence`, `picky` to
+#                     `_Polisher_.__call__`, `._polished`
+#    31-Jul-2015 (CT) Factor `_attr_value`
 #    ««revision-date»»···
 #--
 
@@ -53,22 +56,34 @@ class _Polisher_ (TFL.Meta.Object) :
             setattr (self, k, v)
     # end def __init__
 
-    def __call__ (self, attr, value_dict, value = None) :
+    def __call__ \
+            ( self, attr, value_dict
+            , essence = None
+            , picky   = False
+            , value   = None
+            ) :
         """Polish value of `attr` in `value_dict`, if any, return polished `value_dict`."""
         result = dict (value_dict)
         name   = attr.name
-        if value is None :
-            value  = value_dict.get (name)
+        value  = self._attr_value (attr, name, value, value_dict, essence)
         if isinstance (value, pyk.string_types) :
             guard  = self.guard
             value  = value.strip ()
             if value and (guard is None or guard (value)) :
-                polished = self._polished (attr, name, value, value_dict)
+                polished = self._polished \
+                    (attr, name, value, value_dict, essence, picky)
                 result.update (polished)
         return result
     # end def __call__
 
-    def _polished (self, attr, name, value, value_dict) :
+    def _attr_value (self, attr, name, value, value_dict, essence) :
+        result = value
+        if result is None :
+            result = value_dict.get (name)
+        return result
+    # end def _attr_value
+
+    def _polished (self, attr, name, value, value_dict, essence, picky) :
         raise NotImplementedError \
             ( "%s needs to implement either __call__ or _polished"
             % (self.__class__, )
@@ -90,7 +105,7 @@ class Match_Split (_Polisher_) :
         self.matcher.add (* matchers, ** kw)
     # end def add
 
-    def _polished (self, attr, name, value, value_dict) :
+    def _polished (self, attr, name, value, value_dict, essence, picky) :
         result = {}
         match  = self.matcher.search (value)
         if match is not None :
@@ -110,7 +125,7 @@ class Replace (_Polisher_) :
         self.__super.__init__ (replacer = replacer, ** kw)
     # end def __init__
 
-    def _polished (self, attr, name, value, value_dict) :
+    def _polished (self, attr, name, value, value_dict, essence, picky) :
         result = { name : self.replacer (value) }
         return result
     # end def _polished

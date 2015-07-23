@@ -19,6 +19,7 @@
 #    25-Sep-2014 (CT) Creation
 #    26-Sep-2014 (CT) Add `test_address`
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    31-Jul-2015 (CT) Adapt to changes of PAP.Phone polishers
 #    ««revision-date»»···
 #--
 
@@ -92,17 +93,22 @@ _test_phone = """
 
     >>> p0  = PAP.Phone (sn = "+43 123 4567890", raw = True)
     >>> print (p0.ui_display)
-    +43-123-4567890
+    +43-1-234567890
 
     >>> p1  = PAP.Phone ("43", "1", "234567", raw = True)
 
     >>> print (p1.ui_display)
     +43-1-234567
 
-    >>> _   = p1.set_raw (sn = "+44 9 234568")
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     _   = p1.set_raw (sn = "+44 9 123456")
+    Invariants: Can't set primary attribute Phone.sn to '+44 9 123456'.
+        Not a proper phone number for Country (44) [United Kingdom of Great Britain and Northern Ireland]: 9-123456; subscriber number must have at least 8 digits; got 6 digits instead
+
+    >>> _   = p1.set_raw (sn = "+44 9 12345678")
 
     >>> print (p1.ui_display)
-    +44-9-234568
+    +44-9-12345678
 
 """
 

@@ -123,6 +123,8 @@
 #    29-May-2015 (CT) Add `Undoer`, `E_Type_Mixin.href_undo`
 #     1-Jun-2015 (CT) Add guard for `admin` to `_rendered_delete`
 #     9-Jun-2015 (CT) Add guard for `renderer` to `_Changer_.renderer`
+#    30-Jul-2015 (CT) Add argument `essence`, `picky` to `polisher`
+#    31-Jul-2015 (CT) Handle `ValueError` from `polisher`
 #    ««revision-date»»···
 #--
 
@@ -499,7 +501,11 @@ class _JSON_Action_PO_ (_JSON_Action_) :
         elems   = dict   ((k, form [k]) for k in values)
         fids    = sorted (elems)
         v_dict  = dict   ((e.attr.name, values [k]) for k, e in elems.items ())
-        p_dict  = field.polisher (field.attr, v_dict)
+        p_dict  = field.polisher \
+            ( field.attr, v_dict
+            , essence = field.id_essence
+            , picky   = False
+            )
         result  = dict \
             ( field_ids    = fids
             , field_values = list
@@ -764,8 +770,10 @@ class Completer (_JSON_Action_PO_) :
                         (request, response, form, field, json, values)
                     values.update \
                         (zip (pd ["field_ids"], pd ["field_values"]))
+                except ValueError :
+                    pass
                 except Exception as exc :
-                    logging.exception (exc)
+                    logging.exception (pyk.text_type (exc))
             eor    = self.eligible_object_restriction (completer.etn)
             result = completer.choices (scope, json, eor, self.max_completions)
         return result
@@ -856,8 +864,11 @@ class Polisher (_JSON_Action_PO_) :
                 values = json ["field_values"]
             except KeyError :
                 raise self.top.Status.Bad_Request ("Missing field values")
-            result = self._polished \
-                (request, response, form, field, json, values)
+            try :
+                result = self._polished \
+                    (request, response, form, field, json, values)
+            except ValueError as exc :
+                result ["feedback"] = pyk.text_type (exc)
         else :
             result ["error"] = _T ("Field %s doesn't have a polisher") \
                 % (field.label, )

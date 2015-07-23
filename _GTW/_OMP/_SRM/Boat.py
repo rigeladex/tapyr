@@ -51,6 +51,8 @@
 #    26-Feb-2015 (CT) Change `_Sail_Number_Polisher_` to override `__call__`,
 #                     not `_polish`
 #    29-Apr-2015 (CT) Remove obsolete predicate `valid_vintage`
+#    30-Jul-2015 (CT) Add arguments `essence`, `picky` to
+#                     `_Sail_Number_Polisher_`
 #    ««revision-date»»···
 #--
 
@@ -80,8 +82,14 @@ class _Sail_Number_Polisher_ (MOM.Attr.Polisher.Match_Split) :
         self.__super.__init__ (matcher = matcher, ** kw)
     # end def __init__
 
-    def __call__ (self, attr, value_dict, value = None) :
-        result  = self.__super.__call__ (attr, value_dict, value)
+    def __call__ \
+            ( self, attr, value_dict
+            , essence = None
+            , picky   = False
+            , value   = None
+            ) :
+        result  = self.__super.__call__ \
+            (attr, value_dict, essence, picky, value)
         undef   = object ()
         snx     = result.get ("sail_number_x", "")
         if snx :

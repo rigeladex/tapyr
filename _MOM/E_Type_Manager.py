@@ -126,6 +126,7 @@
 #    26-Sep-2014 (CT) Change `_epkified` to use `_kw_polished`, if possible
 #    26-Sep-2014 (CT) Use `_kw_polished` for `raw` only
 #    15-Jun-2015 (CT) Add guard for `None` to `_cooked_role`
+#    30-Jul-2015 (CT) Pass idempotent `on_error` to `_kw_polished`
 #    ««revision-date»»···
 #--
 
@@ -423,13 +424,14 @@ class Id_Entity (Entity) :
         ### Don't pass `on_error` through here to avoid `Link.__call__`
         ### ending up with doubled error messages in case of
         ### `MOM.Error.Required_Missing`
-        kw = dict (kw)
+        kw = pkw = dict (kw)
         kw.pop ("on_error", None)
         if etype.args_as_kw and kw.get ("raw", False) :
-            pkw = etype._kw_polished (etype.epk_as_kw (* epk, ** kw))
+            pkw = etype._kw_polished \
+                ( etype.epk_as_kw (* epk, ** kw)
+                , on_error = lambda * args, ** kw : False
+                )
             epk = ()
-        else :
-            pkw = kw
         return etype.epkified (* epk, ** pkw), this
     # end def _epkified
 

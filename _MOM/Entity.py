@@ -291,6 +291,8 @@
 #                     and `(type_name, cid)`
 #    27-Apr-2015 (CT) Use `use_index`, not `use_indices`, where possible
 #    15-Jun-2015 (CT) Change `_kw_raw_check_predicates` to add `None` to `ckd_kw`
+#    30-Jul-2015 (CT) Add argument `essence`, `picky` to `polisher`
+#    30-Jul-2015 (CT) Change `_kw_polished` to handle polisher errors
 #    ««revision-date»»···
 #--
 
@@ -701,7 +703,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         """Set attributes specified in `kw` from raw values"""
         assert "raw" not in kw
         ukw = dict (self._kw_undeprecated (kw))
-        pkw = self._kw_polished (ukw)
+        pkw = self._kw_polished (ukw, on_error)
         return self._set_raw_inner (on_error, ** pkw)
     # end def set_raw
 
@@ -808,13 +810,43 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         return result, to_do
     # end def _kw_raw_check_predicates
 
-    @classmethod
-    def _kw_polished (cls, attr_dict) :
+    @TFL.Meta.Class_and_Instance_Method
+    def _kw_polished (soc, attr_dict, on_error = None) :
+        Err    = MOM.Error
+        errors = []
         result = attr_dict
-        for attr in cls.polish_attr :
+        self   = soc if isinstance (soc, Entity) else None
+        if on_error is None :
+            on_error = soc._raise_attr_error
+        for attr in soc.polish_attr :
             if attr.name in result :
-                val    = result [attr.name]
-                result = attr.polisher (attr, result, val)
+                val  = result [attr.name]
+                try :
+                    result = attr.polisher \
+                        ( attr, result
+                        , essence = self
+                        , picky   = True
+                        , value   = val
+                        )
+                except (Err.Attribute_Value, Err.Attribute_Syntax) as exc :
+                    errors.append (exc)
+                except Err.Invariants as exc :
+                    if self is not None :
+                        exc.embed (self, attr.name, attr)
+                    errors.append (exc)
+                except (TypeError, ValueError, Err.Error) as exc :
+                    errors.append \
+                        ( Err.Attribute_Value
+                            (soc, attr.name, val, attr.kind, exc)
+                        )
+                except Exception as exc :
+                    if __debug__ :
+                        logging.exception \
+                        ( "\n    %s %s, attribute polisher error %s: %s [%s]"
+                        , soc.type_name, self, attr.name, val, type (val)
+                        )
+        if errors :
+            on_error (MOM.Error.Invariants (errors))
         return result
     # end def _kw_polished
 

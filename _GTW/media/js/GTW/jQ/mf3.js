@@ -64,6 +64,7 @@
 //    12-May-2015 (CT) Change `selectors.status` to `b` [used to be `b.Status`]
 //    12-May-2015 (CT) Add `need_blur` to fix `polisher` breaking `completer`
 //     1-Jun-2015 (CT) Add `remove_undo`, adapt `action_callback.remove`
+//    31-Jul-2015 (CT) Change `polish_field` to handle `feedback`
 //    ««revision-date»»···
 //--
 
@@ -890,8 +891,23 @@
             var f_completer  = form_spec.completers [c_id];
             var field_values, data;
             var success_cb = function success_cb (answer, status, xhr) {
+                var a$;
                 if (! answer ["error"]) {
-                    completer.put_values (answer, answer.field_values, cargo);
+                    a$ = f$.siblings ().filter ($("aside"));
+                    $("p.error-msg.polish", a$).remove ();
+                    if ("field_values" in answer) {
+                        completer.put_values
+                            (answer, answer.field_values, cargo);
+                    };
+                    if ("feedback" in answer) {
+                        a$.append
+                            ($(L ("p.error-msg.polish"
+                                 , { html : answer.feedback }
+                                 )
+                              )
+                            );
+                        setTimeout (function () { f$.focus (); }, 0);
+                    };
                 } else {
                     $GTW.show_message
                         ("Ajax polisher error: ", answer.error);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-07-29 14:32+0200\n"
+"POT-Creation-Date: 2015-07-31 13:30+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -110,7 +110,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Phone.py:228 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Phone.py:76 _GTW._OMP._PAP.Phone:0
 msgid "Country code"
 msgstr ""
 
@@ -315,8 +315,13 @@ msgid ""
 "a city or district, a mobile provider, or a specific service."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Phone.py:248 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Phone.py:96 _GTW._OMP._PAP.Phone:0
 msgid "Network destination code"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/_E164/Error.py:43
+#, python-format
+msgid "Not a proper phone number for %s: %s"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Property.py:53
@@ -549,7 +554,7 @@ msgstr ""
 msgid "Subject linked to Url"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Phone.py:265 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Phone.py:112 _GTW._OMP._PAP.Phone:0
 msgid "Subscriber number"
 msgstr ""
 
@@ -569,6 +574,16 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Url:0
 msgid "Uniform resource locator, aka URL"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/_E164/Polisher.py:73
+#, python-format
+msgid "Unknown country code %s"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/_E164/Polisher.py:101
+#, python-format
+msgid "Unknown network destination code %s"
 msgstr ""
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
@@ -621,3 +636,4 @@ msgstr ""
 
 #~ msgid "Phone number proper (without country code, area code, extension)"
 #~ msgstr ""
+
