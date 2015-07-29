@@ -32,6 +32,10 @@
 #    29-Apr-2015 (CT) Add rule for `aside .error-msg`
 #    12-May-2015 (CT) Add children `good/missing/bad` to `form ... label > b`
 #     1-Jun-2015 (CT) Add rules for `.Field-Entity.removed`
+#    29-Jul-2015 (CT) Add rules for `.no-js`
+#                     + Disable pointer-events for input elements
+#                     + Reduce opacity of form
+#                     + Display warning in P.color_status_bad
 #    ««revision-date»»···
 #--
 
@@ -549,6 +553,25 @@ style_sheet = Style_Sheet \
                         , background_color  = "transparent"# P.color_status_bad
                         )
                     ]
+                )
+            ]
+        )
+    , Rule
+        ( ".no-js"
+        , children           =
+            [ Rule
+                ( "form"
+                , opacity            = 0.625
+                , children           =
+                    [ Rule
+                        ( "input", "label", "select", "textarea"
+                        , pointer_events     = "none"
+                        )
+                    ]
+                )
+            , Rule
+                ( "noscript h1"
+                , color          = P.color_status_bad
                 )
             ]
         )

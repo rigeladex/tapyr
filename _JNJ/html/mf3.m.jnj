@@ -126,8 +126,9 @@
   {%- set action = page.request.path %}
   <form action="{{ action }}" {# -#}
         class="{{ form.css_class }} pure-form pure-form-aligned" {# -#}
-        id="{{ form.id }}"
+        id="{{ form.id }}" {# -#}
         method="post" {# -#}
+        {#- -#}
   >
     {{ caller () }}
     {%- set response = page.response %}
