@@ -28,6 +28,7 @@
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    20-Jan-2013 (CT) Add `AIS`
 #    26-Apr-2013 (CT) Remove `AIS`
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -136,9 +137,9 @@ _test_code = """
     <urls.value.AQ [Attr.Type.Querier String]>
     <urls.desc.AQ [Attr.Type.Querier String]>
     <phones.AQ [Attr.Type.Querier Rev_Ref]>
-    <phones.number.AQ [Attr.Type.Querier String]>
-    <phones.area_code.AQ [Attr.Type.Querier String]>
-    <phones.country_code.AQ [Attr.Type.Querier String]>
+    <phones.sn.AQ [Attr.Type.Querier String]>
+    <phones.ndc.AQ [Attr.Type.Querier String]>
+    <phones.cc.AQ [Attr.Type.Querier String]>
     <phones.desc.AQ [Attr.Type.Querier String]>
     <emails.AQ [Attr.Type.Querier Rev_Ref]>
     <emails.address.AQ [Attr.Type.Querier String]>
@@ -190,9 +191,9 @@ _test_code = """
     <sailors.club.long_name.AQ [Attr.Type.Querier String]>
     <urls.value.AQ [Attr.Type.Querier String]>
     <urls.desc.AQ [Attr.Type.Querier String]>
-    <phones.number.AQ [Attr.Type.Querier String]>
-    <phones.area_code.AQ [Attr.Type.Querier String]>
-    <phones.country_code.AQ [Attr.Type.Querier String]>
+    <phones.sn.AQ [Attr.Type.Querier String]>
+    <phones.ndc.AQ [Attr.Type.Querier String]>
+    <phones.cc.AQ [Attr.Type.Querier String]>
     <phones.desc.AQ [Attr.Type.Querier String]>
     <emails.address.AQ [Attr.Type.Querier String]>
     <emails.desc.AQ [Attr.Type.Querier String]>
@@ -213,9 +214,9 @@ _test_code = """
     <left.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <left.sex.AQ [Attr.Type.Querier Ckd]>
-    <right.number.AQ [Attr.Type.Querier String]>
-    <right.area_code.AQ [Attr.Type.Querier String]>
-    <right.country_code.AQ [Attr.Type.Querier String]>
+    <right.sn.AQ [Attr.Type.Querier String]>
+    <right.ndc.AQ [Attr.Type.Querier String]>
+    <right.cc.AQ [Attr.Type.Querier String]>
     <right.desc.AQ [Attr.Type.Querier String]>
     <extension.AQ [Attr.Type.Querier String]>
     <desc.AQ [Attr.Type.Querier String]>
@@ -446,9 +447,9 @@ _test_code = """
         alive               1
       sex                 0
     right               2
-      number              3
-      area_code           3
-      country_code        3
+      sn                  3
+      ndc                 3
+      cc                  3
       desc                3
     extension           3
 
@@ -937,7 +938,7 @@ _test_code = """
     Int_List             easter_offset        <class '_MOM._Attr.Coll.List'>
     Name                 name                 <class 'builtins.text-string'>
     Nation               nation               <class 'builtins.text-string'>
-    Numeric_String       area_code            <class 'builtins.text-string'>
+    Numeric_String       cc                   <class 'builtins.text-string'>
     Sex                  sex                  <class 'builtins.text-string'>
     String               city                 <class 'builtins.text-string'>
     Text                 abstract             <class 'builtins.text-string'>

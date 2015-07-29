@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -19,6 +19,7 @@
 #    11-Jun-2013 (CT) Creation
 #    26-Jun-2013 (CT) Add `test_pickled_types`, factor `_attr_map`
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -1167,10 +1168,10 @@ _test_pickled_types = """
     ...             print ("%%-20s %%-15s %%-15s %%6s %%5d %%5d" %% (kind.name, kind.typ, pn, pt.max_length, pt.max_ui_length, pt.length))
     abstract             Text            text-string          0   120     0
     address              Email           text-string         80    81    80
-    area_code            Numeric_String  text-string          5     6     5
     beam                 Float           float             None    22    22
     boat_class           Entity          _Boat_Class_      None    20    20
     calendar             Entity          Calendar          None    20    20
+    cc                   Numeric_String  text-string          3     4     3
     city                 String          text-string         30    31    30
     club                 Entity          Club              None    20    20
     club                 Entity          Club              None    20    20
@@ -1179,7 +1180,6 @@ _test_pickled_types = """
     contents             Text            text-string          0   120     0
     count                Int             int               None     1     1
     country              String          text-string         20    21    20
-    country_code         Numeric_String  text-string          3     4     3
     date                 Date            date              None    12    12
     date_exceptions      Date_List       byte-string          0    20     0
     dates                Date_List       byte-string          0    20     0
@@ -1230,7 +1230,7 @@ _test_pickled_types = """
     name                 String          text-string        100   101   100
     nation               Nation          text-string          3    20     3
     nation               Nation          text-string          3    20     3
-    number               Numeric_String  text-string         14    15    14
+    ndc                  Numeric_String  text-string          5     6     5
     number               Int             int               None    20    20
     parent_url           Url             text-string        160   161   160
     period               Int             int               None     1     1
@@ -1261,6 +1261,7 @@ _test_pickled_types = """
     short_title          String          text-string         30    31    30
     short_title          String          text-string         30    31    30
     skipper              Entity          Sailor            None    20    20
+    sn                   Numeric_String  text-string         14    15    14
     start                Date            date              None    12    12
     starters_rl          Int             int               None    20    20
     status               String          text-string          8     9     8

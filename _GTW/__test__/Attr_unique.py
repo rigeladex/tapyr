@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #     4-Aug-2013 (CT) Creation
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -94,7 +95,7 @@ _test_unique = """
         DBW Uniqueness predicate: unique_epk ('address',)
     PAP.Phone
         EMS
-        DBW Uniqueness predicate: unique_epk ('country_code', 'area_code', 'number')
+        DBW Uniqueness predicate: unique_epk ('cc', 'ndc', 'sn')
     PAP.Person
         EMS
         DBW Uniqueness predicate: unique_epk ('last_name', 'first_name', 'middle_name', 'title')

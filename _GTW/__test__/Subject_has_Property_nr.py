@@ -39,6 +39,7 @@
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    12-Sep-2014 (CT) Remove some of the redundant tests
 #    12-Mar-2015 (CT) Adapt to sqlalchemy 0.9.8
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -733,18 +734,18 @@ _test_attr_wrappers = """
       Kind_Wrapper_R : Role_Ref_Set `persons`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
     PAP.Phone
-      Kind_Wrapper : Numeric_String `area_code`
+      Kind_Wrapper : Numeric_String `cc`
           Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `companies`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_Wrapper : Numeric_String `country_code`
-          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `desc`
           Optional, _User_, _DB_Attr_
-      Kind_Wrapper : Numeric_String `number`
+      Kind_Wrapper : Numeric_String `ndc`
           Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `persons`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper : Numeric_String `sn`
+          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Person
       Kind_Wrapper_R : Role_Ref_Set `accounts`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -2098,17 +2099,17 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
     <SAW : PAP.Phone [pap_phone : mom_id_entity]>
-      <SAW : Numeric_String `area_code` [pap_phone.area_code]>
+      <SAW : Numeric_String `cc` [pap_phone.cc]>
       <SAW : Role_Ref_Set `companies`>
-      <SAW : Numeric_String `country_code` [pap_phone.country_code]>
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_phone.desc]>
       <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Numeric_String `number` [pap_phone.number]>
+      <SAW : Numeric_String `ndc` [pap_phone.ndc]>
       <SAW : Role_Ref_Set `persons`>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Numeric_String `sn` [pap_phone.sn]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
     <SAW : PAP.Person [pap_person : mom_id_entity]>
       <SAW : Role_Ref_Set `accounts`>
@@ -3289,17 +3290,17 @@ _test_q_able = """
       pid                           : pid
       type_name                     : type_name
     <SAW : PAP.Phone [pap_phone : mom_id_entity]>
-      area_code                     : area_code
+      cc                            : cc
       companies                     : companies
-      country_code                  : country_code
       creation                      : creation
       desc                          : desc
       events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
-      number                        : number
+      ndc                           : ndc
       persons                       : persons
       pid                           : pid
+      sn                            : sn
       type_name                     : type_name
     <SAW : PAP.Person [pap_person : mom_id_entity]>
       accounts                      : accounts
@@ -4649,20 +4650,20 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : PAP.Phone [pap_phone : mom_id_entity]>
-        area_code                 : pap_phone.area_code
+        cc                        : pap_phone.cc
         companies                 : <SAW : Role_Ref_Set `companies`>
         company_links             : <SAW : Link_Ref_List `company_links`>
-        country_code              : pap_phone.country_code
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_phone.desc
         electric                  : mom_id_entity.electric
         events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
-        number                    : pap_phone.number
+        ndc                       : pap_phone.ndc
         person_links              : <SAW : Link_Ref_List `person_links`>
         persons                   : <SAW : Role_Ref_Set `persons`>
         pid                       : mom_id_entity.pid
+        sn                        : pap_phone.sn
         subject_links             : <SAW : Link_Ref_List `subject_links`>
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
@@ -5650,11 +5651,11 @@ _test_q_result = """
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_phone."left"
 
-    >>> print (qrt.attrs (Q.phone.number, Q.desc, Q.person.lifetime.start)) ### PAP.Person_has_Phone
+    >>> print (qrt.attrs (Q.phone.sn, Q.desc, Q.person.lifetime.start)) ### PAP.Person_has_Phone
     SQL: SELECT DISTINCT
            pap_person__1.lifetime__start AS pap_person__1_lifetime__start,
            pap_person_has_phone."desc" AS pap_person_has_phone_desc,
-           pap_phone__1.number AS pap_phone__1_number
+           pap_phone__1.sn AS pap_phone__1_sn
          FROM mom_id_entity
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
            JOIN pap_phone AS pap_phone__1 ON pap_phone__1.pid = pap_person_has_phone."right"
@@ -5878,7 +5879,7 @@ _test_q_result = """
     >>> ET = apt ["PAP.Subject"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> show_query (qrt.filter (Q.phone_links.phone.number == 42)) ### PAP.Subject
+    >>> show_query (qrt.filter (Q.phone_links.phone.sn == 42)) ### PAP.Subject
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5915,11 +5916,11 @@ _test_q_result = """
            LEFT OUTER JOIN pap_phone AS pap_phone__1 ON pap_phone__1.pid = pap_person_has_phone."right"
          WHERE (mom_id_entity.pid = pap_company.pid
             OR mom_id_entity.pid = pap_person.pid)
-            AND (pap_phone__2.number = :number_1
-            OR pap_phone__1.number = :number_2)
+            AND (pap_phone__2.sn = :sn_1
+            OR pap_phone__1.sn = :sn_2)
     Parameters:
-         number_1             : 42
-         number_2             : 42
+         sn_1             : 42
+         sn_2             : 42
 
 """
 
@@ -5931,14 +5932,14 @@ _test_qx = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxs = QX.Mapper (qrt)
 
-    >>> show (qxs (Q.phone_links.phone.number == 42))
+    >>> show (qxs (Q.phone_links.phone.sn == 42))
     <PAP.Subject_has_Phone | QX.Kind_Partial for
          <SAW : Phone `right` (PAP.Company_has_Phone | PAP.Person_has_Phone)>>
         <PAP.Subject | QX.Kind_Rev_Query for
              <SAW : Link_Ref_List `phone_links`>>
       Bin:__eq__:
         <PAP.Phone | QX.Kind for
-             <SAW : Numeric_String `number` [pap_phone__1.number]>>
+             <SAW : Numeric_String `sn` [pap_phone__1.sn]>>
             <PAP.Company_has_Phone | QX.Kind_EPK for
                  <SAW : Phone `right` [pap_company_has_phone.right]>>
                 <PAP.Subject | QX.Kind_Rev_Query for
@@ -5946,7 +5947,7 @@ _test_qx = """
         42
       Bin:__eq__:
         <PAP.Phone | QX.Kind for
-             <SAW : Numeric_String `number` [pap_phone__2.number]>>
+             <SAW : Numeric_String `sn` [pap_phone__2.sn]>>
             <PAP.Person_has_Phone | QX.Kind_EPK for
                  <SAW : Phone `right` [pap_person_has_phone.right]>>
                 <PAP.Subject | QX.Kind_Rev_Query for
@@ -6198,10 +6199,10 @@ _test_select = """
                pap_person_has_url."right" AS pap_person_has_url_right,
                pap_person_has_url.pid AS pap_person_has_url_pid,
                pap_phone."desc" AS pap_phone_desc,
-               pap_phone.area_code AS pap_phone_area_code,
-               pap_phone.country_code AS pap_phone_country_code,
-               pap_phone.number AS pap_phone_number,
+               pap_phone.cc AS pap_phone_cc,
+               pap_phone.ndc AS pap_phone_ndc,
                pap_phone.pid AS pap_phone_pid,
+               pap_phone.sn AS pap_phone_sn,
                pap_url."desc" AS pap_url_desc,
                pap_url.pid AS pap_url_pid,
                pap_url.value AS pap_url_value,
@@ -7049,10 +7050,10 @@ _test_select = """
                pap_person.sex AS pap_person_sex,
                pap_person.title AS pap_person_title,
                pap_phone."desc" AS pap_phone_desc,
-               pap_phone.area_code AS pap_phone_area_code,
-               pap_phone.country_code AS pap_phone_country_code,
-               pap_phone.number AS pap_phone_number,
+               pap_phone.cc AS pap_phone_cc,
+               pap_phone.ndc AS pap_phone_ndc,
                pap_phone.pid AS pap_phone_pid,
+               pap_phone.sn AS pap_phone_sn,
                pap_url."desc" AS pap_url_desc,
                pap_url.pid AS pap_url_pid,
                pap_url.value AS pap_url_value,
@@ -7884,10 +7885,10 @@ _test_select = """
                pap_person_has_url."right" AS pap_person_has_url_right,
                pap_person_has_url.pid AS pap_person_has_url_pid,
                pap_phone."desc" AS pap_phone_desc,
-               pap_phone.area_code AS pap_phone_area_code,
-               pap_phone.country_code AS pap_phone_country_code,
-               pap_phone.number AS pap_phone_number,
+               pap_phone.cc AS pap_phone_cc,
+               pap_phone.ndc AS pap_phone_ndc,
                pap_phone.pid AS pap_phone_pid,
+               pap_phone.sn AS pap_phone_sn,
                pap_url."desc" AS pap_url_desc,
                pap_url.pid AS pap_url_pid,
                pap_url.value AS pap_url_value
@@ -7968,10 +7969,10 @@ _test_select = """
                pap_person.sex AS pap_person_sex,
                pap_person.title AS pap_person_title,
                pap_phone."desc" AS pap_phone_desc,
-               pap_phone.area_code AS pap_phone_area_code,
-               pap_phone.country_code AS pap_phone_country_code,
-               pap_phone.number AS pap_phone_number,
+               pap_phone.cc AS pap_phone_cc,
+               pap_phone.ndc AS pap_phone_ndc,
                pap_phone.pid AS pap_phone_pid,
+               pap_phone.sn AS pap_phone_sn,
                pap_url."desc" AS pap_url_desc,
                pap_url.pid AS pap_url_pid,
                pap_url.value AS pap_url_value
@@ -8011,10 +8012,10 @@ _test_select = """
                pap_email.address AS pap_email_address,
                pap_email.pid AS pap_email_pid,
                pap_phone."desc" AS pap_phone_desc,
-               pap_phone.area_code AS pap_phone_area_code,
-               pap_phone.country_code AS pap_phone_country_code,
-               pap_phone.number AS pap_phone_number,
+               pap_phone.cc AS pap_phone_cc,
+               pap_phone.ndc AS pap_phone_ndc,
                pap_phone.pid AS pap_phone_pid,
+               pap_phone.sn AS pap_phone_sn,
                pap_url."desc" AS pap_url_desc,
                pap_url.pid AS pap_url_pid,
                pap_url.value AS pap_url_value
@@ -8151,10 +8152,10 @@ _test_select = """
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
                pap_phone."desc" AS pap_phone_desc,
-               pap_phone.area_code AS pap_phone_area_code,
-               pap_phone.country_code AS pap_phone_country_code,
-               pap_phone.number AS pap_phone_number,
-               pap_phone.pid AS pap_phone_pid
+               pap_phone.cc AS pap_phone_cc,
+               pap_phone.ndc AS pap_phone_ndc,
+               pap_phone.pid AS pap_phone_pid,
+               pap_phone.sn AS pap_phone_sn
         FROM mom_id_entity
            JOIN pap_phone ON mom_id_entity.pid = pap_phone.pid
     PAP.Person
@@ -10138,10 +10139,10 @@ _test_select_strict = """
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
                pap_phone."desc" AS pap_phone_desc,
-               pap_phone.area_code AS pap_phone_area_code,
-               pap_phone.country_code AS pap_phone_country_code,
-               pap_phone.number AS pap_phone_number,
-               pap_phone.pid AS pap_phone_pid
+               pap_phone.cc AS pap_phone_cc,
+               pap_phone.ndc AS pap_phone_ndc,
+               pap_phone.pid AS pap_phone_pid,
+               pap_phone.sn AS pap_phone_sn
         FROM mom_id_entity
            JOIN pap_phone ON mom_id_entity.pid = pap_phone.pid
         WHERE mom_id_entity.type_name = :type_name_1
@@ -11172,11 +11173,11 @@ _test_tables = """
         Column desc                      : Varchar(20)          Optional String desc
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     PAP.Phone (MOM.Id_Entity) <Table pap_phone>
-        Column area_code                 : Varchar(5)           Primary Numeric_String area_code
-        Column country_code              : Varchar(3)           Primary Numeric_String country_code
+        Column cc                        : Varchar(3)           Primary Numeric_String cc
         Column desc                      : Varchar(20)          Optional String desc
-        Column number                    : Varchar(14)          Primary Numeric_String number
+        Column ndc                       : Varchar(5)           Primary Numeric_String ndc
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
+        Column sn                        : Varchar(14)          Primary Numeric_String sn
     PAP.Person (MOM.Id_Entity) <Table pap_person>
         Column __raw_first_name          : Varchar(32)          Primary__Raw_Value String first_name
         Column __raw_last_name           : Varchar(48)          Primary__Raw_Value String last_name
@@ -11458,7 +11459,7 @@ _test_unique = """
     PAP.Address                    city, country, street, zip
     PAP.Company                    name, registered_in
     PAP.Email                      address
-    PAP.Phone                      area_code, country_code, number
+    PAP.Phone                      cc, ndc, sn
     PAP.Person                     first_name, last_name, middle_name, title
     PAP.Url                        value
     PAP.Address_Position           left, position__height, position__lat, position__lon
@@ -11558,7 +11559,7 @@ _test_unique = """
         DBW Uniqueness predicate: unique_epk ('address',)
     PAP.Phone
         EMS
-        DBW Uniqueness predicate: unique_epk ('country_code', 'area_code', 'number')
+        DBW Uniqueness predicate: unique_epk ('cc', 'ndc', 'sn')
     PAP.Person
         EMS
         DBW Uniqueness predicate: unique_epk ('last_name', 'first_name', 'middle_name', 'title')

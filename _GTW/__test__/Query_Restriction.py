@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -23,6 +23,7 @@
 #    25-Mar-2013 (CT) Add `test_pepk`
 #    27-Mar-2013 (CT) Add `test_request_get` and real query to `test_pepk`
 #     2-Mar-2014 (CT) Add test for `qrs.As_Json_Cargo` of `PAP.Person`
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -1169,15 +1170,15 @@ _test_code = """
           }
         , { 'Class' : 'Entity'
           , 'attrs' :
-              [ { 'name' : 'number'
+              [ { 'name' : 'sn'
                 , 'sig_key' : 3
-                , 'ui_name' : 'Number'
+                , 'ui_name' : 'Subscriber number'
                 }
-              , { 'name' : 'area_code'
+              , { 'name' : 'ndc'
                 , 'sig_key' : 3
-                , 'ui_name' : 'Area code'
+                , 'ui_name' : 'Network destination code'
                 }
-              , { 'name' : 'country_code'
+              , { 'name' : 'cc'
                 , 'sig_key' : 3
                 , 'ui_name' : 'Country code'
                 }

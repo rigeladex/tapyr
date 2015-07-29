@@ -28,6 +28,7 @@
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #     9-Sep-2014 (CT) Add tests for query expressions with type restriction
 #    13-Apr-2015 (CT) Add `_test_json`
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -151,7 +152,7 @@ _test_code = """
     >>> prepr (PAP.Subject_has_Property.query_s (subject = pt).all ())
     [PAP.Person_has_Phone (('tanzer', 'christian', '', ''), ('43', '1', '135790'), ''), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@gg32.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
 
-    >>> prepr (PAP.Subject_has_Phone.query_s (Q.right.number.CONTAINS ("2")).all ())
+    >>> prepr (PAP.Subject_has_Phone.query_s (Q.right.sn.CONTAINS ("2")).all ())
     [PAP.Person_has_Phone (('glueck', 'martin', '', ''), ('43', '1', '234567'), ''), PAP.Company_has_Phone (('open source consulting', ''), ('43', '1', '246802'), '16')]
 
     >>> prepr (PAP.Subject_has_Phone.query_s (Q.extension != "").all ())

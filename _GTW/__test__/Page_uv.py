@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -28,6 +28,7 @@
 #     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -88,7 +89,7 @@ _test_code = r"""
     >>> for et in rets :
     ...     print (fmt %% TFL.Caller.Object_Scope (et))
     PAP.Email                                      False  ('address',)
-    PAP.Phone                                      False  ('country_code', 'area_code', 'number')
+    PAP.Phone                                      False  ('cc', 'ndc', 'sn')
     Auth.Certificate                               False  ('email', 'validity', 'desc')
     PAP.Person                                     False  ('last_name', 'first_name', 'middle_name', 'title')
     Auth.Account_Activation                        False  ('left',)
@@ -375,7 +376,7 @@ _test_code = r"""
     >>> for et in rets :
     ...     print (fmt %% (et.type_name, et.epk_sig_root.type_name if et.epk_sig_root is not et else "=", et.epk_sig))
     PAP.Email                                      =                     ('address',)
-    PAP.Phone                                      =                     ('country_code', 'area_code', 'number')
+    PAP.Phone                                      =                     ('cc', 'ndc', 'sn')
     Auth.Certificate                               =                     ('email', 'validity', 'desc')
     PAP.Person                                     =                     ('last_name', 'first_name', 'middle_name', 'title')
     Auth.Account_Activation                        =                     ('left',)

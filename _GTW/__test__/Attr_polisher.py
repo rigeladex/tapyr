@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,7 @@
 # Revision Dates
 #    25-Sep-2014 (CT) Creation
 #    26-Sep-2014 (CT) Add `test_address`
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -89,19 +90,19 @@ _test_phone = """
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
 
-    >>> p0  = PAP.Phone (number = "+43 123 4567890", raw = True)
+    >>> p0  = PAP.Phone (sn = "+43 123 4567890", raw = True)
     >>> print (p0.ui_display)
-    43/123/4567890
+    +43-123-4567890
 
     >>> p1  = PAP.Phone ("43", "1", "234567", raw = True)
 
     >>> print (p1.ui_display)
-    43/1/234567
+    +43-1-234567
 
-    >>> _   = p1.set_raw (number = "+44 9 234568")
+    >>> _   = p1.set_raw (sn = "+44 9 234568")
 
     >>> print (p1.ui_display)
-    44/9/234568
+    +44-9-234568
 
 """
 

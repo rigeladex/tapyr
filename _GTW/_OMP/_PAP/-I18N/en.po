@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-06-16 12:09+0200\n"
+"POT-Creation-Date: 2015-07-29 14:32+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -47,10 +47,6 @@ msgid "Address_Position"
 msgid_plural "Address_Positions"
 msgstr[0] ""
 msgstr[1] ""
-
-#: _GTW._OMP._PAP.Phone:0
-msgid "Area code"
-msgstr ""
 
 #: _GTW._OMP._PAP.Address:0
 msgid "City"
@@ -114,7 +110,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Phone.py:228 _GTW._OMP._PAP.Phone:0
 msgid "Country code"
 msgstr ""
 
@@ -312,11 +308,15 @@ msgid "Name of legal_entity."
 msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
-msgid "National area code of phone number (without prefix)"
+msgid ""
+"National destination code of phone number (without prefix).\n"
+"\n"
+"The national destination code selects a geographic area, e.g.,\n"
+"a city or district, a mobile provider, or a specific service."
 msgstr ""
 
-#: _GTW._OMP._PAP.Phone:0
-msgid "Number"
+#: _GTW/_OMP/_PAP/Phone.py:248 _GTW._OMP._PAP.Phone:0
+msgid "Network destination code"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Property.py:53
@@ -393,10 +393,6 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Phone number of subject"
-msgstr ""
-
-#: _GTW._OMP._PAP.Phone:0
-msgid "Phone number proper (without country code, area code, extension)"
 msgstr ""
 
 #: _GTW._OMP._PAP.Company:0
@@ -553,6 +549,16 @@ msgstr ""
 msgid "Subject linked to Url"
 msgstr ""
 
+#: _GTW/_OMP/_PAP/Phone.py:265 _GTW._OMP._PAP.Phone:0
+msgid "Subscriber number"
+msgstr ""
+
+#: _GTW._OMP._PAP.Phone:0
+msgid ""
+"Subscriber number (without country code, network destination code, "
+"extension)"
+msgstr ""
+
 #: _GTW/_OMP/_PAP/Person.py:167
 msgid "Title"
 msgstr ""
@@ -602,5 +608,17 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ""
+#~ msgstr ""
+
+#~ msgid "Area code"
+#~ msgstr ""
+
+#~ msgid "National area code of phone number (without prefix)"
+#~ msgstr ""
+
+#~ msgid "Number"
+#~ msgstr ""
+
+#~ msgid "Phone number proper (without country code, area code, extension)"
 #~ msgstr ""
 

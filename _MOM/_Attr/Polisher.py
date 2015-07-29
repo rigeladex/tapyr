@@ -24,6 +24,7 @@
 #    26-Feb-2015 (CT) Change `area_code_clean` to `area_code_split`;
 #                     factor, add patterns to, and improve `_phone_multi_regexp`
 #    15-Apr-2015 (CT) Add `compress_spaces` and capitalize+compress combos
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -196,25 +197,25 @@ capitalize_last_word_compress_spaces = Replace \
     , guard = capitalize_last_word.guard
     )
 
-_area_code_pat     = r"(?P<area_code>\d+)"
-_country_code_pat  = r"(?:(?:\+ *|00)(?P<country_code>\d+))"
-_number_pat        = r"(?P<number>\d+)\s*"
+_phone_cc_pat  = r"(?:(?:\+ *|00)(?P<cc>\d+))"
+_phone_ndc_pat = r"(?P<ndc>\d+)"
+_phone_sn_pat  = r"(?P<sn>\d+)\s*"
 
 def _phone_multi_regexp (tail = "") :
     return Multi_Regexp \
         ( Regexp
             ( r"^"
-            + r"(?:" + _country_code_pat + " +|0 *)?"
-            + _area_code_pat
+            + r"(?:" + _phone_cc_pat + " +|0 *)?"
+            + _phone_ndc_pat
             + ((r" " + tail) if tail else "")
             + r"$"
             , re.UNICODE
             )
         , Regexp
             ( r"^"
-            + r"(?:" + _country_code_pat + "|0)? *"
+            + r"(?:" + _phone_cc_pat + "|0)? *"
             + r"\("
-            + _area_code_pat
+            + _phone_ndc_pat
             + r"\) *"
             + tail
             + r"$"
@@ -222,9 +223,9 @@ def _phone_multi_regexp (tail = "") :
             )
         , Regexp
             ( r"^"
-            + r"(?:" + _country_code_pat + "|0)? *"
+            + r"(?:" + _phone_cc_pat + "|0)? *"
             + r"/"
-            + _area_code_pat
+            + _phone_ndc_pat
             + r"/"
             + ("" if tail else "?")
             + " *"
@@ -234,7 +235,19 @@ def _phone_multi_regexp (tail = "") :
             )
         , Regexp
             ( r"^"
-            + r"(?:" + _country_code_pat + "|0)? *"
+            + r"(?:" + _phone_cc_pat + "|0)? *"
+            + r"-"
+            + _phone_ndc_pat
+            + r"-"
+            + ("" if tail else "?")
+            + " *"
+            + tail
+            + r"$"
+            , re.UNICODE
+            )
+        , Regexp
+            ( r"^"
+            + r"(?:" + _phone_cc_pat + "|0)? *"
             + ((r" +" + tail) if tail else "")
             + r"$"
             , re.UNICODE
@@ -242,9 +255,9 @@ def _phone_multi_regexp (tail = "") :
         )
 # end def _phone_multi_regexp
 
-area_code_split    = Match_Split (_phone_multi_regexp ())
-country_code_clean = Match_Split (r"^" + _country_code_pat + r"$")
-phone_number_split = Match_Split (_phone_multi_regexp (_number_pat))
+phone_cc_clean  = Match_Split (r"^" + _phone_cc_pat + r"$")
+phone_ndc_split = Match_Split (_phone_multi_regexp ())
+phone_sn_split  = Match_Split (_phone_multi_regexp (_phone_sn_pat))
 
 _test_capitalize = """
     >>> from _TFL.Record import Record
@@ -359,104 +372,104 @@ _test_capitalize = """
 
 """
 
-_test_area_code_split = r"""
+_test_phone_ndc_split = r"""
     >>> from _TFL.Record import Record
 
-    >>> attr = Record (name = "area_code")
+    >>> attr = Record (name = "ndc")
 
     >>> def show_split (v) :
-    ...     r  = area_code_split (attr, dict (area_code = v))
+    ...     r  = phone_ndc_split (attr, dict (ndc = v))
     ...     vs = ("%s = %s" % (k, v) for k, v in sorted (r.items ()))
     ...     print (", ".join (vs))
 
     >>> show_split ("664")
-    area_code = 664
+    ndc = 664
 
     >>> show_split ("0664")
-    area_code = 664
+    ndc = 664
 
     >>> show_split ("0 664")
-    area_code = 664
+    ndc = 664
 
 """
 
-_test_country_code_clean = r"""
+_test_phone_cc_clean = r"""
     >>> from _TFL.Record import Record
 
-    >>> attr = Record (name = "country_code")
+    >>> attr = Record (name = "cc")
 
     >>> def show_split (v) :
-    ...     r  = country_code_clean (attr, dict (country_code = v))
+    ...     r  = phone_cc_clean (attr, dict (cc = v))
     ...     vs = ("%s = %s" % (k, v) for k, v in sorted (r.items ()))
     ...     print (", ".join (vs))
 
     >>> show_split ("43")
-    country_code = 43
+    cc = 43
 
     >>> show_split ("+43")
-    country_code = 43
+    cc = 43
 
     >>> show_split ("+ 43")
-    country_code = 43
+    cc = 43
 
     >>> show_split ("0043")
-    country_code = 43
+    cc = 43
 
 """
 
-_test_phone_number_split = r"""
+_test_phone_sn_split = r"""
     >>> from _TFL.Record import Record
 
-    >>> attr = Record (name = "number")
+    >>> attr = Record (name = "sn")
 
-    >>> def show_split (number) :
-    ...     r  = phone_number_split (attr, dict (number = number))
+    >>> def show_split (sn) :
+    ...     r  = phone_sn_split (attr, dict (sn = sn))
     ...     vs = ("%s = %s" % (k, v) for k, v in sorted (r.items ()))
     ...     print (", ".join (vs))
 
     >>> show_split ("12345678")
-    number = 12345678
+    sn = 12345678
 
     >>> show_split ("0043 664 12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_split ("+43 664 12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_split ("0043 664 12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_split ("664 12345678")
-    area_code = 664, number = 12345678
+    ndc = 664, sn = 12345678
 
     >>> show_split ("0664 12345678")
-    area_code = 664, number = 12345678
+    ndc = 664, sn = 12345678
 
     >>> show_split ("+43(664)12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_split ("+43 (664) 12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_split ("0(664)12345678")
-    area_code = 664, number = 12345678
+    ndc = 664, sn = 12345678
 
     >>> show_split ("0 (664) 12345678")
-    area_code = 664, number = 12345678
+    ndc = 664, sn = 12345678
 
     >>> show_split ("43 66412345678")
-    area_code = 43, number = 66412345678
+    ndc = 43, sn = 66412345678
 
     >>> show_split ("+43 66412345678")
-    country_code = 43, number = 66412345678
+    cc = 43, sn = 66412345678
 
 """
 
 __test__ = dict \
-    ( test_area_code_split    = _test_area_code_split
-    , test_country_code_clean = _test_country_code_clean
+    ( test_phone_ndc_split    = _test_phone_ndc_split
+    , test_phone_cc_clean     = _test_phone_cc_clean
     , test_capitalize         = _test_capitalize
-    , test_phone_number_split = _test_phone_number_split
+    , test_phone_sn_split     = _test_phone_sn_split
     )
 
 if __name__ != "__main__" :

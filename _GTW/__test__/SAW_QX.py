@@ -20,6 +20,7 @@
 #    31-Jan-2014 (CT) Add test for `__{true,floor}div__`  to `_test_expr`
 #     2-Apr-2014 (CT) Add/fix tests for `Q.NOT` and `~`
 #     9-Sep-2014 (CT) Add tests for query with type restriction
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -115,13 +116,13 @@ _test_columns = """
     QX.Kind_EPK PAP.Subject  :  Q.phone_links.phone
       pap_subject_has_property__1.right
 
-    >>> show_columns (apt, "PAP.Subject", Q.phone_links.phone.number)
-    QX.Kind PAP.Subject  :  Q.phone_links.phone.number
-      pap_phone__1.number
+    >>> show_columns (apt, "PAP.Subject", Q.phone_links.phone.sn)
+    QX.Kind PAP.Subject  :  Q.phone_links.phone.sn
+      pap_phone__1.sn
 
-    >>> show_columns (apt, "PAP.Subject", Q.phone_links.phone.number == 42)
-    QX.Bin PAP.Subject  :  Q.phone_links.phone.number == 42
-      pap_phone__1.number
+    >>> show_columns (apt, "PAP.Subject", Q.phone_links.phone.sn == 42)
+    QX.Bin PAP.Subject  :  Q.phone_links.phone.sn == 42
+      pap_phone__1.sn
 
     >>> show_columns (apt, "PAP.Phone", Q.persons)
     QX.Kind_Rev_Query PAP.Phone  :  Q.persons
@@ -565,10 +566,10 @@ _test_expr = """
         <PAP.Subject | QX.Kind_Rev_Query for
              <SAW : Link_Ref_List `phone_links`>>
 
-    >>> show (qxs (Q.phone_links.phone.number == 42))
+    >>> show (qxs (Q.phone_links.phone.sn == 42))
     Bin:__eq__:
       <PAP.Phone | QX.Kind for
-           <SAW : Numeric_String `number` [pap_phone__1.number]>>
+           <SAW : Numeric_String `sn` [pap_phone__1.sn]>>
           <PAP.Subject_has_Phone | QX.Kind_EPK for
                <SAW : Phone `right` [pap_subject_has_property__1.right]>>
               <PAP.Subject | QX.Kind_Rev_Query for
@@ -579,10 +580,10 @@ _test_expr = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxp = QX.Mapper (qrt)
 
-    >>> show (qxp (Q.phone_links.phone.number == 42))
+    >>> show (qxp (Q.phone_links.phone.sn == 42))
     Bin:__eq__:
       <PAP.Phone | QX.Kind for
-           <SAW : Numeric_String `number` [pap_phone__2.number]>>
+           <SAW : Numeric_String `sn` [pap_phone__2.sn]>>
           <PAP.Person_has_Phone | QX.Kind_EPK for
                <SAW : Phone `right` [pap_subject_has_property__2.right]>>
               <PAP.Person | QX.Kind_Rev_Query for
@@ -757,7 +758,7 @@ _test_expr = """
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
 
-    >>> show (qxs ((Q.subject.phones.number * 2) - (Q.subject.lifetime.start )))
+    >>> show (qxs ((Q.subject.phones.sn * 2) - (Q.subject.lifetime.start )))
     <PAP.Subject | QX.Kind_Partial for
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
@@ -771,7 +772,7 @@ _test_expr = """
                      <SAW : Subject `left` [pap_subject_has_property.left]>>
         Bin:__mul__:
           <PAP.Phone | QX.Kind for
-               <SAW : Numeric_String `number` [pap_phone__3.number]>>
+               <SAW : Numeric_String `sn` [pap_phone__3.sn]>>
               <PAP.Subject | QX.Kind_Rev_Query for
                    <SAW : Role_Ref_Set `phones`>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
@@ -786,7 +787,7 @@ _test_expr = """
                      <SAW : Subject `left` [pap_subject_has_property.left]>>
         Bin:__mul__:
           <PAP.Phone | QX.Kind for
-               <SAW : Numeric_String `number` [pap_phone__3.number]>>
+               <SAW : Numeric_String `sn` [pap_phone__3.sn]>>
               <PAP.Subject | QX.Kind_Rev_Query for
                    <SAW : Role_Ref_Set `phones`>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for

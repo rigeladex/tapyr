@@ -30,6 +30,7 @@
 #    15-Sep-2014 (CT) Adapt to change of macro `entity_selector_form`
 #     2-Jan-2015 (CT) Adapt to another change of macro `entity_selector_form`
 #    27-Jan-2015 (CT) Add template `e_type_admin|ETR_table`
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -1511,26 +1512,26 @@ _test_qr = """
         , attr = Role_Ref_Set `phones`
         , attrs =
           [ Record
-              ( attr = Numeric_String `number`
-              , full_name = 'phones.number'
-              , id = 'phones__number'
-              , name = 'number'
+              ( attr = Numeric_String `sn`
+              , full_name = 'phones.sn'
+              , id = 'phones__sn'
+              , name = 'sn'
               , sig_key = 3
-              , ui_name = 'Phones/Number'
+              , ui_name = 'Phones/Subscriber number'
               )
           , Record
-              ( attr = Numeric_String `area_code`
-              , full_name = 'phones.area_code'
-              , id = 'phones__area_code'
-              , name = 'area_code'
+              ( attr = Numeric_String `ndc`
+              , full_name = 'phones.ndc'
+              , id = 'phones__ndc'
+              , name = 'ndc'
               , sig_key = 3
-              , ui_name = 'Phones/Area code'
+              , ui_name = 'Phones/Network destination code'
               )
           , Record
-              ( attr = Numeric_String `country_code`
-              , full_name = 'phones.country_code'
-              , id = 'phones__country_code'
-              , name = 'country_code'
+              ( attr = Numeric_String `cc`
+              , full_name = 'phones.cc'
+              , id = 'phones__cc'
+              , name = 'cc'
               , sig_key = 3
               , ui_name = 'Phones/Country code'
               )

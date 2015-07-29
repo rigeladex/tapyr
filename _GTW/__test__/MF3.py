@@ -21,6 +21,7 @@
 #    25-Aug-2014 (CT) Adapt to changes of `GTW.MF3.Completer`
 #    27-Aug-2014 (CT) Add test `skip`
 #    30-Mar-2015 (CT) Add test `single_primary`
+#    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    ««revision-date»»···
 #--
 
@@ -31,7 +32,7 @@ from   _GTW                       import GTW
 from   _MOM.import_MOM            import Q
 
 import _GTW._OMP._PAP.import_PAP
-GTW.OMP.PAP.Phone.change_attribute_default ("country_code", "43")
+GTW.OMP.PAP.Phone.change_attribute_default ("cc", "+43")
 
 from   _GTW.__test__.model        import *
 from   _GTW._MF3                  import Element as MF3_E
@@ -332,9 +333,9 @@ _test_element = """
     >>> show_elements (f_Person_z ["phones"].proto, "parent")
     <class Entity_Rev_Ref Z-26:phones> <class Field_Rev_Ref Z-26:phones>
     <class Field_Entity Z-26:phones::right> <class Entity_Rev_Ref Z-26:phones>
-    <class Field Z-26:phones::right.country_code> <class Field_Entity Z-26:phones::right>
-    <class Field Z-26:phones::right.area_code> <class Field_Entity Z-26:phones::right>
-    <class Field Z-26:phones::right.number> <class Field_Entity Z-26:phones::right>
+    <class Field Z-26:phones::right.cc> <class Field_Entity Z-26:phones::right>
+    <class Field Z-26:phones::right.ndc> <class Field_Entity Z-26:phones::right>
+    <class Field Z-26:phones::right.sn> <class Field_Entity Z-26:phones::right>
     <class Field Z-26:phones::extension> <class Entity_Rev_Ref Z-26:phones>
     <class Field Z-26:phones::desc> <class Entity_Rev_Ref Z-26:phones>
     <class Field_Ref_Hidden Z-26:phones::left> <class Entity_Rev_Ref Z-26:phones>
@@ -356,9 +357,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> <Entity Z-26>
     <Entity_Rev_Ref Z-26:phones@3> <Entity_Rev_Ref Z-26:phones@3>
     <Field_Entity Z-26:phones::right@3> <Entity_Rev_Ref Z-26:phones@3>
-    <Field Z-26:phones::right.country_code@3> <Field_Entity Z-26:phones::right@3>
-    <Field Z-26:phones::right.area_code@3> <Field_Entity Z-26:phones::right@3>
-    <Field Z-26:phones::right.number@3> <Field_Entity Z-26:phones::right@3>
+    <Field Z-26:phones::right.cc@3> <Field_Entity Z-26:phones::right@3>
+    <Field Z-26:phones::right.ndc@3> <Field_Entity Z-26:phones::right@3>
+    <Field Z-26:phones::right.sn@3> <Field_Entity Z-26:phones::right@3>
     <Field Z-26:phones::extension@3> <Entity_Rev_Ref Z-26:phones@3>
     <Field Z-26:phones::desc@3> <Entity_Rev_Ref Z-26:phones@3>
     <Field_Ref_Hidden Z-26:phones::left@3> <Entity_Rev_Ref Z-26:phones@3>
@@ -376,9 +377,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> ('tanzer', 'christian', '', '')
     <Entity_Rev_Ref Z-26:phones@3> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
     <Field_Entity Z-26:phones::right@3> ('43', '1', '98765432')
-    <Field Z-26:phones::right.country_code@3> ('43', '1', '98765432')
-    <Field Z-26:phones::right.area_code@3> ('43', '1', '98765432')
-    <Field Z-26:phones::right.number@3> ('43', '1', '98765432')
+    <Field Z-26:phones::right.cc@3> ('43', '1', '98765432')
+    <Field Z-26:phones::right.ndc@3> ('43', '1', '98765432')
+    <Field Z-26:phones::right.sn@3> ('43', '1', '98765432')
     <Field Z-26:phones::extension@3> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
     <Field Z-26:phones::desc@3> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
     <Field_Ref_Hidden Z-26:phones::left@3> ('tanzer', 'christian', '', '')
@@ -396,9 +397,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> Phones
     <Entity_Rev_Ref Z-26:phones@3> Person has Phone
     <Field_Entity Z-26:phones::right@3> Phone
-    <Field Z-26:phones::right.country_code@3> Country code
-    <Field Z-26:phones::right.area_code@3> Area code
-    <Field Z-26:phones::right.number@3> Number
+    <Field Z-26:phones::right.cc@3> Country code
+    <Field Z-26:phones::right.ndc@3> Network destination code
+    <Field Z-26:phones::right.sn@3> Subscriber number
     <Field Z-26:phones::extension@3> Extension
     <Field Z-26:phones::desc@3> Description
     <Field_Ref_Hidden Z-26:phones::left@3> Person
@@ -416,9 +417,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> None
     <Entity_Rev_Ref Z-26:phones@3> None
     <Field_Entity Z-26:phones::right@3> None
-    <Field Z-26:phones::right.country_code@3> None
-    <Field Z-26:phones::right.area_code@3> None
-    <Field Z-26:phones::right.number@3> None
+    <Field Z-26:phones::right.cc@3> None
+    <Field Z-26:phones::right.ndc@3> None
+    <Field Z-26:phones::right.sn@3> None
     <Field Z-26:phones::extension@3> None
     <Field Z-26:phones::desc@3> None
     <Field_Ref_Hidden Z-26:phones::left@3> None
@@ -436,9 +437,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> 9
     <Entity_Rev_Ref Z-26:phones@3> 10
     <Field_Entity Z-26:phones::right@3> 11
-    <Field Z-26:phones::right.country_code@3> 12
-    <Field Z-26:phones::right.area_code@3> 13
-    <Field Z-26:phones::right.number@3> 14
+    <Field Z-26:phones::right.cc@3> 12
+    <Field Z-26:phones::right.ndc@3> 13
+    <Field Z-26:phones::right.sn@3> 14
     <Field Z-26:phones::extension@3> 15
     <Field Z-26:phones::desc@3> 16
     <Field_Ref_Hidden Z-26:phones::left@3> 17
@@ -456,9 +457,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> 9
     <Entity_Rev_Ref Z-26:phones@3> 10
     <Field_Entity Z-26:phones::right@3> 11
-    <Field Z-26:phones::right.country_code@3> 12
-    <Field Z-26:phones::right.area_code@3> 13
-    <Field Z-26:phones::right.number@3> 14
+    <Field Z-26:phones::right.cc@3> 12
+    <Field Z-26:phones::right.ndc@3> 13
+    <Field Z-26:phones::right.sn@3> 14
     <Field Z-26:phones::extension@3> 15
     <Field Z-26:phones::desc@3> 16
     <Field_Ref_Hidden Z-26:phones::left@3> 17
@@ -487,9 +488,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> Z-26:phones
     <Entity_Rev_Ref Z-26:phones@3> Z-26:phones@3
     <Field_Entity Z-26:phones::right@3> Z-26:phones::right@3
-    <Field Z-26:phones::right.country_code@3> Z-26:phones::right.country_code@3
-    <Field Z-26:phones::right.area_code@3> Z-26:phones::right.area_code@3
-    <Field Z-26:phones::right.number@3> Z-26:phones::right.number@3
+    <Field Z-26:phones::right.cc@3> Z-26:phones::right.cc@3
+    <Field Z-26:phones::right.ndc@3> Z-26:phones::right.ndc@3
+    <Field Z-26:phones::right.sn@3> Z-26:phones::right.sn@3
     <Field Z-26:phones::extension@3> Z-26:phones::extension@3
     <Field Z-26:phones::desc@3> Z-26:phones::desc@3
     <Field_Ref_Hidden Z-26:phones::left@3> Z-26:phones::left@3
@@ -507,9 +508,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones>
     <Entity_Rev_Ref Z-26:phones@3> @3
     <Field_Entity Z-26:phones::right@3> @3
-    <Field Z-26:phones::right.country_code@3> @3
-    <Field Z-26:phones::right.area_code@3> @3
-    <Field Z-26:phones::right.number@3> @3
+    <Field Z-26:phones::right.cc@3> @3
+    <Field Z-26:phones::right.ndc@3> @3
+    <Field Z-26:phones::right.sn@3> @3
     <Field Z-26:phones::extension@3> @3
     <Field Z-26:phones::desc@3> @3
     <Field_Ref_Hidden Z-26:phones::left@3> @3
@@ -527,9 +528,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> <Entity Z-26>
     <Entity_Rev_Ref Z-26:phones@3> <Field_Rev_Ref Z-26:phones>
     <Field_Entity Z-26:phones::right@3> <Entity_Rev_Ref Z-26:phones@3>
-    <Field Z-26:phones::right.country_code@3> <Field_Entity Z-26:phones::right@3>
-    <Field Z-26:phones::right.area_code@3> <Field_Entity Z-26:phones::right@3>
-    <Field Z-26:phones::right.number@3> <Field_Entity Z-26:phones::right@3>
+    <Field Z-26:phones::right.cc@3> <Field_Entity Z-26:phones::right@3>
+    <Field Z-26:phones::right.ndc@3> <Field_Entity Z-26:phones::right@3>
+    <Field Z-26:phones::right.sn@3> <Field_Entity Z-26:phones::right@3>
     <Field Z-26:phones::extension@3> <Entity_Rev_Ref Z-26:phones@3>
     <Field Z-26:phones::desc@3> <Entity_Rev_Ref Z-26:phones@3>
     <Field_Ref_Hidden Z-26:phones::left@3> <Entity_Rev_Ref Z-26:phones@3>
@@ -547,9 +548,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> phones
     <Entity_Rev_Ref Z-26:phones@3> phones
     <Field_Entity Z-26:phones::right@3> phones.right
-    <Field Z-26:phones::right.country_code@3> phones.right.country_code
-    <Field Z-26:phones::right.area_code@3> phones.right.area_code
-    <Field Z-26:phones::right.number@3> phones.right.number
+    <Field Z-26:phones::right.cc@3> phones.right.cc
+    <Field Z-26:phones::right.ndc@3> phones.right.ndc
+    <Field Z-26:phones::right.sn@3> phones.right.sn
     <Field Z-26:phones::extension@3> phones.extension
     <Field Z-26:phones::desc@3> phones.desc
     <Field_Ref_Hidden Z-26:phones::left@3> phones.left
@@ -567,9 +568,9 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> phones
     <Entity_Rev_Ref Z-26:phones@3> ---
     <Field_Entity Z-26:phones::right@3> right
-    <Field Z-26:phones::right.country_code@3> country_code
-    <Field Z-26:phones::right.area_code@3> area_code
-    <Field Z-26:phones::right.number@3> number
+    <Field Z-26:phones::right.cc@3> cc
+    <Field Z-26:phones::right.ndc@3> ndc
+    <Field Z-26:phones::right.sn@3> sn
     <Field Z-26:phones::extension@3> extension
     <Field Z-26:phones::desc@3> desc
     <Field_Ref_Hidden Z-26:phones::left@3> left
@@ -580,8 +581,8 @@ _test_element = """
 
     >>> for e in f_p_z.entity_elements :
     ...     print (e, portable_repr (sorted (getattr (e, "_Element_Map", []))))
-    <Entity Z-26> ['Z-26:first_name', 'Z-26:last_name', 'Z-26:lifetime', 'Z-26:lifetime.finish', 'Z-26:lifetime.start', 'Z-26:middle_name', 'Z-26:phones', 'Z-26:phones::desc@3', 'Z-26:phones::extension@3', 'Z-26:phones::left.first_name@3', 'Z-26:phones::left.last_name@3', 'Z-26:phones::left.middle_name@3', 'Z-26:phones::left.title@3', 'Z-26:phones::left@3', 'Z-26:phones::right.area_code@3', 'Z-26:phones::right.country_code@3', 'Z-26:phones::right.number@3', 'Z-26:phones::right@3', 'Z-26:phones@3', 'Z-26:sex', 'Z-26:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'sex', 'title']
-    <Entity_Rev_Ref Z-26:phones@3> ['Z-26:phones::desc@3', 'Z-26:phones::extension@3', 'Z-26:phones::left.first_name@3', 'Z-26:phones::left.last_name@3', 'Z-26:phones::left.middle_name@3', 'Z-26:phones::left.title@3', 'Z-26:phones::left@3', 'Z-26:phones::right.area_code@3', 'Z-26:phones::right.country_code@3', 'Z-26:phones::right.number@3', 'Z-26:phones::right@3', 'desc', 'extension', 'left', 'left.first_name', 'left.last_name', 'left.middle_name', 'left.title', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'right', 'right.area_code', 'right.country_code', 'right.number']
+    <Entity Z-26> ['Z-26:first_name', 'Z-26:last_name', 'Z-26:lifetime', 'Z-26:lifetime.finish', 'Z-26:lifetime.start', 'Z-26:middle_name', 'Z-26:phones', 'Z-26:phones::desc@3', 'Z-26:phones::extension@3', 'Z-26:phones::left.first_name@3', 'Z-26:phones::left.last_name@3', 'Z-26:phones::left.middle_name@3', 'Z-26:phones::left.title@3', 'Z-26:phones::left@3', 'Z-26:phones::right.cc@3', 'Z-26:phones::right.ndc@3', 'Z-26:phones::right.sn@3', 'Z-26:phones::right@3', 'Z-26:phones@3', 'Z-26:sex', 'Z-26:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.cc', 'phones.right.ndc', 'phones.right.sn', 'sex', 'title']
+    <Entity_Rev_Ref Z-26:phones@3> ['Z-26:phones::desc@3', 'Z-26:phones::extension@3', 'Z-26:phones::left.first_name@3', 'Z-26:phones::left.last_name@3', 'Z-26:phones::left.middle_name@3', 'Z-26:phones::left.title@3', 'Z-26:phones::left@3', 'Z-26:phones::right.cc@3', 'Z-26:phones::right.ndc@3', 'Z-26:phones::right.sn@3', 'Z-26:phones::right@3', 'desc', 'extension', 'left', 'left.first_name', 'left.last_name', 'left.middle_name', 'left.title', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.cc', 'phones.right.ndc', 'phones.right.sn', 'right', 'right.cc', 'right.ndc', 'right.sn']
     <Field_Entity Z-26:phones::right@3> []
 
     >>> print (F_Person_z ["Z-26:phones"])
@@ -602,10 +603,10 @@ _test_element = """
     >>> proto = f_p_z ["Z-26:phones"].proto
 
     >>> print (portable_repr (sorted (proto._Element_Map)))
-    ['Z-26:phones::desc', 'Z-26:phones::extension', 'Z-26:phones::left', 'Z-26:phones::left.first_name', 'Z-26:phones::left.last_name', 'Z-26:phones::left.middle_name', 'Z-26:phones::left.title', 'Z-26:phones::right', 'Z-26:phones::right.area_code', 'Z-26:phones::right.country_code', 'Z-26:phones::right.number', 'desc', 'extension', 'left', 'left.first_name', 'left.last_name', 'left.middle_name', 'left.title', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'right', 'right.area_code', 'right.country_code', 'right.number']
+    ['Z-26:phones::desc', 'Z-26:phones::extension', 'Z-26:phones::left', 'Z-26:phones::left.first_name', 'Z-26:phones::left.last_name', 'Z-26:phones::left.middle_name', 'Z-26:phones::left.title', 'Z-26:phones::right', 'Z-26:phones::right.cc', 'Z-26:phones::right.ndc', 'Z-26:phones::right.sn', 'desc', 'extension', 'left', 'left.first_name', 'left.last_name', 'left.middle_name', 'left.title', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.cc', 'phones.right.ndc', 'phones.right.sn', 'right', 'right.cc', 'right.ndc', 'right.sn']
 
     >>> print (proto, proto.__class__, list (proto.elements_transitive ()))
-    <class Entity_Rev_Ref Z-26:phones> <class '_GTW._MF3.Element.M_Entity_Rev_Ref'> [<class Entity_Rev_Ref Z-26:phones>, <class Field_Entity Z-26:phones::right>, <class Field Z-26:phones::right.country_code>, <class Field Z-26:phones::right.area_code>, <class Field Z-26:phones::right.number>, <class Field Z-26:phones::extension>, <class Field Z-26:phones::desc>, <class Field_Ref_Hidden Z-26:phones::left>, <class Field Z-26:phones::left.last_name>, <class Field Z-26:phones::left.first_name>, <class Field Z-26:phones::left.middle_name>, <class Field Z-26:phones::left.title>]
+    <class Entity_Rev_Ref Z-26:phones> <class '_GTW._MF3.Element.M_Entity_Rev_Ref'> [<class Entity_Rev_Ref Z-26:phones>, <class Field_Entity Z-26:phones::right>, <class Field Z-26:phones::right.cc>, <class Field Z-26:phones::right.ndc>, <class Field Z-26:phones::right.sn>, <class Field Z-26:phones::extension>, <class Field Z-26:phones::desc>, <class Field_Ref_Hidden Z-26:phones::left>, <class Field Z-26:phones::left.last_name>, <class Field Z-26:phones::left.first_name>, <class Field Z-26:phones::left.middle_name>, <class Field Z-26:phones::left.title>]
 
     >>> print (f_p_z ["Z-26:phones"])
     <Field_Rev_Ref Z-26:phones>
@@ -627,18 +628,18 @@ _test_element = """
     F      lifetime.finish  Atom
 
     >>> show_completers (f_p_z, "q_name", "attr.completer.kind")
-    Type   q_name                     attr.completer.kind
-    ========================================
-    F      last_name                  Atom
-    F      first_name                 Atom
-    F      middle_name                Atom
-    F      title                      Atom
-    F      lifetime.start             Atom
-    F      lifetime.finish            Atom
-    F      phones.right.country_code  Atom
-    F      phones.right.area_code     Atom
-    F      phones.right.number        Atom
-    F      phones.desc                Atom
+    Type   q_name            attr.completer.kind
+    ===============================
+    F      last_name         Atom
+    F      first_name        Atom
+    F      middle_name       Atom
+    F      title             Atom
+    F      lifetime.start    Atom
+    F      lifetime.finish   Atom
+    F      phones.right.cc   Atom
+    F      phones.right.ndc  Atom
+    F      phones.right.sn   Atom
+    F      phones.desc       Atom
 
     >>> show_field_values (f_p)
     { 'X-26:first_name' : {'init' : 'Christian'}
@@ -665,20 +666,20 @@ _test_element = """
             , 'pid' : 1
             }
         }
-    , 'Z-26:phones::right.area_code@3' : {'init' : '1'}
-    , 'Z-26:phones::right.country_code@3' : {'init' : '43'}
-    , 'Z-26:phones::right.number@3' : {'init' : '98765432'}
+    , 'Z-26:phones::right.cc@3' : {'init' : '+43'}
+    , 'Z-26:phones::right.ndc@3' : {'init' : '1'}
+    , 'Z-26:phones::right.sn@3' : {'init' : '98765432'}
     , 'Z-26:phones::right@3' :
         { 'init' :
             { 'cid' : 2
-            , 'display' : '43/1/98765432'
+            , 'display' : '+43-1-98765432'
             , 'pid' : 2
             }
         }
     , 'Z-26:phones@3' :
         { 'init' :
             { 'cid' : 3
-            , 'display' : 'Tanzer Christian, 43/1/98765432, 42'
+            , 'display' : 'Tanzer Christian, +43-1-98765432, 42'
             , 'pid' : 3
             }
         }
@@ -690,7 +691,7 @@ _test_element = """
     ['X-26:first_name', 'X-26:last_name', 'X-26:lifetime', 'X-26:lifetime.finish', 'X-26:lifetime.start', 'X-26:middle_name', 'X-26:sex', 'X-26:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'sex', 'title']
 
     >>> print (portable_repr (sorted (f_p_z._Element_Map)))
-    ['Z-26:first_name', 'Z-26:last_name', 'Z-26:lifetime', 'Z-26:lifetime.finish', 'Z-26:lifetime.start', 'Z-26:middle_name', 'Z-26:phones', 'Z-26:phones::desc@3', 'Z-26:phones::extension@3', 'Z-26:phones::left.first_name@3', 'Z-26:phones::left.last_name@3', 'Z-26:phones::left.middle_name@3', 'Z-26:phones::left.title@3', 'Z-26:phones::left@3', 'Z-26:phones::right.area_code@3', 'Z-26:phones::right.country_code@3', 'Z-26:phones::right.number@3', 'Z-26:phones::right@3', 'Z-26:phones@3', 'Z-26:sex', 'Z-26:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'sex', 'title']
+    ['Z-26:first_name', 'Z-26:last_name', 'Z-26:lifetime', 'Z-26:lifetime.finish', 'Z-26:lifetime.start', 'Z-26:middle_name', 'Z-26:phones', 'Z-26:phones::desc@3', 'Z-26:phones::extension@3', 'Z-26:phones::left.first_name@3', 'Z-26:phones::left.last_name@3', 'Z-26:phones::left.middle_name@3', 'Z-26:phones::left.title@3', 'Z-26:phones::left@3', 'Z-26:phones::right.cc@3', 'Z-26:phones::right.ndc@3', 'Z-26:phones::right.sn@3', 'Z-26:phones::right@3', 'Z-26:phones@3', 'Z-26:sex', 'Z-26:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.cc', 'phones.right.ndc', 'phones.right.sn', 'sex', 'title']
 
     >>> show_elements (f_p_z2, "Entity")
     <Entity Z-26> <Entity Z-26>
@@ -705,25 +706,25 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> <Entity Z-26>
     <Entity_Rev_Ref Z-26:phones@3> <Entity_Rev_Ref Z-26:phones@3>
     <Field_Entity Z-26:phones::right@3> <Entity_Rev_Ref Z-26:phones@3>
-    <Field Z-26:phones::right.country_code@3> <Field_Entity Z-26:phones::right@3>
-    <Field Z-26:phones::right.area_code@3> <Field_Entity Z-26:phones::right@3>
-    <Field Z-26:phones::right.number@3> <Field_Entity Z-26:phones::right@3>
+    <Field Z-26:phones::right.cc@3> <Field_Entity Z-26:phones::right@3>
+    <Field Z-26:phones::right.ndc@3> <Field_Entity Z-26:phones::right@3>
+    <Field Z-26:phones::right.sn@3> <Field_Entity Z-26:phones::right@3>
     <Field Z-26:phones::extension@3> <Entity_Rev_Ref Z-26:phones@3>
     <Field Z-26:phones::desc@3> <Entity_Rev_Ref Z-26:phones@3>
     <Field_Ref_Hidden Z-26:phones::left@3> <Entity_Rev_Ref Z-26:phones@3>
     <Entity_Rev_Ref Z-26:phones/1> <Entity_Rev_Ref Z-26:phones/1>
     <Field_Entity Z-26:phones::right/1> <Entity_Rev_Ref Z-26:phones/1>
-    <Field Z-26:phones::right.country_code/1> <Field_Entity Z-26:phones::right/1>
-    <Field Z-26:phones::right.area_code/1> <Field_Entity Z-26:phones::right/1>
-    <Field Z-26:phones::right.number/1> <Field_Entity Z-26:phones::right/1>
+    <Field Z-26:phones::right.cc/1> <Field_Entity Z-26:phones::right/1>
+    <Field Z-26:phones::right.ndc/1> <Field_Entity Z-26:phones::right/1>
+    <Field Z-26:phones::right.sn/1> <Field_Entity Z-26:phones::right/1>
     <Field Z-26:phones::extension/1> <Entity_Rev_Ref Z-26:phones/1>
     <Field Z-26:phones::desc/1> <Entity_Rev_Ref Z-26:phones/1>
     <Field_Ref_Hidden Z-26:phones::left/1> <Entity_Rev_Ref Z-26:phones/1>
     <Entity_Rev_Ref Z-26:phones/2> <Entity_Rev_Ref Z-26:phones/2>
     <Field_Entity Z-26:phones::right/2> <Entity_Rev_Ref Z-26:phones/2>
-    <Field Z-26:phones::right.country_code/2> <Field_Entity Z-26:phones::right/2>
-    <Field Z-26:phones::right.area_code/2> <Field_Entity Z-26:phones::right/2>
-    <Field Z-26:phones::right.number/2> <Field_Entity Z-26:phones::right/2>
+    <Field Z-26:phones::right.cc/2> <Field_Entity Z-26:phones::right/2>
+    <Field Z-26:phones::right.ndc/2> <Field_Entity Z-26:phones::right/2>
+    <Field Z-26:phones::right.sn/2> <Field_Entity Z-26:phones::right/2>
     <Field Z-26:phones::extension/2> <Entity_Rev_Ref Z-26:phones/2>
     <Field Z-26:phones::desc/2> <Entity_Rev_Ref Z-26:phones/2>
     <Field_Ref_Hidden Z-26:phones::left/2> <Entity_Rev_Ref Z-26:phones/2>
@@ -741,25 +742,25 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones>
     <Entity_Rev_Ref Z-26:phones@3> @3
     <Field_Entity Z-26:phones::right@3> @3
-    <Field Z-26:phones::right.country_code@3> @3
-    <Field Z-26:phones::right.area_code@3> @3
-    <Field Z-26:phones::right.number@3> @3
+    <Field Z-26:phones::right.cc@3> @3
+    <Field Z-26:phones::right.ndc@3> @3
+    <Field Z-26:phones::right.sn@3> @3
     <Field Z-26:phones::extension@3> @3
     <Field Z-26:phones::desc@3> @3
     <Field_Ref_Hidden Z-26:phones::left@3> @3
     <Entity_Rev_Ref Z-26:phones/1> /1
     <Field_Entity Z-26:phones::right/1> /1
-    <Field Z-26:phones::right.country_code/1> /1
-    <Field Z-26:phones::right.area_code/1> /1
-    <Field Z-26:phones::right.number/1> /1
+    <Field Z-26:phones::right.cc/1> /1
+    <Field Z-26:phones::right.ndc/1> /1
+    <Field Z-26:phones::right.sn/1> /1
     <Field Z-26:phones::extension/1> /1
     <Field Z-26:phones::desc/1> /1
     <Field_Ref_Hidden Z-26:phones::left/1> /1
     <Entity_Rev_Ref Z-26:phones/2> /2
     <Field_Entity Z-26:phones::right/2> /2
-    <Field Z-26:phones::right.country_code/2> /2
-    <Field Z-26:phones::right.area_code/2> /2
-    <Field Z-26:phones::right.number/2> /2
+    <Field Z-26:phones::right.cc/2> /2
+    <Field Z-26:phones::right.ndc/2> /2
+    <Field Z-26:phones::right.sn/2> /2
     <Field Z-26:phones::extension/2> /2
     <Field Z-26:phones::desc/2> /2
     <Field_Ref_Hidden Z-26:phones::left/2> /2
@@ -777,25 +778,25 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> phones
     <Entity_Rev_Ref Z-26:phones@3> phones
     <Field_Entity Z-26:phones::right@3> phones.right
-    <Field Z-26:phones::right.country_code@3> phones.right.country_code
-    <Field Z-26:phones::right.area_code@3> phones.right.area_code
-    <Field Z-26:phones::right.number@3> phones.right.number
+    <Field Z-26:phones::right.cc@3> phones.right.cc
+    <Field Z-26:phones::right.ndc@3> phones.right.ndc
+    <Field Z-26:phones::right.sn@3> phones.right.sn
     <Field Z-26:phones::extension@3> phones.extension
     <Field Z-26:phones::desc@3> phones.desc
     <Field_Ref_Hidden Z-26:phones::left@3> phones.left
     <Entity_Rev_Ref Z-26:phones/1> phones
     <Field_Entity Z-26:phones::right/1> phones.right
-    <Field Z-26:phones::right.country_code/1> phones.right.country_code
-    <Field Z-26:phones::right.area_code/1> phones.right.area_code
-    <Field Z-26:phones::right.number/1> phones.right.number
+    <Field Z-26:phones::right.cc/1> phones.right.cc
+    <Field Z-26:phones::right.ndc/1> phones.right.ndc
+    <Field Z-26:phones::right.sn/1> phones.right.sn
     <Field Z-26:phones::extension/1> phones.extension
     <Field Z-26:phones::desc/1> phones.desc
     <Field_Ref_Hidden Z-26:phones::left/1> phones.left
     <Entity_Rev_Ref Z-26:phones/2> phones
     <Field_Entity Z-26:phones::right/2> phones.right
-    <Field Z-26:phones::right.country_code/2> phones.right.country_code
-    <Field Z-26:phones::right.area_code/2> phones.right.area_code
-    <Field Z-26:phones::right.number/2> phones.right.number
+    <Field Z-26:phones::right.cc/2> phones.right.cc
+    <Field Z-26:phones::right.ndc/2> phones.right.ndc
+    <Field Z-26:phones::right.sn/2> phones.right.sn
     <Field Z-26:phones::extension/2> phones.extension
     <Field Z-26:phones::desc/2> phones.desc
     <Field_Ref_Hidden Z-26:phones::left/2> phones.left
@@ -835,28 +836,28 @@ _test_element = """
                 , 'pid' : 1
                 }
             }
-        , 'Z-26:phones::right.area_code/1' : {}
-        , 'Z-26:phones::right.area_code/2' : {}
-        , 'Z-26:phones::right.area_code@3' : {'init' : '1'}
-        , 'Z-26:phones::right.country_code/1' : {'edit' : '43'}
-        , 'Z-26:phones::right.country_code/2' : {'edit' : '43'}
-        , 'Z-26:phones::right.country_code@3' : {'init' : '43'}
-        , 'Z-26:phones::right.number/1' : {}
-        , 'Z-26:phones::right.number/2' : {}
-        , 'Z-26:phones::right.number@3' : {'init' : '98765432'}
+        , 'Z-26:phones::right.cc/1' : {'edit' : '+43'}
+        , 'Z-26:phones::right.cc/2' : {'edit' : '+43'}
+        , 'Z-26:phones::right.cc@3' : {'init' : '+43'}
+        , 'Z-26:phones::right.ndc/1' : {}
+        , 'Z-26:phones::right.ndc/2' : {}
+        , 'Z-26:phones::right.ndc@3' : {'init' : '1'}
+        , 'Z-26:phones::right.sn/1' : {}
+        , 'Z-26:phones::right.sn/2' : {}
+        , 'Z-26:phones::right.sn@3' : {'init' : '98765432'}
         , 'Z-26:phones::right/1' : {'init' : {}}
         , 'Z-26:phones::right/2' : {'init' : {}}
         , 'Z-26:phones::right@3' :
             { 'init' :
                 { 'cid' : 2
-                , 'display' : '43/1/98765432'
+                , 'display' : '+43-1-98765432'
                 , 'pid' : 2
                 }
             }
         , 'Z-26:phones@3' :
             { 'init' :
                 { 'cid' : 3
-                , 'display' : 'Tanzer Christian, 43/1/98765432, 42'
+                , 'display' : 'Tanzer Christian, +43-1-98765432, 42'
                 , 'pid' : 3
                 }
             }
@@ -867,12 +868,12 @@ _test_element = """
     , 'sid' : 0
     , 'sigs' :
         { 'Z-26' : '_hEg-sePfhfkRLEUj0IYJiL6BgDVhbE-vKI0jQ'
-        , 'Z-26:phones/1' : 'Ey4qGGMaPKObwCJSprKazgyxU28RRfckYn3fMA'
-        , 'Z-26:phones/2' : 'AmzZA4Wi0lga01gC23mXxOzfEpea_0f99pvNkg'
-        , 'Z-26:phones::right/1' : '-NIR3kDY6KpYQ04FZFu0TFyL5oWn1TwnIWSo6Q'
-        , 'Z-26:phones::right/2' : 'g-au0oO4kLINj7o8KxeSNvSNQwX1ikWkbRSUWg'
-        , 'Z-26:phones::right@3' : 'i_q6IXEtx7CRu21Zrp2TgloeU-dHn8wQCHlgfw'
-        , 'Z-26:phones@3' : 'LFkeOzL88mhsuqsPe93gQrPgcQUXVi-jdWlfwQ'
+        , 'Z-26:phones/1' : '1mh8G-a0Q31ETILmBIHf6XvVAdjgd8LbSZ6zFg'
+        , 'Z-26:phones/2' : 'mi_nwniDUZJPVd5jn6pNVLmaAxyCAj-Qkz6F8w'
+        , 'Z-26:phones::right/1' : 'wSEJNhfPN7Nc2yh7VX_610r79TsofrzAP6Ck8g'
+        , 'Z-26:phones::right/2' : 'cS95p33FYRIueAooEpXYqeqrx0Unv99jC4WZyw'
+        , 'Z-26:phones::right@3' : '9a_OfPNB-bfHzXl-YZM2YGYw6MVWmlLv_D32QQ'
+        , 'Z-26:phones@3' : '95BPoxBn1FKU0fsS5zdJLX5Koqob7V50RlZHGw'
         }
     }
 
@@ -907,25 +908,25 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> Field_Rev_Ref
     <Entity_Rev_Ref Z-26:phones@3> Entity_Rev_Ref
     <Field_Entity Z-26:phones::right@3> Field_Entity
-    <Field Z-26:phones::right.country_code@3> Field
-    <Field Z-26:phones::right.area_code@3> Field
-    <Field Z-26:phones::right.number@3> Field
+    <Field Z-26:phones::right.cc@3> Field
+    <Field Z-26:phones::right.ndc@3> Field
+    <Field Z-26:phones::right.sn@3> Field
     <Field Z-26:phones::extension@3> Field
     <Field Z-26:phones::desc@3> Field
     <Field_Ref_Hidden Z-26:phones::left@3> Field_Ref_Hidden
     <Entity_Rev_Ref Z-26:phones/1> Entity_Rev_Ref
     <Field_Entity Z-26:phones::right/1> Field_Entity
-    <Field Z-26:phones::right.country_code/1> Field
-    <Field Z-26:phones::right.area_code/1> Field
-    <Field Z-26:phones::right.number/1> Field
+    <Field Z-26:phones::right.cc/1> Field
+    <Field Z-26:phones::right.ndc/1> Field
+    <Field Z-26:phones::right.sn/1> Field
     <Field Z-26:phones::extension/1> Field
     <Field Z-26:phones::desc/1> Field
     <Field_Ref_Hidden Z-26:phones::left/1> Field_Ref_Hidden
     <Entity_Rev_Ref Z-26:phones/2> Entity_Rev_Ref
     <Field_Entity Z-26:phones::right/2> Field_Entity
-    <Field Z-26:phones::right.country_code/2> Field
-    <Field Z-26:phones::right.area_code/2> Field
-    <Field Z-26:phones::right.number/2> Field
+    <Field Z-26:phones::right.cc/2> Field
+    <Field Z-26:phones::right.ndc/2> Field
+    <Field Z-26:phones::right.sn/2> Field
     <Field Z-26:phones::extension/2> Field
     <Field Z-26:phones::desc/2> Field
     <Field_Ref_Hidden Z-26:phones::left/2> Field_Ref_Hidden
@@ -943,25 +944,25 @@ _test_element = """
     <Field_Rev_Ref Z-26:phones> mf3_input, string
     <Entity_Rev_Ref Z-26:phones@3> mf3_input, id_entity
     <Field_Entity Z-26:phones::right@3> mf3_input, id_entity
-    <Field Z-26:phones::right.country_code@3> mf3_input, number
-    <Field Z-26:phones::right.area_code@3> mf3_input, number
-    <Field Z-26:phones::right.number@3> mf3_input, number
+    <Field Z-26:phones::right.cc@3> mf3_input, number
+    <Field Z-26:phones::right.ndc@3> mf3_input, number
+    <Field Z-26:phones::right.sn@3> mf3_input, number
     <Field Z-26:phones::extension@3> mf3_input, number
     <Field Z-26:phones::desc@3> mf3_input, string
     <Field_Ref_Hidden Z-26:phones::left@3> mf3_input, hidden
     <Entity_Rev_Ref Z-26:phones/1> mf3_input, id_entity
     <Field_Entity Z-26:phones::right/1> mf3_input, id_entity
-    <Field Z-26:phones::right.country_code/1> mf3_input, number
-    <Field Z-26:phones::right.area_code/1> mf3_input, number
-    <Field Z-26:phones::right.number/1> mf3_input, number
+    <Field Z-26:phones::right.cc/1> mf3_input, number
+    <Field Z-26:phones::right.ndc/1> mf3_input, number
+    <Field Z-26:phones::right.sn/1> mf3_input, number
     <Field Z-26:phones::extension/1> mf3_input, number
     <Field Z-26:phones::desc/1> mf3_input, string
     <Field_Ref_Hidden Z-26:phones::left/1> mf3_input, hidden
     <Entity_Rev_Ref Z-26:phones/2> mf3_input, id_entity
     <Field_Entity Z-26:phones::right/2> mf3_input, id_entity
-    <Field Z-26:phones::right.country_code/2> mf3_input, number
-    <Field Z-26:phones::right.area_code/2> mf3_input, number
-    <Field Z-26:phones::right.number/2> mf3_input, number
+    <Field Z-26:phones::right.cc/2> mf3_input, number
+    <Field Z-26:phones::right.ndc/2> mf3_input, number
+    <Field Z-26:phones::right.sn/2> mf3_input, number
     <Field Z-26:phones::extension/2> mf3_input, number
     <Field Z-26:phones::desc/2> mf3_input, string
     <Field_Ref_Hidden Z-26:phones::left/2> mf3_input, hidden
@@ -983,7 +984,7 @@ _test_element = """
     >>> F_PhP   = MF3_E.Entity.Auto (scope.PAP.Person_has_Phone, id_prefix = "X")
     >>> f_PhP   = F_PhP (scope)
     >>> f_pph   = F_PhP (scope, pph)
-    >>> F_PhP_s = MF3_E.Entity.Auto (scope.PAP.Person_has_Phone, id_prefix = "Y", attr_spec = { "left.middle_name" : dict (skip = 1), "right.country_code" : dict (init ="49", prefilled = 1)})
+    >>> F_PhP_s = MF3_E.Entity.Auto (scope.PAP.Person_has_Phone, id_prefix = "Y", attr_spec = { "left.middle_name" : dict (skip = 1), "right.cc" : dict (init ="49", prefilled = 1)})
     >>> f_PhP_s = F_PhP_s (scope)
     >>> F_PhP_z = MF3_E.Entity.Auto (scope.PAP.Person_has_Phone, id_prefix = "Z", attr_spec = { "left" : dict (allow_new = True, attr_selector = MOM.Attr.Selector.editable), "right" : dict (attr_selector = MOM.Attr.Selector.editable)})
     >>> f_PhP_z = F_PhP_z (scope)
@@ -1012,9 +1013,9 @@ _test_element = """
     <Field Z-121:left.lifetime.finish> <Field_Entity Z-121:left>
     <Field Z-121:left.sex> <Field_Entity Z-121:left>
     <Field_Entity Z-121:right> <Entity Z-121>
-    <Field Z-121:right.country_code> <Field_Entity Z-121:right>
-    <Field Z-121:right.area_code> <Field_Entity Z-121:right>
-    <Field Z-121:right.number> <Field_Entity Z-121:right>
+    <Field Z-121:right.cc> <Field_Entity Z-121:right>
+    <Field Z-121:right.ndc> <Field_Entity Z-121:right>
+    <Field Z-121:right.sn> <Field_Entity Z-121:right>
     <Field Z-121:right.desc> <Field_Entity Z-121:right>
     <Field Z-121:extension> <Entity Z-121>
     <Field Z-121:desc> <Entity Z-121>
@@ -1031,9 +1032,9 @@ _test_element = """
     <Field Z-121:left.lifetime.finish> left.lifetime.finish
     <Field Z-121:left.sex> left.sex
     <Field_Entity Z-121:right> right
-    <Field Z-121:right.country_code> right.country_code
-    <Field Z-121:right.area_code> right.area_code
-    <Field Z-121:right.number> right.number
+    <Field Z-121:right.cc> right.cc
+    <Field Z-121:right.ndc> right.ndc
+    <Field Z-121:right.sn> right.sn
     <Field Z-121:right.desc> right.desc
     <Field Z-121:extension> extension
     <Field Z-121:desc> desc
@@ -1050,9 +1051,9 @@ _test_element = """
     <Field Z-121:left.lifetime.finish> lifetime.finish
     <Field Z-121:left.sex> sex
     <Field_Entity Z-121:right> right
-    <Field Z-121:right.country_code> country_code
-    <Field Z-121:right.area_code> area_code
-    <Field Z-121:right.number> number
+    <Field Z-121:right.cc> cc
+    <Field Z-121:right.ndc> ndc
+    <Field Z-121:right.sn> sn
     <Field Z-121:right.desc> desc
     <Field Z-121:extension> extension
     <Field Z-121:desc> desc
@@ -1061,9 +1062,9 @@ _test_element = """
     <Entity X-121> <Entity X-121>
     <Field_Entity X-121:left> <Entity X-121>
     <Field_Entity X-121:right> <Entity X-121>
-    <Field X-121:right.country_code> <Entity X-121>
-    <Field X-121:right.area_code> <Entity X-121>
-    <Field X-121:right.number> <Entity X-121>
+    <Field X-121:right.cc> <Entity X-121>
+    <Field X-121:right.ndc> <Entity X-121>
+    <Field X-121:right.sn> <Entity X-121>
     <Field X-121:extension> <Entity X-121>
     <Field X-121:desc> <Entity X-121>
 
@@ -1071,9 +1072,9 @@ _test_element = """
     <Entity X-121> <Entity X-121>
     <Field_Entity X-121:left> <Entity X-121>
     <Field_Entity X-121:right> <Entity X-121>
-    <Field X-121:right.country_code> <Field_Entity X-121:right>
-    <Field X-121:right.area_code> <Field_Entity X-121:right>
-    <Field X-121:right.number> <Field_Entity X-121:right>
+    <Field X-121:right.cc> <Field_Entity X-121:right>
+    <Field X-121:right.ndc> <Field_Entity X-121:right>
+    <Field X-121:right.sn> <Field_Entity X-121:right>
     <Field X-121:extension> <Entity X-121>
     <Field X-121:desc> <Entity X-121>
 
@@ -1081,9 +1082,9 @@ _test_element = """
     <Entity X-121> PAP.Person_has_Phone
     <Field_Entity X-121:left> PAP.Person_has_Phone
     <Field_Entity X-121:right> PAP.Person_has_Phone
-    <Field X-121:right.country_code> PAP.Phone
-    <Field X-121:right.area_code> PAP.Phone
-    <Field X-121:right.number> PAP.Phone
+    <Field X-121:right.cc> PAP.Phone
+    <Field X-121:right.ndc> PAP.Phone
+    <Field X-121:right.sn> PAP.Phone
     <Field X-121:extension> PAP.Person_has_Phone
     <Field X-121:desc> PAP.Person_has_Phone
 
@@ -1091,9 +1092,9 @@ _test_element = """
     <Entity X-121> PAP.Person_has_Phone
     <Field_Entity X-121:left> PAP.Person
     <Field_Entity X-121:right> PAP.Phone
-    <Field X-121:right.country_code> PAP.Phone
-    <Field X-121:right.area_code> PAP.Phone
-    <Field X-121:right.number> PAP.Phone
+    <Field X-121:right.cc> PAP.Phone
+    <Field X-121:right.ndc> PAP.Phone
+    <Field X-121:right.sn> PAP.Phone
     <Field X-121:extension> PAP.Person_has_Phone
     <Field X-121:desc> PAP.Person_has_Phone
 
@@ -1101,9 +1102,9 @@ _test_element = """
     <Entity X-121> ---
     <Field_Entity X-121:left> PAP.Person
     <Field_Entity X-121:right> PAP.Phone
-    <Field X-121:right.country_code> ---
-    <Field X-121:right.area_code> ---
-    <Field X-121:right.number> ---
+    <Field X-121:right.cc> ---
+    <Field X-121:right.ndc> ---
+    <Field X-121:right.sn> ---
     <Field X-121:extension> ---
     <Field X-121:desc> ---
 
@@ -1115,9 +1116,9 @@ _test_element = """
     <class Field X-121:left.middle_name> <class Field_Entity X-121:left>
     <class Field X-121:left.title> <class Field_Entity X-121:left>
     <class Field_Entity X-121:right> <class Entity X-121>
-    <class Field X-121:right.country_code> <class Field_Entity X-121:right>
-    <class Field X-121:right.area_code> <class Field_Entity X-121:right>
-    <class Field X-121:right.number> <class Field_Entity X-121:right>
+    <class Field X-121:right.cc> <class Field_Entity X-121:right>
+    <class Field X-121:right.ndc> <class Field_Entity X-121:right>
+    <class Field X-121:right.sn> <class Field_Entity X-121:right>
     <class Field X-121:extension> <class Entity X-121>
     <class Field X-121:desc> <class Entity X-121>
 
@@ -1125,9 +1126,9 @@ _test_element = """
     <Entity X-121> None
     <Field_Entity X-121:left> <Entity X-121>
     <Field_Entity X-121:right> <Entity X-121>
-    <Field X-121:right.country_code> <Field_Entity X-121:right>
-    <Field X-121:right.area_code> <Field_Entity X-121:right>
-    <Field X-121:right.number> <Field_Entity X-121:right>
+    <Field X-121:right.cc> <Field_Entity X-121:right>
+    <Field X-121:right.ndc> <Field_Entity X-121:right>
+    <Field X-121:right.sn> <Field_Entity X-121:right>
     <Field X-121:extension> <Entity X-121>
     <Field X-121:desc> <Entity X-121>
 
@@ -1151,9 +1152,9 @@ _test_element = """
     <class Field X-121:left.middle_name> mf3_input, string
     <class Field X-121:left.title> mf3_input, string
     <class Field_Entity X-121:right> mf3_input, id_entity
-    <class Field X-121:right.country_code> mf3_input, number
-    <class Field X-121:right.area_code> mf3_input, number
-    <class Field X-121:right.number> mf3_input, number
+    <class Field X-121:right.cc> mf3_input, number
+    <class Field X-121:right.ndc> mf3_input, number
+    <class Field X-121:right.sn> mf3_input, number
     <class Field X-121:extension> mf3_input, number
     <class Field X-121:desc> mf3_input, string
 
@@ -1161,9 +1162,9 @@ _test_element = """
     <Entity X-121> ---
     <Field_Entity X-121:left> mf3_input, id_entity
     <Field_Entity X-121:right> mf3_input, id_entity
-    <Field X-121:right.country_code> mf3_input, number
-    <Field X-121:right.area_code> mf3_input, number
-    <Field X-121:right.number> mf3_input, number
+    <Field X-121:right.cc> mf3_input, number
+    <Field X-121:right.ndc> mf3_input, number
+    <Field X-121:right.sn> mf3_input, number
     <Field X-121:extension> mf3_input, number
     <Field X-121:desc> mf3_input, string
 
@@ -1171,9 +1172,9 @@ _test_element = """
     <Entity X-121> Entity_Form
     <Field_Entity X-121:left> Field_Entity
     <Field_Entity X-121:right> Field_Entity
-    <Field X-121:right.country_code> Field
-    <Field X-121:right.area_code> Field
-    <Field X-121:right.number> Field
+    <Field X-121:right.cc> Field
+    <Field X-121:right.ndc> Field
+    <Field X-121:right.sn> Field
     <Field X-121:extension> Field
     <Field X-121:desc> Field
 
@@ -1181,9 +1182,9 @@ _test_element = """
     <Entity X-121> ---
     <Field_Entity X-121:left> None
     <Field_Entity X-121:right> None
-    <Field X-121:right.country_code> 43
-    <Field X-121:right.area_code>
-    <Field X-121:right.number>
+    <Field X-121:right.cc> 43
+    <Field X-121:right.ndc>
+    <Field X-121:right.sn>
     <Field X-121:extension>
     <Field X-121:desc>
 
@@ -1191,9 +1192,9 @@ _test_element = """
     <Entity X-121> ---
     <Field_Entity X-121:left>
     <Field_Entity X-121:right>
-    <Field X-121:right.country_code> 43
-    <Field X-121:right.area_code>
-    <Field X-121:right.number>
+    <Field X-121:right.cc> +43
+    <Field X-121:right.ndc>
+    <Field X-121:right.sn>
     <Field X-121:extension>
     <Field X-121:desc>
 
@@ -1201,9 +1202,9 @@ _test_element = """
     <Entity Y-121> ---
     <Field_Entity Y-121:left>
     <Field_Entity Y-121:right>
-    <Field Y-121:right.country_code> 49
-    <Field Y-121:right.area_code>
-    <Field Y-121:right.number>
+    <Field Y-121:right.cc> 49
+    <Field Y-121:right.ndc>
+    <Field Y-121:right.sn>
     <Field Y-121:extension>
     <Field Y-121:desc>
 
@@ -1211,9 +1212,9 @@ _test_element = """
     <Entity Y-121> ---
     <Field_Entity Y-121:left> False
     <Field_Entity Y-121:right> False
-    <Field Y-121:right.country_code> 1
-    <Field Y-121:right.area_code> False
-    <Field Y-121:right.number> False
+    <Field Y-121:right.cc> 1
+    <Field Y-121:right.ndc> False
+    <Field Y-121:right.sn> False
     <Field Y-121:extension> False
     <Field Y-121:desc> False
 
@@ -1221,9 +1222,9 @@ _test_element = """
     <Entity X-121> ---
     <Field_Entity X-121:left> ('tanzer', 'christian', '', '')
     <Field_Entity X-121:right> ('43', '1', '98765432')
-    <Field X-121:right.country_code> 43
-    <Field X-121:right.area_code> 1
-    <Field X-121:right.number> 98765432
+    <Field X-121:right.cc> 43
+    <Field X-121:right.ndc> 1
+    <Field X-121:right.sn> 98765432
     <Field X-121:extension> 42
     <Field X-121:desc> example
 
@@ -1231,19 +1232,19 @@ _test_element = """
     <Entity X-121> ---
     <Field_Entity X-121:left> 1
     <Field_Entity X-121:right> 2
-    <Field X-121:right.country_code> 43
-    <Field X-121:right.area_code> 1
-    <Field X-121:right.number> 98765432
+    <Field X-121:right.cc> +43
+    <Field X-121:right.ndc> 1
+    <Field X-121:right.sn> 98765432
     <Field X-121:extension> 42
     <Field X-121:desc> example
 
     >>> show_elements (f_pph, "ui_display")
-    <Entity X-121> Tanzer Christian, 43/1/98765432, 42
+    <Entity X-121> Tanzer Christian, +43-1-98765432, 42
     <Field_Entity X-121:left> Tanzer Christian
-    <Field_Entity X-121:right> 43/1/98765432
-    <Field X-121:right.country_code> 43
-    <Field X-121:right.area_code> 1
-    <Field X-121:right.number> 98765432
+    <Field_Entity X-121:right> +43-1-98765432
+    <Field X-121:right.cc> +43
+    <Field X-121:right.ndc> 1
+    <Field X-121:right.sn> 98765432
     <Field X-121:extension> 42
     <Field X-121:desc> example
 
@@ -1251,9 +1252,9 @@ _test_element = """
     <Entity X-121> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
     <Field_Entity X-121:left> ('tanzer', 'christian', '', '')
     <Field_Entity X-121:right> ('43', '1', '98765432')
-    <Field X-121:right.country_code> ('43', '1', '98765432')
-    <Field X-121:right.area_code> ('43', '1', '98765432')
-    <Field X-121:right.number> ('43', '1', '98765432')
+    <Field X-121:right.cc> ('43', '1', '98765432')
+    <Field X-121:right.ndc> ('43', '1', '98765432')
+    <Field X-121:right.sn> ('43', '1', '98765432')
     <Field X-121:extension> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
     <Field X-121:desc> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
 
@@ -1261,9 +1262,9 @@ _test_element = """
     <Entity X-121> None
     <Field_Entity X-121:left> left
     <Field_Entity X-121:right> right
-    <Field X-121:right.country_code> right.country_code
-    <Field X-121:right.area_code> right.area_code
-    <Field X-121:right.number> right.number
+    <Field X-121:right.cc> right.cc
+    <Field X-121:right.ndc> right.ndc
+    <Field X-121:right.sn> right.sn
     <Field X-121:extension> extension
     <Field X-121:desc> desc
 
@@ -1271,9 +1272,9 @@ _test_element = """
     <Entity X-121> ---
     <Field_Entity X-121:left> False
     <Field_Entity X-121:right> False
-    <Field X-121:right.country_code> False
-    <Field X-121:right.area_code> False
-    <Field X-121:right.number> False
+    <Field X-121:right.cc> False
+    <Field X-121:right.ndc> False
+    <Field X-121:right.sn> False
     <Field X-121:extension> False
     <Field X-121:desc> False
 
@@ -1290,13 +1291,13 @@ _test_element = """
     , 'X-121:right' :
         { 'init' :
             { 'cid' : 2
-            , 'display' : '43/1/98765432'
+            , 'display' : '+43-1-98765432'
             , 'pid' : 2
             }
         }
-    , 'X-121:right.area_code' : {'init' : '1'}
-    , 'X-121:right.country_code' : {'init' : '43'}
-    , 'X-121:right.number' : {'init' : '98765432'}
+    , 'X-121:right.cc' : {'init' : '+43'}
+    , 'X-121:right.ndc' : {'init' : '1'}
+    , 'X-121:right.sn' : {'init' : '98765432'}
     }
 
 
@@ -1305,9 +1306,9 @@ _test_element = """
     , 'Y-121:extension' : {}
     , 'Y-121:left' : {'init' : {}}
     , 'Y-121:right' : {'init' : {}}
-    , 'Y-121:right.area_code' : {}
-    , 'Y-121:right.country_code' : {'edit' : '49'}
-    , 'Y-121:right.number' : {}
+    , 'Y-121:right.cc' : {'edit' : '49'}
+    , 'Y-121:right.ndc' : {}
+    , 'Y-121:right.sn' : {}
     }
 
 
@@ -1323,10 +1324,10 @@ _test_element = """
     , 'Z-121:left.sex' : {}
     , 'Z-121:left.title' : {}
     , 'Z-121:right' : {'init' : {}}
-    , 'Z-121:right.area_code' : {}
-    , 'Z-121:right.country_code' : {'edit' : '43'}
+    , 'Z-121:right.cc' : {'edit' : '+43'}
     , 'Z-121:right.desc' : {}
-    , 'Z-121:right.number' : {}
+    , 'Z-121:right.ndc' : {}
+    , 'Z-121:right.sn' : {}
     }
 
     >>> set (x.id for x in F_PhP.elements_transitive ()) >= set (x.id for x in f_PhP.elements_transitive ())

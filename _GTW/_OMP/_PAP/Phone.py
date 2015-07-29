@@ -32,6 +32,8 @@
 #    26-Feb-2015 (CT) Add `_Area_Code_Polisher_`, `_Number_Polisher_` to fix
 #                     erroneous input values
 #    14-Apr-2015 (CT) Lower completer treshold for `number`
+#    29-Jul-2015 (CT) Change attribute names to `cc`, `ndc`, `sn`
+#    29-Jul-2015 (CT) Change `ui_display_sep` from "/" to "-"
 #    ««revision-date»»···
 #--
 
@@ -44,157 +46,158 @@ from   _GTW._OMP._PAP           import PAP
 import _GTW._OMP._PAP.Property
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.I18N                import _, _T
 
-class _Area_Code_Polisher_ (MOM.Attr.Polisher._Polisher_) :
-    """Polisher for `area_code`, `country_code` attributes."""
+class _NDC_Polisher_ (MOM.Attr.Polisher._Polisher_) :
+    """Polisher for `ndc`, `cc` attributes."""
 
     @Once_Property
     def splitter (self) :
-        return Attr.Polisher.area_code_split
+        return Attr.Polisher.phone_ndc_split
     # end def splitter
 
     def _polished (self, attr, name, value, value_dict) :
         result  = self.splitter._polished (attr, name, value, value_dict)
         if result and (name not in result or value == "0") :
-            ### user entered a `country_code` or just `0` into the
-            ### input-field for `area_code` --> remove that value
+            ### user entered a `cc` or just `0` into the
+            ### input-field for `ndc` --> remove that value
             result [name] = ""
         return result
     # end def _polished
 
-# end class _Area_Code_Polisher_
+# end class _NDC_Polisher_
 
-class _Number_Polisher_ (MOM.Attr.Polisher._Polisher_) :
-    """Polisher for `country_code`, `area_code`, `number` attributes."""
+class _SN_Polisher_ (MOM.Attr.Polisher._Polisher_) :
+    """Polisher for `cc`, `ndc`, `sn` attributes."""
 
     @Once_Property
     def splitter (self) :
-        return Attr.Polisher.phone_number_split
+        return Attr.Polisher.phone_sn_split
     # end def splitter
 
     def _polished (self, attr, name, value, value_dict) :
-        value  = Attr.Polisher.compress_spaces.replacer   (value)
+        value  = Attr.Polisher.compress_spaces.replacer (value)
         result = self.splitter (attr, value_dict, value)
-        cc     = result.get ("country_code", "")
-        ac     = result.get ("area_code",    "")
-        if ac and ac == cc :
+        cc     = result.get ("cc",  "")
+        ndc    = result.get ("ndc", "")
+        if ndc and ndc == cc :
             ### user entered something like `43 123456789` into the
-            ### input-field for `number` while there was a value of `43` in
-            ### the input-field for `country_code`
+            ### input-field for `sn` while there was a value of `43` in
+            ### the input-field for `cc`
             ### --> remove that value unless the user explicitly entered
             ###     `43 43 123456789`
             match = self.splitter.matcher.search (value)
             if match :
-                dct = match.groupdict ()
-                acm = dct.get ("area_code")
-                ccm = dct.get ("country_code")
-                if acm and ccm :
-                    ac = ""
-            if ac :
-                result.pop ("area_code")
+                dct   = match.groupdict ()
+                ndc_m = dct.get ("ndc")
+                cc_m  = dct.get ("cc")
+                if ndc_m and cc_m :
+                    ndc = ""
+            if ndc :
+                result.pop ("ndc")
         return result
     # end def _polished
 
-# end class _Number_Polisher_
+# end class _SN_Polisher_
 
 _test_polisher = """
 
     >>> from _TFL.Record import Record
 
-    >>> attr     = Record (name = "number")
-    >>> polisher = _Number_Polisher_ ()
-    >>> def show_c_a_n (number, ** kw) :
-    ...     r  = polisher (attr, dict (number = number, ** kw))
+    >>> attr     = Record (name = "sn")
+    >>> polisher = _SN_Polisher_ ()
+    >>> def show_c_a_n (sn, ** kw) :
+    ...     r  = polisher (attr, dict (sn = sn, ** kw))
     ...     vs = ("%s = %s" % (k, v) for k, v in sorted (r.items ()) if v)
     ...     print (", ".join (vs))
 
-    >>> show_c_a_n ("43 66412345678", country_code = "43")
-    country_code = 43, number = 66412345678
+    >>> show_c_a_n ("43 66412345678", cc = "43")
+    cc = 43, sn = 66412345678
 
-    >>> show_c_a_n ("43 43 66412345678", country_code = "43")
-    country_code = 43, number = 43 43 66412345678
+    >>> show_c_a_n ("43 43 66412345678", cc = "43")
+    cc = 43, sn = 43 43 66412345678
 
-    >>> show_c_a_n ("+43 43 66412345678", country_code = "43")
-    area_code = 43, country_code = 43, number = 66412345678
+    >>> show_c_a_n ("+43 43 66412345678", cc = "43")
+    cc = 43, ndc = 43, sn = 66412345678
 
     >>> show_c_a_n ("12345678")
-    number = 12345678
+    sn = 12345678
 
     >>> show_c_a_n ("0043 664 12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_c_a_n ("+43 664 12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_c_a_n ("0043 664 12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_c_a_n ("664 12345678")
-    area_code = 664, number = 12345678
+    ndc = 664, sn = 12345678
 
     >>> show_c_a_n ("0664 12345678")
-    area_code = 664, number = 12345678
+    ndc = 664, sn = 12345678
 
     >>> show_c_a_n ("+43(664)12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_c_a_n ("+43 (664) 12345678")
-    area_code = 664, country_code = 43, number = 12345678
+    cc = 43, ndc = 664, sn = 12345678
 
     >>> show_c_a_n ("0(664)12345678")
-    area_code = 664, number = 12345678
+    ndc = 664, sn = 12345678
 
     >>> show_c_a_n ("0 (664) 12345678")
-    area_code = 664, number = 12345678
+    ndc = 664, sn = 12345678
 
-    >>> show_c_a_n ("43 66412345678", country_code = "43")
-    country_code = 43, number = 66412345678
+    >>> show_c_a_n ("43 66412345678", cc = "43")
+    cc = 43, sn = 66412345678
 
-    >>> show_c_a_n ("+43 66412345678", country_code = "43")
-    country_code = 43, number = 66412345678
+    >>> show_c_a_n ("+43 66412345678", cc = "43")
+    cc = 43, sn = 66412345678
 
-    >>> attr     = Record (name = "area_code")
-    >>> polisher = _Area_Code_Polisher_ ()
+    >>> attr     = Record (name = "ndc")
+    >>> polisher = _NDC_Polisher_ ()
     >>> def show_c_a (value, ** kw) :
-    ...     r  = polisher (attr, dict (area_code = value, ** kw))
+    ...     r  = polisher (attr, dict (ndc = value, ** kw))
     ...     vs = ("%s = %s" % (k, v) for k, v in sorted (r.items ()) if v)
     ...     print (", ".join (vs))
 
     >>> show_c_a ("664")
-    area_code = 664
+    ndc = 664
 
     >>> show_c_a ("0664")
-    area_code = 664
+    ndc = 664
 
     >>> show_c_a ("0 664")
-    area_code = 664
+    ndc = 664
 
-    >>> show_c_a ("664", country_code = "43")
-    area_code = 664, country_code = 43
+    >>> show_c_a ("664", cc = "43")
+    cc = 43, ndc = 664
 
-    >>> show_c_a ("(664)", country_code = "43")
-    area_code = 664, country_code = 43
+    >>> show_c_a ("(664)", cc = "43")
+    cc = 43, ndc = 664
 
-    >>> show_c_a ("+44 664", country_code = "43")
-    area_code = 664, country_code = 44
+    >>> show_c_a ("+44 664", cc = "43")
+    cc = 44, ndc = 664
 
-    >>> show_c_a ("+44 664 ", country_code = "43")
-    area_code = 664, country_code = 44
+    >>> show_c_a ("+44 664 ", cc = "43")
+    cc = 44, ndc = 664
 
-    >>> show_c_a ("+44/664", country_code = "43")
-    area_code = 664, country_code = 44
+    >>> show_c_a ("+44/664", cc = "43")
+    cc = 44, ndc = 664
 
-    >>> show_c_a ("+44/664/", country_code = "43")
-    area_code = 664, country_code = 44
+    >>> show_c_a ("+44/664/", cc = "43")
+    cc = 44, ndc = 664
 
-    >>> show_c_a ("+44 (664)", country_code = "43")
-    area_code = 664, country_code = 44
+    >>> show_c_a ("+44 (664)", cc = "43")
+    cc = 44, ndc = 664
 
-    >>> show_c_a ("+44", country_code = "43")
-    country_code = 44
+    >>> show_c_a ("+44", cc = "43")
+    cc = 44
 
-    >>> show_c_a ("0", country_code = "43")
-    country_code = 43
+    >>> show_c_a ("0", cc = "43")
+    cc = 43
 
 """
 
@@ -209,11 +212,11 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
     _real_name     = "Phone"
 
-    ui_display_sep = "/"
+    ui_display_sep = "-"
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
-        class country_code (A_Numeric_String) :
+        class cc (A_Numeric_String) :
             """International country code of phone number (without prefix)"""
 
             kind           = Attr.Primary
@@ -221,43 +224,51 @@ class _PAP_Phone_ (_Ancestor_Essence) :
             check          = ("value != '0'", )
             example        = "43"
             rank           = 1
+            format         = "+%s"
+            ui_name        = _ ("Country code")
             ui_rank        = -1
 
             completer      = Attr.Completer_Spec  (1)
-            polisher       = Attr.Polisher.country_code_clean
+            polisher       = Attr.Polisher.phone_cc_clean
 
-        # end class country_code
+        # end class cc
 
-        class area_code (A_Numeric_String) :
-            """National area code of phone number (without prefix)"""
+        class ndc (A_Numeric_String) :
+            """National destination code of phone number (without prefix).
+
+               The national destination code selects a geographic area, e.g.,
+               a city or district, a mobile provider, or a specific service.
+            """
 
             kind           = Attr.Primary
             max_length     = 5
             check          = ("value != '0'", )
             example        = "1"
             rank           = 2
+            ui_name        = _ ("Network destination code")
             ui_rank        = -2
 
             completer      = Attr.Completer_Spec  \
-                (1, Attr.Selector.Name ("country_code"))
-            polisher       = _Area_Code_Polisher_ ()
+                (1, Attr.Selector.Name ("cc"))
+            polisher       = _NDC_Polisher_ ()
 
-        # end class area_code
+        # end class ndc
 
-        class number (A_Numeric_String) :
-            """Phone number proper (without country code, area code, extension)"""
+        class sn (A_Numeric_String) :
+            """Subscriber number (without country code, network destination code, extension)"""
 
             kind           = Attr.Primary
             max_length     = 14
             check          = ("value != '0'", )
             example        = "234567"
             rank           = 3
+            ui_name        = _ ("Subscriber number")
             ui_rank        = -3
 
             completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
-            polisher       = _Number_Polisher_ ()
+            polisher       = _SN_Polisher_ ()
 
-        # end class number
+        # end class sn
 
     # end class _Attributes
 
