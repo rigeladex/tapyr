@@ -45,6 +45,7 @@
 #                     `dynamic_defaults`
 #    26-Jan-2015 (CT) Derive `_Meta_Base_` from `M_Auto_Update_Combined`,
 #                     not `M_Auto_Combine`
+#    21-Jul-2015 (CT) Add `Rel_Path_Option.skip_missing`
 #    ««revision-date»»···
 #--
 
@@ -188,6 +189,7 @@ class TFL_Rel_Path_Option (Option) :
 
     auto_split              = ":"
     single_match            = False
+    skip_missing            = True
     type                    = TFL.CAO.Rel_Path
 
     _base_dir               = None
@@ -205,7 +207,10 @@ class TFL_Rel_Path_Option (Option) :
         result = self.__super.kw
         if self.base_dirs :
             result ["_base_dirs"] = self.base_dirs
-        result ["single_match"] = self.single_match
+        result.update \
+            ( single_match = self.single_match
+            , skip_missing = self.skip_missing
+            )
         return result
     # end def kw
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -103,21 +103,31 @@
 #    16-Dec-2013 (CT) Add `CAO._spec` and `Config.pathes`
 #    17-Dec-2013 (CT) Factor `_Spec_Base_`, `_help_items`;
 #                     redefine `Rel_Path._help_items` to add `base_dirs`
-#    18-Dec-2013 (CT) Factor `Rel_Path.resolved_pathes` from `._resolve_range_1`
-#    20-Dec-2013 (CT) Fix `Rel_Path.resolved_pathes` for absolute values
+#    18-Dec-2013 (CT) Factor `Rel_Path.resolved_paths` from `._resolve_range_1`
+#    20-Dec-2013 (CT) Fix `Rel_Path.resolved_paths` for absolute values
 #     3-Jan-2014 (CT) Factor `user_config`, add `Unicode`,
 #                     use `pyk.encoded` for `help`
 #    12-Oct-2014 (CT) Add `SHA`
+#    17-Jul-2015 (CT) Add `Help.topic_map`, factor `_help_help`
+#    20-Jul-2015 (CT) Improve formatting of help for arguments, options, values
+#    21-Jul-2015 (CT) Define `Help.implied_value`, remove `Help.cook`
+#    21-Jul-2015 (CT) Add `Rel_Path.explain_resolution`, `.skip_missing`
+#                     + Change signature of `Rel_Path.resolved_paths` so that
+#                       all arguments are required
+#    21-Jul-2015 (CT) Use `portable_repr` to improve 3-compatibility
+#    22-Jul-2015 (CT) Add `config` and `syntax` to `Help`
 #    ««revision-date»»···
 #--
 
-from   __future__          import print_function
+from   __future__          import print_function, unicode_literals
 
 from   _TFL                import TFL
 
+from   _TFL.Decorator      import getattr_safe
 from   _TFL.formatted_repr import formatted_repr
 from   _TFL.I18N           import _, _T, _Tn
-from   _TFL.Regexp         import Regexp, re
+from   _TFL.portable_repr  import portable_repr
+from   _TFL.Regexp         import Regexp, Re_Replacer, Multi_Re_Replacer, re
 from   _TFL.Trie           import Word_Trie as Trie
 from   _TFL.pyk            import pyk
 from   _TFL                import sos
@@ -138,6 +148,7 @@ from   itertools           import chain as ichain
 
 import decimal
 import sys
+import textwrap
 
 class Err (Exception) :
 
@@ -155,26 +166,95 @@ class Err (Exception) :
 # end class Err
 
 class Arg (TFL.Meta.M_Class) :
-    """Meta class for argument types."""
+    """Meta class for argument and option types.
+
+       The names of argument and option types must be unique: the meta class
+       has an attribute with the name of the type for each of its
+       class-instances.
+
+       Arguments and options are specified in one of two ways:
+
+       * As instance of a class defining the argument/option type which in
+         turn is an instance of either an :class:`Arg`- or :class:`Opt`-class.
+
+         For instance::
+
+           Arg.Path
+               ( name        = "source_file"
+               , description =
+                   "Path(s) of the file(s) to read the contacts from"
+               , auto_split  = ":::"
+               , max_number  = 8
+               )
+
+       * As a string with the format::
+
+           <name>:<type-spec><auto-split-spec>=<default>#<max-number>?<help>
+
+         with:
+
+           :attr:`name`
+
+             The name of the argument or option.
+
+           :attr:`type-spec`
+
+             The letter used as :attr:`type_abbr` for the type of the argument
+             or option.
+
+           :attr:`auto-split-spec`
+
+             One of the letters ",; :" to specify that the value
+             should be automatically split on that letter.
+
+             If a different letter or a multi-letter separator is needed, the
+             argument or option must be defined as a class instance, as
+             explained above.
+
+           :attr:`default`
+
+             The default value for this argument or
+             option, to be used if no value is specified on the command line
+             (or in a configuration file).
+
+           :attr:`max_number`
+
+             The maximum number of values that can be specified for
+             this argument or option, either via auto-split or by multiple
+             occurences of the option in the command line.
+
+           :attr:`help`
+
+             The help string for this argument or option.
+
+         Except for name, all other properties are optional and indicated by
+         the leading letter, i.e., ":" for the `type-spec`, "=" for the
+         `default`, and so on. The default `type-spec` is `B` (Arg.Bool)
+
+         For instance::
+
+           "source_file:P:#8?Path(s) of the file(s) to read the contacts from"
+
+    """
 
     Table      = {}
 
     _spec_pat  = None
     _spec_form = \
         ( """ (?P<name> [^:=# ?]+) """
-          """ (?:  : (?P<type>        [%s]    )? (?P<auto_split> [, :]?))? """
+          """ (?:  : (?P<type>        [%s]    )? (?P<auto_split> [,; :]?))?"""
           """ (?:  = (?P<default>     [^\#?]* ))? """
           """ (?: \# (?P<max_number>  \d+     ))? """
           """ (?: \? (?P<description> .+      ))? """
           """ $ """
         )
 
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__ (name, bases, dict)
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
         r_name = cls.__name__
         if not r_name.startswith ("_") :
             setattr (cls.__class__, r_name, cls)
-            if "type_abbr" in dict :
+            if "type_abbr" in dct :
                 assert not cls.type_abbr in cls.Table, cls
                 assert len (cls.type_abbr) == 1, cls
                 cls.Table [cls.type_abbr] = cls
@@ -210,6 +290,7 @@ class Opt (Arg) :
 class _Spec_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
 
     auto_split    = None
+    explanation   = ""
     needs_value   = True
 
     @TFL.Meta.Once_Property
@@ -221,6 +302,10 @@ class _Spec_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
     def _help_items (self) :
         if self.description :
             yield self.description
+        if self.explanation :
+            yield ""
+            yield self.explanation
+            yield ""
         if self.choices :
             yield "Possible values: %s" % (", ".join (sorted (self.choices)))
     # end def _help_items
@@ -252,30 +337,33 @@ class _Spec_ (_Spec_Base_) :
 
     def __init__ \
             ( self
-            , name          = ""
-            , default       = None
-            , description   = ""
-            , auto_split    = None
-            , max_number    = None
-            , hide          = False
-            , range_delta   = 1
-            , cook          = None
-            , rank          = 0
+            , name            = ""
+            , default         = None
+            , description     = ""
+            , auto_split      = None
+            , max_number      = None
+            , hide            = False
+            , range_delta     = 1
+            , cook            = None
+            , explanation     = None
+            , rank            = 0
             , ** kw
             ) :
-        self.name           = name
-        self.default        = default
-        self.description    = description
+        self.name             = name
+        self.default          = default
+        self.description      = description
         if auto_split is not None :
-            self.auto_split = auto_split
+            self.auto_split   = auto_split
         if max_number is None :
-            max_number      = self._auto_max_number (self.auto_split)
-        self.max_number     = max_number
-        self.hide           = hide or name [:2] == "__"
-        self.range_delta    = range_delta
-        self.rank           = rank
+            max_number        = self._auto_max_number (self.auto_split)
+        self.max_number       = max_number
+        self.hide             = hide or name [:2] == "__"
+        self.range_delta      = range_delta
+        self.rank             = rank
         if cook is not None :
-            self.cook       = cook
+            self.cook         = cook
+        if explanation is not None :
+            self.explanation  = explanation
         self.__dict__.update (kw)
     # end def __init__
 
@@ -455,7 +543,8 @@ class _Number_ (_Spec_) :
             try :
                 value = self._safe_eval (value)
             except Err as exc :
-                err = exc ### try `_cook` ("08" doesn't work for `Int`, otherwise)
+                ### try `_cook` ("08" doesn't work for `Int`, otherwise)
+                err = exc
         try :
             return self._cook (value)
         except (ValueError, TypeError) as exc :
@@ -464,7 +553,7 @@ class _Number_ (_Spec_) :
 
     def _resolve_range_1 (self, value, cao, pat) :
         cook     = self.cook
-        ### Extract match variables because errors in `cook` might trigger
+        ### Extract match variables because errors in cook might trigger
         ### another pattern match overwriting them
         r_head   = pat.head
         r_tail   = pat.tail
@@ -516,7 +605,24 @@ class Binary (Bool) :
 # end class Binary
 
 class Cmd_Choice (_Spec_Base_) :
-    """Argument that selects a sub-command"""
+    """Argument that selects a sub-command.
+
+       The :meth:`__init__` method accepts the arguments:
+
+       :obj:`name`
+         The name of the argument that offers a choice of sub-commands.
+
+       :obj:`* cmds`
+
+         A tuple of sub-commands, each an instance of :class:`Cmd` with
+         its own :obj:`handler`.
+
+       :obj:`description`
+
+         The description for the sub-command argument which must be passed
+         as a keyword argument.
+
+    """
 
     default       = None
     hide          = False
@@ -572,7 +678,7 @@ class Cmd_Choice (_Spec_Base_) :
             if matches :
                 raise Err \
                     ( "Ambiguous sub-command `%s`, matches any of %s"
-                    % (name, matches)
+                    % (name, portable_repr (matches))
                     )
             else :
                 raise Err \
@@ -582,10 +688,12 @@ class Cmd_Choice (_Spec_Base_) :
     # end def _get_sub_cmd
 
     def __getattr__ (self, name) :
+        """Return the sub-command with `name`."""
         return self.sub_cmds [name]
     # end def __getattr__
 
     def __getitem__ (self, key) :
+        """Return the sub-command named `key`."""
         return self.sub_cmds [key]
     # end def __getitem__
 
@@ -597,10 +705,10 @@ class Decimal (_Number_) :
     type_abbr     = "D"
 
     def _cook (self, value) :
-        if isinstance (value, float) :
-            value = str (value)
+        cooker = decimal.Decimal.from_float if isinstance (value, float) \
+            else decimal.Decimal
         if value is not None :
-            return decimal.Decimal (value)
+            return cooker (value)
     # end def _cook
 
 # end class Decimal
@@ -628,9 +736,36 @@ class Help (_Spec_O_) :
 
     alias          = "?"
     auto_split     = ","
+    implied_value  = "default"
     needs_value    = False
-    topics         = set (["args", "buns", "cmds", "opts", "summary", "vals"])
+    line_length    = 78
+    topics         = set \
+        ( [ "args"
+          , "buns"
+          , "cmds"
+          , "config"
+          , "opts"
+          , "summary"
+          , "syntax"
+          , "vals"
+          ]
+        )
     default_topics = set (["args", "buns", "opts", "summary"])
+    topic_map      = dict \
+        ( all      = "Show help about the categories:\n"
+                   + ", ".join (sorted (topics))
+        , args     = "Show help about the arguments, if any."
+        , buns     = "Show help about the arguments/options bundles, if any."
+        , cmds     = "Show help about the sub-commands, if any."
+        , config   = "Show help about configuration options, if any."
+        , help     = "Show help about usage of the help option"
+        , opts     = "Show help about the options, if any."
+        , summary  = "Show summary about the usage of the command."
+        , syntax   = "Show help about the syntax of arguments and options."
+        , vals     =
+            "Display the actual values of the options and arguments that "
+            "would by used by this command invocation."
+        )
 
     def __init__ (self) :
         self.__super.__init__ \
@@ -639,56 +774,41 @@ class Help (_Spec_O_) :
             )
     # end def __init__
 
-    def __call__ (self, cao, indent = 0) :
-        return self._handler (cao, indent)
+    def __call__ (self, cao, indent = 0, spec = None) :
+        return self._handler (cao, indent, spec)
     # end def __call__
 
-    def cook (self, value, cao = None) :
-        if value is None :
-            return True
-        return self.__super.cook (value, cao)
-    # end def cook
-
-    def _encoded (self, v) :
-        if pyk.text_type != str :
-            v = pyk.encoded (v)
+    def _handler (self, cao, indent = 0, spec = None) :
+        helper = cao._cmd._helper
+        if helper :
+            helper (cao)
         else :
-            v = str (v)
-        return v
-    # end def _encoded
-
-    def _handler (self, cao, indent = 0) :
-        cmd = cao._cmd
-        if cmd._helper :
-            cmd._helper (cao)
-        else :
-            nl     = self.nl = self._nl_gen ()
-            topics = self.topics
-            wanted = set (v for v in getattr (cao, self.name) if v)
-            most_p = False
-            if wanted.issubset (set (["all", "*"])) :
-                wanted = topics
-                most_p = True
-            elif wanted == set ([True]) :
-                wanted = self.default_topics
-                most_p = True
-            elif not wanted.issubset (topics) :
-                pyk.fprint \
-                    ( "Possible help topics:\n    "
-                    , ", ".join (sorted (ichain (topics, ("all", "help"))))
-                    )
+            if spec is None :
+                spec    = getattr (cao, self.name)
+            nl          = self.nl = self._nl_gen ()
+            topics      = self.topics
+            wanted      = set (v for v in spec if v)
+            most_p      = False
+            if wanted == set (["default"]) or not wanted :
+                wanted  = self.default_topics
+                most_p  = True
+            elif wanted.issubset (set (["all", "*"])) :
+                wanted  = topics
+                most_p  = True
             if "summary" in wanted :
                 next (nl)
                 self._help_summary (cao, indent)
-            arg_p     = any (a for a in cao._arg_list if not a.hide)
-            want_args = "args" in wanted
+            arg_p       = any (a for a in cao._arg_list if not a.hide)
+            want_args   = "args" in wanted
+            indent_most = indent + (4 * most_p)
+            indent_want = indent + (4 * want_args)
             if want_args and arg_p :
                 next (nl)
                 self._help_args (cao, indent, heading = not most_p)
             if "cmds" in wanted :
                 next (nl)
                 self._help_cmds \
-                    (cao, indent+ (4 * want_args), heading = not want_args)
+                    (cao, indent_want, heading = not want_args)
             opt_p = any \
                 (o for o in pyk.itervalues (cao._opt_dict) if not o.hide)
             if "opts" in wanted and opt_p :
@@ -696,10 +816,19 @@ class Help (_Spec_O_) :
                 self._help_opts (cao, indent, heading = not most_p)
             if "buns" in wanted and cao._bun_dict :
                 next (nl)
-                self._help_buns (cao, indent + (4 * most_p))
+                self._help_buns (cao, indent_most)
+            if "syntax" in wanted :
+                next (nl)
+                self._help_syntax (cao, indent_most)
+            if "config" in wanted and cao._opt_conf :
+                next (nl)
+                self._help_config (cao, indent_most)
             if "vals" in wanted :
                 next (nl)
-                self._help_values (cao, indent + (4 * most_p))
+                self._help_values (cao, indent_most)
+            if not wanted.issubset (topics) :
+                next (nl)
+                self._help_help (cao, indent)
     # end def _handler
 
     def _help_ao (self, ao, cao, head, max_l, prefix = "") :
@@ -711,11 +840,22 @@ class Help (_Spec_O_) :
         except KeyError :
             v = ""
         pyk.fprint \
-            ( "%s%s%-*s  : %s"
-            % (head, prefix, max_l, name, ao.__class__.__name__)
+            ( "%s%s%-*s  : %s%s%s"
+            % ( head, prefix, max_l, name, ao.__class__.__name__
+              , "" if ao.max_number == 1
+                    else (" [%s]" % (ao.max_number if ao.max_number else ""))
+              , (" split on '%s'" % (ao.auto_split, )) if ao.auto_split else ""
+              )
             )
-        for hi in ao._help_items () :
-            pyk.fprint (head, hi, sep = "    ")
+        h1 = head + (" " * 4)
+        h2 = h1   + (" " * 4)
+        w2 = self.line_length - len (h2)
+        for item in ao._help_items () :
+            hx      = h1
+            hanging = ":" in item [:w2]
+            for l in textwrap.wrap (item, w2) :
+                pyk.fprint (hx, l, sep = "")
+                hx = h2 if hanging else h1
     # end def _help_ao
 
     def _help_args (self, cao, indent = 0, heading = False) :
@@ -728,7 +868,10 @@ class Help (_Spec_O_) :
             self._help_ao (arg, cao, head, max_l)
         if cao.argv :
             pyk.fprint ()
-            pyk.fprint ("%s%-*s  : %s" % (head, max_l, "argv", cao.argv))
+            pyk.fprint \
+                ( "%s%-*s  : %s"
+                % (head, max_l, "argv", portable_repr (cao.argv))
+                )
     # end def _help_args
 
     def _help_bun (self, bun, cao, head, indent) :
@@ -744,13 +887,12 @@ class Help (_Spec_O_) :
     # end def _help_bun
 
     def _help_buns (self, cao, indent = 0) :
-        if cao._bun_dict :
-            pyk.fprint \
-                ("%sArgument/option bundles of %s" % (" " * indent, cao._name))
-            indent += 4
-            head    = " " * indent
-            for k, b in sorted (pyk.iteritems (cao._bun_dict)) :
-                self._help_bun (b, cao, head, indent)
+        pyk.fprint \
+            ("%sArgument/option bundles of %s" % (" " * indent, cao._name))
+        indent += 4
+        head    = " " * indent
+        for k, b in sorted (pyk.iteritems (cao._bun_dict)) :
+            self._help_bun (b, cao, head, indent)
     # end def _help_buns
 
     def _help_cmds (self, cao, indent = 0, heading = False) :
@@ -772,6 +914,68 @@ class Help (_Spec_O_) :
             pyk.fprint \
                 ("%s%s doesn't have sub commands" % (" " * indent, cao._name))
     # end def _help_cmds
+
+    def _help_config (self, cao, indent) :
+        help_fmt = """
+            %s has the configuration options::
+
+                %s
+
+            Each of these options can specify any number of configuration
+            files. The config options will be processed in the sequence
+            given above; for each config option, its files will be processed
+            in the sequence they are specified on the command line (or by
+            the default for the option in question). Config files
+            that don't exist are silently ignored.
+
+            Each config file must contain assignments in python syntax, the
+            assigned values must be python strings, i.e., raw values.
+
+            Assignments to the name of arguments or options will override the
+            default for the argument/option in question. If one specific
+            argument/option is assigned to in several config files, the last
+            assignment wins.
+
+            Assignments to names that aren't names of arguments or options
+            will be interpreted as keyword assignments.
+
+            A typical config file looks like (assuming that all lines start in
+            column 1, i.e., without leading whitespace) ::
+
+                cookie_salt    = b"1c060bc8-f4d7-459c-86d4-3f2a4ddc05b0"
+
+                input_encoding = "utf-8"
+
+                locale_code    = "en"
+
+        """
+        help = help_fmt % \
+            (cao._name, ", ".join (o.name for o in cao._opt_conf))
+        self._help__text (cao, indent, "Configuration options", help)
+    # end def _help_config
+
+    def _help_help (self, cao, indent = 0) :
+        map      = self.topic_map
+        format   = "%-*s    %s"
+        l        = max (len (t) for t in map)
+        h0       = " " * indent
+        h1       = h0 + (" " * 4)
+        h2       = h1 + (" " * 4)
+        w1       = self.line_length - len (h1) - len (format % (l, "", ""))
+        w2       = w1 - 4
+        pyk.fprint (h0, "Possible help topics:", sep = "")
+        for topic, desc in sorted (pyk.iteritems (map)) :
+            hx     = h1
+            ps     = desc.split ("\n")
+            t      = topic
+            width  = w1
+            for p in ps :
+                for v in textwrap.wrap (p, width) :
+                    pyk.fprint (hx, format % (l, t, v), sep = "")
+                    t  = ""
+                hx     = h2
+                width  = w2
+    # end def _help_help
 
     def _help_opts (self, cao, indent = 0, heading = False) :
         if heading :
@@ -819,19 +1023,90 @@ class Help (_Spec_O_) :
             yield "..."
     # end def _help_summary_args
 
+    def _help_syntax (self, cao, indent) :
+        help  = """
+            Arguments and options are separated by spaces and can be freely
+            mixed on the commandline.
+
+            Options start with a "-" sign. A "--" token specifies that only
+            arguments are following, i.e., following tokens starting with a "-"
+            sign will be interpreted as arguments, not as options.
+
+            Most options require a value that can be specified as::
+
+                -option value
+
+            or::
+
+                -option=value
+
+            For options with an optional value, e.g., for Bool and Help
+            options, the latter synatx (with "=") must be used!
+
+            Most options allow just a single value, but some allow multiple
+            values. The help for multi-valued options shows "[]" behind the
+            option type; if a maximum number of values is defined for the
+            option, it is show between the "[" and the "]".
+
+            If an option is specified multiple times on the
+            command line:
+
+            * for a single-valued option, the first value specified on the
+              command line will be used.
+
+            * for a multi-valued option, all the values will be used.
+
+            Some multi-valued options are defined to be automatically split by
+            a character or sequence. Such an option can be specified as
+            (assuming "," to be the auto-split character) ::
+
+                -option=1,2,3 -option 4 -option 5,6
+
+            on the command line; in this case `option` would have the values::
+
+                [1, 2, 3, 4, 5, 6]
+
+        """
+        self._help__text (cao, indent, "Argument and option syntax", help)
+    # end def _help_syntax
+
+    def _help__text (self, cao, indent, heading, help) :
+        h0    = " "  * indent
+        h1    = h0   + "    "
+        sep1  = "\n" + h1
+        sep0  = "\n" + sep1
+        width = self.line_length - len (h1)
+        l_pat = Regexp ("^  +", re.MULTILINE)
+        lead  = l_pat.search (help).group (0)
+        help  = help.strip ()
+        clean = Multi_Re_Replacer \
+            ( Re_Replacer (Regexp ("^" + lead, re.MULTILINE), "")
+            , Re_Replacer (Regexp (" :: *$",   re.MULTILINE), "")
+            , Re_Replacer (Regexp (":: *$",    re.MULTILINE), ":")
+            )
+        pyk.fprint (h0, heading, sep = "")
+        pyk.fprint \
+            ( h1
+            , sep0.join
+                (   sep1.join (textwrap.wrap (clean (p), width))
+                for p in help.split ("\n\n")
+                )
+            , sep = ""
+            )
+    # end def _help__text
+
     def _help_value (self, ao, cao, head, max_l, prefix = "") :
         if ao.hide :
             return
-        name = self._encoded (ao.name)
-        raw_default = pyk.text_type (ao.raw_default)
+        name = ao.name
         try :
             raw = cao ["%s:raw" % name]
         except KeyError :
             raw = None
-        if raw is None or raw == []:
-            raw = raw_default
-        raw = self._encoded (raw)
-        if raw == "" :
+        if raw is None or raw == [] :
+            raw = ao.raw_default
+        e_raw   = pyk.encoded (raw)
+        if e_raw == "" :
             raw = None
         try :
             cooked = cao [ao.name]
@@ -841,36 +1116,39 @@ class Help (_Spec_O_) :
             cooked = ao.default
         if ao.max_number == 1 and isinstance (cooked, list) :
             cooked = cooked [0]
-        e_cooked = self._encoded (cooked)
-        pyk.fprint \
-            ("%s%s%-*s  = %s" % (head, prefix, max_l, name, raw))
-        if e_cooked != raw :
+        e_cooked   = pyk.encoded (cooked)
+        ao_head    = "%s%s%-*s  =" % (head, prefix, max_l, name)
+        ao_tail    = raw if not isinstance (raw, (list, dict)) else \
+            formatted_repr (raw, level = (len (ao_head) // 2 + 1)).lstrip ()
+        pyk.fprint (ao_head, ao_tail)
+        if e_cooked != e_raw :
             if isinstance (cooked, (list, dict)) :
                 pyk.fprint \
                     (formatted_repr (cooked, level = (len (head) // 4 + 1) * 2))
             else :
-                pyk.fprint ("%s    %s" % (head, cooked))
+                pyk.fprint (head, cooked, sep = "    ")
     # end def _help_value
 
     def _help_values (self, cao, indent) :
+        h0      = " " * indent
+        h1      = h0  + "    "
+        max_l   = cao._max_name_length
         pyk.fprint \
             ( "%sActual option and argument values of %s"
-            % (" " * indent, cao._name)
+            % (h0, cao._name)
             )
-        indent += 4
-        head    = " " * indent
-        max_l   = cao._max_name_length
         for name, opt in sorted (pyk.iteritems (cao._opt_dict)) :
-            self._help_value (opt, cao, head, max_l, "-")
+            self._help_value (opt, cao, h1, max_l, "-")
         max_l  += 1
         for arg in cao._arg_list :
-            self._help_value (arg, cao, head, max_l)
+            self._help_value (arg, cao, h1, max_l)
     # end def _help_values
 
     def _nl_gen (self) :
+        yield
         while True :
-            yield
             pyk.fprint ()
+            yield
     # end def _nl_gen
 
     def _set_default (self, default) :
@@ -1025,6 +1303,7 @@ class Rel_Path (Path) :
     type_abbr     = "R"
 
     single_match  = False
+    skip_missing  = True
     _base_dir     = None
     _base_dirs    = ()
     _help_dn      = "Base"
@@ -1035,8 +1314,7 @@ class Rel_Path (Path) :
     # end def __init__
 
     @classmethod
-    def resolved_pathes \
-            (cls, base_dirs, path, single_match = False, skip_missing = True) :
+    def resolved_paths (cls, base_dirs, path, single_match, skip_missing) :
         """Generate all occurrences of `path`, relative to `base_dirs`."""
         exists = sos.path.exists
         if base_dirs and not sos.path.isabs (path) :
@@ -1058,7 +1336,7 @@ class Rel_Path (Path) :
         else :
             if exists (path) or not skip_missing :
                 yield sos.path.abspath (path)
-    # end def resolved_pathes
+    # end def resolved_paths
 
     @TFL.Meta.Once_Property
     def base_dirs (self) :
@@ -1072,16 +1350,42 @@ class Rel_Path (Path) :
         return tuple (_gen (self._base_dirs or (self._base_dir, )))
     # end def base_dirs
 
+    @TFL.Meta.Once_Property
+    @TFL.getattr_safe
+    def explain_resolution (self) :
+        def _gen (self) :
+            if self.base_dirs :
+                yield \
+                    ( "For each path specified, %s "
+                      "in the %s directories listed below will be used."
+                    % ( "only the first match"
+                          if self.single_match else "all matches"
+                      , self._help_dn
+                      )
+                    )
+            if self.skip_missing :
+                yield \
+                    ( "Non-existing path values specified for `%s%s` "
+                      "will be silently ignored."
+                    % (self.prefix, self.name)
+                    )
+        return "\n\n".join (_gen (self))
+    # end def explain_resolution
+
     def _help_items (self) :
         for i in self.__super._help_items () :
             yield i
+        explain_resolution = self.explain_resolution
+        if explain_resolution :
+            yield explain_resolution
         if self.base_dirs :
             yield "%s directories: %s" % \
                 (self._help_dn, ", ".join (repr (bd) for bd in self.base_dirs))
     # end def _help_items
 
     def _resolve_range_1 (self, value, cao) :
-        return self.resolved_pathes (self.base_dirs, value, self.single_match)
+        return self.resolved_paths \
+            (self.base_dirs, value, self.single_match, self.skip_missing)
     # end def _resolve_range_1
 
 # end class Rel_Path
@@ -1229,12 +1533,12 @@ class Bundle (TFL.Meta.Object) :
 class Cmd (TFL.Meta.Object) :
     """Model a command with options, arguments, and a handler.
 
+       The canonical usage pattern for :class:`Cmd` is to define an
+       instance of `Cmd` at the module level which is then called without
+       arguments in the `__main__` caluse of the module.
+
        :meth:`Cmd.parse` and :meth:`Cmd.use` return an instance of
        :class:`CAO`.
-
-       Calling an instance of `Cmd` uses :meth:`parse` (if argument `_argv` is
-       specified or no argument at all is given) or :meth:`use` (if `** _kw`
-       are specified) and calls the resulting instance of :class:`CAO`.
     """
 
     _handler      = None
@@ -1255,6 +1559,85 @@ class Cmd (TFL.Meta.Object) :
             , helper        = None
             , defaults      = {}
             ) :
+        """Specify options, arguments, and handler of a command.
+
+           :obj:`handler`
+
+             A callable that takes a :class:`CAO` instance as first argument
+             and implements the command in question.
+
+           :obj:`args`
+
+             A tuple of :class:`Arg`-class instances specifying the
+             possible arguments. One element of :obj:`args` can specify a
+             :class:`Cmd_Choice` with possible sub-commands.
+
+           :obj:`opts`
+
+             A tuple of :class:`Arg`- or :class:`Opt`-class instances
+             specifying the possible  options.
+
+           :obj:`buns`
+
+             A tuple of :class:`Bundle` instances that define pre-packaged
+             bundles of argument- and option-values to support common usage
+             scenarios that can be specified simply by using name of the
+             respective bundle (prefixed by a `@`).
+
+           :obj:`description`
+
+             A description of the command to be included in the `help`.
+
+             If the `description` argument is undefined,
+             :obj:`handler.__doc__` will be used if that is defined.`
+
+           :obj:`name`
+
+             A `name` for the command.
+
+             By default, the name of the module defining the :class:`Cmd`
+             definition is used.
+
+           :obj:`min_args`
+
+             Specifies the minimum number of arguments required.
+
+             By default, no arguments are required.
+
+           :obj:`max_args`
+
+             Specifies the maximum number of arguments allowed  `max_args`.
+
+             The default -1 means an unlimited number is allowed.
+
+           :obj:`do_keywords`
+
+             Specifies whether keyword values are supported.
+
+             If `do_keywords` is True, command line arguments of the form
+             `name=value` will be stored as keywords. Argument and option names
+             have priority over keyword names.
+
+           :obj:`put_keywords`
+
+             Specifies if keyword values should be added to :data:`os.environ`.
+
+             Implies a true value for :obj:`do_keywords`.
+
+           :obj:`helper`
+
+             An optional callable that takes a :class:`CAO` instance as its
+             only argument and displays help about the command.
+
+           :obj:`defaults`
+
+             An optional dictionary with default values for options.
+
+             Normally, the default value for an option is specified by
+             the :class:`Arg` or :class:`Opt` instance defining the
+             option. These defaults can be overridden by this argument.
+
+        """
         assert max_args == -1 or max_args >= min_args
         assert max_args == -1 or max_args >= len (args)
         if handler is not None :
@@ -1279,8 +1662,14 @@ class Cmd (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, _argv = None, ** _kw) :
-        """Setup and call an instance of :class:`CAO` by calling `use` (if
-           `_kw` is given) or `parse` (with `_argv or sys.argv [1:]`).
+        """Setup and call an instance of :class:`CAO`.
+
+           `__call__` works by calling :meth:`use` (if keyword arguments
+           other than `args` and `kw` are given) or :meth:`parse` (with
+           the positional arguments, if any, or :data:`sys.argv [1:]`).
+
+           Arguments for calling the :class:`CAO` instance can be specified
+           via the keyword arguments `args` and `kw`.
         """
         handler_args = _kw.pop ("args", ())
         handler_kw   = _kw.pop ("kw",   {})
@@ -1296,7 +1685,7 @@ class Cmd (TFL.Meta.Object) :
                 cao = self.parse (_argv)
             except Exception as exc :
                 if help :
-                    pyk.fprint (exc, "\n\nUsage :")
+                    pyk.fprint (exc, "Usage :", sep = "\n\n")
                     cao = CAO (self)
                     self.help (cao, indent = 4)
                     return
@@ -1316,8 +1705,8 @@ class Cmd (TFL.Meta.Object) :
 
     def parse (self, argv) :
         """Parse arguments, options, and sub-commands specified in `argv`
-           (which must not contain the command name, like `sys.argv` would)
-           and return an instance of :class:`CAO`.
+           (which must not contain the command name, like :data:`sys.argv`
+           would) and return an instance of :class:`CAO`.
         """
         result = CAO       (self)
         result._parse_args (argv)
@@ -1354,6 +1743,12 @@ class Cmd (TFL.Meta.Object) :
             if max_args == -1 or max_args > 0 :
                 args = (Arg.Str ("__argv"), )
         for i, a in enumerate (args) :
+            if self._sub_cmd_choice is not None :
+                raise Err \
+                        ( "Sub-command choice `%s` must be last argument, "
+                          "offending trailing argument: `%s`"
+                        % (self._sub_cmd_choice.name, a)
+                        )
             if isinstance (a, pyk.string_types) :
                 a = Arg.from_string (a)
             if isinstance (a.__class__, Opt) :
@@ -1433,8 +1828,29 @@ class Cmd (TFL.Meta.Object) :
 class CAO (TFL.Meta.Object) :
     """Command with options and arguments supplied.
 
+       Instances of :class:`CAO` are created and returned by :meth:`Cmd.parse`
+       or :meth:`Cmd.use`.
+
        Calling an instance of `CAO` calls the `handler` of the associated
        :class:`Cmd` instance, passing `self` to the `handler`.
+
+       :class:`CAO` instances provide the API:
+
+       .. attribute:: argn
+
+         The number of command line arguments passed to the command
+
+       .. attribute:: argv
+
+         The list of command line arguments passed to the command — without
+         the script name. Each element of `argv` is cooked according to its
+         :class:`Arg` type.
+
+       .. attribute:: argv_raw
+
+         The list of raw command line arguments passed to the command — without
+         the script name.
+
     """
 
     _bun_pat = Regexp \
@@ -1450,7 +1866,7 @@ class CAO (TFL.Meta.Object) :
         )
     _opt_pat = Regexp \
         ( """ -{1,2} (?P<name> [^:= ]+) """
-          """ (?: = (?P<quote> [\"\']?) (?P<value> .*) (?P=quote)? )? """
+          """ (?: = (?P<quote> [\"\']?) (?P<value> .*) (?P=quote) )? """
           """ $ """
         , re.VERBOSE
         )
@@ -1503,10 +1919,14 @@ class CAO (TFL.Meta.Object) :
     # end def __call__
 
     def GET (self, name, default) :
+        """Return argument/option/keyword value with `name` or `default`, if
+           `name` wasn't defined.
+        """
         return getattr (self, name, default)
     # end def GET
 
     def HELP (self) :
+        """Display help for the command."""
         self._cmd.help (self)
     # end def HELP
 
@@ -1634,7 +2054,7 @@ class CAO (TFL.Meta.Object) :
                 if matches :
                     raise Err \
                         ( "Ambiguous option `%s`, matches any of %s"
-                        % (arg, matches)
+                        % (arg, portable_repr (matches))
                         )
                 else :
                     raise Err ("Unknown option `%s`" % (arg, ))
@@ -1706,7 +2126,7 @@ class CAO (TFL.Meta.Object) :
                 tail = ""
                 if matches :
                     tail = "\n    Ambiguous match for the options: %s" % \
-                        (matches, )
+                        (portable_repr (matches), )
                 raise Err \
                     ( "Unknown argument or option `%s` [%s] for command %s%s"
                     % (k, v, self._name, tail)
@@ -1717,6 +2137,7 @@ class CAO (TFL.Meta.Object) :
     # end def _use_args
 
     def __getattr__ (self, name) :
+        """Return argument/option/keyword value with `name`."""
         try :
             result = self._attribute_value (name)
             setattr (self, name, result)
@@ -1729,6 +2150,16 @@ class CAO (TFL.Meta.Object) :
     # end def __getattr__
 
     def __getitem__ (self, key) :
+        """Return argument/option/keyword value with `key`.
+
+           If `key` is a number between 0 and :attr:`argn`-1, returns the
+           command line argument with that index.
+
+           If `key` is a string, returns the cooked value of the
+           argument/option/keyword with that name. If `key` ends with `:raw`,
+           returns the raw value of the argument or option with that name.
+
+        """
         if isinstance (key, pyk.string_types) :
             map = self._map
             key, _, raw = TFL.split_hst (key, ":")
@@ -1743,6 +2174,7 @@ class CAO (TFL.Meta.Object) :
     # end def __getitem__
 
     def __iter__ (self) :
+        """Return an iterator over :attr:`argv`."""
         return iter (self.argv)
     # end def __iter__
 
@@ -1760,91 +2192,69 @@ def expect_except (* Xs) :
 def show (cao) :
     pyk.fprint (cao._name)
     pyk.fprint \
-        ("    Arguments  : %s" % (sorted (a.name for a in cao._arg_list),))
+        ( "    Arguments  :"
+        , portable_repr (sorted (a.name for a in cao._arg_list))
+        )
     for o in sorted (cao._opt_dict) :
-        pyk.fprint ("    -%-9s : %s" % (o, getattr (cao, o)))
+        pyk.fprint ("    -%-9s : %s" % (o, portable_repr (getattr (cao, o))))
     for a in cao._arg_list :
-        pyk.fprint ("    %-10s : %s" % (a.name, getattr (cao, a.name)))
-    pyk.fprint ("    argv       : %s" % (cao.argv, ))
+        pyk.fprint \
+            ( "    %-10s : %s"
+            % (a.name, portable_repr (getattr (cao, a.name)))
+            )
+    pyk.fprint ("    argv       : %s" % (portable_repr (cao.argv), ))
 # end def show
 
 ### «text» ### start of documentation
-__doc__ = """
+__doc__ = r"""
 Module `CAO`
 =============
 
 This module provides classes for defining and processing **commands**,
 **arguments**, and **options**. The values for arguments and options can be
-parsed from `sys.argv` or supplied by a client via keyword arguments.
+parsed from :data:`sys.argv` or supplied by a client via keyword arguments.
 
 A command is defined by creating an instance of :class:`Cmd`
-with the arguments
-
-- a callback function `handler` that implements the command,
-
-    `handler` is called with an instance of :class:`CAO` as
-    the single argument
-
-- a tuple of :class:`Arg` instances specifying the possible arguments,
-
-- the minimum number of arguments required `min_args`,
-
-- the maximum number of arguments allowed  `max_args`,
-
-    (the default -1 means an unlimited number is allowed)
-
-- a tuple of :class:`Arg` or :class:`Opt` instances specifying the
-  possible  options,
-
-- a tuple of :class:`Bundle` instances that define pre-packaged bundles of
-  argument- and option-values to support common usage scenarios that can be
-  specified simply by using name of the respective bundle,
-
-- a description of the command to be included in the `help`,
-
-    if the `description` argument is undefined, `handler.__doc__` will be
-    used if that is defined
-
-- a `name` for the command (by default, the name of the module defining
-  the `Command` is used).
-
-For `Arg` and `Opt` arguments, a shortcut string notation can be used:
-
-    `<name>:<type-spec><auto-split-spec>=<default>#<max-number>?<help>`
+with the :meth:`~Cmd.__init__` arguments defining the command's arguments,
+options, and possibly sub-commands.
 
 Calling a :class:`Cmd` instance with an argument array, e.g.,
-`sys.argv[1:]`, parses the arguments and options in the array, stores
-their values in the instance, and calls the `handler`.
+:data:`sys.argv[1:]`, parses the arguments and options in the array, stores
+their values in an :class:`CAO` instance, and calls the `handler`.
 
 Calling a :class:`Cmd` instance with keyword arguments initializes
 the argument and option values from those values and calls the
 `handler`.
 
 Alternatively, the methods :meth:`~Cmd.parse` or :meth:`~Cmd.use` can be
-called by a client, should explicit flow control be required.
+called by a client directly, should explicit flow control be required.
 
 A typical use of :class:`Cmd` looks like::
 
     >>> def main (cao) :
     ...     "Explanation of the purpose of the command"
-    ...     if cao.verbose :
-    ...         print ("Starting", cao._name)
+    ...     print ("Starting", cao._name)
     ...     for fn in cao.argv :
     ...         if cao.verbose :
-    ...             print ("   processing", fn)
+    ...             print (" " * cao.indent, "processing", fn)
     ...         ### do whatever needs to be done
-    ...     if cao.verbose :
-    ...         print ("Finished", cao._name)
+    ...     print ("Finished", cao._name)
     ...
 
-    >>> cmd = TFL.CAO.Cmd (
-    ...       handler       = main
+    >>> cmd = TFL.CAO.Cmd \
+    ...     ( handler       = main
     ...     , args          = ( "file:P?File(s) to process",)
     ...     , opts          =
-    ...         ( "indent:I,=4?Number of spaces to use for indentation"
+    ...         ( "indent:I=4?Number of spaces to use for indentation"
     ...         , "-output:P"
     ...             "?Name of file to receive output (default: standard output)"
+    ...         , "-period:I,#10?Periods to consider"
     ...         , "-verbose:B?Print additional information to standard error"
+    ...         , Opt.Config
+    ...             ( name        = "config"
+    ...             , auto_split  = ":::"
+    ...             , description = "File(s) with configuration options"
+    ...             )
     ...         )
     ...     , min_args      = 2
     ...     , max_args      = 8
@@ -1860,10 +2270,10 @@ A typical use of :class:`Cmd` looks like::
     <class 'CAO.Int'>
 
     >>> cmd.indent
-    'indent:I,=4#0?Number of spaces to use for indentation'
+    'indent:I=4#1?Number of spaces to use for indentation'
 
-    >>> cmd.indent.name, cmd.indent.default, cmd.indent.description, cmd.indent.auto_split, cmd.indent.max_number
-    ('indent', [4], 'Number of spaces to use for indentation', ',', 0)
+    >>> print (portable_repr ((cmd.indent.name, cmd.indent.default, cmd.indent.description, cmd.indent.auto_split, cmd.indent.max_number)))
+    ('indent', [4], 'Number of spaces to use for indentation', '', 1)
 
     >>> type (cmd.verbose)
     <class 'CAO.Bool'>
@@ -1882,7 +2292,7 @@ specified. ::
     >>> cao = cmd.parse (["-verbose", "path1", "path2"])
 
     >>> print (cao.indent, type (cao.indent).__name__)
-    [4] list
+    4 int
 
     >>> print (cao.output)
     None
@@ -1893,16 +2303,16 @@ specified. ::
     >>> cao.argn
     2
 
-    >>> cao.argv
+    >>> print (portable_repr (cao.argv))
     ['path1', 'path2']
 
-    >>> cao.file
+    >>> print (portable_repr (cao.file))
     'path1'
 
     >>> cao ()
     Starting cao_example
-       processing path1
-       processing path2
+        processing path1
+        processing path2
     Finished cao_example
 
     >>> cmd.help (cao)
@@ -1914,32 +2324,61 @@ specified. ::
     <BLANKLINE>
         argv               : ['path1', 'path2']
     <BLANKLINE>
-        cao_example doesn't have sub commands
-    <BLANKLINE>
         -Pdb_on_Exception  : Bool
             Start python debugger pdb on exception
-        -help              : Help
+        -config            : Config [] split on ':::'
+            File(s) with configuration options
+            Non-existing path values specified for `-config` will be silently
+            ignored.
+        -help              : Help [] split on ','
             Display help about command
         -indent            : Int
             Number of spaces to use for indentation
         -output            : Path
             Name of file to receive output (default: standard output)
+        -period            : Int [10] split on ','
+            Periods to consider
         -verbose           : Bool
             Print additional information to standard error
-    <BLANKLINE>
-        Actual option and argument values of cao_example
-            -Pdb_on_Exception   = False
-            -help               = []
-            -indent             = 4
-                [4]
-            -output             = None
-                ()
-            -verbose            = True
-            file                = path1
+
+    >>> cao_p = cmd.parse (["-period=1,2,3", "path1", "-period", "4", "path2"])
+
+    >>> cao_p ()
+    Starting cao_example
+    Finished cao_example
+
+    >>> print (cao_p.period, type (cao_p.period).__name__)
+    [1, 2, 3, 4] list
+
+    >>> print (portable_repr (cao_p ["period"]))
+    [1, 2, 3, 4]
+    >>> print (portable_repr (cao_p ["period:raw"]))
+    ['1,2,3', '4']
+
+    >>> cmd.help (cao_p, spec = ["vals"])
+    Actual option and argument values of cao_example
+        -Pdb_on_Exception   = False
+        -config             = None
+            ()
+        -help               = []
+        -indent             = 4
+        -output             = None
+            ()
+        -period             = [ '1,2,3'
+                              , '4'
+                              ]
+            [ 1
+            , 2
+            , 3
+            , 4
+            ]
+        -verbose            = False
+        file                = path1
 
 .. autoclass:: Cmd
-   :members: __call__, parse, use
+   :members: __init__, __call__, parse, use
 .. autoclass:: CAO
+   :members: GET, HELP, __getattr__, __getitem__, __iter__
 
 .. autoclass:: Arg
    :members:
@@ -1979,7 +2418,7 @@ values passed to it::
         -help      : []
         -verbose   : False
         -year      : [2000, 1999]
-        adam       : /tmp/tmp
+        adam       : '/tmp/tmp'
         bert       : 42
         argv       : ['/tmp/tmp', 42]
 
@@ -1988,11 +2427,11 @@ values passed to it::
     [2000, 1999]
     >>> cao.verbose
     False
-    >>> cao.adam
+    >>> print (portable_repr (cao.adam))
     '/tmp/tmp'
     >>> cao.bert
     42
-    >>> cao.argv
+    >>> print (portable_repr (cao.argv))
     ['/tmp/tmp', 42]
 
     >>> cmd (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
@@ -2002,13 +2441,13 @@ values passed to it::
         -help      : []
         -verbose   : True
         -year      : [2000, 1999]
-        adam       : /tmp/tmp
+        adam       : '/tmp/tmp'
         bert       : 137
         argv       : ['/tmp/tmp', 137]
     >>> cap = cmd.parse (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
     >>> cap.verbose
     True
-    >>> cap.argv
+    >>> print (portable_repr (cap.argv))
     ['/tmp/tmp', 137]
     >>> caq = cmd.parse (["/tmp/tmp", "137"])
     >>> caq.verbose
@@ -2033,7 +2472,7 @@ values passed to it::
         -help      : []
         -struct    : False
         ccc        : 3
-        ddd        : D
+        ddd        : 'D'
         argv       : [3, 'D']
     >>> coc = Cmd (show,
     ...     name = "Comp", args = (Arg.Cmd_Choice ("sub", c1, c2), ),
@@ -2068,7 +2507,7 @@ values passed to it::
         -struct    : False
         -verbose   : False
         ccc        : 3
-        ddd        : D
+        ddd        : 'D'
         argv       : [3, 'D']
     >>> coc (["-s"])
     Comp
@@ -2100,7 +2539,7 @@ values passed to it::
         -struct    : False
         -verbose   : False
         ccc        : 3
-        ddd        : D
+        ddd        : 'D'
         argv       : [3, 'D']
     >>> with expect_except (Err) :
     ...      coc (["two", "-s"])
@@ -2120,7 +2559,7 @@ values passed to it::
         -strict    : False
         -verbose   : False
         -y         : None
-        aaa        : two
+        aaa        : 'two'
         bbb        : None
         argv       : ['two']
     >>> coc (["one", "-v", "two", "-Z"])
@@ -2132,7 +2571,7 @@ values passed to it::
         -strict    : False
         -verbose   : True
         -y         : None
-        aaa        : two
+        aaa        : 'two'
         bbb        : None
         argv       : ['two']
     >>> coc (["one", "-v", "two", "-Z", "three", "four"])
@@ -2144,8 +2583,8 @@ values passed to it::
         -strict    : False
         -verbose   : True
         -y         : None
-        aaa        : two
-        bbb        : three
+        aaa        : 'two'
+        bbb        : 'three'
         argv       : ['two', 'three', 'four']
 
     >>> ko  = Arg.Key (name = "foo", dct = {"1": "frodo", "a": 42})
@@ -2162,7 +2601,7 @@ values passed to it::
     dict-test
         Arguments  : ['__argv']
         -Pdb_on_Exception : False
-        -foo       : frodo
+        -foo       : 'frodo'
         -help      : []
         __argv     : None
         argv       : []
@@ -2172,7 +2611,7 @@ values passed to it::
         -Pdb_on_Exception : False
         -foo       : None
         -help      : []
-        __argv     : a
+        __argv     : 'a'
         argv       : ['a', 'b', 'c', 'd']
     >>> cmd (["-foo", "a", "b", "c", "d"])
     dict-test
@@ -2180,15 +2619,15 @@ values passed to it::
         -Pdb_on_Exception : False
         -foo       : 42
         -help      : []
-        __argv     : b
+        __argv     : 'b'
         argv       : ['b', 'c', 'd']
     >>> cmd (["-foo=1", "a", "b", "c", "d"])
     dict-test
         Arguments  : ['__argv']
         -Pdb_on_Exception : False
-        -foo       : frodo
+        -foo       : 'frodo'
         -help      : []
-        __argv     : a
+        __argv     : 'a'
         argv       : ['a', 'b', 'c', 'd']
 
     >>> _ = coc (["-help"])
@@ -2199,7 +2638,7 @@ values passed to it::
     <BLANKLINE>
         -Pdb_on_Exception   : Bool
             Start python debugger pdb on exception
-        -help               : Help
+        -help               : Help [] split on ','
             Display help about command
         -strict             : Bool
         -verbose            : Bool
@@ -2212,7 +2651,7 @@ values passed to it::
         -Pdb_on_Exception   : Bool
             Start python debugger pdb on exception
         -Z                  : Bool
-        -help               : Help
+        -help               : Help [] split on ','
             Display help about command
         -strict             : Bool
         -verbose            : Bool
@@ -2227,7 +2666,7 @@ values passed to it::
     <BLANKLINE>
         -Pdb_on_Exception   : Bool
             Start python debugger pdb on exception
-        -help               : Help
+        -help               : Help [] split on ','
             Display help about command
         -strict             : Bool
         -struct             : Bool
@@ -2250,21 +2689,21 @@ values passed to it::
         Arguments  : ['__argv']
         -Pdb_on_Exception : False
         -help      : []
-        __argv     : a
+        __argv     : 'a'
         argv       : ['a']
     >>> cmd (["a", "b"])
     Varargs test
         Arguments  : ['__argv']
         -Pdb_on_Exception : False
         -help      : []
-        __argv     : a
+        __argv     : 'a'
         argv       : ['a', 'b']
     >>> cmd (["a", "b", "c"])
     Varargs test
         Arguments  : ['__argv']
         -Pdb_on_Exception : False
         -help      : []
-        __argv     : a
+        __argv     : 'a'
         argv       : ['a', 'b', 'c']
     >>> with expect_except (Err) :
     ...      cmd (["a", "b", "c", "d"])
@@ -2293,7 +2732,7 @@ values passed to it::
         -strict    : False
         -verbose   : False
         -y         : None
-        aaa        : foo
+        aaa        : 'foo'
         bbb        : None
         argv       : ['foo']
     >>> cocb (["@c2b"])
@@ -2305,7 +2744,7 @@ values passed to it::
         -struct    : False
         -verbose   : False
         ccc        : 42
-        ddd        : D
+        ddd        : 'D'
         argv       : [42, 'D']
     >>> with expect_except (Err) :
     ...      cocb (["c2b"])
@@ -2324,7 +2763,7 @@ values passed to it::
     <BLANKLINE>
         -Pdb_on_Exception   : Bool
             Start python debugger pdb on exception
-        -help               : Help
+        -help               : Help [] split on ','
             Display help about command
         -strict             : Bool
         -verbose            : Bool

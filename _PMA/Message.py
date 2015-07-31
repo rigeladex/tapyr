@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -1015,8 +1015,8 @@ def messages_from_args (args, base_dirs) :
     parser = Lib.Parser ()
     for arg in args :
         matches = tuple \
-            ( TFL.CAO.Rel_Path.resolved_pathes
-                (base_dirs, arg, skip_missing = True)
+            ( TFL.CAO.Rel_Path.resolved_paths
+                (base_dirs, arg, single_match = False, skip_missing = True)
             )
         if not matches and sos.path.exists (arg) :
             matches = [arg]

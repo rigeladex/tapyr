@@ -484,8 +484,11 @@ def _main (cmd) :
         ( ichain
             ( ichain
                 (  * tuple
-                     ( TFL.CAO.Rel_Path.resolved_pathes
-                         (cmd.msg_base_dirs, m)
+                     ( TFL.CAO.Rel_Path.resolved_paths
+                         ( cmd.msg_base_dirs, m
+                         , single_match = False
+                         , skip_missing = True
+                         )
                      for m in cmd.Attach_Message
                      )
                 )
