@@ -50,6 +50,7 @@
 #    26-Sep-2014 (CT) Add `polisher = capitalize_if_lower_case` to `title`
 #    23-Jan-2015 (CT) Add `title.ui_name_short`
 #    14-Apr-2015 (CT) Lower completer tresholds
+#     3-Aug-2015 (CT) Set `_init_raw_default` to `True`
 #    ««revision-date»»···
 #--
 
@@ -99,7 +100,9 @@ _Ancestor_Essence = PAP.Subject
 class _PAP_Person_ (_Ancestor_Essence) :
     """Model a person."""
 
-    _real_name = "Person"
+    _real_name             = "Person"
+
+    _init_raw_default      = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

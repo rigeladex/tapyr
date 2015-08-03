@@ -293,6 +293,7 @@
 #    15-Jun-2015 (CT) Change `_kw_raw_check_predicates` to add `None` to `ckd_kw`
 #    30-Jul-2015 (CT) Add argument `essence`, `picky` to `polisher`
 #    30-Jul-2015 (CT) Change `_kw_polished` to handle polisher errors
+#     3-Aug-2015 (CT) Use `_init_raw_default`, not literal `False`
 #    ««revision-date»»···
 #--
 
@@ -362,6 +363,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
     _app_globals             = {}
     _attrs_to_update_combine = ("deprecated_attr_names", )
     _home_scope              = None
+    _init_raw_default        = False
     _Reload_Mixin_           = None
 
     class _Attributes (MOM.Attr.Spec) :
@@ -1060,7 +1062,7 @@ class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
     # end def _json_encode
 
     def _main__init__ (self, * args, ** kw) :
-        raw = bool (kw.pop ("raw", False))
+        raw = bool (kw.pop ("raw", self._init_raw_default))
         akw = self.args_as_kw   (* args, ** kw)
         ukw = dict (self._kw_undeprecated (akw))
         skw = self._kw_polished (ukw) if raw else ukw
@@ -1749,7 +1751,7 @@ class Id_Entity \
 
     def _main__init__ (self, * epk, ** kw) :
         self.implicit = kw.pop ("implicit", False)
-        raw           = bool (kw.pop ("raw", False))
+        raw           = bool (kw.pop ("raw", self._init_raw_default))
         akw           = self.epk_as_kw (* epk, ** kw)
         ukw           = dict (self._kw_undeprecated (akw))
         pkw           = self._kw_polished (ukw) if raw else ukw

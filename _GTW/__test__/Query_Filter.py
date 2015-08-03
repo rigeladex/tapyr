@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -28,6 +28,7 @@
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    30-Jul-2013 (CT) Add `show` and `.order_by`, enable HPS
 #    23-Sep-2013 (CT) Add test `sub_query_sql`
+#     3-Aug-2015 (CT) Remove type-cast to `scope.MOM.Date_Interval`
 #    ««revision-date»»···
 #--
 
@@ -214,11 +215,10 @@ _date_queries = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> DI  = lambda s : scope.MOM.Date_Interval (s, raw = True)
-    >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010-01-01"))
-    >>> p   = scope.PAP.Person  ("LN 2", "FN 2", lifetime = DI ("2010-01-03"))
-    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010-02-01"))
-    >>> p   = scope.PAP.Person  ("LN 4", "FN 4", lifetime = DI ("2011-01-03"))
+    >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = ("2010-01-01", ))
+    >>> p   = scope.PAP.Person  ("LN 2", "FN 2", lifetime = ("2010-01-03", ))
+    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = ("2010-02-01", ))
+    >>> p   = scope.PAP.Person  ("LN 4", "FN 4", lifetime = ("2011-01-03", ))
     >>> scope.commit ()
 
     >>> print (scope.PAP.Person.query_s (Q.lifetime.start.year == 2010).all ())
@@ -236,11 +236,10 @@ _sub_query = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> DI  = lambda s : scope.MOM.Date_Interval (s, raw = True)
-    >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010-01-01"))
-    >>> p   = scope.PAP.Person  ("LN 1", "FN 2", lifetime = DI ("2010-01-03"))
-    >>> p   = scope.PAP.Person  ("LN 2", "FN 3", lifetime = DI ("2010-02-01"))
-    >>> p   = scope.PAP.Person  ("LN 2", "FN 4", lifetime = DI ("2011-01-03"))
+    >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = ("2010-01-01", ))
+    >>> p   = scope.PAP.Person  ("LN 1", "FN 2", lifetime = ("2010-01-03", ))
+    >>> p   = scope.PAP.Person  ("LN 2", "FN 3", lifetime = ("2010-02-01", ))
+    >>> p   = scope.PAP.Person  ("LN 2", "FN 4", lifetime = ("2011-01-03", ))
     >>> scope.commit ()
 
     >>> q1 = scope.PAP.Person.query (last_name = "ln 1").attr ("pid")
@@ -263,11 +262,10 @@ _sub_query_sql = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> DI  = lambda s : scope.MOM.Date_Interval (s, raw = True)
-    >>> _   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010-01-01"))
-    >>> _   = scope.PAP.Person  ("LN 1", "FN 2", lifetime = DI ("2010-01-03"))
-    >>> _   = scope.PAP.Person  ("LN 2", "FN 3", lifetime = DI ("2010-02-01"))
-    >>> _   = scope.PAP.Person  ("LN 2", "FN 4", lifetime = DI ("2011-01-03"))
+    >>> _   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = ("2010-01-01", ))
+    >>> _   = scope.PAP.Person  ("LN 1", "FN 2", lifetime = ("2010-01-03", ))
+    >>> _   = scope.PAP.Person  ("LN 2", "FN 3", lifetime = ("2010-02-01", ))
+    >>> _   = scope.PAP.Person  ("LN 2", "FN 4", lifetime = ("2011-01-03", ))
     >>> scope.commit ()
 
     >>> q1 = scope.PAP.Person.query (last_name = "ln 1").attr ("pid")

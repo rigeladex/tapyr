@@ -22,6 +22,7 @@
 #    30-Jul-2012 (CT) Replace obsolete comment by tests showing `count`,
 #                     `query_s`, and length of `uncommitted_changes`
 #    25-Aug-2013 (CT) Add `test_create_m`, fix style
+#     3-Aug-2015 (CT) Adapt to `Person._init_raw_default = True`
 #    ««revision-date»»···
 #--
 
@@ -30,9 +31,9 @@ _test_attr = r"""
     Creating new scope MOMT__...
 
     >>> PAP = scope.PAP
-    >>> per = PAP.Person                   ("ln", "fn")
+    >>> per = PAP.Person ("ln", "fn")
     >>> per.lifetime.start = "2010-01-01"
-    >>> scope.commit                       ()
+    >>> scope.commit ()
 
     >>> per
     PAP.Person ('ln', 'fn', '', '')
@@ -70,9 +71,9 @@ _test_create = r"""
     >>> with expect_except (MOM.Error.Invariants) :
     ...     per = PAP.Person ("ln", "fn")
     Invariants: The attribute values for ('last_name', 'first_name', 'middle_name', 'title') must be unique for each object
-      The new definition of Person PAP.Person ('ln', 'fn', '', '') would clash with 1 existing entities
+      The new definition of Person PAP.Person ('Ln', 'Fn', '', '') would clash with 1 existing entities
       Already existing:
-        PAP.Person ('ln', 'fn', '', '')
+        PAP.Person ('Ln', 'Fn', '', '')
 
     >>> PAP.Person.count ### 2
     2

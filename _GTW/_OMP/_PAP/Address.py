@@ -31,6 +31,7 @@
 #    26-Sep-2014 (CT) Add `polisher`
 #    26-Sep-2014 (CT) Use `Polisher.capitalize_if_not_mixed_case`,
 #                     not `.capitalize`
+#     3-Aug-2015 (CT) Set `_init_raw_default` to `True`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,9 @@ _Ancestor_Essence = PAP.Property
 class _PAP_Address_ (_Ancestor_Essence) :
     """Model a (postal) address."""
 
-    _real_name = "Address"
+    _real_name             = "Address"
+
+    _init_raw_default      = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

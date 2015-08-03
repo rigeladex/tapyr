@@ -26,6 +26,8 @@
 #                     and `all` added
 #    16-Sep-2011 (MG) `attrs_query` test added
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
+#     3-Aug-2015 (CT) Remove type-cast to `scope.MOM.Date_Interval`
+#     3-Aug-2015 (CT) Adapt to `Person._init_raw_default = True`
 #    ««revision-date»»···
 #--
 
@@ -35,10 +37,9 @@ _q_result = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
-    >>> DI  = lambda s : scope.MOM.Date_Interval (s, raw = True)
-    >>> _   = PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010-01-01"))
+    >>> _   = PAP.Person  ("LN 1", "FN 1", lifetime = ("2010-01-01", ))
     >>> _   = PAP.Person  ("LN 2", "FN 2", title = "Dr.")
-    >>> p   = PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010-03-01"))
+    >>> p   = PAP.Person  ("LN 3", "FN 3", lifetime = ("2010-03-01", ))
     >>> _   = PAP.Person  ("LN 4", "FN 4", title = "DI")
     >>> _   = PAP.Person  ("LN 5", "FN 5", title = "DI")
     >>> a   = PAP.Address ("S", "C", "Z", "C")
@@ -85,7 +86,7 @@ _q_result = r"""
     [('fn 1', MOM.Date_Interval_lifetime ('2010-01-01', '2010-12-31'))]
 
     >>> prepr (sorted (PAP.Person.query (pid = 1).attrs (Q.RAW.first_name, Q.lifetime)))
-    [('FN 1', MOM.Date_Interval_lifetime ('2010-01-01', '2010-12-31'))]
+    [('Fn 1', MOM.Date_Interval_lifetime ('2010-01-01', '2010-12-31'))]
 
     >>> scope.rollback ()
 
@@ -206,16 +207,18 @@ _q_result = r"""
 _attrs_query = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
-    >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
-    >>> _   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010-01-01"))
-    >>> _   = scope.PAP.Person  ("LN 2", "FN 2", lifetime = DI ("2010-01-10"), title = "Dr.")
-    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010-01-03"))
-    >>> _   = scope.PAP.Person  ("LN 4", "FN 4", lifetime = DI ("2010-01-16"), title = "DI")
-    >>> _   = scope.PAP.Person  ("LN 5", "FN 5", lifetime = DI ("2010-02-01"), title = "DI")
+
+    >>> PAP = scope.PAP
+
+    >>> _   = PAP.Person  ("LN 1", "FN 1", lifetime = ("2010-01-01", ))
+    >>> _   = PAP.Person  ("LN 2", "FN 2", lifetime = ("2010-01-10", ), title = "Dr.")
+    >>> p   = PAP.Person  ("LN 3", "FN 3", lifetime = ("2010-01-03", ))
+    >>> _   = PAP.Person  ("LN 4", "FN 4", lifetime = ("2010-01-16", ), title = "DI")
+    >>> _   = PAP.Person  ("LN 5", "FN 5", lifetime = ("2010-02-01", ), title = "DI")
 
     >>> scope.commit ()
 
-    >>> q   = scope.PAP.Person.query ()
+    >>> q   = PAP.Person.query ()
     >>> prepr (q.attr  ("last_name").order_by (Q.last_name).all ())
     ['ln 1', 'ln 2', 'ln 3', 'ln 4', 'ln 5']
     >>> q.attr  ("lifetime.start").order_by (Q.lifetime.start).all ()
@@ -234,10 +237,9 @@ _attrs_query = r"""
 _raw_query = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
-    >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
-    >>> p1   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010-01-01"))
+    >>> p1   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = ("2010-01-01", ))
     >>> p  = scope.PAP.Person  ("LN 2", "FN 2")
-    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010-01-03"))
+    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = ("2010-01-03", ))
     >>> p   = scope.PAP.Person  ("Lname 4", "Fn 3")
     >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
     >>> pha = scope.PAP.Person_has_Address (p, a)
@@ -268,12 +270,12 @@ _destroy_test = """
     >>> p = scope.PAP.Person ("ln", "fn")
     >>> for c in scope.uncommitted_changes :
     ...     prepr (c)
-    <Create PAP.Person ('ln', 'fn', '', '', 'PAP.Person'), new-values = {'last_cid' : '1'}>
+    <Create PAP.Person ('Ln', 'Fn', '', '', 'PAP.Person'), new-values = {'last_cid' : '1'}>
     >>> p.destroy ()
     >>> for c in scope.uncommitted_changes :
     ...     prepr (c)
-    <Create PAP.Person ('ln', 'fn', '', '', 'PAP.Person'), new-values = {'last_cid' : '1'}>
-    <Destroy PAP.Person ('ln', 'fn', '', '', 'PAP.Person'), old-values = {'last_cid' : '1'}>
+    <Create PAP.Person ('Ln', 'Fn', '', '', 'PAP.Person'), new-values = {'last_cid' : '1'}>
+    <Destroy PAP.Person ('Ln', 'Fn', '', '', 'PAP.Person'), old-values = {'last_cid' : '1'}>
     """
 
 _copy_test = """

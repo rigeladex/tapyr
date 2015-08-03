@@ -23,6 +23,7 @@
 #    26-Sep-2014 (CT) Add `name.polisher`
 #    26-Sep-2014 (CT) Use `Polisher.capitalize_if_not_mixed_case`,
 #                     not `.capitalize`
+#     3-Aug-2015 (CT) Set `_init_raw_default` to `True`
 #    ««revision-date»»···
 #--
 
@@ -42,9 +43,11 @@ _Ancestor_Essence = PAP.Subject
 class _PAP_Group_ (_Ancestor_Essence) :
     """Model a group of persons."""
 
-    _real_name  = "Group"
+    _real_name                 = "Group"
 
-    is_partial  = True
+    is_partial                 = True
+
+    _init_raw_default          = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
