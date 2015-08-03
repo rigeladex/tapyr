@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -230,6 +230,7 @@ class Event_occurs (_Ancestor_Essence) :
         class detail (A_String) :
 
             kind               = Attr.Query
+            max_length         = 160
             query              = Q.event.detail
 
         # end class detail
@@ -251,6 +252,7 @@ class Event_occurs (_Ancestor_Essence) :
         class short_title (A_String) :
 
             kind               = Attr.Query
+            max_length         = 30
             query              = Q.event.short_title
 
         # end class short_title

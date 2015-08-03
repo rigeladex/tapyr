@@ -139,6 +139,7 @@ class Regatta_Event (_Ancestor_Essence) :
 
             kind               = Attr.Cached
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            max_length         = 128
             auto_up_depends    = ("date", "name", "desc")
 
             def computed (self, obj) :
