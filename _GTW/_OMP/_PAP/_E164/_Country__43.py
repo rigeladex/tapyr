@@ -25,7 +25,7 @@ import _GTW._OMP._PAP._E164.Country
 class Country__43 (GTW.OMP.PAP.E164.Country_M) :
 
     generated_from     = '2312_Austrian_Numbering_Plan_2011-03-30.xls'
-    generation_date    = '2015-07-27 18:12'
+    generation_date    = '2015-08-03 11:27'
 
     ndc_info_map       = \
         { '1' : 'Wien'
@@ -2391,6 +2391,4 @@ class Country__43 (GTW.OMP.PAP.E164.Country_M) :
 
 Country = Country__43 # end class
 
-if __name__ != "__main__" :
-    GTW.OMP.PAP.E164._Export ("Country__43")
 ### __END__ GTW.OMP.PAP.E164._Country__43

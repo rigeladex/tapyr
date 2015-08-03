@@ -264,6 +264,8 @@ class Country__39 (GTW.OMP.PAP.E164.Country_M) :
         ,   "399" : "Mobile (H3G Italy)"
         }
 
+    ndc_min_length     = 2
+
     ndc_types_normal   = {"geographic", "mobile"}
 
     ndc_usage_map = \
@@ -499,6 +501,4 @@ class Country__39 (GTW.OMP.PAP.E164.Country_M) :
 
 Country = Country__39 # end class
 
-if __name__ != "__main__" :
-    GTW.OMP.PAP.E164._Export ("Country__39")
 ### __END__ GTW.OMP.PAP.E164._Country__39

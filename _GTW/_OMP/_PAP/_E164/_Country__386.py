@@ -59,6 +59,8 @@ class Country__386 (GTW.OMP.PAP.E164.Country_M) :
         , "83" : "VoIP"
         }
 
+    ndc_max_length     = 2
+
     ndc_types_normal   = {"geographic", "mobile", "voip"}
 
     ndc_usage_map = \
@@ -97,6 +99,4 @@ class Country__386 (GTW.OMP.PAP.E164.Country_M) :
 
 Country = Country__386 # end class
 
-if __name__ != "__main__" :
-    GTW.OMP.PAP.E164._Export ("Country__386")
 ### __END__ GTW.OMP.PAP.E164._Country__386

@@ -69,31 +69,6 @@ _poland_ndc= "".join \
       )
     )
 
-### https://en.wikipedia.org/wiki/Telephone_numbers_in_Switzerland
-_swiss_geo_ndc = "".join \
-    ( ( "(?:"
-      , "|".join
-           ( ( "2[12467]"
-             , "3[1-4]"
-             , "4[134]"
-             , "5[12568]"
-             , "6[12]"
-             , "71"
-             , "81"
-             , "91"
-             )
-           )
-      , ")"
-      )
-    )
-_swiss_mobile_ndc = "(?:7[5-9])"
-_swiss_ndc= "".join \
-    ( ( "(?:"
-      , "|".join ((_swiss_geo_ndc, _swiss_mobile_ndc))
-      , ")"
-      )
-    )
-
 ### https://en.wikipedia.org/wiki/Local_conventions_for_writing_telephone_numbers
 ### Map of regular expressions for matching phone numbers,
 ### indexed by country code
@@ -128,17 +103,6 @@ ndc_sn_matcher_map = \
         Regexp
           ( r"(?P<ndc>1|[2-9][0-9]) ?"
             r"(?P<sn>[0-9]{3}[- ]?[0-9]{3,4})?"
-          )
-    ,  "45" : ### Denmark (no area code!)
-              ### https://en.wikipedia.org/wiki/Telephone_numbers_in_Denmark
-        Regexp
-          ( r"(?P<sn>"
-              r"(?:\d{2}[- ]\d{2}[- ]\d{2}[- ]\d{2}"
-                r"|\d{4}[- ]\d{4}"
-                r"|\d{2}[- ]\d{3}[- ]\d{3}"
-                r"|\d{8}"
-              r")"
-            r")"
           )
     ,  "47" : ### Norway
               ### https://en.wikipedia.org/wiki/Telephone_numbers_in_Norway

@@ -38,6 +38,12 @@
 #    30-Jul-2015 (CT) Add `_CC_Polisher_`
 #    30-Jul-2015 (CT) Change `_NDC_Polisher_` to use `E164.Country`
 #    31-Jul-2015 (CT) Factor polishers to `E164.Polisher`
+#     3-Aug-2015 (CT) Change attributes `cc`, `ndc`, `sn` to `Primary_Optional`
+#                     + Add `min_length` to `cc`, `sn`
+#     3-Aug-2015 (CT) Add predicates `ndc_length_valid`, `sn_length_valid`
+#                     + Add computed attributes `country`, `ndc_max_length`,
+#                       `ndc_min_length`, `sn_max_length`, `sn_min_length`
+#     3-Aug-2015 (CT) Set `_init_raw_default` to `True`
 #    ««revision-date»»···
 #--
 
@@ -58,26 +64,30 @@ _Ancestor_Essence = PAP.Property
 class _PAP_Phone_ (_Ancestor_Essence) :
     """Model a phone number"""
 
-    _real_name     = "Phone"
+    _real_name                 = "Phone"
 
-    ui_display_sep = "-"
+    ui_display_sep             = "-"
+    _init_raw_default          = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
+
+        ### Primary attributes
 
         class cc (A_Numeric_String) :
             """International country code of phone number (without prefix)"""
 
-            kind           = Attr.Primary
-            max_length     = 3
-            check          = ("value != '0'", )
-            example        = "43"
-            rank           = 1
-            format         = "+%s"
-            ui_name        = _ ("Country code")
-            ui_rank        = -1
+            kind               = Attr.Primary_Optional
+            max_length         = 3
+            min_length         = 1
+            check              = ("value != '0'", )
+            example            = "43"
+            rank               = 1
+            format             = "+%s"
+            ui_name            = _ ("Country code")
+            ui_rank            = -1
 
-            completer      = Attr.Completer_Spec  (1)
-            polisher       = PAP.E164.Polisher.CC ()
+            completer          = Attr.Completer_Spec  (1)
+            polisher           = PAP.E164.Polisher.CC ()
 
         # end class cc
 
@@ -88,39 +98,153 @@ class _PAP_Phone_ (_Ancestor_Essence) :
                a city or district, a mobile provider, or a specific service.
             """
 
-            kind           = Attr.Primary
-            max_length     = 5
-            check          = ("value != '0'", )
-            example        = "1"
-            rank           = 2
-            ui_name        = _ ("Network destination code")
-            ui_rank        = -2
+            kind               = Attr.Primary_Optional
+            max_length         = 5
+            check              = ("value != '0'", )
+            example            = "1"
+            rank               = 2
+            ui_name            = _ ("Network destination code")
+            ui_rank            = -2
 
-            completer      = Attr.Completer_Spec (1, Attr.Selector.Name ("cc"))
-            polisher       = PAP.E164.Polisher.NDC ()
+            completer          = Attr.Completer_Spec \
+                (1, Attr.Selector.Name ("cc"))
+            polisher           = PAP.E164.Polisher.NDC ()
 
         # end class ndc
 
         class sn (A_Numeric_String) :
             """Subscriber number (without country code, network destination code, extension)"""
 
-            kind           = Attr.Primary
-            max_length     = 14
-            check          = ("value != '0'", )
-            example        = "234567"
-            rank           = 3
-            ui_name        = _ ("Subscriber number")
-            ui_rank        = -3
+            kind               = Attr.Primary_Optional
+            max_length         = 14
+            min_length         = 3
+            check              = ("value != '0'", )
+            example            = "234567"
+            rank               = 3
+            ui_name            = _ ("Subscriber number")
+            ui_rank            = -3
 
-            completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
-            polisher       = PAP.E164.Polisher.SN ()
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+            polisher           = PAP.E164.Polisher.SN ()
 
         # end class sn
+
+        ### Non-primary attributes
+
+        class country (A_Blob) :
+
+            kind               = Attr.Computed
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+
+            def computed (self, obj) :
+                cc = obj.cc
+                if cc :
+                    try :
+                        return PAP.E164.Country (cc)
+                    except Exception :
+                        pass
+            # end def computed
+
+        # end class country
+
+        class ndc_max_length (A_Int) :
+            """Maximum permissible length of value for `ndc`."""
+
+            kind               = Attr.Computed
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+
+            def computed (self, obj) :
+                country = obj.country
+                if country :
+                    return country.ndc_max_length
+                return 4
+            # end def computed
+
+        # end class ndc_max_length
+
+        class ndc_min_length (A_Int) :
+            """Minimum permissible length of value for `ndc`."""
+
+            kind               = Attr.Computed
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+
+            def computed (self, obj) :
+                country = obj.country
+                if country :
+                    return country.ndc_min_length
+                return 1
+            # end def computed
+
+        # end class ndc_min_length
+
+        class sn_max_length (A_Int) :
+            """Maximum permissible length of value for `sn`."""
+
+            kind               = Attr.Computed
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+
+            def computed (self, obj) :
+                country = obj.country
+                if country :
+                    return country.sn_max_length (obj.ndc)
+                return 15
+            # end def computed
+
+        # end class sn_max_length
+
+        class sn_min_length (A_Int) :
+            """Minimum permissible length of value for `sn`."""
+
+            kind               = Attr.Computed
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+
+            def computed (self, obj) :
+                country = obj.country
+                if country :
+                    return country.sn_min_length (obj.ndc)
+                return 3
+            # end def computed
+
+        # end class sn_min_length
 
         ### XXX redefine `ui_display` to format phone number according to
         ###     country-specific rules
 
     # end class _Attributes
+
+    class _Predicates (_Ancestor_Essence._Predicates) :
+
+        _Ancestor = _Ancestor_Essence._Predicates
+
+        class ndc_length_valid (Pred.Condition) :
+            """Value for `ndc` must contain at least `ndc_min_length`
+               digits, must not be longer than `ndc_max_length` digits.
+            """
+
+            kind               = Pred.Region
+            assertion          = "ndc_min_length <= length <= ndc_max_length"
+            attributes         = ("ndc", "ndc_max_length", "ndc_min_length")
+            bindings           = dict \
+                ( length       = "len (ndc)"
+                )
+
+        # end class ndc_length_valid
+
+        class sn_length_valid (Pred.Condition) :
+            """Value for `sn` must contain at least `sn_min_length`
+               digits, must not be longer than `sn_max_length` digits.
+            """
+
+            kind               = Pred.Region
+            assertion          = "sn_min_length <= length <= sn_max_length"
+            attributes         = ("sn", "sn_max_length", "sn_min_length")
+            bindings           = dict \
+                ( length       = "len (sn)"
+                )
+
+        # end class sn_length_valid
+
+    # end class _Predicates
 
 Phone = _PAP_Phone_ # end class
 

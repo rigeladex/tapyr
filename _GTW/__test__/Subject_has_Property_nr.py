@@ -735,17 +735,17 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
     PAP.Phone
       Kind_Wrapper : Numeric_String `cc`
-          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `companies`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `desc`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Numeric_String `ndc`
-          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `persons`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Numeric_String `sn`
-          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
     PAP.Person
       Kind_Wrapper_R : Role_Ref_Set `accounts`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -11173,11 +11173,11 @@ _test_tables = """
         Column desc                      : Varchar(20)          Optional String desc
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     PAP.Phone (MOM.Id_Entity) <Table pap_phone>
-        Column cc                        : Varchar(3)           Primary Numeric_String cc
+        Column cc                        : Varchar(3)           Primary_Optional Numeric_String cc
         Column desc                      : Varchar(20)          Optional String desc
-        Column ndc                       : Varchar(5)           Primary Numeric_String ndc
+        Column ndc                       : Varchar(5)           Primary_Optional Numeric_String ndc
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
-        Column sn                        : Varchar(14)          Primary Numeric_String sn
+        Column sn                        : Varchar(14)          Primary_Optional Numeric_String sn
     PAP.Person (MOM.Id_Entity) <Table pap_person>
         Column __raw_first_name          : Varchar(32)          Primary__Raw_Value String first_name
         Column __raw_last_name           : Varchar(48)          Primary__Raw_Value String last_name

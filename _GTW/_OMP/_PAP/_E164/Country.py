@@ -19,6 +19,8 @@
 #    23-Jul-2015 (CT) Creation
 #    2.-Jul-2015 (CT) Continue creation...
 #    31-Jul-2015 (CT) Finish creation
+#     3-Aug-2015 (CT) Add `ndc_max_length`, `ndc_min_length`
+#     3-Aug-2015 (CT) Make `regexp` argument of `Country_R` optional
 #    ««revision-date»»···
 #--
 
@@ -137,6 +139,9 @@ class Country (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Country)) :
     """Provide phone number mapping for a specific country."""
 
     Table              = {}
+
+    ndc_max_length     = 4
+    ndc_min_length     = 1
 
     ndc_prefix         = "0"
 
@@ -339,9 +344,12 @@ class Country_M (Country) :
 class Country_R (Country) :
     """Country with a regexp matching ndc and sn"""
 
-    def __init__ (self, name, code, regexp) :
+    regexp = None
+
+    def __init__ (self, name, code, regexp = None) :
         self.__super.__init__ (name, code)
-        self.regexp = regexp
+        if self.regexp is not None :
+            self.regexp = regexp
     # end def __init__
 
 # end class Country_R

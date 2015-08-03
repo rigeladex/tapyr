@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2012-2015 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A--3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -456,7 +456,7 @@ _test_mac = """
     >>> MAC_Address ("000:11:22:33:44:55")
     Traceback (most recent call last):
      ...
-    Invariants: Condition `AC_check_address_length` : Value for address must not be longer than 17 (length <= 17)
+    Invariants: Condition `AC_check_address_length` : Value for address must not be longer than 17 characters (length <= 17)
         address = '000:11:22:33:44:55'
         length = 18 << len (address)
       `Syntax error` for : `MAC-address `address``
@@ -475,7 +475,7 @@ _test_mac = """
     >>> MAC_Address ("00:11:22:33:44:55:66")
     Traceback (most recent call last):
      ...
-    Invariants: Condition `AC_check_address_length` : Value for address must not be longer than 17 (length <= 17)
+    Invariants: Condition `AC_check_address_length` : Value for address must not be longer than 17 characters (length <= 17)
         address = '00:11:22:33:44:55:66'
         length = 20 << len (address)
       `Syntax error` for : `MAC-address `address``

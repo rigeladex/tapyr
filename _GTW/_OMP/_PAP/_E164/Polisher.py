@@ -69,6 +69,13 @@ class CC (_E164_Polisher_) :
         match  = E164.Country.match (value)
         if match :
             result [name] = match.country.code
+            ndc = self._attr_value (attr, "ndc", None, value_dict, essence)
+            sn  = self._attr_value (attr, "sn",  None, value_dict, essence)
+            if not (ndc or sn) :
+                try :
+                    result.update (match.attr_dict)
+                except ValueError :
+                    pass
         else :
             raise ValueError (_T ("Unknown country code %s") % value)
         return result

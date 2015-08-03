@@ -91,8 +91,6 @@ class Country__43 (GTW.OMP.PAP.E164.Country_M) :
 
 Country = Country__43 # end class
 
-if __name__ != "__main__" :
-    GTW.OMP.PAP.E164._Export ("Country__43")
 ### __END__ GTW.OMP.PAP.E164._Country__43
 """
 

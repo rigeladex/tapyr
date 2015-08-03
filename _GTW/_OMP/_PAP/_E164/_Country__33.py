@@ -35,7 +35,7 @@ class Country_33 (GTW.OMP.PAP.E164.Country_M) :
 
     generated_from     = \
         "https://en.wikipedia.org/wiki/Telephone_numbers_in_France"
-    generation_date    = '2015-07-27 10:05'
+    generation_date    = "2015-07-27 10:05"
 
     ndc_info_map       = \
         { "1" : "Île-de-France"
@@ -48,6 +48,8 @@ class Country_33 (GTW.OMP.PAP.E164.Country_M) :
         , "8" : "Freephone (numéro vert) and shared-cost services."
         , "9" : "Non-geographic number (used by VoIP services)"
         }
+
+    ndc_max_length     = 1
 
     ndc_types_normal   = {"geographic", "mobile", "voip"}
 
@@ -68,6 +70,4 @@ class Country_33 (GTW.OMP.PAP.E164.Country_M) :
 
 Country = Country_33 # end class
 
-if __name__ != "__main__" :
-    GTW.OMP.PAP.E164._Export ("_Country__33")
 ### __END__ GTW.OMP.PAP.E164._Country__33

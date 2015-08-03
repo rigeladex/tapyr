@@ -1652,7 +1652,7 @@ Changing objects and links
     BMT.Person ('luke', 'lucky', '', )
     >>> with expect_except (MOM.Error.Invariants) :
     ...     p.set (middle_name = "zacharias")
-    Invariants: Condition `AC_check_middle_name_length` : Value for middle_name must not be longer than 5 (length <= 5)
+    Invariants: Condition `AC_check_middle_name_length` : Value for middle_name must not be longer than 5 characters (length <= 5)
         length = 9 << len (middle_name)
         middle_name = 'zacharias'
 

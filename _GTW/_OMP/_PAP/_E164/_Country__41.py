@@ -85,6 +85,8 @@ class Country_41 (GTW.OMP.PAP.E164.Country_M) :
         ,  "99" : "Internal network numbers - Not accessible from abroad - Non diallable"
         }
 
+    ndc_min_length     = 2
+
     ndc_types_normal   = {"geographic", "mobile"}
 
     ndc_usage_map = \
@@ -151,6 +153,4 @@ class Country_41 (GTW.OMP.PAP.E164.Country_M) :
 
 Country = Country_41 # end class
 
-if __name__ != "__main__" :
-    GTW.OMP.PAP.E164._Export ("Country_41")
 ### __END__ GTW.OMP.PAP.E164._Country__41

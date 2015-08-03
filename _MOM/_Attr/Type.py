@@ -355,6 +355,10 @@
 #                     of `_A_Id_Entity_Collection_`
 #    28-Apr-2015 (CT) Fix `A_Link_Role.unique_p` (only for unary links)
 #    18-Jun-2015 (CT) Add guard for `P_Type` to `_A_Composite_.from_string`
+#     3-Aug-2015 (CT) Add `min_length` to `_A_String_Base_`
+#     3-Aug-2015 (CT) Redefine `_A_String_Base_.as_string` to not use `format`
+#                     on empty string `value`
+#     3-Aug-2015 (CT) Change `_A_Composite_.from_string` to try downcast
 #    ««revision-date»»···
 #--
 
@@ -1031,7 +1035,9 @@ class _A_Composite_ \
             result = s
         else :
             t = s or {}
-            if isinstance (t, tuple) :
+            if issubclass (P_Type, type (s)) :
+                t = s.raw_attr_dict ()
+            elif isinstance (t, tuple) :
                 try :
                     t = dict (t)
                 except (TypeError, ValueError) :
@@ -1688,6 +1694,7 @@ class _A_String_Base_ (A_Attr_Type) :
     default           = ""
     example           = "foo"
     max_length        = 0
+    min_length        = 0
     Q_Ckd_Type        = MOM.Attr.Querier.String
     ui_length         = TFL.Meta.Class_and_Instance_Once_Property \
         (lambda s : s.max_length or 120)
@@ -1697,25 +1704,43 @@ class _A_String_Base_ (A_Attr_Type) :
         return self.Q_Ckd
     # end def AQ
 
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        if value is not None :
+            return (soc.format % (value, )) if value else value
+        return ""
+    # end def as_string
+
     def _checkers (self, e_type, kind) :
         for c in self.__super._checkers (e_type, kind) :
             yield c
-        if self.max_length :
-            name   = self.name
-            p_kind = [MOM.Pred.Object, MOM.Pred.System] [kind.electric]
+        name    = self.name
+        max_len = self.max_length
+        min_len = self.min_length
+        clauses = []
+        doc     = "Value for %s " % (name, )
+        if min_len :
+            clauses  = ["%s <=" % (min_len, )]
+            doc     += "must contain at least %s characters%s" % \
+                (min_len, "; " if max_len else "")
+        clauses     += ["length"]
+        if max_len :
+            clauses += ["<= %s" % (max_len, )]
+            doc     += "must not be longer than %s characters" % (max_len, )
+        if len (clauses) > 1 :
+            p_kind = [MOM.Pred.Object, MOM.Pred.Region] [kind.electric]
             p_name = "AC_check_%s_length" % (name, )
             check = MOM.Pred.Condition.__class__ \
                 ( p_name, (MOM.Pred.Condition, )
                 , dict
-                    ( assertion  = "length <= %s" % (self.max_length, )
+                    ( assertion  = " ".join (clauses)
                     , attributes = (name, )
                     , bindings   = dict
                         ( length = "len (%s)" % (name, )
                         )
                     , kind       = p_kind
                     , name       = p_name
-                    , __doc__    = "Value for %s must not be longer than %s"
-                      % (name, self.max_length)
+                    , __doc__    = doc
                     )
                 )
             yield check
