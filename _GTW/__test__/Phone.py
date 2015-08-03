@@ -33,7 +33,7 @@ _test_code = """
     >>> at = PAP.Phone ("43", "1", "234567")
 
     >>> print (at.ui_display)
-    +43-1-234567
+    +43-1-23 45 67
 
     >>> print (at.country)
     Country (43) [Austria]
@@ -44,14 +44,16 @@ _test_code = """
     >>> atp = PAP.Phone ("+43 1 234 56 78")
 
     >>> print (atp.ui_display)
-    +43-1-2345678
+    +43-1-234 56 78
 
     >>> print (atp.country)
     Country (43) [Austria]
 
     >>> at1 = PAP.Phone ("43", "2287", "1234567890")
+
     >>> print (at1.ui_display)
-    +43-2287-1234567890
+    +43-2287-123 456 7890
+
     >>> print (at1.ndc_min_length, at1.ndc_max_length, at1.sn_min_length, at1.sn_max_length)
     1 4 3 9
 
@@ -68,7 +70,7 @@ _test_code = """
     >>> dk = PAP.Phone ("45", "", "12345678")
 
     >>> print (dk.ui_display)
-    +45-12345678
+    +45-12 34 56 78
 
     >>> print (portable_repr ([dk.cc, dk.ndc, dk.sn]))
     ['45', '', '12345678']
@@ -110,6 +112,22 @@ _test_code = """
     ...     x = PAP.Phone ("699", "123", "456789")
     Invariants: Can't set primary attribute Phone.cc to '699'.
         Unknown country code 699
+
+    >>> for i in range (3, 14) :
+    ...     n = "1234567890123" [:i]
+    ...     p = PAP.Phone ("43", "1", n)
+    ...     print ("%%-15s : %%s" %% (n, p.FO))
+    123             : +43-1-123
+    1234            : +43-1-12 34
+    12345           : +43-1-12 345
+    123456          : +43-1-12 34 56
+    1234567         : +43-1-123 45 67
+    12345678        : +43-1-123 456 78
+    123456789       : +43-1-123 456 789
+    1234567890      : +43-1-123 456 7890
+    12345678901     : +43-1-1234 567 8901
+    123456789012    : +43-1-1234 5678 9012
+    1234567890123   : +43-1-1234 56789 0123
 
 """
 

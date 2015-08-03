@@ -93,12 +93,12 @@ _test_phone = """
 
     >>> p0  = PAP.Phone (sn = "+43 123 4567890", raw = True)
     >>> print (p0.ui_display)
-    +43-1-234567890
+    +43-1-234 567 890
 
     >>> p1  = PAP.Phone ("43", "1", "234567", raw = True)
 
     >>> print (p1.ui_display)
-    +43-1-234567
+    +43-1-23 45 67
 
     >>> with expect_except (MOM.Error.Invariants) :
     ...     _   = p1.set_raw (sn = "+44 9 123456")
@@ -108,7 +108,7 @@ _test_phone = """
     >>> _   = p1.set_raw (sn = "+44 9 12345678")
 
     >>> print (p1.ui_display)
-    +44-9-12345678
+    +44-9-123 456 78
 
 """
 

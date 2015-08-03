@@ -37,6 +37,8 @@ class Country_33 (GTW.OMP.PAP.E164.Country_M) :
         "https://en.wikipedia.org/wiki/Telephone_numbers_in_France"
     generation_date    = "2015-07-27 10:05"
 
+    formatted_sn       = GTW.OMP.PAP.E164.Country_M.formatted_sn_4x2
+
     ndc_info_map       = \
         { "1" : "Île-de-France"
         , "2" : "Northwest France"

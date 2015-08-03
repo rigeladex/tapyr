@@ -672,14 +672,14 @@ _test_element = """
     , 'Z-26:phones::right@3' :
         { 'init' :
             { 'cid' : 2
-            , 'display' : '+43-1-98765432'
+            , 'display' : '+43-1-987 654 32'
             , 'pid' : 2
             }
         }
     , 'Z-26:phones@3' :
         { 'init' :
             { 'cid' : 3
-            , 'display' : 'Tanzer Christian, +43-1-98765432, 42'
+            , 'display' : 'Tanzer Christian, +43-1-987 654 32, 42'
             , 'pid' : 3
             }
         }
@@ -850,14 +850,14 @@ _test_element = """
         , 'Z-26:phones::right@3' :
             { 'init' :
                 { 'cid' : 2
-                , 'display' : '+43-1-98765432'
+                , 'display' : '+43-1-987 654 32'
                 , 'pid' : 2
                 }
             }
         , 'Z-26:phones@3' :
             { 'init' :
                 { 'cid' : 3
-                , 'display' : 'Tanzer Christian, +43-1-98765432, 42'
+                , 'display' : 'Tanzer Christian, +43-1-987 654 32, 42'
                 , 'pid' : 3
                 }
             }
@@ -1239,9 +1239,9 @@ _test_element = """
     <Field X-121:desc> example
 
     >>> show_elements (f_pph, "ui_display")
-    <Entity X-121> Tanzer Christian, +43-1-98765432, 42
+    <Entity X-121> Tanzer Christian, +43-1-987 654 32, 42
     <Field_Entity X-121:left> Tanzer Christian
-    <Field_Entity X-121:right> +43-1-98765432
+    <Field_Entity X-121:right> +43-1-987 654 32
     <Field X-121:right.cc> +43
     <Field X-121:right.ndc> 1
     <Field X-121:right.sn> 98765432
@@ -1291,7 +1291,7 @@ _test_element = """
     , 'X-121:right' :
         { 'init' :
             { 'cid' : 2
-            , 'display' : '+43-1-98765432'
+            , 'display' : '+43-1-987 654 32'
             , 'pid' : 2
             }
         }

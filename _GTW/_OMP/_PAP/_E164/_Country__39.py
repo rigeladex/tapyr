@@ -39,6 +39,8 @@ class Country__39 (GTW.OMP.PAP.E164.Country_M) :
         """
     generation_date    = "28-Jul-2015 09:55"
 
+    formatted_sn       = lambda x : x
+
     ndc_prefix         = ""
 
     ndc_info_map       = \

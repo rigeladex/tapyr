@@ -21,6 +21,7 @@
 #    31-Jul-2015 (CT) Finish creation
 #     3-Aug-2015 (CT) Add `ndc_max_length`, `ndc_min_length`
 #     3-Aug-2015 (CT) Make `regexp` argument of `Country_R` optional
+#     3-Aug-2015 (CT) Add `formatted_sn`, `formatted_sn_4x2`
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,38 @@ class Country (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Country)) :
     """Provide phone number mapping for a specific country."""
 
     Table              = {}
+
+    ###  3-Aug-2015 16:48
+    ### https://en.wikipedia.org/wiki/Local_conventions_for_writing_telephone_numbers#Denmark
+    ### A : ndc digit
+    ### B : sn  digit
+
+    format_map = \
+        {  "31" : ["AA-BBBBBBB"]                                     # Netherlands
+        ,  "32" : ["A BBB BB BB", "AA BB BB BB", "AAA BB BB BB"]     # Belgium
+        ,  "33" : ["A BB BB BB BB"]                                  # France
+        ,  "34" : ["AAA BBB BBB", "AA B BBB BBB", "A BB BBB BBB"]    # Spain
+        , "351" : ["AA BB BB BBB", "AAA BBB BBB"]                    # Portugal
+        , "353" : ["AA BBB BBBB"]                                    # Ireland
+        , "358" : ["AA BBB BB BB", "A BBB BBB"]                      # Finland
+        ,  "36" : ["A BBB BBB", "A BBB BBBB"]                        # Hungary
+        ,  "39" : ["AAA BBBBBBB"]                                    # Italy
+        ,  "41" : ["AA BBB BB BB"]                                   # Switzerland
+        , "420" : ["A BB BBB BBB", "AA B BBB BBB", "AAA BBB BBB"]    # Czech Republic
+        ,  "44" : ["AA BBBB BBBB", "AAAA BBB BBBB", "AAAAA BBBBBB"]  # UK
+        ,  "45" : ["BB BB BB BB"]                                    # Denmark
+        ,  "47" : ["A B BB BB BB", "AA BB BB BB", "AAA BB BBB"]      # Norway
+        ,  "48" : ["AA BBB BB BB", "AAA BBB BBB"]                    # Poland
+        ,  "49" : ["AAAA BBBBBB"]                                    # Germany
+        }
+    formatted_sn       = Multi_Re_Replacer \
+        ( Re_Replacer (r"^(\d{2,3})(\d{2,3})(\d{2,4})$", r"\1 \2 \3")
+        , Re_Replacer (r"^(\d{2})(\d{2,3})$",            r"\1 \2")
+        , Re_Replacer (r"^(\d{4})(\d{3,5})(\d{4})$",     r"\1 \2 \3")
+        )
+    formatted_sn_4x2   = Re_Replacer \
+        ( r"^(\d{2})(\d{2})(\d{2})(\d{2})$", r"\1 \2 \3 \4")
+
 
     ndc_max_length     = 4
     ndc_min_length     = 1

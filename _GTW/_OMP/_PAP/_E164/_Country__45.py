@@ -43,6 +43,8 @@ class Country__45 (GTW.OMP.PAP.E164.Country_R) :
         "https://en.wikipedia.org/wiki/Local_conventions_for_writing_telephone_numbers#Denmark"
     generation_date    = "2015-08-03 10:30"
 
+    formatted_sn       = GTW.OMP.PAP.E164.Country_M.formatted_sn_4x2
+
     ndc_max_length     = 0
     ndc_min_length     = 0
     ndc_sn_min_length  = 8

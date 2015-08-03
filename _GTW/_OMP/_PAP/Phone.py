@@ -44,6 +44,7 @@
 #                     + Add computed attributes `country`, `ndc_max_length`,
 #                       `ndc_min_length`, `sn_max_length`, `sn_min_length`
 #     3-Aug-2015 (CT) Set `_init_raw_default` to `True`
+#     3-Aug-2015 (CT) Redefine `ui_display.computed` to use `formatted_sn`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,8 @@ class _PAP_Phone_ (_Ancestor_Essence) :
     _init_raw_default          = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
 
         ### Primary attributes
 
@@ -207,8 +210,20 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
         # end class sn_min_length
 
-        ### XXX redefine `ui_display` to format phone number according to
-        ###     country-specific rules
+        class ui_display (_Ancestor.ui_display) :
+
+            def computed (self, obj) :
+                country = obj.country
+                FO      = obj.FO
+                cc      = FO.cc
+                ndc     = FO.ndc
+                sn      = FO.sn
+                if country is not None :
+                    sn  = country.formatted_sn (sn)
+                return obj.ui_display_sep.join (x for x in (cc, ndc, sn) if x)
+            # end def computed
+
+        # end class ui_display
 
     # end class _Attributes
 
