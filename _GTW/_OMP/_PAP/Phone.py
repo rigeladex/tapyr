@@ -45,6 +45,7 @@
 #                       `ndc_min_length`, `sn_max_length`, `sn_min_length`
 #     3-Aug-2015 (CT) Set `_init_raw_default` to `True`
 #     3-Aug-2015 (CT) Redefine `ui_display.computed` to use `formatted_sn`
+#     4-Aug-2015 (CT) Add `cc_info`, `ndc_info`
 #    ««revision-date»»···
 #--
 
@@ -134,10 +135,27 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
         ### Non-primary attributes
 
+        class cc_info (A_String) :
+            """Information about the country specified by `cc`."""
+
+            kind               = Attr.Computed
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            max_length         = 128
+            auto_up_depends    = ("cc",)
+
+            def computed (self, obj) :
+                country = obj.country
+                if country :
+                    return country.name
+            # end def computed
+
+        # end class cc_info
+
         class country (A_Blob) :
 
             kind               = Attr.Computed
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("cc",)
 
             def computed (self, obj) :
                 cc = obj.cc
@@ -150,11 +168,28 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
         # end class country
 
+        class ndc_info (A_String) :
+            """Information about the network destination specified by `ndc`."""
+
+            kind               = Attr.Computed
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            max_length         = 128
+            auto_up_depends    = ("cc", "ndc")
+
+            def computed (self, obj) :
+                country = obj.country
+                if country :
+                    return country.ndc_info (obj.ndc)
+            # end def computed
+
+        # end class ndc_info
+
         class ndc_max_length (A_Int) :
             """Maximum permissible length of value for `ndc`."""
 
             kind               = Attr.Computed
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("cc",)
 
             def computed (self, obj) :
                 country = obj.country
@@ -170,6 +205,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
             kind               = Attr.Computed
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("cc",)
 
             def computed (self, obj) :
                 country = obj.country
@@ -185,6 +221,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
             kind               = Attr.Computed
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("cc", "ndc")
 
             def computed (self, obj) :
                 country = obj.country
@@ -200,6 +237,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
             kind               = Attr.Computed
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("cc", "ndc")
 
             def computed (self, obj) :
                 country = obj.country

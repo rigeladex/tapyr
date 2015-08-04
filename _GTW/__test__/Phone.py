@@ -38,6 +38,9 @@ _test_code = """
     >>> print (at.country)
     Country (43) [Austria]
 
+    >>> print (at.cc_info, at.ndc_info)
+    Austria Wien
+
     >>> print (at.ndc_min_length, at.ndc_max_length, at.sn_min_length, at.sn_max_length)
     1 4 3 12
 
@@ -53,6 +56,9 @@ _test_code = """
 
     >>> print (at1.ui_display)
     +43-2287-123 456 7890
+
+    >>> print (at1.cc_info, at1.ndc_info)
+    Austria Strasshof an der Nordbahn
 
     >>> print (at1.ndc_min_length, at1.ndc_max_length, at1.sn_min_length, at1.sn_max_length)
     1 4 3 9
@@ -77,6 +83,9 @@ _test_code = """
 
     >>> print (dk.country)
     Country (45) [Denmark]
+
+    >>> print (dk.cc_info, dk.ndc_info)
+    Denmark None
 
     >>> with expect_except (MOM.Error.Invariants) :
     ...     PAP.Phone ("45", "", "")
