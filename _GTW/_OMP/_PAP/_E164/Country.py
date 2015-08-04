@@ -22,6 +22,7 @@
 #     3-Aug-2015 (CT) Add `ndc_max_length`, `ndc_min_length`
 #     3-Aug-2015 (CT) Make `regexp` argument of `Country_R` optional
 #     3-Aug-2015 (CT) Add `formatted_sn`, `formatted_sn_4x2`
+#     4-Aug-2015 (CT) Add `M_Country.cc_trie`, `.completions`
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,7 @@ from   _TFL.portable_repr       import portable_repr
 from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import \
     (Regexp, Multi_Regexp, Re_Replacer, Multi_Re_Replacer, re)
+from   _TFL.Trie                import Word_Trie as Trie
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   _GTW._OMP._PAP._E164     import E164
@@ -108,6 +110,12 @@ class M_Country (TFL.Meta.Object.__class__) :
     # end def cc_regexp_strict
 
     @Once_Property
+    def cc_trie (cls) :
+        """Word trie of country codes."""
+        return Trie (cls.cc_map)
+    # end def cc_trie
+
+    @Once_Property
     def ndc_data (cls) :
         from _GTW._OMP._PAP._E164 import ndc_data as result
         return result
@@ -117,6 +125,13 @@ class M_Country (TFL.Meta.Object.__class__) :
     def ndc_sn_matcher_map (cls) :
         return cls.ndc_data.ndc_sn_matcher_map
     # end def ndc_sn_matcher_map
+
+    def completions (cls, cc_prefix) :
+        """Return all country codes starting with `cc_prefix` and unique
+           completion for `cc_prefix`, if any.
+        """
+        return cls.cc_trie.completions (cc_prefix)
+    # end def completions
 
     def match (cls, phone_number) :
         return cls._match (phone_number, cls.cc_regexp)
@@ -173,6 +188,7 @@ class Country (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Country)) :
         ( r"^(\d{2})(\d{2})(\d{2})(\d{2})$", r"\1 \2 \3 \4")
 
 
+    ndc_info_map       = None ### Only available for `Country_M`
     ndc_max_length     = 4
     ndc_min_length     = 1
 
