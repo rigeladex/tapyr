@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,6 +31,8 @@ from   __future__  import print_function, unicode_literals
 
 from   _TFL        import TFL
 from   _TFL.Regexp import Regexp, Re_Replacer, Dict_Replacer, re
+
+import _TFL.CAO
 
 from   itertools   import chain as ichain
 import unicodedata
@@ -134,6 +136,41 @@ Module `Ascii`
 
 """
 
-if __name__ != "__main__" :
+def _main (cmd) :
+    """For each argument, write sanitized_filename to stdout. If `-rename` is
+       specified, the files are renamed to the sanitized_filenames instead.
+    """
+    from _TFL     import sos
+    from _TFL.pyk import pyk
+    for f in cmd.argv :
+        sf = sanitized_filename (pyk.decoded (f))
+        if cmd.rename :
+            sos.rename (f, sf)
+            if cmd.verbose :
+                pyk.fprint ("Renamed", f, "to", sf)
+        else :
+            pyk.fprint (sf, end = " ")
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "file:P?File(s) to rename"
+        ,
+        )
+    , opts          =
+        ( TFL.CAO.Opt.Input_Encoding
+            ( description   = "Input encoding"
+            , default       = "utf-8"
+            )
+        , "-rename:B?Rename the files to names by `sanitized_filename`"
+        , "-verbose:B"
+        )
+    , min_args      = 1
+    )
+
+if __name__ == "__main__" :
+    _Command ()
+else :
     TFL._Export_Module ()
 ### __END__ Ascii
