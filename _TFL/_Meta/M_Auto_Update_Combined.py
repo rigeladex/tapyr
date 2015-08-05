@@ -19,12 +19,18 @@
 # Revision Dates
 #    26-Jan-2015 (CT) Creation
 #     6-Mar-2015 (CT) Add `except` to `_m_update_combine`
+#     5-Aug-2015 (CT) Improve `__doc__`
 #    ««revision-date»»···
 #--
 
 """
-Metaclass that automatically applies `update_combined` to a class's
-attribute and the corresponding attribute of all its base classes.
+Metaclass that automatically applies
+:func:`~_TFL.update_combined.update_combined_many` to a class's attribute and
+the corresponding attribute of all its base classes.
+
+One specifies the attributes to be automatically combined by listing
+their names in either :attr:`_attrs_to_update_combine` or
+:attr:`_attrs_uniq_to_update_combine`.
 
 ::
 
@@ -94,10 +100,6 @@ import _TFL._Meta.M_Class
 import itertools
 
 class M_Auto_Update_Combined (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.M_Class) :
-    """Metaclass that automatically applies `update_combined` to a
-       class's attribute and the corresponding attribute of all its base
-       classes.
-    """
 
     _attrs_to_update_combine      = ()
     _attrs_uniq_to_update_combine = ()

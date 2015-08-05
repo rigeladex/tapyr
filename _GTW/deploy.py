@@ -51,6 +51,7 @@
 #                     not `M_Auto_Combine`
 #    17-Mar-2015 (CT) Factor `_app_path`
 #     8-Apr-2015 (CT) Add `compile_options = "-q"` to `_defaults`
+#     5-Aug-2015 (CT) Remove `_handler_prefix` (obsoleted by `handler_name`)
 #    ««revision-date»»···
 #--
 
@@ -167,20 +168,12 @@ class GTWD_Command (TFL.Command.Root_Command) :
         _babel_config       = "_MOM/base_babel.cfg"
         _package_dirs       = []
 
-        class _GTWD_Babel_Sub_Command_ (_Sub_Command_) :
-
-            _handler_prefix = "babel_"
-
-            is_partial      = True
-
-        _Babel_Sub_Command_ = _GTWD_Babel_Sub_Command_ # end class
-
-        class _GTWD_Extract_ (_Babel_Sub_Command_) :
+        class _GTWD_Extract_ (_Sub_Command_) :
             """Extract strings to translate."""
 
         _Extract_ = _GTWD_Extract_ # end class
 
-        class _GTWD_Compile_ (_Babel_Sub_Command_) :
+        class _GTWD_Compile_ (_Sub_Command_) :
             """Compile translations."""
 
         _Compile_ = _GTWD_Compile_ # end class

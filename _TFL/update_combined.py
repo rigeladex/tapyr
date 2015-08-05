@@ -25,6 +25,7 @@
 #    26-Jan-2015 (CT) Add `update_combined_many`
 #    26-Jan-2015 (CT) Add `update_combined__set` to force `rhs` to `set`
 #     6-Mar-2015 (CT) Add `except` to `update_combined`, `update_combined__set`
+#     5-Aug-2015 (CT) Add `Dont_Combine` to `__doc__`
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ _update_combined_props = dict \
 @Attributed (** _update_combined_props)
 def update_combined (lhs, rhs) :
     """Generic function to update ``lhs`` with the elements of ``rhs``,
-       combining existing keys.
+       combining existing elements/keys.
     """
     try :
         return update_combined_value (lhs, rhs)
@@ -105,7 +106,7 @@ def update_combined (lhs, rhs) :
 
 @Attributed (** _update_combined_props)
 def update_combined_many (lhs, * rest) :
-    """Update `lhs` with the elements of all of `rest`, combining existing
+    """Update ``lhs`` with the elements of all of ``rest``, combining existing
        keys.
     """
     result = lhs
@@ -193,7 +194,14 @@ Module `update_combined`
 
 Update a dictionary/list/set with elements of another
 dictionary/list/set, combining existing keys or values, instead of
-replacing like the standard ``dict`` method ``update()``does .
+replacing like the standard ``dict`` method ``update()`` does .
+
+One can force replacement instead of update for an element by using
+an instance of :class:`dict_dont_combine`, :class:`list_dont_combine`,
+:class:`set_dont_combine`, or :class:`tuple_dont_combine`.
+
+By including an instance of :class:`list_filtered`, one can selectively remove
+existing elements.
 
     >>> from   _TFL.portable_repr import portable_repr
 

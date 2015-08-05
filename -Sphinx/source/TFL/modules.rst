@@ -7,6 +7,8 @@ Modules of Package-NS `TFL`
 
 .. automodule:: _TFL.CAO
 
+.. automodule:: _TFL.Command
+
 .. automodule:: _TFL.Accessor
    :members: _Getter_, _Method_
 
@@ -50,6 +52,9 @@ Modules of Package-NS `TFL`
    :members:
 
 .. automodule:: _TFL.sos
+   :members:
+
+.. automodule:: _TFL.update_combined
    :members:
 
 .. \__END__ modules.rst

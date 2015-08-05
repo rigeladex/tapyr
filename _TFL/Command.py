@@ -46,6 +46,10 @@
 #    26-Jan-2015 (CT) Derive `_Meta_Base_` from `M_Auto_Update_Combined`,
 #                     not `M_Auto_Combine`
 #    21-Jul-2015 (CT) Add `Rel_Path_Option.skip_missing`
+#     5-Aug-2015 (CT) Use `handler_name` instead of `_handler_prefix`
+#     5-Aug-2015 (CT) Add `__doc__`
+#     5-Aug-2015 (CT) Continue adding `__doc__`
+#     6-Aug-2015 (CT) Add `Option.explanation`
 #    ««revision-date»»···
 #--
 
@@ -110,6 +114,7 @@ class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
     _rn_prefix              = "TFL_"
 
     cook              = None
+    explanation       = None
     hide              = False
     max_number        = None
     range_delta       = 1
@@ -174,6 +179,7 @@ class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
             , hide            = self.hide
             , range_delta     = self.range_delta
             , cook            = self.cook
+            , explanation     = self.explanation
             , rank            = self.rank
             )
     # end def kw
@@ -297,6 +303,7 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
     cmd_choice_name         = _ ("command")
     do_keywords             = False
     handler                 = None
+    handler_name            = "_handle"
     helper                  = None
     min_args                = 0
     max_args                = -1
@@ -453,16 +460,19 @@ class TFL_Sub_Command (Command) :
     ### Base class for sub-commands
 
     _real_name              = "Sub_Command"
-    _handler_prefix         = ""
 
     def handler (self, cmd) :
         return self._handler (cmd)
     # end def handler
 
     @TFL.Meta.Once_Property
+    def handler_name (self) :
+        return "_".join ((self._parent.handler_name, self.name))
+    # end def handler_prefix
+
+    @TFL.Meta.Once_Property
     def _handler (self) :
-        handler_name = "".join (("_handle_", self._handler_prefix, self.name))
-        return getattr (self._root, handler_name)
+        return getattr (self._root, self.handler_name)
     # end def _handler
 
 Sub_Command = TFL_Sub_Command # end class
@@ -526,6 +536,420 @@ class TFL_Root_Command (Command) :
 
 Root_Command = TFL_Root_Command # end class
 
+### «text» ### start of documentation
+__doc__ = r"""
+Module `Command`
+=====================
+
+This module provides a framework to assemble complex **commands** with their
+**sub-commands**, **argument**, and **options**.
+
+- A simple command is defined by a single module that creates an instance of
+  :class:`~_TFL.CAO.Cmd`.
+
+- A complex command might be defined by a number of modules by defining a
+  hierarchy of classes derived from :class:`Root_Command`.
+
+  This allows frameworks to define the basic command with a set of generic
+  sub-commands, arguments, and options.
+
+  A specific application based on such a framework derives a specific command
+  class which
+
+  + might combine the generic commands of several different frameworks,
+
+  + might add application specific sub-commands,
+
+  + might set or override defaults for options, and
+
+  + might redefine the handlers of some or all generic sub-commands.
+
+  For instance,
+
+  + the :mod:`MOM<_MOM>` framework provides a class :class:`~_MOM.Command`
+    that defines sub-commands for managing object models and the databases
+    where they are stored.
+
+  + the :mod:`GTW<_GTW>` framework extends :class:`~_MOM.Command` by adding
+    sub-commands for running a MOM-based application as a web service.
+
+  + a specific application based on :mod:`MOM<_MOM>` and :mod:`GTW<_GTW>`
+
+    * might define additional application specific sub-commands,
+
+    * might define options for config-files,
+
+    * might define media parameters used for CSS styles,
+
+    * needs to define the directories containing Jinja templates, and
+
+    * needs to define methods that instantiate the resource tree of the
+      web service.
+
+.. class:: Command
+
+  `Command` is the common base class of the classes :class:`Root_Command`,
+  :class:`Sub_Command`, and :class:`Sub_Command_Combiner`.
+
+  A command's `arguments`_, `options`_, `sub-commands`_, and `other properties`_
+  are defined by class variables and embedded :class:`Option`,
+  :class:`Sub_Command`, and :class:`Sub_Command_Combiner` classes.
+
+  When a :class:`Command` is instantiated, it creates and stores an
+  instance of :class:`~_TFL.CAO.Cmd`; calling a :class:`Command` instance
+  delegates the call to the internal :class:`~_TFL.CAO.Cmd` instance.
+
+  :class:`Command`'s meta class :class:`_M_Command_` is derived from
+  :class:`~_TFL._Meta.M_Auto_Update_Combined.M_Auto_Update_Combined` and
+  automatically update-combines the class variables:
+
+  .. _`arguments`:
+
+  .. attribute:: _args
+
+    Argument tuple: the elements of `_args` are specified exactly as for the
+    :obj:`args` argument of :class:`~_TFL.CAO.Cmd`.
+
+    A :class:`Command` can either provide :attr:`_sub_commands` or
+    :attr:`_args` but not both. If `_args` is provided, it is passed to
+    :class:`~_TFL.CAO.Cmd` unchanged.
+
+  .. attribute:: _buns
+
+    Bundle tuple: the elements of `_buns` are specified exactly as for the
+    :obj:`buns` argument of :class:`~_TFL.CAO.Cmd`. `_buns` is
+    passed to :class:`~_TFL.CAO.Cmd` unchanged.
+
+  .. attribute:: _opts
+
+    Options tuple: the elements of `_opts` are specified exactly as for the
+    :obj:`opts` argument of :class:`~_TFL.CAO.Cmd`.
+
+  Additionally, :class:`_M_Command_` combines all class attributes that are
+  derived from :class:`Command` and :class:`Option` into the class variables
+  :attr:`_sub_commands` and :class:`_opts_reified`, respectively:
+
+  .. _`sub-commands`:
+
+  .. attribute:: _sub_commands
+
+    Sub-command set: set of names of the `sub-commands`_ of the embedding
+    :class:`Command` (and its ancestors).
+
+    Sub-Commands are defined by embedded classes derived from
+    :class:`Sub_Command` or :class:`Sub_Command_Combiner`. A :class:`Command`
+    with sub-commands cannot have other arguments defined in :attr:`_args`.
+
+  .. attribute:: _opts_reified
+
+    Reified options set: set of names of option classes embedded in
+    :class:`Command` class (and its ancestors).
+
+  .. _`options`:
+
+  **Options**
+
+  Options can be defined in two ways:
+
+  + As elements of the :attr:`_opts` tuple.
+
+  + As embedded classes derived from :class:`Option`. The meta class
+    :class:`_M_Command_` combines these into the class variable
+    :attr:`_opts_reified`.
+
+  :attr:`_opts` and instances of all the elements :attr:`_opts_reified` are
+  passed to :class:`~_TFL.CAO.Cmd` as the :obj:`opts` argument.
+
+  .. _`other properties`:
+
+  **Properties**
+
+  .. attribute:: cmd_choice_name
+
+    Defines the name of the :class:`~_TFL.CAO.Cmd_Choice` instance for
+    :attr:`_sub_commands`; default is "command".
+
+  .. attribute:: is_partial
+
+    Classes with a false value of `is_partial` won't be included in the options
+    and sub-commands. This can be used to factor common code between options
+    or sub-commands.
+
+  .. attribute:: _defaults
+
+    An auto-combining dictionary with default values for options. One can
+    include the default value of an option with the option's definition,
+    but in many cases, such a default is application dependent even for generic
+    options. `_defaults` allows the redefinition of default values with
+    a minimum of code.
+
+  .. attribute:: _rn_prefix
+
+    :class:`_M_Command_` expects the names of all :class:`Command` classes to
+    start with `_rn_prefix` and will automatically remove that prefix from the
+    class name while avoiding name clashes in the class's method resolution
+    order.
+
+    The canonical use of `_rn_prefix` is to use the name of the package
+    namespace containing the :class:`Command`. If one package namespace defines
+    more than one command, different values based on the package namespace name
+    should be used for `_rn_prefix`.
+
+  The following properties are passed through to :class:`~_TFL.CAO.Cmd`
+  unchanged and are documented there:
+
+  .. attribute:: do_keywords
+
+  .. attribute:: helper
+
+  .. attribute:: max_args
+
+  .. attribute:: min_args
+
+  .. attribute:: put_keywords
+
+  The following properties are calculated by :class:`Command` and passed
+  to :class:`~_TFL.CAO.Cmd`:
+
+  .. attribute:: args
+
+    Either :attr:`_args` or a :class:`~_TFL.CAO.Cmd_Choice` instance for
+    :attr:`_sub_commands`.
+
+  .. attribute:: buns
+
+    Just the contents of :attr:`_buns`
+
+  .. attribute:: defaults
+
+    Dictionary with default values for options computed from:
+
+    - :attr:`_defaults`,
+
+    - the keyword arguments passed to the :class:`Command` instance,
+
+    - the result of :meth:`dynamic_defaults`.
+
+    Keyword arguments override :attr:`_defaults`, :meth:`dynamic_defaults`
+    override keyword arguments and :attr:`_defaults`.
+
+  .. attribute:: description
+
+    Either the value of :attr:`_description` or of :attr:`__class__.__doc__`.
+
+  .. attribute:: name
+
+    Either the value of :attr:`_name` or the lower case value of
+    :attr:`__class__.__name__` stripped of leading and trailing underscores.
+
+  .. attribute:: opts
+
+    The contents of :attr:`_opts` plus instances of all the elements of
+    :attr:`_opts_reified`.
+
+  .. attribute:: sub_commands
+
+    Instances of all elements of :attr:`_sub_commands`.
+
+  :class:`Command` instances provide the API:
+
+  .. attribute:: app_dir
+
+    The absolute path to the directory containing the class defining the
+    application's :class:`Root_Command`.
+
+  .. attribute:: app_path
+
+    The path to the python module containing the class defining the
+    application's :class:`Root_Command`.
+
+  .. attribute:: lib_dir
+
+    The path to the directory containing the package namespace `_TFL`.
+
+  .. method:: dynamic_defaults(defaults)
+
+    This method can calculate dynamic default values for options and must
+    return a dictionary. If one redefines `dynamic_defaults` in a descendent
+    class, one should normally chain up to the super class's
+    `dynamic_defaults`.
+
+    The argument `defaults` is a dictionary computed from `_defaults` and the
+    keyword arguments passed to the :class:`Command` instance.
+
+    `dynamic_defaults` can override values of `defaults` by including a
+    different value in its result.
+
+    `dynamic_defaults` can use values like :attr:`app_dir` and :attr:`lib_dir`
+    and is thus useful to setup default search paths that include directories
+    containing python modules, e.g., for template directories or Babel
+    configuration files.
+
+.. class:: Root_Command
+
+  One defines a complex command by deriving a class (directly or indirectly)
+  from `TFL.Root_Command`.
+
+  ``Root_Command`` is derived from :class:`Command` and adds the `options`_
+  :attr:`Config_Dirs` and :attr:`Config`.
+
+.. class:: Sub_Command
+
+  One defines a sub-command by including a class derived from
+  :class:`Sub_Command` inside a :class:`Root_Command` or :class:`Sub_Command`
+  class.
+
+  The name of the sub-command can be specified explicitly by defining
+  the class attribute :attr:`_name`; otherwise the lowercase name of the
+  ``Sub_Command`` class stripped of leading and trailing underscores is used
+  for the name.
+
+  ``Sub_Command`` is derived from :class:`Command` and adds a default
+  :meth:`handler` method that delegates to a method of the root command (by
+  default that method's name is combined from ``parent.handler_name`` and the
+  sub-command's ``name``).
+
+  Alternatively, one can define the `handler` method by overriding
+  :meth:`handler` inside the ``Sub_Command`` class.
+
+.. class:: Sub_Command_Combiner
+
+  A sub-command combiner is a class derived from :class:`Sub_Command` that
+  defines a sequence of sub-commands to be executed in that order in the class
+  variable :attr:`_sub_command_seq`.
+
+  .. attribute:: _sub_command_seq
+
+    A sequence of sub-commands. Each element either is a name of a sub-command
+    or a argv-style list starting with the name of a sub-command followed by
+    argument and option values.
+
+.. class:: Option
+
+  Once can define an option by embedding a subclass of `Option` in a
+  :class:`Command` class. When the command is instantiated, it instantiates a
+  :class:`~_TFL.CAO.Arg` or :class:`~_TFL.CAO.Opt` instance for each of its
+  `Option` classes.
+
+  The class attributes of the :class:`Option` class define the semantics of
+  the option:
+
+  .. attribute:: type
+
+    Specifies the :class:`~_TFL.CAO.Arg` or :class:`~_TFL.CAO.Opt` class of the
+    option.
+
+    One can either specify a class directly or specify the name or abbreviation
+    of such a class.
+
+  .. attribute:: name
+
+    Either the value of :attr:`_name` or the lower case value of
+    :attr:`__class__.__name__` stripped of leading and trailing underscores.
+
+  .. attribute:: default
+
+    Either the value of :attr:`_default` or the elements of :attr:`_defaults`
+    joined by :attr:`auto_split`.
+
+    This can be overriden by the :attr:`Command.defaults`.
+
+  .. attribute:: __doc__
+
+    The description of the option.
+
+  .. attribute:: auto_split
+
+    Either the value of :attr:`_auto_split` or the value of
+    :attr:`type.auto_split`.
+
+  .. attribute:: max_number
+
+    The maximum number of values that can be specified for
+    this option, either via auto-split or by multiple
+    occurences of the option in the command line.
+
+  .. attribute:: hide
+
+    Don't include this option in `-help` if :attr:`hide` has a true value.
+
+  .. attribute:: range_delta
+
+    Delta to be used between option values if a range is specified on the
+    command line, default is 1.
+
+  .. method:: cook
+
+    A method or function converting the raw value to the internal
+    representation.
+
+  .. attribute:: explanation
+
+    More detailed information about the option.
+
+  .. attribute:: rank
+
+    Defines the rank of the option. During command setup, configuration options
+    are processed in the order of increasing rank (default rank is 0).
+
+.. class:: Rel_Path_Option
+
+  An option with type :class:`~_TFL.CAO.Arg.Rel_Path`.
+
+  :class:`Rel_Path_Option` offers additional class attributes:
+
+  .. attribute:: single_match
+
+    If true, restrict option values to a single match per value specified on
+    the command line; otherwise include all matches. Default value is False.
+
+  .. attribute:: skip_missing
+
+    If true, skip matching values that don't exist in the file system (useful
+    for input paths); otherwise, include matching values that don't exist
+    (possibly useful for output paths). Default value is True.
+
+  .. attribute:: _base_dir
+
+    Specify a single base directory; overrides :attr:`_base_dirs`. Same
+    semantics as for entries of `_base_dirs`.
+
+  .. attribute:: _base_dirs
+
+    List of base directories for matching relative paths. One can include
+    properties of the embedding :class:`Command` by prefixing them with a "$"
+    sign, e.g, "$app_dir" refers to the :attr:`Command.app_dir`. Default value
+    is ``("$app_dir", )``.
+
+
+.. class:: Config_Option
+
+  An option derived from :class:`Rel_Path_Option` with type
+  :class:`~_TFL.CAO.Arg.Config`.
+
+  :class:`Config_Option` offers additional class attributes:
+
+  .. attribute:: _config_dirs_name
+
+    The name of a :class:`Config_Dirs_Option` option. Default value is
+    "config_dirs".
+
+    The :attr:`Option.defaults` of that option will be added to the front of
+    the base directories of the :class:`Config_Option`.
+
+.. class:: Config_Dirs_Option
+
+  An option of type :class:`~_TFL.CAO.Arg.Rel_Path` that specifies directories
+  for option files for one or more :class:`Config_Option` options.
+
+  The directories are specified via the :attr:`Option.defaults` attribute.
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
+
 if __name__ != "__main__" :
     TFL._Export_Module ()
 ### __END__ TFL.Command
+
+#+  LocalWords:  Reified reified

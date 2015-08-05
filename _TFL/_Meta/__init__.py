@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,6 +20,7 @@
 #     3-Feb-2009 (CT) Documentation added..
 #     4-Feb-2009 (CT) Documentation added...
 #    14-Oct-2013 (CT) Add `Single_Dispatch`
+#     5-Aug-2015 (CT) Add `M_Auto_Update_Combined`
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,12 @@ Module `M_Data_Class`
 =====================
 
 .. automodule:: _TFL._Meta.M_Data_Class
+   :members:
+
+Module `M_Auto_Update_Combined`
+================================
+
+.. automodule:: _TFL._Meta.M_Auto_Update_Combined
    :members:
 
 Module `M_Auto_Combine`
