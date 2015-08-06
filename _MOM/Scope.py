@@ -111,6 +111,7 @@
 #    12-Jun-2014 (CT) Add `_cleaned_url` and use in `Scope.__str__`
 #     5-May-2015 (CT) Remove obsolete class variable `is_universe`
 #     5-May-2015 (CT) Add `after_commit_callback`
+#     6-Aug-2015 (CT) Improve documentation (access to E_Type_Managers)
 #    ««revision-date»»···
 #--
 
@@ -884,7 +885,17 @@ Class `MOM.Scope`
     like normal Python types. Instead, :meth:`load` and method:`new` create
     scopes connected to existing or newly created databases, respectively.
 
-    **`Scope` provides the class attributes:**
+    For each package namespace defining essential object types, `Scope`
+    provides an attribute with the name of the package namespace. That
+    attribute lets one access all essential types of the package namespace.
+
+    For instance, if the scope contains a package namespace ``PAP``, one can
+    access ``scope.PAP.Person`` or ``scope.PAP.Phone``. Each attribute of
+    ``scope.PAP`` refers to the :class:`~_MOM.E_Type_Manager.Object` or
+    :class:`~_MOM.E_Type_Manager.Link` instance of the corresping essential
+    type.
+
+    **`Scope` provides the attributes:**
 
     .. attribute:: app_type
 
