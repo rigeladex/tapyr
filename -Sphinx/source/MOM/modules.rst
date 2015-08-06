@@ -10,4 +10,6 @@ Modules of Package-NS `MOM`
 .. automodule:: _MOM.App_Type
 .. automodule:: _MOM.Scope
 
+.. automodule:: _MOM.Command
+
 .. \__END__ modules.rst

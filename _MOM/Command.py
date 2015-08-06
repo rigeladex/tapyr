@@ -69,6 +69,7 @@
 #    17-Oct-2014 (CT) Pass globals to `py_shell`
 #     7-May-2015 (CT) Fix initialization of `scope` in `_handle_script`
 #     7-May-2015 (CT) Add options `-journal_dir`, `-keep_journal`
+#     6-Aug-2015 (CT) Add `__doc__`
 #    ««revision-date»»···
 #--
 
@@ -202,27 +203,17 @@ class MOM_Command (TFL.Command.Root_Command) :
     _Auth_Mig_ = _MOM_Auth_Mig_ # end class
 
     class _MOM_Create_ (_Sub_Command_) :
-        """Create database specified by `-db_url`."""
+        """Create the database specified by `-db_url`."""
 
     _Create_ = _MOM_Create_ # end class
 
-    class _MOM_Version_Hash_ (_Sub_Command_) :
-        """Show version-hashof program or database or both."""
-
-        _opts                   = \
-            ( "database:B?Show hash of database version"
-            , "code:B?Show hash of program version"
-            )
-
-    _Version_Hash_ = _MOM_Version_Hash_ # end class
-
     class _MOM_Delete_ (_Sub_Command_) :
-        """Delete database specified by `-db_url`."""
+        """Delete the database specified by `-db_url`."""
 
     _Delete_ = _MOM_Delete_ # end class
 
     class _MOM_Info_ (_Sub_Command_) :
-        """Display info about database specified by `-db_url`."""
+        """Display info about the database specified by `-db_url`."""
 
     _Info_ = _MOM_Info_ # end class
 
@@ -232,7 +223,7 @@ class MOM_Command (TFL.Command.Root_Command) :
     _Load_ = _MOM_Load_ # end class
 
     class _MOM_Load_Auth_Mig_ (_Sub_Command_) :
-        """Load a migration of the authorization objects"""
+        """Load a migration of the authorization objects."""
 
     _Load_Auth_Mig_ = _MOM_Load_Auth_Mig_ # end class
 
@@ -282,9 +273,19 @@ class MOM_Command (TFL.Command.Root_Command) :
     _Script_ = _MOM_Script_ # end class
 
     class _MOM_Shell_ (_Sub_Command_) :
-        """Open interactive python shell."""
+        """Open an interactive python shell."""
 
     _Shell_ = _MOM_Shell_ # end class
+
+    class _MOM_Version_Hash_ (_Sub_Command_) :
+        """Show version-hash of program or database or both."""
+
+        _opts                   = \
+            ( "database:B?Show hash of database version"
+            , "code:B?Show hash of program version"
+            )
+
+    _Version_Hash_ = _MOM_Version_Hash_ # end class
 
     @TFL.Meta.Once_Property
     def default_db_name (self) :
@@ -420,29 +421,6 @@ class MOM_Command (TFL.Command.Root_Command) :
         scope.destroy     ()
     # end def _handle_create
 
-    def _handle_version_hash (self, cmd) :
-        both     = cmd.database and cmd.code
-        verbose  = cmd.verbose or both
-        apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
-        dbv      = apt.db_version_hash
-        fmt      = "%(dbv)s"
-        if verbose :
-            dbv  = portable_repr (dbv)
-            fmt  = "%(kind)s = %(dbv)s"
-        if cmd.code or not cmd.database :
-            kind = "code_version_hash" if both else "dbv_hash"
-            print (fmt % dict (kind = kind, dbv = dbv))
-        if cmd.database :
-            try :
-                db_man = self.DB_Man.connect (apt, url)
-            except MOM.Error.Incompatible_DB_Version as exc :
-                db_meta_data = exc.db_meta_data
-            else :
-                db_meta_data = db_man.db_meta_data
-            dbv  = portable_repr (db_meta_data.dbv_hash)
-            print (fmt % dict (kind = "database_version_hash", dbv = dbv))
-    # end def _handle_version_hash
-
     def _handle_delete (self, cmd) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         if cmd.verbose :
@@ -552,6 +530,29 @@ class MOM_Command (TFL.Command.Root_Command) :
         TFL.Environment.py_shell (globs)
     # end def _handle_shell
 
+    def _handle_version_hash (self, cmd) :
+        both     = cmd.database and cmd.code
+        verbose  = cmd.verbose or both
+        apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
+        dbv      = apt.db_version_hash
+        fmt      = "%(dbv)s"
+        if verbose :
+            dbv  = portable_repr (dbv)
+            fmt  = "%(kind)s = %(dbv)s"
+        if cmd.code or not cmd.database :
+            kind = "code_version_hash" if both else "dbv_hash"
+            print (fmt % dict (kind = kind, dbv = dbv))
+        if cmd.database :
+            try :
+                db_man = self.DB_Man.connect (apt, url)
+            except MOM.Error.Incompatible_DB_Version as exc :
+                db_meta_data = exc.db_meta_data
+            else :
+                db_meta_data = db_man.db_meta_data
+            dbv  = portable_repr (db_meta_data.dbv_hash)
+            print (fmt % dict (kind = "database_version_hash", dbv = dbv))
+    # end def _handle_version_hash
+
     def _load_scope (self, apt, url, journal_dir = None) :
         result = self.Scope.load (apt, url)
         if journal_dir :
@@ -603,6 +604,162 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _setup_journal
 
 Command = MOM_Command # end class
+
+### «text» ### start of documentation
+__doc__ = r"""
+Class `MOM.Command`
+=====================
+
+.. class:: Command
+
+  `MOM.Command` defines an extensible command for applications based on MOM.
+
+  `MOM.Command` defines sub-commands for managing object models and the
+  databases where they are stored, including:
+
+  .. class:: Command._Auth_Mig_
+
+    Sub-command ``auth_mig`` to create a migration of the authorization
+    objects.
+
+  .. class:: Command._Create_
+
+    Sub-command ``create`` to create a new database specified by `-db_url`.
+
+  .. class:: Command._Delete_
+
+    Sub-command ``delete`` to delete the existing database specified by
+    `-db_url`.
+
+  .. class:: Command._Info_
+
+    Sub-command ``info`` to display info about the database specified by
+    `-db_url`.
+
+  .. class:: Command._Load_Auth_Mig_
+
+    Sub-command ``load_auth_mig`` to load a migration of the authorization
+    objects.
+
+  .. class:: Command._Migrate_
+
+    Sub-command to migrate the database specified by `-db_url` to
+    `-target_db_url`.
+
+  .. class:: _Readonly_
+
+    Sub-command to change readonly-state of database.
+
+  .. class:: _Script_
+
+    Sub-command to run one or more scripts.
+
+    The scripts are run in a context providing the variables:
+
+    .. data:: cmd
+
+      The :class:`~_TFL.CAO.CAO` instance of the command. One can access
+      argument and option values via ``cmd``, e.g., ``cmd.target_db_url``.
+
+    .. data:: Q
+
+      The query expression generator. ``Q`` is an instance of
+      :class:`~_MOM.Q_Exp.Base` and allows the specification of symbolic
+      queries.
+
+      For instance::
+
+        Q.last_name == "tanzer"
+
+      is a query expression that selects all objects with a value of "tanzer"
+      for the attribute ``last_name``.
+
+    .. data:: scope
+
+      The scope connected to the currently open database, if any. ``scope`` is
+      an instance of :class:`~_MOM.Scope.Scope`. Via ``scope``, one can query
+      and change the object model.
+
+      For instance::
+
+        scope.PAP.Person.query (Q.last_name.STARTSWITH ("tan")).all ()
+
+      returns all instances of the essential type ``PAP.Person`` whose
+      ``last_name`` starts with the value "tan".
+
+      To create a new instance of ``PAP.Person``, one can use::
+
+        scope.PAP.Person \
+            ( "Tanzer", "Christian"
+            , lifetime = ("19590926", )
+            , raw      = True
+            )
+
+      ``scope.etypes`` maps the names of essential types to the corresponding
+      classes and can be used to find the names of all essential types.
+
+  .. class:: _Shell_
+
+    Sub-command to open an interactive python shell.
+
+    The shell runs in the same context as described for :class:`_Script_`.
+
+  .. class:: _Version_Hash_
+
+    Sub-command to show version-hash of program or database or both.
+
+  :class:`Command` provides ther API:
+
+  .. attribute:: default_db_name
+
+    The default name for a database of this application.
+
+  .. attribute:: default_mig_auth_file
+
+    Default name for auth migrations, used by :meth:`dynamic_defaults` to set
+    `mig_auth_file`.
+
+  .. method:: app_type
+
+    Returns a derived app-type, an instance of
+    :class:`~_MOM.App_Type._App_Type_D_`.
+
+  .. method:: app_type_and_url
+
+    Returns a derived app-type and database url.
+
+  .. method:: dynamic_defaults
+
+    Calculates dynamic default values for the options `db_name` and
+    `mig_auth_file`, in addition to the dynamic defaults computed by the
+    super-method :meth:`~_TFL.Command.Command.dynamic_defaults`.
+
+  .. method:: scope
+
+    Creates or loads a scope.
+
+  The final application specific class derived from :class:`Command` need to
+  define the class variables
+
+  .. attribute:: ANS
+
+    Refers to the package namespace defining the application specific object
+    model.
+
+  .. attribute:: nick
+
+    The nick name of the application.
+
+  .. attribute:: _default_db_name
+
+    The default name for a database of this application (used by the property
+    computing :attr:`default_db_name`).
+
+
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
 
 if __name__ != "__main__" :
     MOM._Export ("Command", "_Sub_Command_")
