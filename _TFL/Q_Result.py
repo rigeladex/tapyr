@@ -57,6 +57,8 @@
 #     9-Oct-2013 (CT) Use `adapt__bool__` (3-compatibility)
 #     4-Apr-2014 (CT) Use `TFL.Q`, not `TFL.Attr_Query ()`
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
+#     7-Aug-2015 (CT) Add class and method docstrings to `_Q_Result_`,
+#                     `Q_Result`, and `Q_Result_Composite`
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
@@ -158,7 +160,8 @@ Provide filtering and ordering functions over query result::
     >>> qg.group_by (lambda x : x).all ()
     [1, 2, 3, 4, 5]
 
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+.. autoclass:: _Q_Result_
+ :members:
 
 """
 
@@ -325,6 +328,7 @@ class _Q_Filter_Distinct_ (TFL.Meta.Object) :
 
 @pyk.adapt__bool__
 class _Q_Result_ (TFL.Meta.Object) :
+    """Base class for :class:`Q_Result` and :class:`Q_Result_Composite`."""
 
     Q             = TFL.Q
 
@@ -338,10 +342,12 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def __init__
 
     def all (self) :
+        """Return all elements of query result as a list"""
         return list (self)
     # end def all
 
     def attr (self, getter, allow_duplicates = False) :
+        """Restrict query result to the attribute specified by `getter`."""
         _Attr_ = self._Attr_
         if isinstance (getter, pyk.string_types) :
             getter = getattr (self.Q, getter)
@@ -352,6 +358,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def attr
 
     def attrs (self, * getters, ** kw) :
+        """Restrict query result to the attributes specified by `getters`."""
         allow_duplicates = kw.pop ("allow_duplicates", False)
         if kw :
             raise TypeError ("Unknown keyword arguments %s" % sorted (kw))
@@ -378,12 +385,14 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def attrs
 
     def count (self) :
+        """Return number of elements in query result."""
         if self._cache is None :
             self._fill_cache ()
         return len (self._cache)
     # end def count
 
     def distinct (self, * criteria) :
+        """Restrict query result to distinct elements."""
         n = len (criteria)
         if n == 0 :
             _distinct = uniq
@@ -397,6 +406,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def distinct
 
     def filter (self, * criteria, ** kw) :
+        """Restrict query result to elements matching the `criteria`."""
         if kw :
             criteria = list (criteria)
             Q = self.Q
@@ -412,6 +422,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def filter
 
     def first (self) :
+        """Return first element of query result."""
         try :
             return first (self)
         except IndexError :
@@ -419,6 +430,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def first
 
     def group_by (self, * criteria, ** kw) :
+        """Group query result by `criteria`."""
         if kw :
             criteria = list (criteria)
             Q = self.Q
@@ -434,14 +446,19 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def group_by
 
     def limit (self, limit) :
+        """Limit query result to `limit` elements."""
         return self._Q_Result_Limited_ (self, limit, self._distinct)
     # end def limit
 
     def offset (self, offset) :
+        """Discard elements of query result with index < `offset`."""
         return self._Q_Result_Offset_ (self, offset, self._distinct)
     # end def offset
 
     def one (self) :
+        """Return first and only element of query result. Raise IndexError if
+           query result contains more than one element.
+        """
         result = first (self)
         if len (self._cache) > 1 :
             raise IndexError \
@@ -450,10 +467,12 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def one
 
     def order_by (self, * criteria) :
+        """Order elements of query result by `criteria`."""
         return self._Q_Result_Ordered_ (self, criteria, self._distinct)
     # end def order_by
 
     def slice (self, start, stop = None) :
+        """Restrict elements of query result to slice `start:stop`"""
         return self._Q_Result_Sliced_ (self, start, stop, self._distinct)
     # end def slice
 
@@ -624,6 +643,9 @@ class _Q_Result_Sliced_ (_Q_Result_) :
 # end class _Q_Result_Sliced_
 
 class Q_Result (_Q_Result_) :
+    """Lazy query result. The elements of the query result are only
+       materialized when `all`, `count`, `first`, or `iter` or called.
+    """
 
     def __init__ (self, iterable, _distinct = False) :
         self.iterable  = iterable
@@ -642,6 +664,10 @@ class Q_Result (_Q_Result_) :
 
 @pyk.adapt__bool__
 class Q_Result_Composite (_Q_Result_) :
+    """Lazy query result for composite query. The elements of the composite
+       query result are only materialized when `all`, `count`, `first`, or
+       `iter` or called.
+    """
 
     @TFL.Decorator
     def super_ordered (q) :
