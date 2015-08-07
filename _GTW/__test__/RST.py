@@ -1223,7 +1223,7 @@ _test_doc = r"""
                   , 'ui_name' : 'Races counted'
                   }
                 , { 'default_value' : ''
-                  , 'description' : 'Integer attribute.'
+                  , 'description' : 'Integer value.'
                   , 'example' : '42'
                   , 'is_changeable' : False
                   , 'is_required' : False
@@ -1520,7 +1520,7 @@ _test_doc = r"""
                   , 'ui_name' : 'Races counted'
                   }
                 , { 'default_value' : ''
-                  , 'description' : 'Integer attribute.'
+                  , 'description' : 'Integer value.'
                   , 'example' : '42'
                   , 'is_changeable' : False
                   , 'is_required' : False
@@ -1532,7 +1532,7 @@ _test_doc = r"""
                   , 'ui_name' : 'Year'
                   }
                 , { 'default_value' : ''
-                  , 'description' : 'Integer attribute.'
+                  , 'description' : 'Integer value.'
                   , 'example' : '42'
                   , 'is_changeable' : False
                   , 'is_required' : False
@@ -1831,7 +1831,7 @@ _test_doc = r"""
                   , 'ui_name' : 'Races counted'
                   }
                 , { 'default_value' : ''
-                  , 'description' : 'Integer attribute.'
+                  , 'description' : 'Integer value.'
                   , 'example' : '42'
                   , 'is_changeable' : False
                   , 'is_required' : False

@@ -294,6 +294,7 @@
 #    30-Jul-2015 (CT) Add argument `essence`, `picky` to `polisher`
 #    30-Jul-2015 (CT) Change `_kw_polished` to handle polisher errors
 #     3-Aug-2015 (CT) Use `_init_raw_default`, not literal `False`
+#    10-Aug-2015 (CT) Add documentation for introspective attribute properties
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    16-Dec-2015 (CT) Add `UI_Spec`
 #    18-Dec-2015 (CT) Change `_main__init__` to not pass `on_error` to
@@ -2219,6 +2220,7 @@ class MD_Change (_Ancestor_Essence) :
 
 # end class MD_Change
 
+### «text» ### start of documentation
 __doc__  = """
 Class `MOM.Id_Entity`
 =====================
@@ -2264,11 +2266,63 @@ Class `MOM.Id_Entity`
     `MOM.Id_Entity` defines a number of attributes that can be overriden by
     descendant classes:
 
-    - electric
+    .. attribute:: electric
 
-    - x_locked
+    .. attribute:: x_locked
 
-    - is_used
+    .. attribute:: is_used
+
+    Each essential type provides introspective properties referring to the
+    essential attributes:
+
+    .. attribute:: db_attr
+
+      All attributes stored in the database
+
+    .. attribute:: edit_attr
+
+      All editable attributes
+
+    .. attribute:: id_entity_attr
+
+      All attributes referring to instances of :class:`Id_Entity`
+
+    .. attribute:: link_ref_attr
+
+      All query attributes containing links to the essential type
+
+    .. attribute:: primary
+
+      All attributes that are part of the essential primary key
+
+    .. attribute:: primary_optional
+
+      All optional attributes that are part of the essential primary key
+
+    .. attribute:: primary_required
+
+      All required attributes that are part of the essential primary key
+
+    .. attribute:: q_able
+
+      All attributes that can be used in query expressions
+
+    .. attribute:: rev_ref_attr
+
+      All query attributes containing reverse references to the essential type
+
+    .. attribute:: surrogate_attr
+
+      All attributes containing surrogate keys
+
+    .. attribute:: ui_attr
+
+     All attributes accessible in a user interface (not all of these are
+     editable)
+
+    .. attribute:: user_attr
+
+      All editable attributes except for the ones listed by :attr:`primary`
 
     .. _`essential predicates`:
 

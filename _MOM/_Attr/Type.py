@@ -359,6 +359,8 @@
 #     3-Aug-2015 (CT) Redefine `_A_String_Base_.as_string` to not use `format`
 #                     on empty string `value`
 #     3-Aug-2015 (CT) Change `_A_Composite_.from_string` to try downcast
+#    10-Aug-2015 (CT) Add `__doc__auto_classes`
+#    10-Aug-2015 (CT) Add documentation about `raw value`
 #     7-Oct-2015 (CT) Don't use `bool` for `datetime.time` instances
 #                     (Python 3.5 compatibility)
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
@@ -1331,7 +1333,7 @@ class _A_Float_ (Atomic_Json_Mixin, _A_Number_) :
 # end class _A_Float_
 
 class _A_Int_ (Atomic_Json_Mixin, _A_Number_) :
-    """Integer attribute."""
+    """Integer value."""
 
     typ               = _ ("Int")
     P_Type            = int
@@ -3034,7 +3036,41 @@ class A_Year (A_Int) :
 
 # end class A_Year
 
-__doc__ = """
+__all__  = tuple \
+    (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
+
+__all__ += \
+    ( "decimal"
+    , "is_attr_type"
+    , "Eval_Mixin"
+    , "Q"
+    , "Pickled_Type_Spec"
+    , "Syntax_Re_Mixin"
+    )
+
+def __doc__auto_classes () :
+    from textwrap import dedent
+    gs  = globals ()
+    lws = Regexp  ("\n +")
+    fmt = """\
+.. class:: %s
+
+%s%s
+"""
+    for k in sorted (__all__) :
+        if k.startswith ("A_") and not k == "A_Attr_Type" :
+            cls = gs [k]
+            doc = dedent ((cls.__doc__ or "%s value" & (cls.typ, )).strip ())
+            if lws.search (doc) :
+                indent = len (lws.group (0)) - 1
+            else :
+                indent = 4
+                doc    = doc.replace ("\n", "\n    ")
+            yield fmt % (k, " " * indent, doc)
+# end def __doc__auto_classes
+
+### «text» ### start of documentation
+__doc__ = r"""
 Class `MOM.Attr.A_Attr_Type`
 ============================
 
@@ -3073,10 +3109,24 @@ Class `MOM.Attr.A_Attr_Type`
       Defines the human-readable name of
       the abstract attribute type, e.g., `int`, `string`, or `name`.
 
+    .. _`raw value`:
+
     .. attribute:: needs_raw_value
 
       Specifies if the raw value needs to be stored for
       this attribute type.
+
+      A raw value is a string representation of an attribute's value. Raw
+      values are what is displayed and entered in a user interface. Internally,
+      the raw value is converted to a cooked value.
+
+      Depending on the attribute type, raw values can differ from cooked
+      values. For instance, for attributes like ``last_name`` and
+      ``first_name`` of the essential type ``PAP.Person`` the cooked value is
+      derived from the raw value by converting it to lower case. For attribute
+      values denoting frequencies, the raw value is a string that can contain a
+      unit like ``kHz`` or ``GHz``, while the cooked value is a floating point
+      value normalized to ``Hz``.
 
     Concrete attribute types are characterized by the properties:
 
@@ -3148,7 +3198,7 @@ Class `MOM.Attr.A_Attr_Type`
     .. attribute:: group
 
       A string that can be used to group a set of attributes
-      together. For instance, editors display attributes sorted
+      together. For instance, editors might display attributes sorted
       alphabetically by `(group, name)`.
 
     .. attribute:: rank
@@ -3167,19 +3217,7 @@ Class `MOM.Attr.A_Attr_Type`
       Specifies the database signature of the attribute type. This includes
       properties like `max_length`, `needs_raw_value`, etc.
 
-"""
-
-__all__  = tuple \
-    (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
-
-__all__ += \
-    ( "decimal"
-    , "is_attr_type"
-    , "Eval_Mixin"
-    , "Q"
-    , "Pickled_Type_Spec"
-    , "Syntax_Re_Mixin"
-    )
+""" + "\n".join (__doc__auto_classes ())
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

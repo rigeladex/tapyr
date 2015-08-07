@@ -31,6 +31,8 @@
 #     9-Sep-2014 (CT) Redefine `Base`, `_Get_`;
 #                     add `_Get_._E_Type_Restriction_`, `_Get_.RAW`
 #    11-Sep-2014 (CT) Add `_E_Type_Restriction_.__getitem__`; add doctest
+#     7-Aug-2015 (CT) Add documentation
+#    10-Aug-2015 (CT) Continue adding documentation
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
@@ -48,54 +50,91 @@ import _TFL.Decorator
 import _TFL.Q_Exp
 
 class _MOM_Base_ (TFL.Q_Exp.Base) :
-    """Query generator supporting TFL.Q query expressions plus RAW queries
-       and queries with type restrictions.
+    """Query generator supporting :mod:`~_TFL.Q_Exp` query expressions plus RAW
+       queries and queries with type restrictions.
 
-    >>> Q.RAW.foo.bar.qux
-    Q.RAW.foo.bar.qux
+       .. _`Raw queries`:
 
-    >>> Q.foo.RAW.bar.qux
-    Q.RAW.foo.bar.qux
+       **Raw queries**
 
-    >>> Q.foo.bar.RAW.qux
-    Q.RAW.foo.bar.qux
+       A Q-expression like ``Q.foo`` refers the
+       :attr:`cooked value<_MOM._Attr.Type.A_Attr_Type.needs_raw_value>`
+       of the attribute named ``foo``. To define a Q-expression referring
+       to the :attr:`raw value<_MOM._Attr.Type.A_Attr_Type.needs_raw_value>`
+       of an attribute, Q.RAW.foo can be used:
 
-    >>> Q.foo.bar.qux.RAW
-    Q.RAW.foo.bar.qux
+       >>> Q.RAW.foo.bar.qux
+       Q.RAW.foo.bar.qux
 
-    >>> Q.my_node.manager ["PAP.Person"]
-    Q.my_node.manager ["PAP.Person"]
+       >>> Q.foo.RAW.bar.qux
+       Q.RAW.foo.bar.qux
 
-    >>> q1 = Q.OR (Q.my_node.manager, Q.my_node.owner) ["PAP.Person"]
-    >>> q2 = Q.my_node.OR (Q.manager, Q.owner) [Q.PAP.Person]
+       >>> Q.foo.bar.RAW.qux
+       Q.RAW.foo.bar.qux
 
-    >>> q1
-    <_OR_ [Q.my_node.manager ["PAP.Person"], Q.my_node.owner ["PAP.Person"]]>
+       >>> Q.foo.bar.qux.RAW
+       Q.RAW.foo.bar.qux
 
-    >>> q2
-    <_OR_ [Q.my_node.manager ["PAP.Person"], Q.my_node.owner ["PAP.Person"]]>
+       .. _`Type restrictions`:
 
-    >>> qh = Q.my_node.OR (Q.manager, Q.owner)
-    >>> qh
-    <_OR_ [Q.my_node.manager, Q.my_node.owner]>
+       **Type restrictions**
 
-    >>> qh.OR (Q [Q.PAP.Person], Q [Q.PAP.Company])
-    <_OR_ [Q.my_node.manager ["PAP.Person"], Q.my_node.owner ["PAP.Person"], Q.my_node.manager ["PAP.Company"], Q.my_node.owner ["PAP.Company"]]>
+       MOM supports polymorphic attributes, i.e., attributes that refer to a
+       partial type or a non-partial type with descendent classes. A
+       Q-expression referring to a polymorphic attribute is restricted to the
+       attributes of the attribute's polymorphic type.
 
-    >>> q3 = Q.my_node.manager.OR (Q ["PAP.Association"], Q ["PAP.Company"])
-    >>> q3
-    <_OR_ [Q.my_node.manager ["PAP.Association"], Q.my_node.manager ["PAP.Company"]]>
+       For instance, ``PAP.Subject`` is the ancestor of ``PAP.Person`` and
+       ``PAP.Company``. A Q-expression for an polymorphic attribute ``manager``
+       referring to instances of ``PAP.Subject`` is restricted to the
+       attributes defined by ``PAP.Subject``. If one wants to query for
+       instances of ``PAP.Person`` referred to by ``manager``, a type
+       restriction is needed.
 
-    >>> q3 == 23
-    <Filter_Or [Q.my_node.manager ["PAP.Association"] == 23, Q.my_node.manager ["PAP.Company"] == 23]>
+       To restrict ``my_node.manager`` to ``PAP.Person``:
 
-    >>> q3.name == "ISAF"
-    <Filter_Or [Q.my_node.manager ["PAP.Association"].name == 'ISAF', Q.my_node.manager ["PAP.Company"].name == 'ISAF']>
+        >>> Q.my_node.manager ["PAP.Person"]
+        Q.my_node.manager ["PAP.Person"]
 
-    >>> Q.manager [Q.PAP.Company].owner [Q.PAP.Person]
-    Q.manager ["PAP.Company"].owner ["PAP.Person"]
+        >>> q1 = Q.OR (Q.my_node.manager, Q.my_node.owner) [Q.PAP.Person]
+        >>> q2 = Q.my_node.OR (Q.manager, Q.owner) [Q.PAP.Person]
 
-    """
+        >>> q1
+        <_OR_ [Q.my_node.manager ["PAP.Person"], Q.my_node.owner ["PAP.Person"]]>
+
+        >>> q2
+        <_OR_ [Q.my_node.manager ["PAP.Person"], Q.my_node.owner ["PAP.Person"]]>
+
+        To restrict ``my_node.manager`` or ``my_node.owner`` to ``PAP.Person``
+        or ``PAP.Company``:
+
+        >>> qh = Q.my_node.OR (Q.manager, Q.owner)
+        >>> qh
+        <_OR_ [Q.my_node.manager, Q.my_node.owner]>
+
+        >>> qh.OR (Q [Q.PAP.Person], Q [Q.PAP.Company])
+        <_OR_ [Q.my_node.manager ["PAP.Person"], Q.my_node.owner ["PAP.Person"], Q.my_node.manager ["PAP.Company"], Q.my_node.owner ["PAP.Company"]]>
+
+        To restrict ``my_node.manager`` to ``PAP.Association`` or
+        ``PAP.Company``:
+
+        >>> q3 = Q.my_node.manager.OR (Q ["PAP.Association"], Q ["PAP.Company"])
+        >>> q3
+        <_OR_ [Q.my_node.manager ["PAP.Association"], Q.my_node.manager ["PAP.Company"]]>
+
+        >>> q3 == 23
+        <Filter_Or [Q.my_node.manager [Q.PAP.Association] == 23, Q.my_node.manager ["PAP.Company"] == 23]>
+
+        >>> q3.name == "ISAF"
+        <Filter_Or [Q.my_node.manager ["PAP.Association"].name == 'ISAF', Q.my_node.manager ["PAP.Company"].name == 'ISAF']>
+
+        To restrict ``manager`` to ``PAP.Company`` instances whose ``owner`` is
+        an instance of ``PAP.Person``:
+
+        >>> Q.manager [Q.PAP.Company].owner [Q.PAP.Person]
+        Q.manager ["PAP.Company"].owner ["PAP.Person"]
+
+        """
 
     _real_name       = "Base"
 
@@ -199,9 +238,8 @@ class _E_Type_Restriction_ (TFL.Q_Exp._Get_) :
 # end class _E_Type_Restriction_
 
 class Raw_Attr_Query (Base) :
-    """Syntactic sugar for creating Filter objects based on raw attribute
-       queries.
-    """
+    ### Syntactic sugar for creating Filter objects based on raw attribute
+    ### queries.
 
     def __getattr__ (self, name) :
         if name.startswith ("__") and name.endswith ("__") :
@@ -259,6 +297,188 @@ class _Get_Raw_ (TFL.Q_Exp._Get_) :
     # end def __repr__
 
 # end class _Get_Raw_
+
+### «text» ### start of documentation
+__doc__ = r"""
+Module `MOM.Q_Exp`
+==================
+
+This module implements a query expression language based on
+:mod:`TFL.Q_Exp<_TFL.Q_Exp>`.
+
+It exports the query generator instance :obj:`Q` which is used to define
+symbolic query expressions that can be used for queries of the MOM object
+model. Unlike :obj:`TFL.Q<_TFL.Q_Exp.Q>`, :obj:`MOM.Q<_MOM.Q_Exp.Q>` ignores
+`AttributeError` exceptions.
+
+One queries the object model by calling the
+:meth:`~_MOM.E_Type_Manager.Entity.query` method of the appropriate etype
+manager. Strict queries return only direct instances of the essential class in
+question, but not instances of derived classes. Non-strict queries are
+transitive, i.e., they return instances of the essential class in question and
+all its descendants. For partial types, strict queries return nothing. By
+default, queries are non-strict (transitive). Passing `strict = True` to a
+query makes it strict.
+
+The :meth:`~_MOM.E_Type_Manager.Entity.query` method returns a (lazy) query
+result that is an instance of, or compatible to,
+:class:`~_TFL.Q_Result._Q_Result_`.
+
+One can pass Q-expressions to :meth:`~_MOM.E_Type_Manager.Entity.query` or to
+the `attr`, `attrs`, `distinct`, `filter`, `group_by`, or `order_by` methods of
+the query result. These Q-expressions can use all attributes stored in the
+database and all query attributes, including reverse reference attributes; each
+E_Type provides a property :attr:`~_MOM.Entity.Id_Entity.q_able` listing the
+query-able attributes.
+
+Simple example::
+
+    # Query for all persons whose last name contains the string "tan"
+    pq0 = scope.PAP.Person.query (Q.last_name.CONTAINS ("tan"))
+
+    # Order the elements of the query result by last_name and first_name
+    pq1 = pq0.order_by (Q.last_name, Q.first_name)
+
+    # Limit the number of elements in query result to five
+    pq2 = pq1.limit (5)
+
+    # Materialize the elements of the query result
+    persons = pq2.all ()
+
+    # How many elements did the original query match?
+    pql = pq0.count ()
+
+In SQL terminology, some Q-expressions will trigger
+automatic joins. For instance::
+
+    phaq = scope.PAP.Person_has_Account.query \
+        (Q.right.name.ENDSWITH ("@me.com")).distinct ()
+
+Here, `Q.right` refers to an attribute of `PAP.Person_has_Account` but
+`Q.right.name` refers to an attribute of `scope.Auth.Account`; for a SQL
+database, a join is needed to evaluate the query.
+
+Note, that normally the Q-expressions don't mention any types, tables, or
+columns:
+
+- Q-expressions are essential in that one doesn't need to know
+
+  + which kind of database is used to store the object model;
+
+  + which tables, if any, are storing which attributes;
+
+  + exactly which set of types is involved in a query
+    (for polymorphic queries).
+
+  One and the same Q-expression can be thus be used to query different
+  implementations of the same, or even slightly different, essential object
+  model.
+
+- The same Q-expression can be used to query for instances of different
+  types or tables.
+
+MOM supports polymorphic queries, possibly with
+:ref:`type restriction<Type restrictions>`, like::
+
+    scope.PAP.Subject_has_Property.query \
+        ( Q.left [Q.PAP.Person].last_name.RAW == "Tanzer"
+        , Q.right.desc == "office"
+        )
+
+In this example, ``PAP.Subject`` is an ancestor of ``PAP.Person``,
+``PAP.Company``, and other classes; ``PAP.Property`` is an ancestor of
+``PAP.Address``, ``PAP.Phone``, and other classes. ``Q.left [Q.PAP.Person]``
+restricts the query result to those links where the ``left`` role refers to an
+instance of ``PAP.Person``. Therefore, this query will return links of various
+associations like ``PAP.Person_has_Account``, ``PAP.Person_has_Email``, or
+``PAP.Person_has_Phone``!
+
+For one specific object model implemented with a SQL database, the resulting
+SQL query might look like::
+
+    SELECT
+      mom_id_entity.electric AS mom_id_entity_electric,
+      mom_id_entity.last_cid AS mom_id_entity_last_cid,
+      mom_id_entity.pid AS mom_id_entity_pid,
+      mom_id_entity.type_name AS mom_id_entity_type_name,
+      mom_id_entity.x_locked AS mom_id_entity_x_locked,
+      pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+      pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+      pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+      pap_subject_has_property."left" AS pap_subject_has_property_left,
+      pap_subject_has_property."right" AS pap_subject_has_property_right,
+      pap_subject_has_property.pid AS pap_subject_has_property_pid
+    FROM mom_id_entity
+      JOIN pap_subject_has_property
+        ON mom_id_entity.pid = pap_subject_has_property.pid
+      LEFT OUTER JOIN pap_subject_has_phone
+        ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+      LEFT OUTER JOIN pap_person
+        ON pap_person.pid = pap_subject_has_property."left"
+      LEFT OUTER JOIN pap_address
+        ON pap_address.pid = pap_subject_has_property."right"
+      LEFT OUTER JOIN pap_email
+        ON pap_email.pid = pap_subject_has_property."right"
+      LEFT OUTER JOIN pap_phone
+        ON pap_phone.pid = pap_subject_has_property."right"
+      LEFT OUTER JOIN pap_url
+        ON pap_url.pid = pap_subject_has_property."right"
+    WHERE pap_person.__raw_last_name = :__raw_last_name_1
+       AND (  pap_address."desc" = :desc_1
+           OR pap_email."desc" = :desc_2
+           OR pap_phone."desc" = :desc_3
+           OR pap_url."desc" = :desc_4
+           )
+
+with the parameters::
+
+    __raw_last_name_1    : 'Tanzer'
+    desc_1               : 'office'
+    desc_2               : 'office'
+    desc_3               : 'office'
+    desc_4               : 'office'
+
+Adding a type restriction for ``Q.right``, like::
+
+    scope.PAP.Subject_has_Property.query \
+        ( Q.left  [Q.PAP.Legal_Entity]
+        , Q.right [Q.PAP.Phone].cc == "43"
+        )
+
+reduces the number of joins for the right link role::
+
+    SELECT
+      mom_id_entity.electric AS mom_id_entity_electric,
+      mom_id_entity.last_cid AS mom_id_entity_last_cid,
+      mom_id_entity.pid AS mom_id_entity_pid,
+      mom_id_entity.type_name AS mom_id_entity_type_name,
+      mom_id_entity.x_locked AS mom_id_entity_x_locked,
+      pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+      pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+      pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+      pap_subject_has_property."left" AS pap_subject_has_property_left,
+      pap_subject_has_property."right" AS pap_subject_has_property_right,
+      pap_subject_has_property.pid AS pap_subject_has_property_pid
+    FROM mom_id_entity
+      JOIN pap_subject_has_property
+        ON mom_id_entity.pid = pap_subject_has_property.pid
+      LEFT OUTER JOIN pap_subject_has_phone
+        ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+      LEFT OUTER JOIN pap_association AS pap_association__1
+        ON pap_association__1.pid = pap_subject_has_property."left"
+      LEFT OUTER JOIN pap_company AS pap_company__1
+        ON pap_company__1.pid = pap_subject_has_property."left"
+      LEFT OUTER JOIN pap_phone
+        ON pap_phone.pid = pap_subject_has_property."right"
+    WHERE (pap_association__1.pid IS NOT NULL
+       OR pap_company__1.pid IS NOT NULL)
+       AND pap_phone.cc = :cc_1
+
+In a different application that doesn't import ``PAP.Association``,
+exactly the same  query would result in **one less join**
+(because there wouldn't be a table ``pap_association``).
+
+"""
 
 if __name__ != "__main__" :
     MOM._Export ("Q")

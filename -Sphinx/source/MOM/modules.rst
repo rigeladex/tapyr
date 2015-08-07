@@ -7,6 +7,9 @@ Modules of Package-NS `MOM`
 .. automodule:: _MOM.Object
 .. automodule:: _MOM.Link
 .. automodule:: _MOM.E_Type_Manager
+.. automodule:: _MOM.Q_Exp
+     :members:
+
 .. automodule:: _MOM.App_Type
 .. automodule:: _MOM.Scope
 
