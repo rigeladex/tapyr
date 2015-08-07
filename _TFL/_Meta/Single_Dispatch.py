@@ -30,6 +30,7 @@
 #    13-Apr-2015 (CT) Add `derived` and `override_type`
 #                     + factor `_add_types`; add `_derived`
 #                     + DRY `Single_Dispatch_Method.add_type`
+#     7-Aug-2015 (CT) Change `Single_Dispatch.__init__` to save `__doc__`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,8 @@ class Single_Dispatch (TFL.Meta.Object) :
         if dispatch_on is not None :
             self.dispatch_on = dispatch_on
         functools.wraps (func) (self)
+        ### `functools.wraps` fails to transfer `__doc__`
+        self.__doc__  = getattr (func, "__doc__", None)
     # end def __init__
 
     def __call__ (self, * args, ** kw) :

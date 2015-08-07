@@ -76,273 +76,6 @@
 #    ««revision-date»»···
 #--
 
-"""
-Module `Q_Exp`
-===============
-
-This module implements a query expression language::
-
-    >>> from _TFL.Record import Record as R
-    >>> from datetime import date, datetime
-    >>> r1 = R (foo = 42, bar = 137, baz = 11, quux = R (a = 1, b = 200))
-    >>> r2 = R (foo = 3,  bar = 9,   qux = "abcdef", d = date (2010, 12, 14), dt = datetime (2010, 12, 14, 11, 36))
-    >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
-    >>> r4 = R (foo = 45)
-    >>> q0 = Q.foo
-    >>> q0._name
-    'foo'
-    >>> q0.predicate (r1)
-    42
-
-    >>> qm = - q0
-    >>> qm
-    - Q.foo
-    >>> qm.predicate (r1)
-    -42
-
-    >>> q1 = Q.foo == Q.bar
-    >>> q1, q1.lhs, q1.rhs, normalized_op_name (q1.op.__name__)
-    (Q.foo == Q.bar, Q.foo, Q.bar, 'eq')
-    >>> q1.lhs._name, q1.rhs._name
-    ('foo', 'bar')
-    >>> q1.predicate (r1)
-    False
-
-    >>> q2 = Q.foo + Q.bar
-    >>> q2, q2.lhs, q2.rhs, normalized_op_name (q2.op.__name__)
-    (Q.foo + Q.bar, Q.foo, Q.bar, 'add')
-    >>> q2.predicate (r1)
-    179
-
-    >>> q3 = Q.foo % Q.bar == Q.baz
-    >>> q3, q3.lhs, q3.rhs
-    (Q.foo % Q.bar == Q.baz, Q.foo % Q.bar, Q.baz)
-    >>> q3.predicate (r1)
-    False
-    >>> q4 = Q.bar % Q.foo
-    >>> q4.predicate (r1), Q.baz.predicate (r1)
-    (11, 11)
-    >>> (q4 == Q.baz).predicate (r1)
-    True
-    >>> (~ (q4 == Q.baz)).predicate (r1)
-    False
-
-    >>> q3.lhs.predicate (r1)
-    42
-
-    >>> q5 = Q.foo.BETWEEN (10, 100)
-    >>> q5, q5.lhs, q5.args, normalized_op_name (q5.op.__name__)
-    (Q.foo.between (10, 100), Q.foo, (10, 100), 'between')
-    >>> q5.predicate (r1)
-    True
-    >>> q5.predicate (r2)
-    False
-
-    >>> q6 = Q.foo.IN ((1, 3, 9, 27))
-    >>> q6.predicate (r1)
-    False
-    >>> q6.predicate (r2)
-    True
-
-    >>> QQ = Q.__class__ (Ignore_Exception = (AttributeError, ))
-    >>> QQ.qux.predicate (r1) is QQ.undef
-    True
-    >>> with expect_except (AttributeError) :
-    ...     Q.qux.predicate (r1) is Q.undef
-    AttributeError: qux
-
-    >>> q7 = QQ.qux.CONTAINS ("bc")
-    >>> q7.predicate (r1)
-    >>> q7.predicate (r2)
-    True
-    >>> q8 = QQ.qux.ENDSWITH ("fg")
-    >>> q8.predicate (r1)
-    >>> q8.predicate (r2)
-    False
-    >>> q9 = QQ.qux.ENDSWITH ("ef")
-    >>> q9.predicate (r1)
-    >>> q9.predicate (r2)
-    True
-
-    >>> qa = QQ.qux.STARTSWITH ("abc")
-    >>> qa.predicate (r1)
-    >>> qa.predicate (r2)
-    True
-
-    >>> Q [0] ((2,4))
-    2
-    >>> Q [1] ((2,4))
-    4
-    >>> Q [-1] ((2,4))
-    4
-    >>> Q [-2] ((2,4))
-    2
-
-    >>> Q.foo * -1
-    Q.foo * -1
-    >>> -1 * Q.foo
-    -1 * Q.foo
-
-    >>> qm = Q.foo.D.MONTH (2, 2010)
-    >>> qm, qm.lhs, normalized_op_name (qm.op.__name__)
-    (Q.foo.between (datetime.date(2010, 2, 1), datetime.date(2010, 2, 28)), \
-        Q.foo, 'between')
-
-    >>> Q.foo.D.MONTH (2, 2000)
-    Q.foo.between (datetime.date(2000, 2, 1), datetime.date(2000, 2, 29))
-
-    >>> Q.foo.DT.QUARTER (4, 2010)
-    Q.foo.between (datetime.datetime(2010, 10, 1, 0, 0), \
-      datetime.datetime(2010, 12, 31, 23, 59, 59))
-
-    >>> Q.foo.D.YEAR (2011)
-    Q.foo.between (datetime.date(2011, 1, 1), datetime.date(2011, 12, 31))
-    >>> Q.foo.DT.YEAR (2012)
-    Q.foo.between (datetime.datetime(2012, 1, 1, 0, 0), \
-        datetime.datetime(2012, 12, 31, 23, 59, 59))
-
-    >>> Q.d.D.MONTH (12, 2010) (r2)
-    True
-    >>> Q.d.D.MONTH (1, 2010) (r2)
-    False
-    >>> Q.d.D.QUARTER (4, 2010) (r2)
-    True
-    >>> with expect_except (TypeError) :
-    ...     Q.dt.D.QUARTER (4, 2010) (r2)
-    TypeError: can't compare datetime.datetime to datetime.date
-    >>> Q.dt.DT.QUARTER (4, 2010) (r2)
-    True
-
-    >>> (Q.bar == Q.baz) (r3)
-    False
-    >>> Q.bar.STARTSWITH ("ab") (r3)
-    False
-    >>> Q.bar.CONTAINS ("bc") (r3)
-    False
-
-    >>> print ("%.3f" % ((Q.foo / 7) (r4), ))
-    6.429
-    >>> (Q.foo // 7) (r4)
-    6
-    >>> print ("%.3f" % ((70 / Q.foo) (r4), ))
-    1.556
-    >>> (70 // Q.foo) (r4)
-    1
-
-Python handles `a < b < c` as `(a < b) and (b < c)`. Unfortunately, there is
-no way to simulate this by defining operator methods. Therefore,
-`_Bin_.__nonzero__` raises a TypeError to signal that an expression like
-`Q.a < Q.b < Q.c` isn't possible::
-
-    >>> with expect_except (TypeError) :
-    ...     Q.a < Q.b < Q.c # doctest:+ELLIPSIS
-    TypeError: ...
-
-Query operators with boolean results, i.e., equality and ordering operators,
-cannot be used with any operators except `==` and `!=`::
-
-    >>> with expect_except (TypeError) :
-    ...     (Q.a < Q.b) < Q.c
-    TypeError: Operator `<` not applicable to boolean result of `Q.a < Q.b`, rhs: `Q.c`
-
-    >>> Q.a < Q.b + Q.c
-    Q.a < Q.b + Q.c
-    >>> Q.z + Q.a < Q.b + Q.c
-    Q.z + Q.a < Q.b + Q.c
-    >>> (Q.a < Q.b) == (Q.a % 2)
-    Q.a < Q.b == Q.a % 2
-    >>> (Q.a < Q.b) == (Q.a > 2)
-    Q.a < Q.b == Q.a > 2
-    >>> q = (Q.a < Q.b) == (Q.a % 2)
-    >>> q.lhs
-    Q.a < Q.b
-    >>> q.rhs
-    Q.a % 2
-    >>> display (q)
-    'eq (lt (Q.a, Q.b), mod (Q.a, 2))'
-
-But explicit parenthesis are necessary in some cases::
-
-    >>> with expect_except (TypeError) :
-    ...     Q.a < Q.b == Q.a % 2 # doctest:+ELLIPSIS
-    TypeError: ...
-
-Queries for nested attributes are also possible::
-
-    >>> qn = Q.quux.a
-    >>> qn._name
-    'quux.a'
-    >>> qn.predicate (r1)
-    1
-    >>> qm = Q.quux.b
-    >>> qm.predicate (r1)
-    200
-    >>> (qn > Q.foo) (r1)
-    False
-    >>> (qm > Q.foo) (r1)
-    True
-
-Q.SUM needs documenting::
-
-    >>> print (Q.SUM (1))
-    Q.SUM (1)
-    >>> print (Q.SUM (Q.finish - Q.start))
-    Q.SUM (Q.finish - Q.start)
-
-    >>> Q.SUM (1) (r1)
-    1
-    >>> Q.SUM (42) (r1)
-    42
-    >>> Q.SUM (Q.bar - Q.foo)  (r1)
-    95
-    >>> Q.SUM (Q.foo - Q.bar)  (r1)
-    -95
-
-`display` (also available as `TFL.Q.DISPLAY`) displays the structure of
-q-expressions::
-
-    >>> display (Q.foo < 42)
-    'lt (Q.foo, 42)'
-    >>> display (42 <= Q.foo)
-    'ge (Q.foo, 42)'
-
-    >>> display (Q.foo * 42)
-    'mul (Q.foo, 42)'
-    >>> display (Q.foo / 42)
-    'truediv (Q.foo, 42)'
-    >>> display (Q.foo // 42)
-    'floordiv (Q.foo, 42)'
-
-    >>> display (42 / Q.foo)
-    'truediv/r (Q.foo, 42)'
-    >>> display (42 * Q.foo)
-    'mul/r (Q.foo, 42)'
-
-    >>> Q.DISPLAY (Q.foo % 2 == 0)
-    'eq (mod (Q.foo, 2), 0)'
-    >>> Q.DISPLAY (Q.foo % 2 == Q.bar * 3)
-    'eq (mod (Q.foo, 2), mul (Q.bar, 3))'
-    >>> Q.DISPLAY (Q.foo % 2 == -Q.bar * 3)
-    'eq (mod (Q.foo, 2), mul (neg (Q.bar), 3))'
-    >>> Q.DISPLAY (- (Q.foo % 2 * -Q.bar / 3))
-    'neg (truediv (mul (mod (Q.foo, 2), neg (Q.bar)), 3))'
-
-    >>> Q.DISPLAY (~ (Q.foo % 2 * -Q.bar / 3))
-    'not (truediv (mul (mod (Q.foo, 2), neg (Q.bar)), 3))'
-
-    >>> Q.DISPLAY (Q.baz.STARTSWITH ("qux"))
-    'Call:startswith: (Q.baz, qux)'
-
-    >>> Q.DISPLAY (Q.foo.D.YEAR (2013))
-    'Call:between: (Q.foo, 2013-01-01, 2013-12-31)'
-
-    >>> Q.DISPLAY (Q.foo.IN ((1, 2, 3)))
-    'Call:in: (Q.foo, (1, 2, 3))'
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-"""
-
 from   __future__  import absolute_import
 from   __future__  import division
 from   __future__  import print_function
@@ -357,10 +90,12 @@ import _TFL.Filter
 import _TFL.Undef
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch, Single_Dispatch_Method
+from   _TFL.Math_Func             import average
 from   _TFL.predicate             import callable
 from   _TFL.portable_repr         import portable_repr
 from   _TFL.pyk                   import pyk
 
+import datetime
 import operator
 
 def normalized_op_name (name) :
@@ -369,112 +104,41 @@ def normalized_op_name (name) :
 
 @pyk.adapt__bool__
 class Base (TFL.Meta.Object) :
-    """Query generator
+    """Query generator.
 
-    >>> from _TFL.Record import Record as R
-    >>> r1 = R (foo = 42, bar = 137, baz = 11)
-    >>> q0 = Q.foo
-    >>> q0
-    Q.foo
-    >>> q0._name
-    'foo'
-    >>> q0.predicate (r1)
-    42
+       Exceptions occurring during the evaluation of q-expressions are
+       ignored if they match `Ignore_Exception`, i.e., per default, they
+       aren't.
 
-    >>> Q.fool.STARTSWITH ("bar") (R (fool = "barfly"))
-    True
-    >>> Q.fool.STARTSWITH ("fly") (R (fool = "barfly"))
-    False
-    >>> Q.fool.ENDSWITH ("fly") (R (fool = "barfly"))
-    True
-    >>> Q.fool.ENDSWITH ("bar") (R (fool = "barfly"))
-    False
-    >>> Q.fool.BETWEEN (2, 8) (R (fool = 1))
-    False
-    >>> Q.fool.BETWEEN (2, 8) (R (fool = 2))
-    True
-    >>> Q.fool.BETWEEN (2, 8) (R (fool = 3))
-    True
-    >>> Q.fool.BETWEEN (2, 8) (R (fool = 8))
-    True
-    >>> Q.fool.BETWEEN (2, 8) (R (fool = 9))
-    False
-    >>> (Q.fool == "barfly") (R (fool = "barfly"))
-    True
-    >>> (Q.fool != "barfly") (R (fool = "barfly"))
-    False
-    >>> (Q.fool != "barflyz") (R (fool = "barfly"))
-    True
-    >>> (Q.fool <= "barflyz") (R (fool = "barfly"))
-    True
-    >>> (Q.fool >= "barflyz") (R (fool = "barfly"))
-    False
-    >>> Q.fool.CONTAINS ("barf") (R (fool = "a barfly "))
-    True
-    >>> Q.fool.IN ([2,4,8]) (R (fool = 1))
-    False
-    >>> Q.fool.IN ([2,4,8]) (R (fool = 2))
-    True
-    >>> Q.fool.IN ([2,4,8]) (R (fool = 3))
-    False
-    >>> Q.fool.IN ([2,4,8]) (R (fool = 4))
-    True
-    >>> (Q.fool % 2) (R (fool = 20))
-    0
+       To ignore exceptions, pass an Exception class or a tuple of
+       exception classes to :meth:`Base.__init__`.
 
-    >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
-    >>> ((Q.bar == Q.baz) & (Q.baz == Q.qux)) (r3)
-    False
+       Examples::
 
-    >>> Q.DISPLAY (Q.NOT (Q.foo % 2 * -Q.bar / 3))
-    '<Filter_Not NOT Q.foo % 2 * - Q.bar / 3>'
+       >>> from _TFL.Record import Record as R
+       >>> r1 = R (foo = 42, bar = 137, baz = 11, quux = R (a = 1, b = 200))
+       >>> Q  = Base ()
+       >>> QQ = Base (Ignore_Exception = (AttributeError, ))
 
-    >>> Q.foo & Q.bar
-    <_AND_ [Q.foo, Q.bar]>
-
-    >>> (Q.foo | Q.bar) > 0
-    <Filter_Or [Q.foo > 0, Q.bar > 0]>
-
-    >>> Q.OR (Q.foo, Q.bar, Q.baz)
-    <_OR_ [Q.foo, Q.bar, Q.baz]>
-
-    >>> Q.OR (Q.foo, Q.bar, Q.baz).qux
-    <_OR_ [Q.foo.qux, Q.bar.qux, Q.baz.qux]>
-
-    >>> Q.OR (Q.foo, Q.bar, Q.baz) == 42
-    <Filter_Or [Q.foo == 42, Q.bar == 42, Q.baz == 42]>
-
-    >>> Q.OR (Q.foo, Q.bar, Q.baz).qux < 137
-    <Filter_Or [Q.foo.qux < 137, Q.bar.qux < 137, Q.baz.qux < 137]>
-
-    >>> Q.foo.bar.OR (Q.baz, Q.qux)
-    <_OR_ [Q.foo.bar.baz, Q.foo.bar.qux]>
-
-    >>> Q.foo.bar.OR (Q.baz, Q.qux) > 23
-    <Filter_Or [Q.foo.bar.baz > 23, Q.foo.bar.qux > 23]>
-
-    >>> r1
-    Record (bar = 137, baz = 11, foo = 42)
-
-    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 42) (r1)
-    True
-
-    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 137) (r1)
-    True
-
-    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 11) (r1)
-    True
-
-    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 23) (r1)
-    False
+       >>> (Q.foo == 42)
+       Q.foo == 42
+       >>> (Q.foo == 42) (r1)
+       True
+       >>> (Q.bar == 42) (r1)
+       False
+       >>> with expect_except (AttributeError) :
+       ...     Q.qux (r1) is Q.undef
+       AttributeError: qux
+       >>> QQ.qux (r1) is QQ.undef
+       True
 
     """
 
-    class Ignore_Exception (Exception) : pass
+    class Ignore_Exception (Exception) :
+        pass
 
     NOT              = TFL.Filter_Not
 
-    expr_class_names = []
     undef            = TFL.Undef ("value")
 
     def __init__ (self, Ignore_Exception = None) :
@@ -499,15 +163,18 @@ class Base (TFL.Meta.Object) :
 
     @property
     def NIL (self) :
+        """Evaluates to None, no matter what object the q-expression is applied to."""
         return self._NIL_ (self)
     # end def NIL
 
     @property
     def SELF (self) :
+        """Evaluates to the object the q-expression is applied to."""
         return self._Self_ (self)
     # end def SELF
 
     def AND (self, * args) :
+        """Logical AND of `args`."""
         return self._AND_ (self, * args)
     # end def AND
 
@@ -526,14 +193,11 @@ class Base (TFL.Meta.Object) :
     # end def APPLY_string
 
     def OR (self, * args) :
+        """Logical OR of `args`."""
         return self._OR_  (self, * args)
     # end def OR
 
     def __getattr__ (self, name) :
-        if name.startswith ("__") and name.endswith ("__") :
-            ### Placate inspect.unwrap of Python 3.5,
-            ### which accesses `__wrapped__` and eventually throws `ValueError`
-            return getattr (self.__super, name)
         if "." in name :
             getter = getattr (TFL.Getter, name)
         else :
@@ -569,7 +233,7 @@ class M_Q_Root (TFL.Meta.Object.__class__) :
 # end class M_Q_Root
 
 class Q_Root (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Q_Root)) :
-    """Base class for all classes modelling queries"""
+    """Base class for all classes modelling query operators and functions."""
 
     op_map               = dict \
         ( __and__        = "&"
@@ -622,7 +286,7 @@ class _Aggr_ (Q_Root) :
             result = self.rhs
         else :
             result = pred (obj)
-        return result
+        return self._aggr_fun (result)
     # end def predicate
 
     def __repr__ (self) :
@@ -784,6 +448,7 @@ class _Call_ (Q_Root) :
 
     predicate_precious_p = True
 
+    op_map               = {}
     Table                = {}
 
     def __init__ (self, lhs, op, * args, ** kw) :
@@ -851,8 +516,9 @@ def _method (meth) :
     _.__doc__    = op.__doc__
     _.__name__   = name
     _.__module__ = meth.__module__
-    if name not in _Call_.Table :
-        _Call_.Table [op.__name__] = op
+    if op.__name__ not in _Call_.Table :
+        _Call_.Table  [op.__name__] = op
+        _Call_.op_map [op.__name__] = name
     return _
 # end def _method
 
@@ -879,7 +545,7 @@ def __unary (op_fct, Class) :
     _.__doc__    = op.__doc__
     _.__name__   = name
     _.__module__ = op_fct.__module__
-    if op not in _Una_.Table :
+    if name not in _Una_.Table :
         _Una_.Table [name] = op
     return _
 # end def __unary
@@ -897,8 +563,6 @@ class _Date_ (TFL.Meta.Object) :
 
     class Date (TFL.Meta.Object) :
 
-        import datetime
-
         type       = datetime.date
         lom_delta  = datetime.timedelta (days=1)
         now        = type.today
@@ -907,8 +571,6 @@ class _Date_ (TFL.Meta.Object) :
 
     class Date_Time (TFL.Meta.Object) :
 
-        import datetime
-
         type       = datetime.datetime
         lom_delta  = datetime.timedelta (seconds=1)
         now        = type.today
@@ -916,8 +578,6 @@ class _Date_ (TFL.Meta.Object) :
     # end class Date_Time
 
     class Time (TFL.Meta.Object) :
-
-        import datetime
 
         type       = datetime.time
         lom_delta  = datetime.timedelta (seconds=1)
@@ -1000,7 +660,17 @@ class _Distributive_ (Q_Root) :
         return self.Q.OR (* tuple (Q.APPLY (a, self) for a in args))
     # end def OR
 
-# end class _Distributive_
+    def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
+        if "." in name :
+            getter = getattr (TFL.Getter, name)
+        else :
+            getter = operator.attrgetter (name)
+        return self._Get_ (self, name, getter)
+    # end def __getattr__
 
 @pyk.adapt__bool__
 class _Exp_Base_ (Q_Root) :
@@ -1223,11 +893,8 @@ class _Bool_Bin_Op_ (_Distributive_, _Exp_) :
     # end def __init__
 
     def __getattr__ (self, name) :
-        if name.startswith ("__") and name.endswith ("__") :
-            ### Placate inspect.unwrap of Python 3.5,
-            ### which accesses `__wrapped__` and eventually throws `ValueError`
-            return getattr (self.__super, name)
-        return self.__class__ (Q, * (getattr (p, name) for p in self.predicates))
+        return self.__class__ \
+            (Q, * (getattr (p, name) for p in self.predicates))
     # end def __getattr__
 
     def __getitem__ (self, key) :
@@ -1273,10 +940,6 @@ class _Get_ (_Distributive_, _Exp_) :
     # end def predicate
 
     def __getattr__ (self, name) :
-        if name.startswith ("__") and name.endswith ("__") :
-            ### Placate inspect.unwrap of Python 3.5,
-            ### which accesses `__wrapped__` and eventually throws `ValueError`
-            return getattr (self.__super, name)
         full_name = ".".join ((self._name, name))
         getter    = getattr (TFL.Getter, full_name)
         return self.__class__ (self.Q, full_name, getter)
@@ -1319,10 +982,6 @@ class _Self_ (_Get_) :
     # end def predicate
 
     def __getattr__ (self, name) :
-        if name.startswith ("__") and name.endswith ("__") :
-            ### Placate inspect.unwrap of Python 3.5,
-            ### which accesses `__wrapped__` and eventually throws `ValueError`
-            return getattr (self.__super, name)
         return getattr (self.Q, name)
     # end def __getattr__
 
@@ -1347,10 +1006,6 @@ class _BVAR_Get_ (TFL.Meta.Object) :
     # end def NEW
 
     def __getattr__ (self, name) :
-        if name.startswith ("__") and name.endswith ("__") :
-            ### Placate inspect.unwrap of Python 3.5,
-            ### which accesses `__wrapped__` and eventually throws `ValueError`
-            return getattr (self.__super, name)
         return self.BVAR (self.Q, name)
     # end def __getattr__
 
@@ -1379,18 +1034,7 @@ Base.BVAR = _BVAR_Descriptor_ ()
 
 @TFL.Add_New_Method (_BVAR_Get_)
 class BVAR (_Exp_) :
-    """Bound variable for query expression.
-
-    >>> Q.foo == Q.BVAR.bar
-    Q.foo == Q.BVAR.bar
-
-    >>> Q.BVAR.foo == 42
-    Q.BVAR.foo == 42
-
-    >>> Q.baz == Q.BVAR.NEW
-    Q.baz == Q.BVAR.__bv_1
-
-    """
+    # """Bound variable for query expression."""
 
     predicate_precious_p = True
 
@@ -1417,7 +1061,7 @@ class BVAR (_Exp_) :
 @TFL.Add_New_Method (Base)
 @pyk.adapt__bool__
 class BVAR_Man (TFL.Meta.Object) :
-    """Manager for bound variables"""
+    # """Manager for bound variables"""
 
     def __init__ (self, bvar_man = None) :
         self.bvars    = bvars    = {}
@@ -1456,7 +1100,6 @@ def _derive_expr_class (cls, base, name) :
             )
         )
     setattr (Base, name, derived)
-    Base.expr_class_names.append (name)
     return derived
 # end def _derive_expr_class
 
@@ -1466,11 +1109,14 @@ _derive_expr_class (_Call_, _Exp_B_, "_Call_Bool_")
 _derive_expr_class (_Una_,  _Exp_B_, "_Una_Bool_")
 _derive_expr_class (_Una_,  _Exp_,   "_Una_Expr_")
 
-def _derive_aggr_class (name, doc) :
+def _derive_aggr_class (name, fun, doc) :
+    _aggr_fun = staticmethod (fun)
     cls = _Aggr_.derived \
-        (_Aggr_.__class__ (name, (_Aggr_, ), dict (__doc__ = doc)))
+        ( _Aggr_.__class__
+            (name, (_Aggr_, ), dict (__doc__ = doc, _aggr_fun = _aggr_fun))
+        )
     expr_cls = _derive_expr_class (cls, _Exp_, "%sExpr" % (name, ))
-    @TFL.Attributed (__name__ = cls.op_name, __doc__ = doc)
+    @TFL.Attributed (__name__ = cls.op_name)
     def _ (self, rhs = 1) :
         T = getattr (self, expr_cls.__name__)
         return T (self, rhs)
@@ -1478,11 +1124,11 @@ def _derive_aggr_class (name, doc) :
     return cls
 # end def _derive_aggr_class
 
-_derive_aggr_class ("_Avg_",   "Query function building the average")
-_derive_aggr_class ("_Count_", "Query function finding the count")
-_derive_aggr_class ("_Max_",   "Query function finding the maximum")
-_derive_aggr_class ("_Min_",   "Query function finding the minimum")
-_derive_aggr_class ("_Sum_",   "Query function building the sum")
+_derive_aggr_class ("_Avg_",   average, "Query function building the average")
+_derive_aggr_class ("_Count_", len,     "Query function finding the count")
+_derive_aggr_class ("_Max_",   max,     "Query function finding the maximum")
+_derive_aggr_class ("_Min_",   min,     "Query function finding the minimum")
+_derive_aggr_class ("_Sum_",   sum,     "Query function building the sum")
 
 ###############################################################################
 ### Generic functions to display Q expressions
@@ -1513,6 +1159,485 @@ def _display_call_ (q) :
         , ", ".join (display (a) for a in args)
         )
 # end def _display_call_
+
+### «text» ### start of documentation
+__doc__ = r"""
+Module `Q_Exp`
+===============
+
+This module implements a query expression language. It exports the query
+generator instance :obj:`Q` which is used to define symbolic query expressions.
+A query expression generated by `Q` is a Python callable: applying a
+Q-expression to a python object evaluates the query expression for that object
+and returns the result of that evaluation.
+
+One can pass Q-expressions to `filter` or use them as `key` argument
+to Python's `sorted` function.
+
+You can use the following binary operators in Q-expressions:
+
+    >>> print (", ".join (sorted (set (Q._Bin_.op_map.values()))))
+    %, *, **, +, -, /, //, <, <=, ==, >, >=
+
+You can use the following unary operators in Q-expressions:
+
+    >>> print (", ".join (sorted (set (Q._Una_.op_map.values()))))
+    -, ~
+
+You can use the following query functions in Q-expressions:
+
+    >>> print (", ".join (sorted (set (Q._Call_.op_map.values()))))
+    BETWEEN, CONTAINS, ENDSWITH, IN, STARTSWITH
+
+You can use the following logical operators in Q-expressions:
+
+    >>> print (", ".join (sorted (set (Q.Q_Root.op_map.values()))))
+    &, |, ~
+
+Beware: the predecence of the logical operators is very low, i.e., parentheses
+around the operands are strongly recommended. Alternatively, one can use:
+
+    `Q.AND (lhs, rhs)`
+
+instead of:
+
+   `lhs & rhs`
+
+`Q.OR` instead of `|`, and `Q.NOT` instead of `~`. `Q.AND` and `Q.OR` take
+arbitrarily many operands.
+
+`Q.AND` and `Q.OR` are distributive, i.e., an expression like:
+
+    `Q.OR (Q.foo, Q.bar) == 42`
+
+will evaluate like:
+
+    `Q.OR (Q.foo == 42, Q.bar == 42)`
+
+.. data:: Q
+
+  `Q` is an instance of :class:`Base`.
+
+  - `Q.foo` accesses the attribute with name ``foo``.
+
+  - `Q.foo.qux` accesses the attribute `qux` of the attribute `foo`.
+
+  - `Q.foo == 42` evaluates to True if attribute ``foo`` has the value 42.
+
+  - `Q.foo.STARTSWITH (Q.bar)` evaluates to True if the value of attribute
+    ``foo`` starts with the value of the attribute ``bar``.
+
+  - `Q.NIL` always evaluates to None, no matter what object the q-expression is
+    applied to.
+
+  - `Q.SELF` evaluates to the object the q-expression is applied to.
+
+Python handles `a < b < c` as `(a < b) and (b < c)`. Unfortunately, there is
+no way to simulate this by defining operator methods. Therefore,
+Q-expressions raise a TypeError to signal that an expression like
+`Q.a < Q.b < Q.c` isn't possible::
+
+    >>> with expect_except (TypeError) :
+    ...     Q.a < Q.b < Q.c # doctest:+ELLIPSIS
+    TypeError: ...
+
+<<<<<<< HEAD
+    def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
+        return self.__class__ (Q, * (getattr (p, name) for p in self.predicates))
+    # end def __getattr__
+=======
+Query operators with boolean results, i.e., equality and ordering operators,
+cannot be used with any operators except `==` and `!=`::
+>>>>>>> f78bd1fe298a... Improve documentation of `TFL.Q_Exp`
+
+    >>> (Q.a < Q.b) == Q.c
+    Q.a < Q.b == Q.c
+    >>> with expect_except (TypeError) :
+    ...     (Q.a < Q.b) < Q.c
+    TypeError: Operator `<` not applicable to boolean result of `Q.a < Q.b`, rhs: `Q.c`
+
+"""
+
+### «text» ### start of test
+_test_q = """
+Module `Q_Exp`
+===============
+
+This module implements a query expression language::
+
+    >>> from _TFL.Record import Record as R
+    >>> from datetime import date, datetime
+    >>> r1 = R (foo = 42, bar = 137, baz = 11, quux = R (a = 1, b = 200))
+    >>> r2 = R (foo = 3,  bar = 9,   qux = "abcdef", d = date (2010, 12, 14), dt = datetime (2010, 12, 14, 11, 36))
+    >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
+    >>> r4 = R (foo = 45)
+    >>> q0 = Q.foo
+    >>> q0._name
+    'foo'
+    >>> q0.predicate (r1)
+    42
+
+    >>> qm = - q0
+    >>> qm
+    - Q.foo
+    >>> qm.predicate (r1)
+    -42
+
+    >>> q1 = Q.foo == Q.bar
+    >>> q1, q1.lhs, q1.rhs, normalized_op_name (q1.op.__name__)
+    (Q.foo == Q.bar, Q.foo, Q.bar, 'eq')
+    >>> q1.lhs._name, q1.rhs._name
+    ('foo', 'bar')
+    >>> q1.predicate (r1)
+    False
+
+    >>> q2 = Q.foo + Q.bar
+    >>> q2, q2.lhs, q2.rhs, normalized_op_name (q2.op.__name__)
+    (Q.foo + Q.bar, Q.foo, Q.bar, 'add')
+    >>> q2.predicate (r1)
+    179
+
+    >>> q3 = Q.foo % Q.bar == Q.baz
+    >>> q3, q3.lhs, q3.rhs
+    (Q.foo % Q.bar == Q.baz, Q.foo % Q.bar, Q.baz)
+    >>> q3.predicate (r1)
+    False
+    >>> q4 = Q.bar % Q.foo
+    >>> q4.predicate (r1), Q.baz.predicate (r1)
+    (11, 11)
+    >>> (q4 == Q.baz).predicate (r1)
+    True
+    >>> (~ (q4 == Q.baz)).predicate (r1)
+    False
+
+    >>> q3.lhs.predicate (r1)
+    42
+
+    >>> q5 = Q.foo.BETWEEN (10, 100)
+    >>> q5, q5.lhs, q5.args, normalized_op_name (q5.op.__name__)
+    (Q.foo.between (10, 100), Q.foo, (10, 100), 'between')
+    >>> q5.predicate (r1)
+    True
+    >>> q5.predicate (r2)
+    False
+
+    >>> q6 = Q.foo.IN ((1, 3, 9, 27))
+    >>> q6.predicate (r1)
+    False
+    >>> q6.predicate (r2)
+    True
+
+<<<<<<< HEAD
+    def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
+        full_name = ".".join ((self._name, name))
+        getter    = getattr (TFL.Getter, full_name)
+        return self.__class__ (self.Q, full_name, getter)
+    # end def __getattr__
+=======
+    >>> QQ = Q.__class__ (Ignore_Exception = (AttributeError, ))
+    >>> QQ.qux.predicate (r1) is QQ.undef
+    True
+    >>> with expect_except (AttributeError) :
+    ...     Q.qux.predicate (r1) is Q.undef
+    AttributeError: qux
+>>>>>>> f78bd1fe298a... Improve documentation of `TFL.Q_Exp`
+
+    >>> q7 = QQ.qux.CONTAINS ("bc")
+    >>> q7.predicate (r1)
+    >>> q7.predicate (r2)
+    True
+    >>> q8 = QQ.qux.ENDSWITH ("fg")
+    >>> q8.predicate (r1)
+    >>> q8.predicate (r2)
+    False
+    >>> q9 = QQ.qux.ENDSWITH ("ef")
+    >>> q9.predicate (r1)
+    >>> q9.predicate (r2)
+    True
+
+    >>> qa = QQ.qux.STARTSWITH ("abc")
+    >>> qa.predicate (r1)
+    >>> qa.predicate (r2)
+    True
+
+    >>> Q [0] ((2,4))
+    2
+    >>> Q [1] ((2,4))
+    4
+    >>> Q [-1] ((2,4))
+    4
+    >>> Q [-2] ((2,4))
+    2
+
+    >>> Q.foo * -1
+    Q.foo * -1
+    >>> -1 * Q.foo
+    -1 * Q.foo
+
+    >>> qm = Q.foo.D.MONTH (2, 2010)
+    >>> qm, qm.lhs, normalized_op_name (qm.op.__name__)
+    (Q.foo.between (datetime.date(2010, 2, 1), datetime.date(2010, 2, 28)), Q.foo, 'between')
+
+    >>> Q.foo.D.MONTH (2, 2000)
+    Q.foo.between (datetime.date(2000, 2, 1), datetime.date(2000, 2, 29))
+
+    >>> Q.foo.DT.QUARTER (4, 2010)
+    Q.foo.between (datetime.datetime(2010, 10, 1, 0, 0), datetime.datetime(2010, 12, 31, 23, 59, 59))
+
+    >>> Q.foo.D.YEAR (2011)
+    Q.foo.between (datetime.date(2011, 1, 1), datetime.date(2011, 12, 31))
+    >>> Q.foo.DT.YEAR (2012)
+    Q.foo.between (datetime.datetime(2012, 1, 1, 0, 0), datetime.datetime(2012, 12, 31, 23, 59, 59))
+
+    >>> Q.d.D.MONTH (12, 2010) (r2)
+    True
+    >>> Q.d.D.MONTH (1, 2010) (r2)
+    False
+    >>> Q.d.D.QUARTER (4, 2010) (r2)
+    True
+    >>> with expect_except (TypeError) :
+    ...     Q.dt.D.QUARTER (4, 2010) (r2)
+    TypeError: can't compare datetime.datetime to datetime.date
+    >>> Q.dt.DT.QUARTER (4, 2010) (r2)
+    True
+
+    >>> (Q.bar == Q.baz) (r3)
+    False
+    >>> Q.bar.STARTSWITH ("ab") (r3)
+    False
+    >>> Q.bar.CONTAINS ("bc") (r3)
+    False
+
+    >>> print ("%.3f" % ((Q.foo / 7) (r4), ))
+    6.429
+    >>> (Q.foo // 7) (r4)
+    6
+    >>> print ("%.3f" % ((70 / Q.foo) (r4), ))
+    1.556
+    >>> (70 // Q.foo) (r4)
+    1
+
+<<<<<<< HEAD
+    def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
+        return getattr (self.Q, name)
+    # end def __getattr__
+=======
+    >>> Q.a < Q.b + Q.c
+    Q.a < Q.b + Q.c
+    >>> Q.z + Q.a < Q.b + Q.c
+    Q.z + Q.a < Q.b + Q.c
+    >>> (Q.a < Q.b) == (Q.a % 2)
+    Q.a < Q.b == Q.a % 2
+    >>> (Q.a < Q.b) == (Q.a > 2)
+    Q.a < Q.b == Q.a > 2
+    >>> q = (Q.a < Q.b) == (Q.a % 2)
+    >>> q.lhs
+    Q.a < Q.b
+    >>> q.rhs
+    Q.a % 2
+    >>> display (q)
+    'eq (lt (Q.a, Q.b), mod (Q.a, 2))'
+>>>>>>> f78bd1fe298a... Improve documentation of `TFL.Q_Exp`
+
+But explicit parenthesis are necessary in some cases::
+
+    >>> with expect_except (TypeError) :
+    ...     Q.a < Q.b == Q.a % 2 # doctest:+ELLIPSIS
+    TypeError: ...
+
+Queries for nested attributes are also possible::
+
+    >>> qn = Q.quux.a
+    >>> qn._name
+    'quux.a'
+    >>> qn.predicate (r1)
+    1
+    >>> qm = Q.quux.b
+    >>> qm.predicate (r1)
+    200
+    >>> (qn > Q.foo) (r1)
+    False
+    >>> (qm > Q.foo) (r1)
+    True
+
+`display` (also available as `TFL.Q.DISPLAY`) displays the structure of
+Q-expressions::
+
+    >>> display (Q.foo < 42)
+    'lt (Q.foo, 42)'
+    >>> display (42 <= Q.foo)
+    'ge (Q.foo, 42)'
+
+<<<<<<< HEAD
+    def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
+        return self.BVAR (self.Q, name)
+    # end def __getattr__
+=======
+    >>> display (Q.foo * 42)
+    'mul (Q.foo, 42)'
+    >>> display (Q.foo / 42)
+    'truediv (Q.foo, 42)'
+    >>> display (Q.foo // 42)
+    'floordiv (Q.foo, 42)'
+>>>>>>> f78bd1fe298a... Improve documentation of `TFL.Q_Exp`
+
+    >>> display (42 / Q.foo)
+    'truediv/r (Q.foo, 42)'
+    >>> display (42 * Q.foo)
+    'mul/r (Q.foo, 42)'
+
+    >>> Q.DISPLAY (Q.foo % 2 == 0)
+    'eq (mod (Q.foo, 2), 0)'
+    >>> Q.DISPLAY (Q.foo % 2 == Q.bar * 3)
+    'eq (mod (Q.foo, 2), mul (Q.bar, 3))'
+    >>> Q.DISPLAY (Q.foo % 2 == -Q.bar * 3)
+    'eq (mod (Q.foo, 2), mul (neg (Q.bar), 3))'
+    >>> Q.DISPLAY (- (Q.foo % 2 * -Q.bar / 3))
+    'neg (truediv (mul (mod (Q.foo, 2), neg (Q.bar)), 3))'
+
+    >>> Q.DISPLAY (~ (Q.foo % 2 * -Q.bar / 3))
+    'not (truediv (mul (mod (Q.foo, 2), neg (Q.bar)), 3))'
+
+    >>> Q.DISPLAY (Q.baz.STARTSWITH ("qux"))
+    'Call:startswith: (Q.baz, qux)'
+
+    >>> Q.DISPLAY (Q.foo.D.YEAR (2013))
+    'Call:between: (Q.foo, 2013-01-01, 2013-12-31)'
+
+    >>> Q.DISPLAY (Q.foo.IN ((1, 2, 3)))
+    'Call:in: (Q.foo, (1, 2, 3))'
+
+`Q.BVAR` supports queries with bound variables::
+
+    >>> Q.foo == Q.BVAR.bar
+    Q.foo == Q.BVAR.bar
+
+    >>> Q.BVAR.foo == 42
+    Q.BVAR.foo == 42
+
+    >>> Q.baz == Q.BVAR.NEW
+    Q.baz == Q.BVAR.__bv_1
+
+`Base` examples::
+
+    >>> r1 = R (foo = 42, bar = 137, baz = 11)
+    >>> q0 = Q.foo
+    >>> q0
+    Q.foo
+    >>> q0._name
+    'foo'
+    >>> q0.predicate (r1)
+    42
+
+    >>> Q.fool.STARTSWITH ("bar") (R (fool = "barfly"))
+    True
+    >>> Q.fool.STARTSWITH ("fly") (R (fool = "barfly"))
+    False
+    >>> Q.fool.ENDSWITH ("fly") (R (fool = "barfly"))
+    True
+    >>> Q.fool.ENDSWITH ("bar") (R (fool = "barfly"))
+    False
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 1))
+    False
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 2))
+    True
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 3))
+    True
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 8))
+    True
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 9))
+    False
+    >>> (Q.fool == "barfly") (R (fool = "barfly"))
+    True
+    >>> (Q.fool != "barfly") (R (fool = "barfly"))
+    False
+    >>> (Q.fool != "barflyz") (R (fool = "barfly"))
+    True
+    >>> (Q.fool <= "barflyz") (R (fool = "barfly"))
+    True
+    >>> (Q.fool >= "barflyz") (R (fool = "barfly"))
+    False
+    >>> Q.fool.CONTAINS ("barf") (R (fool = "a barfly "))
+    True
+    >>> Q.fool.IN ([2,4,8]) (R (fool = 1))
+    False
+    >>> Q.fool.IN ([2,4,8]) (R (fool = 2))
+    True
+    >>> Q.fool.IN ([2,4,8]) (R (fool = 3))
+    False
+    >>> Q.fool.IN ([2,4,8]) (R (fool = 4))
+    True
+    >>> (Q.fool % 2) (R (fool = 20))
+    0
+
+    >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
+    >>> ((Q.bar == Q.baz) & (Q.baz == Q.qux)) (r3)
+    False
+
+    >>> Q.DISPLAY (Q.NOT (Q.foo % 2 * -Q.bar / 3))
+    '<Filter_Not NOT Q.foo % 2 * - Q.bar / 3>'
+
+    >>> Q.foo & Q.bar
+    <_AND_ [Q.foo, Q.bar]>
+
+    >>> (Q.foo | Q.bar) > 0
+    <Filter_Or [Q.foo > 0, Q.bar > 0]>
+
+    >>> Q.OR (Q.foo, Q.bar, Q.baz)
+    <_OR_ [Q.foo, Q.bar, Q.baz]>
+
+    >>> Q.OR (Q.foo, Q.bar, Q.baz).qux
+    <_OR_ [Q.foo.qux, Q.bar.qux, Q.baz.qux]>
+
+    >>> Q.OR (Q.foo, Q.bar, Q.baz) == 42
+    <Filter_Or [Q.foo == 42, Q.bar == 42, Q.baz == 42]>
+
+    >>> Q.OR (Q.foo, Q.bar, Q.baz).qux < 137
+    <Filter_Or [Q.foo.qux < 137, Q.bar.qux < 137, Q.baz.qux < 137]>
+
+    >>> Q.foo.bar.OR (Q.baz, Q.qux)
+    <_OR_ [Q.foo.bar.baz, Q.foo.bar.qux]>
+
+    >>> Q.foo.bar.OR (Q.baz, Q.qux) > 23
+    <Filter_Or [Q.foo.bar.baz > 23, Q.foo.bar.qux > 23]>
+
+    >>> r1
+    Record (bar = 137, baz = 11, foo = 42)
+
+    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 42) (r1)
+    True
+
+    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 137) (r1)
+    True
+
+    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 11) (r1)
+    True
+
+    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 23) (r1)
+    False
+
+"""
+
+__test__ = dict \
+    ( test_doc = __doc__
+    , test_q   = _test_q
+    )
 
 if __name__ != "__main__" :
     TFL._Export ("Q")
