@@ -902,7 +902,7 @@ Class `MOM.Scope`
     For instance, if the scope contains a package namespace ``PAP``, one can
     access ``scope.PAP.Person`` or ``scope.PAP.Phone``. Each attribute of
     ``scope.PAP`` refers to the :class:`~_MOM.E_Type_Manager.Object` or
-    :class:`~_MOM.E_Type_Manager.Link` instance of the corresping essential
+    :class:`~_MOM.E_Type_Manager.Link` instance of the corresponding essential
     type.
 
     **`Scope` provides the attributes:**
