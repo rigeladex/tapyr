@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -24,6 +24,8 @@
 #     7-May-2013 (CT) Add `Association`, `Person_has_Account`, if imported
 #     7-May-2013 (CT) Shift `Subject_has_Property` to center of graph
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
+#    10-Aug-2015 (CT) Add `Group`, `Legal_Entity`, `Adhoc_Group`,
+#                     `Person_in_Group`; shift children of `Property` to `E`
 #    ««revision-date»»···
 #--
 
@@ -44,40 +46,34 @@ from   _TFL._D2               import Cardinal_Direction as CD
 from   _TFL.I18N              import _, _T
 
 def graph (app_type) :
-    result = MOM.Graph.Spec.Graph \
+    ag_p    = hasattr (GTW.OMP.PAP, "Adhoc_Group")
+    ass_p   = hasattr (GTW.OMP.PAP, "Association")
+    le_p    = hasattr (GTW.OMP.PAP, "Legal_Entity")
+    shp_off = CD.S
+    result  = MOM.Graph.Spec.Graph \
         ( app_type
         , ET.PAP.Subject_has_Property
             ( Role.left
-                ( Child.PAP.Company
-                    ( offset      = CD.NW
-                    , source_side = "E"
-                    , target_side = "W"
-                    )
-                , Child.PAP.Person
+                ( Child.PAP.Person
                     ( offset      = CD.N
-                    , source_side = "W"
-                    , target_side = "W"
                     )
                 , offset = CD.W
                 )
             , Role.right
                 ( Child.PAP.Address
                     ( ET.PAP.Address_Position
-                        ( label  = "_Position"
-                        , offset = CD.W
+                        ( offset      = CD.S if (ag_p or le_p) else CD.W
                         )
-                    , offset      = CD.S + 2 * CD.W
+                    , offset      = shp_off + 3 * CD.W
                     )
                 , Child.PAP.Email
-                    ( offset      = CD.SW
+                    ( offset      = shp_off + 2 * CD.W
                     )
                 , Child.PAP.Phone
-                    ( offset      = CD.S
+                    ( offset      = shp_off + 1 * CD.W
                     )
                 , Child.PAP.Url
-                    ( offset      = CD.SE
-                    , source_side = "W"
-                    , target_side = "E"
+                    ( offset      = shp_off
                     )
                 , offset = CD.E
                 )
@@ -85,22 +81,62 @@ def graph (app_type) :
         , desc  = _T ("Graph displaying PAP partial object model")
         , title = _T ("PAP graph")
         )
-    if hasattr (GTW.OMP.PAP, "Association") :
+    if hasattr (GTW.OMP.PAP, "Group") :
+        g_args = ()
+        if hasattr (GTW.OMP.PAP, "Person_in_Group") :
+            g_args = \
+                ( ET.PAP.Person_in_Group
+                    ( Role.left  ()
+                    , Role.right ()
+                    , offset      = CD.N
+                    )
+                ,
+                )
         result ["PAP.Subject"]._add \
-            ( Child.PAP.Association
-                ( offset      = CD.W
+            ( Child.PAP.Group
+                ( * g_args
+                , offset      = CD.W
                 )
             )
+        if le_p :
+            result ["PAP.Group"]._add \
+                ( Child.PAP.Legal_Entity
+                    ( offset      = CD.W
+                    , source_side = "E"
+                    , target_side = "W"
+                    )
+                )
+            if ass_p :
+                result ["PAP.Legal_Entity"]._add \
+                    ( Child.PAP.Association
+                        ( offset      = CD.N
+                        )
+                    )
+            if hasattr (GTW.OMP.PAP, "Company") :
+                result ["PAP.Legal_Entity"]._add \
+                    ( Child.PAP.Company
+                        ( offset      = CD.S
+                        )
+                    )
+        if ag_p :
+            result ["PAP.Group"]._add \
+                ( Child.PAP.Adhoc_Group
+                    ( offset      = CD.W + CD.S *
+                        (-1 if not ass_p else (2 if le_p else 0))
+                    , source_side = "E"
+                    , target_side = "W"
+                    )
+                )
     if hasattr (GTW.OMP.PAP, "IM_Handle") :
         result ["PAP.Property"]._add \
             ( Child.PAP.IM_Handle
-                ( offset      = CD.E
+                ( offset      = shp_off + CD.E
                 )
             )
     if hasattr (GTW.OMP.PAP, "Nickname") :
         result ["PAP.Property"]._add \
             ( Child.PAP.Nickname
-                ( offset      = CD.NE
+                ( offset      = CD.E
                 , source_side = "W"
                 , target_side = "E"
                 )
