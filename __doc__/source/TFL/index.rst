@@ -3,6 +3,8 @@
 Package-NS `TFL`
 ======================
 
+.. module:: _TFL
+
 .. toctree::
 
    modules

@@ -664,15 +664,12 @@ specific database, but not globally unique. Once an object is created, its
 `pid` will never change and it won't ever be reused to refer to a different
 object.
 
-Essential objects identified by a simple, unstructured `name` are
-defined by classes derived from
-:class:`MOM.Named_Object<_MOM.Object.Named_Object>`. All other
-essential objects are defined by classes derived from
+Essential objects are defined by classes derived from
 :class:`MOM.Object<_MOM.Object.Object>` that specify one or more
 essential attributes of kind :class:`~_MOM._Attr.Kind.Primary`.
 
 Essential links are identified by the associated objects (the link's
-roles) and any other, if any, primary attributes defined for the link
+roles) and any other primary attributes defined for the link
 in question:
 
 - Unary links are derived from :class:`MOM.Link1<_MOM.Link.Link1>`
