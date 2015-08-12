@@ -136,6 +136,7 @@
 #     4-Aug-2013 (CT) Add `_Derived_Module_` to properly support
 #                     `_Export_Module` for `Derived_Package_Namespace`
 #    13-Apr-2015 (CT) Change `_Add_Import_Callback` to be useable as decorator
+#    12-Aug-2015 (CT) Add `_Import_All`, `__file__`
 #    ««revision-date»»···
 #--
 
@@ -192,7 +193,12 @@ class Package_Namespace (object) :
     """Namespace that provides direct access to classes and
        functions implemented in the modules of a Python package.
 
-       You can access the modules of the package via the attribute `_`.
+       You can access the modules of the package with the attribute ``_``.
+
+       .. attribute:: _
+
+         Allows access to the modules of the package namespace.
+
     """
 
     _leading_underscores = re.compile (r"(\.|^)_+")
@@ -214,8 +220,9 @@ class Package_Namespace (object) :
         self.__seen                = {}
         self.__reload              = 0
         self._Outer                = None
-        self.__doc__               = c_scope.get ("__doc__", str (self))
-        self._desc_                = c_scope.get ("_desc_",  None)
+        self.__doc__               = c_scope.get ("__doc__",  str (self))
+        self._desc_                = c_scope.get ("_desc_",   None)
+        self.__file__              = c_scope.get ("__file__", None)
     # end def __init__
 
     def _Add (self, ** kw) :
@@ -325,11 +332,29 @@ class Package_Namespace (object) :
     # end def _Export_Module
 
     def _Import_Module (self, name) :
-        """Import module `name` from thois package namespace"""
-        import _TFL.import_module ### avoid circular imports !!!
-        return _TFL.import_module.import_module \
-            (".".join ((self.__module_name, name)))
+        """Import module `name` from this package namespace"""
+        from _TFL.import_module import import_module ### avoid circular imports
+        return import_module (".".join ((self.__module_name, name)))
     # end def _Import_Module
+
+    def _Import_All (self) :
+        """Import all modules of this package namespace"""
+        from _TFL.import_module import import_module ### avoid circular imports
+        from _TFL               import sos
+        dir = sos.path.dirname  (self.__file__)
+        pns = self.__module_name
+        for fn in sos.listdir (dir) :
+            if fn.endswith (".py") and not fn.startswith ("__init__") :
+                mod = ".".join ((pns, fn [:-3]))
+                try :
+                    import_module (mod)
+                except Exception as exc :
+                    print \
+                        ( "%s._Import_All: "
+                          "exception during import of %s\n    %s"
+                        % (self.__name__, fn [:-3], exc)
+                        )
+    # end def _Import_All
 
     def _exported_module (self, module_name, mod) :
         return mod
@@ -509,15 +534,17 @@ __doc__ = """
 Module `Package_Namespace`
 ==========================
 
-Implements a namespace that provides direct access to classes and
-functions implemented in the modules of a Python package.
+.. currentmodule:: _TFL.Package_Namespace
 
-In the following, a package Foo_Package and module Bar are assumed as
+This module implements a namespace that provides direct access to classes and
+functions provided by the modules of a Python package.
+
+In the following, a package ``Foo_Package`` and module ``Bar`` are assumed as
 example.
 
 A Python package encapsulates a number of modules. Packages are useful
 for avoiding name clashes between modules of different domains. For
-instance, `Frame` might be used as module name by a GUI package and by
+instance, ``Frame`` might be used as module name by a GUI package and by
 a communications package.
 
 Many modules define a class or function with the same name as
@@ -558,14 +585,14 @@ the `__init__.py`. The disadvantages of this approach are
 - Import bloat. Importing the package will pull in the entire contents
   of the package even if only a tiny part of it is needed.
 
-- If the package qualifier is to used inside the package too (strongly
+- If the package qualifier is used inside the package too (strongly
   recommended), circular imports will result.
 
-  Using the package name to qualify class and function names defined
-  by the modules of the package considerably eases using grep for
-  finding occurences of their use.
+    Using the package name to qualify class and function names defined
+    by the modules of the package considerably eases using grep for
+    finding occurences of their use.
 
-`Package_Namespace` provides another option::
+:class:`Package_Namespace` provides another option::
 
    #6
    from   Foo_Package import Foo
@@ -573,14 +600,15 @@ the `__init__.py`. The disadvantages of this approach are
    instance = Foo.Bar ()
 
 In order to support this, `Foo_Package/__init__.py` must export an
-instance `Foo` of class `Package_Namespace`::
+instance `Foo` of :class:`Package_Namespace`::
 
    ### Foo_Package/__init__.py
    from _TFL.Package_Namespace import Package_Namespace
    Foo = Package_Namespace ()
 
-The Package_Namespace provides the `_Export` method called by modules
-of the package to export classes/functions module into the namespace::
+The :class:`Package_Namespace` provides the :meth:`~Package_Namespace._Export`
+method called by modules of the package to export classes/functions module into
+the namespace::
 
    ### Foo_Package.Bar puts `Bar` and `Baz` into the Package_Namespace
    Foo._Export ("Bar", "Baz")
@@ -592,12 +620,12 @@ transitively).
 
 If a module prefers to put itself instead of some of its attributes
 (functions/classes/whatever) into the Package_Namespace, it can do so
-by calling::
+by calling :meth:`~Package_Namespace._Export_Module`::
 
    Foo._Export_Module ()
 
-The modules of the package can be accessed via the `_` attribute of
-the package namespace.
+The modules of the package can be accessed via the :attr:`~Package_Namespace._`
+attribute of the package namespace.
 
 The standard naming convention for packages exporting a
 Package_Namespace is::
@@ -617,13 +645,13 @@ So, the canonical use of Package_Namespaces looks like::
 .. note::
 
  The methods `_Add_Import_Callback`, `_Add_Lazy_Resolver`, `_Export`,
- `_Export_Module`, `_Import_Module`, and `_Reload` are part of the public
- interface of `Package_Namespaces` (they start with an underscore to avoid
- name clashes with user-defined attributes of package namespaces).
+ `_Export_Module`, `_Import_All`, `_Import_Module`, and `_Reload` are part of
+ the public interface of `Package_Namespaces` (they start with an underscore to
+ avoid name clashes with user-defined attributes of package namespaces).
 
 .. autoclass:: _TFL.Package_Namespace.Package_Namespace
    :members: _Add_Import_Callback, _Add_Lazy_Resolver, _Export,
-       _Export_Module, _Import_Module, _Reload
+       _Export_Module, _Import_All, _Import_Module, _Reload
 
 .. autoclass:: _TFL.Package_Namespace.Derived_Package_Namespace
    :members:
