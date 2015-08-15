@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,35 +31,33 @@
 #                     `load_user_config` interface changed (`* config_fn`)
 #     9-Jul-2007 (CT) `text_output_width` added
 #    27-Dec-2010 (CT) `minor_version` version increased to 7
+#    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
 #    ««revision-date»»···
 #--
 
 from   _TFL.Package_Namespace import Package_Namespace
-import locale
-import sys
+from   _TFL.Decorator         import eval_function_body
 
 PMA = Package_Namespace ()
 
-PMA.authors              = ["Christian Tanzer", "Martin Glueck"]
-PMA.major_version        = _M = 0
-PMA.minor_version        = _m = 7
-PMA.patchlevel           = _p = 0
-PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
-PMA.default_encoding     = locale.getpreferredencoding () or "us-ascii"
-PMA.file_system_encoding = sys.getfilesystemencoding ()
-PMA.text_output_width    = 75
-
-def load_user_config (* config_fn) :
-    from _TFL import sos
-    from _TGL.load_config_file import load_config_file
-    if not config_fn :
-        config_fn = ("~", "PMA", ".config.py")
-    load_config_file (sos.path.join (* config_fn), dict (PMA = PMA))
-PMA.load_user_config = load_user_config
-
-del load_user_config
-del locale
-del sys
-del Package_Namespace
+@eval_function_body
+def _setup_PMA_properties () :
+    import locale
+    import sys
+    def load_user_config (* config_fn) :
+        from _TFL import sos
+        from _TGL.load_config_file import load_config_file
+        if not config_fn :
+            config_fn = ("~", "PMA", ".config.py")
+        load_config_file (sos.path.join (* config_fn), dict (PMA = PMA))
+    PMA.authors              = ["Christian Tanzer", "Martin Glueck"]
+    PMA.major_version        = _M = 0
+    PMA.minor_version        = _m = 7
+    PMA.patchlevel           = _p = 0
+    PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
+    PMA.default_encoding     = locale.getpreferredencoding () or "us-ascii"
+    PMA.file_system_encoding = sys.getfilesystemencoding ()
+    PMA.text_output_width    = 75
+    PMA.load_user_config     = load_user_config
 
 ### __END__ PMA.__init__

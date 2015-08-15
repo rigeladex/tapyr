@@ -94,6 +94,7 @@
 #    11-May-2015 (CT) Add `completer_choose_value_iter`
 #    15-Jun-2015 (CT) Add all invariants in `_Entity_Mixin_._create_instance`
 #                     * remove the guard `not exc.any_required_empty`
+#    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
 #    ««revision-date»»···
 #--
 
@@ -119,6 +120,7 @@ from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import Regexp, re
 
 import _TFL._Meta.Object
+from   _TFL.Decorator           import eval_function_body
 import _TFL._Meta.M_Auto_Combine_Lists
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
@@ -159,11 +161,12 @@ MAT.A_Date.css_align                    = "right"
 MAT.A_Numeric_String.css_align          = "right"
 MAT.A_Time.css_align                    = "right"
 
-for _n in ("A_Date_Interval", "A_Time_Interval") :
-    _AT = getattr (MAT, _n, None)
-    if _AT is not None :
-        _AT.mf3_template_module = "mf3_h_cols"
-del _n, _AT
+@eval_function_body
+def _set_interval_templates () :
+    for _n in ("A_Date_Interval", "A_Time_Interval") :
+        _AT = getattr (MAT, _n, None)
+        if _AT is not None :
+            _AT.mf3_template_module = "mf3_h_cols"
 
 class Delay_Call (BaseException) :
     """Delay call until rev-ref is defined."""

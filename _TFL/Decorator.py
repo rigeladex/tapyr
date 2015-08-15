@@ -50,8 +50,9 @@
 #    21-Aug-2014 (CT)  Add `Add_To_Object`
 #    16-Oct-2014 (CT)  Change `dict_from_class` to return real `dict`,
 #                      remove thunder properties from its result
-#     5-Feb-2015 (CT) Add `default` to `getattr_safe`; factor `_update_wrapper`
-#    16-Jul-2015 (CT) Use `expect_except` in doc-tests
+#     5-Feb-2015 (CT)  Add `default` to `getattr_safe`; factor `_update_wrapper`
+#    16-Jul-2015 (CT)  Use `expect_except` in doc-tests
+#    15-Aug-2015 (CT) Add `eval_function_body`
 #    ««revision-date»»···
 #--
 
@@ -285,6 +286,11 @@ def dict_from_class (cls) :
         if not k.startswith ("__")
         )
 # end def dict_from_class
+
+def eval_function_body (f) :
+    """Call the decorated function. The function itself is not returned!"""
+    return f ()
+# end def eval_function_body
 
 def getattr_safe (f = None, default = None) :
     """Protect `f` from raising `AttributeError` (to avoid `__getattr__`)."""

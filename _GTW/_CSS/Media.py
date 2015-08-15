@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -21,6 +21,7 @@
 #    30-Dec-2010 (CT) Creation
 #    21-Jan-2014 (CT) Support `exprs` of type `dict` in `Query._setup_exprs`
 #    17-Oct-2014 (CT) Put uppercased names into `Type.Table` because `print`
+#    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
 #    ««revision-date»»···
 #--
 
@@ -31,10 +32,11 @@ from   _TFL                       import TFL
 
 import _GTW._CSS
 
-import _TFL._Meta.Object
-
+from   _TFL.Decorator             import eval_function_body
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.pyk                   import pyk
+
+import _TFL._Meta.Object
 
 class M_Media (TFL.Meta.Object.__class__) :
     """Meta class for media types and queries."""
@@ -276,17 +278,29 @@ class Type (_Media_) :
 
 # end class Type
 
-for _t in ("all", "screen", "print") :
-    Type (_t)
-del _t
+@eval_function_body
+def _instantiate_standard_types () :
+    for _t in ("all", "screen", "print") :
+        Type (_t)
 
-_g = globals ()
-_g.update (Type.Table)
-_g.update (M_Media.Nick)
+@eval_function_body
+def _setup_all () :
+    global __all__
+    _g = globals ()
+    _g.update (Type.Table)
+    _g.update (M_Media.Nick)
+    __all__ = tuple \
+        (k for (k, v) in pyk.iteritems (_g) if isinstance (v, (M_Media, Type)))
 
-__all__ = tuple \
-    (k for (k, v) in pyk.iteritems (_g) if isinstance (v, (M_Media, Type)))
-del _g
+__doc__ = """
+This in the docstring, so that it will be tested before the docstrings of the
+various classes in here. The sequence of those tests is not determistic and
+sometimes the following test would fail.
+
+    >>> print (", ".join (sorted (Type.Table)))
+    ALL, PRINT, SCREEN
+
+"""
 
 if __name__ != "__main__" :
     GTW.CSS._Export_Module ()
