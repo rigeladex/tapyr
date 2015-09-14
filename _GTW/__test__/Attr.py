@@ -88,7 +88,7 @@ _test_DET = """
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
         MOM.Link1                        MOM.Id_Entity
-        MOM._MOM_Link_n_                 MOM.Id_Entity
+        MOM._Link_n_                     MOM.Id_Entity
         MOM.Link2                        MOM.Id_Entity
         MOM.Object                       MOM.Id_Entity
         PAP.Id_Entity                    MOM.Id_Entity
@@ -106,7 +106,7 @@ _test_DET = """
         PAP.Link                         MOM.Id_Entity
         PAP.Link1                        MOM.Id_Entity
         PAP.Address_Position          *  MOM.Id_Entity
-        PAP._MOM_Link_n_                 MOM.Id_Entity
+        PAP._Link_n_                     MOM.Id_Entity
         PAP.Link2                        MOM.Id_Entity
         PAP.Subject_has_Property         MOM.Id_Entity
         PAP.Person_has_Account        *  MOM.Id_Entity
@@ -147,7 +147,7 @@ _test_DET = """
         SRM.Regatta_C                 *  MOM.Id_Entity
         SRM.Regatta_H                 *  MOM.Id_Entity
         SRM.Sailor                    *  MOM.Id_Entity
-        SRM._MOM_Link_n_                 MOM.Id_Entity
+        SRM._Link_n_                     MOM.Id_Entity
         SRM.Link2                        MOM.Id_Entity
         SRM.Boat_in_Regatta           *  MOM.Id_Entity
         SRM.Race_Result               *  MOM.Id_Entity
@@ -206,7 +206,7 @@ _test_DET = """
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
         MOM.Link1                        MOM.Id_Entity
-        MOM._MOM_Link_n_                 MOM.Id_Entity
+        MOM._Link_n_                     MOM.Id_Entity
         MOM.Link2                        MOM.Id_Entity
         MOM.Object                       MOM.Id_Entity
         PAP.Id_Entity                    MOM.Id_Entity
@@ -224,7 +224,7 @@ _test_DET = """
         PAP.Link                         MOM.Id_Entity
         PAP.Link1                        MOM.Id_Entity
         PAP.Address_Position          *  MOM.Id_Entity
-        PAP._MOM_Link_n_                 MOM.Id_Entity
+        PAP._Link_n_                     MOM.Id_Entity
         PAP.Link2                        MOM.Id_Entity
         PAP.Subject_has_Property         MOM.Id_Entity
         PAP.Person_has_Account        *  MOM.Id_Entity
@@ -265,7 +265,7 @@ _test_DET = """
         SRM.Regatta_C                 *  MOM.Id_Entity
         SRM.Regatta_H                 *  MOM.Id_Entity
         SRM.Sailor                    *  MOM.Id_Entity
-        SRM._MOM_Link_n_                 MOM.Id_Entity
+        SRM._Link_n_                     MOM.Id_Entity
         SRM.Link2                        MOM.Id_Entity
         SRM.Boat_in_Regatta           *  MOM.Id_Entity
         SRM.Race_Result               *  MOM.Id_Entity
@@ -318,7 +318,7 @@ _test_DET = """
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
         MOM.Link1                        MOM.Id_Entity
-        MOM._MOM_Link_n_                 MOM.Id_Entity
+        MOM._Link_n_                     MOM.Id_Entity
         MOM.Link2                        MOM.Id_Entity
         MOM.Object                       MOM.Id_Entity
         PAP.Id_Entity                    MOM.Id_Entity
@@ -336,7 +336,7 @@ _test_DET = """
         PAP.Link                         MOM.Id_Entity
         PAP.Link1                        MOM.Id_Entity
         PAP.Address_Position          *  MOM.Id_Entity
-        PAP._MOM_Link_n_                 MOM.Id_Entity
+        PAP._Link_n_                     MOM.Id_Entity
         PAP.Link2                        MOM.Id_Entity
         PAP.Subject_has_Property         MOM.Id_Entity
         PAP.Person_has_Account        *  MOM.Id_Entity
@@ -377,7 +377,7 @@ _test_DET = """
         SRM.Regatta_C                 *  MOM.Id_Entity
         SRM.Regatta_H                 *  MOM.Id_Entity
         SRM.Sailor                    *  MOM.Id_Entity
-        SRM._MOM_Link_n_                 MOM.Id_Entity
+        SRM._Link_n_                     MOM.Id_Entity
         SRM.Link2                        MOM.Id_Entity
         SRM.Boat_in_Regatta           *  MOM.Id_Entity
         SRM.Race_Result               *  MOM.Id_Entity
@@ -400,7 +400,7 @@ _test_DET = """
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
         MOM.Link1                        MOM.Id_Entity
-        MOM._MOM_Link_n_                 MOM.Id_Entity
+        MOM._Link_n_                     MOM.Id_Entity
         MOM.Link2                        MOM.Id_Entity
         MOM.Object                       MOM.Id_Entity
         PAP.Id_Entity                    MOM.Id_Entity
@@ -418,7 +418,7 @@ _test_DET = """
         PAP.Link                         MOM.Id_Entity
         PAP.Link1                        MOM.Id_Entity
         PAP.Address_Position          *  MOM.Id_Entity
-        PAP._MOM_Link_n_                 MOM.Id_Entity
+        PAP._Link_n_                     MOM.Id_Entity
         PAP.Link2                        MOM.Id_Entity
         PAP.Subject_has_Property         MOM.Id_Entity
         PAP.Person_has_Account        *  MOM.Id_Entity
@@ -459,7 +459,7 @@ _test_DET = """
         SRM.Regatta_C                 *  MOM.Id_Entity
         SRM.Regatta_H                 *  MOM.Id_Entity
         SRM.Sailor                    *  MOM.Id_Entity
-        SRM._MOM_Link_n_                 MOM.Id_Entity
+        SRM._Link_n_                     MOM.Id_Entity
         SRM.Link2                        MOM.Id_Entity
         SRM.Boat_in_Regatta           *  MOM.Id_Entity
         SRM.Race_Result               *  MOM.Id_Entity
@@ -481,12 +481,12 @@ _test_DET = """
     left [MOM.Link]
         MOM.Link                         MOM.Link
         MOM.Link1                        MOM.Link1
-        MOM._MOM_Link_n_                 MOM.Link
+        MOM._Link_n_                     MOM.Link
         MOM.Link2                        MOM.Link
         PAP.Link                         MOM.Link
         PAP.Link1                        MOM.Link
         PAP.Address_Position          *  PAP.Address_Position
-        PAP._MOM_Link_n_                 MOM.Link
+        PAP._Link_n_                     MOM.Link
         PAP.Link2                        MOM.Link
         PAP.Subject_has_Property         PAP.Subject_has_Property
         PAP.Person_has_Account        *  PAP.Person_has_Account
@@ -508,7 +508,7 @@ _test_DET = """
         SRM.Regatta_C                 *  SRM.Regatta
         SRM.Regatta_H                 *  SRM.Regatta
         SRM.Sailor                    *  SRM.Sailor
-        SRM._MOM_Link_n_                 MOM.Link
+        SRM._Link_n_                     MOM.Link
         SRM.Link2                        MOM.Link
         SRM.Boat_in_Regatta           *  SRM.Boat_in_Regatta
         SRM.Race_Result               *  SRM.Race_Result
@@ -561,7 +561,7 @@ _test_DET = """
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
         MOM.Link1                        MOM.Id_Entity
-        MOM._MOM_Link_n_                 MOM.Id_Entity
+        MOM._Link_n_                     MOM.Id_Entity
         MOM.Link2                        MOM.Id_Entity
         MOM.Object                       MOM.Id_Entity
         PAP.Id_Entity                    MOM.Id_Entity
@@ -579,7 +579,7 @@ _test_DET = """
         PAP.Link                         MOM.Id_Entity
         PAP.Link1                        MOM.Id_Entity
         PAP.Address_Position          *  MOM.Id_Entity
-        PAP._MOM_Link_n_                 MOM.Id_Entity
+        PAP._Link_n_                     MOM.Id_Entity
         PAP.Link2                        MOM.Id_Entity
         PAP.Subject_has_Property         MOM.Id_Entity
         PAP.Person_has_Account        *  MOM.Id_Entity
@@ -620,7 +620,7 @@ _test_DET = """
         SRM.Regatta_C                 *  MOM.Id_Entity
         SRM.Regatta_H                 *  MOM.Id_Entity
         SRM.Sailor                    *  MOM.Id_Entity
-        SRM._MOM_Link_n_                 MOM.Id_Entity
+        SRM._Link_n_                     MOM.Id_Entity
         SRM.Link2                        MOM.Id_Entity
         SRM.Boat_in_Regatta           *  MOM.Id_Entity
         SRM.Race_Result               *  MOM.Id_Entity
@@ -659,15 +659,15 @@ _test_DET = """
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
         SRM.Regatta_H                 *  SRM.Regatta
-    right [MOM._MOM_Link_n_]
-        MOM._MOM_Link_n_                 MOM._MOM_Link_n_
-        MOM.Link2                        MOM._MOM_Link_n_
-        PAP._MOM_Link_n_                 MOM._MOM_Link_n_
-        PAP.Link2                        MOM._MOM_Link_n_
+    right [MOM._Link_n_]
+        MOM._Link_n_                     MOM._Link_n_
+        MOM.Link2                        MOM._Link_n_
+        PAP._Link_n_                     MOM._Link_n_
+        PAP.Link2                        MOM._Link_n_
         PAP.Subject_has_Property         PAP.Subject_has_Property
         PAP.Person_has_Account        *  PAP.Person_has_Account
-        SRM._MOM_Link_n_                 MOM._MOM_Link_n_
-        SRM.Link2                        MOM._MOM_Link_n_
+        SRM._Link_n_                     MOM._Link_n_
+        SRM.Link2                        MOM._Link_n_
         SRM.Boat_in_Regatta           *  SRM.Boat_in_Regatta
         SRM.Crew_Member               *  SRM.Crew_Member
         SRM.Team_has_Boat_in_Regatta  *  SRM.Team_has_Boat_in_Regatta
@@ -714,7 +714,7 @@ _test_DET = """
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
         MOM.Link1                        MOM.Id_Entity
-        MOM._MOM_Link_n_                 MOM.Id_Entity
+        MOM._Link_n_                     MOM.Id_Entity
         MOM.Link2                        MOM.Id_Entity
         MOM.Object                       MOM.Id_Entity
         PAP.Id_Entity                    MOM.Id_Entity
@@ -732,7 +732,7 @@ _test_DET = """
         PAP.Link                         MOM.Id_Entity
         PAP.Link1                        MOM.Id_Entity
         PAP.Address_Position          *  MOM.Id_Entity
-        PAP._MOM_Link_n_                 MOM.Id_Entity
+        PAP._Link_n_                     MOM.Id_Entity
         PAP.Link2                        MOM.Id_Entity
         PAP.Subject_has_Property         MOM.Id_Entity
         PAP.Person_has_Account        *  MOM.Id_Entity
@@ -773,7 +773,7 @@ _test_DET = """
         SRM.Regatta_C                 *  MOM.Id_Entity
         SRM.Regatta_H                 *  MOM.Id_Entity
         SRM.Sailor                    *  MOM.Id_Entity
-        SRM._MOM_Link_n_                 MOM.Id_Entity
+        SRM._Link_n_                     MOM.Id_Entity
         SRM.Link2                        MOM.Id_Entity
         SRM.Boat_in_Regatta           *  MOM.Id_Entity
         SRM.Race_Result               *  MOM.Id_Entity
@@ -808,12 +808,12 @@ _test_DET = """
     ...     print ("%%-30s %%-30s %%s" %% (ET.type_name, kind.attr.DET, kind.attr.DET_Base))
     MOM.Link                       MOM.Link                       None
     MOM.Link1                      MOM.Link1                      MOM.Link
-    MOM._MOM_Link_n_               MOM.Link                       None
+    MOM._Link_n_                   MOM.Link                       None
     MOM.Link2                      MOM.Link                       None
     PAP.Link                       MOM.Link                       None
     PAP.Link1                      MOM.Link                       None
     PAP.Address_Position           PAP.Address_Position           MOM.Link1
-    PAP._MOM_Link_n_               MOM.Link                       None
+    PAP._Link_n_                   MOM.Link                       None
     PAP.Link2                      MOM.Link                       None
     PAP.Subject_has_Property       PAP.Subject_has_Property       MOM.Link
     PAP.Person_has_Account         PAP.Person_has_Account         MOM.Link
@@ -835,7 +835,7 @@ _test_DET = """
     SRM.Regatta_C                  SRM.Regatta                    MOM.Link1
     SRM.Regatta_H                  SRM.Regatta                    MOM.Link1
     SRM.Sailor                     SRM.Sailor                     MOM.Link1
-    SRM._MOM_Link_n_               MOM.Link                       None
+    SRM._Link_n_                   MOM.Link                       None
     SRM.Link2                      MOM.Link                       None
     SRM.Boat_in_Regatta            SRM.Boat_in_Regatta            MOM.Link
     SRM.Race_Result                SRM.Race_Result                MOM.Link1
@@ -861,13 +861,13 @@ _test_DET = """
     ...   if len (ET.Roles) > 1 :
     ...     db = ak.det_base.type_name if ak.det_base else None
     ...     print ("%%-30s %%-30s %%s" %% (ET.type_name, ak.e_type.type_name, db))
-    MOM._MOM_Link_n_               MOM.Link                       None
+    MOM._Link_n_                   MOM.Link                       None
     MOM.Link2                      MOM.Link                       None
-    PAP._MOM_Link_n_               MOM.Link                       None
+    PAP._Link_n_                   MOM.Link                       None
     PAP.Link2                      MOM.Link                       None
     PAP.Subject_has_Property       PAP.Subject_has_Property       MOM.Link
     PAP.Person_has_Account         PAP.Person_has_Account         MOM.Link
-    SRM._MOM_Link_n_               MOM.Link                       None
+    SRM._Link_n_                   MOM.Link                       None
     SRM.Link2                      MOM.Link                       None
     SRM.Boat_in_Regatta            SRM.Boat_in_Regatta            MOM.Link
     SRM.Crew_Member                SRM.Crew_Member                MOM.Link
@@ -885,22 +885,22 @@ _test_DET = """
     PAP.Company_has_Address        PAP.Company_has_Address        PAP.Subject_has_Property
     PAP.Person_has_Address         PAP.Person_has_Address         PAP.Subject_has_Property
 
-    >>> name, DT = ("right", "MOM._MOM_Link_n_")
+    >>> name, DT = ("right", "MOM._Link_n_")
     >>> xs       = a_map [name, DT]
     >>> for ak, ET in sorted (xs, key = lambda x : x [1].i_rank) : ### right
     ...     db = ak.det_base.type_name if ak.det_base else None
     ...     print ("%%-30s %%-30s %%s" %% (ET.type_name, ak.e_type.type_name, db))
-    MOM._MOM_Link_n_               MOM._MOM_Link_n_               None
-    MOM.Link2                      MOM._MOM_Link_n_               None
-    PAP._MOM_Link_n_               MOM._MOM_Link_n_               None
-    PAP.Link2                      MOM._MOM_Link_n_               None
-    PAP.Subject_has_Property       PAP.Subject_has_Property       MOM._MOM_Link_n_
-    PAP.Person_has_Account         PAP.Person_has_Account         MOM._MOM_Link_n_
-    SRM._MOM_Link_n_               MOM._MOM_Link_n_               None
-    SRM.Link2                      MOM._MOM_Link_n_               None
-    SRM.Boat_in_Regatta            SRM.Boat_in_Regatta            MOM._MOM_Link_n_
-    SRM.Crew_Member                SRM.Crew_Member                MOM._MOM_Link_n_
-    SRM.Team_has_Boat_in_Regatta   SRM.Team_has_Boat_in_Regatta   MOM._MOM_Link_n_
+    MOM._Link_n_                   MOM._Link_n_                   None
+    MOM.Link2                      MOM._Link_n_                   None
+    PAP._Link_n_                   MOM._Link_n_                   None
+    PAP.Link2                      MOM._Link_n_                   None
+    PAP.Subject_has_Property       PAP.Subject_has_Property       MOM._Link_n_
+    PAP.Person_has_Account         PAP.Person_has_Account         MOM._Link_n_
+    SRM._Link_n_                   MOM._Link_n_                   None
+    SRM.Link2                      MOM._Link_n_                   None
+    SRM.Boat_in_Regatta            SRM.Boat_in_Regatta            MOM._Link_n_
+    SRM.Crew_Member                SRM.Crew_Member                MOM._Link_n_
+    SRM.Team_has_Boat_in_Regatta   SRM.Team_has_Boat_in_Regatta   MOM._Link_n_
     PAP.Subject_has_Address        PAP.Subject_has_Address        PAP.Subject_has_Property
     PAP.Subject_has_Email          PAP.Subject_has_Email          PAP.Subject_has_Property
     PAP.Subject_has_Phone          PAP.Subject_has_Phone          PAP.Subject_has_Property
@@ -922,12 +922,12 @@ _test_DET = """
     ...     print ("%%-30s%%-2s %%s" %% (ET.type_name, flag, rt))
     MOM.Link                         None
     MOM.Link1                        None
-    MOM._MOM_Link_n_                 None
+    MOM._Link_n_                     None
     MOM.Link2                        None
     PAP.Link                         None
     PAP.Link1                        None
     PAP.Address_Position          *  PAP.Address
-    PAP._MOM_Link_n_                 None
+    PAP._Link_n_                     None
     PAP.Link2                        None
     PAP.Subject_has_Property         PAP.Subject
     PAP.Person_has_Account        *  PAP.Person
@@ -949,7 +949,7 @@ _test_DET = """
     SRM.Regatta_C                 *  SRM.Regatta_Event
     SRM.Regatta_H                 *  SRM.Regatta_Event
     SRM.Sailor                    *  PAP.Person
-    SRM._MOM_Link_n_                 None
+    SRM._Link_n_                     None
     SRM.Link2                        None
     SRM.Boat_in_Regatta           *  SRM.Boat
     SRM.Race_Result               *  SRM.Boat_in_Regatta
@@ -969,19 +969,19 @@ _test_DET = """
     PAP.Company_has_Address       *  PAP.Company
     PAP.Person_has_Address        *  PAP.Person
 
-    >>> name, DT = ("right", "MOM._MOM_Link_n_")
+    >>> name, DT = ("right", "MOM._Link_n_")
     >>> xs       = a_map [name, DT]
     >>> for ak, ET in sorted (xs, key = lambda x : x [1].i_rank) : ### right
     ...     flag = "*" if not ET.is_partial else ""
     ...     rt = ak.E_Type.type_name if ak.E_Type else None
     ...     print ("%%-30s%%-2s %%s" %% (ET.type_name, flag, rt))
-    MOM._MOM_Link_n_                 None
+    MOM._Link_n_                     None
     MOM.Link2                        None
-    PAP._MOM_Link_n_                 None
+    PAP._Link_n_                     None
     PAP.Link2                        None
     PAP.Subject_has_Property         PAP.Property
     PAP.Person_has_Account        *  Auth.Account
-    SRM._MOM_Link_n_                 None
+    SRM._Link_n_                     None
     SRM.Link2                        None
     SRM.Boat_in_Regatta           *  SRM.Regatta
     SRM.Crew_Member               *  SRM.Sailor
@@ -1013,13 +1013,13 @@ _test_DET = """
     ...     print ("%%-30s %%-30s %%-30s %%s" %% (ET.type_name, det, db, at))
     E_Type                         det                            det_base                       attr.E_Type
     ==============================================================================================================
-    MOM._MOM_Link_n_               MOM.Link                       <Undef/value>                  <Undef/value>
+    MOM._Link_n_                   MOM.Link                       <Undef/value>                  <Undef/value>
     MOM.Link2                      MOM.Link                       <Undef/value>                  <Undef/value>
-    PAP._MOM_Link_n_               MOM.Link                       <Undef/value>                  <Undef/value>
+    PAP._Link_n_                   MOM.Link                       <Undef/value>                  <Undef/value>
     PAP.Link2                      MOM.Link                       <Undef/value>                  <Undef/value>
     PAP.Subject_has_Property       PAP.Subject_has_Property       MOM.Link                       PAP.Subject
     PAP.Person_has_Account         PAP.Person_has_Account         MOM.Link                       PAP.Person
-    SRM._MOM_Link_n_               MOM.Link                       <Undef/value>                  <Undef/value>
+    SRM._Link_n_                   MOM.Link                       <Undef/value>                  <Undef/value>
     SRM.Link2                      MOM.Link                       <Undef/value>                  <Undef/value>
     SRM.Boat_in_Regatta            SRM.Boat_in_Regatta            MOM.Link                       SRM.Boat
     SRM.Crew_Member                SRM.Crew_Member                MOM.Link                       SRM.Boat_in_Regatta
@@ -1037,7 +1037,7 @@ _test_DET = """
     PAP.Company_has_Address        PAP.Company_has_Address        PAP.Subject_has_Property       PAP.Company
     PAP.Person_has_Address         PAP.Person_has_Address         PAP.Subject_has_Property       PAP.Person
 
-    >>> name, DT = ("right", "MOM._MOM_Link_n_")
+    >>> name, DT = ("right", "MOM._Link_n_")
     >>> xs       = a_map [name, DT]
     >>> for i, (kind, ET) in enumerate (sorted (xs, key = lambda x : x [1].i_rank)) : ### right
     ...     if not i :
@@ -1050,17 +1050,17 @@ _test_DET = """
     ...     print ("%%-30s %%-30s %%-30s %%s" %% (ET.type_name, det, db, at))
     E_Type                         det                            det_base                       attr.E_Type
     ==============================================================================================================
-    MOM._MOM_Link_n_               MOM._MOM_Link_n_               <Undef/value>                  <Undef/value>
-    MOM.Link2                      MOM._MOM_Link_n_               <Undef/value>                  <Undef/value>
-    PAP._MOM_Link_n_               MOM._MOM_Link_n_               <Undef/value>                  <Undef/value>
-    PAP.Link2                      MOM._MOM_Link_n_               <Undef/value>                  <Undef/value>
-    PAP.Subject_has_Property       PAP.Subject_has_Property       MOM._MOM_Link_n_               PAP.Property
-    PAP.Person_has_Account         PAP.Person_has_Account         MOM._MOM_Link_n_               Auth.Account
-    SRM._MOM_Link_n_               MOM._MOM_Link_n_               <Undef/value>                  <Undef/value>
-    SRM.Link2                      MOM._MOM_Link_n_               <Undef/value>                  <Undef/value>
-    SRM.Boat_in_Regatta            SRM.Boat_in_Regatta            MOM._MOM_Link_n_               SRM.Regatta
-    SRM.Crew_Member                SRM.Crew_Member                MOM._MOM_Link_n_               SRM.Sailor
-    SRM.Team_has_Boat_in_Regatta   SRM.Team_has_Boat_in_Regatta   MOM._MOM_Link_n_               SRM.Boat_in_Regatta
+    MOM._Link_n_                   MOM._Link_n_                   <Undef/value>                  <Undef/value>
+    MOM.Link2                      MOM._Link_n_                   <Undef/value>                  <Undef/value>
+    PAP._Link_n_                   MOM._Link_n_                   <Undef/value>                  <Undef/value>
+    PAP.Link2                      MOM._Link_n_                   <Undef/value>                  <Undef/value>
+    PAP.Subject_has_Property       PAP.Subject_has_Property       MOM._Link_n_                   PAP.Property
+    PAP.Person_has_Account         PAP.Person_has_Account         MOM._Link_n_                   Auth.Account
+    SRM._Link_n_                   MOM._Link_n_                   <Undef/value>                  <Undef/value>
+    SRM.Link2                      MOM._Link_n_                   <Undef/value>                  <Undef/value>
+    SRM.Boat_in_Regatta            SRM.Boat_in_Regatta            MOM._Link_n_                   SRM.Regatta
+    SRM.Crew_Member                SRM.Crew_Member                MOM._Link_n_                   SRM.Sailor
+    SRM.Team_has_Boat_in_Regatta   SRM.Team_has_Boat_in_Regatta   MOM._Link_n_                   SRM.Boat_in_Regatta
     PAP.Subject_has_Address        PAP.Subject_has_Address        PAP.Subject_has_Property       PAP.Address
     PAP.Subject_has_Email          PAP.Subject_has_Email          PAP.Subject_has_Property       PAP.Email
     PAP.Subject_has_Phone          PAP.Subject_has_Phone          PAP.Subject_has_Property       PAP.Phone
@@ -1086,13 +1086,13 @@ _test_DET = """
     ...     print ("%%-30s %%-30s %%s" %% (ET.type_name, det, dek))
     E_Type                         det                            det_kind
     ================================================================================
-    MOM._MOM_Link_n_               MOM.Link                       Left `left`
+    MOM._Link_n_                   MOM.Link                       Left `left`
     MOM.Link2                      MOM.Link                       Left `left`
-    PAP._MOM_Link_n_               MOM.Link                       Left `left`
+    PAP._Link_n_                   MOM.Link                       Left `left`
     PAP.Link2                      MOM.Link                       Left `left`
     PAP.Subject_has_Property       PAP.Subject_has_Property       Subject `left`
     PAP.Person_has_Account         PAP.Person_has_Account         Person `left`
-    SRM._MOM_Link_n_               MOM.Link                       Left `left`
+    SRM._Link_n_                   MOM.Link                       Left `left`
     SRM.Link2                      MOM.Link                       Left `left`
     SRM.Boat_in_Regatta            SRM.Boat_in_Regatta            Boat `left`
     SRM.Crew_Member                SRM.Crew_Member                Boat_in_Regatta `left`
@@ -1110,7 +1110,7 @@ _test_DET = """
     PAP.Company_has_Address        PAP.Company_has_Address        Company `left`
     PAP.Person_has_Address         PAP.Person_has_Address         Person `left`
 
-    >>> name, DT = ("right", "MOM._MOM_Link_n_")
+    >>> name, DT = ("right", "MOM._Link_n_")
     >>> xs       = a_map [name, DT]
     >>> for i, (kind, ET) in enumerate (sorted (xs, key = lambda x : x [1].i_rank)) : ### right
     ...     if not i :
@@ -1121,14 +1121,14 @@ _test_DET = """
     ...     print ("%%-30s %%-30s %%s" %% (ET.type_name, det, dek))
     E_Type                         det                            det_kind
     ================================================================================
-    MOM._MOM_Link_n_               MOM._MOM_Link_n_               Right `right`
-    MOM.Link2                      MOM._MOM_Link_n_               Right `right`
-    PAP._MOM_Link_n_               MOM._MOM_Link_n_               Right `right`
-    PAP.Link2                      MOM._MOM_Link_n_               Right `right`
+    MOM._Link_n_                   MOM._Link_n_                   Right `right`
+    MOM.Link2                      MOM._Link_n_                   Right `right`
+    PAP._Link_n_                   MOM._Link_n_                   Right `right`
+    PAP.Link2                      MOM._Link_n_                   Right `right`
     PAP.Subject_has_Property       PAP.Subject_has_Property       Property `right`
     PAP.Person_has_Account         PAP.Person_has_Account         Account `right`
-    SRM._MOM_Link_n_               MOM._MOM_Link_n_               Right `right`
-    SRM.Link2                      MOM._MOM_Link_n_               Right `right`
+    SRM._Link_n_                   MOM._Link_n_                   Right `right`
+    SRM.Link2                      MOM._Link_n_                   Right `right`
     SRM.Boat_in_Regatta            SRM.Boat_in_Regatta            Regatta `right`
     SRM.Crew_Member                SRM.Crew_Member                Sailor `right`
     SRM.Team_has_Boat_in_Regatta   SRM.Team_has_Boat_in_Regatta   Boat_in_Regatta `right`
@@ -1362,7 +1362,7 @@ _test_types = """
             SRM.Sailor
             SRM.Race_Result
             SRM.Team
-        MOM._MOM_Link_n_
+        MOM._Link_n_
           MOM.Link2
             Auth.Link2
               Auth.Account_in_Group
@@ -1386,9 +1386,9 @@ _test_types = """
               SRM.Crew_Member
               SRM.Team_has_Boat_in_Regatta
           MOM.Link3
-          Auth._MOM_Link_n_
-          PAP._MOM_Link_n_
-          SRM._MOM_Link_n_
+          Auth._Link_n_
+          PAP._Link_n_
+          SRM._Link_n_
         Auth.Link
         PAP.Link
         EVT.Link

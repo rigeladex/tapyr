@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -87,7 +87,7 @@ test_code = r"""
     MOM.Link1
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
-    MOM._MOM_Link_n_
+    MOM._Link_n_
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     MOM.Link2
@@ -133,7 +133,7 @@ test_code = r"""
     Auth.Link
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
-    Auth._MOM_Link_n_
+    Auth._Link_n_
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Link2
@@ -260,7 +260,7 @@ test_code = r"""
     PAP.Address_Position
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
-    PAP._MOM_Link_n_
+    PAP._Link_n_
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Link2
@@ -374,7 +374,7 @@ test_code = r"""
         ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['skipper'])
         ('SRM.Crew_Member', ['right'])
-    SRM._MOM_Link_n_
+    SRM._Link_n_
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SRM.Link2

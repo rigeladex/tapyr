@@ -61,7 +61,7 @@ _test_ancestors = """
     MOM.MD_Change
     MOM.Link                             < MOM.Id_Entity
     MOM.Link1                            < MOM.Id_Entity
-    MOM._MOM_Link_n_                     < MOM.Id_Entity
+    MOM._Link_n_                         < MOM.Id_Entity
     MOM.Link2                            < MOM.Id_Entity
     MOM.Link3                            < MOM.Id_Entity
     MOM.Object                           < MOM.Id_Entity
@@ -76,7 +76,7 @@ _test_ancestors = """
     Auth.Certificate                     < MOM.Id_Entity
     Auth.Group                           < MOM.Id_Entity
     Auth.Link                            < MOM.Id_Entity
-    Auth._MOM_Link_n_                    < MOM.Id_Entity
+    Auth._Link_n_                        < MOM.Id_Entity
     Auth.Link2                           < MOM.Id_Entity
     Auth.Account_in_Group                < MOM.Id_Entity
     Auth.Link1                           < MOM.Id_Entity
@@ -117,7 +117,7 @@ _test_ancestors = """
     PAP.Link                             < MOM.Id_Entity
     PAP.Link1                            < MOM.Id_Entity
     PAP.Address_Position                 < MOM.Id_Entity
-    PAP._MOM_Link_n_                     < MOM.Id_Entity
+    PAP._Link_n_                         < MOM.Id_Entity
     PAP.Link2                            < MOM.Id_Entity
     PAP.Subject_has_Property             < MOM.Id_Entity
     PAP.Person_has_Account               < MOM.Id_Entity
@@ -154,7 +154,7 @@ _test_ancestors = """
     SRM.Regatta_C                        < SRM.Regatta      < MOM.Id_Entity
     SRM.Regatta_H                        < SRM.Regatta      < MOM.Id_Entity
     SRM.Sailor                           < MOM.Id_Entity
-    SRM._MOM_Link_n_                     < MOM.Id_Entity
+    SRM._Link_n_                         < MOM.Id_Entity
     SRM.Link2                            < MOM.Id_Entity
     SRM.Boat_in_Regatta                  < MOM.Id_Entity
     SRM.Race_Result                      < MOM.Id_Entity
@@ -179,7 +179,7 @@ _test_ancestors = """
     MOM.MD_Change                        mom_md_change
     MOM.Link                             mom_id_entity
     MOM.Link1                            mom_id_entity
-    MOM._MOM_Link_n_                     mom_id_entity
+    MOM._Link_n_                         mom_id_entity
     MOM.Link2                            mom_id_entity
     MOM.Link3                            mom_id_entity
     MOM.Object                           mom_id_entity
@@ -194,7 +194,7 @@ _test_ancestors = """
     Auth.Certificate                     mom_id_entity
     Auth.Group                           mom_id_entity
     Auth.Link                            mom_id_entity
-    Auth._MOM_Link_n_                    mom_id_entity
+    Auth._Link_n_                        mom_id_entity
     Auth.Link2                           mom_id_entity
     Auth.Account_in_Group                mom_id_entity
     Auth.Link1                           mom_id_entity
@@ -235,7 +235,7 @@ _test_ancestors = """
     PAP.Link                             mom_id_entity
     PAP.Link1                            mom_id_entity
     PAP.Address_Position                 mom_id_entity
-    PAP._MOM_Link_n_                     mom_id_entity
+    PAP._Link_n_                         mom_id_entity
     PAP.Link2                            mom_id_entity
     PAP.Subject_has_Property             mom_id_entity
     PAP.Person_has_Account               mom_id_entity
@@ -272,7 +272,7 @@ _test_ancestors = """
     SRM.Regatta_C                        mom_id_entity
     SRM.Regatta_H                        mom_id_entity
     SRM.Sailor                           mom_id_entity
-    SRM._MOM_Link_n_                     mom_id_entity
+    SRM._Link_n_                         mom_id_entity
     SRM.Link2                            mom_id_entity
     SRM.Boat_in_Regatta                  mom_id_entity
     SRM.Race_Result                      mom_id_entity
@@ -339,7 +339,7 @@ _test_attr_wrappers = """
     MOM.Link1
       Kind_Wrapper_P : Left `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-    MOM._MOM_Link_n_
+    MOM._Link_n_
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_P : Right `right`
@@ -436,7 +436,7 @@ _test_attr_wrappers = """
     Auth.Link
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-    Auth._MOM_Link_n_
+    Auth._Link_n_
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_P : Right `right`
@@ -797,7 +797,7 @@ _test_attr_wrappers = """
               _Nested_Mixin_, _Raw_Value_Mixin_, Necessary, _User_, _DB_Attr_
           Kind_Wrapper : Angle `lon`
               _Nested_Mixin_, _Raw_Value_Mixin_, Necessary, _User_, _DB_Attr_
-    PAP._MOM_Link_n_
+    PAP._Link_n_
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_P : Right `right`
@@ -1135,7 +1135,7 @@ _test_attr_wrappers = """
           _Raw_Value_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Nation `nation`
           Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
-    SRM._MOM_Link_n_
+    SRM._Link_n_
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_P : Right `right`
@@ -1654,7 +1654,7 @@ _test_q_able = """
       <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification | Auth.Account_Password_Change_Required | Auth.Account_Password_Reset | EVT.Event | EVT.Event_occurs | EVT.Recurrence_Rule | EVT.Recurrence_Spec | PAP.Address_Position | SRM.Boat | SRM.Race_Result | SRM.Regatta | SRM.Sailor | SRM.Team | SWP.Clip_O | SWP.Picture)>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : MOM._MOM_Link_n_ [mom_id_entity]>
+    <SAW : MOM._Link_n_ [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
@@ -1789,7 +1789,7 @@ _test_q_able = """
       <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification | Auth.Account_Password_Change_Required | Auth.Account_Password_Reset | Auth.Account_in_Group)>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : Auth._MOM_Link_n_ [mom_id_entity]>
+    <SAW : Auth._Link_n_ [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
@@ -2186,7 +2186,7 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Position `position` [pap_address_position.position__height, pap_address_position.position__lat, pap_address_position.position____raw_lat, pap_address_position.position__lon, pap_address_position.position____raw_lon]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : PAP._MOM_Link_n_ [mom_id_entity]>
+    <SAW : PAP._Link_n_ [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
@@ -2594,7 +2594,7 @@ _test_q_able = """
       <SAW : Nation `nation` [srm_sailor.nation]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : SRM._MOM_Link_n_ [mom_id_entity]>
+    <SAW : SRM._Link_n_ [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
@@ -2835,7 +2835,7 @@ _test_q_able = """
       left                          : left
       pid                           : pid
       type_name                     : type_name
-    <SAW : MOM._MOM_Link_n_ [mom_id_entity]>
+    <SAW : MOM._Link_n_ [mom_id_entity]>
       creation                      : creation
       events                        : events
       last_change                   : last_change
@@ -2972,7 +2972,7 @@ _test_q_able = """
       left                          : left
       pid                           : pid
       type_name                     : type_name
-    <SAW : Auth._MOM_Link_n_ [mom_id_entity]>
+    <SAW : Auth._Link_n_ [mom_id_entity]>
       creation                      : creation
       events                        : events
       last_change                   : last_change
@@ -3382,7 +3382,7 @@ _test_q_able = """
           lat                           : position.lat
           lon                           : position.lon
       type_name                     : type_name
-    <SAW : PAP._MOM_Link_n_ [mom_id_entity]>
+    <SAW : PAP._Link_n_ [mom_id_entity]>
       creation                      : creation
       events                        : events
       last_change                   : last_change
@@ -3823,7 +3823,7 @@ _test_q_able = """
       nation                        : nation
       pid                           : pid
       type_name                     : type_name
-    <SAW : SRM._MOM_Link_n_ [mom_id_entity]>
+    <SAW : SRM._Link_n_ [mom_id_entity]>
       creation                      : creation
       events                        : events
       last_change                   : last_change
@@ -6668,7 +6668,7 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : MOM._MOM_Link_n_ [mom_id_entity]>
+    <SAW : MOM._Link_n_ [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
         events                    : <SAW : Link_Ref_List `events`>
@@ -6831,7 +6831,7 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : Auth._MOM_Link_n_ [mom_id_entity]>
+    <SAW : Auth._Link_n_ [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
         events                    : <SAW : Link_Ref_List `events`>
@@ -7373,7 +7373,7 @@ _test_qc_map = """
         position____raw_lon       : pap_address_position.position____raw_lon
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP._MOM_Link_n_ [mom_id_entity]>
+    <SAW : PAP._Link_n_ [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
         events                    : <SAW : Link_Ref_List `events`>
@@ -7926,7 +7926,7 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM._MOM_Link_n_ [mom_id_entity]>
+    <SAW : SRM._Link_n_ [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
         events                    : <SAW : Link_Ref_List `events`>
@@ -8926,7 +8926,7 @@ _test_select = """
             OR mom_id_entity.pid = srm_sailor.pid
             OR mom_id_entity.pid = srm_race_result.pid
             OR mom_id_entity.pid = srm_team.pid
-    MOM._MOM_Link_n_
+    MOM._Link_n_
         SELECT auth_account_in_group."left" AS auth_account_in_group_left,
                auth_account_in_group."right" AS auth_account_in_group_right,
                auth_account_in_group.pid AS auth_account_in_group_pid,
@@ -9405,7 +9405,7 @@ _test_select = """
             OR mom_id_entity.pid = auth_account_password_change_required.pid
             OR mom_id_entity.pid = auth_account_email_verification.pid
             OR mom_id_entity.pid = auth_account_password_reset.pid
-    Auth._MOM_Link_n_
+    Auth._Link_n_
         SELECT auth_account_in_group."left" AS auth_account_in_group_left,
                auth_account_in_group."right" AS auth_account_in_group_right,
                auth_account_in_group.pid AS auth_account_in_group_pid,
@@ -10251,7 +10251,7 @@ _test_select = """
                pap_address_position.position__lon AS pap_address_position_position__lon
         FROM mom_id_entity
            JOIN pap_address_position ON mom_id_entity.pid = pap_address_position.pid
-    PAP._MOM_Link_n_
+    PAP._Link_n_
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
@@ -11218,7 +11218,7 @@ _test_select = """
                srm_sailor.pid AS srm_sailor_pid
         FROM mom_id_entity
            JOIN srm_sailor ON mom_id_entity.pid = srm_sailor.pid
-    SRM._MOM_Link_n_
+    SRM._Link_n_
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
@@ -11630,7 +11630,7 @@ _test_select_strict = """
         SELECT mom_id_entity.pid
         FROM mom_id_entity
         WHERE false
-    MOM._MOM_Link_n_
+    MOM._Link_n_
         SELECT mom_id_entity.pid
         FROM mom_id_entity
         WHERE false
@@ -11721,7 +11721,7 @@ _test_select_strict = """
         SELECT mom_id_entity.pid
         FROM mom_id_entity
         WHERE false
-    Auth._MOM_Link_n_
+    Auth._Link_n_
         SELECT mom_id_entity.pid
         FROM mom_id_entity
         WHERE false
@@ -12052,7 +12052,7 @@ _test_select_strict = """
         FROM mom_id_entity
            JOIN pap_address_position ON mom_id_entity.pid = pap_address_position.pid
         WHERE mom_id_entity.type_name = :type_name_1
-    PAP._MOM_Link_n_
+    PAP._Link_n_
         SELECT mom_id_entity.pid
         FROM mom_id_entity
         WHERE false
@@ -12431,7 +12431,7 @@ _test_select_strict = """
         FROM mom_id_entity
            JOIN srm_sailor ON mom_id_entity.pid = srm_sailor.pid
         WHERE mom_id_entity.type_name = :type_name_1
-    SRM._MOM_Link_n_
+    SRM._Link_n_
         SELECT mom_id_entity.pid
         FROM mom_id_entity
         WHERE false
@@ -12814,7 +12814,7 @@ _test_tables = """
     Auth._Account_                           : auth__account_
     Auth._Account_Action_                    : None
     Auth._Account_Token_Action_              : None
-    Auth._MOM_Link_n_                        : None
+    Auth._Link_n_                            : None
     EVT.Calendar                             : evt_calendar
     EVT.Event                                : evt_event
     EVT.Event_occurs                         : evt_event_occurs
@@ -12843,7 +12843,7 @@ _test_tables = """
     MOM.Object                               : None
     MOM.Position                             : None
     MOM.Time_Interval                        : None
-    MOM._MOM_Link_n_                         : None
+    MOM._Link_n_                             : None
     MOM._Pic_                                : None
     MOM._Thumb_                              : None
     PAP.Address                              : pap_address
@@ -12876,7 +12876,7 @@ _test_tables = """
     PAP.Subject_has_Property                 : pap_subject_has_property
     PAP.Subject_has_Url                      : None
     PAP.Url                                  : pap_url
-    PAP._MOM_Link_n_                         : None
+    PAP._Link_n_                             : None
     SRM.Boat                                 : srm_boat
     SRM.Boat_Class                           : srm_boat_class
     SRM.Boat_in_Regatta                      : srm_boat_in_regatta
@@ -12899,7 +12899,7 @@ _test_tables = """
     SRM.Team                                 : srm_team
     SRM.Team_has_Boat_in_Regatta             : srm_team_has_boat_in_regatta
     SRM._Boat_Class_                         : srm__boat_class_
-    SRM._MOM_Link_n_                         : None
+    SRM._Link_n_                             : None
     SWP.Clip_O                               : swp_clip_o
     SWP.Clip_X                               : swp_clip_x
     SWP.Gallery                              : swp_gallery

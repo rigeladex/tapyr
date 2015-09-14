@@ -168,7 +168,7 @@ _test_code = r"""
     Auth.Certificate                               True   False  False
     Auth.Group                                     True   False  False
     Auth.Link                                      False  True   True
-    Auth._MOM_Link_n_                              False  False  False
+    Auth._Link_n_                                  False  False  False
     Auth.Link2                                     False  False  False
     Auth.Account_in_Group                          True   False  False
     Auth.Link1                                     False  True   True
@@ -205,7 +205,7 @@ _test_code = r"""
     PAP.Link                                       False  True   True
     PAP.Link1                                      False  True   True
     PAP.Address_Position                           True   False  False
-    PAP._MOM_Link_n_                               False  True   True
+    PAP._Link_n_                                   False  True   True
     PAP.Link2                                      False  True   True
     PAP.Subject_has_Property                       True   True   True
     PAP.Person_has_Account                         True   False  False
@@ -240,7 +240,7 @@ _test_code = r"""
     SRM.Regatta_C                                  True   False  False
     SRM.Regatta_H                                  True   False  False
     SRM.Sailor                                     True   False  False
-    SRM._MOM_Link_n_                               False  False  False
+    SRM._Link_n_                                   False  False  False
     SRM.Link2                                      False  False  False
     SRM.Boat_in_Regatta                            True   False  False
     SRM.Race_Result                                True   False  False
@@ -270,7 +270,7 @@ _test_code = r"""
     MOM.Id_Entity                                  ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Certificate', 'Auth.Group', 'Auth._Account_', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Person_has_Account', 'PAP.Phone', 'PAP.Subject_has_Property', 'PAP.Url', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Regatta_Event', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SRM._Boat_Class_', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture', 'SWP.Referral']
     MOM.Link                                       ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address_Position', 'PAP.Person_has_Account', 'PAP.Subject_has_Property', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture']
     MOM.Link1                                      ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address_Position', 'SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture']
-    MOM._MOM_Link_n_                               ['Auth.Account_in_Group', 'PAP.Person_has_Account', 'PAP.Subject_has_Property', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
+    MOM._Link_n_                                   ['Auth.Account_in_Group', 'PAP.Person_has_Account', 'PAP.Subject_has_Property', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
     MOM.Link2                                      ['Auth.Account_in_Group', 'PAP.Person_has_Account', 'PAP.Subject_has_Property', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
     MOM.Object                                     ['Auth.Certificate', 'Auth.Group', 'Auth._Account_', 'EVT.Calendar', 'PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url', 'SRM.Club', 'SRM.Regatta_Event', 'SRM._Boat_Class_', 'SWP.Gallery', 'SWP.Page', 'SWP.Referral']
     Auth.Id_Entity                                 ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Certificate', 'Auth.Group', 'Auth._Account_']
@@ -281,7 +281,7 @@ _test_code = r"""
     Auth.Certificate                               Auth.Certificate 0
     Auth.Group                                     Auth.Group 0
     Auth.Link                                      ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group']
-    Auth._MOM_Link_n_                              ['Auth.Account_in_Group']
+    Auth._Link_n_                                  ['Auth.Account_in_Group']
     Auth.Link2                                     ['Auth.Account_in_Group']
     Auth.Account_in_Group                          Auth.Account_in_Group 0
     Auth.Link1                                     ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset']
@@ -316,7 +316,7 @@ _test_code = r"""
     PAP.Link                                       ['PAP.Address_Position', 'PAP.Person_has_Account', 'PAP.Subject_has_Property']
     PAP.Link1                                      ['PAP.Address_Position']
     PAP.Address_Position                           PAP.Address_Position 0
-    PAP._MOM_Link_n_                               ['PAP.Person_has_Account', 'PAP.Subject_has_Property']
+    PAP._Link_n_                                   ['PAP.Person_has_Account', 'PAP.Subject_has_Property']
     PAP.Link2                                      ['PAP.Person_has_Account', 'PAP.Subject_has_Property']
     PAP.Subject_has_Property                       PAP.Subject_has_Property 0
     PAP.Person_has_Account                         PAP.Person_has_Account 0
@@ -347,7 +347,7 @@ _test_code = r"""
     SRM.Regatta_C                                  SRM.Regatta 0
     SRM.Regatta_H                                  SRM.Regatta 0
     SRM.Sailor                                     SRM.Sailor 0
-    SRM._MOM_Link_n_                               ['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
+    SRM._Link_n_                                   ['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
     SRM.Link2                                      ['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
     SRM.Boat_in_Regatta                            SRM.Boat_in_Regatta 0
     SRM.Race_Result                                SRM.Race_Result 0

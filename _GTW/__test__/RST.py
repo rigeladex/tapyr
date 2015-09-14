@@ -206,7 +206,7 @@ _test_cqf = r"""
         (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous', 'Auth.Certificate', 'Auth.Group'],),)
     Auth-_Account_
         (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous'],),)
-    Auth-_MOM_Link_n_
+    Auth-_Link_n_
         (Q.type_name.in_ (['Auth.Account_in_Group'],),)
     MOM-Id_Entity
         ()
@@ -218,7 +218,7 @@ _test_cqf = r"""
         (Q.type_name.in_ (['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     MOM-Object
         (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous', 'Auth.Certificate', 'Auth.Group', 'PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page', 'SWP.Referral'],),)
-    MOM-_MOM_Link_n_
+    MOM-_Link_n_
         (Q.type_name.in_ (['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     PAP-Address
         (Q.type_name == 'PAP.Address',)
@@ -280,7 +280,7 @@ _test_cqf = r"""
         (Q.type_name.in_ (['PAP.Company_has_Url', 'PAP.Person_has_Url'],),)
     PAP-Url
         (Q.type_name == 'PAP.Url',)
-    PAP-_MOM_Link_n_
+    PAP-_Link_n_
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url'],),)
     SRM-Boat
         (Q.type_name == 'SRM.Boat',)
@@ -324,7 +324,7 @@ _test_cqf = r"""
         (Q.type_name == 'SRM.Team_has_Boat_in_Regatta',)
     SRM-_Boat_Class_
         (Q.type_name.in_ (['SRM.Boat_Class', 'SRM.Handicap'],),)
-    SRM-_MOM_Link_n_
+    SRM-_Link_n_
         (Q.type_name.in_ (['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     SWP-Clip_O
         (Q.type_name == 'SWP.Clip_O',)
@@ -363,13 +363,13 @@ _test_cqf = r"""
     Auth-Link2    (Left `left`, Right `right`)
     Auth-Object    ()
     Auth-_Account_    (Email `name`, Boolean `enabled`, Boolean `superuser`)
-    Auth-_MOM_Link_n_    (Left `left`, Right `right`)
+    Auth-_Link_n_    (Left `left`, Right `right`)
     MOM-Id_Entity    ()
     MOM-Link    (Left `left`,)
     MOM-Link1    (Left `left`,)
     MOM-Link2    (Left `left`, Right `right`)
     MOM-Object    ()
-    MOM-_MOM_Link_n_    (Left `left`, Right `right`)
+    MOM-_Link_n_    (Left `left`, Right `right`)
     PAP-Address    (String `street`, String `zip`, String `city`, String `country`, String `desc`, String `region`)
     PAP-Address_Position    (Address `left`, Position `position`)
     PAP-Company    (String `name`, String `registered_in`, Date_Interval `lifetime`, String `short_name`)
@@ -400,7 +400,7 @@ _test_cqf = r"""
     PAP-Subject_has_Property    (Subject `left`, Property `right`, String `desc`)
     PAP-Subject_has_Url    (Subject `left`, Url `right`, String `desc`)
     PAP-Url    (Url `value`, String `desc`)
-    PAP-_MOM_Link_n_    (Left `left`, Right `right`)
+    PAP-_Link_n_    (Left `left`, Right `right`)
     SRM-Boat    (Boat_Class `left`, Int `sail_number`, Nation `nation`, String `sail_number_x`, String `name`)
     SRM-Boat_Class    (String `name`, Float `beam`, Float `loa`, Int `max_crew`, Float `sail_area`)
     SRM-Boat_in_Regatta    (Boat `left`, Regatta `right`, Entity `skipper`, Int `place`, Int `points`)
@@ -422,7 +422,7 @@ _test_cqf = r"""
     SRM-Team    (Regatta_C `left`, String `name`, Entity `club`, String `desc`, Entity `leader`, Int `place`)
     SRM-Team_has_Boat_in_Regatta    (Team `left`, Boat_in_Regatta `right`)
     SRM-_Boat_Class_    (String `name`,)
-    SRM-_MOM_Link_n_    (Left `left`, Right `right`)
+    SRM-_Link_n_    (Left `left`, Right `right`)
     SWP-Clip_O    (Object_PN `left`, Date_Interval `date_x`, Text `abstract`, Int `prio`)
     SWP-Clip_X    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, String `title`, Format `format`, String `head_line`, Url `link_to`, Boolean `hidden`, Int `prio`)
     SWP-Gallery    (Date-Slug `perma_name`, Date_Interval `date`, String `short_title`, String `title`, Directory `directory`, Boolean `hidden`, Int `prio`)
@@ -437,7 +437,7 @@ _test_cqf = r"""
     SWP-Referral    (Url `parent_url`, Date-Slug `perma_name`, Url `target_url`, Date_Interval `date`, String `short_title`, String `title`, String `download_name`, Boolean `hidden`, Int `prio`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Referral|SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_MOM\_Link\_n\_|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-\_MOM\_Link\_n\_|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Group|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_MOM\_Link\_n\_|Auth\-\_Account\_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
+    v1(?:/(?:SWP\-Referral|SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Link\_n\_|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-\_Link\_n\_|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Group|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_Link\_n\_|Auth\-\_Account\_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -651,13 +651,13 @@ _test_doc = r"""
             , 'Auth-Link2'
             , 'Auth-Object'
             , 'Auth-_Account_'
-            , 'Auth-_MOM_Link_n_'
+            , 'Auth-_Link_n_'
             , 'MOM-Id_Entity'
             , 'MOM-Link'
             , 'MOM-Link1'
             , 'MOM-Link2'
             , 'MOM-Object'
-            , 'MOM-_MOM_Link_n_'
+            , 'MOM-_Link_n_'
             , 'PAP-Address'
             , 'PAP-Address_Position'
             , 'PAP-Company'
@@ -688,7 +688,7 @@ _test_doc = r"""
             , 'PAP-Subject_has_Property'
             , 'PAP-Subject_has_Url'
             , 'PAP-Url'
-            , 'PAP-_MOM_Link_n_'
+            , 'PAP-_Link_n_'
             , 'SRM-Boat'
             , 'SRM-Boat_Class'
             , 'SRM-Boat_in_Regatta'
@@ -710,7 +710,7 @@ _test_doc = r"""
             , 'SRM-Team'
             , 'SRM-Team_has_Boat_in_Regatta'
             , 'SRM-_Boat_Class_'
-            , 'SRM-_MOM_Link_n_'
+            , 'SRM-_Link_n_'
             , 'SWP-Clip_O'
             , 'SWP-Clip_X'
             , 'SWP-Gallery'
@@ -2422,13 +2422,13 @@ _test_get = r"""
             , 'Auth-Link2'
             , 'Auth-Object'
             , 'Auth-_Account_'
-            , 'Auth-_MOM_Link_n_'
+            , 'Auth-_Link_n_'
             , 'MOM-Id_Entity'
             , 'MOM-Link'
             , 'MOM-Link1'
             , 'MOM-Link2'
             , 'MOM-Object'
-            , 'MOM-_MOM_Link_n_'
+            , 'MOM-_Link_n_'
             , 'PAP-Address'
             , 'PAP-Address_Position'
             , 'PAP-Company'
@@ -2459,7 +2459,7 @@ _test_get = r"""
             , 'PAP-Subject_has_Property'
             , 'PAP-Subject_has_Url'
             , 'PAP-Url'
-            , 'PAP-_MOM_Link_n_'
+            , 'PAP-_Link_n_'
             , 'SRM-Boat'
             , 'SRM-Boat_Class'
             , 'SRM-Boat_in_Regatta'
@@ -2481,7 +2481,7 @@ _test_get = r"""
             , 'SRM-Team'
             , 'SRM-Team_has_Boat_in_Regatta'
             , 'SRM-_Boat_Class_'
-            , 'SRM-_MOM_Link_n_'
+            , 'SRM-_Link_n_'
             , 'SWP-Clip_O'
             , 'SWP-Clip_X'
             , 'SWP-Gallery'
@@ -2514,13 +2514,13 @@ _test_get = r"""
             , '/v1/Auth-Link2'
             , '/v1/Auth-Object'
             , '/v1/Auth-_Account_'
-            , '/v1/Auth-_MOM_Link_n_'
+            , '/v1/Auth-_Link_n_'
             , '/v1/MOM-Id_Entity'
             , '/v1/MOM-Link'
             , '/v1/MOM-Link1'
             , '/v1/MOM-Link2'
             , '/v1/MOM-Object'
-            , '/v1/MOM-_MOM_Link_n_'
+            , '/v1/MOM-_Link_n_'
             , '/v1/PAP-Address'
             , '/v1/PAP-Address_Position'
             , '/v1/PAP-Company'
@@ -2551,7 +2551,7 @@ _test_get = r"""
             , '/v1/PAP-Subject_has_Property'
             , '/v1/PAP-Subject_has_Url'
             , '/v1/PAP-Url'
-            , '/v1/PAP-_MOM_Link_n_'
+            , '/v1/PAP-_Link_n_'
             , '/v1/SRM-Boat'
             , '/v1/SRM-Boat_Class'
             , '/v1/SRM-Boat_in_Regatta'
@@ -2573,7 +2573,7 @@ _test_get = r"""
             , '/v1/SRM-Team'
             , '/v1/SRM-Team_has_Boat_in_Regatta'
             , '/v1/SRM-_Boat_Class_'
-            , '/v1/SRM-_MOM_Link_n_'
+            , '/v1/SRM-_Link_n_'
             , '/v1/SWP-Clip_O'
             , '/v1/SWP-Clip_X'
             , '/v1/SWP-Gallery'

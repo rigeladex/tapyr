@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -62,6 +62,7 @@
 #    15-May-2013 (CT) Remove `_Cacher_` and role- and link-cacher children
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    17-Jun-2013 (CT) Add `_MOM_Link_n_` to `_Export`
+#    14-Sep-2015 (CT) Add `_real_name` for `_Link_n_`
 #    ««revision-date»»···
 #--
 
@@ -150,6 +151,7 @@ class _MOM_Link_n_ \
     """Root class for link-types of MOM meta object model with more than 1 role."""
 
     is_partial            = True
+    _real_name            = "_Link_n_"
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -160,9 +162,9 @@ class _MOM_Link_n_ \
 
     # end class _Attributes
 
-# end class _MOM_Link_n_
+_Link_n_ = _MOM_Link_n_ # end class
 
-_Ancestor_Essence = _MOM_Link_n_
+_Ancestor_Essence = _Link_n_
 
 class Link2 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link2)) :
     """Common base class for essential binary links of MOM."""
@@ -171,7 +173,7 @@ class Link2 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link2)) :
 
 # end class Link2
 
-_Ancestor_Essence = _MOM_Link_n_
+_Ancestor_Essence = _Link_n_
 
 class Link3 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link3)) :
     """Common base class for essential ternary links of MOM."""
@@ -482,5 +484,5 @@ DFC-synthesis for an association `X_has_P` would be defined like::
 """
 
 if __name__ != "__main__" :
-    MOM._Export ("*", "_MOM_Link_n_")
+    MOM._Export ("*", "_Link_n_")
 ### __END__ MOM.Link

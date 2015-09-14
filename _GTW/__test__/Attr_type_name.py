@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -48,7 +48,7 @@ _test_hierarchy = """
     Auth.Link2                     Internal__Type_Name Type_Name_Type Auth.Link2
     Auth.Object                    Internal__Type_Name Type_Name_Type Auth.Object
     Auth._Account_                 Internal__Type_Name Type_Name_Type Auth._Account_
-    Auth._MOM_Link_n_              Internal__Type_Name Type_Name_Type Auth._MOM_Link_n_
+    Auth._Link_n_                  Internal__Type_Name Type_Name_Type Auth._Link_n_
     EVT.Calendar                   Internal__Type_Name Type_Name_Type EVT.Calendar
     EVT.Event                      Internal__Type_Name Type_Name_Type EVT.Event
     EVT.Event_occurs               Internal__Type_Name Type_Name_Type EVT.Event_occurs
@@ -64,7 +64,7 @@ _test_hierarchy = """
     MOM.Link1                      Internal__Type_Name Type_Name_Type MOM.Link1
     MOM.Link2                      Internal__Type_Name Type_Name_Type MOM.Link2
     MOM.Object                     Internal__Type_Name Type_Name_Type MOM.Object
-    MOM._MOM_Link_n_               Internal__Type_Name Type_Name_Type MOM._MOM_Link_n_
+    MOM._Link_n_                   Internal__Type_Name Type_Name_Type MOM._Link_n_
     PAP.Address                    Internal__Type_Name Type_Name_Type PAP.Address
     PAP.Address_Position           Internal__Type_Name Type_Name_Type PAP.Address_Position
     PAP.Company                    Internal__Type_Name Type_Name_Type PAP.Company
@@ -95,7 +95,7 @@ _test_hierarchy = """
     PAP.Subject_has_Property       Internal__Type_Name Type_Name_Type PAP.Subject_has_Property
     PAP.Subject_has_Url            Internal__Type_Name Type_Name_Type PAP.Subject_has_Url
     PAP.Url                        Internal__Type_Name Type_Name_Type PAP.Url
-    PAP._MOM_Link_n_               Internal__Type_Name Type_Name_Type PAP._MOM_Link_n_
+    PAP._Link_n_                   Internal__Type_Name Type_Name_Type PAP._Link_n_
     SRM.Boat                       Internal__Type_Name Type_Name_Type SRM.Boat
     SRM.Boat_Class                 Internal__Type_Name Type_Name_Type SRM.Boat_Class
     SRM.Boat_in_Regatta            Internal__Type_Name Type_Name_Type SRM.Boat_in_Regatta
@@ -117,7 +117,7 @@ _test_hierarchy = """
     SRM.Team                       Internal__Type_Name Type_Name_Type SRM.Team
     SRM.Team_has_Boat_in_Regatta   Internal__Type_Name Type_Name_Type SRM.Team_has_Boat_in_Regatta
     SRM._Boat_Class_               Internal__Type_Name Type_Name_Type SRM._Boat_Class_
-    SRM._MOM_Link_n_               Internal__Type_Name Type_Name_Type SRM._MOM_Link_n_
+    SRM._Link_n_                   Internal__Type_Name Type_Name_Type SRM._Link_n_
     SWP.Clip_O                     Internal__Type_Name Type_Name_Type SWP.Clip_O
     SWP.Clip_X                     Internal__Type_Name Type_Name_Type SWP.Clip_X
     SWP.Gallery                    Internal__Type_Name Type_Name_Type SWP.Gallery

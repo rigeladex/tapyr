@@ -719,7 +719,7 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
         return (left,), kw
     def epkified_raw (cls, left, ** kw) :
         return (left,), kw
-    *** MOM._MOM_Link_n_ *** ('left', 'right')
+    *** MOM._Link_n_ *** ('left', 'right')
     def epkified_ckd (cls, left, right, ** kw) :
         return (left, right), kw
     def epkified_raw (cls, left, right, ** kw) :
@@ -824,7 +824,7 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
         kw = dict (kw)
         kw.update ((k, v) for k, v in [("left", left)] if v is not undefined)
         return kw
-    *** MOM._MOM_Link_n_ *** ('left', 'right')
+    *** MOM._Link_n_ *** ('left', 'right')
     def args_as_kw (cls, left = undefined, right = undefined, ** kw) :
         kw = dict (kw)
         kw.update ((k, v) for k, v in [("left", left), ("right", right)] if v is not undefined)
@@ -962,10 +962,10 @@ Each entity_type knows about its children:
     MOM.MD_Entity
         ['MOM.MD_Change']
     MOM.Link
-        ['MOM.Link1', 'MOM._MOM_Link_n_']
+        ['MOM.Link1', 'MOM._Link_n_']
     MOM.Link1
         ['BMT.Expected_Traptime', 'BMT.Rodent_is_sick']
-    MOM._MOM_Link_n_
+    MOM._Link_n_
         ['MOM.Link2', 'MOM.Link3']
     MOM.Link2
         ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rodent_in_Trap']
@@ -1003,9 +1003,9 @@ Each entity_type knows about its children:
         ['MOM.Link', 'MOM.Object']
         ['BMT.Expected_Traptime', 'BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
     MOM.Link
-        ['MOM.Link1', 'MOM._MOM_Link_n_']
+        ['MOM.Link1', 'MOM._Link_n_']
         ['BMT.Expected_Traptime', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick']
-    MOM._MOM_Link_n_
+    MOM._Link_n_
         ['MOM.Link2', 'MOM.Link3']
         ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rodent_in_Trap']
     MOM.Object
@@ -1086,9 +1086,9 @@ The app-type specific entity-types are ready to be used by
     []
 
     >>> print (portable_repr (sorted (apt.etypes)))
-    ['BMT.Beaver', 'BMT.Expected_Traptime', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Int_Interval', 'MOM.Int_Interval_C', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link3', 'MOM.MD_Change', 'MOM.MD_Entity', 'MOM.Named_Object', 'MOM.Object', 'MOM.Position', 'MOM._Interval_', 'MOM._MOM_Link_n_']
+    ['BMT.Beaver', 'BMT.Expected_Traptime', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Int_Interval', 'MOM.Int_Interval_C', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link3', 'MOM.MD_Change', 'MOM.MD_Entity', 'MOM.Named_Object', 'MOM.Object', 'MOM.Position', 'MOM._Interval_', 'MOM._Link_n_']
     >>> print (portable_repr ([t.type_name for t in apt._T_Extension]))
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.MD_Entity', 'MOM.MD_Change', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link3', 'MOM.Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Int_Interval', 'MOM.Int_Interval_C', 'MOM.Position', 'MOM.Named_Object', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Expected_Traptime', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.MD_Entity', 'MOM.MD_Change', 'MOM.Link', 'MOM.Link1', 'MOM._Link_n_', 'MOM.Link2', 'MOM.Link3', 'MOM.Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Int_Interval', 'MOM.Int_Interval_C', 'MOM.Position', 'MOM.Named_Object', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Expected_Traptime', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap']
     >>> for t in apt._T_Extension [2:] :
     ...     print ("%%-35s %%s" %% (t.type_name, t.epk_sig))
     MOM.Id_Entity                       ()
@@ -1096,7 +1096,7 @@ The app-type specific entity-types are ready to be used by
     MOM.MD_Change                       ()
     MOM.Link                            ('left',)
     MOM.Link1                           ('left',)
-    MOM._MOM_Link_n_                    ('left', 'right')
+    MOM._Link_n_                        ('left', 'right')
     MOM.Link2                           ('left', 'right')
     MOM.Link3                           ('left', 'middle', 'right')
     MOM.Object                          ()
@@ -1137,7 +1137,7 @@ The app-type specific entity-types are ready to be used by
         ('left',)
     MOM.Link1
         ('left',)
-    MOM._MOM_Link_n_
+    MOM._Link_n_
         ('left', 'right')
     MOM.Link2
         ('left', 'right')
@@ -1224,7 +1224,7 @@ The app-type specific entity-types are ready to be used by
           MOM.Link1
             BMT.Rodent_is_sick
             BMT.Expected_Traptime
-          MOM._MOM_Link_n_
+          MOM._Link_n_
             MOM.Link2
               BMT.Rodent_in_Trap
               BMT.Person_owns_Trap

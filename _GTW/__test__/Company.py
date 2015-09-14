@@ -2324,7 +2324,7 @@ _test_entity_attr = """
         left                                primary    SWP.Object_PN             SWP.Clip_O
     ....SWP.Picture
         left                                primary    SWP.Gallery               SWP.Picture
-    ..MOM._MOM_Link_n_
+    ..MOM._Link_n_
     ...MOM.Link2
     ....Auth.Link2
     .....Auth.Account_in_Group
@@ -2362,9 +2362,9 @@ _test_entity_attr = """
     .....SRM.Team_has_Boat_in_Regatta
         left                                primary    SRM.Team                  SRM.Team_has_Boat_in_Regatta
         right                               primary    SRM.Boat_in_Regatta       SRM.Team_has_Boat_in_Regatta
-    ...Auth._MOM_Link_n_
-    ...PAP._MOM_Link_n_
-    ...SRM._MOM_Link_n_
+    ...Auth._Link_n_
+    ...PAP._Link_n_
+    ...SRM._Link_n_
     ..Auth.Link
     ..EVT.Link
     ..PAP.Link
@@ -3014,7 +3014,7 @@ _test_entity_attr = """
     Auth._Account_                           True
     Auth._Account_Action_                    False
     Auth._Account_Token_Action_              False
-    Auth._MOM_Link_n_                        True
+    Auth._Link_n_                            True
     EVT.Calendar                             True
     EVT.Event                                True
     EVT.Event_occurs                         True
@@ -3031,7 +3031,7 @@ _test_entity_attr = """
     MOM.Link2                                True
     MOM.Link3                                False
     MOM.Object                               True
-    MOM._MOM_Link_n_                         True
+    MOM._Link_n_                             True
     PAP.Address                              True
     PAP.Address_Position                     True
     PAP.Association                          True
@@ -3069,7 +3069,7 @@ _test_entity_attr = """
     PAP.Subject_has_Property                 True
     PAP.Subject_has_Url                      True
     PAP.Url                                  True
-    PAP._MOM_Link_n_                         True
+    PAP._Link_n_                             True
     SRM.Boat                                 True
     SRM.Boat_Class                           True
     SRM.Boat_in_Regatta                      True
@@ -3091,7 +3091,7 @@ _test_entity_attr = """
     SRM.Team                                 True
     SRM.Team_has_Boat_in_Regatta             True
     SRM._Boat_Class_                         True
-    SRM._MOM_Link_n_                         True
+    SRM._Link_n_                             True
     SWP.Clip_O                               True
     SWP.Clip_X                               True
     SWP.Gallery                              True

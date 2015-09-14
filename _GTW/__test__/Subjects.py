@@ -264,7 +264,7 @@ _test_code = """
           SWP.Link1  . . . . . . . . . . . . . . . . .           True   True
             SWP.Clip_O . . . . . . . . . . . . . . . .    True          True
             SWP.Picture  . . . . . . . . . . . . . . .    True
-        MOM._MOM_Link_n_ . . . . . . . . . . . . . . .           True   True
+        MOM._Link_n_ . . . . . . . . . . . . . . . . .           True   True
           MOM.Link2  . . . . . . . . . . . . . . . . .           True   True
               Auth.Account_in_Group  . . . . . . . . .    True
             PAP.Link2  . . . . . . . . . . . . . . . .           True   True
@@ -289,7 +289,7 @@ _test_code = """
               SRM.Boat_in_Regatta  . . . . . . . . . .    True
               SRM.Crew_Member  . . . . . . . . . . . .    True
               SRM.Team_has_Boat_in_Regatta . . . . . .    True
-          PAP._MOM_Link_n_ . . . . . . . . . . . . . .           True   True
+          PAP._Link_n_ . . . . . . . . . . . . . . . .           True   True
         Auth.Link  . . . . . . . . . . . . . . . . . .           True   True
         EVT.Link . . . . . . . . . . . . . . . . . . .           True   True
         PAP.Link . . . . . . . . . . . . . . . . . . .           True   True
