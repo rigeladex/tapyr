@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -28,6 +28,7 @@
 #    19-Jul-2011 (CT) `MOM.Q_Exp_Raw` added
 #    15-Jun-2013 (CT) Import `Derived_PNS`
 #     9-Sep-2014 (CT) Rename `MOM.Q_Exp_Raw` to `MOM.Q_Exp`
+#    14-Sep-2015 (CT) Add `import_full_model`
 #    ««revision-date»»···
 #--
 
@@ -49,5 +50,13 @@ from   _MOM._Attr       import Attr
 from   _MOM._Pred       import Pred
 
 import _MOM.Derived_PNS
+
+def import_full_model () :
+    """Import all essential classes defined by MOM."""
+    import _MOM.Document
+    import _MOM.Id_Entity_has_Tag
+# end def import_full_model
+
+MOM._Export ("import_full_model")
 
 ### __END__ MOM.import_MOM

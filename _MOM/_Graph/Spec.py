@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -26,6 +26,10 @@
 #     6-Sep-2012 (CT) Add `guide_offset`
 #    25-Sep-2012 (CT) Add `desc` and `title` to `Graph`
 #     3-Jun-2013 (CT) Get attribute descriptors from `.attr_prop`
+#    14-Sep-2015 (CT) Add `guide_prio`
+#    14-Sep-2015 (CT) Add `Graph._graph_type`, `Graph._graph_type_map`
+#                     + Change `Attr.instantiate` to use `MOM.Id_Entity` as
+#                       `E_Type` for entries of `Graph._graph_type_map`
 #    ««revision-date»»···
 #--
 
@@ -100,11 +104,14 @@ class _Spec_Rel_ (_Spec_Item_) :
     """Base class for specs of relations"""
 
     guide_offset = None
+    guide_prio   = 0
     source_side  = None
     target_side  = None
 
+    _attr_names  = MOM.Graph.Relation._Relation_._attr_names
+
     def __call__ (self, * args, ** kw) :
-        self.pop_to_self (kw, "guide_offset", "source_side", "target_side")
+        self.pop_to_self (kw, * self._attr_names)
         return self.__super.__call__ (* args, ** kw)
     # end def __call__
 
@@ -112,7 +119,7 @@ class _Spec_Rel_ (_Spec_Item_) :
     def _rel_kw (self) :
         return dict \
             (  (rn, getattr (self, rn))
-            for rn in ("guide_offset", "source_side", "target_side")
+            for rn in self._attr_names
             if  getattr (self, rn) is not None
             )
     # end def _rel_kw
@@ -127,8 +134,12 @@ class Attr (_Spec_Rel_) :
 
     def _instantiate (self, graph, anchor, offset = None) :
         attr = anchor.e_type.attr_prop (self._name)
-        if attr.E_Type :
-            spec = getattr (ET, attr.E_Type.type_name)
+        attr_ET = attr.E_Type
+        if attr_ET is None :
+            if anchor.e_type.type_name in graph._graph_type_map :
+                attr_ET = attr.E_Type = graph.app_type ["MOM.Id_Entity"]
+        if attr_ET :
+            spec = getattr (ET, attr_ET.type_name)
             if self._args or self._kw  :
                 spec (* self._args, ** self._kw)
             result = spec._instantiate (graph, anchor = anchor, offset = offset)
@@ -213,10 +224,10 @@ class Skip (_Spec_Item_) :
 class Graph (TFL.Meta.Object) :
     """Specification of a graph describing (part of) a MOM-based object model."""
 
-    _setup_links_p = False
+    _setup_links_p  = False
 
-    desc           = None
-    title          = None
+    desc            = None
+    title           = None
 
     def __init__ (self, app_type, * entities, ** kw) :
         self.pop_to_self (kw, "desc", "title")
@@ -225,6 +236,17 @@ class Graph (TFL.Meta.Object) :
         self.node_map = {}
         self.add (* entities)
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def _graph_type_map (self) :
+        ### for MOM.Link1, ..., use `Graph.Id_Entity`, not `Graph.Link1`, ...
+        return \
+            { "MOM.Link1"    : MOM.Graph.Id_Entity
+            , "MOM.Link2"    : MOM.Graph.Id_Entity
+            , "MOM.Link3"    : MOM.Graph.Id_Entity
+            , "MOM._Link_n_" : MOM.Graph.Id_Entity
+            }
+    # end def _graph_type_map
 
     def add (self, * entities) :
         i = len (self.node_map)
@@ -257,6 +279,13 @@ class Graph (TFL.Meta.Object) :
             self._setup_links_p = True
     # end def setup_links
 
+    def _graph_type (self, e_type) :
+        result_type = self._graph_type_map.get (e_type.type_name)
+        if result_type is None :
+            result_type = e_type.Graph_Type
+        return result_type (self, e_type)
+    # end def _graph_type
+
     def __contains__ (self, item) :
         return item in self.node_map
     # end def __contains__
@@ -266,7 +295,7 @@ class Graph (TFL.Meta.Object) :
             result = self.node_map [key]
         except KeyError :
             e_type = self.app_type [key]
-            result = self.node_map [key] = e_type.Graph_Type (self, e_type)
+            result = self.node_map [key] = self._graph_type (e_type)
         return result
     # end def __getitem__
 

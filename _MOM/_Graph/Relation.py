@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -31,6 +31,7 @@
 #    22-Oct-2012 (RS) Fix `guide_sort_key`
 #    23-Oct-2012 (CT) Change `guide_sort_key` to use `sign`, improve style
 #    22-Nov-2012 (CT) Guard `AttributeError` in `_Relation_.set_guides`
+#    14-Sep-2015 (CT) Add `guide_prio`
 #    ««revision-date»»···
 #--
 
@@ -185,6 +186,7 @@ class _Relation_ (_R_Base_) :
     """Base class for relations between MOM entities."""
 
     guide_offset      = 0.25
+    guide_prio        = 0
     guides            = None
     info              = None
     is_reverse        = False
@@ -193,10 +195,13 @@ class _Relation_ (_R_Base_) :
     target_connector  = None
     target_side       = None
 
+    _attr_names       = \
+        ("guide_offset", "guide_prio", "source_side", "target_side")
+
     _points           = None
 
     def __init__ (self, source, target, * args, ** kw) :
-        self.pop_to_self (kw, "guide_offset", "source_side", "target_side")
+        self.pop_to_self (kw, * self._attr_names)
         if kw :
             raise TypeError \
                 ("Unknown arguments %s" % (sorted (pyk.iteritems (kw))))

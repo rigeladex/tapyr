@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -32,6 +32,9 @@
 #     9-Nov-2012 (CT) Fix typo in `Dir_Placer.add`
 #     6-Dec-2012 (CT) Allow anchor cycle in `Entity.anchor.setter`
 #     3-Jun-2013 (CT) Get attribute descriptors from `.attr_prop`
+#    14-Sep-2015 (CT) Add `guide_prio`
+#    14-Sep-2015 (CT) Change `Entity.pos` to not use `anchor` for root element
+#    14-Sep-2015 (CT) Guard against `AttributeError` in `auto_add_roles`
 #    ««revision-date»»···
 #--
 
@@ -145,7 +148,8 @@ class Rel_Placer (TFL.Meta.Object) :
                         yield r, o.connector.side
             rels      = self.rels
             opposites = tuple (_opposites (self, rels))
-            rels.sort (key = TFL.Sorted_By ("guide_sort_key", "type_name"))
+            rels.sort (key = TFL.Sorted_By \
+                ("guide_sort_key", "guide_prio", "type_name"))
             n = len (rels)
             try :
                 offset_s = self._offset_map [n]
@@ -435,7 +439,7 @@ class Entity (TFL.Meta.Object) :
         if result is None or self._sync_cid != self.graph.cid :
             self._sync_cid = self.graph.cid
             anchor = self.anchor
-            if anchor is not None :
+            if anchor is not None and self.index :
                 result = CD.Pp    (anchor.pos, self.offset)
             else :
                 result = CD.Point (* (self.offset or ()))
@@ -497,7 +501,10 @@ class Entity (TFL.Meta.Object) :
         rel_map  = self.rel_map
         skip     = self.skip
         for role in e_type.Roles :
-            ra_tn = role.assoc.type_name
+            try :
+                ra_tn = role.assoc.type_name
+            except AttributeError as exc :
+                continue
             if ra_tn in graph :
                 assoc = graph [ra_tn]
                 if role.name in assoc.rel_map :

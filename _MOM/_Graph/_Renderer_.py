@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -167,7 +167,8 @@ class _Renderer_ (TFL.Meta.Object) :
         self.pop_to_self (kw, "grid_size", prefix = "_")
         self.graph      = graph
         Node            = self.Node
-        self.nodes = ns = list (Node (e, self) for e in self.graph.nodes ())
+        g_nodes         = self.graph.nodes ()
+        self.nodes = ns = list (Node (e, self) for e in g_nodes)
         self.node_map   = dict ((n.entity.type_name, n) for n in ns)
         graph.setup_links ()
         for n in ns :
