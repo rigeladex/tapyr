@@ -23,6 +23,10 @@
 #     3-Aug-2015 (CT) Make `regexp` argument of `Country_R` optional
 #     3-Aug-2015 (CT) Add `formatted_sn`, `formatted_sn_4x2`
 #     4-Aug-2015 (CT) Add `M_Country.cc_trie`, `.completions`
+#    15-Sep-2015 (CT) Fix guard for `regexp` in `Country_R.__init__`
+#    15-Sep-2015 (CT) Change `Country.split` to allow `regexp` without `ndc`
+#    15-Sep-2015 (CT) Change `M_Country.__call__` to raise `ValueError`,
+#                     not KeyError, for non-existing country codes
 #    ««revision-date»»···
 #--
 
@@ -58,7 +62,7 @@ class M_Country (TFL.Meta.Object.__class__) :
         try :
             name   = cls.cc_map [cc]
         except KeyError :
-            raise KeyError ("Unknown country code %s" % (cc, ))
+            raise ValueError ("Unknown country code %s" % (cc, ))
         try :
             result = cls.Table [cc]
         except KeyError :
@@ -251,7 +255,12 @@ class Country (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Country)) :
         regexp  = self.regexp
         match   = regexp.match (ndc_sn)
         if match :
-            ndc = self.cleaned_ndc (regexp.ndc)
+            try :
+                r_ndc = regexp.ndc
+            except AttributeError :
+                ndc = ""
+            else :
+                ndc = self.cleaned_ndc (r_ndc)
             sn  = self.cleaned_sn  (ndc, regexp.sn)
             return ndc, sn
         raise E164.ValueError (self, ndc_sn, self._split_error_tail (""))
@@ -397,7 +406,7 @@ class Country_R (Country) :
 
     def __init__ (self, name, code, regexp = None) :
         self.__super.__init__ (name, code)
-        if self.regexp is not None :
+        if regexp is not None :
             self.regexp = regexp
     # end def __init__
 

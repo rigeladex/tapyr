@@ -13,10 +13,11 @@
 #    GTW.__test__.Phone
 #
 # Purpose
-#    «text»···
+#    Test PAP.Phone semantics
 #
 # Revision Dates
 #     3-Aug-2015 (CT) Creation
+#    15-Sep-2015 (CT) Adapt to bug fixes in `E164.Country`
 #    ««revision-date»»···
 #--
 
@@ -52,10 +53,14 @@ _test_code = """
     >>> print (atp.country)
     Country (43) [Austria]
 
-    >>> at1 = PAP.Phone ("43", "2287", "1234567890")
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     at1 = PAP.Phone ("43", "2287", "1234567890")
+    Invariants: Can't set primary attribute Phone.sn to '1234567890'.
+        Not a proper phone number for Country (43) [Austria]: 2287-1234567890; subscriber number must have at most 9 digits; got 10 digits instead
 
+    >>> at1 = PAP.Phone ("43", "2287", "123456789")
     >>> print (at1.ui_display)
-    +43-2287-123 456 7890
+    +43-2287-123 456 789
 
     >>> print (at1.cc_info, at1.ndc_info)
     Austria Strasshof an der Nordbahn
@@ -63,14 +68,6 @@ _test_code = """
     >>> print (at1.ndc_min_length, at1.ndc_max_length, at1.sn_min_length, at1.sn_max_length)
     1 4 3 9
 
-    >>> with expect_except (MOM.Error.Invariants) :
-    ...     scope.commit ()
-    Invariants: Condition `sn_length_valid` : Value for `sn` must contain at least `sn_min_length`
-    digits, must not be longer than `sn_max_length` digits. (sn_min_length <= length <= sn_max_length)
-        length = 10 << len (sn)
-        sn = '1234567890'
-        sn_max_length = 9
-        sn_min_length = 3
     >>> scope.rollback ()
 
     >>> dk = PAP.Phone ("45", "", "12345678")
@@ -94,15 +91,10 @@ _test_code = """
         sn = None
     >>> scope.rollback ()
 
-    >>> dk = PAP.Phone ("45", "12", "345678")
     >>> with expect_except (MOM.Error.Invariants) :
-    ...     scope.commit ()
-    Invariants: Condition `ndc_length_valid` : Value for `ndc` must contain at least `ndc_min_length`
-    digits, must not be longer than `ndc_max_length` digits. (ndc_min_length <= length <= ndc_max_length)
-        length = 2 << len (ndc)
-        ndc = '12'
-        ndc_max_length = 0
-        ndc_min_length = 0
+    ...     dk = PAP.Phone ("45", "12", "345678")
+    Invariants: Can't set primary attribute Phone.ndc to '12'.
+        Unknown network destination code 12
     >>> scope.rollback ()
 
     >>> with expect_except (MOM.Error.Invariants) :
@@ -121,11 +113,16 @@ _test_code = """
     ...     x = PAP.Phone ("699", "123", "456789")
     Invariants: Can't set primary attribute Phone.cc to '699'.
         Unknown country code 699
+      Can't set primary attribute Phone.ndc to '123'.
+        Unknown country code 699
+      Can't set primary attribute Phone.sn to '456789'.
+        Unknown country code 699
 
-    >>> for i in range (3, 14) :
-    ...     n = "1234567890123" [:i]
-    ...     p = PAP.Phone ("43", "1", n)
-    ...     print ("%%-15s : %%s" %% (n, p.FO))
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     for i in range (3, 14) :
+    ...         n = "1234567890123" [:i]
+    ...         p = PAP.Phone ("43", "1", n)
+    ...         print ("%%-15s : %%s" %% (n, p.FO))
     123             : +43-1-123
     1234            : +43-1-12 34
     12345           : +43-1-12 345
@@ -136,7 +133,8 @@ _test_code = """
     1234567890      : +43-1-123 456 7890
     12345678901     : +43-1-1234 567 8901
     123456789012    : +43-1-1234 5678 9012
-    1234567890123   : +43-1-1234 56789 0123
+    Invariants: Can't set primary attribute Phone.sn to '1234567890123'.
+        Not a proper phone number for Country (43) [Austria]: 1-1234567890123; subscriber number must have at most 12 digits; got 13 digits instead
 
 """
 
