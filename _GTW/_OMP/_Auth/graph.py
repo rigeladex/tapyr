@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.Auth.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -20,6 +20,7 @@
 #    26-Sep-2012 (CT) Fix typo in `_Export`
 #     7-May-2013 (CT) Add `Person_has_Account`, remove `_Account_Action_`
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
+#    15-Sep-2015 (CT) Remove `import_XXX` from `__main__`
 #    ««revision-date»»···
 #--
 
@@ -77,8 +78,7 @@ class Command (MOM.Graph.Command) :
 # end class Command
 
 if __name__ != "__main__" :
-    GTW.OMP.Auth._Export ("*")
+    GTW.OMP.Auth._Export_Module ()
 else :
-    import _GTW._OMP._Auth.import_Auth
     Command () ()
 ### __END__ GTW.OMP.Auth.graph

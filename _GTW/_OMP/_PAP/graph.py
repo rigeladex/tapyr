@@ -26,6 +26,7 @@
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    10-Aug-2015 (CT) Add `Group`, `Legal_Entity`, `Adhoc_Group`,
 #                     `Person_in_Group`; shift children of `Property` to `E`
+#    15-Sep-2015 (CT) Remove `import_XXX` from `__main__`
 #    ««revision-date»»···
 #--
 
@@ -161,11 +162,16 @@ class Command (MOM.Graph.Command) :
         return GTW.OMP.PAP
     # end def PNS
 
+    def import_all (self) :
+        import _GTW._OMP._Auth
+        self.__super.import_all  ()
+        GTW.OMP.Auth._Import_All ()
+    # end def import_all
+
 # end class Command
 
 if __name__ != "__main__" :
-    GTW.OMP.PAP._Export ("*")
+    GTW.OMP.PAP._Export_Module ()
 else :
-    import _GTW._OMP._PAP.import_PAP
     Command () ()
 ### __END__ GTW.OMP.PAP.graph

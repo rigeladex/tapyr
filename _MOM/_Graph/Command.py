@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -19,6 +19,7 @@
 #    24-Sep-2012 (CT) Creation
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
+#    15-Sep-2015 (CT) Add option `-all`, automatic import of `import_XXX`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,8 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
     min_args = max_args     = 0
 
     _opts                   = \
-        ( "-dir:P?Directory of output file"
+        ( "-all:B?Import all modules of package namespace"
+        , "-dir:P?Directory of output file"
         , "-name:P?Name of output file"
         , "-png:B?Render graph as png file (implies `-svg`)"
         , "-svg:B?Render graph as svg file"
@@ -83,6 +85,12 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
     # end def file_name
 
     def handler (self, cmd) :
+        if cmd.all :
+            self.import_all ()
+        else :
+            PNS = self.PNS
+            pn  = PNS.__name__.split (".") [-1]
+            PNS._Import_Module ("_".join (("import", pn)))
         g = self.graph (self.app_type)
         if cmd.svg or cmd.png :
             from _MOM._Graph.SVG import Renderer as SVG_Renderer
@@ -108,6 +116,10 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
             if cmd.verbose :
                 print ("Rendered ", f.name)
     # end def handler
+
+    def import_all (self) :
+        self.PNS._Import_All ()
+    # end def import_all
 
     @TFL.Contextmanager
     def open (self, cmd, ext) :

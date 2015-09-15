@@ -17,6 +17,8 @@
 #
 # Revision Dates
 #    14-Sep-2015 (CT) Creation
+#    15-Sep-2015 (CT) Add `desc` and `title` to `Graph` spec
+#    15-Sep-2015 (CT) Remove imports from `__main__`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +62,8 @@ def graph (app_type) :
                 )
             ,
             )
+        , desc  = _T ("Graph displaying MOM meta object model")
+        , title = _T ("MOM graph")
         )
     if doc_p :
         result ["MOM.Link1"]._add \
@@ -92,9 +96,7 @@ class Command (MOM.Graph.Command) :
 # end class Command
 
 if __name__ != "__main__" :
-    MOM._Export ("*")
+    MOM._Export_Module ()
 else :
-    import _MOM.import_MOM
-    MOM.import_full_model ()
     Command () ()
 ### __END__ MOM.graph
