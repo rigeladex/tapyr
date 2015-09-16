@@ -227,6 +227,11 @@
 #                     + remove spurious redefinitions of `ui_display`
 #    13-Apr-2015 (CT) Add `_json_encode` to `m_setup_etypes`
 #     5-May-2015 (CT) Remove obsolete methods `_m_entity_type`, `_m_scope`
+#    12-Aug-2015 (CT) Change `_m_init_prop_specs` to reset `__doc_*__`
+#    15-Aug-2015 (CT) Improve readability of `M_E_Type._m_setup_attributes`
+#    16-Aug-2015 (CT) Add missing import for `...M_Auto_Update_Combined`
+#    16-Aug-2015 (CT) Change `_m_init_prop_specs` to reset `immaterial`
+#    13-Nov-2015 (CT) Add `M_E_Type.__lt__` to allow sorting of E_Types
 #    16-Dec-2015 (CT) Add `UI_Spec` to `_m_create_base_e_types`
 #    ««revision-date»»···
 #--
@@ -237,6 +242,7 @@ from   _MOM import MOM
 from   _TFL import TFL
 
 import _TFL._Meta.M_Auto_Combine
+import _TFL._Meta.M_Auto_Update_Combined
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
 import _TFL.Caller
@@ -246,6 +252,7 @@ import _TFL.Undef
 
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.object_globals   import class_globals
+from   _TFL.Q_Exp            import Q
 from   _TFL.predicate        import any_true, first
 from   _TFL.pyk              import pyk
 
@@ -649,7 +656,32 @@ class M_E_Mixin \
 # end class M_E_Mixin
 
 class M_Entity (M_E_Mixin) :
-    """Meta class for essential entity of MOM meta object model."""
+    """Meta class for essential entity of MOM meta object model.
+
+
+       `MOM.Meta.M_Entity` provides the meta machinery for defining the
+       characteristics of essential object and link types of the MOM meta object
+       model. It is the common base class for
+       :class:`MOM.Meta.M_Object<_MOM._Meta.M_Object.M_Object>` and
+       :class:`MOM.Meta.M_Link<_MOM._Meta.M_Link.M_Link>`.
+
+       .. attribute:: PNS_Aliases
+
+         Specifies an optional mapping of package namespace aliases to
+         the canonical package namespace name. This allows the decoupling
+         of the concrete package structure from the abstract view of the
+         object model.
+
+         For instance::
+
+             MOM.Entity.PNS_Aliases = dict \\
+                 ( PAP             = GTW.OMP.PAP
+                 , SRM             = GTW.OMP.SRM
+                 , SWP             = GTW.OMP.SWP
+                 )
+
+       XXX
+    """
 
     _Class_Kind                = "Spec Essence"
 
@@ -763,6 +795,12 @@ class M_Entity (M_E_Mixin) :
             setattr (cls, "is_partial", False)
         if "show_in_ui" not in dct :
             setattr (cls, "show_in_ui", cls.show_in_ui_T)
+        for d in ( "__doc_attr_head__", "__doc_attr_tail__"
+                 , "__doc_pred_head__", "__doc_pred_tail__"
+                 , "immaterial"
+                 ) :
+            if d not in dct :
+                setattr (cls, d, None)
         for psn in cls._nested_classes_to_combine :
             cls._m_combine_nested_class (psn, bases, dct)
     # end def _m_init_prop_specs
@@ -982,7 +1020,69 @@ class M_MD_Entity (M_Entity) :
 
 @TFL.Add_To_Class ("M_E_Type", M_Entity)
 class M_E_Type (M_E_Mixin) :
-    """Meta class for for essence of MOM.Entity."""
+    """Meta class for for essence of MOM.Entity.
+
+       `MOM.Meta.M_E_Type` provides the meta machinery for defining app-type
+       specific essential object and link types (aka, e_types).
+
+       Each instance of `M_E_Type` is a class that is defined using information
+       of an essential class, i.e., a descendent of :class:`~_MOM.Entity.Entity`.
+
+       For each instance of `M_E_Type`, it:
+
+       * Setups the attributes and predicates by instantiating
+         `Essence._Attributes` and `Essence._Predicates` (and assigning it to
+         class variables `_Attributes` and `_Predicates`, respectively, of the
+         `etype`).
+
+       * Assigns the class variables `is_editable` and `show_in_ui` according
+         the settings of essential and app-type specific settings.
+
+       * Checks that object predicates don't depend on electric attributes.
+
+       * Adds all object predicates to the `invariant` lists of the attributes
+         the predicates depend on.
+
+       * Adds `_syntax_checks` entries to `_Predicates` for all non-electric
+         attributes with a callable `check_syntax`.
+
+       * Adds the `etype` to the `children` dictionary of all its base classes.
+
+       `M_E_Type` provides the attributes:
+
+       .. attribute:: db_sig
+
+         `db_sig` defines the database signature of the `etype`. The `db_sig`
+         comprises the `type_name` and the :attr:`db_sig<MOM.Attr.Type.db_sig>`
+         of a attributes stored in the database.
+
+       .. attribute:: default_child
+
+         For partial classes, `default_child` can be set to refer to the
+         non-partial descendent class that should be used by default (for
+         instance, to create a new object in an object editor).
+
+       `M_E_Type` provides the methods:
+
+       .. method:: add_attribute
+
+         Add an essential attribute  to the etype.
+
+       .. method:: add_predicate
+
+         Add an essential predicate to the etype.
+
+       .. method:: add_to_app_type(app_type)
+
+         Adds the newly created `etype` to the `app_type`.
+
+       .. method:: after_creation(instance)
+
+         Called after the creation of `instance`. Descendent meta classes
+         can override `after_creation` to modify certain instances
+         automatically when they are created.
+
+    """
 
     app_type    = None
 
@@ -1122,29 +1222,31 @@ class M_E_Type (M_E_Mixin) :
     # end def _m_fix_refuse_links
 
     def _m_setup_attributes (cls) :
-        cls.AQ = MOM.Attr.Querier.E_Type (cls)
+        cls.AQ          = MOM.Attr.Querier.E_Type (cls)
         cls._Attributes = A = cls._Attributes (cls)
         cls._Predicates = P = cls._Predicates (cls)
         attr_dict       = A._attr_dict
         app_type        = cls.app_type
-        for pv in P._pred_kind.get ("object", []) :
-            pn = pv.name
-            for an in pv.attributes + pv.attr_none :
+        for pk in sorted (P._pred_kind.get ("object", []), key = Q.rank) :
+            pn = pk.name
+            n_attrs = len (pk.attrs)
+            for an in pk.attrs :
                 if an in attr_dict :
-                    attr = attr_dict [an]
-                    if attr :
-                        if attr.electric :
-                            if not isinstance (attr, MOM.Attr.Once_Cached) :
+                    ak = attr_dict [an]
+                    if ak :
+                        at = ak.attr
+                        if ak.electric :
+                            if not isinstance (ak, MOM.Attr.Once_Cached) :
                                 print \
                                     ( "%s: %s attribute `%s` of `%s` cannot "
                                       "be referred to by object "
                                       "invariant `%s`"
-                                    % (cls, attr.kind, an, cls.type_name, pn)
+                                    % (cls, ak.kind, an, cls.type_name, pn)
                                     )
                         else :
-                            P._attr_map [attr.attr].append (pn)
-                            if attr.is_required :
-                                pv.pred.is_required = True
+                            P._attr_map [at].append (pn)
+                            if ak.is_required :
+                                pk.pred.is_required = True
         P._syntax_checks = \
             [  a for a in pyk.itervalues (attr_dict)
             if (not a.electric) and TFL.callable (a.attr.check_syntax)
@@ -1166,9 +1268,14 @@ class M_E_Type (M_E_Mixin) :
             cls.__m_super._set_type_names (base_name)
     # end def _set_type_names
 
+    def __lt__ (cls, rhs) :
+        return cls.__name__ < getattr (rhs, "__name__", rhs)
+    # end def __lt__
+
     def __getattr__ (cls, name) :
         ### just to ease up-chaining in descendents
-        raise AttributeError ("%s.%s" % (cls.type_name, name))
+        head = repr (cls) if name == "_type_name" else cls.type_name
+        raise AttributeError ("%s.%s" % (head, name))
     # end def __getattr__
 
 # end class M_E_Type
@@ -1462,93 +1569,12 @@ class M_E_Type_MD (M_E_Type) :
 
 # end class M_E_Type_MD
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Meta.M_Entity`
-=========================
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. class:: M_Entity
-
-    `MOM.Meta.M_Entity` provides the meta machinery for defining the
-    characteristics of essential object and link types of the MOM meta object
-    model. It is the common base class for
-    :class:`MOM.Meta.M_Object<_MOM._Meta.M_Object.M_Object>` and
-    :class:`MOM.Meta.M_Link<_MOM._Meta.M_Link.M_Link>`.
-
-    .. attribute:: PNS_Aliases
-
-      Specifies an optional mapping of package namespace aliases to
-      the canonical package namespace name. This allows the decoupling
-      of the concrete package structure from the abstract view of the
-      object model.
-
-      For instance::
-
-          MOM.Entity.PNS_Aliases = dict \\
-              ( PAP             = GTW.OMP.PAP
-              , SRM             = GTW.OMP.SRM
-              , SWP             = GTW.OMP.SWP
-              )
-
-XXX
-
-.. class:: M_E_Type
-
-    `MOM.Meta.M_E_Type` provides the meta machinery for defining app-type
-    specific essential object and link types (aka, e_types).
-
-    Each instance of `M_E_Type` is a class that is defined using information
-    of an essential class, i.e., a descendent of :class:`~_MOM.Entity.Entity`.
-
-    For each instance of `M_E_Type`, it:
-
-    * Setups the attributes and predicates by instantiating
-      `Essence._Attributes` and `Essence._Predicates` (and assigning it to
-      class variables `_Attributes` and `_Predicates`, respectively, of the
-      `etype`).
-
-    * Assigns the class variables `is_editable` and `show_in_ui` according
-      the settings of essential and app-type specific settings.
-
-    * Checks that object predicates don't depend on electric attributes.
-
-    * Adds all object predicates to the `invariant` lists of the attributes
-      the predicates depend on.
-
-    * Adds `_syntax_checks` entries to `_Predicates` for all non-electric
-      attributes with a callable `check_syntax`.
-
-    * Adds the `etype` to the `children` dictionary of all its base classes.
-
-    `M_E_Type` provides the attributes:
-
-    .. attribute:: db_sig
-
-      `db_sig` defines the database signature of the `etype`. The `db_sig`
-      comprises the `type_name` and the :attr:`db_sig<MOM.Attr.Type.db_sig>`
-      of a attributes stored in the database.
-
-    .. attribute:: default_child
-
-      For partial classes, `default_child` can be set to refer to the
-      non-partial descendent class that should be used by default (for
-      instance, to create a new object in an object editor).
-
-    `M_E_Type` provides the methods:
-
-    .. automethod:: add_attribute
-    .. automethod:: add_predicate
-
-    .. method:: add_to_app_type(app_type)
-
-      Adds the newly created `etype` to the `app_type`.
-
-    .. automethod:: after_creation
 
 
 """
 
 if __name__ != "__main__" :
-    MOM.Meta._Export ("*")
+    MOM.Meta._Export ("*", "_M_E_Type_Id_RC_")
 ### __END__ MOM.Meta.M_Entity

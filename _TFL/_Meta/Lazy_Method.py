@@ -32,6 +32,7 @@
 #     3-Feb-2009 (CT)  Documentation improved
 #     8-Oct-2015 (CT)  Change `__getattr__` to *not* handle `__XXX__`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    13-Nov-2015 (CT) Add `__code__`, `__func__` to placate `inspect.getargspec`
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,7 @@ class _Lazy_Wrapper_RLV_ (object) :
     counter_name = "changes"
 
     def __init__ (self, fct, counter_name = None) :
-        self.fct      = fct
+        self.fct      = self.__func__ = fct
         self.__name__ = getattr (fct, "__name__", None)
         self.__doc__  = getattr (fct, "__doc__", None)
         self.changes  = TFL.defaultdict (lambda : -1)
@@ -59,6 +60,11 @@ class _Lazy_Wrapper_RLV_ (object) :
         if counter_name :
             self.counter_name = counter_name
     # end def __init__
+
+    @property
+    def __code__ (self) :
+        return self.fct.__code__
+    im_func = __code__ # end def __code__
 
     def __call__ (self, that, * args, ** kw) :
         if self.changes [that] != int (getattr (that, self.counter_name)) :
@@ -92,16 +98,16 @@ class _Lazy_Wrapper_RNC_ (_Lazy_Wrapper_RLV_) :
 class Lazy_Method_RLV (TFL.Meta.Method_Descriptor) :
     """Lazy evaluation wrapper: the wrapped method is executed only if the
        the object changed since the last call. In any case, the result of the
-       last successfull run will be returned
+       last successful run will be returned
 
        Note that this wrapper is only applicable to methods which result does
        *not* depend on the arguments passed to the method.
 
        >>> class Test (object) :
        ...     changes = 0
+       ...     @Lazy_Method_RLV
        ...     def test (self) :
        ...         print ("Test.test", self.changes)
-       ...     test = Lazy_Method (test)
        ...
        >>> t = Test ()
        >>> t.test ()
@@ -115,6 +121,7 @@ class Lazy_Method_RLV (TFL.Meta.Method_Descriptor) :
        >>> Test.test (t)
        Test.test 2
        >>> Test.test (t)
+
     """
 
     NC = object ()
@@ -142,6 +149,7 @@ class Lazy_Method (Lazy_Method_RLV) :
     """Provided for legacy, should not be used in new code -- use
        :class:`~_TFL._Meta.Lazy_Method.Lazy_Method_RLV` instead!
     """
+# end class Lazy_Method
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*")

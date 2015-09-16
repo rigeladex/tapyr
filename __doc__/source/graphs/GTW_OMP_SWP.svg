@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC
+    "-//W3C//DTD SVG 1.1//EN"
+    "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg class="MOM-Graph" preserveAspectRatio="xMinYMin" version="1.1"
+     viewBox="0 0 960 850" width="100%" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+  <title>
+    SWP graph
+  </title>
+  <defs>
+    <marker id="MOM:AM" fill="none" markerHeight="4"
+            markerUnits="strokeWidth" markerWidth="4" orient="auto" refX="0"
+            refY="35" stroke="#FFA022" viewBox="0 0 70 70"
+    >
+      <path d="m 0,0 0,70 25.0,-15.0 0,-40.0 -25.0,-15.0 z" fill="#FFA022"
+            fill-opacity="0.7" stroke="none"
+      >
+      </path>
+      <path d="m 35.0,20.0 0,30.0 25.0,-15.0 -25.0,-15.0 z" fill="#FFA022"
+            fill-opacity="0.7" stroke="none"
+      >
+      </path>
+      <path d="m 25.0,15.0 10.0,5.0 0,30.0 -10.0,5.0 0,-40.0 z" fill="#FFF"
+            stroke="none"
+      >
+      </path>
+    </marker>
+    <marker id="MOM:IM" fill="none" markerHeight="3"
+            markerUnits="strokeWidth" markerWidth="3" orient="auto" refX="8"
+            refY="5" stroke="#08D" stroke-opacity="0.45" viewBox="0 0 10 10"
+    >
+      <path d="M 0  0 L 10 5 0 2 z">
+      </path>
+      <path d="M 0 10 L 10 5 0 8 z">
+      </path>
+    </marker>
+    <marker id="MOM:RM" fill="none" markerHeight="3"
+            markerUnits="strokeWidth" markerWidth="3" orient="auto" refX="0"
+            refY="2" stroke="#666" viewBox="0 0 4 4"
+    >
+      <path d="M 4 0 L 0 0  0 4  4 4">
+      </path>
+    </marker>
+  </defs>
+  <g id="SWP.Clip_O" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      SWP.Clip_O: News clip for a object.
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="720"
+          y="375"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="729"
+          y="375"
+    >
+      <tspan dx="0" dy="27.0" x="729">
+        SWP.Clip_O
+      </tspan>
+    </text>
+  </g>
+  <g id="SWP.Clip_X" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      SWP.Clip_X: News clip for the front page of a website referring to an external web
+             page.
+          
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="720"
+          y="675"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="729"
+          y="675"
+    >
+      <tspan dx="0" dy="27.0" x="729">
+        SWP.Clip_X
+      </tspan>
+    </text>
+  </g>
+  <g id="SWP.Gallery" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      SWP.Gallery: Model a gallery of pictures
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="400"
+          y="75"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="409" y="75">
+      <tspan dx="0" dy="27.0" x="409">
+        SWP.Gallery
+      </tspan>
+    </text>
+  </g>
+  <g id="SWP.Object_PN" fill="#EDEDED" class="E_Type" opacity="0.6">
+    <title>
+      SWP.Object_PN: Object with a perma_name.
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="400"
+          y="375"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="409"
+          y="375"
+    >
+      <tspan dx="0" dy="27.0" x="409">
+        SWP.Object_PN
+      </tspan>
+    </text>
+  </g>
+  <g id="SWP.Page" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      SWP.Page: Model a static web page.
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="400"
+          y="675"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="409"
+          y="675"
+    >
+      <tspan dx="0" dy="27.0" x="409">
+        SWP.Page
+      </tspan>
+    </text>
+  </g>
+  <g id="SWP.Page_Y" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      SWP.Page_Y: Model a year-specific static web page.
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="80"
+          y="675"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="89" y="675">
+      <tspan dx="0" dy="27.0" x="89">
+        SWP.Page_Y
+      </tspan>
+    </text>
+  </g>
+  <g id="SWP.Picture" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      SWP.Picture: Model a picture that can be displayed on a web page.
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="720"
+          y="75"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="729" y="75">
+      <tspan dx="0" dy="27.0" x="729">
+        SWP.Picture
+      </tspan>
+    </text>
+  </g>
+  <g id="SWP.Clip_O.left:SWP.Object_PN" opacity="1.0">
+    <title>
+      SWP.Clip_O role object: Object the news clip refers to
+    </title>
+    <polyline fill="none" marker-start="url(#MOM:RM)"
+              points="720,425 560,425" stroke="#666" stroke-width="5"
+    />
+    <path d="M 560 425 L 720 425" id="SWP.Clip_O.left:SWP.Object_PN::path"
+          fill="none" stroke="none"
+    >
+    </path>
+    <text fill="#666" font-family="sans-serif" font-size="18">
+      <textPath startOffset="90%" text-anchor="end"
+                xlink:href="#SWP.Clip_O.left:SWP.Object_PN::path"
+      >
+        <tspan dy="-7.0">
+          left
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+  <g id="SWP.Clip_X:is_a:SWP.Page" opacity="1.0">
+    <title>
+      SWP.Clip_X is-a SWP.Page: SWP.Clip_X is derived from SWP.Page
+    </title>
+    <polyline fill="none" marker-end="url(#MOM:IM)" points="720,725 560,725"
+              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    />
+    <path d="M 560 725 L 720 725" id="SWP.Clip_X:is_a:SWP.Page::path"
+          fill="none" stroke="none"
+    >
+    </path>
+    <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
+          font-size="18"
+    >
+      <textPath startOffset="90%" text-anchor="end"
+                xlink:href="#SWP.Clip_X:is_a:SWP.Page::path"
+      >
+        <tspan dy="-7.0">
+          IS_A
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+  <g id="SWP.Gallery:is_a:SWP.Object_PN" opacity="1.0">
+    <title>
+      SWP.Gallery is-a SWP.Object_PN: SWP.Gallery is derived from SWP.Object_PN
+    </title>
+    <polyline fill="none" marker-end="url(#MOM:IM)" points="480,175 480,375"
+              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    />
+    <path d="M 480 175 L 480 375" id="SWP.Gallery:is_a:SWP.Object_PN::path"
+          fill="none" stroke="none"
+    >
+    </path>
+    <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
+          font-size="18"
+    >
+      <textPath startOffset="10%" text-anchor="start"
+                xlink:href="#SWP.Gallery:is_a:SWP.Object_PN::path"
+      >
+        <tspan dy="-7.0">
+          IS_A
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+  <g id="SWP.Page:is_a:SWP.Object_PN" opacity="1.0">
+    <title>
+      SWP.Page is-a SWP.Object_PN: SWP.Page is derived from SWP.Object_PN
+    </title>
+    <polyline fill="none" marker-end="url(#MOM:IM)" points="480,675 480,475"
+              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    />
+    <path d="M 480 675 L 480 475" id="SWP.Page:is_a:SWP.Object_PN::path"
+          fill="none" stroke="none"
+    >
+    </path>
+    <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
+          font-size="18"
+    >
+      <textPath startOffset="10%" text-anchor="start"
+                xlink:href="#SWP.Page:is_a:SWP.Object_PN::path"
+      >
+        <tspan dy="-7.0">
+          IS_A
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+  <g id="SWP.Page_Y:is_a:SWP.Page" opacity="1.0">
+    <title>
+      SWP.Page_Y is-a SWP.Page: SWP.Page_Y is derived from SWP.Page
+    </title>
+    <polyline fill="none" marker-end="url(#MOM:IM)" points="240,725 400,725"
+              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    />
+    <path d="M 240 725 L 400 725" id="SWP.Page_Y:is_a:SWP.Page::path"
+          fill="none" stroke="none"
+    >
+    </path>
+    <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
+          font-size="18"
+    >
+      <textPath startOffset="10%" text-anchor="start"
+                xlink:href="#SWP.Page_Y:is_a:SWP.Page::path"
+      >
+        <tspan dy="-7.0">
+          IS_A
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+  <g id="SWP.Picture.left:SWP.Gallery" opacity="1.0">
+    <title>
+      SWP.Picture role gallery: Gallery to which this picture belongs.
+    </title>
+    <polyline fill="none" marker-start="url(#MOM:RM)"
+              points="720,125 560,125" stroke="#666" stroke-width="5"
+    />
+    <path d="M 560 125 L 720 125" id="SWP.Picture.left:SWP.Gallery::path"
+          fill="none" stroke="none"
+    >
+    </path>
+    <text fill="#666" font-family="sans-serif" font-size="18">
+      <textPath startOffset="90%" text-anchor="end"
+                xlink:href="#SWP.Picture.left:SWP.Gallery::path"
+      >
+        <tspan dy="-7.0">
+          left
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+</svg>

@@ -67,9 +67,6 @@ def _import_cb_json_dump (module) :
 # end def _import_cb_json_dump
 
 __doc__ = """
-Module `Undef`
-==========================
-
 :class:`Undef` provides a way to define undefined objects with a nice
 and deterministic `repr`.
 

@@ -1786,7 +1786,7 @@ Attribute queries
     [BMT.Trap ('x', 1), BMT.Trap ('y', 1), BMT.Trap ('z', 3)]
 
     >>> prepr ((tuple (scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight, allow_duplicates = True))))
-    (42.0, 42.0)
+    (42, 42)
     >>> prepr ((tuple (scope.BMT.Rodent.query_s (Q.weight == None).attrs (Q.name, "color"))))
     (('betty', ''), ('rutty_rat', ''), ('toothy_beaver', ''))
 

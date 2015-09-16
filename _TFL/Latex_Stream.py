@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2014 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 1999-2015 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -165,7 +165,7 @@ class Latex_Stream (Formatted_Stream) :
     end_subsubsection  = Formatted_Stream.deindent
 
     def _begin_block (self, name, attributes = "") :
-        """Write the beginning `\begin {}' statement for a block-statement.
+        """Write the beginning `\begin {}` statement for a block-statement.
         """
         if not self.at_bol :
             self.putl ()
@@ -176,7 +176,7 @@ class Latex_Stream (Formatted_Stream) :
     begin_block = _begin_block
 
     def _end_block (self, name, attributes = "") :
-        """Write the end `\end {}' statement for a block-statement.
+        """Write the end `\end {}` statement for a block-statement.
         """
         self.deindent ()
         self.putl     (r"\end{%s}%s" % (name, attributes))
@@ -212,7 +212,7 @@ class Latex_Stream (Formatted_Stream) :
     # end def include
 
     def item (self, item_name, text, item_length = 0, item_indent_only = None) :
-        """Write a `item' statement for a block structure to the stream."""
+        """Write a `item` statement for a block structure to the stream."""
         if isinstance (text, str) :
             text = (text, )
         text = list (text)

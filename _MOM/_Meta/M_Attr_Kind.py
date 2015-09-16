@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,6 +33,11 @@ class M_Attr_Kind (MOM.Meta.M_Prop_Kind) :
     # end def __init__
 
 # end class M_Attr_Kind
+
+__doc__ = """
+
+
+"""
 
 if __name__ != "__main__" :
     MOM.Meta._Export ("*")

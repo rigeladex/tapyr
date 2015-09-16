@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -44,13 +44,8 @@ class M_Attr_Spec (MOM.Meta.M_Prop_Spec) :
 
 # end class M_Attr_Spec
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Meta.M_Attr_Spec`
-============================
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. autoclass:: M_Attr_Spec
 
 """
 

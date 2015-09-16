@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -69,9 +69,7 @@ class Class_Proxy :
 
 # end class Class_Proxy
 
-import __builtin__
-
-def isinstance_cp (object, C, isinstance = __builtin__.isinstance) :
+def isinstance_cp (object, C, isinstance = isinstance) :
     ### print ("isinstance", object, C)
     ### from caller_globals import caller_info
     ### print ("isinstance", caller_info ())
@@ -80,7 +78,7 @@ def isinstance_cp (object, C, isinstance = __builtin__.isinstance) :
     return isinstance (object, C)
 # end def isinstance_cp
 
-def issubclass_cp (C, B, issubclass = __builtin__.issubclass) :
+def issubclass_cp (C, B, issubclass = issubclass) :
     ### print ("issubclass", C, B)
     ### from caller_globals import caller_info
     ### print ("isinstance", caller_info ())
@@ -88,37 +86,6 @@ def issubclass_cp (C, B, issubclass = __builtin__.issubclass) :
     if hasattr (B, "_Class") : B = B._Class
     return issubclass (C, B)
 # end def issubclass_cp
-
-del __builtin__
-
-### the following would redefine the __builtin__ functions isinstance and
-### issubclass which is too radical
-###
-### def _fix_builtins () :
-###     import __builtin__
-###
-###     def isinstance (object, C, isinstance = __builtin__.isinstance) :
-###         ### print ("isinstance", object, C)
-###         from caller_globals import caller_info
-###         print ("isinstance", caller_info ())
-###         if hasattr (C, "_Class") :
-###             C = C._Class
-###         return isinstance (object, C)
-###     isinstance.__doc__     = __builtin__.isinstance.__doc__
-###     __builtin__.isinstance = isinstance
-###
-###     def issubclass (C, B, issubclass = __builtin__.issubclass) :
-###         ### print ("issubclass", C, B)
-###         from caller_globals import caller_info
-###         print ("isinstance", caller_info ())
-###         if hasattr (C, "_Class") : C = C._Class
-###         if hasattr (B, "_Class") : B = B._Class
-###         return issubclass (C, B)
-###     issubclass.__doc__     = __builtin__.issubclass.__doc__
-###     __builtin__.issubclass = issubclass
-###
-### _fix_builtins ()
-### del _fix_builtins
 
 from _TFL import TFL
 TFL._Export ("*")

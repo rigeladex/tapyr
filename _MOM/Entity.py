@@ -295,6 +295,10 @@
 #    30-Jul-2015 (CT) Change `_kw_polished` to handle polisher errors
 #     3-Aug-2015 (CT) Use `_init_raw_default`, not literal `False`
 #    10-Aug-2015 (CT) Add documentation for introspective attribute properties
+#    12-Aug-2015 (CT) Remove obsolete `compute_defaults_internal`
+#    12-Aug-2015 (CT) Add method docstrings; split up module docstring
+#    15-Aug-2015 (CT) Set `type_name.max_length` to 0
+#    16-Aug-2015 (CT) Add `auto_derived_p`, `auto_derived_root`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    16-Dec-2015 (CT) Add `UI_Spec`
 #    18-Dec-2015 (CT) Change `_main__init__` to not pass `on_error` to
@@ -348,6 +352,8 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 
     PNS                   = MOM
 
+    auto_derived_p        = False ### Set by meta machinery
+    auto_derived_root     = None  ### Set by meta machinery
     deprecated_attr_names = {}
     electric              = False
     init_finished         = False
@@ -520,6 +526,9 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 
     @property
     def raw_attr_dict (self) :
+        """Dictionary with raw attr values of :attr:`user_attr` that
+           `has_substance`.
+        """
         return dict \
             (  (a.name, a.get_raw (self))
             for a in self.user_attr if a.has_substance (self)
@@ -533,6 +542,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 
     @property
     def ui_display_format (self) :
+        """Format used for :attr:`ui_display`."""
         return self.ui_display_sep.join \
             ( "%%(%s)s" % a.name for a in self.sig_attr
             if a.has_substance (self)
@@ -564,6 +574,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 
     @classmethod
     def from_attr_pickle_cargo (cls, scope, cargo) :
+        """Create new entity in `scope` based on pickle `cargo`."""
         result = cls.__new__    (cls, scope = scope)
         result._init_attributes ()
         result.set_pickle_cargo (cargo)
@@ -574,10 +585,18 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
     _MOM_Entity__init__ = property (lambda self, __init__ = __init__ : __init__)
 
     def after_init (self) :
+        """Is called by the UI after an instance of the class was
+           (successfully) created. `after_init` can create additional objects
+           automatically to ease the life of the interactive user of the
+           application.
+        """
         pass
     # end def after_init
 
     def as_attr_pickle_cargo (self) :
+        """Dictionary with pickle cargo of :attr:`attributes` that are
+           `save_to_db`.
+        """
         return dict \
             (   (a.name, a.get_pickle_cargo  (self))
             for a in pyk.itervalues (self.attributes) if a.save_to_db
@@ -607,18 +626,9 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
             return attr.get_value (self)
     # end def attr_value_maybe
 
-    def compute_defaults_internal (self) :
-        """Compute default values for optional/internal/cached parameters."""
-        pass
-    # end def compute_defaults_internal
-
-    @classmethod
-    def compute_type_defaults_internal (cls) :
-        pass
-    # end def compute_type_defaults_internal
-
     @TFL.Meta.Class_and_Instance_Method
     def cooked_attrs (soc, kw, on_error = None) :
+        """Dictionary `kw` converted to cooked values."""
         attributes = soc.attributes
         result     = {}
         if on_error is None :
@@ -649,6 +659,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
     # end def has_substance
 
     def is_correct (self, attr_dict = {}, _kind = "object")  :
+        """True if predicates of `_kind` are satisfied for `attr_dict`."""
         ews = self._pred_man.check_kind (_kind, self, attr_dict)
         return not ews
     # end def is_correct
@@ -680,7 +691,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
     # end def reset_syncable
 
     def set (self, on_error = None, ** kw) :
-        """Set attributes specified in `kw` from cooked values"""
+        """Set attributes  from cooked values specified in `kw`."""
         assert "raw" not in kw
         ukw = dict (self._kw_undeprecated (kw))
         return self._set_ckd_inner (on_error, ** kw)
@@ -712,7 +723,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
     # end def set_pickle_cargo
 
     def set_raw (self, on_error = None, ** kw) :
-        """Set attributes specified in `kw` from raw values"""
+        """Set attributes from raw values specified in `kw`."""
         assert "raw" not in kw
         ukw = dict (self._kw_undeprecated (kw))
         pkw = self._kw_polished (ukw, on_error)
@@ -993,6 +1004,8 @@ class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
 
     @property
     def hash_key (self) :
+        """Hash key: tuple of hash values for attributes in :attr:`hash_sig`.
+        """
         return tuple (a.get_hash (self) for a in self.hash_sig)
     # end def hash_key
 
@@ -1002,10 +1015,12 @@ class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
     # end def SCM_Change_Attr
 
     def as_pickle_cargo (self) :
+        """Pickle cargo of `self`."""
         return (str (self.type_name), self.as_attr_pickle_cargo ())
     # end def as_pickle_cargo
 
     def as_string (self) :
+        """Serialization of `self` as string"""
         return tuple (sorted (pyk.iteritems (self.raw_attr_dict)))
     # end def as_string
 
@@ -1020,6 +1035,7 @@ class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
     # end def attr_as_code
 
     def attr_tuple_to_save (self) :
+        """Tuple of attributes in :attr:`user_attr` that need saving."""
         result  = self.user_attr
         save_p  = tuple (a.to_save (self) for a in result) [::-1]
         to_drop = tuple (itertools.takewhile ((lambda x : not x), save_p))
@@ -1030,6 +1046,7 @@ class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
     # end def attr_tuple_to_save
 
     def attr_tuple (self) :
+        """Tuple of of cooked values of attributes in :attr:`user_attr`"""
         return tuple (a.get_value (self) for a in self.user_attr)
     # end def attr_tuple
 
@@ -1308,6 +1325,7 @@ class Id_Entity \
             kind               = Attr.Internal
             Kind_Mixins        = (Attr._Type_Name_Mixin_, )
             hidden_nested      = 1
+            max_length         = 0
 
         # end class type_name
 
@@ -1374,12 +1392,13 @@ class Id_Entity \
 
     @TFL.Meta.Once_Property
     def ETM (self) :
+        """E_Type_Manager managing `self`."""
         return self.home_scope [self.type_name]
     # end def ETM
 
     @TFL.Meta.Once_Property
     def epk (self) :
-        """Essential primary key"""
+        """Essential primary key as tuple of cooked values."""
         return tuple \
             (a.get_value (self) for a in self.primary) + (self.type_name,)
     # end def epk
@@ -1410,12 +1429,13 @@ class Id_Entity \
 
     @TFL.Meta.Once_Property
     def epk_as_dict (self) :
+        """Dictionary of values in :attr:`epk`."""
         return dict (zip (self.epk_sig, self.epk))
     # end def epk_as_dict
 
     @property
     def epk_raw (self) :
-        """Essential primary key as raw values"""
+        """Essential primary key as tuple of raw values."""
         return \
             ( tuple (a.get_raw_epk (self) for a in self.primary)
             + (self.type_name, )
@@ -1424,7 +1444,9 @@ class Id_Entity \
 
     @property
     def epk_raw_pid (self) :
-        """Essential primary key as raw values (pids for Id_Entity attributes)."""
+        """Essential primary key as tuple of raw values
+           but pids for Id_Entity attributes.
+        """
         return \
             ( tuple (a.get_raw_pid (self) for a in self.primary)
             + (self.type_name, )
@@ -1453,6 +1475,7 @@ class Id_Entity \
 
     @property
     def ui_display_format (self) :
+        """Format used for :attr:`ui_display`."""
         return self.ui_display_sep.join \
             ( "%%(%s)s" % a.name for (a, v) in zip (self.primary, self.epk)
               if a.has_substance (self)
@@ -1514,6 +1537,9 @@ class Id_Entity \
     # end def all_referrers
 
     def async_changes (self, * filter, ** kw) :
+        """Changes that happened asynchronously since `self` was last read from
+           database.
+        """
         result = self.home_scope.query_changes \
             (Q.cid > self.last_cid, Q.pid == self.pid)
         if filters or kw :
@@ -1522,6 +1548,7 @@ class Id_Entity \
     # end def async_changes
 
     def as_migration (self) :
+        """Migration of `self`."""
         def _gen (self) :
             skip = set (("last_cid", "pid", "type_name"))
             for ak in self.db_attr :
@@ -1531,6 +1558,7 @@ class Id_Entity \
     # end def as_migration
 
     def as_pickle_cargo (self) :
+        """Pickle cargo of `self`."""
         return (str (self.type_name), self.as_attr_pickle_cargo (), self.pid)
     # end def as_pickle_cargo
 
@@ -1544,7 +1572,7 @@ class Id_Entity \
     # end def attr_as_code
 
     def changes (self, * filters, ** kw) :
-        """Return change objects related to `self`."""
+        """Return change objects for `self` that match `filters` and `kw`."""
         result = self.home_scope.query_changes (Q.pid == self.pid)
         if filters or kw :
             result = result.filter (* filters, ** kw)
@@ -1552,7 +1580,7 @@ class Id_Entity \
     # end def changes
 
     def check_all (self) :
-        """Checks all predicates"""
+        """True if all predicates are satisfied."""
         return self._pred_man.check_all (self)
     # end def check_all
 
@@ -1614,6 +1642,7 @@ class Id_Entity \
 
     @classmethod
     def epk_as_kw (cls, * epk, ** kw) :
+        """Dictionary with values of `epk` and values of `kw`"""
         on_error = kw.pop ("on_error", None)
         if epk and isinstance (epk [-1], cls.Type_Name_Type) :
             epk  = epk [:-1]
@@ -1622,6 +1651,9 @@ class Id_Entity \
 
     @classmethod
     def epkified (cls, * epk, ** kw) :
+        """Return `epk` tuple and `kw` dictionary, no matter if `epk` values
+           were passed as positional or named arguments.
+        """
         if epk and isinstance (epk [-1], cls.Type_Name_Type) :
             epk  = epk [:-1]
         raw      = bool (kw.get ("raw", False))
@@ -1646,6 +1678,7 @@ class Id_Entity \
     # end def epkified
 
     def is_defined (self)  :
+        """True if all necessary attributes have substance."""
         return \
             (  (not self.is_used)
             or all (a.has_substance (self) for a in self.necessary)
@@ -1653,6 +1686,7 @@ class Id_Entity \
     # end def is_defined
 
     def is_g_correct (self)  :
+        """True if all system predicates are satisfied."""
         ews = self._pred_man.check_kind ("system", self)
         return not ews
     # end def is_g_correct
@@ -2221,14 +2255,8 @@ class MD_Change (_Ancestor_Essence) :
 # end class MD_Change
 
 ### «text» ### start of documentation
-__doc__  = """
-Class `MOM.Id_Entity`
-=====================
 
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. class:: Id_Entity
-
+Id_Entity.__doc_attr_head__ = """
     `MOM.Id_Entity` provides the framework for defining essential classes and
     associations. Each essential class or association is characterized by
 
@@ -2262,18 +2290,11 @@ Class `MOM.Id_Entity`
 
     Each essential attribute is defined by a class derived from one of
     the attribute types in :mod:`MOM.Attr.Type<_MOM._Attr.Type>`.
+"""
 
-    `MOM.Id_Entity` defines a number of attributes that can be overriden by
-    descendant classes:
-
-    .. attribute:: electric
-
-    .. attribute:: x_locked
-
-    .. attribute:: is_used
-
-    Each essential type provides introspective properties referring to the
-    essential attributes:
+Id_Entity.__doc_attr_tail__ = """
+    Each essential type provides introspective properties specifying the
+    various categories of essential attributes defined for the type:
 
     .. attribute:: db_attr
 
@@ -2324,6 +2345,9 @@ Class `MOM.Id_Entity`
 
       All editable attributes except for the ones listed by :attr:`primary`
 
+"""
+
+Id_Entity.__doc_pred_head__ = """
     .. _`essential predicates`:
 
     **Essential Predicates**
@@ -2350,6 +2374,10 @@ Class `MOM.Id_Entity`
     of how predicates should be defined. Normally, predicates define
     `assertion`, not `eval_condition`! This is explained in more detail in
     :mod:`MOM.Pred.Type<_MOM._Pred.Type>`.
+
+"""
+
+Id_Entity.__doc_pred_tail__ = """
 
     .. _`class attributes`:
 
@@ -2441,49 +2469,11 @@ Class `MOM.Id_Entity`
 
     .. _`methods`:
 
-    **Methods**
+    **Methods and Properties**
 
-    Descendents of `MOM.Id_Entity` can redefine a number of methods to
-    influence how instances of the class are handled by the framework. If
-    you redefine one of these methods, you'll normally need to call the
-    `super` method somewhere in the redefinition.
+"""
 
-    .. method:: after_init
-
-      Is called by the GUI after an instance of the class was
-      (successfully) created. `after_init` can create additional objects
-      automatically to ease the life of the interactive user of the
-      application.
-
-    .. automethod:: all_referrers
-
-    .. automethod:: changes
-
-    .. method:: compute_defaults_internal
-
-      Is called whenever object attributes
-      needs to synchronized and can be used to set attributes to computed
-      default values. Please note that it is better to use
-      `compute_default` defined for a specific attribute than to compute that
-      value in `compute_defaults_internal`.
-
-      `compute_defaults_internal` should only be used when the default
-      values for several different attributes need to be computed together.
-
-    .. method:: compute_type_defaults_internal
-
-      Is a class method that is called to
-      compute a default value of an attribute that is based on all
-      instances of the class. The value of such an attribute must be
-      stored as a class attribute (or in the root object of the scope).
-
-    .. automethod:: copy
-
-    .. automethod:: destroy
-
-    .. automethod:: set
-
-    .. automethod:: set_raw
+__doc__  = """
 
 """
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,8 +17,8 @@
 # Revision Dates
 #    24-Mar-2001 (CT)  Creation
 #    28-Mar-2001 (CT)  Various optimizations and simplifications added
-#     5-Apr-2001 (ARU) Computed attribute `nodes' added
-#                      Bug in `__getattr__' of `_divisors' corrected
+#     5-Apr-2001 (ARU) Computed attribute `nodes` added
+#                      Bug in `__getattr__` of `_divisors` corrected
 #    11-Jun-2003 (CT)  s/== None/is None/
 #    11-Feb-2006 (CT)  Moved into package `TFL`
 #    27-Nov-2011 (CT)  Modernize
@@ -38,7 +38,7 @@ import math
 class OverflowError (ValueError) : pass
 
 def Divisor_Dag (n) :
-    """Returns `Divisor_Dag' for `n'"""
+    """Returns `Divisor_Dag` for `n`"""
     try :
         return _Divisor_Dag_.Table [n]
     except KeyError :
@@ -53,11 +53,11 @@ class _Divisor_Dag_ :
 
        number        Number to which divisor DAG applies
        subdags       Sub DAGS of divisor DAG
-       divisors      Sorted list of all divisors of `number'
-       prime_factors Sorted list of all prime factors of `number'
+       divisors      Sorted list of all divisors of `number`
+       prime_factors Sorted list of all prime factors of `number`
        edges         Inversely sorted list of all edges of divisor DAG
-       _divisors     Dictionary of all `divisors'
-       _edges        Dictionary of all `edges'
+       _divisors     Dictionary of all `divisors`
+       _edges        Dictionary of all `edges`
     """
 
     Table = {}

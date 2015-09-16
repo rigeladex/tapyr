@@ -284,9 +284,6 @@ class Object_Scope_Mutable (Object_Scope) :
 __doc__ = """
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
-Module `Caller`
-==========================
-
 """
 
 if __name__ != "__main__" :

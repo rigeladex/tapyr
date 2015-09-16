@@ -28,20 +28,102 @@
 #    26-Mar-2014 (CT) Add guard against double quotes in `_doc_properties`
 #    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine_Dict`,
 #                     as ancestor
+#     9-Dec-2015 (CT) Add `_Doc_Map_`, `_M_Doc_Map_`
 #    ««revision-date»»···
 #--
 
-from   _MOM                import MOM
-from   _TFL                import TFL
+from   _MOM                  import MOM
+from   _TFL                  import TFL
 
 import _MOM._Meta
+import _TFL._Meta.M_Auto_Combine_Nested_Classes
 import _TFL._Meta.M_Auto_Update_Combined
-import _TFL.normalized_indent
+import _TFL._Meta.Once_Property
 
-class M_Prop_Type (TFL.Meta.M_Auto_Update_Combined) :
+import _TFL.normalized_indent
+from   _TFL.predicate        import first
+from   _TFL.pyk              import pyk
+
+class _M_Doc_Map_ (TFL.Meta.M_Class) :
+    """Meta class for `_Doc_Map_` classes."""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        _own_names = set (k for k in dct if not k.startswith ("__"))
+        _names     = set (_own_names)
+        for b in cls.__bases__ :
+            _names.update (getattr (b, "_names", ()))
+        for k in _own_names :
+            v = dct [k]
+            if v :
+                v = TFL.normalized_indent (v)
+                setattr (cls, k, v)
+        setattr (cls, "_names",     _names)
+        setattr (cls, "_own_names", _own_names)
+        if not cls.__doc__ :
+            setattr \
+                ( cls, "__doc__"
+                , first (b.__doc__ for b in cls.__bases__ if b.__doc__)
+                )
+        cls._OWN = cls._ALL = None
+    # end def __init__
+
+    @property
+    def ALL (cls) :
+        """All documented attributes of `cls` and its ancestors."""
+        result = cls._ALL
+        if result is None :
+            result = cls._ALL = cls._items (cls._names)
+        return result
+    # end def ALL
+
+    @property
+    def OWN (cls) :
+        """Documented attributes of `cls` itself."""
+        result = cls._OWN
+        if result is None :
+            result = cls._OWN = cls._items (cls._own_names)
+        return result
+    # end def OWN
+
+    def get (self, key, default) :
+        try :
+            return getattr (cls, key)
+        except AttributeError :
+            return default
+    # end def get
+
+    def _items (cls, names) :
+        def _gen (cls, names) :
+            for k in sorted (names) :
+                v = getattr (cls, k)
+                if v :
+                    yield k, v
+        return list (_gen (cls, names))
+    # end def _items
+
+    def __getitem__ (cls, key) :
+        try :
+            return getattr (cls, key)
+        except AttributeError :
+            raise KeyError (key)
+    # end def __getitem__
+
+    def __iter__ (cls) :
+        return iter (cls._names)
+    # end def __iter__
+
+# end class _M_Doc_Map_
+
+class M_Prop_Type \
+        ( TFL.Meta.M_Auto_Update_Combined
+        , TFL.Meta.M_Auto_Combine_Nested_Classes
+        ) :
     """Root of metaclasses for MOM.Attr.Type and MOM.Pred.Type"""
 
-    count = 0
+    count                      = 0
+
+    _nested_classes_to_combine = ("_Doc_Map_", )
 
     def __new__ (meta, name, bases, dct) :
         doc = dct.get ("__doc__")
@@ -80,13 +162,8 @@ class M_Prop_Type (TFL.Meta.M_Auto_Update_Combined) :
 
 # end class M_Prop_Type
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Meta.M_Prop_Type`
-============================
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. class:: M_Prop_Type
 
     `MOM.Meta.M_Prop_Type` provides the meta machinery for defining
     :class:`attribute<_MOM._Meta.M_Attr_Type.Root>` and
@@ -114,5 +191,5 @@ Class `MOM.Meta.M_Prop_Type`
 """
 
 if __name__ != "__main__" :
-    MOM.Meta._Export ("*")
+    MOM.Meta._Export ("*","_M_Doc_Map_")
 ### __END__ MOM.Meta.M_Prop_Type

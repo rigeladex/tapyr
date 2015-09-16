@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -1257,9 +1257,6 @@ def xored_string (source, salt = "ß") :
 # end def xored_string
 
 __doc__ = """
-
-Module `predicate`
-===================
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 

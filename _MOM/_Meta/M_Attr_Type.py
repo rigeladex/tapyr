@@ -66,6 +66,7 @@
 #    10-Mar-2014 (CT) Factor `_d_rank` to `M_Prop_Type`
 #    11-Mar-2014 (CT) Add `Composite` to simplify attribute redefinition
 #    27-Feb-2015 (CT) Change `_do_overrides` to use `New`, unique `__name__`
+#    15-Aug-2015 (CT) Add `is_abstract`, `A_Type`
 #    ««revision-date»»···
 #--
 
@@ -83,9 +84,10 @@ class Root (MOM.Meta.M_Prop_Type) :
     """Meta class for MOM.Attr.Type classes."""
 
     def __new__ (meta, name, bases, dct) :
+        is_abstract = dct ["is_abstract"] = name.startswith (("A_", "_A_"))
         dct.setdefault \
             ( "is_partial_p"
-            , (   name.startswith (("_A_", "A_"))
+            , (  is_abstract
               or (name.startswith ("_") and name.endswith ("_"))
               )
             )
@@ -95,6 +97,8 @@ class Root (MOM.Meta.M_Prop_Type) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         cls._max_ui_length = None
+        if cls.is_abstract :
+            cls.A_Type = cls
         if not cls.is_partial_p :
             cls.ckd_name   = "__%s" % (cls.name, )
             cls.raw_name   = \
@@ -162,7 +166,7 @@ class Composite (Root) :
                       "`_Predicates` but no `P_Type`"
                     % (dct ["__module__"], name)
                     )
-            dn = name [2:] if name.startswith (("A_", "_A_")) else name
+            dn = name [2:] if cls.is_abstract else name
             pn = P_Type_parent.__name__
             ns = [dn] if dn.startswith (pn) else [pn, dn]
             kw = dict (__module__  = cls.__module__)
@@ -174,7 +178,7 @@ class Composite (Root) :
             if _Predicates :
                 kw ["_Predicates"] = P_Type_parent._Predicates.__class__ \
                     ( "_Predicates", (P_Type_parent._Predicates, )
-                    , _Predicates.__dict__
+                    , dict (_Predicates.__dict__)
                     )
             cls.P_Type = P_Type_parent.New (__name__ = "_".join (ns), ** kw)
     # end def _do_overrides
@@ -501,19 +505,11 @@ class Unit (Root) :
 
 # end class Unit
 
+### «text» ### start of documentation
 __doc__ = """
-Module `MOM.Meta.M_Attr_Type`
-==============================
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
-.. autoclass:: Root
-.. autoclass:: Decimal
-.. autoclass:: Link_Role
-.. autoclass:: Named_Value
-.. autoclass:: Named_Object
-.. autoclass:: String
-.. autoclass:: Unit
 
 """
 

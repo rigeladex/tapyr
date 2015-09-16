@@ -191,7 +191,7 @@ def Indices (seq) :
 # end def Indices
 
 def pairwise (seq) :
-    """Generates a list of pairs `(seq [0:1], seq [1:2], ..., seq [n-1:n])'.
+    """Generates a list of pairs `(seq [0:1], seq [1:2], ..., seq [n-1:n])`.
 
        >>> _show (pairwise ("abcdef"))
        [('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e'), ('e', 'f')]
@@ -230,7 +230,7 @@ def pairwise_circle (seq) :
 # end def pairwise_circle
 
 def paired_map (s1, s2) :
-    """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))'.
+    """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))`.
 
        >>> _show (paired_map ("", []))
        []

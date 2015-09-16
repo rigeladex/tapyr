@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2006  Philipp Gortan <gortan@tttech.com>
+# Copyright (C) 2005-2015  Philipp Gortan <gortan@tttech.com>
 # ****************************************************************************
 #
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -21,12 +21,13 @@
 #     8-Mar-2006 (CT)  `* args` added to `__call__`
 #    13-Mar-2006 (PGO) Message added if `sys.exc_info` is empty
 #    20-Jun-2006 (PGO) Support for (deprecated) string exceptions added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from    _TFL                 import  TFL
 import  _TFL._Meta.Object
@@ -53,9 +54,9 @@ class _Traceback_Printer_ (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args) :
-        print self.as_string ()
+        print (self.as_string ())
         for a in args :
-            print a
+            print (a)
     # end def __call__
 
     def as_string (self) :

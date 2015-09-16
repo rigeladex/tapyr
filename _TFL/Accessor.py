@@ -162,9 +162,6 @@ Getter = _Getter_ ()
 Method = _Method_ ()
 
 __doc__ = """
-Module `Accessor`
-==========================
-
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 """

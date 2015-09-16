@@ -1,7 +1,9 @@
 .. tapyr documentation master file
 
+Tapyr documentation
+===================
+
 Welcome to tapyr's documentation!
-=================================
 
 This is the documentation for
 `Christian Tanzer's <https://github.com/tanzer>`_
@@ -37,21 +39,21 @@ Tapyr comprises a number of :mod:`package namespaces
 - :mod:`TFL<_TFL>` provides utility classes and functions used by the other
   package namespaces.
 
-Package-NS `MOM`
+Package Namespaces
 ======================
 
 .. toctree::
-   :maxdepth: 3
+  :glob:
 
-   MOM/index
+  P_[0-9]*
 
-Package-NS `TFL`
-======================
+Bibliography
+========================
 
 .. toctree::
-   :maxdepth: 3
+  :glob:
 
-   TFL/index
+  bib
 
 Module Index
 ==================

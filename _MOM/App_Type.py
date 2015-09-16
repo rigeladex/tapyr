@@ -249,7 +249,35 @@ class _App_Type_D_ (_App_Type_) :
 # end class _App_Type_D_
 
 class App_Type (_App_Type_) :
-    """Encapsulate information about a specific application type."""
+    """Encapsulate information about a specific application type.
+
+       `MOM.App_Type` defines the characteristics of a specific
+       application. It encapsulates information about the essential
+       object model of the application.
+
+       Each `App_Type` is instantiated with the attributes:
+
+       .. attribute:: name
+
+         Name of the app-type.
+
+       .. attribute:: ANS
+
+         Specifies the package namespace of the application (Application
+         Name Space).
+
+       .. attribute:: Root_Type_Name
+
+         Specifies the name of the `root type` of the application, if
+         any. If there is a root type, each scope created has its own
+         specific root object which is an instance of the root type.
+
+       `App_Type` provides the methods:
+
+       .. automethod:: add_init_callback
+       .. automethod:: add_kill_callback
+       .. automethod:: Derived
+    """
 
     Table            = {}
 
@@ -286,38 +314,9 @@ class App_Type (_App_Type_) :
 
 # end class App_Type
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.App_Type`
-====================
 
-.. class:: App_Type
-
-    `MOM.App_Type` defines the characteristics of a specific
-    application. It encapsulates information about the essential
-    object model of the application.
-
-    Each `App_Type` is instantiated with the attributes:
-
-    .. attribute:: name
-
-      Name of the app-type.
-
-    .. attribute:: ANS
-
-      Specifies the package namespace of the application (Application
-      Name Space).
-
-    .. attribute:: Root_Type_Name
-
-      Specifies the name of the `root type` of the application, if
-      any. If there is a root type, each scope created has its own
-      specific root object which is an instance of the root type.
-
-    `App_Type` provides the methods:
-
-    .. automethod:: add_init_callback
-    .. automethod:: add_kill_callback
-    .. automethod:: Derived
 
 .. class:: _App_Type_D_
 
@@ -369,7 +368,6 @@ Class `MOM.App_Type`
           of the class in question.
 
     .. automethod:: entity_type
-
 
 """
 

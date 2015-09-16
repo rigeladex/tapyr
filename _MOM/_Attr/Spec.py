@@ -67,6 +67,7 @@
 #    28-Mar-2014 (CT) Add `e_type.link_ref_map`
 #    25-Sep-2014 (CT) Add `polish_attr`
 #    30-Jul-2015 (CT) Don't sort `polish_attr` by `ui_rank`, sort by `rank`
+#    14-Aug-2015 (CT) Add `q_able_no_edit`
 #    ««revision-date»»···
 #--
 
@@ -127,6 +128,9 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec)) :
                 )
             )
         e_type.edit_attr        = tuple (MOM.Attr.Selector.editable (e_type))
+        ea_set                  = set   (e_type.edit_attr)
+        e_type.q_able_no_edit   = tuple \
+            (a for a in e_type.q_able if a not in ea_set)
         e_type.id_entity_attr   = tuple \
             (  a for a in e_type.edit_attr
             if isinstance (a, MOM.Attr._EPK_Mixin_)
@@ -262,13 +266,9 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec)) :
 
 # end class Spec
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Attr.Spec`
-=====================
-
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. autoclass:: Spec
 
 """
 

@@ -49,7 +49,13 @@ import itertools
 
 class _MOM_Object_ \
           (TFL.Meta.BaM (MOM.Id_Entity, metaclass = MOM.Meta.M_Object)) :
-    """Common base class for essential objects of MOM."""
+    """Common base class for essential objects of MOM.
+
+       `MOM.Object` provides the framework for defining essential classes.
+
+       It is based on :class:`~_MOM.Entity.Id_Entity`.
+
+    """
 
     _real_name            = "Object"
     is_partial            = True
@@ -98,16 +104,7 @@ class _Object_Reload_Mixin_ \
 # end class _Object_Reload_Mixin_
 
 __doc__ = """
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
-Class `MOM.Object`
-==================
-
-.. class:: Object
-
-   `MOM.Object` provides the framework for defining essential classes.
-
-   It is based on :class:`~_MOM.Entity.Id_Entity`.
 
 """
 

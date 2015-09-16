@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glück. All rights reserved
+# Copyright (C) 2010-2015 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -25,7 +25,7 @@ from   _GTW._OMP              import OMP
 from   _MOM                   import MOM
 import _MOM.Derived_PNS
 
-_desc_ = """
+_desc_ = __doc__ = """
 Partial object model for authentication: accounts, groups, and their relations.
 """
 

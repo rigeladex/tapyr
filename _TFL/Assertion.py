@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -42,15 +42,15 @@ def _test_assertion (expr, locals, msg = "", expression = None) :
 # end def _test_assertion
 
 def Assertion (expression, msg = "") :
-    """Perform the equivalent of `assert' on `eval (expression)'.
+    """Perform the equivalent of `assert` on `eval (expression)`.
 
-       There are two differences to standard `assert':
+       There are two differences to standard `assert`:
 
-       - all elements of `locals' and of the caller's local name space
-         are shown in the message passed to `AssertionError'
+       - all elements of `locals` and of the caller's local name space
+         are shown in the message passed to `AssertionError`
 
-       - A false value of `__debug__' doesn't prevent the check of
-         `expression'
+       - A false value of `__debug__` doesn't prevent the check of
+         `expression`
     """
     locals = TFL.Caller.locals ()
     try :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -24,5 +24,11 @@ from _TFL.Package_Namespace import Package_Namespace
 GTW = Package_Namespace ()
 
 del Package_Namespace
+
+__doc__ = """
+`GTW` provides a `Werkzeug-based <http://werkzeug.pocoo.org/>`_ framework for
+defining RESTful web applications built on top of :mod:`MOM<_MOM>`.
+
+"""
 
 ### __END__ GTW.__init__

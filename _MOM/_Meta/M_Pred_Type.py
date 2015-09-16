@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -232,18 +232,11 @@ class Unique (_Condition_) :
 
 # end class Unique
 
+### «text» ### start of documentation
 __doc__ = """
-Module `MOM.Meta.M_Pred_Type`
-==============================
-
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 .. autoclass:: _Condition_
-.. autoclass:: Condition
-.. autoclass:: Quantifier
-.. autoclass:: N_Quantifier
-.. autoclass:: U_Quantifier
-.. autoclass:: Unique
 
 """
 

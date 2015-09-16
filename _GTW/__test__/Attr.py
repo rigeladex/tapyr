@@ -1162,10 +1162,11 @@ _test_pickled_types = """
     ...     if kind.save_to_db and not kind.is_composite :
     ...         pt = kind.Pickled_Type
     ...         if pt :
+    ...             at = kind.attr
     ...             pn = pt.__name__
     ...             pn = portable_repr.Type_Name_Map.get (pn, pn)
     ...             p_types.add (pn)
-    ...             print ("%%-20s %%-15s %%-15s %%6s %%5d %%5d" %% (kind.name, kind.typ, pn, pt.max_length, pt.max_ui_length, pt.length))
+    ...             print ("%%-20s %%-15s %%-15s %%6s %%5d %%5d" %% (kind.name, at.typ, pn, pt.max_length, pt.max_ui_length, pt.length))
     abstract             Text            text-string          0   120     0
     address              Email           text-string         80    81    80
     beam                 Float           float             None    22    22
@@ -1270,7 +1271,7 @@ _test_pickled_types = """
     text                 Text            text-string          0   120     0
     title                String          text-string         20    21    20
     title                String          text-string        120   121   120
-    type_name            String          text-string         64    65    64
+    type_name            String          text-string          0   120     0
     unit                 Unit            int               None    20    20
     value                Url             text-string        160   161   160
     week                 Int_List        byte-string          0    20     0

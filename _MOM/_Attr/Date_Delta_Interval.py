@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -19,6 +19,7 @@
 # Revision Dates
 #     3-Mar-2014 (CT) Creation
 #    11-Mar-2014 (CT) Use `_Overrides`
+#    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -189,8 +190,9 @@ class A_Date_Delta_Interval_N (A_Date_Delta_Interval) :
 
 # end class A_Date_Interval
 
-__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
+__attr_types = Attr.attr_types_of_module ()
+__all__      = __attr_types
 
 if __name__ != "__main__" :
-    MOM.Attr._Export (* __all__)
+    MOM.Attr._Export (* __attr_types)
 ### __END__ MOM.Attr.Date_Delta_Interval

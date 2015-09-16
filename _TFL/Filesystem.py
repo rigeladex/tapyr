@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,9 +17,9 @@
 # Revision Dates
 #    29-Apr-2001 (CT) Creation
 #     3-May-2001 (CT) Doc-test framework added at end
-#     7-May-2001 (CT) `Filter' renamed to `Regexp_Filter' (and re.escape
+#     7-May-2001 (CT) `Filter` renamed to `Regexp_Filter` (and re.escape
 #                     removed)
-#     7-May-2001 (CT) `Glob_Filter' added
+#     7-May-2001 (CT) `Glob_Filter` added
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    24-Mar-2005 (CT) Use `TFL.sos` instead of `sos`
 #    ««revision-date»»···
@@ -45,7 +45,7 @@ class File :
        - full_name       file name containing full path
        - permissions     permission bits of file
 
-       and all file attributes returned by `stat'.
+       and all file attributes returned by `stat`.
     """
 
     _stat_map = \
@@ -96,7 +96,7 @@ class File :
     # end def __getattr__
 
     def isdir (self) :
-        """Returns true if `self' is a directory"""
+        """Returns true if `self` is a directory"""
         try :
             return stat.S_ISDIR (self.mode)
         except OSError :
@@ -104,7 +104,7 @@ class File :
     # end def isdir
 
     def isfile (self) :
-        """Returns true if `self' is a regular file"""
+        """Returns true if `self` is a regular file"""
         try :
             return stat.S_ISREG (self.mode)
         except OSError :
@@ -112,7 +112,7 @@ class File :
     # end def isfile
 
     def islink (self) :
-        """Returns true if `self' is a symbolic link"""
+        """Returns true if `self` is a symbolic link"""
         try :
             return stat.S_ISLNK (self.mode)
         except OSError :
@@ -144,7 +144,7 @@ class Directory (File) :
     File          = File
 
     def files (self) :
-        """Return all files in `self' matching `self.filter'"""
+        """Return all files in `self` matching `self.filter`"""
         all = dircache.listdir (self.full_name)
         if all != self._all_children or not self._files :
             self._all_children = all
@@ -160,7 +160,7 @@ class Directory (File) :
     # end def files
 
     def subdirectories (self) :
-        """Return all subdirectories of `self'"""
+        """Return all subdirectories of `self`"""
         all = dircache.listdir (self.full_name)
         if all != self._all_children or not self._subdirs :
             self._all_children = all

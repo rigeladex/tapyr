@@ -336,9 +336,9 @@ class _Kind_Wrapper_ (TFL.Meta.Object) :
     # end def _setup_alias_columns
 
     def __repr__ (self) :
-        kind = self.kind
+        attr = self.attr
         return "<SAW : %s `%s` [%s]>" % \
-            (kind.typ, self.name, ", ".join (str (c) for c in self.columns))
+            (attr.typ, self.name, ", ".join (str (c) for c in self.columns))
     # end def __repr__
 
 # end class _Kind_Wrapper_
@@ -404,8 +404,7 @@ class Kind_Wrapper_P (_Kind_Wrapper_PQ_) :
     def __repr__ (self) :
         tail = " (%s)" % \
             (" | ".join (sorted (c.type_name for c in self.ETW.children)), )
-        kind = self.kind
-        return "<SAW : %s `%s`%s>" % (kind.typ, self.name, tail)
+        return "<SAW : %s `%s`%s>" % (self.attr.typ, self.name, tail)
     # end def __repr__
 
 # end class Kind_Wrapper_P
@@ -417,8 +416,7 @@ class Kind_Wrapper_Q (_Kind_Wrapper_PQ_) :
     """
 
     def __repr__ (self) :
-        kind = self.kind
-        return "<SAW : %s `%s`>" % (kind.typ, self.name)
+        return "<SAW : %s `%s`>" % (self.attr.typ, self.name)
     # end def __repr__
 
 # end class Kind_Wrapper_Q
@@ -430,8 +428,7 @@ class Kind_Wrapper_R (_Kind_Wrapper_PQ_) :
     """
 
     def __repr__ (self) :
-        kind = self.kind
-        return "<SAW : %s `%s`>" % (kind.typ, self.name)
+        return "<SAW : %s `%s`>" % (self.attr.typ, self.name)
     # end def __repr__
 
 # end class Kind_Wrapper_R

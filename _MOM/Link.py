@@ -100,6 +100,7 @@ class _MOM_Link_ \
 
     @property
     def roles (self) :
+        """Link roles as tuple of cooked values (subset of :attr:`epk`)."""
         return self.epk [:self.number_of_roles]
     # end def roles
 
@@ -268,18 +269,14 @@ class _Link3_Reload_Mixin_ \
 
 # end class _Link3_Reload_Mixin_
 
-__doc__ = """
-Class `MOM.Link`
-================
-
-.. class:: Link
-
+### «text» ### start of documentation
+Link.__doc_attr_head__ = """
     `MOM.Link` provides the framework for defining essential
     associations. It is based on :class:`~_MOM.Entity.Id_Entity`.
 
     An association models the relationship between two or
-    more objects of essential classes. An association manages the set
-    of links between the objects of the associated classes.
+    more objects or links of essential classes. An association manages the
+    set of links between the entities of the associated classes.
     Conceptually, each link is an independent entity.
 
     The class `Link` simultaneously models two concepts:
@@ -289,7 +286,7 @@ Class `MOM.Link`
 
       The behavior of the association is provided by the methods and
       properties of the link manager
-      :class:`MOM.E_Type_Manager<_MOM.E_Type_Manager.E_Type_Manager>`.
+      :class:`E_Type_Manager<_MOM.E_Type_Manager.Link>`.
 
     - Each instance of `Link` models one specific link of the association.
 
@@ -301,144 +298,154 @@ Class `MOM.Link`
 
     - `multiplicity`_
 
-Arity
------
+    .. _`arity`:
 
-Arity defines how many objects one link comprises. A unary link relates the
-(attributes of the) link to one object. A binary association relates pairs of
-objects to each other, a ternary association relates triples of objects to
-each other, and so on.
+    **Arity**
 
-For each arity, a separate subclass exists, e.g.,
-:class:`Link2`, :class:`Link3`, etc. Each arity-specific subclass has
-its own arity-specific metaclass, e.g., :class:`M_Link3` defines the
-behavior of :class:`Link3`.
+    Arity defines how many objects one link comprises. A unary link relates
+    the (attributes of the) link to one object. A binary association relates
+    pairs of objects to each other, a ternary association relates triples of
+    objects to each other, and so on.
 
-An essential association is modelled by a class that inherits from the
-proper arity-specific descendent of :class:`Link_EB`.
+    For each arity, a separate subclass exists, e.g., :class:`Link2`,
+    :class:`Link3`, etc. Each arity-specific subclass has its own
+    arity-specific metaclass, e.g., :class:`M_Link3` defines the behavior of
+    :class:`Link3`.
 
-.. autoclass:: Link1()
+    An essential association is modelled by a class that inherits from the
+    proper arity-specific descendent of :class:`Link_EB`.
 
-.. autoclass:: Link2()
+    * :class:`Link1`
 
-.. autoclass:: Link3()
+    * :class:`Link2`
 
-Roles
------
+    * :class:`Link3`
 
-Each object participating in a link of an association plays a specific
-`role`. A role is characterized by:
+    .. _`roles`:
 
-* Role type: the type of essential object expected.
+    **Roles**
 
-* Role name (default `role_type.type_base_name.lower ()`).
+    Each object participating in a link of an association plays a specific
+    `role`. A role is characterized by:
 
-  - If an association links objects of the same types in different
-    roles to each other, at least one, preferably all of these roles
-    need a unique role name that's different from the default role
-    name.
+    * Role type: the type of essential object expected.
 
-* Generic role name (e.g., `left` or `right`).
+    * Role name (default `role_type.type_base_name.lower ()`).
 
-* Role abbreviation (e.g., `l` or `r`).
+      - If an association links objects of the same types in different
+        roles to each other, at least one, preferably all of these roles
+        need a unique role name that's different from the default role
+        name.
 
-* Multiplicity constraint, if any.
+    * Generic role name (e.g., `left` or `right`).
 
-* Non-essential properties:
+    * Role abbreviation (e.g., `l` or `r`).
 
-  - `link_ref_attr_name` (see `link-ref-attr-name`)
+    * Multiplicity constraint, if any.
 
-  - `auto_rev_ref` (see `auto-rev-ref`_)
+    * Non-essential properties:
 
-Each role of a specific association is defined by a link-role attribute named
-by the generic role name. For a specific association, the link-role attribute
+      - `link_ref_attr_name` (see `link-ref-attr-name`_)
 
-  * Must define :attr:`role_type` (unless that's already inherited).
+      - `auto_rev_ref` (see `auto-rev-ref`_)
 
-  * May define :attr:`role_name`, multiplicity constraints
-    (:attr:`max_links`) or any non-essential property of the role.
+    Each role of a specific association is defined by a link-role attribute
+    named by the generic role name. For a specific association, the link-role
+    attribute
 
-For instance::
+      * Must define :attr:`role_type` (unless that's already inherited).
 
-    class Person_works_for_Company (Link2) :
+      * May define :attr:`role_name`, multiplicity constraints
+        (:attr:`max_links`) or any non-essential property of the role.
 
-        class _Attributes (Link2._Attributes) :
+    For instance::
 
-            class left (Link2._Attributes.left) :
-                role_type     = Person
-                role_name     = "employee"
-                auto_rev_ref  = True
-                max_links     = 1 ### Danger, Will Robinson
-            # end class left
+        class Person_works_for_Company (Link2) :
 
-            class right (Link2._Attributes.right) :
-                role_type     = Company
-                role_name     = "employer"
-            # end class right
+            class _Attributes (Link2._Attributes) :
 
-        # end class _Attributes
+                class left (Link2._Attributes.left) :
+                    role_type     = Person
+                    role_name     = "employee"
+                    auto_rev_ref  = True
+                    max_links     = 1 ### Danger, Will Robinson
+                # end class left
 
-Multiplicity
-------------
+                class right (Link2._Attributes.right) :
+                    role_type     = Company
+                    role_name     = "employer"
+                # end class right
 
-Multiplicity restricts how many links can exist for a single object
-in a specific role. Constraints on multiplicity frequently change over
-the lifetime of a software application.
+            # end class _Attributes
 
-Common multiplicities (of binary associations) are:
+    .. _`multiplicity`:
 
-- 1 <--> 1
+    **Multiplicity**
 
-- 1 <--> n
+    Multiplicity restricts how many links can exist for a single object
+    in a specific role. Constraints on multiplicity frequently change over
+    the lifetime of a software application.
 
-- n <--> m
+    Common multiplicities (of binary associations) are:
 
-Associations with at least one role with multiplicity 1 could be
-implemented by an attribute of the respective object instead of an
-association. Any change of requirements might invalidate that
-implementation, though.
+    - 1 <--> 1
 
-Simple multiplicity constraints are implemented by defining
-`max_links` for the appropriate role. In this case, the `Link` class
-will enforce the constraint.
+    - 1 <--> n
 
-Link-ref-attr-name
--------------------
+    - n <--> m
 
-For each link-role, the metaclass of the link automatically creates a query
-attribute of type `A_Link_Ref_List` for the role-type that returns the links
-in which the object is referred to by that link-role.
+    Associations with at least one role with multiplicity 1 could be
+    implemented by an attribute of the respective object instead of an
+    association. Any change of requirements might invalidate that
+    implementation, though.
 
-By default, the name of `A_Link_Ref_List` attributes is:
+    Simple multiplicity constraints are implemented by defining
+    `max_links` for the appropriate role. In this case, the `Link` class
+    will enforce the constraint.
 
-- for :class:`Link1`, the `type_base_name` in lower case
+    .. _`link-ref-attr-name`:
 
-- for :class:`Link2`, the `role_name` of the other link-role
+    **Link-ref-attr-name**
 
-- for :class:`Link3`, the `role_name` of the other link-roles joined
-  by "__"
+    For each link-role, the metaclass of the link automatically creates a query
+    attribute of type `A_Link_Ref_List` for the role-type that returns the
+    links in which the object is referred to by that link-role.
 
-This default can be overriden by defining the property `link_ref_attr_name`
-for the link-role; setting `link_ref_attr_name` to `Undef()` inhibits the
-creation of the `A_Link_Ref_List` attribute.
+    By default, the name of `A_Link_Ref_List` attributes is:
 
-Unless `link_ref_suffix` is set to `None` for the
-link-role, the name of the `A_Link_Ref_List` is then pluralized, assuming
-English rules for pluralization.
+    - for :class:`Link1`, the `type_base_name` in lower case
 
-Auto-Rev-Ref
-------------
+    - for :class:`Link2`, the `role_name` of the other link-role
 
-By specifying `auto_rev_ref` for one of the `roles` of an entity-based
-association, an attribute referring to the objects linked via this
-association is automagically added to another role of the association.
+    - for :class:`Link3`, the `role_name` of the other link-roles joined
+      by "__"
 
-`auto_rev_ref` can be set to one of the values:
+    This default can be overriden by defining the property `link_ref_attr_name`
+    for the link-role; setting `link_ref_attr_name` to `Undef()` inhibits the
+    creation of the `A_Link_Ref_List` attribute.
 
-- `True`. This only works for binary associations.As it is the simplest case,
-  it should be preferred over the other possibilities, if possible.
+    Unless `link_ref_suffix` is set to `None` for the link-role, the name of
+    the `A_Link_Ref_List` is then pluralized, assuming English rules for
+    pluralization.
 
-- A string specifying the name of the auto-rev-ref attribute.
+    .. _`auto-rev-ref`:
+
+    **Auto-Rev-Ref**
+
+    By specifying `auto_rev_ref` for one of the `roles` of an entity-based
+    association, an attribute referring to the objects linked via this
+    association is automagically added to another role of the association.
+
+    `auto_rev_ref` can be set to one of the values:
+
+    - `True`. This only works for binary associations.As it is the simplest
+      case, it should be preferred over the other possibilities, if possible.
+
+    - A string specifying the name of the auto-rev-ref attribute.
+
+"""
+
+__doc__ = """
 
 """
 

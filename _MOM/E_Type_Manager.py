@@ -705,43 +705,27 @@ class Link3 (Link) :
 # end class Link3
 
 __doc__ = """
-Module `MOM.E_Type_Manager`
-===========================
+`MOM.E_Type_Manager` provides classes implementing scope-specific managers
+for essential object and link types.
 
-  `MOM.E_Type_Manager` provides classes implementing scope-specific managers
-  for essential object and link types.
+For each essential object and link type, a scope provides a
+`E_Type_Manager` that is accessible under the `type_name` of the essential
+type in question.
 
-  For each essential object and link type, a scope provides a
-  `E_Type_Manager` that is accessible under the `type_name` of the essential
-  type in question.
+For instance, the `E_Type_Manager` for an essential
+object type `BMT.Mouse` of a scope `s` can be accessed as::
 
-  For instance, the `E_Type_Manager` for an essential
-  object type `BMT.Mouse` of a scope `s` can be accessed as::
+  s.BMT.Mouse
 
-      s.BMT.Mouse
+and provides methods to create and query instances of `BMT.Mouse`. A new
+mouse named `mickey` is created by::
 
-  and provides methods to create and query instances of `BMT.Mouse`. A new
-  mouse named `mickey` is created by::
+  s.BMT.Mouse ("mickey")
 
-      s.BMT.Mouse ("mickey")
+The transitive extension of mice, i.e., the extension of `BMT.Mouse` and
+all classes derived from it, is computed by the query::
 
-  The transitive extension of mice, i.e., the extension of `BMT.Mouse` and
-  all classes derived from it, is computed by the query::
-
-      s.BMT.Mouse.query ()
-
-
-
-.. autoclass:: Entity()
-    :members:
-
-.. autoclass:: Object()
-    :members:
-    :inherited-members:
-
-.. autoclass:: Link()
-    :members:
-    :inherited-members:
+  s.BMT.Mouse.query ()
 
 
 """

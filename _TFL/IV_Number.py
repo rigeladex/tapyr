@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,13 +17,13 @@
 # Revision Dates
 #    25-Oct-1999 (CT) Creation
 #     2-Nov-1999 (CT) Comment added
-#    15-Nov-1999 (CT) `db_extension' added
-#    18-Nov-1999 (CT) `producer' added
-#    19-Nov-1999 (CT) `producer' convert to list
-#    19-Nov-1999 (CT) `consumer' added
-#     8-Aug-2000 (MG) Format of `__repr__' changed
-#     9-Aug-2000 (CT) `clone' added
-#     9-Aug-2000 (MG) `_unnested' added and used in `__repr__'
+#    15-Nov-1999 (CT) `db_extension` added
+#    18-Nov-1999 (CT) `producer` added
+#    19-Nov-1999 (CT) `producer` convert to list
+#    19-Nov-1999 (CT) `consumer` added
+#     8-Aug-2000 (MG) Format of `__repr__` changed
+#     9-Aug-2000 (CT) `clone` added
+#     9-Aug-2000 (MG) `_unnested` added and used in `__repr__`
 #    28-Sep-2000 (CT) s/database/data base/g
 #    13-Dec-2000 (CT) s/data base/database/g
 #    12-Apr-2002 (CT) Use `StandardError` instead of `Exception`
@@ -46,19 +46,19 @@ class Interface_Mismatch (Exception) :
 class IV_Number :
     """Model Interface-Version Number.
 
-       An `IV_Number' describes the version of a specific interface of a
+       An `IV_Number` describes the version of a specific interface of a
        software product (e.g., a database read or written).
 
-       `external_version' is set to the version of the interface when the
+       `external_version` is set to the version of the interface when the
        program reads information from that interface. The value of
-       `external_version' can be used to convert from an old to a new format.
+       `external_version` can be used to convert from an old to a new format.
 
-           `external_version' applies only to two-way interfaces which are
+           `external_version` applies only to two-way interfaces which are
            read and written by the same program.
 
-       `external_version' must lie in the interval (`comp_min', `comp_max').
+       `external_version` must lie in the interval (`comp_min`, `comp_max`).
        If it is set to a value not in that interval, an exception is raised.
-       The function `compatible' can be used to check the `external_version'
+       The function `compatible` can be used to check the `external_version`
        before setting it.
     """
 
@@ -83,7 +83,7 @@ class IV_Number :
     # end def __init__
 
     def clone (self, comp_min) :
-        """Returns a clone of `self' with changed `comp_min'."""
+        """Returns a clone of `self` with changed `comp_min`."""
         return self.__class__   \
             ( self.name
             , self.producer
@@ -100,21 +100,21 @@ class IV_Number :
     # end def compatible
 
     def restrict (self, comp_min, comp_max) :
-        """Restrict compatibility interval to `comp_min' and `comp_max'."""
+        """Restrict compatibility interval to `comp_min` and `comp_max`."""
         self.__dict__ ["comp_min"] = max (self.comp_min, comp_min)
         self.__dict__ ["comp_max"] = min (self.comp_max, comp_max)
     # end def restrict
 
     def reset_external_version (self) :
-        """Reset `self.external_version'."""
+        """Reset `self.external_version`."""
         self.__dict__ ["external_version"] = -1
     # end def reset_external_version
 
     def __setattr__ (self, name, value) :
-        """Prevent the changing of attributes other than `external_version'.
+        """Prevent the changing of attributes other than `external_version`.
 
-           `external_version' is checked for compatibility with `comp_min'
-           and `comp_max'.
+           `external_version` is checked for compatibility with `comp_min`
+           and `comp_max`.
 
            Once an attribute is set, it cannot be changed to another value.
         """

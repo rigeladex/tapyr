@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,7 +31,7 @@ for i, c in enumerate (_chars) :
     _ord_map [c] = i
 
 def atoi (string, _ord_map = _ord_map) :
-    """Convert `string' in B64 representation to integer. If the result is
+    """Convert `string` in B64 representation to integer. If the result is
        too large to fit a normal integer, Pythons long integer type is used.
     """
     result = 0
@@ -41,7 +41,7 @@ def atoi (string, _ord_map = _ord_map) :
 # end def atoi
 
 def itoa (number, _base = _base, _ord_map = _ord_map) :
-    """Convert `number' to string in B64 representation."""
+    """Convert `number` to string in B64 representation."""
     result = []
     if number == 0 :
         result.append ("0")

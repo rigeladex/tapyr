@@ -36,6 +36,7 @@
 #     2-Aug-2013 (CT) Use `A_Int.max_value...`, not literals
 #     2-Aug-2013 (CT) Add import callback for `_GTW._OMP._NET.SAW`, `.SAW_PG`
 #     6-Aug-2013 (CT) Remove composite attributes, aka, major surgery
+#    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #    16-Dec-2015 (CT) Use `_Add_Import_Callback` as decorator
 #    ««revision-date»»···
 #--
@@ -208,8 +209,9 @@ def _import_saw_pg (module) :
     import _GTW._OMP._NET.SAW_PG
 # end def _import_saw_pg
 
-__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
+__attr_types      = Attr.attr_types_of_module ()
+__sphinx__members = __attr_types
 
 if __name__ != "__main__" :
-    GTW.OMP.NET._Export ("*")
+    GTW.OMP.NET._Export (* __attr_types)
 ### __END__ GTW.OMP.NET.Attr_Type

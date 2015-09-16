@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -220,6 +220,7 @@
 #                     (only True for existing instance!)
 #    27-Aug-2014 (CT) Add guard for `None` to `_get_computed`
 #    17-Oct-2014 (CT) Change `db_sig` to wrap kind-specific sig in tuple
+#    11-Dec-2015 (CT) Add property `_SPK_Mixin_.typ`
 #    ««revision-date»»···
 #--
 
@@ -573,6 +574,11 @@ class _SPK_Mixin_ (Kind) :
     def db_sig (self) :
         return self.__super.db_sig + (self.attr.P_Type.type_name, )
     # end def db_sig
+
+    @TFL.Meta.Once_Property
+    def typ (self) :
+        return self.attr.P_Type.type_base_name
+    # end def typ
 
     def from_pickle_cargo (self, scope, cargo, lazy = False) :
         spk = cargo and cargo [0]
@@ -1610,14 +1616,8 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
 
 # end class Id_Entity_Reference_Mixin
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Attr.Kind`
-============================
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. class:: Kind
-
     `MOM.Attr.Kind` is the root class of a hierarchy of classes defining the
     various kinds of attributes of essential classes. The attribute kind
     controls how the value of an attribute is accessed and how (and if) it
@@ -1636,26 +1636,6 @@ Class `MOM.Attr.Kind`
 
     There are some mixins that can modify the semantics of :class:`Optional`
     attributes.
-
-.. autoclass:: Primary
-.. autoclass:: Primary_Optional
-.. autoclass:: Required
-.. autoclass:: Necessary
-.. autoclass:: Optional
-
-.. autoclass:: Internal
-.. autoclass:: Cached
-.. autoclass:: Computed
-.. autoclass:: Query
-.. autoclass:: Auto_Cached
-.. autoclass:: Sync_Cached
-.. autoclass:: Once_Cached
-.. autoclass:: Const
-
-.. autoclass:: Computed_Mixin
-.. autoclass:: Computed_Set_Mixin
-.. autoclass:: Init_Only_Mixin
-.. autoclass:: Sticky_Mixin
 
 """
 

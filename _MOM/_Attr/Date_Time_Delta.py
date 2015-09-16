@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2014-2015 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A--3411 Weidling, Austria. rsc@runtux.com
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -18,6 +18,7 @@
 # Revision Dates
 #    16-Jun-2014 (RS) Creation
 #    11-Jul-2014 (CT) Derive from `A_Attr_Type`, set `Pickler.Type` to `A_Float`
+#    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -111,8 +112,9 @@ class A_Date_Time_Delta (_Ancestor_Essence) :
 
 # end class A_Date_Time_Delta
 
-__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
+__attr_types      = Attr.attr_types_of_module ()
+__sphinx__members = __attr_types
 
 if __name__ != "__main__" :
-    MOM.Attr._Export (* __all__)
+    MOM.Attr._Export (* __attr_types)
 ### __END__ MOM.Attr.Date_Interval

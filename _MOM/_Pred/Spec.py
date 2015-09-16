@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -28,6 +28,8 @@
 #    29-Jan-2013 (CT) Move predicate creation to redefined `_create_properties`
 #    29-Jan-2013 (CT) Add `uniqueness_dbw` and `uniqueness_ems`
 #    31-May-2013 (CT) Factor `_prop_map_name`
+#    15-Aug-2015 (CT) Change `_setup_attr_checker` to use kind `Region`
+#                     for `electric` attributes
 #    ««revision-date»»···
 #--
 
@@ -102,7 +104,7 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Pred_Spec)) :
     # end def _kind_list_name
 
     def _setup_attr_checker (self, e_type, attr) :
-        kind = (MOM.Pred.Object, MOM.Pred.System) [attr.electric]
+        kind = (MOM.Pred.Object, MOM.Pred.Region) [attr.electric]
         stem = "AC_check_%s" % (attr.name, )
         for i, check in enumerate (attr._checkers (e_type)) :
             if isinstance (check, pyk.string_types) :
@@ -127,13 +129,8 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Pred_Spec)) :
 
 # end class Spec
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Pred.Spec`
-=====================
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. autoclass:: Spec
 
 """
 

@@ -15,25 +15,25 @@
 #    Provide classes and functions for handling dates and times
 #
 #    This is just a quick hack around time.py which grew out of frustration
-#    that Python 1.5.* doesn't support `time.strptime' under Win32
+#    that Python 1.5.* doesn't support `time.strptime` under Win32
 #
 #    To be really useful it would not lots of work...
 #
 # Revision Dates
 #     5-Oct-1999 (CT) Creation
-#     6-Oct-1999 (CT) Allow dates without year-field in `day_to_time_tuple'
-#     6-Oct-1999 (CT) Conversion of alphabetic months moved into `Time_Tuple'
-#                     (from `day_to_time_tuple')
+#     6-Oct-1999 (CT) Allow dates without year-field in `day_to_time_tuple`
+#     6-Oct-1999 (CT) Conversion of alphabetic months moved into `Time_Tuple`
+#                     (from `day_to_time_tuple`)
 #    18-Nov-1999 (CT) Main-script added
-#    03-Jan-2000 (CT) `day_per_month' added
-#    03-Jan-2000 (CT) `_dd_month_pat' changed (last `.' optional)
-#    11-Jan-2000 (CT) Optional `.' moved from `_dd_month_pat' to
-#                     `_day_patterns'
-#    16-Jan-2000 (CT) Class `Date' added
-#    16-Jan-2000 (CT) `Time_Tuple.rindex' added
-#    16-Jan-2000 (CT) `Time_Tuple.__init__' and `Time_Tuple._sanitized_month'
+#    03-Jan-2000 (CT) `day_per_month` added
+#    03-Jan-2000 (CT) `_dd_month_pat` changed (last `.` optional)
+#    11-Jan-2000 (CT) Optional `.` moved from `_dd_month_pat` to
+#                     `_day_patterns`
+#    16-Jan-2000 (CT) Class `Date` added
+#    16-Jan-2000 (CT) `Time_Tuple.rindex` added
+#    16-Jan-2000 (CT) `Time_Tuple.__init__` and `Time_Tuple._sanitized_month`
 #                     corrected
-#    14-Jan-2001 (CT) `__getattr__' added to `Date'
+#    14-Jan-2001 (CT) `__getattr__` added to `Date`
 #    29-Jul-2001 (CT) Reverse mapping added to `months`
 #    17-Sep-2001 (CT) `_time_pat` added
 #    27-Dec-2001 (CT) `Time_Tuple.__init__` changed to ignore `None` values
@@ -129,18 +129,18 @@ class Time_Tuple :
     day_per_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
     def __init__ (self, * args, ** kw) :
-        """Create a time tuple from `args' and `kw'.
+        """Create a time tuple from `args` and `kw`.
 
-           If used, `args' must contain time some or all tuple elements in
+           If used, `args` must contain time some or all tuple elements in
            the canonical sequence
 
                (year, month, day, hour, minute, second, weekday, jd, dst)
 
-           If used, `kw' can provide any of these elements by name.
+           If used, `kw` can provide any of these elements by name.
 
-           Any elements specified neither by `args' nor `kw' are taken from
+           Any elements specified neither by `args` nor `kw` are taken from
 
-               `localtime (time())'
+               `localtime (time())`
 
            The arguments can be strings or integers. String arguments must
            evaluate to integers or be a valid month name (see the
@@ -295,7 +295,7 @@ _day_patterns  = \
     )
 
 def day_to_time_tuple (day_string) :
-    """Convert `day_string' containing a date to `Time_Tuple'"""
+    """Convert `day_string` containing a date to `Time_Tuple`"""
     for pat in _day_patterns :
         match = pat.match (day_string)
         if match :
@@ -326,7 +326,7 @@ class Date :
     # end def __init__
 
     def dec (self, n = 1) :
-        """Decrement `self' by `n' days."""
+        """Decrement `self` by `n` days."""
         self.value = self.value - n * 86400
         if hasattr (self, "tuple") :
             del self.tuple
@@ -337,24 +337,24 @@ class Date :
     # end def formatted
 
     def inc (self, n = 1) :
-        """Increment `self' by `n' days."""
+        """Increment `self` by `n` days."""
         self.value = self.value + n * 86400
         if hasattr (self, "tuple") :
             del self.tuple
     # end def inc
 
     def local_tuple (self) :
-        """Return `self' as `Time_Tuple' (local time)"""
+        """Return `self` as `Time_Tuple` (local time)"""
         return Time_Tuple (* localtime (self.value))
     # end def local_tuple
 
     def gm_tuple (self) :
-        """Return `self' as `Time_Tuple' (Greenwich time)"""
+        """Return `self` as `Time_Tuple` (Greenwich time)"""
         return Time_Tuple (* gmtime (self.value))
     # end def gm_tuple
 
     def __add__ (self, n) :
-        """Return value of `self' incremented by `n' days."""
+        """Return value of `self` incremented by `n` days."""
         return self.__class__ (self.value + n * 86400)
     # end def __add__
 
@@ -386,7 +386,7 @@ class Date :
     # end def formatted
 
     def __sub__ (self, n) :
-        """Return value `self' decremented by `n' days."""
+        """Return value `self` decremented by `n` days."""
         return self.__class__ (self.value - n * 86400)
     # end def __sub__
 

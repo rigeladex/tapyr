@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This package is part of the package _MOM.
@@ -91,8 +91,7 @@ Constraints
 
   * don't store volatile attributes
 
-  * don't store computed attributes (can be recomputed by
-    `compute_defaults_internal` at any time)
+  * don't store computed attributes
 
 - Make interface to historian as small as possible
 

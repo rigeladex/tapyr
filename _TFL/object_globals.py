@@ -26,17 +26,17 @@ from   _TFL import TFL
 import sys
 
 def object_globals (o) :
-    """Return the globals associated to object `o'."""
+    """Return the globals associated to object `o`."""
     return object_module (o).__dict__
 # end def object_globals
 
 def class_globals (c) :
-    """Return the globals associated to class `c'."""
+    """Return the globals associated to class `c`."""
     return class_module (c).__dict__
 # end def class_globals
 
 def class_module (c) :
-    """Return the module defining the class `c'."""
+    """Return the module defining the class `c`."""
     return sys.modules [c.__module__]
 # end def class_module
 

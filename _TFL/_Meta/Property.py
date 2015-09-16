@@ -52,6 +52,8 @@
 #     4-Jun-2014 (CT) Add `Property`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    13-Nov-2015 (CT) Add `__code__`, `__func__` to placate `inspect.getargspec`
+#    13-Nov-2015 (CT) Add metaclass to `Bound_Method` to fix `__getattr__`
 #    ««revision-date»»···
 #--
 
@@ -105,14 +107,19 @@ class Data_Descriptor (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
 class Method_Descriptor (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
     """Descriptor for special method types."""
 
-    class Bound_Method (object) :
+    class Bound_Method (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
 
         def __init__ (self, method, target, cls) :
-            self.method  = method
+            self.method  = self.__func__ = method
             self.target  = target
             self.cls     = cls
             self.__doc__ = method.__doc__
         # end def __init__
+
+        @property
+        def __code__ (self) :
+            return self.method.__code__
+        im_func = __code__ # end def __code__
 
         @property
         def __name__ (self) :
@@ -144,6 +151,11 @@ class Method_Descriptor (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
         self.__doc__ = method.__doc__
         self.cls     = cls
     # end def __init__
+
+    @property
+    def __code__ (self) :
+        return self.method.__code__
+    im_func = __code__ # end def __code__
 
     @property
     def __name__ (self) :

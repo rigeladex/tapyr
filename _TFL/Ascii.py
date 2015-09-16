@@ -132,9 +132,6 @@ def sanitized_filename (s, translate_table = None) :
 __doc__ = """
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
-Module `Ascii`
-==========================
-
 """
 
 def _main (cmd) :

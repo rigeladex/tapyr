@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -34,6 +34,7 @@
 #     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    11-Mar-2014 (CT) Use `_Overrides`
 #    24-Jun-2014 (CT) Fix `A_Date_Interval_C.computed__finish`
+#    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -187,8 +188,9 @@ class A_Date_Interval_N (A_Date_Interval) :
 
 # end class A_Date_Interval_N
 
-__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
+__attr_types      = Attr.attr_types_of_module ()
+__sphinx__members = ("Date_Interval", ) + __attr_types
 
 if __name__ != "__main__" :
-    MOM.Attr._Export (* __all__)
+    MOM.Attr._Export (* __attr_types)
 ### __END__ MOM.Attr.Date_Interval

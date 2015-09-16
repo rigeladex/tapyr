@@ -59,6 +59,7 @@
 #    21-Jan-2015 (CT) Add `filtered_dict`
 #    23-Jan-2015 (CT) Add `html_char_ref`
 #    10-Jun-2015 (CT) Add `uuid`
+#    13-Nov-2015 (CT) Define `dir`, `setattr` as functions to avoid sphinx errors
 #    ««revision-date»»···
 #--
 
@@ -78,6 +79,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 
 import _TFL._Meta.Object
 import _TFL.Accessor
+import _TFL.Caller
 import _TFL.Sorted_By
 
 import itertools
@@ -100,6 +102,7 @@ class GTW (TFL.Meta.Object) :
 
     @Once_Property
     def Dingbats (self) :
+        """Provide access to :mod:`~_TFL.Dingbats`."""
         from _TFL import Dingbats
         return Dingbats
     # end def Dingbats
@@ -127,7 +130,14 @@ class GTW (TFL.Meta.Object) :
     # end def call_macro
 
     dict = staticmethod (dict)
-    dir  = staticmethod (dir)
+
+    def dir (self, x = None) :
+        """Return directory of `x` or the locals of the caller."""
+        if x is None :
+            return sorted (TFL.Caller.locals ())
+        else :
+            return dir (x)
+    # end def dir
 
     def email_uri (self, email, text = None, ** kw) :
         """Returns a mailto URI for `email`.
@@ -160,6 +170,7 @@ class GTW (TFL.Meta.Object) :
     # end def eval_sorted_by
 
     def filtered_dict (self, * ds, ** kw) :
+        """Return a dict will all non-empty values of `ds` and `kw`."""
         result = {}
         for d in ds :
             result.update (d)
@@ -174,6 +185,11 @@ class GTW (TFL.Meta.Object) :
     first         = staticmethod (TFL.first)
 
     def firstof (self, * args) :
+        """Return the first non-None and non-Undefined value of `args`.
+
+           If `args` contains a single `tuple` or `list`, returns first
+           non-None and non-Undefined element of that sequence.
+        """
         if len (args) == 1 and isinstance (args [0], (tuple, list)) :
             args = args [0]
         for a in args :
@@ -182,6 +198,7 @@ class GTW (TFL.Meta.Object) :
     # end def firstof
 
     def formatted (self, format, * args, ** kw) :
+        """Return result of `%` applied to `format`and `args` or `kw`."""
         if args :
             assert not kw
             return format % args
@@ -210,6 +227,7 @@ class GTW (TFL.Meta.Object) :
     Getter     = TFL.Getter
 
     def html_char_ref (self, arg) :
+        """Return HTML character reference for `arg`."""
         if isinstance (arg, pyk.string_types) and len (arg) == 1 :
             arg = ord (arg)
         return "&#x%4.4X" % (arg, )
@@ -220,11 +238,13 @@ class GTW (TFL.Meta.Object) :
     list       = staticmethod (list)
 
     def log_stdout (self, * text) :
+        """Write `text` to standard output."""
         print (* text)
         return ""
     # end def log_stdout
 
     def now (self, format = "%Y/%m/%d") :
+        """Return the current date-time formatted by `format`."""
         from datetime import datetime
         result = datetime.now ()
         return result.strftime (format)
@@ -266,7 +286,12 @@ class GTW (TFL.Meta.Object) :
     # end def render_mode
 
     reversed   = staticmethod (reversed)
-    setattr    = staticmethod (setattr)
+
+    def setattr (self, x, y, v) :
+        """Set attribute `y` of object `x` to value `v`."""
+        setattr (x, y, v)
+    # end def setattr
+
     sorted     = staticmethod (sorted)
     Sorted_By  = TFL.Sorted_By
     styler     = staticmethod (HTML.Styler)
@@ -280,6 +305,7 @@ class GTW (TFL.Meta.Object) :
     # end def tel_uri
 
     def update_blackboard (self, ** kw) :
+        """Add `kw` to blackboard."""
         self.blackboard.update (kw)
         return ""
     # end def update_blackboard
@@ -287,6 +313,15 @@ class GTW (TFL.Meta.Object) :
     unichr = staticmethod (pyk.unichr)
 
     def uri (self, scheme, uri, text = None, ** kw) :
+        """Return HTML <a> element as specified by `scheme`, `uri`, `text`, and
+           `kw`.
+
+           If `kw` contains a true value for `obfuscate`,
+           :func:`~_GTW.HTML.obfuscator` will be applied to the result.
+
+           All other values in `kw` will be converted to attributes of the <a>
+           element.
+        """
         obfuscate = kw.pop ("obfuscate", False)
         if text is None :
             text = uri
@@ -301,6 +336,7 @@ class GTW (TFL.Meta.Object) :
     # end def uri
 
     def uuid (self) :
+        """Return the hex-value of a newly created UUID (uuid1)."""
         return uuid.uuid1 ().hex
     # end def uuid
 

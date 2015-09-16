@@ -868,13 +868,13 @@ _test_element = """
     , 'pid' : 1
     , 'sid' : 0
     , 'sigs' :
-        { 'Z-26' : '_hEg-sePfhfkRLEUj0IYJiL6BgDVhbE-vKI0jQ'
-        , 'Z-26:phones/1' : '1mh8G-a0Q31ETILmBIHf6XvVAdjgd8LbSZ6zFg'
-        , 'Z-26:phones/2' : 'mi_nwniDUZJPVd5jn6pNVLmaAxyCAj-Qkz6F8w'
-        , 'Z-26:phones::right/1' : 'wSEJNhfPN7Nc2yh7VX_610r79TsofrzAP6Ck8g'
-        , 'Z-26:phones::right/2' : 'cS95p33FYRIueAooEpXYqeqrx0Unv99jC4WZyw'
-        , 'Z-26:phones::right@3' : '9a_OfPNB-bfHzXl-YZM2YGYw6MVWmlLv_D32QQ'
-        , 'Z-26:phones@3' : '95BPoxBn1FKU0fsS5zdJLX5Koqob7V50RlZHGw'
+        { 'Z-26' : 'LIK3AyfLWxqCKALsALBufgqG2byxcgHgH3YFcQ'
+        , 'Z-26:phones/1' : '7UEXbSkX05AGhz2dh-JWw-Vy52Hh4fNqCeyqXQ'
+        , 'Z-26:phones/2' : 'uCFE3jU3Ly3UjkijTwh8FNFgodNHX5oDlZ7idQ'
+        , 'Z-26:phones::right/1' : 'oGs7kTmj7C7UPdcaI-FQlQokWDXlQ7ZvB5wixw'
+        , 'Z-26:phones::right/2' : 'mbro5WcZeIL_4vyJ5LzQXVNIYFDhvjwdosR19Q'
+        , 'Z-26:phones::right@3' : 'gkTiCHvamRDyIpZVlUCeR-9apTI5ErhiKgIOoQ'
+        , 'Z-26:phones@3' : 'AkzioCnxzAGL-R6uBvx313ZMNetrPyYg-EJEHA'
         }
     }
 
@@ -1993,8 +1993,8 @@ _test_single_primary = r"""
             }
         , 'sid' : 0
         , 'sigs' :
-            { 'S-78' : 'nBHmtRfh0gecdAyXDOjeL0qFzVO8zCJXv8BPmg'
-            , 'S-78:left' : 'vFCTr5suihkuI3ZJ7r0t8KaN6GMyXMlhIEfDOA'
+            { 'S-78' : '93Qk3j2q66JPVdcXUx-J9kTeOwLfyS-ky5Dcsw'
+            , 'S-78:left' : 'O38NylwL4xRzTHppwxAnIFbWUuSZkiurFOLBrQ'
             }
         }
     , 'checkers' : {}
@@ -2027,7 +2027,7 @@ _test_single_primary = r"""
             , 'S_r-78:sail_number_x' : {}
             }
         , 'sid' : 0
-        , 'sigs' : {'S_r-78' : 'kouChdapyz7H8pYiA0ULV2RuFrW8nGs53KeJ3w'}
+        , 'sigs' : {'S_r-78' : 'ZR3qceE4XUgpNj19f1vwXC14K1nM57IlV-7_aA'}
         }
     , 'checkers' : {}
     , 'completers' :
@@ -2052,7 +2052,7 @@ _test_single_primary = r"""
             , 'S-113:right' : {'init' : {}}
             }
         , 'sid' : 0
-        , 'sigs' : {'S-113' : 'GQtNF0p_Kxw34kmdFjaL6bOnbyUjih2C8LnDZQ'}
+        , 'sigs' : {'S-113' : 'XiX4D4xdzkGe3I-4hLwepj9yB4W6GUWuxDOS6Q'}
         }
     , 'checkers' : {}
     , 'completers' :

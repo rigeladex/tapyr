@@ -137,7 +137,15 @@
 #                     `_Export_Module` for `Derived_Package_Namespace`
 #    13-Apr-2015 (CT) Change `_Add_Import_Callback` to be useable as decorator
 #    12-Aug-2015 (CT) Add `_Import_All`, `__file__`
+#    13-Aug-2015 (CT) Change `_Import_All` to ignore names starting with "__"
+#    16-Aug-2015 (CT) Add `__PNS__`, `GET`
+#    17-Aug-2015 (CT) Factor property `MODULES`
+#    17-Aug-2015 (CT) Add `__is_PNS__` to modules defining Package_Namespace
+#                     instances
+#    18-Aug-2015 (CT) Add `self._Export` to `__init__` for proper bootstrap
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    13-Nov-2015 (CT) Restrict `__getattr__` change to `__wrapped__`
+#                     [Otherwise, accessing `__PNS__` fails]
 #    ««revision-date»»···
 #--
 
@@ -145,6 +153,7 @@ from   __future__  import print_function
 
 from   _TFL.pyk    import pyk
 
+import logging
 import re
 import sys
 
@@ -164,10 +173,10 @@ class _Derived_Module_ (object) :
     # end def __init__
 
     def __getattr__ (self, name) :
-        if name.startswith ("__") and name.endswith ("__") :
+        if name == "__wrapped__" :
             ### Placate inspect.unwrap of Python 3.5,
             ### which accesses `__wrapped__` and eventually throws `ValueError`
-            return getattr (self.__super, name)
+            raise AttributeError (name)
         try :
             result = getattr (self.__module, name)
         except AttributeError :
@@ -210,6 +219,9 @@ class Package_Namespace (object) :
     _check_clashes       = True
 
     _Import_Callback_Map = defaultdict (lambda : defaultdict (list))
+    __PKG__              = None
+
+    __Table              = {}
 
     def __init__ (self, * lazy_resolvers, ** kw) :
         c_scope, module_name, name = self._args_from_kw (kw)
@@ -225,10 +237,40 @@ class Package_Namespace (object) :
         self.__seen                = {}
         self.__reload              = 0
         self._Outer                = None
-        self.__doc__               = c_scope.get ("__doc__",  str (self))
-        self._desc_                = c_scope.get ("_desc_",   None)
-        self.__file__              = c_scope.get ("__file__", None)
+        self.__doc__               = c_scope.get ("__doc__",     str (self))
+        self._desc_                = c_scope.get ("_desc_",      None)
+        self.__file__              = c_scope.get ("__file__",    None)
+        p_name                     = c_scope.get ("__package__", None)
+        if p_name :
+            Table                  = self.__Table
+            for k in p_name, qname, ".".join ((p_name, "__init__")) :
+                Table [k]          = self
+        c_scope ["__PNS__"]        = self
+        c_scope ["__is_PNS__"]     = True
+        if qname == "TFL" :
+            ### Normally, the `_Export` would happen in the
+            ### `if __name__ != "__main__" ` stanza at the bottom
+            ### of the module but that would require a circular
+            ### import of `TFL` from `_TFL`
+            self._Export ("*")
+        else :
+            self._Load_Module (c_scope)
     # end def __init__
+
+    @classmethod
+    def GET (cls, name) :
+        """Return Package_Namespace the module, package, or package namespace
+           with `name` belongs to, if any.
+        """
+        return cls.__Table.get (name)
+    # end def GET
+
+    @property
+    def MODULES (self) :
+        """List of all modules in Package_Namespace, in sequence of import"""
+        mps = sorted (pyk.itervalues (self.__modules), key = lambda x : x [1])
+        return [m for (m, p) in mps]
+    # end def MODULES
 
     def _Add (self, ** kw) :
         """Add elements of `kw` to Package_Namespace `self`."""
@@ -264,6 +306,10 @@ class Package_Namespace (object) :
     def _args_from_kw (self, kw) :
         c_scope     = kw.pop ("c_scope",     None) or _caller_globals (2)
         module_name = kw.pop ("module_name", None) or c_scope ["__name__"]
+        if module_name.endswith (".__init__") :
+            ### this only happens on explicit import of `__init__`
+            ### `don't do that`, but protect against it anyway
+            module_name = module_name [:-9]
         name        = kw.pop ("name",        None) or module_name
         if kw :
             raise TypeError \
@@ -289,7 +335,6 @@ class Package_Namespace (object) :
         """
         result         = {}
         caller_globals = _caller_globals ()
-        transitive     = kw.get ("transitive")
         mod            = kw.get ("mod")
         if mod is None :
             module_name, mod = self._Load_Module (caller_globals)
@@ -299,7 +344,8 @@ class Package_Namespace (object) :
         check_clashes  = self._check_clashes and not self.__reload
         if primary is not None :
             result [module_name] = primary
-        self._Cache_Module (module_name, mod)
+        self._Cache_Module    (module_name, mod)
+        self._Register_Module (mod)
         if symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
             if all_symbols :
@@ -314,8 +360,9 @@ class Package_Namespace (object) :
             symbols = symbols [1:]
         if symbols :
             self._import_names (mod, symbols, result, check_clashes)
-        self.__dict__.update      (result)
-        self._run_import_callback (mod)
+        mod.__PNS_Export__ = sorted (result)
+        self.__dict__.update        (result)
+        self._run_import_callback   (mod)
     # end def _Export
 
     def _Export_Module (self) :
@@ -333,6 +380,7 @@ class Package_Namespace (object) :
                     )
         self.__dict__  [module_name] = self._exported_module (module_name, mod)
         self._Cache_Module        (module_name, mod)
+        self._Register_Module     (mod)
         self._run_import_callback (mod)
     # end def _Export_Module
 
@@ -342,22 +390,35 @@ class Package_Namespace (object) :
         return import_module (".".join ((self.__module_name, name)))
     # end def _Import_Module
 
-    def _Import_All (self) :
+    def _Import_All (self, mod_skip_pat = None) :
         """Import all modules of this package namespace"""
         from _TFL.import_module import import_module ### avoid circular imports
         from _TFL               import sos
         dir = sos.path.dirname  (self.__file__)
         pns = self.__module_name
-        for fn in sos.listdir (dir) :
-            if fn.endswith (".py") and not fn.startswith ("__init__") :
-                mod = ".".join ((pns, fn [:-3]))
+        for f in sos.listdir (dir) :
+            is_py = f.endswith (".py")
+            want = \
+                (   (  is_py
+                    or sos.path.exists (sos.path.join (dir, f, "__init__.py"))
+                    )
+                and not
+                    (   f.startswith (("__", "."))
+                    or ( mod_skip_pat.search (f)
+                       if mod_skip_pat is not None else False
+                       )
+                    )
+                )
+            if want :
+                mn  = f [:-3] if is_py else f
+                mod = ".".join ((pns, mn))
                 try :
                     import_module (mod)
                 except Exception as exc :
-                    print \
+                    logging.exception \
                         ( "%s._Import_All: "
                           "exception during import of %s\n    %s"
-                        % (self.__name__, fn [:-3], exc)
+                        % (self.__name__, mn, exc)
                         )
     # end def _Import_All
 
@@ -396,25 +457,35 @@ class Package_Namespace (object) :
     def _Load_Module (self, caller_globals) :
         q_name = caller_globals ["__name__"]
         b_name = q_name.split   (".") [-1]
-        return b_name, self.__module_space._load (q_name, b_name)
+        mod    = self.__module_space._load (q_name, b_name)
+        if self.__PKG__ is None :
+            self.__PKG__ = mod
+        return b_name, mod
     # end def _Load_Module
+
+    def _Register_Module (self, mod) :
+        try :
+            ### if `mod` is a package exporting a Package_Namespace,
+            ### `mod.__PNS__` was already set by `Package_Namespace.__init__`
+            mod.__PNS__
+        except AttributeError :
+            mod.__PNS__  = self.__Table [mod.__name__] = self
+    # end def _Register_Module
 
     def _Reload (self, * modules) :
         """Reload all the `modules` of the `Package_Namespace` specified
            (default: all modules of the `Package_Namespace` currently imported).
         """
-        old_reload = self.__reload
+        old_reload  = self.__reload
         if not modules :
-            from _TFL.predicate import dusort
-            second  = lambda x : x[1]
-            modules = \
-                [m for (m, i) in dusort (self.__modules.values (), second)]
+            modules = self.MODULES
         try :
             self.__reload = 1
             pyk.fprint ("Reloading", self.__bname, end = " ")
             for m in modules :
                 pyk.fprint (m.__name__, end = " ")
-                reload (m)
+                m         = reload (m)
+                m.__PNS__ = self
             pyk.fprint ("finished")
         finally :
             self.__reload = old_reload
@@ -535,12 +606,9 @@ class Derived_Package_Namespace (Package_Namespace) :
 
 # end class Derived_Package_Namespace
 
+__all__ = ("Package_Namespace", "Derived_Package_Namespace")
+
 __doc__ = """
-Module `Package_Namespace`
-==========================
-
-.. currentmodule:: _TFL.Package_Namespace
-
 This module implements a namespace that provides direct access to classes and
 functions provided by the modules of a Python package.
 
@@ -654,12 +722,6 @@ So, the canonical use of Package_Namespaces looks like::
  the public interface of `Package_Namespaces` (they start with an underscore to
  avoid name clashes with user-defined attributes of package namespaces).
 
-.. autoclass:: _TFL.Package_Namespace.Package_Namespace
-   :members: _Add_Import_Callback, _Add_Lazy_Resolver, _Export,
-       _Export_Module, _Import_All, _Import_Module, _Reload
-
-.. autoclass:: _TFL.Package_Namespace.Derived_Package_Namespace
-   :members:
 
 """
 

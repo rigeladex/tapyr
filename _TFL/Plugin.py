@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,6 +34,7 @@
 #                      factored in here
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
+#    13-Nov-2015 (CT) Remove import of `_TFL._UI.Command_Mgr`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,6 @@ from   _TFL                  import TFL
 
 import _TFL._Meta.Object
 import _TFL._Meta.M_Class
-import _TFL._UI.Command_Mgr
 import _TFL.Accessor
 import _TFL.Functor
 import _TFL.import_module
@@ -73,7 +73,6 @@ class _TFL_Plugin_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Plugin)) :
     _real_name           = "Plugin"
 
     application          = None
-    Command              = TFL.UI.Command
     date                 = property (TFL.Getter._version.date)
     description          = property (TFL.Getter._version.productdesc)
     expiration_date      = property (TFL.Getter._version.expiration_date)

@@ -189,9 +189,6 @@ def update_combined_value__undef (lhs, rhs) :
 # end def update_combined_value__undef
 
 __doc__ = """
-Module `update_combined`
-==========================
-
 Update a dictionary/list/set with elements of another
 dictionary/list/set, combining existing keys or values, instead of
 replacing like the standard ``dict`` method ``update()`` does .

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,14 +37,14 @@ class Primes (TFL.Immutable_Ordered_Set) :
     # end def is_prime
 
     def factors (self, number, _i = 0) :
-        """Returns list of all prime factors of `number'."""
+        """Returns list of all prime factors of `number`."""
         try :
             return self.Factors [number]
         except KeyError :
             last_p = int (sqrt (number))
             for p in self [_i:] :
                 if p > last_p :
-                    ### if we didn't find any prime factor yet, `number' must
+                    ### if we didn't find any prime factor yet, `number` must
                     ### be prime itself
                     result = [number]
                     break
@@ -60,8 +60,8 @@ class Primes (TFL.Immutable_Ordered_Set) :
     # end def factors
 
     def u_factors (self, number, _i = 0) :
-        """Returns list of all unique prime factors of `number' (i.e.,
-           `result' contains each factor only once).
+        """Returns list of all unique prime factors of `number` (i.e.,
+           `result` contains each factor only once).
         """
         try :
             return self.U_Factors [number]
@@ -69,7 +69,7 @@ class Primes (TFL.Immutable_Ordered_Set) :
             last_p = int (sqrt (number))
             for p in self [_i:] :
                 if p > last_p :
-                    ### if we didn't find any prime factor yet, `number' must
+                    ### if we didn't find any prime factor yet, `number` must
                     ### be prime itself
                     result = [number]
                     break

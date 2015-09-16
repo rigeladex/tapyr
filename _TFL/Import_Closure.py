@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,18 +17,18 @@
 #
 # Revision Dates
 #    25-Nov-1998 (CT)  Creation
-#    26-Nov-1998 (CT)  `import_pat' corrected
-#     7-Sep-2000 (CT)  `expanded_path' applied
-#    12-Apr-2001 (CT)  `import_pat' changed ("[^#]*?" --> "^\s*")
-#    12-Apr-2001 (CT)  `-ignore' added
+#    26-Nov-1998 (CT)  `import_pat` corrected
+#     7-Sep-2000 (CT)  `expanded_path` applied
+#    12-Apr-2001 (CT)  `import_pat` changed ("[^#]*?" --> "^\s*")
+#    12-Apr-2001 (CT)  `-ignore` added
 #     8-May-2001 (CT)  Support for package imports added
-#    18-May-2001 (CT)  Use `_find_import' everywhere (factoring of
-#                      `_find_import' finally completed)
-#     2-Jul-2001 (CT)  `pkg_namespace_import_pat' added and used
-#     3-Jul-2001 (CT)  `-Pathsep' added
-#     3-Jul-2001 (CT)  `pkg_namespace_pat' and `pkg_ns_dict' added and used
-#    17-Jul-2001 (CT)  Leading `_' removed from namespace-packages
-#    17-Jul-2001 (CT)  `pkg_namespace_pat' renamed to `pkg_namespace_def_pat'
+#    18-May-2001 (CT)  Use `_find_import` everywhere (factoring of
+#                      `_find_import` finally completed)
+#     2-Jul-2001 (CT)  `pkg_namespace_import_pat` added and used
+#     3-Jul-2001 (CT)  `-Pathsep` added
+#     3-Jul-2001 (CT)  `pkg_namespace_pat` and `pkg_ns_dict` added and used
+#    17-Jul-2001 (CT)  Leading `_` removed from namespace-packages
+#    17-Jul-2001 (CT)  `pkg_namespace_pat` renamed to `pkg_namespace_def_pat`
 #    17-Jul-2001 (CT)  Global functions replaced by class Import_Finder
 #    17-Jul-2001 (CT)  Support for implicit imports from package namespaces
 #                      added
@@ -104,7 +104,7 @@
 #    25-Mar-2005 (MG)  Import of `Filename` changed
 #     5-Jul-2006 (CED) `__sub__` adds parent packages recursively
 #    11-Jul-2006 (PGO) `script_code` flag added
-#    20-Jul-2006 (PGO) `__sub__` doesn't add parent packages any longer (moved
+#    20-Jul-2006 (PGO) `__sub__` doesn`t add parent packages any longer (moved
 #                      to TFL.Plugin_Packager)
 #    14-Aug-2006 (CED) `Derived_PNS_Finder` added and used
 #    16-Aug-2006 (CED) `_path_of` fixed
@@ -115,6 +115,11 @@
 #    16-Jun-2013 (CT)  Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                       import TFL
 
@@ -313,8 +318,8 @@ class Import_Closure :
         if file_name :
             self.root_pym = pym = self._import_root (file_name)
             if not pym :
-                print "Where is %s?" % (file_name, )
-                print "...didn't find it in %s" % (self.import_path, )
+                print ("Where is %s?" % (file_name, ))
+                print ("...didn't find it in %s" % (self.import_path, ))
                 raise ValueError
     # end def __init__
 
@@ -350,11 +355,12 @@ class Import_Closure :
             return True
         else :
             if self.debug :
-                print >> sys.stderr, \
+                print \
                     ( "%s is imported absolutely and relatively: `%s` vs. `%s`"
                     % ( pym.path_name
                       , self.file_dict [pym.path_name], pym.rel_name
                       )
+                    , file = sys.stderr
                     )
     # end def _add
 
@@ -418,7 +424,7 @@ class Import_Closure :
                 base = self.derived_modules [name].replace (".", TFL.sos.path.sep)
             return self.pym_dict.get (base)
         else :
-            print name, "doesn't match import pattern"
+            print (name, "doesn't match import pattern")
     # end def _import_root
 
     def new (cls, root_pym, import_path, ignore, pyms = ()) :
@@ -431,8 +437,8 @@ class Import_Closure :
     new = classmethod (new)
 
     def path_of (self, py_name, prefix = "") :
-        """Return the full path of `py_name' in the list of directories
-           `import_path' or `None'.
+        """Return the full path of `py_name` in the list of directories
+           `import_path` or `None`.
         """
         if prefix :
             py_names = (py_name, TFL.sos.path.join (prefix, py_name))
@@ -504,9 +510,8 @@ def _main (cmd) :
         (TFL.sos.expanded_path, cmd.import_path.split (cmd.Pathsep))
     ignore      = dict_from_list (cmd.ignore)
     out_opts    = sum \
-        ( [  bool (o) for o
-          in cmd.as_code, cmd.files, cmd.packages, cmd.toplevels
-          ]
+        (   bool (o) for o
+        in (cmd.as_code, cmd.files, cmd.packages, cmd.toplevels)
         )
     result = finder = Import_Closure \
         ( file_name   = cmd.python_module
@@ -527,16 +532,13 @@ def _main (cmd) :
     if sep == r"\n" :
         sep = "\n"
     if cmd.as_code :
-        print result.as_code ()
+        print (result.as_code ())
     if cmd.toplevels :
-        print sep.join \
-            (sorted ([m.pkg for m in result.tlp_dict.values ()]))
+        print (sep.join (sorted (m.pkg for m in result.tlp_dict.values ())))
     if cmd.packages :
-        print sep.join \
-            (sorted ([m.pkg for m in result.pkg_dict.values ()]))
+        print (sep.join (sorted (m.pkg for m in result.pkg_dict.values ())))
     if cmd.files or not out_opts :
-        print sep.join \
-            (sorted ([str (m) for m in result.pym_dict.values ()]))
+        print (sep.join (sorted (str (m) for m in result.pym_dict.values ())))
 # end def _main
 
 _Command = TFL.CAO.Cmd \
@@ -554,7 +556,7 @@ _Command = TFL.CAO.Cmd \
         , "-files:B?Show all files in import closure"
         , "-ignore:S,=U_Test?Ignore modules specified"
         , "-packages:B?Show all packages in import closure"
-        , "-Pathsep:S=:?Path separator used by `import_path'"
+        , "-Pathsep:S=:?Path separator used by `import_path`"
         , "-toplevels:B?Show all toplevel packages in import closure"
         , "-script_code:B?Add imports following the "
           "__name__ == '__main__' line"

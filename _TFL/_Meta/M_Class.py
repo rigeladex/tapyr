@@ -56,6 +56,7 @@
 #    25-Apr-2014 (CT)  Add `__mc_super` for use in metaclass `__new__`
 #     5-Jun-2014 (CT)  Remove `M_Autoproperty` and `M_Class_SWRP`
 #    16-Jul-2015 (CT)  Use auto-numbered footnotes in docstring
+#    10-Dec-2015 (CT) Change `_m_combine_nested_class` to set `__outer__`
 #    ««revision-date»»···
 #--
 
@@ -297,7 +298,11 @@ class M_Base (BaM (type, metaclass = M_M_Class)) :
                 )
             if c_bases :
                 cb0 = c_bases [0]
-                d   = dict (__module__ = cls.__module__, ** kw)
+                d   = dict \
+                    ( __module__ = cls.__module__
+                    , __outer__  = cls.__name__
+                    , ** kw
+                    )
                 setattr (cls, cn, cb0.__class__ (cn, c_bases, d))
     # end def _m_combine_nested_class
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -113,15 +113,10 @@ class Manager (TFL.Meta.Object) :
 
 # end class Manager
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Attr.Manager`
-========================
 
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. class:: Manager
-
-  `MOM.Attr.Manager` manages the attributes of specific instances of an
+  MOM.Attr.Manager` manages the attributes of specific instances of an
   :class:`objects<_MOM.Object.Object>` and :class:`links<_MOM.Link.Link>` of
   essential object models. Each essential entity has its own attribute
   manager.

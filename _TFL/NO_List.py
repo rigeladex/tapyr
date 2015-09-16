@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,15 +16,15 @@
 #
 # Revision Dates
 #     5-Oct-1999 (CT)  Creation
-#     3-Feb-2000 (MG)  `__getslice__' added
-#    28-Mar-2000 (CT)  `__add__' changed to allow addition of normal lists and
+#     3-Feb-2000 (MG)  `__getslice__` added
+#    28-Mar-2000 (CT)  `__add__` changed to allow addition of normal lists and
 #                      tuples to NO_Lists
-#    28-Jun-2000 (CT)  `insert' changed to allow `index == None'
-#    30-Jun-2000 (CT)  `keys' added
-#     8-Aug-2000 (CT)  `get' added
-#    16-Mar-2001 (CT)  `Ordered_Set' factored
-#    16-Mar-2001 (CT)  `update' added
-#    21-Mar-2001 (MG)  Redefine `_check_value' because TTPbuild currently uses
+#    28-Jun-2000 (CT)  `insert` changed to allow `index == None`
+#    30-Jun-2000 (CT)  `keys` added
+#     8-Aug-2000 (CT)  `get` added
+#    16-Mar-2001 (CT)  `Ordered_Set` factored
+#    16-Mar-2001 (CT)  `update` added
+#    21-Mar-2001 (MG)  Redefine `_check_value` because TTPbuild currently uses
 #                      objects with the same name !
 #    11-Jun-2003 (CT)  s/== None/is None/
 #    11-Jun-2003 (CT)  s/!= None/is not None/
@@ -84,7 +84,7 @@ class NO_List (TFL.Ordered_Set):
     """List of named objects. Access to the list elements is provided by
        numerical index and by name.
 
-       Each element of the list must provide an attribute `name' of a
+       Each element of the list must provide an attribute `name` of a
        non-numeric type.
     """
 

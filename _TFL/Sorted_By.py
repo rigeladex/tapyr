@@ -320,10 +320,6 @@ class Sorted_By_Strict (Sorted_By) :
 # end class Sorted_By_Strict
 
 __doc__ = """
-
-Module `Sorted_By`
-====================
-
 Easy declaration of composite sort-keys for list of sort criteria, some of
 which might be reversed.
 

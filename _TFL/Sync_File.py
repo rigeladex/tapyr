@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,30 +17,30 @@
 #
 # Revision Dates
 #    17-Apr-1998 (CT) Creation
-#     5-Mar-1999 (CT) `__str__' and `__repr__' added
-#    19-Apr-1999 (CT) Remove `tmp_name' if making no backup
-#    19-Apr-1999 (CT) Raise exceptions instead of returning `None'
-#    12-Oct-1999 (CT) Use `sos.tempfile_name' instead of `tempfile.mktemp'
+#     5-Mar-1999 (CT) `__str__` and `__repr__` added
+#    19-Apr-1999 (CT) Remove `tmp_name` if making no backup
+#    19-Apr-1999 (CT) Raise exceptions instead of returning `None`
+#    12-Oct-1999 (CT) Use `sos.tempfile_name` instead of `tempfile.mktemp`
 #                     and pass directory in (avoid using default directory to
 #                     which the user may not have write access)
-#    15-Oct-1999 (CT) `or sos.curdir' added to call of `sos.tempfile_name' to
+#    15-Oct-1999 (CT) `or sos.curdir` added to call of `sos.tempfile_name` to
 #                     accomodate writes to current directory (for which None
 #                     was passed which leads to an error because it tries to
 #                     do cross device rename operations)
-#    20-Jul-2000 (CT) `_get_key_save' and `_write_header' factored from `open'
-#    31-Jul-2000 (CT) Attribute `exists' added
-#     6-Sep-2000 (CT) `close' and locking added
-#     8-Sep-2000 (CT) Support open-mode `r', too
-#     8-Sep-2000 (CT) `_open_w' factored
-#     8-Sep-2000 (CT) Reraise `IOError' unless `ENOENT' in `_get_key'
-#     8-Sep-2000 (CT) `Sync_DB_' factored in here
-#    11-Sep-2000 (CT) Error in `open' corrected (if and else clause for
-#                     `_modify_mode_pat.search' were switched)
-#    11-Sep-2000 (CT) Bug in `Sync_DB_' fixed (spurious reference to `Struct')
-#    11-Sep-2000 (CT) Bug in `Sync_DB_.load' fixed (define `db')
-#    28-Sep-2000 (CT) Added missing `exc' to `except' clause in `_open_lock'
+#    20-Jul-2000 (CT) `_get_key_save` and `_write_header` factored from `open`
+#    31-Jul-2000 (CT) Attribute `exists` added
+#     6-Sep-2000 (CT) `close` and locking added
+#     8-Sep-2000 (CT) Support open-mode `r`, too
+#     8-Sep-2000 (CT) `_open_w` factored
+#     8-Sep-2000 (CT) Reraise `IOError` unless `ENOENT` in `_get_key`
+#     8-Sep-2000 (CT) `Sync_DB_` factored in here
+#    11-Sep-2000 (CT) Error in `open` corrected (if and else clause for
+#                     `_modify_mode_pat.search` were switched)
+#    11-Sep-2000 (CT) Bug in `Sync_DB_` fixed (spurious reference to `Struct`)
+#    11-Sep-2000 (CT) Bug in `Sync_DB_.load` fixed (define `db`)
+#    28-Sep-2000 (CT) Added missing `exc` to `except` clause in `_open_lock`
 #    13-Dec-2000 (CT) s/data base/database/g
-#    22-Feb-2001 (CT) Use `raise' instead of `raise exc' for re-raise
+#    22-Feb-2001 (CT) Use `raise` instead of `raise exc` for re-raise
 #    19-Sep-2001 (CT) `_can_lock` added to, and used in, `_open_lock`
 #    21-Sep-2001 (CT) `_open_method` dictionary used instead of explicit `if`
 #    21-Sep-2001 (CT) `Sync_Dir` and `Open_Sync_Dir_?` added
@@ -115,7 +115,7 @@ class _Sync_File_ :
 
     def open (self, * args, ** kw) :
         """Check if file is unchanged and return the open'ed file object if
-           so. This function creates a lock -- you *must* call `close' to
+           so. This function creates a lock -- you *must* call `close` to
            free the lock.
         """
         result = None
@@ -546,7 +546,7 @@ class Sync_DB_ :
     # end def __init__
 
     def load (self, file_name) :
-        """Load user data from file named `file_name'"""
+        """Load user data from file named `file_name`"""
         assert (file_name)
         assert (self.data_base is None)
         db = self.data_base = self._sync_file (file_name)
@@ -558,7 +558,7 @@ class Sync_DB_ :
             except Already_Open as exc :
                 ### traceback.print_exc ()
                 print \
-                    ( "The %s `%s' is currently locked by another user"
+                    ( "The %s `%s` is currently locked by another user"
                     % (db.file_desc, db.file_name)
                     )
                 raise Already_Open (db)
@@ -567,8 +567,8 @@ class Sync_DB_ :
             except Exception as exc :
                 ### traceback.print_exc ()
                 print \
-                    ( "The %s `%s' couldn't be opened for reading due "
-                      "to exception\n    `%s'"
+                    ( "The %s `%s` couldn't be opened for reading due "
+                      "to exception\n    `%s`"
                     % (db.file_desc, db.file_name, str (exc))
                     )
                 raise
@@ -579,7 +579,7 @@ class Sync_DB_ :
     # end def load
 
     def load_add (self, file_name) :
-        """Add user data from file named `file_name' to db"""
+        """Add user data from file named `file_name` to db"""
         assert (file_name)
         assert (self.data_base is not None)
         file = open (file_name, "r")
@@ -598,7 +598,7 @@ class Sync_DB_ :
         except Sync_Conflict as exc :
             ### traceback.print_exc ()
             print \
-                ( "The %s `%s' was changed since you started to work on it"
+                ( "The %s `%s` was changed since you started to work on it"
                 % (db.file_desc, db.file_name)
                 )
             raise Sync_Error (db)
@@ -607,8 +607,8 @@ class Sync_DB_ :
         except Exception as exc :
             ### traceback.print_exc ()
             print \
-                ( "The %s `%s' couldn't be opened for writing "
-                  "due to exception\n    `%s'"
+                ( "The %s `%s` couldn't be opened for writing "
+                  "due to exception\n    `%s`"
                 % (db.file_desc, db.file_name, str (exc))
                 )
             raise

@@ -53,6 +53,7 @@
 #    10-Oct-2014 (CT) Use `portable_repr`
 #     2-Apr-2015 (CT) Don't put `FO` object into `val_disp`,
 #                     convert them with `pyk.text_type` to string
+#    15-Aug-2015 (CT) Add stub for `_Condition_.predicates`
 #    ««revision-date»»···
 #--
 
@@ -99,8 +100,9 @@ class _Condition_ \
     is_required     = False ### set by meta machinery
     kind            = None
     parameters      = ()
+    predicates      = None  ### set by meta machinery: nested predicates, if any
     rank            = 1
-    renameds        = () ### only for compatibility with MOM.Attr.Type
+    renameds        = ()    ### only for compatibility with MOM.Attr.Type
     severe          = True
 
     ### DBW backend may set `do_check` to `False` if database performs the check
@@ -497,13 +499,14 @@ class Unique \
               , metaclass = MOM.Meta.M_Pred_Type.Unique
               )
           ) :
-    ### A predicate defining a uniqueness constraint over a set of attributes.
-    ###
-    ### For Unique predicates, the predicate is evaluated even if some
-    ### attributes have a value equal to `None`, i.e., all attributes must be
-    ### listed listed in `attr_none`.
+    """A predicate defining a uniqueness constraint over a set of attributes.
 
-    ### DBW backend sets `ems_check` to `False` if database performs the check
+       For Unique predicates, the predicate is evaluated even if some
+       attributes have a value equal to `None`, i.e., all attributes must be
+       listed listed in `attr_none`.
+
+       DBW backend sets `ems_check` to `False` if database performs the check
+    """
     ems_check = True
 
     @classmethod
@@ -571,12 +574,8 @@ def Attribute_Check (name, attr, assertion, attr_none = (), ** kw) :
         return result
 # end def Attribute_Check
 
+### «text» ### start of documentation
 __doc__ = """
-Module `MOM.Pred.Type`
-======================
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
 The module `MOM.Pred.Type` provides the framework for defining the
 type of predicates of essential objects and links. There are five
 different predicate types:
@@ -594,140 +593,140 @@ different predicate types:
 Concrete predicates are specified by defining a class derived from the
 appropriate predicate type, e.g., :class:`Condition` or :class:`U_Quant`.
 
-Concrete predicates are characterized by the properties:
+.. class:: _Condition_()
 
-.. attribute:: name
+    Base class for all predicates (atomic and quantifiers).
 
-  Specified by the name of the class.
+    Concrete predicates are characterized by the properties:
 
-.. attribute:: description
+    .. attribute:: name
 
-  A short description of the predicate in question.
+      Specified by the name of the class.
 
-  Normally specified via the doc-string of the
-  class (but can also be defined by defining a class attribute
-  `description`).
+    .. attribute:: description
 
-  `description` should be written in a way as to clearly explain to
-  the user what is wrong when the predicate is violated and how the
-  error can be fixed.
+      A short description of the predicate in question.
 
-.. attribute:: explanation
+      Normally specified via the doc-string of the
+      class (but can also be defined by defining a class attribute
+      `description`).
 
-  A long description of the predicate in question
-  (optional).
+      `description` should be written in a way as to clearly explain to
+      the user what is wrong when the predicate is violated and how the
+      error can be fixed.
 
-.. attribute:: kind
+    .. attribute:: explanation
 
-  Refers to the specific class defining the
-  :class:`~_MOM._Pred.Kind.Kind` of the predicate in question.
+      A long description of the predicate in question
+      (optional).
 
-.. attribute:: assertion
+    .. attribute:: kind
 
-  A logical expression defining the constraint (specified
-  as a string).
+      Refers to the specific class defining the
+      :class:`~_MOM._Pred.Kind.Kind` of the predicate in question.
 
-.. attribute:: attributes
+    .. attribute:: assertion
 
-  List of names of the attributes constrained by the
-  predicate.
+      A logical expression defining the constraint (specified
+      as a string).
 
-  * The predicate is only evaluated if all `attributes` have a
-    value differing from `None`.
+    .. attribute:: attributes
 
-  * The names listed can be dotted names, e.g., `a.b.c`.
+      List of names of the attributes constrained by the
+      predicate.
 
-.. attribute:: attr_none
+      * The predicate is only evaluated if all `attributes` have a
+        value differing from `None`.
 
-  List of names of the attributes constrained by the
-  predicate.
+      * The names listed can be dotted names, e.g., `a.b.c`.
 
-  * The predicate is even evaluated if some elements of `attr_none` have
-    a value of `None`.
+    .. attribute:: attr_none
 
-  * The names listed can be dotted names, e.g., `a.b.c`.
+      List of names of the attributes constrained by the
+      predicate.
 
-.. attribute:: bindings
+      * The predicate is even evaluated if some elements of `attr_none` have
+        a value of `None`.
 
-  A dictionary of names to be bound to the results of
-  epxressions usable in the :attr:`assertion`.
+      * The names listed can be dotted names, e.g., `a.b.c`.
 
-  * Judicious use of `bindings` can dramatically simplify :attr:`assertion`.
+    .. attribute:: bindings
 
-  * The name, the symbolic expression, and the calculated value of each
-    binding will be displayed in the error message of the predicate.
+      A dictionary of names to be bound to the results of
+      epxressions usable in the :attr:`assertion`.
 
-.. attribute:: guard
+      * Judicious use of `bindings` can dramatically simplify :attr:`assertion`.
 
-  A logical expression defining a guard for the predicate
-  (specified as a string).
+      * The name, the symbolic expression, and the calculated value of each
+        binding will be displayed in the error message of the predicate.
 
-  * The predicate is only evaluated if `guard` evaluates to True.
+    .. attribute:: guard
 
-.. attribute:: guard_attr
+      A logical expression defining a guard for the predicate
+      (specified as a string).
 
-  List of names of attributes used by :attr:`guard`.
+      * The predicate is only evaluated if `guard` evaluates to True.
 
-  * The names listed can be dotted names, e.g., `a.b.c`.
+    .. attribute:: guard_attr
 
-.. attribute:: parameters
+      List of names of attributes used by :attr:`guard`.
 
-  List of properties of other objects constrained by the
-  predicate.
+      * The names listed can be dotted names, e.g., `a.b.c`.
 
-  * The predicate is only evaluated if all `parameters` have a
-    value differing from `None`.
+    .. attribute:: parameters
 
-.. attribute:: rank
+      List of properties of other objects constrained by the
+      predicate.
 
-  For each object, the predicates of a specific kind are
-  evaluated in the sequence of `rank` (lower rank first).
+      * The predicate is only evaluated if all `parameters` have a
+        value differing from `None`.
 
-  * If a predicate of a specific rank is violated, predicates of
-    higher rank are not evaluated.
+    .. attribute:: rank
 
-  * This can be used to avoid lots of spurious error messages that all
-    follow from a violation of one (or a small set of) basic predicate(s).
+      For each object, the predicates of a specific kind are
+      evaluated in the sequence of `rank` (lower rank first).
 
-.. attribute:: severe
+      * If a predicate of a specific rank is violated, predicates of
+        higher rank are not evaluated.
 
-  Specifies whether a predicate describes an error condition
-  or a warning (by default, it's an error).
+      * This can be used to avoid lots of spurious error messages that all
+        follow from a violation of one (or a small set of) basic predicate(s).
 
-.. attribute:: _extra_links_s
+    .. attribute:: severe
 
-  List of essential types to be hyperlinked in an
-  error message for this predicate.
+      Specifies whether a predicate describes an error condition
+      or a warning (by default, it's an error).
 
-  * The names of these types must appear somewhere in :attr:`description`,
-    :attr:`explanation`, or :attr:`assertion` for `_extra_links_s` to have a
-    noticeable effect.
+    .. attribute:: _extra_links_s
 
-Concrete quantifier predicates are characterized by the additional
-required properties:
+      List of essential types to be hyperlinked in an
+      error message for this predicate.
 
-.. attribute:: bvar
+      * The names of these types must appear somewhere in :attr:`description`,
+        :attr:`explanation`, or :attr:`assertion` for `_extra_links_s` to have a
+        noticeable effect.
 
-  A string listing the `bounded variables`_ of the quantified
-  `assertion`.
+.. class:: _Quantifier_
 
-  * Corresponds to the loop variables in a python loop.
+    Concrete quantifier predicates are characterized by the additional
+    required properties:
 
-.. attribute:: bvar_attr
+    .. attribute:: bvar
 
-  A list of expressions referring to attributes of the bounded
-  variables to be shown for violating elements of `seq`.
+      A string listing the `bounded variables`_ of the quantified
+      `assertion`.
 
-.. attribute:: seq
+      * Corresponds to the loop variables in a python loop.
 
-  An expression defining the sequence over which `assertion` is
-  quantified.
+    .. attribute:: bvar_attr
 
-.. autoclass:: Condition()
-.. autoclass:: U_Quant()
-.. autoclass:: E_Quant()
-.. autoclass:: N_Quant()
-.. autoclass:: Unique()
+      A list of expressions referring to attributes of the bounded
+      variables to be shown for violating elements of `seq`.
+
+    .. attribute:: seq
+
+      An expression defining the sequence over which `assertion` is
+      quantified.
 
 Namespace for evaluation of `assertion` (and `seq`)
 ----------------------------------------------------

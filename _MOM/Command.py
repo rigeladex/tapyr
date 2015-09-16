@@ -609,9 +609,6 @@ Command = MOM_Command # end class
 
 ### «text» ### start of documentation
 __doc__ = r"""
-Class `MOM.Command`
-=====================
-
 .. class:: Command
 
   `MOM.Command` defines an extensible command for applications based on MOM.

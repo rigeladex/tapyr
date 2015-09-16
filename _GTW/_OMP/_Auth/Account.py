@@ -145,7 +145,7 @@ _Account_ = _Auth_Account_ # end class _Auth_Account_
 _Ancestor_Essence = _Account_
 
 class Account_Anonymous (_Ancestor_Essence) :
-    """Default account for users which are not logging in."""
+    # """Default account for users which are not logging in."""
 
     max_count    = 1
     show_in_ui   = False
@@ -187,7 +187,7 @@ class Account_Anonymous (_Ancestor_Essence) :
 _Ancestor_Essence = _Account_
 
 class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
-    """E-Type manager for password accounts"""
+    # """E-Type manager for password accounts"""
 
     def apply_migration (self, migration) :
         """Add all objects and links `migration` to `self.home_scope`."""
@@ -378,6 +378,12 @@ class Account (_Ancestor_Essence) :
     # end def verify_password
 
 # end class Account
+
+__doc__ = """
+
+.. autoclass:: _Account_
+
+"""
 
 if __name__ != "__main__" :
     GTW.OMP.Auth._Export ("*")

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -15,14 +15,14 @@
 #
 # Revision Dates
 #     2-Mar-1998 (CT)  Creation
-#    25-Aug-1998 (CT)  `intersection' optimized (use hash-table instead of
+#    25-Aug-1998 (CT)  `intersection` optimized (use hash-table instead of
 #                      iterative comparison)
-#    28-Jan-1999 (CT)  `intersection' moved to `predicate.py'
-#    28-Jan-1999 (MG)  `greatest_common_divisor', `least_common_multiple',
-#                      `gcd' and `lcm' added
-#    15-Feb-2001 (CT)  `gcd' streamlined
-#    15-Feb-2001 (CT)  `default' added to `greatest_common_divisor' and
-#                      `least_common_multiple' and check for empty `seq' added
+#    28-Jan-1999 (CT)  `intersection` moved to `predicate.py`
+#    28-Jan-1999 (MG)  `greatest_common_divisor`, `least_common_multiple`,
+#                      `gcd` and `lcm` added
+#    15-Feb-2001 (CT)  `gcd` streamlined
+#    15-Feb-2001 (CT)  `default` added to `greatest_common_divisor` and
+#                      `least_common_multiple` and check for empty `seq` added
 #     4-Dec-2001 (CT)  `p2_ceil` added
 #    30-Aug-2002 (CT)  `p2_ceil` corrected (division by 8 is *not* reusable)
 #    27-Feb-2004 (CT)  `average` and `standard_deviation` added
@@ -64,7 +64,7 @@ def average (seq) :
 # end def average
 
 def gcd (a, b) :
-    """Calculates the greates common devisor of `a' and  `b'"""
+    """Calculates the greates common devisor of `a` and  `b`"""
     a = abs (a)
     b = abs (b)
     if (a < b) :
@@ -75,7 +75,7 @@ def gcd (a, b) :
 # end def gcd
 
 def greatest_common_divisor (seq, default = None) :
-    """Calculates the greates common devisor of `seq'"""
+    """Calculates the greates common devisor of `seq`"""
     result = default
     if seq :
         result = seq [0]
@@ -101,12 +101,12 @@ def horner (x, ai) :
 # end def horner
 
 def lcm (a, b) :
-    """Calculates the least common multiple of `a' and `b'"""
+    """Calculates the least common multiple of `a` and `b`"""
     return (a // gcd (a, b)) * b
 # end def lcm
 
 def least_common_multiple (seq, default = None) :
-    """Calculates the least common multiple of `seq'"""
+    """Calculates the least common multiple of `seq`"""
     result = default
     if seq :
         result = seq [0]

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -68,18 +68,12 @@ class M_E_Type_Object_Reload (MOM.Meta.M_E_Type_Id_Reload, M_E_Type_Object) :
 
 # end class M_E_Type_Object_Reload
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Meta.M_Object`
-=========================
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. class:: M_Object
 
     `MOM.Meta.M_Object` provides the meta machinery for defining
     essential object types and instances. It is based on
     :class:`~_MOM._Meta.M_Entity.M_Entity`.
-
 
 """
 

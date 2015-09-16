@@ -369,9 +369,6 @@ def subclass_responsibility (f) :
 # end def subclass_responsibility
 
 __doc__ = """
-Module `Decorator`
-==========================
-
 Library of decorator functions.
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>

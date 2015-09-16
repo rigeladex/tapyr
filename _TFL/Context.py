@@ -133,11 +133,6 @@ def time_block (fmt = "Execution time: %s", out = None, cb = None) :
 # end def time_block
 
 __doc__ = """
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-Module `Context`
-==========================
-
 Library of context manager functions.
 
 """

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -146,15 +146,10 @@ class Uniqueness (Kind) :
 
 # end class Uniqueness
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Pred.Kind`
-=====================
 
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. class:: Kind
-
-    `MOM.Pred.Kind` is the root class of a hierarchy of classes defining the
+    :class:`Kind` is the root class of a hierarchy of classes defining the
     various kinds of predicates of essential classes. The predicate kind
     controls how a predicate is evaluated. Technically, `Kind` and its
     subclasses define Python `property` types.
@@ -169,10 +164,6 @@ Class `MOM.Pred.Kind`
     application or application domain can define additional kinds of
     predicates by providing additional classes derived from :class:`Kind`.
 
-.. autoclass:: Object
-.. autoclass:: Region
-.. autoclass:: System
-.. autoclass:: Uniqueness
 
 """
 

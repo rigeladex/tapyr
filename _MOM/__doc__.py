@@ -64,6 +64,9 @@
 #     4-Oct-2013 (CT) Add `DBW` and `DBW.SAW` to `toctree` directive
 #    17-Jun-2014 (RS) Add `MOM.Int_Interval`, `MOM.Int_Interval_C`
 #    23-Jun-2014 (RS) Fix breakage in unicode string
+#    13-Aug-2015 (CT) Use `...E_Spec` as `_Ancestor_Essence` to avoid errors
+#                     during Sphinx run due to multiple app-type creations
+#                     [App_Type setup replaces E_Spec with bare essence]
 #    ««revision-date»»···
 #--
 
@@ -112,12 +115,13 @@ Version = Product_Version \
         )
     )
 
-class Named_Object (MOM.Object) :
+_Ancestor_Essence = MOM.Object.E_Spec
+class Named_Object (_Ancestor_Essence) :
     """Common base class for essential named objects of MOM."""
 
     is_partial            = True
 
-    class _Attributes (MOM.Object._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class name (A_Name) :
             """Unique name of the object."""
@@ -130,7 +134,7 @@ class Named_Object (MOM.Object) :
 
 # end class Named_Object
 
-_Ancestor_Essence = MOM.Object
+_Ancestor_Essence = MOM.Object.E_Spec
 
 class Location (_Ancestor_Essence) :
     """Model a location of the Better Mouse Trap application."""
@@ -165,7 +169,7 @@ class Location (_Ancestor_Essence) :
 
 # end class Location
 
-_Ancestor_Essence = MOM.Object
+_Ancestor_Essence = MOM.Object.E_Spec
 
 class Person (_Ancestor_Essence) :
     """Model a person of the Better Mouse Trap application."""
@@ -367,7 +371,7 @@ class Supertrap (_Ancestor_Essence) :
 
 # end class Supertrap
 
-_Ancestor_Essence = MOM.Link1
+_Ancestor_Essence = MOM.Link1.E_Spec
 
 class Rodent_is_sick (_Ancestor_Essence) :
     """Model the sickness of a rodent."""
@@ -405,7 +409,7 @@ class Rodent_is_sick (_Ancestor_Essence) :
 
 # end class Rodent_is_sick
 
-_Ancestor_Essence = MOM.Link2
+_Ancestor_Essence = MOM.Link2.E_Spec
 
 class Rodent_in_Trap (_Ancestor_Essence) :
     """Model a rodent caught in a trap."""
@@ -452,7 +456,7 @@ class Rodent_in_Trap (_Ancestor_Essence) :
 
 # end class Rodent_in_Trap
 
-_Ancestor_Essence = MOM.Link2
+_Ancestor_Essence = MOM.Link2.E_Spec
 
 class Person_owns_Trap (_Ancestor_Essence) :
 
@@ -490,7 +494,7 @@ class Person_owns_Trap (_Ancestor_Essence) :
 
 # end class Person_owns_Trap
 
-_Ancestor_Essence = MOM.Link2
+_Ancestor_Essence = MOM.Link2.E_Spec
 
 class Person_sets_Trap (_Ancestor_Essence) :
 
@@ -594,12 +598,6 @@ An essential class as defined by its module isn't usable before an
 
     >>> BMT.Person
     <class 'BMT.Person' [Spec Essence]>
-    >>> BMT.Rodent
-    <class 'BMT.Rodent' [Spec Essence]>
-    >>> BMT.Beaver
-    <class 'BMT.Beaver' [Spec Essence]>
-    >>> BMT.Person_owns_Trap
-    <class 'BMT.Person_owns_Trap' [Spec Essence]>
     >>> BMT.Person.last_name
     Traceback (most recent call last):
         ...
@@ -1856,22 +1854,6 @@ to load the objects involved into memory::
     ...    _ = x.set (max_weight = 25)
     >>> tuple (scope.BMT.Trap.query_s (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
     ((2, 25.0, 50.0), (3, 25.0, 75.0))
-
-Modules and nested package namespaces
-=======================================
-
-.. toctree::
-
-   modules
-   Attr/index
-   Pred/index
-   SCM/index
-   DBW/index
-   DBW/SAW/index
-   Meta/index
-   bib
-
-
 
 """
 

@@ -30,6 +30,7 @@
 #    24-Jun-2014 (CT) Fix `A_Int_Interval_C.computed__upper`
 #    24-Jun-2014 (CT) Force attribute names to `str`
 #     4-Sep-2014 (RS) Fix interval limit: `lower` <= `upper` not '<'
+#    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -196,12 +197,13 @@ class A_Int_Interval_C (A_Int_Interval) :
 
 # end class A_Int_Interval_C
 
-__all__ = tuple \
-    (  k for (k, v) in pyk.iteritems (globals ())
-    if is_attr_type (v) and not v.__name__ == "_Interval_"
+__attr_types       = Attr.attr_types_of_module ()
+__sphinx__members = __attr_types + \
+    ("_Interval_", "Float_Interval", "Frequency_Interval", "Int_Interval"
+    , "make"
     )
 
 if __name__ != "__main__" :
-    MOM.Attr._Export ("*")
+    MOM.Attr._Export (* __attr_types)
     MOM.Attr._Export_Module ()
 ### __END__ MOM.Attr.Number_Interval

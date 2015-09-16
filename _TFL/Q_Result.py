@@ -59,14 +59,12 @@
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #     7-Aug-2015 (CT) Add class and method docstrings to `_Q_Result_`,
 #                     `Q_Result`, and `Q_Result_Composite`
+#    15-Aug-2015 (CT) Add `_portable_repr_Attr_`
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
 """
-Module `Q_Result`
-==================
-
 Provide filtering and ordering functions over query result::
 
     >>> qr = Q_Result ([x for x in range (10)])
@@ -179,6 +177,7 @@ import _TFL.Q_Exp
 import _TFL.Sorted_By
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch
+from   _TFL.portable_repr         import portable_repr
 from   _TFL.predicate             import first, uniq, uniq_p
 
 import itertools
@@ -270,6 +269,11 @@ class _Attr_ (object) :
     # end def __str__
 
 # end class _Attr_
+
+@portable_repr.add_type (_Attr_)
+def _portable_repr_Attr_ (obj, seen) :
+    return portable_repr (obj._VALUE)
+# end def _portable_repr_Attr_
 
 class _Attrs_Tuple_ (tuple) :
     """Wrapper for result of `.attrs` method."""

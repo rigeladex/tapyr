@@ -71,31 +71,6 @@ Meta class for auto-combining
   (see :class:`~_TFL._Meta.M_Auto_Combine_Sets.M_Auto_Combine_Sets`)
 
 between a class and its ancestors.
-
-`M_Auto_Combine_Dicts`
-=============================
-
-.. automodule:: _TFL._Meta.M_Auto_Combine_Dicts
-   :members:
-
-`M_Auto_Combine_Lists`
-=============================
-
-.. automodule:: _TFL._Meta.M_Auto_Combine_Lists
-   :members:
-
-`M_Auto_Combine_Nested_Classes`
-======================================
-
-.. automodule:: _TFL._Meta.M_Auto_Combine_Nested_Classes
-   :members:
-
-`M_Auto_Combine_Sets`
-=============================
-
-.. automodule:: _TFL._Meta.M_Auto_Combine_Sets
-   :members:
-
 """
 
 if __name__ != "__main__" :

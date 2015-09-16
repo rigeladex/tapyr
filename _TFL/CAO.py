@@ -116,6 +116,8 @@
 #                       all arguments are required
 #    21-Jul-2015 (CT) Use `portable_repr` to improve 3-compatibility
 #    22-Jul-2015 (CT) Add `config` and `syntax` to `Help`
+#    17-Aug-2015 (CT) Add `Rel_Path.cook` to assure `resolved_paths` even if
+#                     `auto_split` isn't set
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    18-Dec-2015 (CT) Add optional `save_error` to `expect_except`
 #    ««revision-date»»···
@@ -1318,6 +1320,18 @@ class Rel_Path (Path) :
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 
+    def cook (self, value, cao = None) :
+        ### Need to redefine `cook` because instances without `auto_split`
+        ### don't go through `_resolve_range`
+        if not self.auto_split :
+            value = TFL.first \
+                ( self.resolved_paths
+                    (self.base_dirs, value, True, self.skip_missing)
+                )
+        result = self.__super.cook (value, cao)
+        return result
+    # end def cook
+
     @classmethod
     def resolved_paths (cls, base_dirs, path, single_match, skip_missing) :
         """Generate all occurrences of `path`, relative to `base_dirs`."""
@@ -2226,9 +2240,6 @@ def show (cao) :
 
 ### «text» ### start of documentation
 __doc__ = r"""
-Module `CAO`
-=============
-
 This module provides classes for defining and processing **commands**,
 **arguments**, and **options**. The values for arguments and options can be
 parsed from :data:`sys.argv` or supplied by a client via keyword arguments.
@@ -2394,18 +2405,6 @@ specified. ::
         -verbose            = False
         file                = path1
 
-.. autoclass:: Cmd
-   :members: __init__, __call__, parse, use
-.. autoclass:: CAO
-   :members: GET, HELP, __getattr__, __getitem__, __iter__
-
-.. autoclass:: Arg
-   :members:
-.. autoclass:: Opt
-   :members:
-.. autoclass:: Bundle
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 """
 

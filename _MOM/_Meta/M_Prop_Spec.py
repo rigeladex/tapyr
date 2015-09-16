@@ -42,6 +42,26 @@ import _MOM._Meta.M_Prop_Type
 
 class M_Prop_Spec (TFL.Meta.M_Auto_Update_Combined) :
     """Root meta class for for attribute-spec and predicate-spec metaclasses.
+
+       `MOM.Meta.M_Prop_Spec` provides the meta machinery for defining
+       :class:`attribute<_MOM._Meta.M_Attr_Spec.M_Attr_Spec>` and
+       :class:`predicate<_MOM._Meta.M_Pred_Spec.M_Pred_Spec>` specifications.
+
+       `M_Prop_Spec` gathers all class attributes of the `Spec` which are
+       derived from the :class:`base property
+       type<_MOM._Meta.M_Prop_Type.M_Prop_Type>` and puts them into the class
+       attributes mapping property names to property values:
+
+       .. attribute:: _names
+
+         Dictionary with all locally defined *and* all inherited properties.
+
+       .. attribute:: _own_names
+
+         Dictionary with all locally defined properties.
+
+       Setting a class variable to `None` in a derived `Spec` will remove the
+       property from the `Spec`.
     """
 
     _attrs_uniq_to_update_combine = ("Kind_Mixins", )
@@ -118,33 +138,9 @@ class M_Prop_Spec (TFL.Meta.M_Auto_Update_Combined) :
 
 # end class M_Prop_Spec
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Meta.M_Prop_Spec`
-============================
 
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. class:: M_Prop_Spec
-
-    `MOM.Meta.M_Prop_Spec` provides the meta machinery for defining
-    :class:`attribute<_MOM._Meta.M_Attr_Spec.M_Attr_Spec>` and
-    :class:`predicate<_MOM._Meta.M_Pred_Spec.M_Pred_Spec>` specifications.
-
-    `M_Prop_Spec` gathers all class attributes of the `Spec` which are
-    derived from the :class:`base property
-    type<_MOM._Meta.M_Prop_Type.M_Prop_Type>` and puts them into the class
-    attributes mapping property names to property values:
-
-    .. attribute:: _names
-
-      Dictionary with all locally defined *and* all inherited properties.
-
-    .. attribute:: _own_names
-
-      Dictionary with all locally defined properties.
-
-    Setting a class variable to `None` in a derived `Spec` will remove the
-    property from the `Spec`.
 """
 
 if __name__ != "__main__" :

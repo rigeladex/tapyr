@@ -123,7 +123,7 @@ class _MOM_Base_ (TFL.Q_Exp.Base) :
         <_OR_ [Q.my_node.manager ["PAP.Association"], Q.my_node.manager ["PAP.Company"]]>
 
         >>> q3 == 23
-        <Filter_Or [Q.my_node.manager [Q.PAP.Association] == 23, Q.my_node.manager ["PAP.Company"] == 23]>
+        <Filter_Or [Q.my_node.manager ["PAP.Association"] == 23, Q.my_node.manager ["PAP.Company"] == 23]>
 
         >>> q3.name == "ISAF"
         <Filter_Or [Q.my_node.manager ["PAP.Association"].name == 'ISAF', Q.my_node.manager ["PAP.Company"].name == 'ISAF']>
@@ -300,9 +300,6 @@ class _Get_Raw_ (TFL.Q_Exp._Get_) :
 
 ### «text» ### start of documentation
 __doc__ = r"""
-Module `MOM.Q_Exp`
-==================
-
 This module implements a query expression language based on
 :mod:`TFL.Q_Exp<_TFL.Q_Exp>`.
 

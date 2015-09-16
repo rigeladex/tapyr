@@ -361,6 +361,9 @@
 #     3-Aug-2015 (CT) Change `_A_Composite_.from_string` to try downcast
 #    10-Aug-2015 (CT) Add `__doc__auto_classes`
 #    10-Aug-2015 (CT) Add documentation about `raw value`
+#    15-Aug-2015 (CT) Add guard for `electric` to `_A_Composite_._checkers`
+#    15-Aug-2015 (CT) Add `predicates`, `predicates_own`, `predicates_shared`
+#    15-Aug-2015 (CT) Add `predicates` to `_A_Composite_._checkers`
 #     7-Oct-2015 (CT) Don't use `bool` for `datetime.time` instances
 #                     (Python 3.5 compatibility)
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
@@ -371,6 +374,10 @@
 #                     * Change `_from_string` to allow `utcoffset` in input
 #    25-Oct-2015 (CT) Add `A_Duration`
 #    25-Nov-2015 (CT) Add "%d-%m-%Y" to `A_Date.input_formats`
+#     9-Dec-2015 (CT) Add `_Doc_Map_`
+#    10-Dec-2015 (CT) Add `__sphinx__members`
+#    11-Dec-2015 (CT) Factor `attr_types_of_module`;
+#                     add `module` to `is_attr_type`
 #    ««revision-date»»···
 #--
 
@@ -402,8 +409,9 @@ from   _TFL                  import sos
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
-import _TFL.Decorator
+import _TFL.Caller
 import _TFL.Currency
+import _TFL.Decorator
 import _TFL.r_eval
 
 import datetime
@@ -415,8 +423,24 @@ import time
 
 plain_number_pat = r"\d+ (?: \.\d*)? (?: [eE]\d+)? \s*"
 
-def is_attr_type (x) :
-    return isinstance (x, MOM.Meta.M_Attr_Type.Root)
+def attr_types_of_module (dct = None) :
+    """Return all attribute type classes in module dictionary `dct`."""
+    if dct is None :
+        dct = TFL.Caller.globals ()
+    module = dct.get ("__name__")
+    return tuple \
+        ( sorted
+            ( (k for (k, v) in pyk.iteritems (dct) if is_attr_type (v, module))
+            , key = lambda k : dct [k]._i_rank
+            )
+        )
+# end def attr_types_of_module
+
+def is_attr_type (x, module = None) :
+    result = isinstance (x, MOM.Meta.M_Attr_Type.Root)
+    if result and module :
+        result = x.__module__ == module
+    return result
 # end def is_attr_type
 
 @TFL.Decorator
@@ -510,7 +534,6 @@ class A_Attr_Type \
     electric            = False ### True if created by framework
     explanation         = ""
     format              = "%s"
-    group               = ""
     hidden              = False
     hidden_nested       = 10
     kind                = None
@@ -545,6 +568,209 @@ class A_Attr_Type \
 
     _t_rank             = 0
 
+    class _Doc_Map_ (MOM.Prop.Type._Doc_Map_) :
+        """Attribute types are specified by the class attributes:"""
+
+        auto_up_depends = """
+            Used for computed attributes to specify the names of the attributes
+            that this attribute depends on.
+        """
+
+        check = """
+            An optional set of boolean expressions restricting the possible
+            `value` of attributes of this type.
+
+            For instance, ``0 <= value <= 100``.
+        """
+
+        completer = """
+            An instance of :class:`~_MOM._Attr.Completer_Spec` that specifies
+            how auto-completion should be done for this attribute.
+        """
+
+        computed = """
+            A method that computes the value of an attribute that is cached or
+            computed.
+
+            `computed` can be specified for
+            :class:`~_MOM._Attr.Kind.Optional` attributes with the
+            :class:`~_MOM._Attr.Kind.Computed_Mixin` or
+            one of the internal attribute kinds
+            :class:`~_MOM._Attr.Kind.Sync_Cached`,
+            :class:`~_MOM._Attr.Kind.Query`,
+            :class:`~_MOM._Attr.Kind.Once_Cached`, or
+            :class:`~_MOM._Attr.Kind.Computed`.
+        """
+
+        default = """
+            Defines the default value to be used for the
+            attribute when no explicit value is defined by the tool's user.
+
+            This is optional and defaults to `None`.
+
+            `default` **must** not be specified for
+            :class:`~_MOM._Attr.Kind.Primary` and
+            :class:`~_MOM._Attr.Kind.Necessary` attributes.
+        """
+
+        description = """
+            A short description of the attribute in question.
+            This is for example used for displaying a short help text.
+
+            Normally specified via the doc-string of the
+            class (but can also be defined by defining a class attribute
+            `description`).
+        """
+
+        example = """
+            A possible value for this attribute used as example in the
+            documentation.
+        """
+
+        explanation = """
+            A long description of the attribute in question
+            (optional). This is used for more detailed documentation of the
+            attribute and augments `description`.
+        """
+
+        format = """
+            A ``%-format`` directive that specifies how to convert the
+            attribute's value to a human-readable string (default = ``%s``).
+        """
+
+        hidden = """
+            An attribute with a true value of `hidden` will not be shown in the
+            UI or documentation.
+        """
+
+        kind = """
+            Specifies the specific class defining the
+            :class:`~_MOM._Attr.Kind.Kind` of the attribute in question.
+
+            The `kind` controls how the value of an attribute is accessed and
+            how (and if) it can be modified. Technically,
+            :class:`~_MOM._Attr.Kind.Kind` and its subclasses define Python
+            ``data descriptors`` that implement ``property`` semantics.
+        """
+
+        Kind_Mixins = """
+            Additional mixins for the `kind` to be used for this
+            attribute. Some of the possible mixins are
+            :class:`~_MOM._Attr.Kind.Computed_Mixin`,
+            :class:`~_MOM._Attr.Kind.Sticky_Mixin`, and
+            :class:`~_MOM._Attr.Kind.Init_Only_Mixin`.
+
+            This is optional and defaults to `()`.
+        """
+
+        needs_raw_value = """
+            Specifies if the raw value needs to be stored for
+            this attribute type.
+
+            .. _`raw value`:
+
+            A raw value is a string representation of an attribute's value. Raw
+            values are what is displayed and entered in a user interface.
+            Internally, the raw value is converted to a cooked value.
+
+            Depending on the attribute type, raw values can differ from cooked
+            values. For instance, for attributes like ``last_name`` and
+            ``first_name`` of the essential type ``PAP.Person`` the cooked
+            value is derived from the raw value by converting it to lower case.
+            For attribute values denoting frequencies, the raw value is a
+            string that can contain a unit like ``kHz`` or ``GHz``, while the
+            cooked value is a floating point value normalized to ``Hz``.
+        """
+
+        Pickler = """
+            An optional class defining the class methods `as_cargo` and
+            `from_cargo` to convert this attribute's value to and from a pickle
+            cargo.
+        """
+
+        polisher = """
+            An optional instance of a class derived from
+            :class:`~_MOM._Attr._Polisher_`. `polisher` is used to clean up
+            the raw values before they are converted to cooked values.
+        """
+
+        P_Type = """
+            Specifies the Python type of the cooked value.
+        """
+
+        q_able = """
+            An attribute with a false value of `q_able` won't be usable to
+            filter query results.
+        """
+
+        query = """
+            A :class:`query expression <_MOM.Q_Exp.Q>` for attributes of
+            kind :class:`~_MOM._Attr.Kind.Query`. The attributes referenced by
+            the query expression must belong to the same object.
+        """
+
+        query_preconditions = """
+            A set of conditions that must be satisfied for the `query` to be
+            evaluated.
+        """
+
+        rank = """
+            Attributes are sorted by `(rank, name)`.
+        """
+
+        raw_default = """
+            Defines the :attr:`default` value as a raw value.
+        """
+
+        sort_rank = """
+            Rank of attribute in sort-key of objects. Normally, `sorted_by_epk`
+            of an `E_Type` is defined by the `epk_sig`. `sort_rank` allows to
+            change the sequence of the primary keys for sorting.
+        """
+
+        sort_skip = """
+            An attribute with a false value of `sort_skip` won't be included
+            in the `sorted_by_epk` of objects.
+        """
+
+        syntax = """
+            Provides information about the syntax required for the raw values
+            of the attribute.
+        """
+
+        typ = """
+            Defines the human-readable name of the abstract attribute type,
+            e.g., `int`, `string`, or `name`.
+        """
+
+        ui_length = """
+            An indication of the length of input fields in an UI.
+        """
+
+        ui_name = """
+            Name used to refer to this attribute in an UI.
+        """
+
+        ui_name_short = """
+            Short name used to refer to this attribute in an UI (default:
+            :attr:`ui_name`).
+        """
+
+        ui_rank = """
+            Rank used for sorting attributes for display in an UI.
+        """
+
+        unique_p = """
+            The value of an attribute with a true value of `unique_p` must be
+            unique over all objects.
+        """
+
+        use_index = """
+            Indicate that a database index should be used for this attribute.
+        """
+
+    # end class _Doc_Map_
+
     @TFL.Meta.Once_Property
     def AQ (self) :
         return self.Q_Raw if self.needs_raw_value else self.Q_Ckd
@@ -568,6 +794,23 @@ class A_Attr_Type \
         if self.needs_raw_value :
             return Pickled_Type_Spec (pyk.text_type, self)
     # end def Pickled_Type_Raw
+
+    @TFL.Meta.Once_Property
+    def predicates (self) :
+        P  = self.e_type._Predicates
+        ns = P._attr_map.get (self, [])
+        return [P._pred_dict [n] for n in ns]
+    # end def predicates
+
+    @TFL.Meta.Once_Property
+    def predicates_own (self) :
+        return [p for p in self.predicates if len (p.attrs) == 1]
+    # end def predicates_own
+
+    @TFL.Meta.Once_Property
+    def predicates_shared (self) :
+        return [p for p in self.predicates if len (p.attrs) > 1]
+    # end def predicates_shared
 
     @TFL.Meta.Class_and_Instance_Once_Property
     def Q_Ckd (self) :
@@ -606,6 +849,17 @@ class A_Attr_Type \
                 (self.ui_length, (getattr (self, "max_length", 0) or 0) + 1)
         return result
     # end def max_ui_length
+
+    @TFL.Meta.Once_Property
+    def Raw_Choices (self) :
+        result = ()
+        if self.Choices :
+            def _gen (Choices) :
+                for x in Choices :
+                    yield x [0] if isinstance (x, (list, tuple)) else x
+            result = tuple (_gen (self.Choices))
+        return result
+    # end def Raw_Choices
 
     @TFL.Meta.Once_Property
     def raw_query (self) :
@@ -916,7 +1170,7 @@ class _A_Collection_ (A_Attr_Type) :
 # end class _A_Collection_
 
 class _A_Entity_ (A_Attr_Type) :
-    """Common base class for _A_Composite_ and _A_Id_Entity_"""
+    """Common base class for :class:`~_MOM._Attr.Type._A_Composite_` and :class:`~_MOM._Attr.Type._A_Id_Entity_`."""
 
     ### Type of composite attribute
     ###     (derived from MOM.An_Entity or MOM.Id_Entity)
@@ -1066,27 +1320,34 @@ class _A_Composite_ \
     def _checkers (self, e_type, kind) :
         for c in self.__super._checkers (e_type, kind) :
             yield c
-        name = self.name
-        for k, ps in pyk.iteritems (self.P_Type._Predicates._pred_kind) :
-            if kind.electric :
-                k = kind.kind
-                p_kind = MOM.Pred.System
-            else :
+        if not kind.electric :
+            ### Electric composite attribute:
+            ### - cannot check object predicates of nested attributes because
+            ###   the composite isn't updated yet when object predicates are
+            ###   checked
+            ### - cannot check the nested predicates as `region` or `system`
+            ###   either because they should only be checked on change itself,
+            ###   e.g., `start__not_in_future` for nested A_Date attributes
+            name = self.name
+            for k, ps in pyk.iteritems (self.P_Type._Predicates._pred_kind) :
                 p_kind = MOM.Pred.Kind.Table [k]
-            if ps :
-                p_name = "AC_check_%s_%s" % (name, k)
-                check  = MOM.Pred.Condition.__class__ \
-                    ( p_name, (MOM.Pred.Condition, )
-                    , dict
-                        ( assertion  = "%s.is_correct (_kind = %r)" % (name, k)
-                        , attributes = (name, )
-                        , kind       = p_kind
-                        , name       = p_name
-                        , __doc__    = " "
-                          ### Space necessary to avoid inheritance of `__doc__`
+                if ps :
+                    p_name = "AC_check_%s_%s" % (name, k)
+                    check  = MOM.Pred.Condition.__class__ \
+                        ( p_name, (MOM.Pred.Condition, )
+                        , dict
+                            ( assertion  = "%s.is_correct (_kind = %r)"
+                                % (name, k)
+                            , attributes = (name, )
+                            , kind       = p_kind
+                            , name       = p_name
+                            , predicates = ps
+                            , __doc__    = " "
+                              ### Space necessary to avoid inheritance of
+                              ### `__doc__`
+                            )
                         )
-                    )
-                yield check
+                    yield check
     # end def _checkers
 
 # end class _A_Composite_
@@ -1097,6 +1358,15 @@ class _A_Date_ (A_Attr_Type) :
     needs_raw_value    = False
     not_in_future      = False
     _tuple_off         = 0
+
+    class _Doc_Map_ (A_Attr_Type._Doc_Map_) :
+
+        not_in_future = """
+            A true value of `not_in_future` means that the date/time value of
+            the attribute must not lie in the future at the moment it is set.
+        """
+
+    # end class _Doc_Map_
 
     @property
     def output_format (self) :
@@ -1222,6 +1492,23 @@ class _A_Number_ (A_Attr_Type) :
 
     _string_fixer       = None
 
+    class _Doc_Map_ (A_Attr_Type._Doc_Map_) :
+
+        max_value = """
+            Maximum value allowed for this attribute.
+        """
+
+        min_value = """
+            Minimum value allowed for this attribute.
+        """
+
+        _string_fixer = """
+            A callable used to clean up the raw value before converting to the
+            cooked value.
+        """
+
+    # end class _Doc_Map_
+
     @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
         return self.__super.db_sig + (self.min_value, self.max_value)
@@ -1302,6 +1589,18 @@ class _A_Decimal_ (_A_Number_) :
         ( r"([-+]?\d*\.\d+([eE][-+]?\d+)?)"
         , r"""Decimal("\1")"""
         )
+
+    class _Doc_Map_ (_A_Number_._Doc_Map_) :
+
+        decimal_places = """
+            The number of decimal places to use for values of this attribute.
+        """
+
+        max_digits = """
+            The maximum number of digits to use for values of this attribute.
+        """
+
+    # end class _Doc_Map_
 
     @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
@@ -1403,7 +1702,17 @@ class _A_SPK_Entity_ (_A_Entity_) :
     """Attribute referring to an entity identified by a spk"""
 
     rev_ref_attr_name   = None
-    rev_ref_singular    = False
+
+    class _Doc_Map_ (_A_Entity_._Doc_Map_) :
+
+        rev_ref_attr_name = """
+            If `rev_ref_attr_name` is specified, create a reverse reference
+            query, i.e., create a query attribute in the `E_Type` specified by
+            :attr:`P_Type` that has the name `rev_ref_attr_name` and returns
+            all objects referring the instance of :attr:`P_Type`.
+        """
+
+    # end class _Doc_Map_
 
     def as_code (self, value) :
         if value is not None :
@@ -1489,6 +1798,30 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
 
     ### allow creation of new entity for this attribute
     ui_allow_new        = True
+
+    class _Doc_Map_ (_A_SPK_Entity_._Doc_Map_) :
+
+        allow_e_types = """
+            Allow E_Types (and their children) that would otherwise be refused
+            by :attr:`refuse_e_types`.
+        """
+
+        only_e_types = """
+            Restrict eligible E_Types to the ones specified by `only_e_types`.
+            This overrides :attr:`allow_e_types` and :attr:`refuse_e_types`.
+        """
+
+        refuse_e_types = """
+            Remove the E_Types (and their children) specified by
+            `refuse_e_types` from the set of eligible E_Types.
+        """
+
+        ui_allow_new = """
+            In the UI, allow the creation of new objects for values of this
+            attributes if the value of `ui_allow_new` is true.
+        """
+
+    # end class _Doc_Map_
 
     def __init__ (self, kind, e_type) :
         self.__super.__init__ (kind, e_type)
@@ -1625,6 +1958,7 @@ class _A_MD_Change_ (_A_SPK_Entity_) :
 # end class _A_MD_Change_
 
 class _A_Rev_Ref_ (A_Attr_Type) :
+    """Base class for :class:`~_MOM._Attr.Type._A_Link_Ref_`, :class:`~_MOM._Attr.Type.A_Rev_Ref`, and :class:`~_MOM._Attr.Type.A_Rev_Ref_Set`."""
 
     ### need to recompute each time value is accessed ### ???
     kind                = MOM.Attr._Rev_Query_
@@ -1644,6 +1978,36 @@ class _A_Rev_Ref_ (A_Attr_Type) :
 
     electric            = True
     hidden              = True
+
+    class _Doc_Map_ (A_Attr_Type._Doc_Map_) :
+
+        max_rev_ref = """
+            Maximum number of reverse references that are allowed in UI.
+        """
+
+        min_rev_ref = """
+            Minimum number of reverse references setup by UI.
+        """
+
+        Ref_Type = """
+            The E_Type that contains the forward referencing attribute with the
+            name :attr:`ref_name`.
+        """
+
+        ref_name = """
+            The name of the attribute of :attr:`Ref_Type` that contains the
+            forward reference.
+        """
+
+        sort_key = """
+            The key used to sort the result of the reverse reference query.
+        """
+
+        sqx_filter = """
+            An extra filter used for the reverse reference query.
+        """
+
+    # end class _Doc_Map_
 
     def __init__ (self, kind, e_type) :
         for k in ("P_Type", "Ref_Type") :
@@ -1715,6 +2079,18 @@ class _A_String_Base_ (A_Attr_Type) :
     ui_length         = TFL.Meta.Class_and_Instance_Once_Property \
         (lambda s : s.max_length or 120)
 
+    class _Doc_Map_ (A_Attr_Type._Doc_Map_) :
+
+        max_length = """
+            Maximum number of characters for this attribute.
+        """
+
+        min_length = """
+            Minimum number of characters for this attribute.
+        """
+
+    # end class _Doc_Map_
+
     @TFL.Meta.Once_Property
     def AQ (self) :
         return self.Q_Ckd
@@ -1771,14 +2147,21 @@ class _A_Filename_ (_A_String_Base_) :
     P_Type            = pyk.byte_type
 
     open_mode         = "w"
-    """`open_mode` defines the mode to use for opening the file specified
-       by the value of the attribute.
+    do_check         = True
+
+    class _Doc_Map_ (_A_String_Base_._Doc_Map_) :
+
+        open_mode = """
+            `open_mode` defines the mode to use for opening the file specified
+             by the value of the attribute.
        """
 
-    do_check         = True
-    """`do_check` specifies whether the existence of a file as specified by
-       the attribute's value is checked by `from_string`.
+        do_check = """
+            `do_check` specifies whether the existence of a file as specified
+            by the attribute's value is checked by `from_string`.
        """
+
+    # end class _Doc_Map_
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, s) :
@@ -1823,6 +2206,15 @@ class _A_String_ \
     ignore_case       = False
     needs_raw_value   = False
     P_Type            = pyk.text_type
+
+    class _Doc_Map_ (_A_String_Base_._Doc_Map_) :
+
+        ignore_case = """
+            For a true value of `ignore_case`, the cooked value will be
+            converted to lower case, and the raw value will be saved.
+        """
+
+    # end class _Doc_Map_
 
     @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
@@ -2314,6 +2706,15 @@ class A_Date (_A_Date_) :
         ( "%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%d/%m/%Y", "%d.%m.%Y", "%d-%m-%Y")
     _tuple_len     = 3
 
+    class _Doc_Map_ (_A_Date_._Doc_Map_) :
+
+        input_formats = """
+            The possible strftime-formats used to convert raw values to cooked
+            values.
+        """
+
+    # end class _Doc_Map_
+
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
         value = self.kind.get_value (obj)
         if value is not None :
@@ -2666,9 +3067,7 @@ class A_Filename (_A_Filename_) :
 # end class A_Filename
 
 class A_Float (_A_Float_) :
-
-    pass
-
+    """A floating point value."""
 # end class A_Float
 
 class A_Frequency (_A_Unit_, _A_Float_) :
@@ -2688,7 +3087,7 @@ class A_Frequency (_A_Unit_, _A_Float_) :
 # end class A_Frequency
 
 class A_Int (_A_Int_) :
-    pass
+    """A integer value."""
 # end class A_Int
 
 class A_Int_List (_A_Typed_List_) :
@@ -2720,6 +3119,7 @@ class A_Length (_A_Unit_, _A_Float_) :
 # end class A_Length
 
 class _A_Link_Ref_ (_A_Rev_Ref_) :
+    """Base class for :class:`~_MOM._Attr.Type.A_Link_Ref` and :class:`~_MOM._Attr.Type.A_Link_Ref_Set`."""
 
     role_filter         = TFL.Meta.Alias_Property ("ref_filter")
     role_name           = TFL.Meta.Alias_Property ("ref_name")
@@ -2760,7 +3160,6 @@ class A_Link_Role \
     auto_rev_ref_np     = False
     auto_derive_np      = False
     auto_derive_npt     = False
-    Cacher_Type         = None
     dfc_synthesizer     = None
     force_role_name     = None
     is_link_role        = True
@@ -2769,6 +3168,7 @@ class A_Link_Role \
     link_ref_suffix     = TFL.Undef ("suffix")
     kind                = MOM.Attr.Link_Role
     max_links           = -1
+    rev_ref_singular    = False
     role_name           = None
     role_type           = None
     E_Type = P_Type     = TFL.Meta.Alias_Property ("role_type")
@@ -2778,6 +3178,68 @@ class A_Link_Role \
     use_index           = True
 
     _t_rank                   = -100
+
+    class _Doc_Map_ (_A_Id_Entity_._Doc_Map_) :
+
+        auto_rev_ref = """
+            Create an automatic reverse reference query attribute for this
+            role.
+        """
+
+        auto_rev_ref_np = """
+            Value of :attr:`auto_rev_ref` for automatically derived link
+            classes.
+        """
+
+        auto_derive_np = """
+            Automatically derive link classes for non-partial children of this
+            roles :attr:`E_Type`.
+        """
+
+        auto_derive_npt = """
+            Value of :attr:`auto_derive_np` for automatically derived link
+            classes.
+        """
+
+        force_role_name = """
+            Use `force_role_name` instead of :attr:`default_role_name` if not
+            value for :attr:`role_name` is specified.
+        """
+
+        link_ref_attr_name = """
+            The base name of the automatically created reverse reference query
+            attribute for the links.
+        """
+
+        link_ref_singular = """
+            Use singular, not plural, for the name of the reverse reference
+            query attribute for the links.
+        """
+
+        link_ref_suffix = """
+            Suffix for the name of the automatically created reverse reference
+            query attribute for the links.
+        """
+
+        max_links = """
+            Maximum number of links for this role.
+        """
+
+        rev_ref_singular = """
+            Use singular, not plural, for the name of the reverse reference
+            query attribute for the roles.
+        """
+
+        role_name = """
+            The application specific role name
+            (default `role_type.type_base_name.lower ()`).
+        """
+
+        role_type = """
+            The type of essential object expected as value of this attribute.
+        """
+
+    # end class _Doc_Map_
 
     @TFL.Meta.Once_Property
     def q_able_names (self) :
@@ -2884,6 +3346,7 @@ class A_Rev_Ref_Set (_A_Rev_Ref_, _A_Id_Entity_Set_) :
 # end class A_Rev_Ref_Set
 
 class _A_Role_Ref_ (_A_Rev_Ref_) :
+    """Base class for :class:`~_MOM._Attr.Type.A_Role_Ref` and :class:`_MOM._Attr.Type.A_Role_Ref_Set`."""
 
     hidden              = False
     hidden_nested       = 1
@@ -3036,48 +3499,19 @@ class A_Year (A_Int) :
 
 # end class A_Year
 
-__all__  = tuple \
-    (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
-
-__all__ += \
-    ( "decimal"
-    , "is_attr_type"
+__sphinx__members  = attr_types_of_module () + \
+    ( "Atomic_Json_Mixin"
     , "Eval_Mixin"
-    , "Q"
-    , "Pickled_Type_Spec"
     , "Syntax_Re_Mixin"
+    , "attr_types_of_module"
+    , "is_attr_type"
+    , "Pickled_Type_Spec"
     )
 
-def __doc__auto_classes () :
-    from textwrap import dedent
-    gs  = globals ()
-    lws = Regexp  ("\n +")
-    fmt = """\
-.. class:: %s
-
-%s%s
-"""
-    for k in sorted (__all__) :
-        if k.startswith ("A_") and not k == "A_Attr_Type" :
-            cls = gs [k]
-            doc = dedent ((cls.__doc__ or "%s value" & (cls.typ, )).strip ())
-            if lws.search (doc) :
-                indent = len (lws.group (0)) - 1
-            else :
-                indent = 4
-                doc    = doc.replace ("\n", "\n    ")
-            yield fmt % (k, " " * indent, doc)
-# end def __doc__auto_classes
+__all__ = __sphinx__members + ("decimal", "Q")
 
 ### «text» ### start of documentation
 __doc__ = r"""
-Class `MOM.Attr.A_Attr_Type`
-============================
-
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-.. class:: A_Attr_Type
-
     `MOM.Attr.A_Attr_Type` provides the framework for defining the
     type of essential or non-essential attributes of essential objects
     and links. It is the root class for a hierarchy of classes defining
@@ -3093,122 +3527,6 @@ Class `MOM.Attr.A_Attr_Type`
     defining concrete attributes **must** not start with `A_` to avoid
     terminal confusion.
 
-    Abstract attribute types are characterized by the properties:
-
-    .. attribute:: name
-
-      Specified by the name of the class.
-
-    .. attribute:: syntax
-
-      Provides information about the syntax required for the
-      attribute.
-
-    .. attribute:: typ
-
-      Defines the human-readable name of
-      the abstract attribute type, e.g., `int`, `string`, or `name`.
-
-    .. _`raw value`:
-
-    .. attribute:: needs_raw_value
-
-      Specifies if the raw value needs to be stored for
-      this attribute type.
-
-      A raw value is a string representation of an attribute's value. Raw
-      values are what is displayed and entered in a user interface. Internally,
-      the raw value is converted to a cooked value.
-
-      Depending on the attribute type, raw values can differ from cooked
-      values. For instance, for attributes like ``last_name`` and
-      ``first_name`` of the essential type ``PAP.Person`` the cooked value is
-      derived from the raw value by converting it to lower case. For attribute
-      values denoting frequencies, the raw value is a string that can contain a
-      unit like ``kHz`` or ``GHz``, while the cooked value is a floating point
-      value normalized to ``Hz``.
-
-    Concrete attribute types are characterized by the properties:
-
-    .. attribute:: name
-
-      Specified by the name of the class.
-
-    .. attribute:: description
-
-      A short description of the attribute in question.
-      This is for example used for displaying a short help text.
-
-      Normally specified via the doc-string of the
-      class (but can also be defined by defining a class attribute
-      `description`).
-
-    .. attribute:: explanation
-
-      A long description of the attribute in question
-      (optional). This is used for the documentation of the attribute
-      (together with `description`) and is for example displayed by
-      an attribute browser.
-
-    .. attribute:: kind
-
-      Refers to the specific class defining the
-      :class:`~_MOM._Attr.Kind.Kind` of the attribute in question.
-
-    .. attribute:: Kind_Mixins
-
-      A number of mixins for the `kind` to be used for this
-      attribute. Some of the possible mixins are
-      :class:`~_MOM._Attr.Kind.Computed_Mixin`,
-      :class:`~_MOM._Attr.Kind.Sticky_Mixin`, and
-      :class:`~_MOM._Attr.Kind.Init_Only_Mixin`.
-
-      This is optional and defaults to `()`.
-
-    .. attribute:: check
-
-      Specifies a tuple of expressions that constrain the possible
-      values of the attribute. e.g. '0 <= this <= 100'.
-
-      This is optional and defaults to `()`.
-
-    .. attribute:: default
-
-      Defines the default value to be used for the
-      attribute when no explicit value is defined by the tool's user.
-
-      This is optional and defaults to `None`.
-
-      `default` **must** not be specified for
-      :class:`~_MOM._Attr.Kind.Primary` and
-      :class:`~_MOM._Attr.Kind.Necessary` attributes.
-
-    .. attribute:: computed
-
-      A method that's used to compute a value if none is
-      specified by the tool user for
-      :class:`~_MOM._Attr.Kind.Optional` attributes with the
-      :class:`~_MOM._Attr.Kind.Computed_Mixin` or
-      one of the internal attributes kinds
-      :class:`~_MOM._Attr.Kind.Sync_Cached`,
-      :class:`~_MOM._Attr.Kind.Query`,
-      :class:`~_MOM._Attr.Kind.Once_Cached`, or
-      :class:`~_MOM._Attr.Kind.Computed`.
-
-    .. attribute:: group
-
-      A string that can be used to group a set of attributes
-      together. For instance, editors might display attributes sorted
-      alphabetically by `(group, name)`.
-
-    .. attribute:: rank
-
-      Used when sorting attributes.
-
-    .. attribute:: store_default
-
-      Specifies whether the default value should be
-      stored in the database (unless explicitly specified, it isn't).
 
     Attribute types provide the computed property:
 
@@ -3217,7 +3535,7 @@ Class `MOM.Attr.A_Attr_Type`
       Specifies the database signature of the attribute type. This includes
       properties like `max_length`, `needs_raw_value`, etc.
 
-""" + "\n".join (__doc__auto_classes ())
+"""
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

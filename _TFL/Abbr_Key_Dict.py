@@ -13,12 +13,12 @@
 #
 # Purpose
 #    Dictionary supporting unique abbreviations of a key to be used as
-#    arguments for `__getitem__'
+#    arguments for `__getitem__`
 #
 # Revision Dates
 #    26-Feb-1999 (CT) Creation
-#     8-Apr-1999 (CT) `__init__' added
-#    15-Dec-1999 (CT) Inherit from `D_Dict' instead of `UserDict'
+#     8-Apr-1999 (CT) `__init__` added
+#    15-Dec-1999 (CT) Inherit from `D_Dict` instead of `UserDict`
 #    11-Jun-2003 (CT) s/!= None/is not None/
 #    19-Apr-2004 (CT) `really_has_key` added
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
@@ -30,39 +30,6 @@
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
-
-"""
->>> d = Abbr_Key_Dict (a = 1, ab = 2, abc = 3, bertie = 4, bingo = 5)
->>> d ["a"], d ["ab"], d ["abc"]
-(1, 2, 3)
->>> d ["be"], d ["ber"], d ["bertie"]
-(4, 4, 4)
->>> with expect_except (Ambiguous_Key) :
-...      d ["b"] # doctest:+ELLIPSIS
-Ambiguous_Key: "b matches more than 1 key: ['bertie', 'bingo']"
->>> d ["berties"]
-Traceback (most recent call last):
-  ...
-KeyError: 'berties'
->>> d.matching_keys ("a")
-['a']
->>> d.matching_keys ("b")
-['bertie', 'bingo']
->>> d.matching_keys ("be")
-['bertie']
->>> "a" in d, d.has_key ("a")
-(True, True)
->>> "ab" in d, d.has_key ("ab")
-(True, True)
->>> "abc" in d, d.has_key ("abc")
-(True, True)
->>> "b" in d, d.has_key ("b")
-(False, False)
->>> "be" in d, d.has_key ("be")
-(False, True)
->>> "bertie" in d, d.has_key ("bertie")
-(True, True)
-"""
 
 from   _TFL      import TFL
 from   _TFL.pyk  import pyk
@@ -76,7 +43,7 @@ class Ambiguous_Key (KeyError) :
 
 class Abbr_Key_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
     """Dictionary supporting unique abbreviations of a key to be used as
-       arguments for `__getitem__'.
+       arguments for `__getitem__`.
     """
 
     def __getitem__ (self, key) :
@@ -91,7 +58,7 @@ class Abbr_Key_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
     # end def __getitem__
 
     def matching_keys (self, abbr) :
-        """Returns a list of all keys matching `abbr' if any."""
+        """Returns a list of all keys matching `abbr` if any."""
         if abbr in self :
             return [abbr]
         elif isinstance (abbr, str) :
@@ -100,7 +67,7 @@ class Abbr_Key_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
     # end def matching_keys
 
     def matching_key (self, abbr) :
-        """Returns the key matching `abbr' if any."""
+        """Returns the key matching `abbr` if any."""
         matching = self.matching_keys (abbr)
         if len (matching) == 1 :
             return matching [0]
@@ -115,6 +82,41 @@ class Abbr_Key_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
     # end def really_has_key
 
 # end class Abbr_Key_Dict
+
+__test__ = dict \
+    ( test = """
+    >>> d = Abbr_Key_Dict (a = 1, ab = 2, abc = 3, bertie = 4, bingo = 5)
+    >>> d ["a"], d ["ab"], d ["abc"]
+    (1, 2, 3)
+    >>> d ["be"], d ["ber"], d ["bertie"]
+    (4, 4, 4)
+    >>> with expect_except (Ambiguous_Key) :
+    ...      d ["b"] # doctest:+ELLIPSIS
+    Ambiguous_Key: "b matches more than 1 key: ['bertie', 'bingo']"
+    >>> d ["berties"]
+    Traceback (most recent call last):
+      ...
+    KeyError: 'berties'
+    >>> d.matching_keys ("a")
+    ['a']
+    >>> d.matching_keys ("b")
+    ['bertie', 'bingo']
+    >>> d.matching_keys ("be")
+    ['bertie']
+    >>> "a" in d, d.has_key ("a")
+    (True, True)
+    >>> "ab" in d, d.has_key ("ab")
+    (True, True)
+    >>> "abc" in d, d.has_key ("abc")
+    (True, True)
+    >>> "b" in d, d.has_key ("b")
+    (False, False)
+    >>> "be" in d, d.has_key ("be")
+    (False, True)
+    >>> "bertie" in d, d.has_key ("bertie")
+    (True, True)
+    """
+    )
 
 if __name__ != "__main__" :
     TFL._Export ("*")

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,8 @@
 # Revision Dates
 #    15-Jun-2013 (CT) Creation
 #    17-Jun-2013 (CT) Add `_MOM_Link_n_` to `MOM_bases`, `MOM_base_parents`
+#    13-Aug-2015 (CT) Add module docstring, improve class docstrings
+#    14-Aug-2015 (CT) Change `_Lazy_Resolver_._derived` to set `immaterial`
 #    ««revision-date»»···
 #--
 
@@ -119,6 +121,7 @@ class _Lazy_Resolver_ (TFL.Meta.Object) :
             ( name_postfix  = postfix
             , _real_name    = name
             , head_mixins   = (mixin, ) if mixin else ()
+            , immaterial    = True
             , is_partial    = True
             , PNS           = PNS
             , __doc__       = _doc_pat.sub
@@ -135,9 +138,11 @@ class Derived_PNS \
           ( TFL.Meta.BaM
               (Derived_Package_Namespace, metaclass = TFL.Meta.M_Class)
           ) :
-    """Package_Namespace derived from the `MOM` package namespace with a lazy
-       resolver for derived base classes like `Entity`, `Id_Entity`, `Object`,
-       `Link1`, etc.
+    """Package_Namespace derived from the :mod:`MOM<_MOM>` package namespace
+       with a lazy resolver for derived base classes like `Entity`,
+       `Id_Entity`, `Object`, `Link1`, etc.
+
+       `Derived_PNS` is typically used for partial object models.
     """
 
     def __init__ (self, * lazy_resolvers, ** kw) :
@@ -163,9 +168,12 @@ class Derived_PNS \
 
 class Underived_PNS \
           (TFL.Meta.BaM (Package_Namespace, metaclass = TFL.Meta.M_Class)) :
-    """Package_Namespace based on, but not derived from, from the `MOM`
-       package namespace with a lazy resolver for derived base classes like
-       `Entity`, `Id_Entity`, `Object`, `Link1`, etc.
+    """Package_Namespace based on, but not derived from, from the
+       :mod:`MOM<_MOM>` package namespace with a lazy resolver for derived base
+       classes like `Entity`, `Id_Entity`, `Object`, `Link1`, etc.
+
+       `Underived_PNS` is typically used for the top-level
+       application-specific object model.
     """
 
     def __init__ (self, * lazy_resolvers, ** kw) :
@@ -187,6 +195,18 @@ class Underived_PNS \
     # end def __init__
 
 # end class Underived_PNS
+
+### «text» ### start of documentation
+__doc__ = r"""
+This module provides the classes :class:`Derived_PNS` and
+:class:`Underived_PNS` to define :class:`package
+namespace<_TFL.Package_Namespace.Package_Namespace>` instances, called PNS,
+for MOM object models. `Derived_PNS` and `Underived_PNS` will automatically
+derive PNS-specific sub-classes with the correct
+attr:`~_MOM.Entity.Id_Entity.PNS` value for classes like `PNS.Id_Entity`,
+`PNS.Object`, and `PNS.Link2`.
+
+"""
 
 if __name__ != "__main__" :
     MOM._Export ("*")

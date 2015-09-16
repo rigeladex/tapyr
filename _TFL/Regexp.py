@@ -319,11 +319,9 @@ class Dict_Replacer (Re_Replacer) :
     """Replace all keys (which are assumed to be plain strings, not regexpes)
        of a dictionary with the corresponding values.
 
-       ::
-
-    >>> dr = Dict_Replacer ({"--" : "\\endash", "---" : "\\emdash"})
-    >>> print (dr ("TeX interprets `--` as an en-dash and `---` as an em-dash"))
-    TeX interprets `\\endash` as an en-dash and `\\emdash` as an em-dash
+       >>> dr = Dict_Replacer ({"--" : "\\endash", "---" : "\\emdash"})
+       >>> print (dr ("TeX interprets `--` as an en-dash and `---` as an em-dash"))
+       TeX interprets `\\endash` as an en-dash and `\\emdash` as an em-dash
     """
 
     def __init__ (self, __dict = {}, __flags = 0, ** kw) :
@@ -365,9 +363,6 @@ class Multi_Re_Replacer (TFL.Meta.Object) :
 # end class Multi_Re_Replacer
 
 __doc__ = """
-
-Module `Regexp`
-=================
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 

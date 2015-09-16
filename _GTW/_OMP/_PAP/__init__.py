@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This package is part of the package GTW.OMP.
@@ -27,7 +27,7 @@ from   _GTW._OMP              import OMP
 from   _MOM                   import MOM
 import _MOM.Derived_PNS
 
-_desc_ = """
+_desc_ = __doc__ = """
 Partial object model for (natural and legal) persons and their (contact)
 properties.
 """

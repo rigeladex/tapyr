@@ -112,6 +112,7 @@
 #     5-May-2015 (CT) Remove obsolete class variable `is_universe`
 #     5-May-2015 (CT) Add `after_commit_callback`
 #     6-Aug-2015 (CT) Improve documentation (access to E_Type_Managers)
+#    12-Aug-2015 (CT) Remove obsolete `compute_defaults_internal`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
@@ -454,37 +455,6 @@ class Scope (TFL.Meta.Object) :
                 cb (self, ucc)
     # end def commit
 
-    @TFL.Meta.Lazy_Method_RLV
-    def compute_defaults_internal (self, gauge = Gauge_Logger ()) :
-        """Lazily call `compute_defaults_internal` for all entities."""
-        with self.as_active () :
-            sk = TFL.Sorted_By ("id")
-            gauge.reset ("Compute default internal attributes")
-            for et in self.T_Extension :
-                et.compute_type_defaults_internal ()
-            for e in self.entity_iter_gauge \
-                    (gauge, label = "Reset syncable attributes") :
-                e.reset_syncable ()
-            for e in self.entity_iter_gauge \
-                    (gauge, sort_key = sk, label = "Sync attributes") :
-                e.sync_attributes ()
-            for e in self.entity_iter_gauge \
-                    ( gauge
-                    , sort_key = sk
-                    , label = "Computing default internal attributes"
-                    ) :
-                try :
-                    e.compute_defaults_internal ()
-                except Exception as exc :
-                    print \
-                        ( "Exception in compute_defaults_internal for %s:\n    %s"
-                        % (e, exc)
-                        , file = sys.stderr
-                        )
-                    if __debug__ :
-                        traceback.print_exc ()
-    # end def compute_defaults_internal
-
     def copy (self, app_type, db_url) :
         """Copy all entities and change-history  of `self` into a new
            scope for `app_type` and `db_url`.
@@ -594,10 +564,6 @@ class Scope (TFL.Meta.Object) :
         """Returns all objects which are globally incorrect (i.e., violating
            the object's `system` predicates).
         """
-        try :
-            self.compute_defaults_internal (gauge)
-        except MOM.Error.Invariant :
-            pass
         with self.as_active () :
             return self._check_inv (gauge, "system")
     # end def g_incorrect
@@ -881,10 +847,8 @@ class Scope (TFL.Meta.Object) :
 
 atexit.register (Scope.destroy_all)
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Scope`
-====================
-
 .. class:: Scope
 
     `MOM.Scope` maps the object model of a specific derived
@@ -956,11 +920,11 @@ Class `MOM.Scope`
 
     **`Scope` provides the class and instance methods:**
 
-    .. automethod:: add_after_commit_callback
+    .. automethod:: add_after_commit_callback(* callbacks)
 
-    .. automethod:: add_init_callback
+    .. automethod:: add_init_callback(* callbacks)
 
-    .. automethod:: add_kill_callback
+    .. automethod:: add_kill_callback(* callbacks)
 
     **`Scope` provides the instance methods:**
 
@@ -980,11 +944,11 @@ Class `MOM.Scope`
 
     .. automethod:: entity_type
 
-    .. automethod:: g_incorrect
+    .. automethod:: g_incorrect()
 
     .. automethod:: has_changed
 
-    .. automethod:: i_incorrect
+    .. automethod:: i_incorrect()
 
     .. automethod:: nested_change_recorder
 
@@ -992,7 +956,7 @@ Class `MOM.Scope`
 
     .. automethod:: query_changes
 
-    .. automethod:: r_incorrect
+    .. automethod:: r_incorrect()
 
     .. automethod:: record_change
 

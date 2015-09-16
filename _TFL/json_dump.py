@@ -143,9 +143,6 @@ def to_string (cargo, default = default, sort_keys = True, ** kw) :
 # end def to_string
 
 __doc__ = """
-Module `json_dump`
-===================
-
 This modules provides functions to customize json serialization.
 
 .. function:: default(o)

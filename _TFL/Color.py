@@ -881,11 +881,6 @@ __all__ = tuple \
     )
 
 __doc__ = """
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
-Module `Color`
-==========================
-
 Classes modelling various color representations::
 
     >>> c = RGB_8 (255, 0, 0)

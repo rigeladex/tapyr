@@ -33,10 +33,13 @@ import _TFL.CAO
 
 def bayesian (p_h, p_o_h, p_o_not_h) :
     """Calculate the probability of hypothesis `h` given the new observation
-       `o`, where
+       `o`, where ::
+
        - `p_h` is the probability before the new observation was made,
+
        - `p_o_h` is the probability of the observation when the
          hypothesis `h` is true,
+
        - `p_o_not_h` is the probability of the observation when the
          hypothesis `h` is false.
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -325,9 +325,6 @@ def tempfile_name (in_dir = None, create_dir = False) :
 # end def tempfile_name
 
 __doc__ = """
-
-Module `sos`
-=============
 
 Wrapper around module `os`; improves portability of some functions.
 

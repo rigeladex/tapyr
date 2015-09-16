@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC
+    "-//W3C//DTD SVG 1.1//EN"
+    "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg class="MOM-Graph" preserveAspectRatio="xMinYMin" version="1.1"
+     viewBox="0 0 1280 550" width="100%" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+  <title>
+    EVT graph
+  </title>
+  <defs>
+    <marker id="MOM:AM" fill="none" markerHeight="4"
+            markerUnits="strokeWidth" markerWidth="4" orient="auto" refX="0"
+            refY="35" stroke="#FFA022" viewBox="0 0 70 70"
+    >
+      <path d="m 0,0 0,70 25.0,-15.0 0,-40.0 -25.0,-15.0 z" fill="#FFA022"
+            fill-opacity="0.7" stroke="none"
+      >
+      </path>
+      <path d="m 35.0,20.0 0,30.0 25.0,-15.0 -25.0,-15.0 z" fill="#FFA022"
+            fill-opacity="0.7" stroke="none"
+      >
+      </path>
+      <path d="m 25.0,15.0 10.0,5.0 0,30.0 -10.0,5.0 0,-40.0 z" fill="#FFF"
+            stroke="none"
+      >
+      </path>
+    </marker>
+    <marker id="MOM:IM" fill="none" markerHeight="3"
+            markerUnits="strokeWidth" markerWidth="3" orient="auto" refX="8"
+            refY="5" stroke="#08D" stroke-opacity="0.45" viewBox="0 0 10 10"
+    >
+      <path d="M 0  0 L 10 5 0 2 z">
+      </path>
+      <path d="M 0 10 L 10 5 0 8 z">
+      </path>
+    </marker>
+    <marker id="MOM:RM" fill="none" markerHeight="3"
+            markerUnits="strokeWidth" markerWidth="3" orient="auto" refX="0"
+            refY="2" stroke="#666" viewBox="0 0 4 4"
+    >
+      <path d="M 4 0 L 0 0  0 4  4 4">
+      </path>
+    </marker>
+  </defs>
+  <g id="EVT.Calendar" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      EVT.Calendar: Model a calendar of events.
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="400"
+          y="75"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="409" y="75">
+      <tspan dx="0" dy="27.0" x="409">
+        EVT.Calendar
+      </tspan>
+    </text>
+  </g>
+  <g id="EVT.Event" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      EVT.Event: Model a calendary event (or set of recurring events)
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="400"
+          y="375"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="409"
+          y="375"
+    >
+      <tspan dx="0" dy="27.0" x="409">
+        EVT.Event
+      </tspan>
+    </text>
+  </g>
+  <g id="EVT.Recurrence_Rule" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      EVT.Recurrence_Rule: Recurrence rule specifying a set of dates to include or exclude.
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="1040"
+          y="375"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="1049"
+          y="375"
+    >
+      <tspan dx="0" dy="27.0" x="1049">
+        EVT.Recurrence
+      </tspan>
+      <tspan dx="9" dy="27.0" x="1049">
+        _Rule
+      </tspan>
+    </text>
+  </g>
+  <g id="EVT.Recurrence_Spec" fill="#EDEDED" class="E_Type" opacity="1.0">
+    <title>
+      EVT.Recurrence_Spec: Specification for recurrency of event.
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="720"
+          y="375"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="729"
+          y="375"
+    >
+      <tspan dx="0" dy="27.0" x="729">
+        EVT.Recurrence
+      </tspan>
+      <tspan dx="9" dy="27.0" x="729">
+        _Spec
+      </tspan>
+    </text>
+  </g>
+  <g id="MOM.Id_Entity" fill="#EDEDED" class="E_Type" opacity="0.6">
+    <title>
+      MOM.Id_Entity: Root class for MOM entities with identity, i.e.,
+             objects and links.
+          
+    </title>
+    <rect height="100" stroke="#999" stroke-width="4" width="160" x="80"
+          y="375"
+    />
+    <text fill="#003" font-family="sans-serif" font-size="18" x="89" y="375">
+      <tspan dx="0" dy="27.0" x="89">
+        MOM.Id_Entity
+      </tspan>
+    </text>
+  </g>
+  <g id="EVT.Event.calendar:EVT.Calendar" opacity="1.0">
+    <title>
+      EVT.Event attribute calendar: Calendar to which the event belongs
+    </title>
+    <polyline fill="none" marker-start="url(#MOM:AM)"
+              points="480,375 480,175" stroke="#FFA022" stroke-opacity="0.7"
+              stroke-width="5"
+    />
+    <path d="M 480 375 L 480 175" id="EVT.Event.calendar:EVT.Calendar::path"
+          fill="none" stroke="none"
+    >
+    </path>
+    <text fill="#FFA022" fill-opacity="0.7" font-family="sans-serif"
+          font-size="18"
+    >
+      <textPath startOffset="10%" text-anchor="start"
+                xlink:href="#EVT.Event.calendar:EVT.Calendar::path"
+      >
+        <tspan dy="-7.0">
+          calendar
+        </tspan>
+      </textPath>
+    </text>
+    <text fill="#FFA022" fill-opacity="0.7" font-family="sans-serif"
+          font-size="18"
+    >
+      <textPath startOffset="10%" text-anchor="start"
+                xlink:href="#EVT.Event.calendar:EVT.Calendar::path"
+      >
+        <tspan dy="18">
+          [primary]
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+  <g id="EVT.Event.left:MOM.Id_Entity" opacity="1.0">
+    <title>
+      EVT.Event role object: Object which this event is bound to.
+    </title>
+    <polyline fill="none" marker-start="url(#MOM:RM)"
+              points="400,425 240,425" stroke="#666" stroke-width="5"
+    />
+    <path d="M 240 425 L 400 425" id="EVT.Event.left:MOM.Id_Entity::path"
+          fill="none" stroke="none"
+    >
+    </path>
+    <text fill="#666" font-family="sans-serif" font-size="18">
+      <textPath startOffset="90%" text-anchor="end"
+                xlink:href="#EVT.Event.left:MOM.Id_Entity::path"
+      >
+        <tspan dy="-7.0">
+          left
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+  <g id="EVT.Recurrence_Rule.left:EVT.Recurrence_Spec" opacity="1.0">
+    <title>
+      EVT.Recurrence_Rule role recurrence_spec: Recurrence-spec this rule applies to.
+    </title>
+    <polyline fill="none" marker-start="url(#MOM:RM)"
+              points="1040,425 880,425" stroke="#666" stroke-width="5"
+    />
+    <path d="M 880 425 L 1040 425"
+          id="EVT.Recurrence_Rule.left:EVT.Recurrence_Spec::path"
+          fill="none" stroke="none"
+    >
+    </path>
+    <text fill="#666" font-family="sans-serif" font-size="18">
+      <textPath startOffset="90%" text-anchor="end"
+                xlink:href="#EVT.Recurrence_Rule.left:EVT.Recurrence_Spec::path"
+      >
+        <tspan dy="-7.0">
+          left
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+  <g id="EVT.Recurrence_Spec.left:EVT.Event" opacity="1.0">
+    <title>
+      EVT.Recurrence_Spec role event: Event that recurs
+    </title>
+    <polyline fill="none" marker-start="url(#MOM:RM)"
+              points="720,425 560,425" stroke="#666" stroke-width="5"
+    />
+    <path d="M 560 425 L 720 425"
+          id="EVT.Recurrence_Spec.left:EVT.Event::path" fill="none"
+          stroke="none"
+    >
+    </path>
+    <text fill="#666" font-family="sans-serif" font-size="18">
+      <textPath startOffset="90%" text-anchor="end"
+                xlink:href="#EVT.Recurrence_Spec.left:EVT.Event::path"
+      >
+        <tspan dy="-7.0">
+          left
+        </tspan>
+      </textPath>
+    </text>
+    <text fill="#666" font-family="sans-serif" font-size="18">
+      <textPath startOffset="90%" text-anchor="end"
+                xlink:href="#EVT.Recurrence_Spec.left:EVT.Event::path"
+      >
+        <tspan dy="18">
+          0 .. 1
+        </tspan>
+      </textPath>
+    </text>
+  </g>
+</svg>

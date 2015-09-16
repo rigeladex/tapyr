@@ -55,7 +55,7 @@ def formatted_column (c) :
         tail.append \
             ( "%s %s %s"
             % ( c_MOM_Kind.__class__.__name__
-              , c_MOM_Kind.typ
+              , c_MOM_Kind.attr.typ
               , getattr (c_MOM_Kind, "name", c_MOM_Kind)
               )
             )

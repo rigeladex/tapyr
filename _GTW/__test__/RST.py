@@ -771,7 +771,7 @@ _test_doc = r"""
                   , 'kind' : 'required'
                   , 'name' : 'skipper'
                   , 'p_type' : 'Sailor'
-                  , 'type' : 'Entity'
+                  , 'type' : 'Sailor'
                   , 'type_name' : 'SRM.Sailor'
                   , 'ui_name' : 'Skipper'
                   , 'url' : '/Doc/SRM-Sailor'
@@ -875,7 +875,6 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : False
                   , 'kind' : 'internal'
-                  , 'max_length' : 64
                   , 'name' : 'type_name'
                   , 'p_type' : 'str'
                   , 'type' : 'String'
@@ -1008,7 +1007,7 @@ _test_doc = r"""
                   , 'kind' : 'primary'
                   , 'name' : 'boat_class'
                   , 'p_type' : '_Boat_Class_'
-                  , 'type' : 'Entity'
+                  , 'type' : '_Boat_Class_'
                   , 'type_name' : 'SRM._Boat_Class_'
                   , 'ui_name' : 'Boat class'
                   , 'url' : '/Doc/SRM-_Boat_Class_'
@@ -1191,7 +1190,6 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : False
                   , 'kind' : 'internal'
-                  , 'max_length' : 64
                   , 'name' : 'type_name'
                   , 'p_type' : 'str'
                   , 'type' : 'String'
@@ -1223,7 +1221,7 @@ _test_doc = r"""
                   , 'ui_name' : 'Races counted'
                   }
                 , { 'default_value' : ''
-                  , 'description' : 'Integer value.'
+                  , 'description' : 'A integer value.'
                   , 'example' : '42'
                   , 'is_changeable' : False
                   , 'is_required' : False
@@ -1292,7 +1290,7 @@ _test_doc = r"""
                   , 'kind' : 'primary'
                   , 'name' : 'boat_class'
                   , 'p_type' : 'Boat_Class'
-                  , 'type' : 'Entity'
+                  , 'type' : 'Boat_Class'
                   , 'type_name' : 'SRM.Boat_Class'
                   , 'ui_name' : 'Boat class'
                   , 'url' : '/Doc/SRM-Boat_Class'
@@ -1488,7 +1486,6 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : False
                   , 'kind' : 'internal'
-                  , 'max_length' : 64
                   , 'name' : 'type_name'
                   , 'p_type' : 'str'
                   , 'type' : 'String'
@@ -1520,7 +1517,7 @@ _test_doc = r"""
                   , 'ui_name' : 'Races counted'
                   }
                 , { 'default_value' : ''
-                  , 'description' : 'Integer value.'
+                  , 'description' : 'A integer value.'
                   , 'example' : '42'
                   , 'is_changeable' : False
                   , 'is_required' : False
@@ -1532,7 +1529,7 @@ _test_doc = r"""
                   , 'ui_name' : 'Year'
                   }
                 , { 'default_value' : ''
-                  , 'description' : 'Integer value.'
+                  , 'description' : 'A integer value.'
                   , 'example' : '42'
                   , 'is_changeable' : False
                   , 'is_required' : False
@@ -1616,7 +1613,7 @@ _test_doc = r"""
                   , 'kind' : 'primary'
                   , 'name' : 'boat_class'
                   , 'p_type' : 'Handicap'
-                  , 'type' : 'Entity'
+                  , 'type' : 'Handicap'
                   , 'type_name' : 'SRM.Handicap'
                   , 'ui_name' : 'Handicap'
                   , 'url' : '/Doc/SRM-Handicap'
@@ -1799,7 +1796,6 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : False
                   , 'kind' : 'internal'
-                  , 'max_length' : 64
                   , 'name' : 'type_name'
                   , 'p_type' : 'str'
                   , 'type' : 'String'
@@ -1831,7 +1827,7 @@ _test_doc = r"""
                   , 'ui_name' : 'Races counted'
                   }
                 , { 'default_value' : ''
-                  , 'description' : 'Integer value.'
+                  , 'description' : 'A integer value.'
                   , 'example' : '42'
                   , 'is_changeable' : False
                   , 'is_required' : False
@@ -1987,7 +1983,6 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : False
                   , 'kind' : 'internal'
-                  , 'max_length' : 64
                   , 'name' : 'type_name'
                   , 'p_type' : 'str'
                   , 'type' : 'String'
@@ -5031,7 +5026,6 @@ _test_rat = r"""
                   , 'is_required' : False
                   , 'is_settable' : False
                   , 'kind' : 'internal'
-                  , 'max_length' : 64
                   , 'name' : 'type_name'
                   , 'p_type' : 'str'
                   , 'type' : 'String'

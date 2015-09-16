@@ -49,9 +49,6 @@
 #--
 
 """
-Module `Filter`
-================
-
 This module provides some classes for filtering iterables::
 
     >>> def pprint (x) :

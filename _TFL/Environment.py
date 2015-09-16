@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,13 +16,13 @@
 #
 # Revision Dates
 #    17-Apr-1998 (CT)  Creation
-#    16-Feb-1999 (CT)  Added `script_name' and `script_path'
-#    16-Feb-1999 (CT)  Added `path_of' and `path_contains'
-#    17-Feb-1999 (CT)  `path_expanded' added
-#    13-Apr-2000 (CT)  `frozen' added
-#    14-Apr-2000 (CT)  `module_path' added
-#    25-Apr-2000 (CT)  `system' added
-#    26-Apr-2000 (CT)  `default_dir' and `home_dir' added
+#    16-Feb-1999 (CT)  Added `script_name` and `script_path`
+#    16-Feb-1999 (CT)  Added `path_of` and `path_contains`
+#    17-Feb-1999 (CT)  `path_expanded` added
+#    13-Apr-2000 (CT)  `frozen` added
+#    14-Apr-2000 (CT)  `module_path` added
+#    25-Apr-2000 (CT)  `system` added
+#    26-Apr-2000 (CT)  `default_dir` and `home_dir` added
 #    13-Sep-2001 (AGO) Workaround for default paths of frozen modules
 #    13-May-2003 (CT)  `module_path` changed to look in `sys.modules` first
 #                      (can't be bothered to tweak `imp.find_module` for
@@ -147,9 +147,9 @@ def script_path () :
 # end def script_path
 
 def path_expanded (filename) :
-    """Returns filename expanded by `path_of (filename)'.
+    """Returns filename expanded by `path_of (filename)`.
 
-       If no path is found for `filename', it is returned as is.
+       If no path is found for `filename`, it is returned as is.
     """
     path = path_of (filename)
     if path :
@@ -159,9 +159,9 @@ def path_expanded (filename) :
 # end def path_expanded
 
 def path_of (filename) :
-    """Returns path where `filename' resides. `path_of' looks in the
+    """Returns path where `filename` resides. `path_of` looks in the
        directory of the current python-script and in the python path and
-       returns the first directory containing `filename'.
+       returns the first directory containing `filename`.
     """
     sc_path = script_path ()
     if path_contains (sc_path, filename) :
@@ -173,7 +173,7 @@ def path_of (filename) :
 # end def path_of
 
 def path_contains (path, filename) :
-    """Returns `path' if there exists a file named `filename' there."""
+    """Returns `path` if there exists a file named `filename` there."""
     if sos.path.isfile (sos.path.join (path, filename)) :
         return path
     else :
@@ -193,7 +193,7 @@ _module_pathes = {}
 # sys.path which imp.find_module does not understand. Remove workaround
 # when either one is fixed.
 def module_path (module) :
-    """Returns path where `module' resides"""
+    """Returns path where `module` resides"""
     # print ">>> sys.path = %s" % sys.path #AGO
     # print ">>> dir () = %s" % dir () #AGO
     if module not in _module_pathes :

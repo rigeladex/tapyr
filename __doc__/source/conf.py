@@ -17,6 +17,10 @@ import sys
 import os
 import shlex
 
+import sphinx_auto_imports
+
+NOW = datetime.datetime.now ()
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -33,13 +37,15 @@ import shlex
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
+    'sphinx.ext.viewcode',
+    '_TFL.sphinx_autodoc',
+    '_MOM.sphinx_autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
 ]
 
 autodoc_member_order = "bysource"
-autodoc_default_flags = ["show-inheritance", "special-members"]
+autodoc_default_flags = ["show-inheritance"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -57,7 +63,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'tapyr'
-copyright = u'1998-%s, Christian Tanzer' % (datetime.datetime.now ().year, )
+copyright = u'1998-%s, Christian Tanzer' % (NOW.year, )
 author = u'Christian Tanzer'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -132,10 +138,10 @@ html_theme = 'sphinx_rtd_theme'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title = "Tapyr documentation"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+html_short_title = "Tapyr"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -158,7 +164,7 @@ html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%Y-%m-%d'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -300,10 +306,11 @@ texinfo_documents = [
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = project
+epub_title = NOW.strftime ("Tapyr doc, %Y-%m-%d")
 epub_author = author
 epub_publisher = author
 epub_copyright = copyright
+epub_identifier = "https://github.com/Tapyr/tapyr"
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = project
@@ -347,6 +354,7 @@ epub_exclude_files = ['search.html']
 
 # The depth of the table of contents in toc.ncx.
 #epub_tocdepth = 3
+epub_tocdepth = 2
 
 # Allow duplicate toc entries.
 #epub_tocdup = True
@@ -362,6 +370,7 @@ epub_exclude_files = ['search.html']
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #epub_show_urls = 'inline'
+epub_show_urls = "footnote"
 
 # If false, no index is generated.
 #epub_use_index = True

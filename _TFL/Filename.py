@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,26 +16,26 @@
 #
 # Revision Dates
 #    16-Apr-1998 (CT) Creation
-#    20-Apr-1999 (CT) `__str__' and `__repr__' added
-#    16-Jul-1999 (CT) `abs_directory' added
-#    16-Jul-1999 (CT) `normpath' applied to `directory'
-#    19-Jul-1999 (CT) Use `os.path.abspath' if available
+#    20-Apr-1999 (CT) `__str__` and `__repr__` added
+#    16-Jul-1999 (CT) `abs_directory` added
+#    16-Jul-1999 (CT) `normpath` applied to `directory`
+#    19-Jul-1999 (CT) Use `os.path.abspath` if available
 #    17-Sep-1999 (MY) Complete documentation of the module
 #    29-Sep-1999 (MY) Spellcheck the comments and put comment-endmarker in
 #                     a separate line
-#    28-Oct-1999 (CT) `base_ext' added
+#    28-Oct-1999 (CT) `base_ext` added
 #     7-Dec-1999 (CT) Hack around bug in os.path.split of Win32 Python 1.5.1
-#     7-Dec-1999 (CT) `abs_name' added
-#     3-Feb-2000 (CT) `default_dir' added
-#     3-May-2000 (CT) `__cmp__' and `__hash__' added
-#    31-Jul-2000 (CT) `make_absolute' added
-#    18-Dec-2000 (CT) `default_rel' added
-#    19-Feb-2001 (CT) Stub for `relative_to' added
-#    20-Feb-2001 (CT) `relative_to' added (as implemented by (ARU) and (MFE))
-#    20-Feb-2001 (CT) Unit tests for `relative_to' added
+#     7-Dec-1999 (CT) `abs_name` added
+#     3-Feb-2000 (CT) `default_dir` added
+#     3-May-2000 (CT) `__cmp__` and `__hash__` added
+#    31-Jul-2000 (CT) `make_absolute` added
+#    18-Dec-2000 (CT) `default_rel` added
+#    19-Feb-2001 (CT) Stub for `relative_to` added
+#    20-Feb-2001 (CT) `relative_to` added (as implemented by (ARU) and (MFE))
+#    20-Feb-2001 (CT) Unit tests for `relative_to` added
 #    26-Feb-2001 (ARU) Unit tests for 'Filename' constructor/selector axioms
 #                      added
-#    26-Feb-2001 (CT) `__init__' changed to apply `path.normpath' only to
+#    26-Feb-2001 (CT) `__init__` changed to apply `path.normpath` only to
 #                     non-empty directories
 #    26-Feb-2001 (CT) Unit tests corrected
 #     3-May-2001 (CT) Doc-test added and style of test formatting changed
@@ -108,8 +108,8 @@ class Filename (TFL.Meta.Object) :
        base        basic file name
        ext         extension of the filename
        directory   path of the filename
-       base_ext    `base' + `ext'
-       name        complete filename including `directory', `base', and `ext'
+       base_ext    `base` + `ext`
+       name        complete filename including `directory`, `base`, and `ext`
 
        For example:
 
@@ -170,19 +170,19 @@ class Filename (TFL.Meta.Object) :
     _base_ext = property (lambda s : s.base_ext)
 
     def __init__ (self, name, * defaults, ** kw) :
-        """Constructs the filename from the `name' and the optional `defaults'
-           for `name', `directory', and `extension'. Default types that are
+        """Constructs the filename from the `name` and the optional `defaults`
+           for `name`, `directory`, and `extension`. Default types that are
            already specified are ignored.
 
            name         name of the file specifying one or more of the
-                        components `directory', `base', and `ext'
+                        components `directory`, `base`, and `ext`
 
            defaults     arbitrary number of strings (or Filenames) with
-                        defaults for `directory', `base', and `ext'
+                        defaults for `directory`, `base`, and `ext`
 
                         (if a default should just define a directory, it must
                         end with a directory separator -- otherwise its last
-                        part will be interpreted as `base')
+                        part will be interpreted as `base`)
 
            default_dir  specify a default directory (this string can be
                         specified with or without trailing directory separator)
@@ -244,7 +244,7 @@ class Filename (TFL.Meta.Object) :
     # end def abs_directory
 
     def abs_name (self) :
-        """Return the absolute filename corresponding to `self'."""
+        """Return the absolute filename corresponding to `self`."""
         return sos.path.join (self.abs_directory (), self._base_ext)
     # end def abs_name
 
@@ -290,14 +290,14 @@ class Filename (TFL.Meta.Object) :
     # end def real_directory
 
     def real_name (self) :
-        """Return the absolute filename corresponding to `self'
+        """Return the absolute filename corresponding to `self`
            after resolving all symlinks.
         """
         return sos.path.join (self.real_directory (), self._base_ext)
     # end def real_name
 
     def relative_to (self, other) :
-        """Returns `self' converted to a path relative to `other' (empty, if
+        """Returns `self` converted to a path relative to `other` (empty, if
            that's not possible)
 
            For example:

@@ -99,6 +99,7 @@
 #    11-Jul-2014 (CT) Change `child_np` to use `.E_Type`, not `.__class__` to
 #                     determine the `etypes` of `roles`
 #     7-Apr-2015 (CT) Redefine `_m_default_ui_name` to improve auto-`ui_name`
+#    16-Aug-2015 (CT) Add `auto_derived_p`, `auto_derived_root`
 #    ««revision-date»»···
 #--
 
@@ -119,7 +120,22 @@ import _TFL.Undef
 import itertools
 
 class M_Link (MOM.Meta.M_Id_Entity) :
-    """Meta class of link-types of MOM meta object model."""
+    """Meta class of link-types of MOM meta object model.
+
+       `MOM.Meta.M_Link` provides the meta machinery for defining
+       essential association types and link instances. It is based on
+       :class:`~_MOM._Meta.M_Entity.M_Entity`.
+
+       `M_Link` is the common base class for the arity-specific subclasses.
+
+       `M_Link` provides the attribute:
+
+       .. attribute:: Roles
+
+         The tuple of role objects (contains as many role objects as the arity
+         of the association specifies).
+
+    """
 
     auto_derive_np_kw = TFL.mm_dict_mm_dict ()
     _orn              = {}
@@ -236,7 +252,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 , (cls, )
                 , dict
                     ( auto_kw ["properties"]
-                    , _Attributes    = cls._Attributes.__class__
+                    , _Attributes        = cls._Attributes.__class__
                         ( "_Attributes"
                         , (cls._Attributes, )
                         , dict
@@ -245,9 +261,11 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                             , ** rkw
                             )
                         )
-                    , is_partial     = is_partial
-                    , PNS            = cls.PNS
-                    , __module__     = cls.__module__
+                    , auto_derived_p     = True
+                    , auto_derived_root  = cls.auto_derived_root or cls
+                    , is_partial         = is_partial
+                    , PNS                = cls.PNS
+                    , __module__         = cls.__module__
                     )
                 )
             ### reset cache
@@ -361,7 +379,11 @@ class M_Link (MOM.Meta.M_Id_Entity) :
 # end class M_Link
 
 class M_Link1 (M_Link) :
-    """Meta class of unary link-types of MOM meta object model."""
+    """Meta class of unary link-types of MOM meta object model.
+
+       `MOM.Meta.M_Link1` provides the meta machinery for
+       :class:`unary links<_MOM.Link.Link1>`.
+    """
 
     link_ref_attr_name_s = ""
     rev_ref_attr_hidden  = False
@@ -393,7 +415,11 @@ class M_Link_n (M_Link) :
 # end class M_Link_n
 
 class M_Link2 (M_Link_n) :
-    """Meta class of binary entity-based link-types of MOM meta object model."""
+    """Meta class of binary entity-based link-types of MOM meta object model.
+
+       `MOM.Meta.M_Link2` provides the meta machinery for
+       :class:`binary links<_MOM.Link.Link2>`.
+    """
 
     _orn = dict (left = "right", right = "left")
 
@@ -404,7 +430,11 @@ class M_Link2 (M_Link_n) :
 # end class M_Link2
 
 class M_Link3 (M_Link_n) :
-    """Meta class of ternary link-types of MOM meta object model."""
+    """Meta class of ternary link-types of MOM meta object model.
+
+       `MOM.Meta.M_Link3` provides the meta machinery for
+       :class:`ternary links<_MOM.Link.Link3>`.
+    """
 
 # end class M_Link3
 
@@ -578,39 +608,9 @@ class M_E_Type_Link3_Reload (MOM.Meta.M_E_Type_Id_Reload, M_E_Type_Link3) :
 
 # end class M_E_Type_Link3_Reload
 
+### «text» ### start of documentation
 __doc__ = """
-Class `MOM.Meta.M_Link`
-=========================
 
-.. class:: M_Link
-
-    `MOM.Meta.M_Link` provides the meta machinery for defining
-    essential association types and link instances. It is based on
-    :class:`~_MOM._Meta.M_Entity.M_Entity`.
-
-    `M_Link` is the common base class for the arity-specific subclasses.
-
-    `M_Link` provides the attribute:
-
-    .. attribute:: Roles
-
-      The tuple of role objects (contains as many role objects as the arity
-      of the association specifies).
-
-.. class:: M_Link1
-
-    `MOM.Meta.M_Link1` provides the meta machinery for
-    :class:`unary links<_MOM.Link.Link1>`.
-
-.. class:: M_Link2
-
-    `MOM.Meta.M_Link2` provides the meta machinery for
-    :class:`binary links<_MOM.Link.Link2>`.
-
-.. class:: M_Link3
-
-    `MOM.Meta.M_Link3` provides the meta machinery for
-    :class:`ternary links<_MOM.Link.Link3>`.
 
 """
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This package is part of the package _MOM.
@@ -55,7 +55,7 @@ and handle errors.
 
 Each predicate is characterized by
 
-- its :class:`type<_MOM._Pred.Type.Condition>`
+- its :class:`type<_MOM._Pred.Type._Condition_>`
 
 - its :class:`kind<_MOM._Pred.Kind.Kind>`
 
@@ -138,4 +138,5 @@ How to write a predicate
 
 
 """
+
 ### __END__ MOM.Pred.__init__

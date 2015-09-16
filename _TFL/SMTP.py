@@ -258,21 +258,19 @@ class SMTP_Logger (SMTP) :
 class SMTP_Tester (SMTP) :
     """Tester writing to stdout instead of connecting to SMTP server.
 
-    ::
-
-    >>> smtp = SMTP_Tester (charset = "utf-8")
-    >>> smtp (_test_email)
-    Email via localhost from sender@example.com to ['receiver@example.com']
-    <BLANKLINE>
-    Date: Tue, 20 Oct 2015 14:42:23 -0000
-    Content-Type: text/plain; charset="utf-8"
-    Content-Transfer-Encoding: 8bit
-    Subject: Test email with some diacritics
-    To: receiver@example.com
-    From: sender@example.com
-    <BLANKLINE>
-    Test email containing diacritics like ö, ä, ü, and ß.
-    <BLANKLINE>
+       >>> smtp = SMTP_Tester (charset = "utf-8")
+       >>> smtp (_test_email)
+       Email via localhost from sender@example.com to ['receiver@example.com']
+       <BLANKLINE>
+       Date: Tue, 20 Oct 2015 14:42:23 -0000
+       Content-Type: text/plain; charset="utf-8"
+       Content-Transfer-Encoding: 8bit
+       Subject: Test email with some diacritics
+       To: receiver@example.com
+       From: sender@example.com
+       <BLANKLINE>
+       Test email containing diacritics like ö, ä, ü, and ß.
+       <BLANKLINE>
 
     """
 

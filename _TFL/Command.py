@@ -221,8 +221,8 @@ class TFL_Rel_Path_Option (Option) :
     # end def kw
 
     def _gen_base_dirs (self, bds) :
+        cwd = sos.getcwd ()
         for bd in bds :
-            cwd = sos.getcwd ()
             if isinstance (bd, pyk.string_types) and bd.startswith ("$") :
                 h, _, t = split_hst (bd, "/")
                 h       = getattr (self.cmd, h [1:])
@@ -538,9 +538,6 @@ Root_Command = TFL_Root_Command # end class
 
 ### «text» ### start of documentation
 __doc__ = r"""
-Module `Command`
-=====================
-
 This module provides a framework to assemble complex **commands** with their
 **sub-commands**, **argument**, and **options**.
 
