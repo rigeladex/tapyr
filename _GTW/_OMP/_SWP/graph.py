@@ -38,7 +38,10 @@ import _MOM._Graph.Entity
 from   _TFL._D2               import Cardinal_Direction as CD
 from   _TFL.I18N              import _, _T
 
+import _TFL._Meta.Once_Property
+
 def graph (app_type) :
+    """Class/association graph displaying SWP partial object model"""
     return MOM.Graph.Spec.Graph \
         ( app_type
         , ET.SWP.Gallery
@@ -53,14 +56,15 @@ def graph (app_type) :
                 )
             , ET.SWP.Picture (offset = CD.E)
             )
-        , desc  = _T ("Graph displaying SWP partial object model")
+        , desc  = _T
+            ("Class/association graph displaying SWP partial object model")
         , title = _T ("SWP graph")
         )
 # end def graph
 
 class Command (MOM.Graph.Command) :
 
-    @property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def PNS (self) :
         return GTW.OMP.SWP
     # end def PNS

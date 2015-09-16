@@ -42,7 +42,10 @@ import _MOM._Graph.Entity
 from   _TFL._D2               import Cardinal_Direction as CD
 from   _TFL.I18N              import _, _T
 
+import _TFL._Meta.Once_Property
+
 def graph (app_type) :
+    """Class/association graph displaying SRM partial object model"""
     return MOM.Graph.Spec.Graph \
         ( app_type
         , ET.SRM.Boat_in_Regatta
@@ -86,14 +89,15 @@ def graph (app_type) :
                 , offset = CD.N * 2
                 )
             )
-        , desc  = _T ("Graph displaying SRM partial object model")
+        , desc  = _T
+            ("Class/association graph displaying SRM partial object model")
         , title = _T ("SRM graph")
         )
 # end def graph
 
 class Command (MOM.Graph.Command) :
 
-    @property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def PNS (self) :
         return GTW.OMP.SRM
     # end def PNS

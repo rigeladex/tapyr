@@ -40,7 +40,10 @@ import _MOM._Graph.Entity
 from   _TFL._D2               import Cardinal_Direction as CD
 from   _TFL.I18N              import _, _T
 
+import _TFL._Meta.Once_Property
+
 def graph (app_type) :
+    """Class/association graph describing Auth partial object model"""
     result = MOM.Graph.Spec.Graph \
         ( app_type
         , ET.Auth.Account_in_Group
@@ -51,7 +54,8 @@ def graph (app_type) :
                 ( offset = CD.E
                 )
             )
-        , desc  = _T ("Graph displaying Auth partial object model")
+        , desc  = _T
+            ("Class/association graph displaying Auth partial object model")
         , title = _T ("Auth graph")
         )
     if hasattr (GTW.OMP, "PAP") and hasattr (GTW.OMP.PAP, "Person_has_Account"):
@@ -70,7 +74,7 @@ def graph (app_type) :
 
 class Command (MOM.Graph.Command) :
 
-    @property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def PNS (self) :
         return GTW.OMP.Auth
     # end def PNS

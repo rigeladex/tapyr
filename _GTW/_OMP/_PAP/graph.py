@@ -46,7 +46,10 @@ import _MOM._Graph.Entity
 from   _TFL._D2               import Cardinal_Direction as CD
 from   _TFL.I18N              import _, _T
 
+import _TFL._Meta.Once_Property
+
 def graph (app_type) :
+    """Class/association graph displaying PAP partial object model"""
     ag_p    = hasattr (GTW.OMP.PAP, "Adhoc_Group")
     ass_p   = hasattr (GTW.OMP.PAP, "Association")
     le_p    = hasattr (GTW.OMP.PAP, "Legal_Entity")
@@ -79,7 +82,8 @@ def graph (app_type) :
                 , offset = CD.E
                 )
             )
-        , desc  = _T ("Graph displaying PAP partial object model")
+        , desc  = _T
+            ("Class/association graph displaying PAP partial object model")
         , title = _T ("PAP graph")
         )
     if hasattr (GTW.OMP.PAP, "Group") :
@@ -157,7 +161,7 @@ def graph (app_type) :
 
 class Command (MOM.Graph.Command) :
 
-    @property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def PNS (self) :
         return GTW.OMP.PAP
     # end def PNS

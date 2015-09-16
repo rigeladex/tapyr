@@ -36,7 +36,10 @@ import _MOM._Graph.Entity
 from   _TFL._D2               import Cardinal_Direction as CD
 from   _TFL.I18N              import _, _T
 
+import _TFL._Meta.Once_Property
+
 def graph (app_type) :
+    """Class/association graph describing MOM meta object model"""
     doc_p = hasattr (MOM, "Document")
     iht_p = hasattr (MOM, "Id_Entity_has_Tag")
     result = MOM.Graph.Spec.Graph \
@@ -88,7 +91,7 @@ def graph (app_type) :
 
 class Command (MOM.Graph.Command) :
 
-    @property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def PNS (self) :
         return MOM
     # end def PNS

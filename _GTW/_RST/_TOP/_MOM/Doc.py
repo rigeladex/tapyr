@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -31,6 +31,8 @@
 #    20-Feb-2014 (CT) Set `E_Type.nav_off_canvas` to True
 #    14-Apr-2014 (CT) Set `App_Type.pid` to `ET_Doc`
 #    24-Sep-2014 (CT) Prefer PNS-alias over PNS-name
+#    16-Sep-2015 (CT) Add guard to `PNS_graph` against inherited graph
+#    16-Sep-2015 (CT) DRY and simplify `_get_svg`
 #    ««revision-date»»···
 #--
 
@@ -166,9 +168,13 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         PNS = self.PNS
         if PNS :
             try :
-                return PNS._Import_Module ("graph")
+                result = PNS._Import_Module ("graph")
             except ImportError as exc :
                 pass
+            else :
+                ### Don't return if graph is inherited from parent PNS
+                if result.Command.PNS is PNS :
+                    return result
     # end def PNS_graph
 
     @Once_Property
@@ -228,13 +234,10 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
     def _get_svg (self, want_document) :
         PNS_graph = self.PNS_graph
         if PNS_graph is not None :
-            from _MOM._Graph.SVG import Renderer as SVG_Renderer
-            g = PNS_graph.graph (self.top.App_Type)
-            r = SVG_Renderer (g, want_document = want_document)
-            f = pyk.StringIO ()
-            r.render ()
-            r.canvas.write_to_xml_stream (f)
-            return f.getvalue ()
+            from _MOM._Graph.SVG import Renderer
+            graph  = PNS_graph.graph (self.top.App_Type)
+            result = graph.render    (Renderer, want_document = want_document)
+            return result
     # end def _get_svg
 
 PNS = _RST_TOP_MOM_Doc_PNS_ # end class
