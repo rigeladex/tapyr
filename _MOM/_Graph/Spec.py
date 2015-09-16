@@ -30,6 +30,7 @@
 #    14-Sep-2015 (CT) Add `Graph._graph_type`, `Graph._graph_type_map`
 #                     + Change `Attr.instantiate` to use `MOM.Id_Entity` as
 #                       `E_Type` for entries of `Graph._graph_type_map`
+#    16-Sep-2015 (CT) Add `Graph.render`, `.render_to`
 #    ««revision-date»»···
 #--
 
@@ -259,6 +260,16 @@ class Graph (TFL.Meta.Object) :
     def nodes (self, sort_key = TFL.Getter.index) :
         return sorted (pyk.itervalues (self.node_map), key = sort_key)
     # end def nodes
+
+    def render (self, Renderer, ** kw) :
+        """Render this graph via `Renderer` with arguments in `kw`"""
+        r = Renderer (self, ** kw)
+        return r.render ()
+    # end def render
+
+    def render_to (self, file, Renderer, ** kw) :
+        print (self.render (Renderer, ** kw), file = file)
+    # end def render_to
 
     def setup_links (self) :
         if not self._setup_links_p :

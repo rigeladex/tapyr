@@ -20,6 +20,8 @@
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
 #    15-Sep-2015 (CT) Add option `-all`, automatic import of `import_XXX`
+#    16-Sep-2015 (CT) Factor and DRY `render` (use `graph.render_to`)
+#    16-Sep-2015 (CT) Factor `import_default`
 #    ««revision-date»»···
 #--
 
@@ -88,18 +90,11 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
         if cmd.all :
             self.import_all ()
         else :
-            PNS = self.PNS
-            pn  = PNS.__name__.split (".") [-1]
-            PNS._Import_Module ("_".join (("import", pn)))
+            self.import_default ()
         g = self.graph (self.app_type)
         if cmd.svg or cmd.png :
             from _MOM._Graph.SVG import Renderer as SVG_Renderer
-            r = SVG_Renderer (g)
-            r.render ()
-            with self.open (cmd, "svg") as f :
-                r.canvas.write_to_xml_stream (f)
-            if cmd.verbose :
-                print ("Rendered ", f.name)
+            self.render (cmd, g, SVG_Renderer)
         if cmd.png :
             import plumbum
             inkscape = plumbum.local [b"inkscape"]
@@ -110,16 +105,18 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
                 print ("Rendered ", png_fn)
         if cmd.txt :
             from _MOM._Graph.Ascii import Renderer as Ascii_Renderer
-            r = Ascii_Renderer (g)
-            with self.open (cmd, "txt") as f :
-                print (r.render (), file = f)
-            if cmd.verbose :
-                print ("Rendered ", f.name)
+            self.render (cmd, g, Ascii_Renderer)
     # end def handler
 
     def import_all (self) :
         self.PNS._Import_All ()
     # end def import_all
+
+    def import_default (self) :
+        PNS = self.PNS
+        pn  = PNS.__name__.split (".") [-1]
+        PNS._Import_Module ("_".join (("import", pn)))
+    # end def import_default
 
     @TFL.Contextmanager
     def open (self, cmd, ext) :
@@ -127,6 +124,13 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
         with open (fn, "wb") as f :
             yield f
     # end def open
+
+    def render (self, cmd, graph, Renderer) :
+        with self.open (cmd, Renderer.extension) as file :
+            graph.render_to (file, Renderer)
+            if cmd.verbose :
+                print ("Rendered ", file.name)
+    # end def render
 
     def _app_dir_default (self) :
         return self.app_dir

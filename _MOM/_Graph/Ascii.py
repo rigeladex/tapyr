@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -20,6 +20,7 @@
 #    26-Aug-2012 (CT) Add `Canvas.line`, `Ascii.render_link`
 #     5-Sep-2012 (CT) Add `_clean_rendered`
 #    26-Sep-2012 (CT) Remove `_clean_rendered` (fix `_Renderer_.transform`)
+#    16-Sep-2015 (CT) Add `Renderer.extension`
 #    ««revision-date»»···
 #--
 
@@ -120,8 +121,9 @@ class Renderer (MOM.Graph._Renderer_) :
     """ASCII renderer for MOM.Graph"""
 
     Canvas             = Canvas
-    node_size          = D2.Point (16,  4) ### in characters
     default_grid_scale = D2.Point ( 2,  3)
+    extension          = "txt"
+    node_size          = D2.Point (16,  4) ### in characters
 
     conn_chars         = dict \
         ( bottom       = "v"

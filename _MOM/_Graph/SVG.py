@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -33,6 +33,7 @@
 #    26-Sep-2012 (CT) Don't consider `is_partial` for `klass`
 #    26-Sep-2012 (CT) Add class `MOM-Graph` to `Root` element
 #    27-Sep-2012 (CT) Set `preserve_aspect_ratio` to `xMinYMin`
+#    16-Sep-2015 (CT) Add `Renderer.extension`
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,7 @@ class Renderer (MOM.Graph._Renderer_) :
 
     default_grid_scale = D2.Point ( 2,  3)
     encoding           = "utf-8"
+    extension          = "svg"
     link_markers       = dict \
         ( attr         = dict (start = "MOM:AM")
         , is_a         = dict (end   = "MOM:IM")
