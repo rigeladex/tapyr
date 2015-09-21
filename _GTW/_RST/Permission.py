@@ -32,6 +32,7 @@
 #    21-Jan-2015 (CT) Add `Login_has_Person`
 #    21-Jan-2015 (CT) Add `_Permission_.instance`, `_M_Permission_.instance`
 #     5-Feb-2015 (CT) Add `_User_Person_Matches_Attribute_`
+#    21-Sep-2015 (CT) Add `auth_required`, `message`
 #    ««revision-date»»···
 #--
 
@@ -58,12 +59,17 @@ class _M_Permission_ (TFL._.Filter._Filter_S_.__class__) :
 class _Permission_ \
         (TFL.Meta.BaM (TFL._.Filter._Filter_S_, metaclass = _M_Permission_)) :
 
-    _rank = 0
+    _rank         = 0
+    auth_required = True
 
     @Property
     def instance (self) :
         return self
     # end def instance
+
+    def message (self, user, page, * args, ** kw) :
+        pass
+    # end def message
 
     def _get_obj (self, page, kw) :
         result = kw.get ("obj")

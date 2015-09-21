@@ -134,6 +134,9 @@
 #    20-Mar-2015 (CT) Change `lang_pat` to `property`
 #    24-Mar-2015 (CT) Call `I18N.use` in `_http_response_context`
 #    24-Mar-2015 (CT) Use `_http_response_context` for error renderings, too
+#    21-Sep-2015 (CT) Change `auth_required` to consider
+#                     `permission.auth_required`
+#    21-Sep-2015 (CT) Change `allow_method` to consider `p.auth_required`
 #    ««revision-date»»···
 #--
 
@@ -364,10 +367,12 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
     def auth_required (self) :
         ### if a parent requires authorization, all children do too
         ### (even if they claim otherwise!)
+        parent     = self.parent
+        permission = self.permission
         return \
             (  self._auth_required
-            or self.permission
-            or (self.parent and self.parent.auth_required)
+            or (permission and permission.auth_required)
+            or (parent     and parent.auth_required)
             or False
             )
     # end def auth_required
@@ -641,7 +646,13 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         if method and not (user and user.superuser) :
             pn = method.mode + "_permissions"
             permissions = getattr (self, pn)
-            return all (p (user, self, ** kw) for p in permissions)
+            for p in permissions :
+                if not p (user, self, ** kw) :
+                    if p.auth_required :
+                        return False
+                    else :
+                        raise self.Status.Forbidden \
+                            (p.message (user, self, ** kw))
         return True
     # end def allow_method
 

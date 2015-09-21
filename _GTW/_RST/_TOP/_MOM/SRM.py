@@ -59,6 +59,7 @@
 #     6-May-2015 (CT) Add "boat.b_class" to `Registration.list_display`
 #    22-Jun-2015 (CT) Add `sort_key` for `_crew` fields
 #    21-Sep-2015 (CT) Add `_real_name` to `Renderer` classes
+#    21-Sep-2015 (CT) Add permission `Can_Register`
 #    ««revision-date»»···
 #--
 
@@ -88,6 +89,26 @@ from   posixpath                import join as pp_join
 
 import datetime
 import itertools
+
+class Can_Register (GTW.RST._Permission_) :
+    """Permission for regatta registration."""
+
+    auth_required = False
+
+    def message (self, user, page, * args, ** kw) :
+        obj = page.parent.obj
+        if obj.is_cancelled :
+            fmt = _T ("Regatta %s is cancelled")
+        else :
+            fmt = _T ("Registration for %s is closed")
+        return fmt % (obj.ui_display, )
+    # end def message
+
+    def predicate (self, user, page, * args, ** kw) :
+        return page.can_register
+    # end def predicate
+
+# end class Can_Register
 
 class Is_Skipper (GTW.RST._User_Person_Matches_Attribute_) :
     """Permission if user matches the skipper"""
@@ -439,8 +460,9 @@ class _Register_Action_ (GTW.RST.TOP.MOM.Action.Create) :
 class _Registration_Page_ (_Regatta_Page_) :
 
     child_permission_map      = dict \
-        ( change              = Is_Skipper () | Is_Superuser ()
-        , delete              = Is_Skipper () | Is_Superuser ()
+        ( change              = Is_Skipper   () | Is_Superuser ()
+        , create              = Can_Register ()
+        , delete              = Is_Skipper   () | Is_Superuser ()
         )
 
     class _Registration_Page_GET_ (_Regatta_Page_.GET) :
@@ -768,6 +790,8 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
             NA = GTW.OMP.SRM.Nav.Admin.Boat_in_Regatta
             kw = dict \
                 ( bir.admin._orig_kw
+                , child_permission_map  =
+                    _Registration_Page_.child_permission_map
                 , default_qr_kw         = dict (right___EQ = self.obj.pid)
                 , MF3_Attr_Spec         = NA ["MF3_Attr_Spec_R"]
                 , MF3_Form_Spec         = NA ["MF3_Form_Spec_R"]
