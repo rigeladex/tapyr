@@ -125,6 +125,7 @@
 #     9-Jun-2015 (CT) Add guard for `renderer` to `_Changer_.renderer`
 #    30-Jul-2015 (CT) Add argument `essence`, `picky` to `polisher`
 #    31-Jul-2015 (CT) Handle `ValueError` from `polisher`
+#    21-Sep-2015 (CT) Add `_real_name` to `Renderer` classes
 #    ««revision-date»»···
 #--
 
@@ -1373,23 +1374,24 @@ class E_Type \
 
     GET = _E_Type_GET_ # end class
 
-    class Renderer (GTW.RST.TOP.MOM.Renderer.E_Type) :
+    class _E_Type_Renderer_ (GTW.RST.TOP.MOM.Renderer.E_Type) :
 
-        Action    = GTW.RST.TOP.MOM.Action
+        _real_name     = "Renderer"
+        Action         = GTW.RST.TOP.MOM.Action
 
-        Actions_I = \
+        Actions_I      = \
             ( Action.Change
             , Action.Delete
             )
 
-        Actions_T = \
+        Actions_T      = \
             ( Action.Create
             ,
             )
 
         actions_at_top = None
 
-    # end class Renderer
+    Renderer = _E_Type_Renderer_ # end class
 
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "list_display", prefix = "_")

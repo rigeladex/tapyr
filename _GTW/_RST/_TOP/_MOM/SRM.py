@@ -58,6 +58,7 @@
 #    16-Apr-2015 (CT) Factor `mf3_attr_spec_r`
 #     6-May-2015 (CT) Add "boat.b_class" to `Registration.list_display`
 #    22-Jun-2015 (CT) Add `sort_key` for `_crew` fields
+#    21-Sep-2015 (CT) Add `_real_name` to `Renderer` classes
 #    ««revision-date»»···
 #--
 
@@ -392,11 +393,12 @@ class _Regatta_Page_ \
 
     # end class Field_Team_Table
 
-    class Renderer (GTW.RST.TOP.MOM.Renderer.E_Type) :
+    class _Regatta_Page__Renderer_ (GTW.RST.TOP.MOM.Renderer.E_Type) :
 
+        _real_name          = "Renderer"
         template_module     = "ETR_table_regatta"
 
-    # end class Renderer
+    Renderer = _Regatta_Page__Renderer_ # end class
 
     @Once_Property
     def E_Type (self) :
@@ -512,7 +514,9 @@ class _Registration_Page_ (_Regatta_Page_) :
 
     GET = _Registration_Page_GET_ # end class
 
-    class Renderer (_Regatta_Page_.Renderer) :
+    class _Registration_Page_Renderer_ (_Regatta_Page_.Renderer) :
+
+        _real_name           = "Renderer"
 
         _Actions_I           = \
             ( GTW.RST.TOP.MOM.Action.Change
@@ -546,7 +550,7 @@ class _Registration_Page_ (_Regatta_Page_) :
                 return self.__super.actions_at_bottom
         # end def actions_at_bottom
 
-    # end class Renderer
+    Renderer = _Registration_Page_Renderer_ # end class
 
     boat_sort_key = TFL.Sorted_By \
         ( "skipper.person.last_name"
@@ -558,12 +562,13 @@ class _Registration_Page_ (_Regatta_Page_) :
 
 class _Result_Page_ (_Regatta_Page_) :
 
-    class Renderer (_Regatta_Page_.Renderer) :
+    class _Result_Page_Renderer_ (_Regatta_Page_.Renderer) :
 
+        _real_name          = "Renderer"
         css_classes         = ("Result", )
         template_module     = "ETR_table_regatta_result"
 
-    # end class Renderer
+    Renderer = _Result_Page_Renderer_ # end class
 
     boat_sort_key = Q.place
 
@@ -612,11 +617,12 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
 
     class Registration_Teamrace (_Teamrace_Mixin_, _Registration_Page_) :
 
-        class Renderer (_Registration_Page_.Renderer) :
+        class Registration_Teamrace_Renderer (_Registration_Page_.Renderer) :
 
+            _real_name      = "Renderer"
             css_classes     = ("Registration", "Teamrace")
 
-        # end class Renderer
+        Renderer = Registration_Teamrace_Renderer # end class
 
         boat_attr_names     = \
             ( "boat_index"
@@ -652,11 +658,12 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
 
     class Result_Teamrace (_Teamrace_Mixin_, _Result_Page_) :
 
-        class Renderer (_Result_Page_.Renderer) :
+        class Result_Teamrace_Renderer (_Result_Page_.Renderer) :
 
+            _real_name      = "Renderer"
             css_classes     = ("Result", "Teamrace")
 
-        # end class Renderer
+        Renderer = Result_Teamrace_Renderer # end class
 
         boat_attr_names     = \
             ( "boat_sail_number"
@@ -1138,11 +1145,12 @@ class Archive (_Ancestor) :
 
         # end class Field_Regatta_Kinds
 
-        class Renderer (GTW.RST.TOP.MOM.Renderer.E_Type) :
+        class _SRM_Year_Renderer_ (GTW.RST.TOP.MOM.Renderer.E_Type) :
 
+            _real_name          = "Renderer"
             template_module     = "ETR_table_regatta"
 
-        # end class Renderer
+        Renderer = _SRM_Year_Renderer_ # end class
 
         @property ### depends on currently selected language (I18N/L10N)
         def head_line (self) :
