@@ -116,6 +116,7 @@
 #                       all arguments are required
 #    21-Jul-2015 (CT) Use `portable_repr` to improve 3-compatibility
 #    22-Jul-2015 (CT) Add `config` and `syntax` to `Help`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -689,7 +690,10 @@ class Cmd_Choice (_Spec_Base_) :
 
     def __getattr__ (self, name) :
         """Return the sub-command with `name`."""
-        return self.sub_cmds [name]
+        try :
+            return self.sub_cmds [name]
+        except KeyError :
+            raise AttributeError (name)
     # end def __getattr__
 
     def __getitem__ (self, key) :
@@ -1518,7 +1522,10 @@ class Bundle (TFL.Meta.Object) :
     # end def __contains__
 
     def __getattr__ (self, name) :
-        return self._kw [name]
+        try :
+            return self._kw [name]
+        except KeyError :
+            raise AttributeError (name)
     # end def __getattr__
 
     def __getitem__ (self, key) :
@@ -1813,6 +1820,10 @@ class Cmd (TFL.Meta.Object) :
     # end def _setup_opts
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return self._attribute_spec (name)
     # end def __getattr__
 
@@ -2138,6 +2149,10 @@ class CAO (TFL.Meta.Object) :
 
     def __getattr__ (self, name) :
         """Return argument/option/keyword value with `name`."""
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         try :
             result = self._attribute_value (name)
             setattr (self, name, result)

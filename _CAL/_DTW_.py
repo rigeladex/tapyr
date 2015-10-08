@@ -36,6 +36,7 @@
 #     3-May-2011 (CT) `_init_kw` added and used for `__repr__`
 #    29-Mar-2012 (CT) Add `_xtra_arg_names` and `_xtra_kw` (to support `tzinfo`)
 #     6-May-2015 (CT) Add `_import_cb_json_dump`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -178,6 +179,10 @@ class _Mutable_DTW_ (TFL.Meta.Object) :
     # end def __eq__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return getattr (self._wrapped, name)
     # end def __getattr__
 

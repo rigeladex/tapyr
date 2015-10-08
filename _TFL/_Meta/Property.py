@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -50,6 +50,7 @@
 #     4-Jun-2014 (CT) Change `Alias_Meta_and_Class_Attribute` to evaluate
 #                     `property` values
 #     4-Jun-2014 (CT) Add `Property`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -119,12 +120,17 @@ class Method_Descriptor (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
         # end def __call__
 
         def __getattr__ (self, name) :
+            if name.startswith ("__") and name.endswith ("__") :
+                ### Placate inspect.unwrap of Python 3.5,
+                ### which accesses `__wrapped__` and eventually throws
+                ### `ValueError`
+                return getattr (self.__super, name)
             return getattr (self.method, name)
         # end def __getattr__
 
         def __repr__ (self) :
             return "<bound method %s.%s of %r>" % \
-                   (self.cls.__name__, self.method.__name__, self.target)
+                (self.cls.__name__, self.method.__name__, self.target)
         # end def __repr__
 
     # end class Bound_Method
@@ -355,8 +361,11 @@ class Alias_Property (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
            ...         return 42
            ...     bar = Alias_Property ("foo")
            ...
-           >>> X.bar
-           <bound method type.foo of <class 'Property.X'>>
+
+           ### Python 3.5 returns `X.foo`, not `type.foo` for `repr`
+           >>> print (repr (X.bar).replace ("type.", "X."))
+           <bound method X.foo of <class 'Property.X'>>
+
            >>> X.bar()
            42
            >>> x = X()

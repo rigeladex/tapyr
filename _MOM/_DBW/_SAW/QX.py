@@ -65,6 +65,7 @@
 #                     (hack only needed for Python 2, anyway)
 #    10-Oct-2014 (CT) Use `TFL.Q_Exp._Una_.name_map` to get operator names
 #     7-Oct-2015 (CT) Fix `operator.__div__` handling for Python 3, too
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -222,6 +223,10 @@ class Mapper (_RAW_) :
     # end def _add_joins
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         ETW = self.ETW
         head, _, tail = split_hst (name, ".")
         is_raw = head == "RAW"
@@ -678,6 +683,10 @@ class _Bool_Distributive_ (_Bool_) :
     # end def _op_bin
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         self.predicates = list (getattr (p, name) for p in self.predicates)
         return self
     # end def __getattr__
@@ -1159,6 +1168,10 @@ class _Attr_ (_RAW_, _Base_) :
     # end def _inner_kw
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if self._field is not None :
             raise AttributeError (name)
         head, _, tail = split_hst (name, ".")

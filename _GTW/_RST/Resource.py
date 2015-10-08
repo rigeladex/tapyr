@@ -137,6 +137,7 @@
 #    21-Sep-2015 (CT) Change `auth_required` to consider
 #                     `permission.auth_required`
 #    21-Sep-2015 (CT) Change `allow_method` to consider `p.auth_required`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -873,6 +874,10 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
     # end def _handle_method_context
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if self.parent is not None :
             return getattr (self.parent, name)
         raise AttributeError (name)
@@ -989,6 +994,10 @@ class RST_Alias (_Ancestor) :
     # end def _handle_method_context
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if name not in self._parent_attr :
             target = self.target
             if target is not None :

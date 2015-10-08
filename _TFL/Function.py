@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,6 +29,7 @@
 #    21-Feb-2008 (MG) `__init__`: use getattr chain to handle all sorts of
 #                     callables as `function`
 #    15-Apr-2008 (MG) `function` class attribute added (needed for unpickling)
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,10 @@ class Function :
     # end def __getstate__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return getattr (self.function, name)
     # end def __getattr__
 

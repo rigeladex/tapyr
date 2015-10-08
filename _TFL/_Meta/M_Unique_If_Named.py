@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,6 +17,7 @@
 # Revision Dates
 #    21-Aug-2009 (CT) Creation
 #    21-Aug-2009 (CT) Guard `__getattr__` against `name == "_"`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,10 @@ class M_Unique_If_Named (TFL.Meta.M_Class) :
     # end def __call__
 
     def __getattr__ (cls, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (cls.__m_super, name)
         if name == "_" :
             raise AttributeError (name)
         return getattr (cls._, name)

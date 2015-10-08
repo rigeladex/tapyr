@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,6 +30,7 @@
 #    28-Feb-2007 (CED) `self.result` also has to be per instance of course
 #    29-Aug-2008 (CT)  s/super(...)/__super/
 #     3-Feb-2009 (CT)  Documentation improved
+#     8-Oct-2015 (CT)  Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,10 @@ class _Lazy_Wrapper_RLV_ (object) :
     # end def __call__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return getattr (self.fct, name)
     # end def __getattr__
 

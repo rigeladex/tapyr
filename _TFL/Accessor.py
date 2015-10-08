@@ -32,6 +32,8 @@
 #    16-Aug-2012 (CT) Simplify `_Getter_`: get rid of `_Getter_[01n]_`
 #    22-Feb-2013 (CT) Remove legacy spellings `Attribute` and `Item`
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
+#     6-Oct-2015 (CT) Change `_Getter_.__repr__` to *not* return `None`
+#     6-Oct-2015 (CT) Change `_Getter_.__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -102,6 +104,10 @@ class _Getter_ (TFL.Meta.Object) :
     # end def _call_n
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if self.__doc__ :
             doc = "%s.%s`" % (self.__doc__ [:-1], name)
         else :
@@ -120,7 +126,7 @@ class _Getter_ (TFL.Meta.Object) :
     # end def __getitem__
 
     def __repr__ (self) :
-        return self.__doc__
+        return self.__doc__ or self.__super.__repr__ ()
     # end def __repr__
 
 # end class _Getter_

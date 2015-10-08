@@ -76,6 +76,7 @@
 #    12-Sep-2014 (CT) Factor `etw_alias`
 #    23-Apr-2015 (CT) Add `pid_query`, `pid_query_stmt`, `type_name_select_stmt`
 #                     + plus `_pid_query_direct`, `_pid_query_indirect`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -964,6 +965,10 @@ class E_Type_Wrapper_Alias (_E_Type_Wrapper_Base_) :
     # end def _mangled_alias
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return getattr (self._ETW, name)
     # end def __getattr__
 

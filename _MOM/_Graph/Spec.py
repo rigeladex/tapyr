@@ -31,6 +31,7 @@
 #                     + Change `Attr.instantiate` to use `MOM.Id_Entity` as
 #                       `E_Type` for entries of `Graph._graph_type_map`
 #    16-Sep-2015 (CT) Add `Graph.render`, `.render_to`
+#     6-Oct-2015 (CT) Change `_Spec_Item_.__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +84,10 @@ class _Spec_Item_ (TFL.Meta.Object) :
     # end def __call__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if self._args or self._kw  :
             raise TypeError \
                 ( "Can't dereference %s after setting args/kw of %s"

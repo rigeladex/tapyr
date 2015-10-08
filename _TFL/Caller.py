@@ -53,6 +53,7 @@
 #    31-Jan-2012 (CT) Change `Object_Scope.__init__` to pass
 #                     `object.__dict__` through `dict` (to allow classes, too)
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -239,6 +240,10 @@ class Object_Scope (Scope) :
     # end def __getitem__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         try :
             return self.__super.__getattr__ (name)
         except AttributeError :

@@ -21,6 +21,7 @@
 #     3-May-2013 (CT) Add exception handler to `Resource._json`
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #     6-May-2015 (CT) Use `TFL.json_dump.to_string`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -266,6 +267,10 @@ class Requester (TFL.Meta.Object) :
     # end def add_cookies
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return self.Wrapper (name, self)
     # end def __getattr__
 

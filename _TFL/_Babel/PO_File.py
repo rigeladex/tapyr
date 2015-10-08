@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -24,6 +24,7 @@
 #    11-May-2012 (CT) Print `pkg` in case of `ImportError`
 #     7-Jun-2012 (CT) Add `verbose` to `combined`
 #     9-Dec-2013 (CT) Fix 3-compatibility
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -197,6 +198,10 @@ class PO_File (TFL.Meta.Object) :
     # end def __contains__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if name != "catalog" :
             return getattr (self.catalog, name)
         raise AttributeError (name)

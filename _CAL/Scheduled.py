@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -24,6 +24,7 @@
 #    12-Dec-2004 (CT) Doctest added
 #    12-Dec-2004 (CT) Default format added
 #    12-Dec-2004 (CT) `__repr__` added
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -151,6 +152,10 @@ class Scheduled (TFL.Meta.Object) :
     # end def substantial_attributes
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if self.prototype is not None :
             return getattr (self.prototype, name)
         elif name in self.attr_defaults :

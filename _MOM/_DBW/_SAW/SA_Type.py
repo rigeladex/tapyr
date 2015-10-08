@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -21,6 +21,7 @@
 #    30-Jul-2013 (CT) Change `_Type_Name_Integer_` to allow undefined values;
 #                     needed by MD_Change instances not bound to Entities
 #     4-Aug-2013 (CT) Fix `_Type_Name_Integer_.process_bind_param`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,10 @@ class M_SA_Type (TFL.Meta.Object.__class__) :
     # end def P_Type_Map
 
     def __getattr__ (cls, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         result = getattr (SA.types, name)
         setattr (cls, name, result)
         return result
@@ -158,6 +163,10 @@ class SA_Type (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_SA_Type)) :
     # end def Type_Name
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         result = getattr (self.__class__, name)
         setattr (self, name, result)
         return result

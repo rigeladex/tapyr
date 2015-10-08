@@ -36,6 +36,7 @@
 #    22-Jun-2015 (CT) Change `_set_as_html` to avoid empty elements
 #                     (use `&nbsp;` in place of nothing)
 #    24-Jun-2015 (CT) Add `zero_width_space` to `Creation.as_html`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -226,6 +227,10 @@ class Base (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Field)) :
     # end def _set_as_value
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if self.attr is not None :
             return getattr (self.attr, name)
         raise AttributeError (name)

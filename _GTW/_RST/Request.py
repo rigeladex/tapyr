@@ -42,6 +42,7 @@
 #    26-Apr-2014 (CT) Remove stale imports
 #    29-Apr-2014 (CT) Add `getattr_safe` to several properties
 #    20-Mar-2015 (CT) Add property `language`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,10 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def __init__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if name == "request" : ### XXX remove after porting of GTW.Werkzeug.Error
             return self._request
         elif name != "_request" :

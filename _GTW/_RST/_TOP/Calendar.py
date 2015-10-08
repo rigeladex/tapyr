@@ -29,6 +29,7 @@
 #    24-Feb-2014 (CT) Add `_Event_Wrapper_`
 #    26-Feb-2014 (CT) Remove `nav_off_canvas`
 #     5-Apr-2015 (CT) Fix typo
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -121,6 +122,10 @@ class _Event_Wrapper_ (TFL.Meta.Object) :
     # end def title
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         result = getattr (self._instance, name)
         setattr (self, name, result)
         return result

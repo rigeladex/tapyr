@@ -160,6 +160,7 @@
 #    17-Feb-2015 (CT) Move values for `ignore` to `Config`, out of `__init__`
 #     2-Jun-2015 (CT) Add dictionary `vat_privat` index by account,
 #                     rename `vat_private` to `vat_privat_default`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -346,6 +347,10 @@ class Account_Entry (_Entry_) :
     # end def __init__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return getattr (self.dtuple, name)
     # end def __getattr__
 

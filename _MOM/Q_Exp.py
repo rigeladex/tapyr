@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -31,6 +31,7 @@
 #     9-Sep-2014 (CT) Redefine `Base`, `_Get_`;
 #                     add `_Get_._E_Type_Restriction_`, `_Get_.RAW`
 #    11-Sep-2014 (CT) Add `_E_Type_Restriction_.__getitem__`; add doctest
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -171,6 +172,10 @@ class _E_Type_Restriction_ (TFL.Q_Exp._Get_) :
     # end def predicate
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         tg = self._tail_getter
         return self.__class__ \
             ( self._head_getter
@@ -199,6 +204,10 @@ class Raw_Attr_Query (Base) :
     """
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return self._Get_Raw_ (self, name)
     # end def __getattr__
 
@@ -238,6 +247,10 @@ class _Get_Raw_ (TFL.Q_Exp._Get_) :
     # end def _name
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return self.__class__ (self.Q, name, self._name)
     # end def __getattr__
 

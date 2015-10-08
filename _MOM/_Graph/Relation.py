@@ -32,6 +32,7 @@
 #    23-Oct-2012 (CT) Change `guide_sort_key` to use `sign`, improve style
 #    22-Nov-2012 (CT) Guard `AttributeError` in `_Relation_.set_guides`
 #    14-Sep-2015 (CT) Add `guide_prio`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,10 @@ class _Reverse_ (_R_Base_) :
     # end def shift_guide
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return getattr (self.reverse, name)
     # end def __getattr__
 

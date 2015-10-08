@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -21,6 +21,7 @@
 #     5-Aug-2010 (CT) `_get_nested` added to support `composite.field`
 #    10-Dec-2012 (CT) Change `_get_nested` to delegate to `obj.FO`
 #     3-Mar-2014 (CT) Factor `_get_attr`; add support for `tuple, list`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,10 @@ class FO (TFL.Meta.Object) :
     # end def _get_nested
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if "." in name :
             result = self._get_nested (name)
         else :

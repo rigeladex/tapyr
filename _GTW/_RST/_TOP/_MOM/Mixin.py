@@ -36,6 +36,7 @@
 #    10-Feb-2015 (CT) Factor `Renderer_Mixin`
 #    16-Apr-2015 (CT) Pass `default` to `getattr_safe` for `fields_default`
 #    27-Apr-2015 (CT) Factor `E_Type_Mixin_Base._default_title`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -309,6 +310,10 @@ class TOP_MOM_Entity_Mixin_Base \
     # end def FO
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if self.attr_mapper :
             try :
                 return self.attr_mapper (self.obj.FO, name)
@@ -390,6 +395,10 @@ class TOP_MOM_E_Type_Mixin_Base \
     # end def _default_title
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if self.attr_mapper :
             try :
                 return self.attr_mapper (self.obj, name)

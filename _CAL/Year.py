@@ -61,6 +61,7 @@
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #    28-Feb-2014 (CT) Use future `print_function`
 #     6-May-2015 (CT) Add `_import_cb_json_dump`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -174,6 +175,10 @@ class Day (_Ordinal_) :
     # end def Year
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return getattr (self.date, name)
     # end def __getattr__
 

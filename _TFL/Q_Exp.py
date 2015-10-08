@@ -72,6 +72,7 @@
 #    11-Sep-2014 (CT) Add `_Distributive_` as mixin for `_Bool_Bin_Op_`, `_Get_`
 #    27-Feb-2015 (CT) Add `Q.DATE`, `Q.DATE_TIME`, `Q.TIME`, and `_Date_.NOW`
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -526,6 +527,10 @@ class Base (TFL.Meta.Object) :
     # end def OR
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if "." in name :
             getter = getattr (TFL.Getter, name)
         else :
@@ -1215,6 +1220,10 @@ class _Bool_Bin_Op_ (_Distributive_, _Exp_) :
     # end def __init__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return self.__class__ (Q, * (getattr (p, name) for p in self.predicates))
     # end def __getattr__
 
@@ -1261,6 +1270,10 @@ class _Get_ (_Distributive_, _Exp_) :
     # end def predicate
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         full_name = ".".join ((self._name, name))
         getter    = getattr (TFL.Getter, full_name)
         return self.__class__ (self.Q, full_name, getter)
@@ -1303,6 +1316,10 @@ class _Self_ (_Get_) :
     # end def predicate
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return getattr (self.Q, name)
     # end def __getattr__
 
@@ -1327,6 +1344,10 @@ class _BVAR_Get_ (TFL.Meta.Object) :
     # end def NEW
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return self.BVAR (self.Q, name)
     # end def __getattr__
 

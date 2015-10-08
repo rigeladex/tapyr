@@ -361,6 +361,7 @@
 #     3-Aug-2015 (CT) Change `_A_Composite_.from_string` to try downcast
 #     7-Oct-2015 (CT) Don't use `bool` for `datetime.time` instances
 #                     (Python 3.5 compatibility)
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    25-Oct-2015 (CT) Add `A_Duration`
 #    ««revision-date»»···
 #--
@@ -926,6 +927,10 @@ class _A_Entity_ (A_Attr_Type) :
     # end def __init__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         ### to support calls like `scope.PAP.Person.lifetime.start.AQ
         P_Type = self.P_Type
         try :

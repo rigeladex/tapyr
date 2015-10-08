@@ -112,6 +112,7 @@
 #     5-May-2015 (CT) Remove obsolete class variable `is_universe`
 #     5-May-2015 (CT) Add `after_commit_callback`
 #     6-Aug-2015 (CT) Improve documentation (access to E_Type_Managers)
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -254,6 +255,11 @@ class Scope (TFL.Meta.Object) :
         # end def __init__
 
         def __getattr__ (self, name) :
+            if name.startswith ("__") and name.endswith ("__") :
+                ### Placate inspect.unwrap of Python 3.5,
+                ### which accesses `__wrapped__` and eventually throws
+                ### `ValueError`
+                return getattr (self.__super, name)
             scope  = self._scope
             etypes = scope.etypes
             pkg_ns = scope._pkg_ns
@@ -831,6 +837,10 @@ class Scope (TFL.Meta.Object) :
     # end def _setup_root
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if "." in name :
             if name in self._etm :
                 return self._etm [name]

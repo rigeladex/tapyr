@@ -166,6 +166,7 @@
 #    22-Apr-2014 (CT) Change `_main` to pass `encoding` to `formatted`
 #     5-Jun-2014 (CT) Use `Once_Property`, not `Lazy_Property`; use
 #                     `M_Class`, not `M_Class_SWRP`, as metaclass
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -355,6 +356,10 @@ class Msg_Scope (TFL.Caller.Scope) :
     # end def _get_sender_name
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         try :
             return self._get_attr_ (name)
         except self.Lookup_Error :

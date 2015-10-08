@@ -294,6 +294,7 @@
 #    30-Jul-2015 (CT) Add argument `essence`, `picky` to `polisher`
 #    30-Jul-2015 (CT) Change `_kw_polished` to handle polisher errors
 #     3-Aug-2015 (CT) Use `_init_raw_default`, not literal `False`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -474,6 +475,11 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         # end def _get_repr
 
         def __getattr__ (self, name) :
+            if name.startswith ("__") and name.endswith ("__") :
+                ### Placate inspect.unwrap of Python 3.5,
+                ### which accesses `__wrapped__` and eventually throws
+                ### `ValueError`
+                return getattr (self.__super, name)
             result = self (name)
             if "." not in name :
                 setattr (self, name, result)
@@ -2168,6 +2174,10 @@ class MD_Change (_Ancestor_Essence) :
     # end def _repr
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return getattr (self.scm_change, name)
     # end def __getattr__
 

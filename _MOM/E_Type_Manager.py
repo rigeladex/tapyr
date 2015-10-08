@@ -127,6 +127,7 @@
 #    26-Sep-2014 (CT) Use `_kw_polished` for `raw` only
 #    15-Jun-2015 (CT) Add guard for `None` to `_cooked_role`
 #    30-Jul-2015 (CT) Pass idempotent `on_error` to `_kw_polished`
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -275,6 +276,10 @@ class Entity (TFL.Meta.Object) :
     # end def raw_query_attrs
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         etype = self._etype
         try :
             return getattr (etype, name)

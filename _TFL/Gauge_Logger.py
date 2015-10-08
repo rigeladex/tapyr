@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,8 +31,7 @@
 #    14-Mar-2005 (CT)  Dead code courtesy of GWA removed
 #    21-Jan-2006 (MG)  Moved into `TFL` package
 #    23-Nov-2006 (PGO) Inheritance changed
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     8-Oct-2015 (CT)  Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -67,6 +66,10 @@ class Gauge_Logger (TFL.Meta.Object) :
     # end def _activate
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         if self.gauge :
             return getattr (self.gauge, name)
         elif name == "activate" :

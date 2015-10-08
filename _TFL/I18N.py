@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,6 +47,7 @@
 #    31-Mar-2014 (CT) Add guard for `AttributeError` to `ugettext`, `ungettext`
 #                     (3-compatibility for `gettext.NullTranslations`)
 #    31-Mar-2014 (CT) Use `print` in doctest of `context` (3-compatibility)
+#     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
 
@@ -92,6 +93,10 @@ class _Name_ (TFL.Meta.Object) :
     """Translator for names"""
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         return _T (name)
     # end def __getattr__
 
