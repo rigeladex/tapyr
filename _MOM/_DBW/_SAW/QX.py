@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -64,6 +64,7 @@
 #    10-Oct-2014 (CT) Protect access to `operator.__div__`
 #                     (hack only needed for Python 2, anyway)
 #    10-Oct-2014 (CT) Use `TFL.Q_Exp._Una_.name_map` to get operator names
+#     7-Oct-2015 (CT) Fix `operator.__div__` handling for Python 3, too
 #    ««revision-date»»···
 #--
 
@@ -871,13 +872,13 @@ class Bin (_Op_) :
         if reverse :
             lhs, rhs = rhs, lhs
         op = self.op
-        op_div = getattr (operator, "__div__", None)
+        op_div = getattr (operator, "__div__", operator.__truediv__)
         if op is operator.__truediv__ :
             typ = SA.types.Float ### XXX use SA.types.Decimal if necessary
             lhs = SA.expression.cast (lhs, typ)
             rhs = SA.expression.cast (rhs, typ)
-        elif op_div is not None and op is operator.__floordiv__ :
-            ### avoid TypeError:
+        elif op is operator.__floordiv__ :
+            ### avoid TypeError raised by sqlalchemy ::
             ###     unsupported operand type(s) for //: 'Column' and 'Column'
             op = op_div
         return op (lhs, rhs)
