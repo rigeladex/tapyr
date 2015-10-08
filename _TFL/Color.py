@@ -28,6 +28,8 @@
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    11-Feb-2015 (CT) Add `Color.with_alpha`
 #    14-Jun-2015 (CT) Add `HUSL`; change signature and internals of `Value`
+#     6-Oct-2015 (CT) Adapt `hex`, `hex_CSS` to Python 3.5
+#                     ("%X" requires `int`, blows up for `float`)
 #    ««revision-date»»···
 #--
 
@@ -170,13 +172,13 @@ class Value (TFL.Meta.Object) :
 
     @Once_Property
     def hex (self) :
-        r, g, b = tuple ("%2.2X" % (x*255, ) for x in self.rgb)
+        r, g, b = tuple ("%2.2X" % (int (x*255), ) for x in self.rgb)
         return "#%s%s%s" % (r, g, b)
     # end def hex
 
     @Once_Property
     def hex_CSS (self) :
-        r, g, b = tuple ("%2.2X" % (x*255, ) for x in self.rgb)
+        r, g, b = tuple ("%2.2X" % (int (x*255), ) for x in self.rgb)
         if all (x [0] == x [1] for x in (r, g, b)) :
             r, g, b = tuple (x [0] for x in (r, g, b))
         return "#%s%s%s" % (r, g, b)
