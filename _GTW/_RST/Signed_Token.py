@@ -24,6 +24,7 @@
 #    13-Mar-2015 (CT) Add `form_action` to `Anti_CSRF`
 #    10-Jun-2015 (CT) Adapt doctest to `form_action`, `request.path`
 #                     in `Anti_CSRF`
+#     7-Oct-2015 (CT) Add more `pyk.encoded`, `pyk.decoded` calls (Python 3.5)
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ import logging
 import time
 
 @pyk.adapt__bool__
+@pyk.adapt__str__
 class _Base_ (TFL.Meta.Object) :
     """Signed token as used for secure cookies or CSRF tokens"""
 
@@ -65,13 +67,14 @@ class _Base_ (TFL.Meta.Object) :
     _value                     = None
 
     def __init__ (self, request, data, ** kw) :
-        time = request.current_time
+        time  = request.current_time
+        b64ed = lambda x : base64.b64encode (pyk.encoded (x, self.encoding))
         self.__dict__.update \
-            ( cargo     = base64.b64encode (pyk.encoded (data, self.encoding))
+            ( cargo     = b64ed (data)
             , data      = data
             , request   = request
             , time      = time
-            , timestamp = base64.b64encode (str (int (time)))
+            , timestamp = b64ed (int (time))
             , ** kw
             )
     # end def __init__
@@ -152,8 +155,9 @@ class _Base_ (TFL.Meta.Object) :
     def value (self) :
         result = self._value
         if result is None :
+            sig    = pyk.encoded (self.signature, self.encoding)
             result = self._value = self.val_sep.join \
-                ((self.cargo, self.timestamp, self.signature))
+                ((self.cargo, self.timestamp, sig))
         return result
     # end def value
 
@@ -190,7 +194,7 @@ class _Base_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __str__ (self) :
-        return self.value
+        return pyk.decoded (self.value)
     # end def __str__
 
 # end class _Base_
