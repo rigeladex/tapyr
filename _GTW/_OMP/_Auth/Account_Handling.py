@@ -33,6 +33,8 @@
 #    10-May-2013 (CT) Add `_Account_Action_.show_in_ui_T = False`
 #    13-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
 #    11-Jun-2015 (CT) Move `description.default` to `Account_EMail_Verification`
+#     8-Oct-2015 (CT) Change `Account_Token_Manager.__call__` to allow `()`
+#                     (`example` does that and triggers a warning otherwise)
 #    ««revision-date»»···
 #--
 
@@ -128,14 +130,16 @@ _Ancestor_Essence = _Account_Action_
 class Account_Token_Manager (_Ancestor_Essence.M_E_Type.Manager) :
     """E-Type manager for token based account actions"""
 
-    def __call__ (self, account, expires = None, ** kw) :
-        token = uuid.uuid4 ().hex
-        if not expires :
-            etype   = self._etype
-            expires = \
-                datetime.datetime.utcnow () + etype.expire_duration_default
-        return self.__super.__call__ \
-            (account, token = token, expires = expires, ** kw)
+    def __call__ (self, account = None, expires = None, ** kw) :
+        ### `account` is None in case of `Account_Token_Manager.example`
+        if account is not None :
+            token = uuid.uuid4 ().hex
+            if not expires :
+                etype   = self._etype
+                expires = \
+                    datetime.datetime.utcnow () + etype.expire_duration_default
+            return self.__super.__call__ \
+                (account, token = token, expires = expires, ** kw)
     # end def __call__
 
 # end class Account_Token_Manager
