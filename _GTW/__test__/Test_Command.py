@@ -33,6 +33,7 @@
 #    25-Sep-2013 (CT) Add `debug`
 #    26-Sep-2013 (CT) Add `_backend_reset`
 #    27-Aug-2014 (CT) Remove import of `_GTW._AFS._MOM.Spec`
+#     7-Oct-2015 (CT) Encapsulate `pyquery` in `_PQ_`, placate its insane 2/3 difference
 #    ««revision-date»»···
 #--
 
@@ -68,8 +69,6 @@ import _TFL.Generators
 
 from    werkzeug.test     import Client, EnvironBuilder
 from    werkzeug.wrappers import BaseResponse
-import  pyquery
-import  lxml.html
 
 def prepr (* args) :
     print (* (portable_repr (a) for a in args))
@@ -106,17 +105,44 @@ def debug (** kw) :
 class Test_Response (BaseResponse) :
     """Enhance the reponse for the test setup"""
 
+    class _PQ_ (TFL.Meta.Object) :
+
+        def __init__ (self, data) :
+            self._pq = self.PyQuery (data)
+        # end def __init__
+
+        def __call__ (self, filter) :
+            return self._pq (self._coded (filter))
+        # end def __call__
+
+        @Once_Property
+        def PyQuery (self) :
+            import lxml.html
+            def _as_string (self) :
+                return pyk.decoded (lxml.html.tostring (self))
+            lxml.html.HtmlElement.string = Once_Property (_as_string)
+            import pyquery
+            return pyquery.PyQuery
+        # end def PyQuery
+
+        @Once_Property
+        def _coded (self) :
+            if pyk.byte_type == str :
+                ### Python 2: pyquery.PyQuery needs (8-bit)   str argument
+                return pyk.encoded
+            else :
+                ### Python 3: pyquery.PyQuery needs (unicode) str argument
+                return pyk.decoded
+        # end def _coded
+
+    # end class _PQ_
+
     @Once_Property
     def PQ (self) :
-        return pyquery.PyQuery (self.data)
+        return self._PQ_ (self.data)
     # end def PQ
 
 # end class Test_Response
-
-def _as_string (self) :
-    return lxml.html.tostring (self)
-# end def _as_string
-lxml.html.HtmlElement.string = Once_Property (_as_string)
 
 _Ancestor = GTW.Werkzeug.Command
 

@@ -28,13 +28,14 @@
 #    11-Dec-2013 (CT) Add `CSRF_check = "no"` to `_defaults`
 #    26-Jun-2014 (CT) Factor `show_errors`, apply `sorted`
 #    12-Jun-2015 (CT) Adapt to changes of authentication templates
+#     7-Oct-2015 (CT) Pass `"xxx"`, not `b"xxx"`, to `.PQ`
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
 def show_errors (resp) :
-    errors = sorted (resp.PQ (b".Error-Message"), key = TFL.Getter.sourceline)
+    errors = sorted (resp.PQ (".Error-Message"), key = TFL.Getter.sourceline)
     print ("".join (e.string for e in errors))
 # end def show_errors
 
@@ -115,7 +116,7 @@ _activate        = r"""
     >>> scope.commit ()
 
     >>> resp   = Scaffold.test_get ("/Auth/activate.html", query_string = "p=%%d" %% (a2.pid, ))
-    >>> print ("".join (t.string for t in resp.PQ (b"legend")))
+    >>> print ("".join (t.string for t in resp.PQ ("legend")))
     <legend>Activate account for a2@foo.bar on website localhost</legend>
     <BLANKLINE>
 
@@ -167,7 +168,7 @@ _register        = r"""
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> resp   = Scaffold.test_get ("/Auth/register.html")
-    >>> print ("\n".join (str (sorted (t.items ())) for t in resp.PQ (b"input"))) # doctest:+ELLIPSIS
+    >>> print ("\n".join (str (sorted (t.items ())) for t in resp.PQ ("input"))) # doctest:+ELLIPSIS
     [('id', 'F_username'), ('maxlength', '80'), ('name', 'username'), ('required', ''), ('type', 'email')]
     [('id', 'F_npassword'), ('name', 'npassword'), ('required', ''), ('type', 'password')]
     [('autocomplete', 'off'), ('id', 'F_vpassword'), ('name', 'vpassword'), ('required', ''), ('type', 'password')]
@@ -245,7 +246,7 @@ _change_email    = r"""
     >>> login (Scaffold, a2, passwd)
     True
     >>> resp   = Scaffold.test_get ("/Auth/change_email.html", query_string = "p=%%d" %% (a2.pid, ))
-    >>> print ("".join (t.string for t in resp.PQ (b".account-name")))
+    >>> print ("".join (t.string for t in resp.PQ (".account-name")))
     <BLANKLINE>
 
     >>> data   = dict (username = a2.name)
@@ -310,7 +311,7 @@ _change_password = r"""
     >>> login (Scaffold, a2, passwd)
     True
     >>> resp   = Scaffold.test_get ("/Auth/change_password.html", query_string = "p=%%d" %% (a2.pid, ))
-    >>> print ("".join (t.string for t in resp.PQ (b"legend")))
+    >>> print ("".join (t.string for t in resp.PQ ("legend")))
     <legend>Change Password for a2@foo.bar on website localhost</legend>
     <BLANKLINE>
 
