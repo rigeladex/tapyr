@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -28,6 +28,8 @@
 #    18-Nov-2013 (CT) Change default `charset` to `utf-8`
 #    17-Feb-2014 (CT) Change `SMTP_Logger.send` to use `pyk.encoded`
 #    31-Mar-2014 (CT) Simplify, and fix, `header` for Python-3
+#     8-Oct-2015 (CT) Remove guard against text-type from `__call__`
+#                     (Python 3.5 expects `str`, not `bytes`)
 #    ««revision-date»»···
 #--
 
@@ -88,9 +90,6 @@ class SMTP (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, text, mail_opts = (), rcpt_opts = None) :
-        if isinstance (text, pyk.text_type) :
-            raise TypeError \
-                ("SMTP () expects a byte string, got unicode: %r" % text)
         email = message_from_string (text)
         self.send_message (email, mail_opts = mail_opts, rcpt_opts = rcpt_opts)
     # end def __call__
@@ -216,13 +215,14 @@ class SMTP_Logger (SMTP) :
     # end def __init__
 
     def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
+        msg_x = pyk.encoded (msg)
         self._log \
             ( "[%s] Email via %s from %s to %s\n    %s"
             , datetime.datetime.now ().replace (microsecond = 0)
             , pyk.encoded (self.mail_host)
             , pyk.encoded (from_addr)
             , list (pyk.encoded (t) for t in to_addrs)
-            , "\n    ".join (msg.split ("\n"))
+            , "\n    ".join (msg_x.split ("\n"))
             )
     # end def send
 

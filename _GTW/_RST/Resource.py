@@ -767,13 +767,13 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         email_from = context.get ("email_from")
         if not email_from :
             context ["email_from"] = email_from = self.email_from
+        enc  = self.encoding
         smtp = context.pop ("smtp", self.smtp)
-        smtp.charset = enc = self.encoding
-        text = pyk.encoded (self.top.Templateer.render (template, context), enc)
+        text = self.top.Templateer.render (template, context)
         try :
             smtp (text)
         except Exception as exc :
-            logging.error \
+            logging.exception \
                 ( pyk.encoded
                     ( "Exception: %s"
                       "\n  When trying to send email from %s to %s"
@@ -783,7 +783,7 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
                 , pyk.encoded (exc, enc)
                 , pyk.encoded (email_from, enc)
                 , pyk.encoded (context.get ("email_to", "<Unkown>"), enc)
-                , text
+                , pyk.encoded (text, enc)
                 )
             try :
                 kw = dict \
