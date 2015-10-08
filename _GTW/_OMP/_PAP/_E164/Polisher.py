@@ -18,6 +18,8 @@
 # Revision Dates
 #    30-Jul-2015 (CT) Start creation
 #    31-Jul-2015 (CT) Finish creation
+#     7-Oct-2015 (CT) Change `SN._polished` to not assign `strict_err` with `as`
+#                     (Python 3 compatibility!)
 #    ««revision-date»»···
 #--
 
@@ -131,12 +133,14 @@ class SN (_E164_Polisher_) :
                 if ndc :
                     try :
                         result [name] = country.cleaned_sn (ndc, value)
-                    except E164.SN_Too_Long as strict_err :
-                        call_pns = True
+                    except E164.SN_Too_Long as err :
+                        strict_err = err
+                        call_pns   = True
                 else :
                     try :
                         ndc, sn = country.split (value)
-                    except ValueError as strict_err :
+                    except ValueError as err :
+                        strict_err = err
                         if picky :
                             call_pns = True
                     else :
