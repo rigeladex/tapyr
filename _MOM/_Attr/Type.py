@@ -359,6 +359,8 @@
 #     3-Aug-2015 (CT) Redefine `_A_String_Base_.as_string` to not use `format`
 #                     on empty string `value`
 #     3-Aug-2015 (CT) Change `_A_Composite_.from_string` to try downcast
+#     7-Oct-2015 (CT) Don't use `bool` for `datetime.time` instances
+#                     (Python 3.5 compatibility)
 #    25-Oct-2015 (CT) Add `A_Duration`
 #    ««revision-date»»···
 #--
@@ -2378,7 +2380,9 @@ class A_Date_Time (_A_Date_) :
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
         value = self.kind.get_value (obj)
         if value is not None :
-            if not value.time () :
+            ### In Python 3.5, bool (time) is never False
+            t = value.time ()
+            if t == t.min :
                 return pyk.text_type (value.strftime ("%Y-%m-%d"))
             else :
                 offset = TFL.user_config.time_zone.utcoffset (value)
@@ -2393,7 +2397,9 @@ class A_Date_Time (_A_Date_) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            if not value.time () :
+            ### In Python 3.5, bool (time) is never False
+            t = value.time ()
+            if t == t.min :
                 return value.strftime (A_Date.input_formats [0])
             else :
                 v = value + TFL.user_config.time_zone.utcoffset (value)
