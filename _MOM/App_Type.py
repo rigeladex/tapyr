@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -39,6 +39,7 @@
 #    23-Aug-2013 (CT) Add guard for `fqn != qn` to `add_type`
 #    12-Oct-2014 (CT) Use `TFL.user_config.sha` instead of home-grown code
 #    17-Oct-2014 (CT) Change `db_sig` to use a dict, not tuple, of E_Types
+#    12-Oct-2015 (CT) Apply `pyk.decoded` to `result` of `db_version_hash`
 #    ««revision-date»»···
 #--
 
@@ -149,7 +150,7 @@ class _App_Type_D_ (_App_Type_) :
     def db_version_hash (self) :
         sha    = TFL.user_config.sha
         result = sha (self.db_sig).b64digest (strip = True)
-        return result
+        return pyk.decoded (result)
     # end def db_version_hash
 
     @TFL.Meta.Once_Property

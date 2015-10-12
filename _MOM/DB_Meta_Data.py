@@ -32,6 +32,8 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _MOM       import MOM
 from   _TFL       import TFL
 
+from   _TFL.pyk   import pyk
+
 import _TFL.Environment
 import _TFL.Record
 
@@ -60,12 +62,12 @@ class _MOM_DB_Meta_Data_ (TFL.Record) :
         Version = app_type.Version
         result  = cls \
             ( creator       = kw.pop ("creator", None) or TFL.Record
-                ( date          = datetime.datetime.utcnow ()
+                ( date          = pyk.decoded (datetime.datetime.utcnow ())
                 , tool_version  = Version.id
                 , user          =
-                    getattr (scope, "user", TFL.Environment.username)
+                    getattr (scope, "user", None) or TFL.Environment.username
                 )
-            , dbid          = uuid.uuid4 ()
+            , dbid          = pyk.decoded (uuid.uuid4 ())
             , dbv_hash      = app_type.db_version_hash
             , guid          =
                 kw.pop ("guid", None) or getattr (scope, "guid", None)

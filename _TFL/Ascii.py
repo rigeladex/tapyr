@@ -24,12 +24,14 @@
 #    23-Dec-2007 (CT) Use `Re_Replacer` and `Dict_Replacer` instead of
 #                     home-grown code
 #    18-Oct-2010 (CT) `_quote_map` added and used
+#    12-Oct-2015 (CT) Apply `pyk.decoded` to `result` of `_encoded`
 #    ««revision-date»»···
 #--
 
 from   __future__  import print_function, unicode_literals
 
 from   _TFL        import TFL
+from   _TFL.pyk    import pyk
 from   _TFL.Regexp import Regexp, Re_Replacer, Dict_Replacer, re
 
 import _TFL.CAO
@@ -78,7 +80,8 @@ _quote_map      = \
 _quote_rep      = Dict_Replacer (_quote_map)
 
 def _encoded (s) :
-    return unicodedata.normalize ("NFKD", s).encode ("ascii", "ignore")
+    return pyk.decoded \
+        (unicodedata.normalize ("NFKD", s).encode ("ascii", "ignore"))
 # end def _encoded
 
 def _sanitized_unicode (s, translate_table = None) :
@@ -89,10 +92,8 @@ def _sanitized_unicode (s, translate_table = None) :
 # end def _sanitized_unicode
 
 def _show (s) :
-    from _TFL.pyk import pyk
-    result = repr (s)
-    if result.startswith ("b'") :
-        result = result [1:]
+    from _TFL.portable_repr import portable_repr
+    result = portable_repr (s)
     pyk.fprint (result)
 # end def _show
 
