@@ -78,6 +78,8 @@
 #    16-Jun-2015 (CT) Change default of `webmaster`
 #                     (`@gmail.com` was a bad choice)
 #    29-Jun-2015 (CT) Add `preload` to `Strict Transport Security` header
+#    12-Oct-2015 (CT) Use `logging.exception`, not `logging.warning`
+#                     in `_load_I18N`
 #    ««revision-date»»···
 #--
 
@@ -441,7 +443,7 @@ class GT2W_Command (GTW.OMP.Command) :
                     , log_level  = cmd.log_level
                     )
             except Exception as exc :
-                logging.warning ("Exception during I18N.load: %r" % (exc, ))
+                logging.exception ("Exception during I18N.load: %r" % (exc, ))
         return result
     # end def _load_I18N
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -18,6 +18,8 @@
 # Revision Dates
 #    18-Jun-2010 (CT) Creation (factored from TFL.I18N)
 #    23-Oct-2014 (CT) Add `__future__` import of `print_function`
+#    12-Oct-2015 (CT) Adapt `_parse` to Python 3.5 changes
+#                     of `gettext.GNUTranslations._parse`
 #    ««revision-date»»···
 #--
 
@@ -35,7 +37,7 @@ class Translations (babel.support.Translations) :
     """Add better support for singular/plural"""
 
     def _parse (self, fp):
-        """Slighly modifiey version of gettext.GNUTranslations._parse."""
+        """Slighly modified version of gettext.GNUTranslations._parse."""
         unpack   = struct.unpack
         filename = getattr (fp, "name", "")
         # Parse the .mo file header, which consists of 5 little endian 32
@@ -70,8 +72,8 @@ class Translations (babel.support.Translations) :
             if not mlen :
                 # Catalog description
                 lastk = k = None
-                for item in tmsg.splitlines ():
-                    item = item.strip ()
+                for b_item in tmsg.split ('\n'.encode("ascii")) :
+                    item = b_item.decode().strip()
                     if not item:
                         continue
                     if ":" in item :
@@ -97,14 +99,15 @@ class Translations (babel.support.Translations) :
             # cause no problems since us-ascii should always be a subset of
             # the charset encoding.  We may want to fall back to 8-bit msgids
             # if the Unicode conversion fails.
-            if "\x00" in msg :
+            charset = self._charset or 'ascii'
+            sep     = b"\x00"
+            if sep in msg :
                 # Plural forms
-                msgid1, msgid2 = msg.split  ("\x00")
-                tmsg           = tmsg.split ("\x00")
-                if self._charset:
-                    msgid1 = pyk.text_type (msgid1, self._charset)
-                    msgid2 = pyk.text_type (msgid2, self._charset)
-                    tmsg   = [pyk.text_type (x, self._charset) for x in tmsg]
+                msgid1, msgid2 = msg.split  (sep)
+                tmsg           = tmsg.split (sep)
+                msgid1 = pyk.text_type (msgid1, charset)
+                msgid2 = pyk.text_type (msgid2, charset)
+                tmsg   = [pyk.text_type (x, charset) for x in tmsg]
                 for i, msg in enumerate (tmsg) :
                     catalog [(msgid1, i)] = msg
                 ### In addtion to the two keys to the catalog as well to be
@@ -113,9 +116,8 @@ class Translations (babel.support.Translations) :
                 catalog [msgid1] = tmsg [ 0]
                 catalog [msgid2] = tmsg [-1]
             else:
-                if self._charset :
-                    msg       = pyk.text_type (msg,  self._charset)
-                    tmsg      = pyk.text_type (tmsg, self._charset)
+                msg  = pyk.text_type (msg,  charset)
+                tmsg = pyk.text_type (tmsg, charset)
                 catalog [msg] = tmsg
             # advance to next entry in the seek tables
             masteridx += 8
