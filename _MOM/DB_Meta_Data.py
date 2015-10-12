@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -23,8 +23,11 @@
 #    30-Jan-2011 (CT) `dbid` added
 #    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
 #     7-Jun-2013 (CT) Change `COPY` to iterate over `other`, not `other._kw`
+#    12-Oct-2015 (CT) Add Python-3 future imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import, division, print_function, unicode_literals
 
 from   _MOM       import MOM
 from   _TFL       import TFL

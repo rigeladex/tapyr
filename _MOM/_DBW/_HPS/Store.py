@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -60,8 +60,11 @@
 #    26-May-2013 (CT) Use `chmod` to limit readability of files
 #     6-Jun-2013 (CT) Simplify signature of `_save_context`; add `max_surrs`
 #     7-Jun-2013 (CT) Add/use argument `db_meta_data` to/in `consume`
+#    12-Oct-2015 (CT) Add Python-3 future imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import, division, print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -92,9 +95,9 @@ pickle = pyk.pickle
 
 TZF = TFL.module_copy \
     ( "zipfile"
-    , stringFileHeader = "MM\004\003"
-    , stringCentralDir = "MM\002\001"
-    , stringEndArchive = "MM\006\005"
+    , stringFileHeader = b"MM\004\003"
+    , stringCentralDir = b"MM\002\001"
+    , stringEndArchive = b"MM\006\005"
     )
 
 class _HPS_DB_Meta_Data_ (MOM.DB_Meta_Data) :
