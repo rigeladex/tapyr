@@ -29,6 +29,7 @@
 #    15-Jun-2013 (CT) Import `Derived_PNS`
 #     9-Sep-2014 (CT) Rename `MOM.Q_Exp_Raw` to `MOM.Q_Exp`
 #    14-Sep-2015 (CT) Add `import_full_model`
+#    13-Oct-2015 (CT) Add `import` for `_TFL.fix_datetime_pickle_2_vs_3`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,8 @@ from   _MOM._Attr       import Attr
 from   _MOM._Pred       import Pred
 
 import _MOM.Derived_PNS
+
+import _TFL.fix_datetime_pickle_2_vs_3
 
 def import_full_model () :
     """Import all essential classes defined by MOM."""

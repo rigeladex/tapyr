@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -37,6 +37,7 @@
 #     9-Oct-2014 (CT) Add `builtins`
 #    10-Oct-2014 (CT) Add `urlencode`, `urlparse`
 #    13-Oct-2014 (CT) Add `byte_type`
+#    13-Oct-2015 (CT) Add `copyreg`
 #    ««revision-date»»···
 #--
 
@@ -96,6 +97,12 @@ class _Pyk_ (object) :
     # end def config_parser
 
     Classic_Class_Type = None
+
+    @lazy_property
+    def copyreg (self) :
+        import copyreg
+        return copyreg
+    # end def copyreg
 
     @staticmethod
     def decoded (v, * encodings) :
