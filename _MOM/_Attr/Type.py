@@ -362,6 +362,11 @@
 #     7-Oct-2015 (CT) Don't use `bool` for `datetime.time` instances
 #                     (Python 3.5 compatibility)
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    14-Oct-2015 (CT) Improve `A_Date_Time`
+#                     * Factor rfc3339_format, utcoffset_fmt, utcoffset_pat
+#                     * Change `as_string` to apply `utcoffset` consistently
+#                     * Change `as_rest_cargo_ckd` to always include `utcoffset`
+#                     * Change `_from_string` to allow `utcoffset` in input
 #    25-Oct-2015 (CT) Add `A_Duration`
 #    ««revision-date»»···
 #--
@@ -2373,42 +2378,39 @@ class A_Date_Time (_A_Date_) :
     Q_Name         = "DATE_TIME"
     syntax         = _ ("yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional")
     ui_length      = 22
+    rfc3339_format = "%Y-%m-%dT%H:%M:%S"
     input_formats  = tuple \
         ( itertools.chain
             ( * (  (f + " %H:%M:%S", f + " %H:%M", f)
                 for f in A_Date.input_formats
                 )
             )
-        )
+        ) + (rfc3339_format, )
+    utcoffset_fmt  = "%+03d:%02d"
+    utcoffset_pat  = Regexp (r" *[-+](?P<oh>\d{2}):(?P<om>\d{2}) *$")
     _tuple_len     = 6
 
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
+        ### formatted according to ISO 8601, RFC 3339
         value = self.kind.get_value (obj)
         if value is not None :
-            ### In Python 3.5, bool (time) is never False
-            t = value.time ()
-            if t == t.min :
-                return pyk.text_type (value.strftime ("%Y-%m-%d"))
-            else :
-                offset = TFL.user_config.time_zone.utcoffset (value)
-                oh, os = divmod (offset.total_seconds (), 3600)
-                om     = os // 60
-                v      = value + offset
-                ### Date format according to ISO 8601, RFC 3339
-                return v.strftime \
-                    ("%Y-%m-%dT%H:%M:%S" + ("%+03d:%02d" % (oh, om)))
+            offset = TFL.user_config.time_zone.utcoffset (value)
+            v      = value + offset
+            oh, os = divmod (offset.total_seconds (), 3600)
+            om     = os // 60
+            fmt    = self.rfc3339_format + (self.utcoffset_fmt % (oh, om))
+            return v.strftime (fmt)
     # end def as_rest_cargo_ckd
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            ### In Python 3.5, bool (time) is never False
-            t = value.time ()
-            if t == t.min :
-                return value.strftime (A_Date.input_formats [0])
-            else :
-                v = value + TFL.user_config.time_zone.utcoffset (value)
-                return v.strftime (soc._output_format ())
+            ### In Python 3.5, `bool (t)` is never False -> compare to `t.min`
+            v   = value + TFL.user_config.time_zone.utcoffset (value)
+            t   = v.time ()
+            fmt = A_Date.input_formats [0] if t == t.min \
+                else soc._output_format ()
+            return v.strftime (fmt)
         return ""
     # end def as_string
 
@@ -2435,8 +2437,17 @@ class A_Date_Time (_A_Date_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
-        result = super (A_Date_Time, soc)._from_string (s, obj, glob, locl)
-        result -= TFL.user_config.time_zone.utcoffset (result)
+        utcoffset     = None
+        utcoffset_pat = soc.utcoffset_pat
+        if utcoffset_pat.search (s) :
+            oh        = int (utcoffset_pat.oh)
+            om        = int (utcoffset_pat.om)
+            s         = s [: utcoffset_pat.start ()]
+            utcoffset = datetime.timedelta (0, (oh * 60 + om) * 60)
+        result  = super (A_Date_Time, soc)._from_string (s, obj, glob, locl)
+        if utcoffset is None :
+            utcoffset = TFL.user_config.time_zone.utcoffset (result)
+        result -= utcoffset
         return result
     # end def _from_string
 
