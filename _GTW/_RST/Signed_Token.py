@@ -59,7 +59,7 @@ class _Base_ (TFL.Meta.Object) :
     secret_x                   = None
     sig_sep                    = b":::"
     timestamp                  = ""
-    val_sep                    = b"|"
+    val_sep                    = "|"
     x_signature                = ""
     x_value                    = ""
 
@@ -68,7 +68,8 @@ class _Base_ (TFL.Meta.Object) :
 
     def __init__ (self, request, data, ** kw) :
         time  = request.current_time
-        b64ed = lambda x : base64.b64encode (pyk.encoded (x, self.encoding))
+        b64ed = lambda x : \
+            pyk.decoded (base64.b64encode (pyk.encoded (x, self.encoding)))
         self.__dict__.update \
             ( cargo     = b64ed (data)
             , data      = data
@@ -155,7 +156,7 @@ class _Base_ (TFL.Meta.Object) :
     def value (self) :
         result = self._value
         if result is None :
-            sig    = pyk.encoded (self.signature, self.encoding)
+            sig    = pyk.decoded (self.signature, self.encoding)
             result = self._value = self.val_sep.join \
                 ((self.cargo, self.timestamp, sig))
         return result
