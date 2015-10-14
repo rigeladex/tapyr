@@ -54,6 +54,7 @@
 #     9-Dec-2013 (CT) Use `utf-8`, not `latin-1`
 #    31-Jan-2014 (CT) Use `sos.python_options` for spawned python interpreter
 #    16-Jul-2015 (CT) Add `expect_except` to `module` before testing
+#    14-Oct-2015 (CT) Add command line option `-RExclude`
 #    ««revision-date»»···
 #--
 
@@ -208,8 +209,15 @@ def _main (cmd) :
             run_cmd = run_command_with_summary
         else :
             run_cmd = run_command
+        if cmd.RExclude :
+            x_pat   = Regexp (cmd.RExclude)
+            exclude = x_pat.search
+        elif cmd.exclude :
+            exclude = lambda a : fnmatch.fnmatch (a, cmd.exclude)
+        else :
+            exclude = lambda a : False
         def run_mod (a) :
-            if cmd.exclude and fnmatch.fnmatch (a, cmd.exclude):
+            if exclude (a) :
                 summary.excluded.append (a)
                 print ("%s excluded" % (a, ))
             else :
@@ -270,6 +278,7 @@ _Command = TFL.CAO.Cmd \
         ( "exclude:S?Glob pattern to exclude certain tests"
         , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
         , "path:P:?Path to add to sys.path"
+        , "RExclude:S?Regular expression to exclude certain tests"
         , "summary:B?Summary of failed tests"
         , "timing:B?Add timing information"
         , "transitive:B"
