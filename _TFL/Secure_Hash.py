@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,7 @@
 # Revision Dates
 #    11-Oct-2014 (CT) Creation
 #    12-Oct-2014 (CT) Continue creation
+#    14-Oct-2015 (CT) Change `b64digest` to return `pyk.text_type`
 #    ««revision-date»»···
 #--
 
@@ -156,7 +157,7 @@ class _Wrapper_ (TFL.Meta.Object) :
         result = base64.b64encode (self.digest (), altchars)
         if strip :
             result = result.rstrip (b"=")
-        return result
+        return pyk.text_type (result, "ASCII")
     # end def b64digest
 
     @classmethod
