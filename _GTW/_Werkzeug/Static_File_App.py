@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -19,6 +19,7 @@
 #    22-Jun-2012 (CT) Creation
 #    26-Jun-2012 (CT) Fix `__call__`
 #     9-Jul-2012 (CT) Fix `get_path`
+#    14-Oct-2015 (CT) Fix call to `zip.adler32` to pass `pyk.encoded`
 #    ««revision-date»»···
 #--
 
@@ -32,6 +33,7 @@ import _GTW._Werkzeug.Request
 import _GTW._Werkzeug.Response
 
 from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.pyk                   import pyk
 
 import _TFL._Meta.Object
 import _TFL.Record
@@ -97,7 +99,7 @@ class Static_File_App (TFL.Meta.Object) :
         last_modified  = datetime.fromtimestamp (mtime)
         offset         = TFL.user_config.time_zone.utcoffset (last_modified)
         last_modified -= offset
-        fn_hash        = zlib.adler32 (file_name) & 0xffffffff
+        fn_hash        = zlib.adler32 (pyk.encoded (file_name)) & 0xffffffff
         return TFL.Record \
             ( etag           = "sf-%s-%s-%s" % (mtime, size, fn_hash)
             , last_modified  = last_modified
