@@ -33,6 +33,7 @@
 #    14-May-2014 (CT) Add `sort_key` to `_E_Type_Archive_.Year`
 #    25-Jun-2014 (CT) Factor `referral_query` and friends to `...Mixin`
 #    27-Apr-2015 (CT) Redefine `_E_Type_Archive_.Year._default_title`
+#    14-Oct-2015 (CT) Fix `Entity.changer` (pass `...pid` through `text_type`)
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ class TOP_MOM_Entity (GTW.RST.TOP.MOM.Entity_Mixin, _Ancestor) :
     def changer (self) :
         admin = self.admin
         if admin :
-            return admin._get_child ("change", self.obj.pid)
+            return admin._get_child ("change", pyk.text_type (self.obj.pid))
     # end def changer
 
     def href_change (self) :
