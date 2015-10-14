@@ -30,6 +30,8 @@
 #    26-Feb-2014 (CT) Remove `nav_off_canvas`
 #     5-Apr-2015 (CT) Fix typo
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    14-Oct-2015 (CT) Change `_Event_Wrapper_` to apply `text_type` to `date`
+#                     and `time`
 #    ««revision-date»»···
 #--
 
@@ -49,6 +51,7 @@ import _GTW._RST._TOP.Page
 from   _TFL.defaultdict           import defaultdict_kd
 from   _TFL.Decorator             import getattr_safe
 from   _TFL.I18N                  import _, _T, _Tn
+from   _TFL.pyk                   import pyk
 from   _TFL.Regexp                import Regexp, re
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch
@@ -76,7 +79,7 @@ class _Event_Wrapper_ (TFL.Meta.Object) :
 
     @Once_Property
     def date (self) :
-        return self._instance.FO.date
+        return pyk.text_type (self._instance.FO.date)
     # end def date
 
     @Once_Property
@@ -112,7 +115,7 @@ class _Event_Wrapper_ (TFL.Meta.Object) :
 
     @Once_Property
     def time (self) :
-        return self._instance.FO.time
+        return pyk.text_type (self._instance.FO.time)
     # end def time
 
     @Once_Property
