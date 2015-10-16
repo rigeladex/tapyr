@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -23,10 +23,14 @@
 #    27-Feb-2010 (MG) Allow the extraction method to specify in which file
 #                     the translation was found
 #    23-Oct-2014 (CT) Add missing `__future__` import of `print_function`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__                    import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                          import TFL
 from   _TFL.predicate                import any_true
@@ -177,7 +181,7 @@ def _extract_from_file (method_name, file_name, config, cmd, keywords) :
 
 def _strip_comment_tags(comments, tags):
     """Helper function for `extract` that strips comment tags from strings
-    in a list of comment lines.  This functions operates in-place.
+       in a list of comment lines.  This functions operates in-place.
     """
     def _strip(line):
         for tag in tags:

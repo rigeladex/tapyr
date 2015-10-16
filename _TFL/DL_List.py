@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -56,6 +56,7 @@ import _TFL.predicate
 import _TFL._Meta.Object
 
 @pyk.adapt__bool__
+@pyk.adapt__str__
 class DL_Item (TFL.Meta.Object) :
     """Item in a doubly linked list"""
 
@@ -111,22 +112,22 @@ class DL_Item (TFL.Meta.Object) :
         return not (self.next is None or self.prev is None)
     # end def __bool__
 
-    def __str__ (self) :
-        if bool (self) :
-            return str (self.value)
-        else :
-            return "<%s at %s: %s, %s, %s>" % \
-                ( self.__class__, id (self)
-                , id (self.next), id (self.prev), self.value
-                )
-    # end def __str__
-
     def __repr__ (self) :
         if self.value is None :
             return "<empty item>"
         else :
             return repr (self.value)
     # end def __repr__
+
+    def __str__ (self) :
+        if bool (self) :
+            return pyk.text_type (self.value)
+        else :
+            return "<%s at %s: %s, %s, %s>" % \
+                ( self.__class__, id (self)
+                , id (self.next), id (self.prev), self.value
+                )
+    # end def __str__
 
 # end class DL_Item
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -21,8 +21,14 @@
 #                     `__init__`
 #     4-Jan-2010 (CT) Option classes based on TFL.CAO instead of
 #                     TFL.Command_Line
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from    _TFL.Regexp import *
 import  _TFL.CAO
@@ -34,9 +40,9 @@ class Re_Filter (TFL.Filter) :
        >>> f = Re_Filter ("(foo|bar)")
        >>> g = ~ f
        >>> l = ["fool", "abc", "barroom", "fubar", "zoppl", "sucks"]
-       >>> f.filter (l)
+       >>> _show (f.filter (l))
        ['fool', 'barroom', 'fubar']
-       >>> g.filter (l)
+       >>> _show (g.filter (l))
        ['abc', 'zoppl', 'sucks']
     """
 
@@ -124,6 +130,11 @@ class _Re_Filter_Arg_OA_ (_Re_Filter_Arg_) :
     # end def cook
 
 # end class _Re_Filter_Arg_OA_
+
+def _show (it) :
+    from _TFL.portable_repr import portable_repr
+    print (portable_repr (list (it)))
+# end def _show
 
 if __name__ != "__main__" :
     TFL._Export ("*")

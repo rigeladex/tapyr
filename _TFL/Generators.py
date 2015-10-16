@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,10 +37,14 @@
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    12-Jun-2013 (CT) Add `bool_split_iters`
 #     7-Oct-2014 (CT) Change `paired_map` not to use `len`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__       import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL             import TFL
 from   _TFL.pyk         import pyk
@@ -55,15 +59,15 @@ def alt_iter (* iterables) :
        >>> s1 = range (4)
        >>> s2 = [chr (i + 65) for i in range (3)]
        >>> s3 = range (42, 55, 3)
-       >>> list (alt_iter ())
+       >>> _show (alt_iter ())
        []
-       >>> list (alt_iter (s1))
+       >>> _show (alt_iter (s1))
        [0, 1, 2, 3]
-       >>> list (alt_iter (s1, s2))
+       >>> _show (alt_iter (s1, s2))
        [0, 'A', 1, 'B', 2, 'C', 3]
-       >>> list (alt_iter (s2, s1))
+       >>> _show (alt_iter (s2, s1))
        ['A', 0, 'B', 1, 'C', 2, 3]
-       >>> list (alt_iter (s1, s2, s3))
+       >>> _show (alt_iter (s1, s2, s3))
        [0, 'A', 42, 1, 'B', 45, 2, 'C', 48, 3, 51, 54]
     """
     iters = [iter (x) for x in iterables]
@@ -83,13 +87,13 @@ def bool_split_iters (seq, predicate = bool) :
        elements of `seq`, as determined by `predicate`
 
     >>> seq = list (pyk.xrange (10))
-    >>> list (list (x) for x in bool_split_iters (seq))
+    >>> _show (list (x) for x in bool_split_iters (seq))
     [[0], [1, 2, 3, 4, 5, 6, 7, 8, 9]]
-    >>> list (list (x) for x in bool_split_iters (seq, lambda i : i % 2))
+    >>> _show (list (x) for x in bool_split_iters (seq, lambda i : i % 2))
     [[0, 2, 4, 6, 8], [1, 3, 5, 7, 9]]
-    >>> list (list (x) for x in bool_split_iters (seq, lambda i : i % 3))
+    >>> _show (list (x) for x in bool_split_iters (seq, lambda i : i % 3))
     [[0, 3, 6, 9], [1, 2, 4, 5, 7, 8]]
-    >>> list (list (x) for x in bool_split_iters (seq, lambda i : i < 5))
+    >>> _show (list (x) for x in bool_split_iters (seq, lambda i : i < 5))
     [[5, 6, 7, 8, 9], [0, 1, 2, 3, 4]]
 
     """
@@ -156,12 +160,12 @@ class Look_Ahead_Gen (object) :
 def enumerate_slice (seq, head, tail = None) :
     """Generate `index, value` pairs for slice `seq [head:tail]`.
 
-       >>> tuple (enumerate_slice (range (7), 0))
-       ((0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6))
-       >>> tuple (enumerate_slice (range (20), 5, 10))
-       ((5, 5), (6, 6), (7, 7), (8, 8), (9, 9))
-       >>> tuple (enumerate_slice ("abcdefghijklmnopqrstuvwxyz", 20))
-       ((20, 'u'), (21, 'v'), (22, 'w'), (23, 'x'), (24, 'y'), (25, 'z'))
+       >>> _show (enumerate_slice (range (7), 0))
+       [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)]
+       >>> _show (enumerate_slice (range (20), 5, 10))
+       [(5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]
+       >>> _show (enumerate_slice ("abcdefghijklmnopqrstuvwxyz", 20))
+       [(20, 'u'), (21, 'v'), (22, 'w'), (23, 'x'), (24, 'y'), (25, 'z')]
     """
     i = head
     for v in seq [head:tail] :
@@ -180,7 +184,7 @@ def Integers (n) :
 def Indices (seq) :
     """Generates indices of sequence `seq`.
 
-       >>> list (Indices ("abcdef"))
+       >>> _show (Indices ("abcdef"))
        [0, 1, 2, 3, 4, 5]
     """
     return Integers (len (seq))
@@ -189,13 +193,13 @@ def Indices (seq) :
 def pairwise (seq) :
     """Generates a list of pairs `(seq [0:1], seq [1:2], ..., seq [n-1:n])'.
 
-       >>> list (pairwise ("abcdef"))
+       >>> _show (pairwise ("abcdef"))
        [('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e'), ('e', 'f')]
-       >>> list (pairwise (range (4)))
+       >>> _show (pairwise (range (4)))
        [(0, 1), (1, 2), (2, 3)]
-       >>> list (pairwise ([1]))
+       >>> _show (pairwise ([1]))
        []
-       >>> list (pairwise ([]))
+       >>> _show (pairwise ([]))
        []
     """
     lag = Look_Ahead_Gen (seq)
@@ -207,13 +211,13 @@ def pairwise (seq) :
 def pairwise_circle (seq) :
     """Generates a list of pairs of a circle of iterable `seq`
 
-       >>> list (pairwise_circle ([1, 2, 3, 4, 5]))
+       >>> _show (pairwise_circle ([1, 2, 3, 4, 5]))
        [(1, 2), (2, 3), (3, 4), (4, 5), (5, 1)]
-       >>> list (pairwise_circle ([1, 2]))
+       >>> _show (pairwise_circle ([1, 2]))
        [(1, 2), (2, 1)]
-       >>> list (pairwise_circle ([1]))
+       >>> _show (pairwise_circle ([1]))
        [(1, 1)]
-       >>> list (pairwise_circle ([]))
+       >>> _show (pairwise_circle ([]))
        []
     """
     lag = Look_Ahead_Gen (seq)
@@ -228,13 +232,13 @@ def pairwise_circle (seq) :
 def paired_map (s1, s2) :
     """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))'.
 
-       >>> list (paired_map ("", []))
+       >>> _show (paired_map ("", []))
        []
-       >>> list (paired_map ("abc", range (4)))
+       >>> _show (paired_map ("abc", range (4)))
        [('a', 0), ('b', 1), ('c', 2), (None, 3)]
-       >>> list (paired_map ("abc", range (3)))
+       >>> _show (paired_map ("abc", range (3)))
        [('a', 0), ('b', 1), ('c', 2)]
-       >>> list (paired_map ("abc", range (2)))
+       >>> _show (paired_map ("abc", range (2)))
        [('a', 0), ('b', 1), ('c', None)]
     """
     def _gen (s) :
@@ -317,17 +321,17 @@ class Lazy_List :
 def window_wise (seq, size) :
     """Return all windows of `size` elements in `seq`.
 
-       >>> list (window_wise (range (5), 1))
+       >>> _show (window_wise (range (5), 1))
        [(0,), (1,), (2,), (3,), (4,)]
-       >>> list (window_wise (range (5), 2))
+       >>> _show (window_wise (range (5), 2))
        [(0, 1), (1, 2), (2, 3), (3, 4)]
-       >>> list (window_wise (range (5), 3))
+       >>> _show (window_wise (range (5), 3))
        [(0, 1, 2), (1, 2, 3), (2, 3, 4)]
-       >>> list (window_wise (range (5), 4))
+       >>> _show (window_wise (range (5), 4))
        [(0, 1, 2, 3), (1, 2, 3, 4)]
-       >>> list (window_wise (range (5), 5))
+       >>> _show (window_wise (range (5), 5))
        [(0, 1, 2, 3, 4)]
-       >>> list (window_wise (range (5), 6))
+       >>> _show (window_wise (range (5), 6))
        []
     """
     from _TFL.DL_List import DL_Ring
@@ -341,6 +345,11 @@ def window_wise (seq, size) :
             w.append    (next (s))
             yield tuple (w.values ())
 # end def window_wise
+
+def _show (it) :
+    from _TFL.portable_repr import portable_repr
+    print (portable_repr (list (it)))
+# end def _show
 
 if __name__ != "__main__" :
     TFL._Export ("*")

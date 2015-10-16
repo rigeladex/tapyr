@@ -44,6 +44,7 @@
 #    10-Oct-2013 (CT) Factor `_Filter_S_._add_derived_classes`
 #     4-Apr-2014 (CT) Remove `Attr_Query` to `Q_Exp`
 #     5-Feb-2015 (CT) Add Property `instance`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
@@ -174,7 +175,10 @@ operators short-circuit::
 
 """
 
+from   __future__  import absolute_import
+from   __future__  import division
 from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                     import TFL
 

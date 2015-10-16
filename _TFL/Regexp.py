@@ -42,11 +42,14 @@
 #    24-Sep-2014 (CT) Factor `Multi_Regexp.add`
 #    13-Oct-2014 (CT) Add `Multi_Regexp.sub` and `.subn`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division
+from   __future__  import absolute_import
+from   __future__  import division
 from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL           import TFL
 from   _TFL.pyk       import pyk
@@ -85,15 +88,15 @@ class Regexp (TFL.Meta.Object) :
     >>> _   = pat.match ("last_name___EQ")
     >>> bool (pat)
     True
-    >>> pat.groups ()
-    ('last_name', 'EQ')
+    >>> print (", ".join (pat.groups ()))
+    last_name, EQ
 
     >>> sav = pat.Copy()
     >>> _   = pat.match ("owner__last_name___STARTSWITH")
-    >>> pat.groups()
-    ('owner__last_name', 'STARTSWITH')
-    >>> sav.groups()
-    ('last_name', 'EQ')
+    >>> print (", ".join (pat.groups ()))
+    owner__last_name, STARTSWITH
+    >>> print (", ".join (sav.groups ()))
+    last_name, EQ
 
     """
 
@@ -281,10 +284,10 @@ class Re_Replacer (TFL.Meta.Object) :
 
        >>> rep = Re_Replacer (
        ...     "[abc]", lambda m : str ("abc".index (m.group (0))))
-       >>> rep ("abc")
-       '012'
-       >>> rep ("abc", count = 1)
-       '0bc'
+       >>> print (rep ("abc"))
+       012
+       >>> print (rep ("abc", count = 1))
+       0bc
     """
 
     default_flags = 0
@@ -316,9 +319,11 @@ class Dict_Replacer (Re_Replacer) :
     """Replace all keys (which are assumed to be plain strings, not regexpes)
        of a dictionary with the corresponding values.
 
-       >>> dr = Dict_Replacer ({"--" : "\\endash", "---" : "\\emdash"})
-       >>> dr ("TeX interprets `--` as an en-dash and `---` as an em-dash")
-       'TeX interprets `\\\\endash` as an en-dash and `\\\\emdash` as an em-dash'
+       ::
+
+    >>> dr = Dict_Replacer ({"--" : "\\endash", "---" : "\\emdash"})
+    >>> print (dr ("TeX interprets `--` as an en-dash and `---` as an em-dash"))
+    TeX interprets `\\endash` as an en-dash and `\\emdash` as an em-dash
     """
 
     def __init__ (self, __dict = {}, __flags = 0, ** kw) :

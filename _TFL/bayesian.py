@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -18,10 +18,14 @@
 #     3-Aug-2003 (CT) Creation
 #    29-Sep-2006 (CT) Two more doctests added
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import
+from   __future__  import division
 from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL import TFL
 
@@ -41,30 +45,27 @@ def bayesian (p_h, p_o_h, p_o_not_h) :
        disease is present and 10% (or 5%, or 1%) of the time when the disease
        is not present:
 
-       >>> "%5.3f" % bayesian (0.01, 0.80, 0.10)
-       '0.075'
-
-       >>> "%5.3f" % bayesian (0.01, 0.85, 0.05)
-       '0.147'
-
-       >>> "%5.3f" % bayesian (0.01, 0.90, 0.01)
-       '0.476'
-
-       >>> "%5.3f" % bayesian (0.01, 0.99, 0.01)
-       '0.500'
+       >>> print ("%5.3f" % bayesian (0.01, 0.80, 0.10))
+       0.075
+       >>> print ("%5.3f" % bayesian (0.01, 0.85, 0.05))
+       0.147
+       >>> print ("%5.3f" % bayesian (0.01, 0.90, 0.01))
+       0.476
+       >>> print ("%5.3f" % bayesian (0.01, 0.99, 0.01))
+       0.500
 
        Because so many people don't have the disease, the false positives far
        exceed the small percentage of those tested who actually have the
        disease.
 
-       >>> "%5.3f" % bayesian (0.50, 0.80, 0.10)
-       '0.889'
-       >>> "%5.3f" % bayesian (0.50, 0.85, 0.05)
-       '0.944'
-       >>> "%5.3f" % bayesian (0.50, 0.90, 0.01)
-       '0.989'
-       >>> "%5.3f" % bayesian (0.50, 0.99, 0.01)
-       '0.990'
+       >>> print ("%5.3f" % bayesian (0.50, 0.80, 0.10))
+       0.889
+       >>> print ("%5.3f" % bayesian (0.50, 0.85, 0.05))
+       0.944
+       >>> print ("%5.3f" % bayesian (0.50, 0.90, 0.01))
+       0.989
+       >>> print ("%5.3f" % bayesian (0.50, 0.99, 0.01))
+       0.990
     """
     p_not_h         = 1.0 - p_h
     p_h_times_p_o_h = p_h * p_o_h

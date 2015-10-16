@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -24,8 +24,14 @@
 #    20-Aug-2012 (CT) Add `transformed`
 #    20-Aug-2012 (CT) Sort methods alphabetically
 #    21-Aug-2012 (CT) Add `__iter__`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL           import TFL
 from   _TFL._D2       import D2
@@ -83,8 +89,8 @@ class Line (TFL.Meta.Object) :
        Point (2.5, 2.5)
        >>> l.length () == m.length ()
        1
-       >>> "%5.2f" % l.length ()
-       ' 7.07'
+       >>> print ("%5.2f" % l.length ())
+        7.07
        >>> l.distance (D2.Point (5.0, 0.0)) - (l.length () / 2) < 1.e-12
        1
        >>> l.point (0.5)

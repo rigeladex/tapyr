@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,10 +28,14 @@
 #     8-Jun-2012 (CT) Add `opts.get ("prefix")` to `pop_to_self`
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #     5-Jun-2014 (CT) Remove `__properties`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__       import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL       import TFL
 from   _TFL._Meta import Meta

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -20,10 +20,14 @@
 #    30-Jan-2010 (MG) `get_list`: `combine_default` added
 #    15-Apr-2012 (CT) Fix doctests
 #     7-Oct-2014 (CT) Make Python-3 compatible
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__              import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _TFL.pyk                import pyk
@@ -60,8 +64,8 @@ class Config_File (TFL.Meta.Object) :
     >>> sorted (pyk.iteritems (cfg.extractors))# doctest:+ELLIPSIS
     [('mom', ...), ('python', <function Python at ...>)]
 
-    >>> sorted (cfg.patterns)
-    ['mom', 'python']
+    >>> print (", ".join (sorted (cfg.patterns)))
+    mom, python
 
     """
 

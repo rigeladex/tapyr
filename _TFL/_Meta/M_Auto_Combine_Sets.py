@@ -18,6 +18,7 @@
 # Revision Dates
 #     5-Jan-2010 (CT) Creation (new implementation)
 #    26-Jan-2015 (CT) Add `_sets_to_combine` to `_sets_to_combine`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
@@ -27,6 +28,7 @@ Meta class for auto-combining the set-valued attributes mentioned in
 
 ::
 
+    >>> from _TFL.portable_repr import portable_repr
     >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Combine_Sets)) :
     ...     _sets_to_combine  = ("foo", "bar")
     ...     foo               = set ([1, 2, 3])
@@ -38,13 +40,19 @@ Meta class for auto-combining the set-valued attributes mentioned in
     ...
     >>> class C (B) :
     ...     bar               = set ("xyz")
-    >>> sorted (A.foo), sorted (A.bar)
-    ([1, 2, 3], [])
-    >>> sorted (B.foo), sorted (B.bar), sorted (B.baz)
-    ([1, 2, 3, 4, 5], ['a', 'b'], [])
-    >>> sorted (C.foo), sorted (C.bar), sorted (C.baz)
-    ([1, 2, 3, 4, 5], ['a', 'b', 'x', 'y', 'z'], [])
+    >>> portable_repr (A.foo), portable_repr (A.bar)
+    ('{1, 2, 3}', '{}')
+    >>> portable_repr (B.foo), portable_repr (B.bar), portable_repr (B.baz)
+    ('{1, 2, 3, 4, 5}', "{'a', 'b'}", '{}')
+    >>> portable_repr (C.foo), portable_repr (C.bar), portable_repr(C.baz)
+    ('{1, 2, 3, 4, 5}', "{'a', 'b', 'x', 'y', 'z'}", '{}')
+
 """
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                import TFL
 import _TFL._Meta.M_Class

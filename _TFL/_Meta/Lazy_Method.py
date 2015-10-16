@@ -31,10 +31,14 @@
 #    29-Aug-2008 (CT)  s/super(...)/__super/
 #     3-Feb-2009 (CT)  Documentation improved
 #     8-Oct-2015 (CT)  Change `__getattr__` to *not* handle `__XXX__`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__       import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL             import TFL
 import _TFL._Meta.Property

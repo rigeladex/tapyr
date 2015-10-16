@@ -18,6 +18,7 @@
 #    21-Aug-2009 (CT) Creation
 #    21-Aug-2009 (CT) Guard `__getattr__` against `name == "_"`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,11 @@ True
 >>> a is not C._.foo
 True
 """
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL             import TFL
 import _TFL._Meta.M_Class

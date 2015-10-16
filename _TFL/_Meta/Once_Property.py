@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -21,8 +21,14 @@
 #     7-Oct-2009 (CT) `Once_Property` implemented as wrapper around
 #                     `Lazy_Property`
 #    26-Jun-2013 (CT) Add `Class_and_Instance_Once_Property`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL             import TFL
 import _TFL._Meta.Property

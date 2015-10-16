@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -25,10 +25,14 @@
 #    23-Sep-2004 (CT)  Cleanup
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #    21-Feb-2008 (MG) `Functor.__init__`:  simplified by using `kw.pop`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk

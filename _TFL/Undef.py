@@ -21,8 +21,14 @@
 #    22-Feb-2013 (CT) Add doc-tests
 #    21-Aug-2014 (CT) Add `is_undefined`
 #    13-Apr-2015 (CT) Add `_import_cb_json_dump`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL               import TFL
 from   _TFL.pyk           import pyk

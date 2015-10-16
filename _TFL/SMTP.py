@@ -30,13 +30,17 @@
 #    31-Mar-2014 (CT) Simplify, and fix, `header` for Python-3
 #     8-Oct-2015 (CT) Remove guard against text-type from `__call__`
 #                     (Python 3.5 expects `str`, not `bytes`)
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import
+from   __future__  import division
 from   __future__  import print_function
 
 from   _TFL                    import TFL
 from   _TFL.pyk                import pyk
+from   _TFL.portable_repr      import portable_repr
 
 import _TFL._Meta.Object
 import _TFL.Context
@@ -238,7 +242,9 @@ class SMTP_Tester (SMTP) :
 
     def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
         pyk.fprint \
-            ("Email via", self.mail_host, "from", from_addr, "to", to_addrs)
+            ( "Email via", self.mail_host, "from", from_addr, "to"
+            , portable_repr (to_addrs)
+            )
         pyk.fprint (msg)
     # end def send
 

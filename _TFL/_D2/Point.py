@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,10 +37,14 @@
 #     3-Sep-2012 (CT) Add `_Point_.free`
 #    19-Oct-2012 (RS) Fix multiplication by `Point (0, 0)` for `_R_Point_`
 #    19-Oct-2012 (RS) Fix `_R_Point_` arithmetics when `_scale` != (1, 1)
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__          import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                import TFL
 

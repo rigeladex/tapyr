@@ -57,6 +57,7 @@
 #     9-Oct-2013 (CT) Use `adapt__bool__` (3-compatibility)
 #     4-Apr-2014 (CT) Use `TFL.Q`, not `TFL.Attr_Query ()`
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
@@ -160,6 +161,11 @@ Provide filtering and ordering functions over query result::
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 """
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                       import TFL
 from   _TFL.pyk                   import pyk

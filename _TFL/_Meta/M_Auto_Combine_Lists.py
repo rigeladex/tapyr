@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -23,6 +23,7 @@
 #     2-Feb-2009 (CT) s/_M_Type_/M_Base/
 #     3-Feb-2009 (CT) Documentation improved
 #     5-Jan-2010 (CT) Use `uniq` instead of `set` and `sorted`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,11 @@ Meta class for auto-combining the list-valued attributes mentioned in
     >>> id (B.qux [0]) == id (A.qux [0])
     True
 """
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                import TFL
 import _TFL._Meta.M_Class

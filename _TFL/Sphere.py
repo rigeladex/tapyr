@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Martin Glueck All rights reserved
+# Copyright (C) 2011-2015 Martin Glueck All rights reserved
 # ****************************************************************************
 #
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
@@ -17,10 +17,14 @@
 # Revision Dates
 #     6-Apr-2011 (MG) Creation
 #    23-May-2011 (CT) `doctest` fixed (no floating point in output)
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import
+from   __future__  import division
 from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL               import TFL
 import _TFL._Meta.Object

@@ -53,8 +53,14 @@
 #     5-Feb-2015 (CT)  Add `default` to `getattr_safe`; factor `_update_wrapper`
 #    16-Jul-2015 (CT)  Use `expect_except` in doc-tests
 #    15-Aug-2015 (CT) Add `eval_function_body`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL         import TFL
 from   _TFL.pyk     import pyk
@@ -92,8 +98,8 @@ def Decorator (decorator) :
            ...     "Function to test decoration"
            ...     pass
            ...
-           >>> foo.__name__, foo.__doc__
-           ('wrapper', 'Wrapper around decorated function')
+           >>> print (foo.__name__, ":", foo.__doc__)
+           wrapper : Wrapper around decorated function
 
            >>> @Decorator
            ... def deco (f) :
@@ -107,8 +113,8 @@ def Decorator (decorator) :
            ...     "Function to test decoration"
            ...     pass
            ...
-           >>> foo.__name__, foo.__doc__
-           ('foo', 'Function to test decoration')
+           >>> print (foo.__name__, ":", foo.__doc__)
+           foo : Function to test decoration
     """
     def wrapper (f) :
         if isinstance (f, (classmethod, staticmethod)) :
@@ -141,17 +147,18 @@ def Annotated (RETURN = _AR_undefined, ** kw) :
        Each key of `kw` must be the name of an argument of the function to be
        annotated::
 
+           >>> from _TFL.portable_repr import portable_repr
            >>> @TFL.Annotated (bar = "Arg 1", baz = 42)
            ... def foo (bar, baz) : pass
            ...
-           >>> sorted (foo.func_annotations.items ())
-           [('bar', 'Arg 1'), ('baz', 42)]
+           >>> portable_repr (foo.func_annotations)
+           "{'bar' : 'Arg 1', 'baz' : 42}"
 
            >>> @TFL.Annotated (bar = "Arg 1", baz = 42, RETURN = None)
            ... def foo (bar, baz) : pass
            ...
-           >>> sorted (foo.func_annotations.items ())
-           [('bar', 'Arg 1'), ('baz', 42), ('return', None)]
+           >>> portable_repr (foo.func_annotations)
+           "{'bar' : 'Arg 1', 'baz' : 42, 'return' : None}"
 
            >>> with expect_except (TypeError) :
            ...     @TFL.Annotated (bar = "Arg 1", baz = 42, qux = None)
@@ -185,21 +192,23 @@ def Attributed (** kw) :
 
        ::
 
+           >>> from _TFL.portable_repr import portable_repr
            >>> @Attributed (foo = 1, bar = 42)
            ... def f () :
            ...     pass
            ...
-           >>> sorted (pyk.iteritems (f.__dict__))
-           [('bar', 42), ('foo', 1)]
+           >>> portable_repr (f.__dict__)
+           "{'bar' : 42, 'foo' : 1}"
 
            >>> @Attributed (a = "WTF", b = 137)
            ... def g () :
            ...     "Test `Attributed` decorator"
            ...
-           >>> sorted (pyk.iteritems (g.__dict__))
-           [('a', 'WTF'), ('b', 137)]
-           >>> g.__doc__
-           'Test `Attributed` decorator'
+           >>> portable_repr (g.__dict__)
+           "{'a' : 'WTF', 'b' : 137}"
+
+           >>> print (g.__doc__)
+           Test `Attributed` decorator
     """
     def decorator (f) :
         for k, v in pyk.iteritems (kw) :

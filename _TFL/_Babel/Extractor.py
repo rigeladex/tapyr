@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -21,8 +21,15 @@
 #    27-Feb-2010 (MG) Support for different file name added
 #    30-Nov-2010 (CT) s/save_eval/safe_eval/ and added `strip`-calls
 #    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
+
 from   _TFL                    import TFL
 import _TFL.I18N
 from    babel.util             import parse_encoding

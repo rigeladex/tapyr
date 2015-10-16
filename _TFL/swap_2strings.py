@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,10 +20,14 @@
 #                         `ValueError: inconsistent leading whitespace`
 #                     from the $%&@*$ doc-test
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import
+from   __future__  import division
 from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL.Regexp import *
 
@@ -53,12 +57,14 @@ class String_Swapper :
 def swap_2strings (s1, s2, text) :
     """Swap all occurences of `s1` and `s2` in `text`
 
-       >>> swap_2strings ("a", "b", "ab" * 5)
-       'bababababa'
-       >>> swap_2strings ("sda", "sdb", "/dev/sda1 /  \\n/dev/sdb1 /alt  ")
-       '/dev/sdb1 /  \\n/dev/sda1 /alt  '
-       >>> swap_2strings ("sda", "sdb", "/dev/sda2 /b \\n/dev/sdb2 /alt/b")
-       '/dev/sdb2 /b \\n/dev/sda2 /alt/b'
+       >>> print (swap_2strings ("a", "b", "ab" * 5))
+       bababababa
+       >>> print (swap_2strings ("sda", "sdb", "/dev/sda1 /  \\n/dev/sdb1 /alt  "))
+       /dev/sdb1 /
+       /dev/sda1 /alt
+       >>> print (swap_2strings ("sda", "sdb", "/dev/sda2 /b \\n/dev/sdb2 /alt/b"))
+       /dev/sdb2 /b
+       /dev/sda2 /alt/b
     """
     return String_Swapper (s1, s2) (text)
 # end def swap_2strings

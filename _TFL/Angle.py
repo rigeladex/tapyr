@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,10 +20,14 @@
 #    17-Jun-2010 (CT) `__unicode__` introduced
 #    23-Dec-2010 (CT) Doctest fixed (don't use `repr` of floating point numbers)
 #    13-Oct-2014 (CT) Use `portable_repr`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__                 import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+### importing `unicode_literals` from `__future__` wrecks 2.7 doctest
 
 from   _TFL                       import TFL
 

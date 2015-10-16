@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,8 +29,14 @@
 #    13-Jul-2005 (CED) `M_Auto_Combine_Sets` added to bases
 #     3-Feb-2009 (CT)  Documentation added
 #    28-Sep-2012 (CT)  Add `M_Auto_Combine_Nested_Classes`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                import TFL
 

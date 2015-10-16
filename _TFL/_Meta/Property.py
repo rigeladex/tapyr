@@ -51,10 +51,14 @@
 #                     `property` values
 #     4-Jun-2014 (CT) Add `Property`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
-from   __future__       import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL             import TFL
 import _TFL._Meta.M_Class
@@ -278,19 +282,19 @@ def Class_Property (getter) :
         >>> Foo.bar
         23
 
-        >>> Foo.baz
+        >>> print (Foo.baz)
         classmethod baz called
-        'Frozz'
-        >>> foo.baz
+        Frozz
+        >>> print (foo.baz)
         classmethod baz called
-        'Frozz'
+        Frozz
         >>>
-        >>> Foo.foo
+        >>> print (Foo.foo)
         Class_Method foo called
-        'Hello world'
-        >>> foo.foo
+        Hello world
+        >>> print (foo.foo)
         Class_Method foo called
-        'Hello world'
+        Hello world
         >>>
         >>> Foo.qux
         Once property qux
@@ -607,10 +611,10 @@ class Property (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
          >>> u.foo
          529
 
-         >>> T.bar
-         'Meta_T.bar default'
-         >>> t.bar
-         'T.bar default'
+         >>> print (T.bar)
+         Meta_T.bar default
+         >>> print (t.bar)
+         T.bar default
          >>> T.bar = 1764
          >>> t.bar = 23
          >>> T.bar
@@ -629,8 +633,8 @@ class Property (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
 
          >>> U.baz # doctest:+ELLIPSIS
          <Property.Property object at ...>
-         >>> u.baz
-         'U.baz'
+         >>> print (u.baz)
+         U.baz
 
     """
 

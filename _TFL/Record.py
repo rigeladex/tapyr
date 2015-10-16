@@ -42,8 +42,14 @@
 #    13-Apr-2015 (CT) Add `_import_cb_json_dump`
 #     6-May-2015 (CT) Use `TFL.json_dump.jsonified`
 #    29-May-2015 (CT) Add `* ds` to `Record.__init__`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                import TFL
 
@@ -58,8 +64,8 @@ class Record (TFL.Meta.Object) :
     """Class emulating a struct/record (but dynamically).
 
     >>> r = Record (x = "y", kw = dict (foo = 42))
-    >>> r.x
-    'y'
+    >>> print (r.x)
+    y
     >>> r.kw
     {'foo': 42}
 
@@ -185,8 +191,8 @@ class Record_S (Record) :
 
     >>> c = Record_S (x = 1)
     >>> o = Record_S (a = 42, b = Record_S (a = 137, b = "foo", c = c))
-    >>> "o.a = %(a)s, o.b.a = %(b.a)s, o.b.c.x = %(b.c.x)s" % o
-    'o.a = 42, o.b.a = 137, o.b.c.x = 1'
+    >>> print ("o.a = %(a)s, o.b.a = %(b.a)s, o.b.c.x = %(b.c.x)s" % o)
+    o.a = 42, o.b.a = 137, o.b.c.x = 1
 
     >>> c
     Record_S (x = 1)

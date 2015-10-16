@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -21,6 +21,7 @@
 #     2-Feb-2009 (CT) s/_M_Type_/M_Base/
 #     3-Feb-2009 (CT) Documentation improved
 #     5-Jan-2010 (CT) Use `itertools.chain` instead of `TFL.d_dict`
+#    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
 
@@ -30,6 +31,7 @@ Meta class for auto-combining the dict-valued attributes mentioned in
 
 ::
 
+    >>> from _TFL.portable_repr import portable_repr
     >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Combine_Dicts)) :
     ...     _dicts_to_combine = ("foo", "bar")
     ...     bar               = dict (x = 1, y = 2)
@@ -44,15 +46,21 @@ Meta class for auto-combining the dict-valued attributes mentioned in
     >>> class AB (A, B) :
     ...     foo               = dict (v = "b", w = "a")
     ...     bar               = dict (x = "z", z = -42)
-    >>> sorted (A.foo.items ()), sorted (A.bar.items ())
-    ([], [('x', 1), ('y', 2)])
-    >>> sorted (B.foo.items ()), sorted (B.bar.items ())
-    ([('u', 1), ('v', 'a')], [('y', 3), ('z', 42)])
-    >>> sorted (BA.foo.items ()), sorted (BA.bar.items ()), sorted (BA.baz.items ())
-    ([('u', 1), ('v', 'a')], [('x', 1), ('y', 3), ('z', 42)], [])
-    >>> sorted (AB.foo.items ()), sorted (AB.bar.items ())
-    ([('u', 1), ('v', 'b'), ('w', 'a')], [('x', 'z'), ('y', 2), ('z', -42)])
+    >>> portable_repr (A.foo), portable_repr (A.bar)
+    ('{}', "{'x' : 1, 'y' : 2}")
+    >>> portable_repr (B.foo), portable_repr (B.bar)
+    ("{'u' : 1, 'v' : 'a'}", "{'y' : 3, 'z' : 42}")
+    >>> portable_repr (BA.foo), portable_repr (BA.bar), portable_repr (BA.baz)
+    ("{'u' : 1, 'v' : 'a'}", "{'x' : 1, 'y' : 3, 'z' : 42}", '{}')
+    >>> portable_repr (AB.foo), portable_repr (AB.bar)
+    ("{'u' : 1, 'v' : 'b', 'w' : 'a'}", "{'x' : 'z', 'y' : 2, 'z' : -42}")
+
 """
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                import TFL
 from   _TFL.pyk            import pyk

@@ -59,7 +59,10 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import
+from   __future__  import division
 from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL             import TFL
 from   _TFL.pyk         import pyk
@@ -149,7 +152,7 @@ def BaM (* bases, ** kw) :
         def __new__ (cls, name, this_bases, d):
             if this_bases is None :
                 ### return temporary class
-                return type.__new__ (cls, name, (), d)
+                return type.__new__ (cls, str (name), (), d)
             ### return instance of `meta`, derived from `bases`
             ### * add `__metaclass__` to `d` to please
             ###   `M_M_Class._most_specific_meta`
@@ -161,12 +164,12 @@ def _m_mangled_attr_name (name, cls_name) :
     """Returns `name` as mangled by Python for occurences of `__%s` % name
        inside the definition of a class with name `cls_name`.
 
-       >>> _m_mangled_attr_name ("foo", "Bar")
-       '_Bar__foo'
-       >>> _m_mangled_attr_name ("foo", "_Bar")
-       '_Bar__foo'
-       >>> _m_mangled_attr_name ("foo", "_Bar_")
-       '_Bar___foo'
+       >>> print (_m_mangled_attr_name ("foo", "Bar"))
+       _Bar__foo
+       >>> print (_m_mangled_attr_name ("foo", "_Bar"))
+       _Bar__foo
+       >>> print (_m_mangled_attr_name ("foo", "_Bar_"))
+       _Bar___foo
     """
     if cls_name.startswith ("_") :
         format = "%s__%s"
