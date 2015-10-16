@@ -55,6 +55,7 @@
 #    31-Jan-2014 (CT) Use `sos.python_options` for spawned python interpreter
 #    16-Jul-2015 (CT) Add `expect_except` to `module` before testing
 #    14-Oct-2015 (CT) Add command line option `-RExclude`
+#    16-Oct-2015 (CT) Add command line option `-Extra_Interpreters`
 #    ««revision-date»»···
 #--
 
@@ -93,9 +94,9 @@ summary        = TFL.Record \
     , total    = 0
     )
 
-format_f = """%(module.__file__)s fails %(f)s of %(t)s doc-tests in %(cases)s test-cases%(et)s"""
-format_s = """%(module.__file__)s passes all of %(t)s doc-tests in %(cases)s test-cases%(et)s"""
-format_x = """%s raises exception `%r` during doc-tests%s"""
+format_f = """%(module.__file__)s fails %(f)s of %(t)s doc-tests in %(cases)s test-cases%(et)s%(py_version)s"""
+format_s = """%(module.__file__)s passes all of %(t)s doc-tests in %(cases)s test-cases%(et)s%(py_version)s"""
+format_x = """%s  [py %s] raises exception `%r` during doc-tests%s"""
 sum_pat  = Regexp \
     ( "(?P<module>.+?) (?:fails (?P<failed>\d+)|passes all) of "
       "(?P<total>\d+) doc-tests (?:in (?P<cases>\d+) test-cases)?"
@@ -154,13 +155,16 @@ def run_command_with_summary (cmd) :
 # end def run_command_with_summary
 
 def _main (cmd) :
-    cmd_path = list (cmd.path or [])
-    replacer = Re_Replacer (r"\.py[co]", ".py")
-    a        = cmd.argv [0]
-    et       = ""
-    if len (cmd.argv) == 1 and not sos.path.isdir (a) :
-        f  = Filename (a)
-        m  = f.base
+    cmd_path   = list (cmd.path or [])
+    replacer   = Re_Replacer (r"\.py[co]", ".py")
+    a          = cmd.argv [0]
+    et         = ""
+    one_arg_p  = len (cmd.argv) == 1 and not sos.path.isdir (a)
+    if one_arg_p and not cmd.Extra_Interpreters :
+        f              = Filename (a)
+        m              = f.base
+        py_version     = " [py %s]" % \
+            ".".join (str (v) for v in sys.version_info [:3])
         sys.path [0:0] = cmd_path
         mod_path       = f.directory if f.directory else "./"
         if sos.path.exists \
@@ -188,7 +192,8 @@ def _main (cmd) :
             exec_time = _timer () - start
             if cmd.timing :
                 et = " in %7.5fs" % (exec_time, )
-            print (format_x % (replacer (a), exc, et), file = sys.stderr)
+            msg = format_x % (replacer (a), py_version, exc, et)
+            print (msg, file = sys.stderr)
             raise
         else :
             format = format_f if f else format_s
@@ -196,7 +201,9 @@ def _main (cmd) :
                 et = " in %7.5fs" % (exec_time, )
             print (replacer (format % TFL.Caller.Scope ()), file = sys.stderr)
     else :
-        head_pieces = [sys.executable] + sos.python_options () + \
+        py_executables = [sys.executable] + list (cmd.Extra_Interpreters)
+        py_version     = ""
+        head_pieces    = sos.python_options () + \
             [ sos.path.join
                 (Environment.script_path (), Environment.script_name ())
             , "-path %r" % (",".join (cmd_path), ) if cmd_path else ""
@@ -222,7 +229,8 @@ def _main (cmd) :
                 print ("%s excluded" % (a, ))
             else :
                 summary.modules += 1
-                run_cmd ("%s %s" % (head, a))
+                for pyx in py_executables :
+                    run_cmd ("%s %s %s" % (pyx, head, a))
         def run_mods (d) :
             for f in sorted (sos.listdir_exts (d, ".py")) :
                 if has_doctest (f) :
@@ -276,6 +284,7 @@ _Command = TFL.CAO.Cmd \
     , args         = ("module:P?Module(s) to test", )
     , opts         =
         ( "exclude:S?Glob pattern to exclude certain tests"
+        , "Extra_Interpreters:P:?Extra python interpreters to run tests through"
         , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
         , "path:P:?Path to add to sys.path"
         , "RExclude:S?Regular expression to exclude certain tests"
