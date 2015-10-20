@@ -138,10 +138,14 @@
 #                     `permission.auth_required`
 #    21-Sep-2015 (CT) Change `allow_method` to consider `p.auth_required`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    20-Oct-2015 (CT) Run `logging` arguments through `pyk.as_str`
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -735,12 +739,12 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
                     ((message, pyk.decoded (xtra, enc)))
             message = _error_email_cleaner (message)
             if not self.Templateer :
-                print ("Exception:", exc)
-                print ("Request path", request.path)
-                print ("Email", email)
-                print (message)
-                print (request.data)
-                print (request.environ)
+                pyk.fprint ("Exception:", exc)
+                pyk.fprint ("Request path", request.path)
+                pyk.fprint ("Email", email)
+                pyk.fprint (message)
+                pyk.fprint (request.data)
+                pyk.fprint (request.environ)
             else :
                 kw = {}
                 if self.DEBUG :
@@ -759,8 +763,8 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
                     )
         except Exception as xxx :
             logging.exception \
-                ( "Exception `%r` during `send_error_email`"
-                , pyk.decoded (xxx, enc)
+                ( pyk.as_str ("Exception `%r` during `send_error_email`", enc)
+                , pyk.as_str (xxx, enc)
                 )
     # end def send_error_email
 
@@ -775,16 +779,16 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
             smtp (text)
         except Exception as exc :
             logging.exception \
-                ( pyk.encoded
+                ( pyk.as_str
                     ( "Exception: %s"
                       "\n  When trying to send email from %s to %s"
                       "\n  %s"
                     , enc
                     )
-                , pyk.encoded (exc, enc)
-                , pyk.encoded (email_from, enc)
-                , pyk.encoded (context.get ("email_to", "<Unkown>"), enc)
-                , pyk.encoded (text, enc)
+                , pyk.as_str (exc.__class__.__name__, enc)
+                , pyk.as_str (email_from, enc)
+                , pyk.as_str (context.get ("email_to", "<Unkown>"), enc)
+                , pyk.as_str (text, enc)
                 )
             try :
                 kw = dict \
@@ -848,9 +852,11 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
             except IndexError :
                 pass
             except Exception as exc :
+                enc  = self.encoding
                 logging.error \
-                    ( "Exception %s when trying to determine the user"
-                    , exc
+                    ( pyk.as_str
+                        ("Exception %s when trying to determine the user")
+                    , pyk.as_str (exc, enc)
                     )
         return result
     # end def _get_user
@@ -1530,8 +1536,12 @@ class RST_Root (_Ancestor) :
                     result = self._href_pat = re.compile \
                         ("(?:%s)(?:/|$)" % (hpf, ))
                 except Exception as exc :
+                    enc  = self.encoding
                     logging.error \
-                        ("Exception in href_pat for %s: %s", self, exc)
+                        ( pyk.as_str ("Exception in href_pat for %s: %s", enc)
+                        , pyk.as_str (self, enc)
+                        , pyk.as_str (exc, enc)
+                        )
         return result
     # end def href_pat
 
@@ -1546,7 +1556,7 @@ class RST_Root (_Ancestor) :
                 result    = self._lang_pat = re.compile \
                     (r"(?:/?(?:%s)(?:/|$))" % ("|".join (sorted (languages))))
             except Exception as exc :
-                logging.error (exc)
+                logging.error (pyk.as_str (exc, self.encoding))
             return result
     # end def lang_pat
 

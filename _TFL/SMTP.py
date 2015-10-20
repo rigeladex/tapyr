@@ -31,6 +31,9 @@
 #     8-Oct-2015 (CT) Remove guard against text-type from `__call__`
 #                     (Python 3.5 expects `str`, not `bytes`)
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    20-Oct-2015 (CT) Use `pyk.as_str`
+#    20-Oct-2015 (CT) Change `header` to do the same for Python-2 and -3
+#    20-Oct-2015 (CT) Add doctests for `SMTP_Logger`, `SMTP_Tester`
 #    ««revision-date»»···
 #--
 
@@ -94,7 +97,7 @@ class SMTP (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, text, mail_opts = (), rcpt_opts = None) :
-        email = message_from_string (text)
+        email = message_from_string (pyk.as_str (text, self.charset))
         self.send_message (email, mail_opts = mail_opts, rcpt_opts = rcpt_opts)
     # end def __call__
 
@@ -124,36 +127,32 @@ class SMTP (TFL.Meta.Object) :
 
            Wrapping is done only if `s` contains non-ASCII characters;
            applying `Header` to pure ASCII strings adds stupid line noise to
-           email addresses! For Python 3, `email.header.Header` does the
-           right thing; only Python 2 needs the convoluted gymnastics.
+           email addresses!
 
         >>> smtp = SMTP ()
         >>> print (smtp.header ("christian.tanzer@swing.co.at"))
         christian.tanzer@swing.co.at
 
         """
-        if sys.version_info < (3,) :
-            if charset is None :
-                charset = self.charset
-            result = s
-            if isinstance (result, str) :
-                decoded = decode_header (result)
-                if any (c for ds, c in decoded) :
-                    result = make_header \
-                        (list ((ds, c or charset) for ds, c in decoded), ** kw)
-            if not isinstance (result, Header) :
-                if isinstance (result, str) :
-                    try :
-                        result  = result.decode (charset)
-                    except UnicodeError :
-                        charset = "utf-8"
-                        result  = result.decode (charset)
+        if charset is None :
+            charset = self.charset
+        result = s
+        if isinstance (result, pyk.byte_type) :
+            decoded = decode_header (result)
+            if any (c for ds, c in decoded) :
+                result = make_header \
+                    (list ((ds, c or charset) for ds, c in decoded), ** kw)
+        if not isinstance (result, Header) :
+            if isinstance (result, pyk.byte_type) :
                 try :
-                    result.encode ("ascii")
+                    result  = result.decode (charset)
                 except UnicodeError :
-                    result = Header (s, charset = charset, ** kw)
-        else :
-            result = Header (s, charset = charset, ** kw)
+                    charset = "utf-8"
+                    result  = result.decode (charset)
+            try :
+                result.encode ("ascii")
+            except UnicodeError :
+                result = Header (s, charset = charset, ** kw)
         return result
     # end def header
 
@@ -179,7 +178,8 @@ class SMTP (TFL.Meta.Object) :
         assert isinstance (email, message.Message)
         if envelope is None :
             envelope = email
-        to = set (t.strip () for t in envelope ["To"].split (","))
+        to_addrs = envelope ["To"]
+        to       = set (t.strip () for t in to_addrs.split (","))
         for k in "cc", "bcc", "dcc" :
             for h in envelope.get_all (k, []) :
                 if h :
@@ -209,7 +209,14 @@ class SMTP (TFL.Meta.Object) :
 # end class SMTP
 
 class SMTP_Logger (SMTP) :
-    """Log email using `logging` instead of connecting to SMTP server."""
+    """Log email using `logging` instead of connecting to SMTP server.
+
+    ::
+
+    >>> smtp = SMTP_Logger (charset = "utf-8")
+    >>> smtp (_test_email)
+
+"""
 
     level = "error"
 
@@ -219,14 +226,14 @@ class SMTP_Logger (SMTP) :
     # end def __init__
 
     def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
-        msg_x = pyk.encoded (msg)
+        charset = self.charset
         self._log \
-            ( "[%s] Email via %s from %s to %s\n    %s"
+            ( pyk.as_str ("[%s] Email via %s from %s to %s\n    %s", charset)
             , datetime.datetime.now ().replace (microsecond = 0)
-            , pyk.encoded (self.mail_host)
-            , pyk.encoded (from_addr)
-            , list (pyk.encoded (t) for t in to_addrs)
-            , "\n    ".join (msg_x.split ("\n"))
+            , pyk.as_str (self.mail_host, charset)
+            , pyk.as_str (from_addr, charset)
+            , list (pyk.as_str (t, charset) for t in to_addrs)
+            , pyk.as_str ("\n    ".join (msg.split ("\n")), charset)
             )
     # end def send
 
@@ -238,17 +245,43 @@ class SMTP_Logger (SMTP) :
 # end class SMTP_Logger
 
 class SMTP_Tester (SMTP) :
-    """Tester writing to stdout instead of connecting to SMTP server."""
+    """Tester writing to stdout instead of connecting to SMTP server.
+
+    ::
+
+    >>> smtp = SMTP_Tester (charset = "utf-8")
+    >>> smtp (_test_email)
+    Email via localhost from sender@example.com to ['receiver@example.com']
+    <BLANKLINE>
+    Date: Tue, 20 Oct 2015 14:42:23 -0000
+    Content-type: text/plain; charset="utf-8"
+    Subject: Test email with some diacritics
+    To: receiver@example.com
+    From: sender@example.com
+    <BLANKLINE>
+    Test email containing diacritics like ö, ä, ü, and ß.
+    <BLANKLINE>
+
+    """
 
     def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
         pyk.fprint \
             ( "Email via", self.mail_host, "from", from_addr, "to"
-            , portable_repr (to_addrs)
+            , portable_repr (to_addrs), "\n"
             )
         pyk.fprint (msg)
     # end def send
 
 # end class SMTP_Tester
+
+_test_email = """\
+From: sender@example.com
+To: receiver@example.com
+Subject: Test email with some diacritics
+Date: Tue, 20 Oct 2015 14:42:23 -0000
+
+Test email containing diacritics like ö, ä, ü, and ß.
+"""
 
 if __name__ != "__main__" :
     TFL._Export ("*")

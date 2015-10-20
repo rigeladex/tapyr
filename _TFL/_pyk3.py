@@ -38,6 +38,7 @@
 #    10-Oct-2014 (CT) Add `urlencode`, `urlparse`
 #    13-Oct-2014 (CT) Add `byte_type`
 #    13-Oct-2015 (CT) Add `copyreg`
+#    20-Oct-2015 (CT) Add `as_str`
 #    ««revision-date»»···
 #--
 
@@ -121,7 +122,7 @@ class _Pyk_ (object) :
         elif not isinstance (v, str) :
             v = str (v)
         return v
-    # end def decoded
+    as_str = decoded # end def decoded
 
     @staticmethod
     def encoded (v, encoding = None) :

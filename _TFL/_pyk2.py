@@ -36,6 +36,7 @@
 #    10-Oct-2014 (CT) Add `urlencode`, `urlparse`
 #    13-Oct-2014 (CT) Add `byte_type`
 #    13-Oct-2015 (CT) Add `copyreg`
+#    20-Oct-2015 (CT) Add `as_str`
 #    ««revision-date»»···
 #--
 
@@ -146,7 +147,7 @@ class _Pyk_ (object) :
         if isinstance (v, unicode) :
             v = v.encode (encoding, "replace")
         return v
-    # end def encoded
+    as_str = encoded # end def encoded
 
     @staticmethod
     def fprint (* values, ** kw) :
