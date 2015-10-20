@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -36,15 +36,18 @@
 #     5-Oct-2012 (CT) Change `Request_Data_List.get` to use `.getlist`
 #    17-May-2013 (CT) Change `has_option` to return default `False`
 #    29-Apr-2014 (CT) Add guard against `data is not None`
+#    16-Oct-2015 (CT) Use `portable_repr` for arguments of `logging.warning`
 #    ««revision-date»»···
 #--
 
-from   _TFL              import TFL
-from   _TFL.pyk          import pyk
+from   _TFL               import TFL
+from   _TFL.pyk           import pyk
+
+from   _TFL.portable_repr import portable_repr
 
 import _TFL._Meta.Object
 
-from   _GTW              import GTW
+from   _GTW               import GTW
 
 import  logging
 
@@ -95,7 +98,7 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
             if len (value) != 1 :
                 logging.warning \
                     ( "Got multiple values for '%s', using '%s', ignoring: %s"
-                    , key, value [0], value [1:]
+                    , key, portable_repr (value [0]), portable_repr (value [1:])
                     )
             value = value [0]
         return self._normalized (value)
