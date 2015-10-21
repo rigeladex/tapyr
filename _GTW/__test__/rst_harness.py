@@ -32,6 +32,8 @@
 #     4-May-2013 (CT) Add `set-copy` to`skip_headers`
 #    31-Mar-2014 (CT) Add `default_value` for `<date instance>` to `date_cleaner`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    21-Oct-2015 (CT) Add `p_type_cleaner`, `json_cleaner`,
+#                     improve Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -61,6 +63,13 @@ date_cleaner = Multi_Re_Replacer \
         , r"'date' : <date instance>"
         )
     )
+
+p_type_cleaner = Re_Replacer \
+    ( r"'p_type' : 'unicode'"
+    , r"'p_type' : 'str'"
+    )
+
+json_cleaner = Multi_Re_Replacer (date_cleaner, p_type_cleaner)
 
 def req_json (r) :
     if r is not None and r.content :
@@ -139,11 +148,13 @@ def run_server \
 # end def run_server
 
 def _normal (k, v) :
+    k = k.lower ()
     if k in ("date", "last-modified") :
         v = "<datetime instance>"
     elif k in ("etag",) :
         v = "ETag value"
-    elif k in ("RAT",) :
+    elif k in ("rat",) :
+        k = "RAT"
         v = "<REST authorization token>"
     elif k == "content-length" and int (v) != 0 :
         v = "<length>"
@@ -161,7 +172,8 @@ def show (r, ** kw) :
             json = dict ( _normal (k, v) for k, v in pyk.iteritems (json))
         kw ["json"] = json
     elif r.content :
-        kw ["content"] = r.content.replace ("\r", "").strip ().split ("\n")
+        kw ["content"] = pyk.decoded \
+            (r.content).replace ("\r", "").strip ().split ("\n")
     output = formatted \
         ( dict
             ( status  = r.status_code

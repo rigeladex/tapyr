@@ -49,6 +49,7 @@
 #    31-Mar-2014 (CT) Apply `date_cleaner` to `R.get("/Doc/SRM-Boat_in_Regatta")`
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    21-Oct-2015 (CT) Use `json_cleaner`, improve Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -436,8 +437,8 @@ _test_cqf = r"""
     SWP-Picture    (Gallery `left`, Int `number`, String `name`, Picture `photo`, Thumbnail `thumb`)
     SWP-Referral    (Url `parent_url`, Date-Slug `perma_name`, Url `target_url`, Date_Interval `date`, String `short_title`, String `title`, String `download_name`, Boolean `hidden`, Int `prio`)
 
-    >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Referral|SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Link\_n\_|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-\_Link\_n\_|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Group|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_Link\_n\_|Auth\-\_Account\_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
+    >>> print (root.href_pat_frag.replace (r"\_", "_"))
+    v1(?:/(?:SWP\-Referral|SWP\-Picture|SWP\-Page_Y|SWP\-Page|SWP\-Object_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id_Entity|SWP\-Gallery|SWP\-Clip_X|SWP\-Clip_O|SRM\-_Link_n_|SRM\-_Boat_Class_|SRM\-Team_has_Boat_in_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta_H|SRM\-Regatta_Event|SRM\-Regatta_C|SRM\-Regatta|SRM\-Race_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id_Entity|SRM\-Handicap|SRM\-Crew_Member|SRM\-Club|SRM\-Boat_in_Regatta|SRM\-Boat_Class|SRM\-Boat|PAP\-_Link_n_|PAP\-Url|PAP\-Subject_has_Url|PAP\-Subject_has_Property|PAP\-Subject_has_Phone|PAP\-Subject_has_Email|PAP\-Subject_has_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person_has_Url|PAP\-Person_has_Phone|PAP\-Person_has_Email|PAP\-Person_has_Address|PAP\-Person_has_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal_Entity|PAP\-Id_Entity|PAP\-Group|PAP\-Email|PAP\-Company_has_Url|PAP\-Company_has_Phone|PAP\-Company_has_Email|PAP\-Company_has_Address|PAP\-Company|PAP\-Address_Position|PAP\-Address|MOM\-_Link_n_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id_Entity|Auth\-_Link_n_|Auth\-_Account_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account_in_Group|Auth\-Account))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -730,7 +731,7 @@ _test_doc = r"""
     , 'url' : 'http://localhost:9999/Doc?brief'
     }
 
-    >>> _ = show (R.get ("/Doc/SRM-Boat_in_Regatta"), cleaner = date_cleaner)
+    >>> _ = show (R.get ("/Doc/SRM-Boat_in_Regatta"), cleaner = json_cleaner)
     { 'json' :
         { 'attributes' :
             { 'editable' :
@@ -876,7 +877,7 @@ _test_doc = r"""
                   , 'kind' : 'internal'
                   , 'max_length' : 64
                   , 'name' : 'type_name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Type name'
                   }
@@ -981,7 +982,7 @@ _test_doc = r"""
     , 'url' : 'http://localhost:9999/Doc/SRM-Boat_in_Regatta'
     }
 
-    >>> _ = show (R.get ("/Doc/SRM-Regatta"))
+    >>> _ = show (R.get ("/Doc/SRM-Regatta"), cleaner = json_cleaner)
     { 'json' :
         { 'attributes' :
             { 'editable' :
@@ -1047,7 +1048,7 @@ _test_doc = r"""
                   , 'kind' : 'optional'
                   , 'max_length' : 32
                   , 'name' : 'kind'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Kind'
                   }
@@ -1087,7 +1088,7 @@ _test_doc = r"""
                         , 'kind' : 'optional'
                         , 'max_length' : 64
                         , 'name' : 'software'
-                        , 'p_type' : 'unicode'
+                        , 'p_type' : 'str'
                         , 'type' : 'String'
                         , 'ui_name' : 'Software'
                         }
@@ -1100,7 +1101,7 @@ _test_doc = r"""
                         , 'kind' : 'optional'
                         , 'max_length' : 64
                         , 'name' : 'status'
-                        , 'p_type' : 'unicode'
+                        , 'p_type' : 'str'
                         , 'type' : 'String'
                         , 'ui_name' : 'Status'
                         }
@@ -1192,7 +1193,7 @@ _test_doc = r"""
                   , 'kind' : 'internal'
                   , 'max_length' : 64
                   , 'name' : 'type_name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Type name'
                   }
@@ -1205,7 +1206,7 @@ _test_doc = r"""
                   , 'kind' : 'internal'
                   , 'max_length' : 64
                   , 'name' : 'perma_name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Perma name'
                   }
@@ -1265,7 +1266,7 @@ _test_doc = r"""
     , 'url' : 'http://localhost:9999/Doc/SRM-Regatta'
     }
 
-    >>> _ = show (R.get ("/Doc/SRM-Regatta_C"))
+    >>> _ = show (R.get ("/Doc/SRM-Regatta_C"), cleaner = json_cleaner)
     { 'json' :
         { 'attributes' :
             { 'editable' :
@@ -1331,7 +1332,7 @@ _test_doc = r"""
                   , 'kind' : 'optional'
                   , 'max_length' : 32
                   , 'name' : 'kind'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Kind'
                   }
@@ -1371,7 +1372,7 @@ _test_doc = r"""
                         , 'kind' : 'optional'
                         , 'max_length' : 64
                         , 'name' : 'software'
-                        , 'p_type' : 'unicode'
+                        , 'p_type' : 'str'
                         , 'type' : 'String'
                         , 'ui_name' : 'Software'
                         }
@@ -1384,7 +1385,7 @@ _test_doc = r"""
                         , 'kind' : 'optional'
                         , 'max_length' : 64
                         , 'name' : 'status'
-                        , 'p_type' : 'unicode'
+                        , 'p_type' : 'str'
                         , 'type' : 'String'
                         , 'ui_name' : 'Status'
                         }
@@ -1489,7 +1490,7 @@ _test_doc = r"""
                   , 'kind' : 'internal'
                   , 'max_length' : 64
                   , 'name' : 'type_name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Type name'
                   }
@@ -1502,7 +1503,7 @@ _test_doc = r"""
                   , 'kind' : 'internal'
                   , 'max_length' : 64
                   , 'name' : 'perma_name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Perma name'
                   }
@@ -1589,7 +1590,7 @@ _test_doc = r"""
     , 'url' : 'http://localhost:9999/Doc/SRM-Regatta_C'
     }
 
-    >>> _ = show (R.get ("/Doc/SRM-Regatta_H"))
+    >>> _ = show (R.get ("/Doc/SRM-Regatta_H"), cleaner = json_cleaner)
     { 'json' :
         { 'attributes' :
             { 'editable' :
@@ -1655,7 +1656,7 @@ _test_doc = r"""
                   , 'kind' : 'optional'
                   , 'max_length' : 32
                   , 'name' : 'kind'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Kind'
                   }
@@ -1695,7 +1696,7 @@ _test_doc = r"""
                         , 'kind' : 'optional'
                         , 'max_length' : 64
                         , 'name' : 'software'
-                        , 'p_type' : 'unicode'
+                        , 'p_type' : 'str'
                         , 'type' : 'String'
                         , 'ui_name' : 'Software'
                         }
@@ -1708,7 +1709,7 @@ _test_doc = r"""
                         , 'kind' : 'optional'
                         , 'max_length' : 64
                         , 'name' : 'status'
-                        , 'p_type' : 'unicode'
+                        , 'p_type' : 'str'
                         , 'type' : 'String'
                         , 'ui_name' : 'Status'
                         }
@@ -1800,7 +1801,7 @@ _test_doc = r"""
                   , 'kind' : 'internal'
                   , 'max_length' : 64
                   , 'name' : 'type_name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Type name'
                   }
@@ -1813,7 +1814,7 @@ _test_doc = r"""
                   , 'kind' : 'internal'
                   , 'max_length' : 64
                   , 'name' : 'perma_name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Perma name'
                   }
@@ -1869,7 +1870,7 @@ _test_doc = r"""
     , 'url' : 'http://localhost:9999/Doc/SRM-Regatta_H'
     }
 
-    >>> _ = show (R.get ("/Doc/SRM-Crew_Member"))
+    >>> _ = show (R.get ("/Doc/SRM-Crew_Member"), cleaner = json_cleaner)
     { 'json' :
         { 'attributes' :
             { 'editable' :
@@ -1922,7 +1923,7 @@ _test_doc = r"""
                   , 'kind' : 'optional'
                   , 'max_length' : 32
                   , 'name' : 'role'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Role'
                   }
@@ -1988,7 +1989,7 @@ _test_doc = r"""
                   , 'kind' : 'internal'
                   , 'max_length' : 64
                   , 'name' : 'type_name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Type name'
                   }
@@ -4910,7 +4911,7 @@ _test_rat = r"""
     >>> cookies = r.cookies
 
     >>> rvo = R.options ("/v1/Auth-Account", cookies = cookies)
-    >>> showf (rvo)
+    >>> showf (rvo, cleaner = json_cleaner)
     { 'headers' :
         { 'allow' : 'GET, HEAD, OPTIONS, POST'
         , 'cache-control' : 'no-cache'
@@ -4940,7 +4941,7 @@ _test_rat = r"""
                   , 'kind' : 'primary'
                   , 'max_length' : 80
                   , 'name' : 'name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'Email'
                   , 'ui_name' : 'Name'
                   }
@@ -5032,7 +5033,7 @@ _test_rat = r"""
                   , 'kind' : 'internal'
                   , 'max_length' : 64
                   , 'name' : 'type_name'
-                  , 'p_type' : 'unicode'
+                  , 'p_type' : 'str'
                   , 'type' : 'String'
                   , 'ui_name' : 'Type name'
                   }
