@@ -35,10 +35,14 @@
 #    29-Apr-2014 (CT) Add `getattr_safe` to property `username`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    17-Mar-2015 (CT) Pop `Anti_CSRF` from `session`
+#    21-Oct-2015 (CT) Add `pyk.decoded` to `session_cookie_name`
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -103,7 +107,7 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
 
     @Once_Property
     def session_cookie_name (self) :
-        return self.settings.get ("session_id",  "SESSION_ID")
+        return pyk.decoded (self.settings.get ("session_id",  "SESSION_ID"))
     # end def session_cookie_name
 
     @property

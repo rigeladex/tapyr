@@ -25,11 +25,14 @@
 #    10-Jun-2015 (CT) Adapt doctest to `form_action`, `request.path`
 #                     in `Anti_CSRF`
 #     7-Oct-2015 (CT) Add more `pyk.encoded`, `pyk.decoded` calls (Python 3.5)
+#    21-Oct-2015 (CT) Define `sig_sep` as `str`, not `bytes`
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -57,7 +60,7 @@ class _Base_ (TFL.Meta.Object) :
     data                       = None
     encoding                   = "utf-8"
     secret_x                   = None
-    sig_sep                    = b":::"
+    sig_sep                    = ":::"
     timestamp                  = ""
     val_sep                    = "|"
     x_signature                = ""
@@ -221,7 +224,7 @@ class Anti_CSRF (_Base_) :
     def secrets (self) :
         request     = self.request
         form_action = self.form_action
-        result    = self.__super.secrets + \
+        result      = self.__super.secrets + \
             ( request.session.sid
             , request.host
             , form_action or request.path

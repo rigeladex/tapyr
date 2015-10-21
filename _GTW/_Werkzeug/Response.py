@@ -21,10 +21,14 @@
 #    14-Mar-2014 (CT) Add `encoded_url`
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #     6-May-2015 (CT) Use `TFL.json_dump.to_string`
+#    21-Oct-2015 (CT) Use `as_str`, node `encoded`, for header `key`
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _GTW                       import GTW
 from   _TFL                       import TFL
@@ -54,8 +58,7 @@ class _WZG_Response_ \
     default_charset      = "utf-8"
 
     def add_header (self, key, value, ** kw) :
-        if isinstance (key, pyk.text_type) :
-            key = key.encode ("ascii")
+        key = pyk.as_str (key, "ascii")
         return self.headers.add (key, value, ** kw)
     # end def add_header
 
@@ -79,8 +82,7 @@ class _WZG_Response_ \
     # end def write
 
     def set_header (self, key, value, ** kw) :
-        if isinstance (key, pyk.text_type) :
-            key = key.encode ("ascii")
+        key = pyk.as_str (key, "ascii")
         return self.headers.set (key, value, ** kw)
     # end def set_header
 
