@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -24,6 +24,12 @@
 #    20-Jan-2014 (CT) Add `url_x`
 #    13-Mar-2014 (CT) Remove `url_x`
 #    28-Aug-2014 (CT) Wrap `safe_str_cmp` to normalize args to `iso-8859-1`
+#    21-Oct-2015 (CT) Don't use `werkzeug.contrib.wrappers.JSONRequestMixin`
+#                     * because https://github.com/mitsuhiko/werkzeug/issues/731
+#                     * raises BadRequest if `self.data` is `bytes` (Python 3)
+#                       and simplejson isn't available; without giving a
+#                       sensible explanation !!!
+#    21-Oct-2015 (CT) Change `body` to run `.data` through `pyk.decoded`
 #    ««revision-date»»···
 #--
 
@@ -40,8 +46,7 @@ from   _TFL._Meta.Once_Property   import Once_Property
 
 import _TFL._Meta.M_Class
 
-from   werkzeug.contrib.wrappers     import \
-           JSONRequestMixin, DynamicCharsetRequestMixin
+from   werkzeug.contrib.wrappers     import DynamicCharsetRequestMixin
 from   werkzeug.exceptions           import HTTPException as HTTP_Exception
 from   werkzeug.security             import safe_str_cmp as _wz_safe_str_cmp
 from   werkzeug.wrappers             import Request
@@ -56,7 +61,7 @@ def safe_str_cmp (lhs, rhs) :
 
 class _WZG_Request_ \
           ( TFL.Meta.BaM
-              ( DynamicCharsetRequestMixin, JSONRequestMixin, Request
+              ( DynamicCharsetRequestMixin, Request
               , metaclass = TFL.Meta.M_Class
               )
           ) :
@@ -71,7 +76,7 @@ class _WZG_Request_ \
 
     @Once_Property
     def body (self) :
-        return self.data
+        return pyk.decoded (self.data, self.charset)
     # end def body
 
     @Once_Property
@@ -83,12 +88,15 @@ class _WZG_Request_ \
         return result
     # end def path_x
 
-    @property
+    @Once_Property
     def json (self) :
-        try :
-            return self.__super.json
-        except Exception as exc :
-            return {}
+        result = {}
+        if "json" in self.environ.get ("CONTENT_TYPE", "") :
+            try :
+                result = json.loads (self.body)
+            except Exception as exc :
+                pass
+        return result
     # end def json
 
     @Once_Property
