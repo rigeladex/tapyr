@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Martin Glueck All rights reserved
+# Copyright (C) 2011-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This program is licensed under the terms of the BSD 3-Clause License
@@ -17,6 +17,7 @@
 #    25-Jul-2011 (MG) Creation
 #    28-Mar-2013 (CT) Add `-summary` to be more compatible with `run_doctest`
 #     7-Aug-2013 (CT) Add `cases` (adapt to change of `run_doctest`)
+#    21-Oct-2015 (CT) Add `py_version`, adapt to Python 3
 #    ««revision-date»»···
 #--
 
@@ -28,7 +29,6 @@ from   _TFL.Regexp  import *
 import _TFL.sos     as     os
 from    run_doctest import format_x, format_f, format_s
 
-import  new
 import  sys
 import  doctest
 
@@ -41,6 +41,8 @@ def _main (cmd) :
         raise ValueError ("Module %s not found" % (cmd.module, ))
     f                     = TFL.Filename (cmd.module)
     m                     = f.base
+    py_version            = " [py %s]" % \
+        ".".join (str (v) for v in sys.version_info [:3])
     sys.path [0:0]        = cmd_path
     if f.directory :
         sys.path [0:0]    = [f.directory]
@@ -53,7 +55,7 @@ def _main (cmd) :
     try :
         module            = __import__ (m)
         tests             = set (cmd.argv [1:])
-        for tn in getattr (module, "__test__", {}).keys () :
+        for tn in list (getattr (module, "__test__", {})) :
             if tn not in tests :
                 del module.__test__ [tn]
         f, t              = doctest.testmod \
@@ -62,7 +64,8 @@ def _main (cmd) :
             , optionflags = flags
             )
     except Exception as exc :
-        print (format_x % (replacer (a), exc, et), file = sys.stderr)
+        msg = format_x % (replacer (a), py_version, exc, et)
+        print (msg, file = sys.stderr)
         raise
     else :
         cases  = int (bool (t))
