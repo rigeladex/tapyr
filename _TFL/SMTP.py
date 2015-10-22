@@ -34,6 +34,7 @@
 #    20-Oct-2015 (CT) Use `pyk.as_str`
 #    20-Oct-2015 (CT) Change `header` to do the same for Python-2 and -3
 #    20-Oct-2015 (CT) Add doctests for `SMTP_Logger`, `SMTP_Tester`
+#    22-Oct-2015 (CT) Encode `msg` argument to `server.sendmail`
 #    ««revision-date»»···
 #--
 
@@ -171,7 +172,8 @@ class SMTP (TFL.Meta.Object) :
 
     def send (self, from_addr, to_addrs, msg, mail_opts = (), rcpt_opts = None) :
         with self.connection () as server :
-            server.sendmail (from_addr, to_addrs, msg, mail_opts, rcpt_opts)
+            msg_x = pyk.encoded (msg, self.charset)
+            server.sendmail (from_addr, to_addrs, msg_x, mail_opts, rcpt_opts)
     # end def send
 
     def send_message (self, email, envelope = None, mail_opts = (), rcpt_opts = None) :
