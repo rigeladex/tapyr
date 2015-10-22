@@ -34,6 +34,7 @@
 #    26-Sep-2013 (CT) Add `_backend_reset`
 #    27-Aug-2014 (CT) Remove import of `_GTW._AFS._MOM.Spec`
 #     7-Oct-2015 (CT) Encapsulate `pyquery` in `_PQ_`, placate its insane 2/3 difference
+#    21-Oct-2015 (CT) Use `pyk.as_str`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -108,11 +109,11 @@ class Test_Response (BaseResponse) :
     class _PQ_ (TFL.Meta.Object) :
 
         def __init__ (self, data) :
-            self._pq = self.PyQuery (data)
+            self._pq = self.PyQuery (pyk.as_str (data))
         # end def __init__
 
         def __call__ (self, filter) :
-            return self._pq (self._coded (filter))
+            return self._pq (pyk.as_str (filter))
         # end def __call__
 
         @Once_Property
@@ -124,16 +125,6 @@ class Test_Response (BaseResponse) :
             import pyquery
             return pyquery.PyQuery
         # end def PyQuery
-
-        @Once_Property
-        def _coded (self) :
-            if pyk.byte_type == str :
-                ### Python 2: pyquery.PyQuery needs (8-bit)   str argument
-                return pyk.encoded
-            else :
-                ### Python 3: pyquery.PyQuery needs (unicode) str argument
-                return pyk.decoded
-        # end def _coded
 
     # end class _PQ_
 
