@@ -34,6 +34,7 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    21-Oct-2015 (CT) Add `p_type_cleaner`, `json_cleaner`,
 #                     improve Python-3 compatibility
+#    21-Oct-2015 (CT) Add `pyk.decoded` for `ro.content` to `traverse`
 #    ««revision-date»»···
 #--
 
@@ -210,7 +211,7 @@ def traverse (url, level = 0, seen = None, ** kw) :
             print (path, ":", allow)
             seen.add (allow)
     else :
-        print (path, ":", ro.status_code, ro.content)
+        print (path, ":", ro.status_code, pyk.decoded (ro.content))
     if rg.ok :
         json = req_json (rg)
         if json :

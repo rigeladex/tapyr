@@ -139,6 +139,8 @@
 #    21-Sep-2015 (CT) Change `allow_method` to consider `p.auth_required`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    20-Oct-2015 (CT) Run `logging` arguments through `pyk.as_str`
+#    21-Oct-2015 (CT) Print `request.body`, not `request.data`,
+#                     in `send_error_email`
 #    ««revision-date»»···
 #--
 
@@ -743,7 +745,7 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
                 pyk.fprint ("Request path", request.path)
                 pyk.fprint ("Email", email)
                 pyk.fprint (message)
-                pyk.fprint (request.data)
+                pyk.fprint (request.body)
                 pyk.fprint (request.environ)
             else :
                 kw = {}
