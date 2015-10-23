@@ -20,6 +20,7 @@
 #     6-May-2015 (CT) Add `to_file`, `to_open_file`, `to_string`
 #     6-May-2015 (CT) Add `add_date_time_serializers`
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
+#    22-Oct-2015 (CT) Add workaround for Python-3 issue25457 (`_fix_keys`)
 #    ««revision-date»»···
 #--
 
@@ -27,10 +28,12 @@ from   __future__ import division, print_function
 from   __future__ import absolute_import, unicode_literals
 
 from   _TFL              import TFL
+from   _TFL.pyk          import pyk
 
 import _TFL._Meta.Single_Dispatch
 
 import json
+import sys
 
 __date_time_serializers_added = False
 
@@ -61,6 +64,45 @@ def default (o) :
     raise TypeError (repr (o) + " is not JSON serializable")
 # end def default
 
+### workaround http://bugs.python.org/issue25457
+__keys_need_fixing = sys.version_info >= (3, )
+
+if __keys_need_fixing :
+    ### workaround http://bugs.python.org/issue25457
+    @TFL.Meta.Single_Dispatch
+    def _fix_keys (o) :
+        return o
+    # end def _fix_keys
+
+    @_fix_keys.add_type (dict)
+    def _fix_keys_dict (dct) :
+        return dict (_fix_keys_dict_iter (dct))
+    # end def _fix_keys_dict
+
+    def _fix_keys_dict_iter (dct) :
+        for k, v in pyk.iteritems (dct) :
+            if isinstance (k, (int, float)) :
+                k = str (k).lower () ### `.lower` because `bool`
+            elif k is None :
+                k = "null"
+            yield k, _fix_keys (v)
+    # end def _fix_keys_dict_iter
+
+    @_fix_keys.add_type (list, tuple)
+    def _fix_keys_seq (seq) :
+        return seq.__class__ (_fix_keys (v) for v in seq)
+    # end def _fix_keys_seq
+
+def _do_dump (dumper, cargo, * args, ** kw) :
+    try :
+        return dumper (cargo, * args, ** kw)
+    except TypeError :
+        if __keys_need_fixing and kw.get ("sort_keys") :
+            cargo = _fix_keys (cargo)
+            return dumper (cargo, * args, ** kw)
+        raise
+# end def _do_dump
+
 def to_file (cargo, file_name, default = default, sort_keys = True, ** kw) :
     """Serialize `cargo` as a JSON formatted stream to a file name `file_name`.
 
@@ -70,7 +112,10 @@ def to_file (cargo, file_name, default = default, sort_keys = True, ** kw) :
        The arguments have the same meaning as in `json.dump`.
     """
     with open (file_name, "wb") as fp :
-        json.dump (cargo, fp, default = default, sort_keys = sort_keys, ** kw)
+        return _do_dump \
+            ( json.dump, cargo, fp
+            , default = default, sort_keys = sort_keys, ** kw
+            )
 # end def to_file
 
 def to_open_file (cargo, fp, default = default, sort_keys = True, ** kw) :
@@ -81,7 +126,8 @@ def to_open_file (cargo, fp, default = default, sort_keys = True, ** kw) :
 
        The arguments have the same meaning as in `json.dump`.
     """
-    json.dump (cargo, fp, default = default, sort_keys = sort_keys, ** kw)
+    return _do_dump \
+        (json.dump, cargo, fp, default = default, sort_keys = sort_keys, ** kw)
 # end def to_open_file
 
 def to_string (cargo, default = default, sort_keys = True, ** kw) :
@@ -92,7 +138,8 @@ def to_string (cargo, default = default, sort_keys = True, ** kw) :
 
        The arguments have the same meaning as in `json.dump`.
     """
-    return json.dumps (cargo, default = default, sort_keys = sort_keys, ** kw)
+    return _do_dump \
+        (json.dumps, cargo, default = default, sort_keys = sort_keys, ** kw)
 # end def to_string
 
 __doc__ = """
@@ -132,6 +179,18 @@ Examples::
     >>> add_date_time_serializers ()
     >>> print (to_string (dt))
     "2015-05-06T12:50:00.000000"
+
+    >>> mixed_keys = [
+    ...   { None: "nada", 23 : 42, "foo" : "bar" , True : False, False : True}]
+    >>> (to_string (mixed_keys) ==
+    ... '[{"23": 42, "false": true, "foo": "bar", "null": "nada", "true": false}]'
+    ... if __keys_need_fixing else True)
+    True
+
+    >>> (to_string (mixed_keys) ==
+    ... '[{"null": "nada", "false": true, "true": false, "23": 42, "foo": "bar"}]'
+    ... if not __keys_need_fixing else True)
+    True
 
 """
 
