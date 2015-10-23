@@ -35,6 +35,7 @@
 #    20-Oct-2015 (CT) Change `header` to do the same for Python-2 and -3
 #    20-Oct-2015 (CT) Add doctests for `SMTP_Logger`, `SMTP_Tester`
 #    22-Oct-2015 (CT) Encode `msg` argument to `server.sendmail`
+#    23-Oct-2015 (CT) Remove call to `server.close` from `close`
 #    ««revision-date»»···
 #--
 
@@ -56,7 +57,6 @@ from   email.utils             import formatdate
 import datetime
 import logging
 import smtplib
-import socket
 import sys
 
 class SMTP (TFL.Meta.Object) :
@@ -106,8 +106,6 @@ class SMTP (TFL.Meta.Object) :
         assert self.server is not None
         try :
             self.server.quit ()
-        except socket.sslerror :
-            self.server.close ()
         finally :
             self.server = None
     # end def close
