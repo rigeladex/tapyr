@@ -50,7 +50,6 @@ import _TFL.Accessor
 import _TFL.json_dump
 import _TFL.Record
 
-import json
 from   posixpath import splitext as pp_splitext
 
 class _Meta_ (TFL.Meta.M_Class) :

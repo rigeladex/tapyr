@@ -56,11 +56,10 @@ import _TFL._Meta.Object
 from   itertools                import chain  as ichain
 from   xml.sax.saxutils         import escape as html_escape
 
-import sys
-
+_max_rank        = 1 << 63
 defaultdict_rank = defaultdict_cb.New \
     ( __name__        = "defaultdict_rank"
-    , default_factory = lambda x = 0 : (sys.maxint, sys.maxint)
+    , default_factory = lambda x = 0 : (_max_rank, _max_rank)
     )
 
 MOM.Error.Error._mf3_json_attributes = \
@@ -232,7 +231,7 @@ class Wrapper (TFL.Meta.Object) :
     # end def _error_as_json_cargo__Required_Missing
 
     def __repr__ (self) :
-        return b"%r;ERR-%d: %r" % (self.entity, self.index, self.error)
+        return "%r;ERR-%d: %r" % (self.entity, self.index, self.error)
     # end def __repr__
 
 # end class Wrapper

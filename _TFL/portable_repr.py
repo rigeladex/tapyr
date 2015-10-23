@@ -22,6 +22,7 @@
 #    15-Oct-2014 (CT) Protect against recursion
 #    16-Oct-2014 (CT) Wrap generic functions in dict created from
 #                     `_portable_repr_properties` by `dict_from_class`
+#    22-Oct-2015 (CT) Add `logging.exception` to `generic_portable_repr`
 #    ««revision-date»»···
 #--
 
@@ -126,7 +127,15 @@ class _portable_repr_properties (object) :
 
            For many object types, eval (portable_repr (object)) == object.
         """
-        return repr (obj)
+        try :
+            return repr (obj)
+        except Exception as exc :
+            import logging
+            logging.exception \
+                ( "***** Exception '%s' for object of type %s"
+                , exc.__class__.__name__, type (obj)
+                )
+            raise
     call = generic_portable_repr # end def
 
     @Decorator

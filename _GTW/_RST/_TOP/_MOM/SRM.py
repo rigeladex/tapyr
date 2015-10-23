@@ -60,6 +60,8 @@
 #    22-Jun-2015 (CT) Add `sort_key` for `_crew` fields
 #    21-Sep-2015 (CT) Add `_real_name` to `Renderer` classes
 #    21-Sep-2015 (CT) Add permission `Can_Register`
+#    22-Oct-2015 (CT) Make `_response_body_csv` Python-3 compatible
+#                     (use `pyk.as_str (s)`, not `pyk.text_type (s).encoded`)
 #    ««revision-date»»···
 #--
 
@@ -481,7 +483,7 @@ class _Registration_Page_ (_Regatta_Page_) :
 
         def _response_body_csv (self, resource, request, response) :
             def conv (s) :
-                return pyk.text_type (s).encode ("utf-8", "replace")
+                return pyk.as_str (s)
             boats    = resource.obj.boats
             if not boats :
                 return {}
@@ -826,7 +828,7 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
     def _register_submit_error_callback (self, resource, request, response, scope, fv, result) :
         from _TFL.formatted_repr import formatted_repr as formatted
         errors    = pyk.decoded \
-            (b"\n\n".join (formatted (e) for e in fv.errors))
+            ("\n\n".join (formatted (e) for e in fv.errors))
         message = "\n\n-----------------\n\n".join \
             (( self._regatta_registration_formatted   (resource, scope, fv)
              , errors
