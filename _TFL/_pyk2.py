@@ -37,6 +37,7 @@
 #    13-Oct-2014 (CT) Add `byte_type`
 #    13-Oct-2015 (CT) Add `copyreg`
 #    20-Oct-2015 (CT) Add `as_str`
+#    25-Oct-2015 (CT) Add `pickle_protocol`
 #    ««revision-date»»···
 #--
 
@@ -211,7 +212,8 @@ class _Pyk_ (object) :
         return cPickle
     # end def pickle
 
-    range       = staticmethod (range)
+    pickle_protocol = 2
+    range           = staticmethod (range)
 
     @staticmethod
     def reprify (r) :

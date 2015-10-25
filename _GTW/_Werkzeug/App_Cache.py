@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -22,6 +22,7 @@
 #    10-Aug-2012 (CT) Add `verbose`
 #    11-Dec-2013 (CT) Use `time_block` unconditionally
 #    12-Oct-2014 (CT) Change `load` to convert `pickle` errors to `IOError`
+#    25-Oct-2015 (CT) Use `pyk.pickle_protocol`
 #    ««revision-date»»···
 #--
 
@@ -100,7 +101,7 @@ class App_Cache (TFL.Meta.Object) :
                 cargo.update (cp.as_pickle_cargo (** kw))
             try :
                 with open (path, "wb") as file :
-                    pyk.pickle.dump (cargo, file, pyk.pickle.HIGHEST_PROTOCOL)
+                    pyk.pickle.dump (cargo, file, pyk.pickle_protocol)
                 if self.verbose :
                     print ("Stored pickle dump %s successfully" % path)
             except Exception as exc :

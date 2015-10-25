@@ -87,6 +87,7 @@
 #                     factor `_from_cargo`
 #     8-May-2015 (CT) Add `M_Change` managing `M_Table`,
 #                     remove `module` from `as_json_cargo`, `from_json_cargo`
+#    25-Oct-2015 (CT) Use `pyk.pickle_protocol`
 #    ««revision-date»»···
 #--
 
@@ -179,7 +180,7 @@ class _Change_ (TFL.Meta.BaM (_Ancestor, metaclass = M_Change)) :
 
     def as_pickle (self, transitive = False) :
         cargo = self.as_pickle_cargo (transitive)
-        return pickle.dumps (cargo, pickle.HIGHEST_PROTOCOL)
+        return pickle.dumps (cargo, pyk.pickle_protocol)
     # end def as_pickle
 
     def as_pickle_cargo (self, transitive = False) :

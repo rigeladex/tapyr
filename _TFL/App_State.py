@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -36,6 +36,7 @@
 #    20-May-2005 (CT)  Moved to TFL
 #    19-Aug-2008 (CT)  `product_name` added as optional paramter to `__init__`
 #    17-Dec-2009 (CT)  Use `pickle` instead of `cPickle` (3-compatibility)
+#    28-Oct-2015 (CT) Use `pyk.pickle_protocol`
 #    ««revision-date»»···
 #--
 
@@ -123,7 +124,8 @@ class App_State (TFL.Meta.Object) :
                     ( r"%s" % self.foldername ()
                     , root = win32con.HKEY_CURRENT_USER
                     )
-                state     = pyk.pickle.dumps (self.state, self.bin)
+                state     = pyk.pickle.dumps \
+                    (self.state, self.bin, pyk.pickle_protocol)
                 reg_entry.write ("state", state)
             except (SystemExit, KeyboardInterrupt) :
                 raise
@@ -154,7 +156,8 @@ class App_State (TFL.Meta.Object) :
         def dump (self) :
             """Dump persistent application state to rc file"""
             try :
-                state = pyk.pickle.dumps (self.state, self.bin)
+                state = pyk.pickle.dumps \
+                    (self.state, self.bin, pyk.pickle_protocol)
                 with open (self.filename (), "wb") as file :
                     file.write (state)
             except (SystemExit, KeyboardInterrupt) :

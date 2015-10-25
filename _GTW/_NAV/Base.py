@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -298,6 +298,7 @@
 #     6-Jul-2012 (CT) Use `SMTP_Logger`, not `print`
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
 #    27-Jan-2014 (CT) Add `A_Link`
+#    28-Oct-2015 (CT) Use `pyk.pickle_protocol`
 #    ««revision-date»»···
 #--
 
@@ -1430,7 +1431,7 @@ class Root (_Dir_) :
                 cargo.update (cp.as_pickle_cargo (self))
             try :
                 with open (cache_file, "wb") as file :
-                    pyk.pickle.dump (cargo, file, pyk.pickle.HIGHEST_PROTOCOL)
+                    pyk.pickle.dump (cargo, file, pyk.pickle_protocol)
             except StandardError as exc :
                 logging.warning \
                     ( "Storing pickle dump %s failed with exception: %s"

@@ -61,6 +61,7 @@
 #     6-Jun-2013 (CT) Simplify signature of `_save_context`; add `max_surrs`
 #     7-Jun-2013 (CT) Add/use argument `db_meta_data` to/in `consume`
 #    12-Oct-2015 (CT) Add Python-3 future imports
+#    25-Oct-2015 (CT) Use `pyk.pickle_protocol`
 #    ««revision-date»»···
 #--
 
@@ -293,7 +294,7 @@ class Store (TFL.Meta.Object) :
 
     def _save_info (self, info) :
         with open (self.info_uri.name, "wb") as file :
-            pickle.dump (info, file, pickle.HIGHEST_PROTOCOL)
+            pickle.dump (info, file, pyk.pickle_protocol)
         self.info = info
     # end def _save_info
 
@@ -327,13 +328,13 @@ class Store_PC (Store) :
             for i, cargo in enumerate (sliced (e_iter, chunk_size)) :
                 s_name  = TFL.Filename ("by_pid_%d" % i, self.x_uri)
                 with open (s_name.name, "wb") as file :
-                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                    pickle.dump (cargo, file, pyk.pickle_protocol)
                 stores.append   (s_name.base_ext)
             for cargo in sliced (c_iter, chunk_size) :
                 max_cid = cargo [-1] [1] ["cid"]
                 c_name  = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
                 with open (c_name.name, "wb") as file :
-                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                    pickle.dump (cargo, file, pyk.pickle_protocol)
                 commits.append ((max_cid, c_name.base_ext))
             info.max_cid = db_meta_data.max_cid
             info.max_pid = db_meta_data.max_pid
@@ -403,7 +404,7 @@ class Store_S (Store) :
             with self._save_context (x_name, scope, info) :
                 c_name = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
                 with open (c_name.name, "wb") as file :
-                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                    pickle.dump (cargo, file, pyk.pickle_protocol)
                 info.pending.append ((max_cid, c_name.base_ext))
     # end def commit
 
@@ -473,7 +474,7 @@ class Store_S (Store) :
                 for pid, e in sorted (pyk.iteritems (scope.ems.pm.table))
                 ]
             with open (s_name.name, "wb") as file :
-                pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                pickle.dump (cargo, file, pyk.pickle_protocol)
             stores.append   (s_name.base_ext)
             info.commits.extend (info.pending)
             info.pending = []

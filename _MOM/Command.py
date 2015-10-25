@@ -70,6 +70,7 @@
 #     7-May-2015 (CT) Fix initialization of `scope` in `_handle_script`
 #     7-May-2015 (CT) Add options `-journal_dir`, `-keep_journal`
 #     6-Aug-2015 (CT) Add `__doc__`
+#    28-Oct-2015 (CT) Use `pyk.pickle_protocol`
 #    ««revision-date»»···
 #--
 
@@ -393,7 +394,8 @@ class MOM_Command (TFL.Command.Root_Command) :
     def _handle_auth_mig (self, cmd) :
         try :
             scope = self._handle_load (cmd, journal_dir = None)
-            mig   = pyk.pickle.dumps  (scope.Auth.Account.migration ())
+            mig   = pyk.pickle.dumps \
+                (scope.Auth.Account.migration (), pyk.pickle_protocol)
             with open (cmd.mig_auth_file, "wb") as f :
                 sos.fchmod (f.fileno (), stat.S_IRUSR | stat.S_IWUSR)
                 f.write (mig)
