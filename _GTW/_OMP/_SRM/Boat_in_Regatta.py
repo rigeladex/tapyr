@@ -39,6 +39,7 @@
 #    17-Aug-2014 (CT) Remove attribute `ranking_list_points_lp`
 #    28-Apr-2015 (CT) Add `_A_Id_Entity_List_` to bases of `crew`
 #    29-Apr-2015 (CT) Change `crew_number_valid` to use `_crew`, not `crew`
+#    25-Oct-2015 (CT) Add optional attribute `yardstick`
 #    ««revision-date»»···
 #--
 
@@ -144,6 +145,16 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             kind               = Attr.Required
 
         # end class skipper
+
+        class yardstick (A_Int) :
+            """Yardstick number of boat."""
+
+            kind               = Attr.Optional
+            default            = 100
+            example            = 107
+            min_value          = 50
+
+        # end class yardstick
 
         class other_boots_skippered (A_Blob) :
             """Other links of this `skipper` to a boat in this `regatta.event`.

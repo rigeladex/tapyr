@@ -1393,6 +1393,7 @@ _test_element = """
     F       R-107:skipper.club.name         R-107:skipper.club
     F       R-107:place                     R-107
     F       R-107:points                    R-107
+    F       R-107:yardstick                 R-107
 
     >>> show_elements_x (f_bir, "q_name", "r_name", "E_Type.type_name")
     Type    q_name                    r_name         E_Type.type_name
@@ -1424,6 +1425,7 @@ _test_element = """
     F       skipper.club.name         name           SRM.Club
     F       place                     place          SRM.Boat_in_Regatta
     F       points                    points         SRM.Boat_in_Regatta
+    F       yardstick                 yardstick      SRM.Boat_in_Regatta
 
     >>> show_elements_x (f_bir, "attr.e_type.type_name", "parent.E_Type.type_name")
     Type    attr.e_type.type_name  parent.E_Type.type_name
@@ -1453,6 +1455,7 @@ _test_element = """
     F       SRM.Sailor           SRM.Sailor
     F_E     SRM.Sailor           SRM.Sailor
     F       SRM.Club             SRM.Club
+    F       SRM.Boat_in_Regatta  SRM.Boat_in_Regatta
     F       SRM.Boat_in_Regatta  SRM.Boat_in_Regatta
     F       SRM.Boat_in_Regatta  SRM.Boat_in_Regatta
 
@@ -1854,8 +1857,8 @@ _test_element = """
 
     >>> show_elements_x (f_bir, "q_name", "field_elements")
     Type    q_name                    field_elements
-    ===========================================================================================================================================================================================
-    E       None                      (<Field_Entity R-107:left>, <Field_Entity R-107:right>, <Field_Entity R-107:skipper>, <Field R-107:place>, <Field R-107:points>)
+    =============================================================================================================================================================================================
+    E       None                      (<Field_Entity R-107:left>, <Field_Entity R-107:right>, <Field_Entity R-107:skipper>, <Field R-107:place>, <Field R-107:points>, <Field R-107:yardstick>)
     F_E     left                      (<Field_Entity R-107:left.left>, <Field R-107:left.sail_number>, <Field R-107:left.nation>, <Field R-107:left.sail_number_x>)
     F_E     left.left                 (<Field R-107:left.left.name>,)
     F       left.left.name            ()
@@ -1882,6 +1885,7 @@ _test_element = """
     F       skipper.club.name         ()
     F       place                     ()
     F       points                    ()
+    F       yardstick                 ()
 
     >>> show_elements_x (f_p, "q_name", "field_elements")
     Type    q_name           field_elements

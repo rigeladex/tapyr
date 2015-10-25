@@ -403,7 +403,7 @@ _test_cqf = r"""
     PAP-_Link_n_    (Left `left`, Right `right`)
     SRM-Boat    (Boat_Class `left`, Int `sail_number`, Nation `nation`, String `sail_number_x`, String `name`)
     SRM-Boat_Class    (String `name`, Float `beam`, Float `loa`, Int `max_crew`, Float `sail_area`)
-    SRM-Boat_in_Regatta    (Boat `left`, Regatta `right`, Entity `skipper`, Int `place`, Int `points`)
+    SRM-Boat_in_Regatta    (Boat `left`, Regatta `right`, Entity `skipper`, Int `place`, Int `points`, Int `yardstick`)
     SRM-Club    (String `name`, String `long_name`)
     SRM-Crew_Member    (Boat_in_Regatta `left`, Sailor `right`, Int `key`, String `role`)
     SRM-Handicap    (String `name`,)
@@ -800,6 +800,19 @@ _test_doc = r"""
                   , 'p_type' : 'int'
                   , 'type' : 'Int'
                   , 'ui_name' : 'Points'
+                  }
+                , { 'default_value' : '100'
+                  , 'description' : 'Yardstick number of boat.'
+                  , 'example' : 107
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'min_value' : 50
+                  , 'name' : 'yardstick'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Yardstick'
                   }
                 ]
             , 'queryable' :
@@ -4743,9 +4756,9 @@ _test_query = r"""
 
     >>> r = show (R.get ("/v1/SRM-Boat_in_Regatta.csv?verbose&raw&brief"))
     { 'content' :
-        [ 'left,right,skipper,place,points'
-        , '8,11,5,,'
-        , '8,14,5,,'
+        [ 'left,right,skipper,place,points,yardstick'
+        , '8,11,5,,,'
+        , '8,14,5,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Boat_in_Regatta.csv?verbose&raw&brief'
@@ -4754,24 +4767,24 @@ _test_query = r"""
     ### API-style attribute query
     >>> r = show (R.get ("/v1/SRM-Boat_in_Regatta.csv?AQ=left,EQ,8&verbose&raw&brief"))
     { 'content' :
-        [ 'left,right,skipper,place,points'
-        , '8,11,5,,'
-        , '8,14,5,,'
+        [ 'left,right,skipper,place,points,yardstick'
+        , '8,11,5,,,'
+        , '8,14,5,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Boat_in_Regatta.csv?AQ=left,EQ,8&verbose&raw&brief'
     }
 
     >>> r = show (R.get ("/v1/SRM-Boat_in_Regatta.csv?AQ=left,EQ,11&verbose&raw&brief"))
-    { 'content' : ['left,right,skipper,place,points']
+    { 'content' : ['left,right,skipper,place,points,yardstick']
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Boat_in_Regatta.csv?AQ=left,EQ,11&verbose&raw&brief'
     }
 
     >>> r = show (R.get ("/v1/SRM-Boat_in_Regatta.csv?AQ=right,EQ,11&verbose&raw&brief"))
     { 'content' :
-        [ 'left,right,skipper,place,points'
-        , '8,11,5,,'
+        [ 'left,right,skipper,place,points,yardstick'
+        , '8,11,5,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Boat_in_Regatta.csv?AQ=right,EQ,11&verbose&raw&brief'
@@ -4779,9 +4792,9 @@ _test_query = r"""
 
     >>> r = show (R.get ("/v1/SRM-Boat_in_Regatta.csv?AQ=skipper,EQ,5&verbose&raw&brief"))
     { 'content' :
-        [ 'left,right,skipper,place,points'
-        , '8,11,5,,'
-        , '8,14,5,,'
+        [ 'left,right,skipper,place,points,yardstick'
+        , '8,11,5,,,'
+        , '8,14,5,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Boat_in_Regatta.csv?AQ=skipper,EQ,5&verbose&raw&brief'
@@ -4790,9 +4803,9 @@ _test_query = r"""
     ### HTML-form-style attribute query
     >>> r = show (R.get ("/v1/SRM-Boat_in_Regatta.csv?left___EQ=8&verbose&raw&brief"))
     { 'content' :
-        [ 'left,right,skipper,place,points'
-        , '8,11,5,,'
-        , '8,14,5,,'
+        [ 'left,right,skipper,place,points,yardstick'
+        , '8,11,5,,,'
+        , '8,14,5,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Boat_in_Regatta.csv?left___EQ=8&verbose&raw&brief'

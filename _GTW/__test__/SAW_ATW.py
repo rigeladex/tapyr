@@ -1166,6 +1166,8 @@ _test_attr_wrappers = """
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Required, _Required_Mixin_, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `teams`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper : Int `yardstick`
+          Optional, _User_, _DB_Attr_
     SRM.Race_Result
       Kind_Wrapper : Boolean `discarded`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
@@ -2629,6 +2631,7 @@ _test_q_able = """
       <SAW : Entity `skipper` [srm_boat_in_regatta.skipper]>
       <SAW : Role_Ref_Set `teams`>
       <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Int `yardstick` [srm_boat_in_regatta.yardstick]>
     <SAW : SRM.Race_Result [srm_race_result : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `discarded` [srm_race_result.discarded]>
@@ -3858,6 +3861,7 @@ _test_q_able = """
       skipper                       : skipper
       teams                         : teams
       type_name                     : type_name
+      yardstick                     : yardstick
     <SAW : SRM.Race_Result [srm_race_result : mom_id_entity]>
       creation                      : creation
       discarded                     : discarded
@@ -4996,7 +5000,8 @@ _test_q_result = """
            srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
            srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
            srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
-           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+           srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick
          FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
            JOIN srm_regatta AS srm_regatta__1 ON srm_regatta__1.pid = srm_boat_in_regatta."right"
@@ -5017,7 +5022,8 @@ _test_q_result = """
            srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
            srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
            srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
-           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+           srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick
          FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
            JOIN srm_regatta AS srm_regatta__1 ON srm_regatta__1.pid = srm_boat_in_regatta."right"
@@ -6214,7 +6220,8 @@ _test_q_result = """
            srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
            srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
            srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
-           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+           srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick
          FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
            JOIN srm_boat AS srm_boat__1 ON srm_boat__1.pid = srm_boat_in_regatta."left"
@@ -6235,7 +6242,8 @@ _test_q_result = """
            srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
            srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
            srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
-           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+           srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick
          FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
            JOIN srm_boat AS srm_boat__1 ON srm_boat__1.pid = srm_boat_in_regatta."left"
@@ -6256,7 +6264,8 @@ _test_q_result = """
            srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
            srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
            srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
-           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+           srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick
          FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
          WHERE srm_boat_in_regatta.points IS NOT NULL
@@ -6278,7 +6287,8 @@ _test_q_result = """
            srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
            srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
            srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
-           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+           srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick
          FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
          WHERE NOT (srm_boat_in_regatta.points IS NOT NULL
@@ -7971,6 +7981,7 @@ _test_qc_map = """
         teams                     : <SAW : Role_Ref_Set `teams`>
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
+        yardstick                 : srm_boat_in_regatta.yardstick
     <SAW : SRM.Race_Result [srm_race_result : mom_id_entity]>
         boat_in_regatta           : srm_race_result.left
         creation                  : <SAW : Rev_Ref `creation`>
@@ -8396,6 +8407,7 @@ _test_select = """
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
                srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick,
                srm_club.__raw_name AS srm_club___raw_name,
                srm_club.long_name AS srm_club_long_name,
                srm_club.name AS srm_club_name,
@@ -8657,6 +8669,7 @@ _test_select = """
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
                srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick,
                srm_crew_member."left" AS srm_crew_member_left,
                srm_crew_member."right" AS srm_crew_member_right,
                srm_crew_member.key AS srm_crew_member_key,
@@ -8952,6 +8965,7 @@ _test_select = """
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
                srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick,
                srm_crew_member."left" AS srm_crew_member_left,
                srm_crew_member."right" AS srm_crew_member_right,
                srm_crew_member.key AS srm_crew_member_key,
@@ -9001,6 +9015,7 @@ _test_select = """
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
                srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick,
                srm_crew_member."left" AS srm_crew_member_left,
                srm_crew_member."right" AS srm_crew_member_right,
                srm_crew_member.key AS srm_crew_member_key,
@@ -10351,6 +10366,7 @@ _test_select = """
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
                srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick,
                srm_club.__raw_name AS srm_club___raw_name,
                srm_club.long_name AS srm_club_long_name,
                srm_club.name AS srm_club_name,
@@ -10539,6 +10555,7 @@ _test_select = """
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
                srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick,
                srm_crew_member."left" AS srm_crew_member_left,
                srm_crew_member."right" AS srm_crew_member_right,
                srm_crew_member.key AS srm_crew_member_key,
@@ -11232,6 +11249,7 @@ _test_select = """
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
                srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick,
                srm_crew_member."left" AS srm_crew_member_left,
                srm_crew_member."right" AS srm_crew_member_right,
                srm_crew_member.key AS srm_crew_member_key,
@@ -11261,6 +11279,7 @@ _test_select = """
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
                srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick,
                srm_crew_member."left" AS srm_crew_member_left,
                srm_crew_member."right" AS srm_crew_member_right,
                srm_crew_member.key AS srm_crew_member_key,
@@ -11289,7 +11308,8 @@ _test_select = """
                srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
-               srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+               srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick
         FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
     SRM.Race_Result
@@ -12452,7 +12472,8 @@ _test_select_strict = """
                srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
                srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
                srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
-               srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+               srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper,
+               srm_boat_in_regatta.yardstick AS srm_boat_in_regatta_yardstick
         FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
         WHERE mom_id_entity.type_name = :type_name_1
@@ -13225,6 +13246,7 @@ _test_tables = """
         Column registration_date         : Date                 Internal__Init_Only Date registration_date
         Column right                     : Integer              Link_Role Regatta right Id_Entity()
         Column skipper                   : Integer              Required__Id_Entity_Reference Entity skipper Id_Entity()
+        Column yardstick                 : Integer              Optional Int yardstick
     SRM.Race_Result (MOM.Id_Entity) <Table srm_race_result>
         Column discarded                 : Boolean              Optional__Sticky Boolean discarded
         Column left                      : Integer              Link_Role__Init_Only Boat_in_Regatta left Id_Entity()

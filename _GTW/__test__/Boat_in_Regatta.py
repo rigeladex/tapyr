@@ -247,6 +247,7 @@ _test_code = r"""
     (<skipper.club.long_name.AQ [Attr.Type.Querier String]>, '-----')
     (<place.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<points.AQ [Attr.Type.Querier Ckd]>, '-----')
+    (<yardstick.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<creation.AQ [Attr.Type.Querier Rev_Ref]>, 'MOM.MD_Change')
     (<creation.c_time.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<creation.c_user.AQ [Attr.Type.Querier Id_Entity]>, 'MOM.Id_Entity')
@@ -391,6 +392,7 @@ _test_code = r"""
     skipper__club__long_name
     place
     points
+    yardstick
     creation__c_time
     creation__kind
     creation__time

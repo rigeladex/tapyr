@@ -359,6 +359,7 @@
 #     3-Aug-2015 (CT) Redefine `_A_String_Base_.as_string` to not use `format`
 #                     on empty string `value`
 #     3-Aug-2015 (CT) Change `_A_Composite_.from_string` to try downcast
+#    25-Oct-2015 (CT) Add `A_Duration`
 #    ««revision-date»»···
 #--
 
@@ -2482,6 +2483,31 @@ class A_Dirname (_A_Filename_) :
     # end def _from_string
 
 # end class A_Dirname
+
+class A_Duration (_A_Number_) :
+    """A temporal duration measured in seconds."""
+
+    typ               = _ ("Duration")
+    P_Type            = float
+    example           = "42:23"
+    syntax            = _\
+        ( "dd:hh:mm:ss, "
+          "the days `dd`, hours `hh`, and minutes `mm` are optional. "
+          "`42:23` means 42 minutes and 23 seconds (or 2543 seconds)."
+        )
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+        s = s.strip ()
+        if s :
+            ps     = reversed (s.split (":", 3))
+            result = 0
+            for p, f in zip (ps, [1, 60, 3600, 86400]) :
+                result += int (p, 10) * f
+            return result
+    # end def _from_string
+
+# end class A_Duration
 
 class A_Email (Syntax_Re_Mixin, _A_String_) :
     """An email address"""

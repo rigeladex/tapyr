@@ -512,6 +512,7 @@ _test_code = """
         long_name           3
     place               0
     points              0
+    yardstick           0
     creation            2
       c_time              0
       c_user              2
@@ -701,6 +702,10 @@ _test_code = """
         Int `points` points
     Int `points` unwrapped
         Int `points` points
+    Int `yardstick`
+        Int `yardstick` yardstick
+    Int `yardstick` unwrapped
+        Int `yardstick` yardstick
     Rev_Ref `creation`
         Date-Time `c_time` creation.c_time
         String `kind` creation.kind

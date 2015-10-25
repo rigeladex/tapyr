@@ -47,6 +47,7 @@
 #    30-Jan-2014 (CT) Add attributes `ranking_list_factor`, `starters`
 #    17-Aug-2014 (CT) Remove attribute `ranking_list_factor`
 #     3-Feb-2015 (CT) Add `max_crew`
+#    25-Oct-2015 (CT) Add `compute_yardstick_results`, `yardstick_time`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,7 @@ import _GTW._OMP._SRM.Boat_Class
 import _GTW._OMP._SRM.Regatta_Event
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.predicate           import dusplit
 from   _TFL.pyk                 import pyk
 
 import _TFL.Decorator
@@ -304,6 +306,25 @@ class Regatta_H (_Ancestor_Essence) :
         # end class max_crew
 
     # end class _Attributes
+
+    def compute_yardstick_results (self) :
+        sort_key = TFL.Sorted_By (Q.time_corrected, Q.left.yardstick)
+        SRM      = self.home_scope.SRM
+        ys_time  = self.yardstick_time
+        for race_times in dusplit \
+                (SRM.Race_Time.query (Q.left.right == self).all (), Q.race) :
+            for rt in race_times :
+                rt.time_corrected = ys_time (rt.left.yardstick, rt.time)
+            for i, rt in enumerated (sorted (race_times, key = sort_key)) :
+                SRM.Race_Result (rt.left, rt.race, points = i)
+    # end def compute_yardstick_results
+
+    def yardstick_time (self, ys_factor, seconds) :
+        """Return corrected time for elapsed time `seconds` and yardstick
+           factor `ys_factor`.
+        """
+        return (seconds * 100.0) / ys_factor
+    # end def yardstick_time
 
 # end class Regatta_H
 

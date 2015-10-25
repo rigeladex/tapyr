@@ -39,6 +39,7 @@
 #    30-Mar-2015 (CT) Add `Ranking`, `Regatta_in_Ranking`
 #     7-May-2015 (CT) Dont skip `left.left.max_crew` for `MF3_Attr_Spec_R` of
 #                     `Boat_in_Regatta`
+#    25-Oct-2015 (CT) Add `race_times` to `MF3_Form_Spec` of `Boat_in_Regatta`
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,7 @@ class Admin (object) :
             , "skipper.person.first_name"
             )
         , MF3_Form_Spec        = dict
-            ( include_rev_refs = ("_crew", "race_results")
+            ( include_rev_refs = ("_crew", "race_results", "race_times")
             )
         , MF3_Attr_Spec_R      = dict
             ( { "left.sail_number_x"

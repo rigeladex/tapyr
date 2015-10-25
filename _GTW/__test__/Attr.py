@@ -1275,6 +1275,7 @@ _test_pickled_types = """
     value                Url             text-string        160   161   160
     week                 Int_List        byte-string          0    20     0
     week_day             Weekday_RR_List byte-string          0    20     0
+    yardstick            Int             int               None     3     3
     year                 Int             int               None     5     5
     year_day             Int_List        byte-string          0    20     0
     zip                  String          text-string          6     7     6
