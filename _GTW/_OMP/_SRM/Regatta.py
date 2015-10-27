@@ -315,8 +315,8 @@ class Regatta_H (_Ancestor_Essence) :
                 (SRM.Race_Time.query (Q.left.right == self).all (), Q.race) :
             for rt in race_times :
                 rt.time_corrected = ys_time (rt.left.yardstick, rt.time)
-            for i, rt in enumerated (sorted (race_times, key = sort_key)) :
-                SRM.Race_Result (rt.left, rt.race, points = i)
+            for i, rt in enumerate (sorted (race_times, key = sort_key)) :
+                SRM.Race_Result.instance (rt.left, rt.race, points = i)
     # end def compute_yardstick_results
 
     def yardstick_time (self, ys_factor, seconds) :
