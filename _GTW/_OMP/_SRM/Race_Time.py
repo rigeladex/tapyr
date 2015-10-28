@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    25-Oct-2015 (CT) Creation
+#    28-Oct-2015 (CT) Add `max_ui_length` to attribute `time`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,7 @@ class Race_Time (_Ancestor_Essence) :
 
             kind               = Attr.Required
             example            = "42:23"
+            max_ui_length      = 12
             min_value          = 1
             needs_raw_value    = True
             rank               = 1
