@@ -21,10 +21,14 @@
 #    21-Apr-2015 (CT) Disable `file_insertion_enabled`, `raw_enabled`
 #    10-Jul-2015 (CT) Add `logging` for exceptions raised by docutils
 #    10-Jul-2015 (CT) Patch `get_measure` broken in docutils versions < 0.11
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
-from   __future__               import unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _ReST                    import ReST
 from   _TFL                     import TFL
@@ -155,7 +159,7 @@ __doc__ = """
     ...
     ... The end...
     ... '''
-    >>> print ReST.to_html (text, encoding = "utf-8")
+    >>> print (ReST.to_html (text, encoding = "utf-8"))
     <h1 class="title">Test of ReST.to_html</h1>
     <BLANKLINE>
     <div class="section" id="section">
@@ -175,7 +179,7 @@ __doc__ = """
     ...  :width: 160
     ...  :target: /some/where/else/target.html
     ... '''
-    >>> print ReST.to_html (img_text, encoding = "utf-8")
+    >>> print (ReST.to_html (img_text, encoding = "utf-8"))
     <a class="reference external image-reference" href="/some/where/else/target.html"><img alt="Some description" class="align-right" src="/some/where/pic.jpg" style="width: 160px;" /></a>
     <BLANKLINE>
 
