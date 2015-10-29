@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,6 +17,7 @@
 # Revision Dates
 #    29-Dec-2009 (CT) Creation
 #    12-Oct-2014 (CT) Use `next` function, not method (Python-3 compatibility)
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -29,6 +30,7 @@ class Onion (Extension) :
     """Jinja extension providing a `onion` tag.
 
        >>> from _JNJ.Environment import HTML
+       >>> from _TFL.portable_repr import portable_repr
 
        >>> env = HTML ()
        >>> template = '''
@@ -46,10 +48,10 @@ class Onion (Extension) :
        ...   {% endonion -%}
        ... '''
        >>> t = env.from_string (template)
-       >>> t.render (foo = True)
-       u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n    '
-       >>> t.render (foo = False)
-       u'\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
+       >>> print (portable_repr (t.render (foo = True)))
+       '\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n    '
+       >>> print (portable_repr (t.render (foo = False)))
+       '\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
 
        ### The else tags inside the head/tail are optional
        >>> template = '''
@@ -65,10 +67,10 @@ class Onion (Extension) :
        ...   {% endonion -%}
        ... '''
        >>> t = env.from_string (template)
-       >>> t.render (foo = True)
-       u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n    '
-       >>> t.render (foo = False)
-       u'\\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
+       >>> print (portable_repr (t.render (foo = True)))
+       '\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n    '
+       >>> print (portable_repr (t.render (foo = False)))
+       '\\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
        >>> template = '''
        ...   {% onion foo %}
        ...     {% head %}
@@ -82,10 +84,10 @@ class Onion (Extension) :
        ...   {% endonion %}
        ... '''.strip ()
        >>> t = env.from_string (template)
-       >>> t.render (foo = True)
-       u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n  '
-       >>> t.render (foo = False)
-       u'\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    '
+       >>> print (portable_repr (t.render (foo = True)))
+       '\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n  '
+       >>> print (portable_repr (t.render (foo = False)))
+       '\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    '
     """
 
     tags = set (("onion", ))

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,8 +27,14 @@
 #    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
 #    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
 #     9-Jul-2014 (CT) Add `prefixes` argument to `HTML`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _JNJ               import JNJ
 from   _TFL               import TFL
@@ -134,16 +140,13 @@ on how the environment was set up::
     ... '''
 
     >>> t5 = env5.from_string (template)
-    >>> tx = envx.from_string (template)
-    >>> print t5.render ()
+    >>> print (t5.render ().replace ('<section id="foo" class="bar">', '<section class="bar" id="foo">'))
     <!DOCTYPE html>
-    <html lang="de">
-    <BLANKLINE>
-    <section  id="foo" class="bar">
+    <html lang="de" class="no-js">
+      <section class="bar" id="foo">
       A sample section for testing the differences between
         html5 and xhtml.
     </section>
-    <BLANKLINE>
       42
       42
       cccc
@@ -153,53 +156,25 @@ on how the environment was set up::
       <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
     <BLANKLINE>
       <select name="Choice" class="side">
+          <option value="">---</option>
+    <BLANKLINE>
             <option>red</option>
-            <option>green</option>
-      </select>
+            <option>green</option></select>
       <select name="CV" class="side">
           <option value="0">red</option>
           <option value="1" selected="selected">green</option>
-      </select>
+          <option value="">---</option>
+        </select>
     </html>
     <BLANKLINE>
-    >>> print tx.render ()
-    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
-    >
-    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de" >
-    <BLANKLINE>
-    <div class="section bar"  id="foo">
-      A sample section for testing the differences between
-        html5 and xhtml.
-    </div>
-    <BLANKLINE>
-      42
-      42
-      cccc
-      default first of
-      default first of
-    <BLANKLINE>
-      <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
-    <BLANKLINE>
-      <select name="Choice" class="side">
-            <option>red</option>
-            <option>green</option>
-      </select>
-      <select name="CV" class="side">
-          <option value="0">red</option>
-          <option value="1" selected="selected">green</option>
-      </select>
-    </html>
-    <BLANKLINE>
-    >>> print t5.render (d = "qux")
+
+    >>> print (t5.render (d = "qux").replace ('<section id="foo" class="bar">', '<section class="bar" id="foo">'))
     <!DOCTYPE html>
-    <html lang="de">
-    <BLANKLINE>
-    <section  id="foo" class="bar">
+    <html lang="de" class="no-js">
+      <section class="bar" id="foo">
       A sample section for testing the differences between
         html5 and xhtml.
     </section>
-    <BLANKLINE>
       42
       42
       cccc
@@ -209,56 +184,31 @@ on how the environment was set up::
       <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
     <BLANKLINE>
       <select name="Choice" class="side">
+          <option value="">---</option>
+    <BLANKLINE>
             <option>red</option>
-            <option>green</option>
-      </select>
+            <option>green</option></select>
       <select name="CV" class="side">
           <option value="0">red</option>
           <option value="1" selected="selected">green</option>
-      </select>
+          <option value="">---</option>
+        </select>
     </html>
     <BLANKLINE>
-    >>> print tx.render (d = "qux")
-    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
-    >
-    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de" >
-    <BLANKLINE>
-    <div class="section bar"  id="foo">
-      A sample section for testing the differences between
-        html5 and xhtml.
-    </div>
-    <BLANKLINE>
-      42
-      42
-      cccc
-      qux
-      default first of
-    <BLANKLINE>
-      <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
-    <BLANKLINE>
-      <select name="Choice" class="side">
-            <option>red</option>
-            <option>green</option>
-      </select>
-      <select name="CV" class="side">
-          <option value="0">red</option>
-          <option value="1" selected="selected">green</option>
-      </select>
-    </html>
 
     >>> et = env5.get_template ("email/email.jnj")
-    >>> print et.render (email_from = "tanzer@swing.co.at", email_to = "martin@mangari.com", email_body = "Nih!", NAV = None)
+    >>> print (et.render (email_from = "tanzer@swing.co.at", email_to = "martin@mangari.com", email_body = "Nih!", NAV = None))
     From:    tanzer@swing.co.at
     To:      martin@mangari.com
-    Content-type: text/plain; charset=utf-8
+    Content-type: text/plain; charset=iso-8859-15
     <BLANKLINE>
     <BLANKLINE>
     Nih!
-    >>> print et.render (email_from = "tanzer@swing.co.at", email_to = "martin@mangari.com", email_body = "Nih!", NAV = None)
+
+    >>> print (et.render (email_from = "tanzer@swing.co.at", email_to = "martin@mangari.com", email_body = "Nih!", NAV = None))
     From:    tanzer@swing.co.at
     To:      martin@mangari.com
-    Content-type: text/plain; charset=utf-8
+    Content-type: text/plain; charset=iso-8859-15
     <BLANKLINE>
     <BLANKLINE>
     Nih!
