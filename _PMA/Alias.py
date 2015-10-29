@@ -22,13 +22,20 @@
 #     2-Apr-2015 (CT) Change `add_alias_file` to use `expanded_path`,
 #                     ignore missing file
 #     2-Apr-2015 (CT) Change `Alias.__str__` to return joined `email_addresses`
+#    28-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
 
 from   _TFL.predicate          import split_hst
+from   _TFL.pyk                import pyk
 from   _TFL.Regexp             import *
 from   _TFL                    import sos
 
@@ -37,6 +44,7 @@ from   _PMA                    import Lib
 
 import _TFL._Meta.Object
 
+@pyk.adapt__str__
 class Alias (TFL.Meta.Object) :
     """Model a single alias"""
 
@@ -104,7 +112,7 @@ class Alias_Mgr (TFL.Meta.Object) :
         path = sos.expanded_path (name)
         if sos.path.exists (path) :
             with open (path) as f :
-                buffer = f.read ()
+                buffer = pyk.decoded (f.read ())
             self.add_alias_buffer (buffer)
     # end def add_alias_file
 

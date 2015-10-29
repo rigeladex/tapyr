@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -24,14 +24,21 @@
 #    05-Jan-2006 (MG) Open the files in binary mode in the `load` functions
 #                     (they are stored in binary mode too)
 #    10-Nov-2009 (CT) Use `pickle` instead of `cPickle` to silence `-3`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
-from   _TGL                    import TGL
-import _TFL._Meta.Object
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
-import pickle
+from   _TFL                     import TFL
+from   _TGL                     import TGL
+
+from   _TFL.pyk                 import pyk
+
+import _TFL._Meta.Object
 
 class _Status_ (TFL.Meta.Object) :
 
@@ -55,14 +62,14 @@ class _Status_ (TFL.Meta.Object) :
         try :
             del self._attr [name]
         except KeyError :
-            raise AttributeError, name
+            raise AttributeError (name)
     # end def __delattr__
 
     def __getattr__ (self, name) :
         try :
             return self._attr [name]
         except KeyError :
-            raise AttributeError, name
+            raise AttributeError (name)
     # end def __getattr__
 
     def __getstate__ (self) :
@@ -80,8 +87,8 @@ class _Status_ (TFL.Meta.Object) :
         elif isinstance (p, property) :
             p.__set__ (self, value)
         else :
-            raise AttributeError, \
-                "can't set attribute %s to %s" % (name, value)
+            raise AttributeError \
+                ("can't set attribute %s to %s" % (name, value))
     # end def __setattr__
 
     def __setstate__ (self, attr) :
@@ -95,17 +102,13 @@ class _Status_C_ (_Status_) :
     @classmethod
     def load (cls, filename) :
         try :
-            f = open (filename, "rb")
-        except IOError :
-            pass
-        else :
-            try :
+            with open (filename, "rb") as f :
                 try :
-                    cls._Table = pickle.load (f)
+                    cls._Table = pyk.pickle.load (f)
                 except EOFError :
                     pass
-            finally :
-                f.close ()
+        except IOError :
+            pass
     # end def load
 
     @classmethod
@@ -118,9 +121,8 @@ class _Status_C_ (_Status_) :
 
     @classmethod
     def save (cls, filename) :
-        f = open    (filename, "wb")
-        pickle.dump (cls._Table, f, pickle.HIGHEST_PROTOCOL)
-        f.close     ()
+        with open (filename, "wb") as f :
+            pyk.pickle.dump (cls._Table, f, pyk.pickle_protocol)
     # end def save
 
 # end class _Status_C_
@@ -129,25 +131,20 @@ class _Status_I_ (_Status_) :
 
     def load (self, filename) :
         try :
-            f = open (filename, "rb")
-        except IOError :
-            pass
-        else :
-            try :
+            with open (filename, "rb") as f :
                 try :
-                    attrs = pickle.load (f)
+                    attrs = pyk.pickle.load (f)
                 except EOFError :
                     pass
                 else :
                     self._set_attr (** attrs)
-            finally :
-                f.close ()
+        except IOError :
+            pass
     # end def load
 
     def save (self, filename) :
-        f = open    (filename, "wb")
-        pickle.dump (self._attr, f, pickle.HIGHEST_PROTOCOL)
-        f.close     ()
+        with open (filename, "wb") as f :
+            pyk.pickle.dump (self._attr, f, pyk.pickle_protocol)
     # end def save
 
 # end class _Status_I_

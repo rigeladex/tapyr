@@ -167,10 +167,14 @@
 #     5-Jun-2014 (CT) Use `Once_Property`, not `Lazy_Property`; use
 #                     `M_Class`, not `M_Class_SWRP`, as metaclass
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
-from   __future__              import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -208,18 +212,15 @@ def decoded_header (header) :
             enc = c or PMA.default_encoding
             if enc == "unknown" :
                 enc = PMA.default_encoding
-            result.append (p.decode (enc, "replace"))
-    result = u" ".join (result)
+            result.append (pyk.decoded (p, enc))
+    result = " ".join (result)
     return result
 # end def decoded_header
 
 def save (filename, body) :
     if body :
         with open (filename, "wb") as f :
-            try :
-                f.write (body)
-            except UnicodeError :
-                f.write (body.encode (PMA.default_encoding, "replace"))
+            f.write (pyk.encoded (body, PMA.default_encoding))
 # end def save
 
 class Msg_Scope (TFL.Caller.Scope) :
@@ -266,12 +267,9 @@ class Msg_Scope (TFL.Caller.Scope) :
         _pl = self.msg.email
         while _pl.is_multipart () :
             _pl = _pl.get_payload (0)
-        result = _pl.get_payload (decode = True) or u""
-        if isinstance (result, str) :
-            ### Some emails trigger `UnicodeDecodeError:
-            ### 'ascii' codec can't decode byte 0xe4` without `replace` argument
-            result = result.decode (self.msg.charset, "replace")
-        result = _ws_pat.sub (u" ", result.strip ()) or u"<empty>"
+        result  = _pl.get_payload (decode = True) or u""
+        result  = pyk.decoded (result, self.msg.charset)
+        result  = _ws_pat.sub (u" ", result.strip ()) or u"<empty>"
         return result
     # end def _get_body
 
@@ -375,6 +373,7 @@ class Msg_Scope (TFL.Caller.Scope) :
 
 # end class Msg_Scope
 
+@pyk.adapt__str__
 class _Msg_Part_ (TFL.Meta.Object) :
 
     label_width         = 8
@@ -422,7 +421,7 @@ class _Msg_Part_ (TFL.Meta.Object) :
                 if result is None :
                     result = email.get_param ("charset", "us-ascii")
         try :
-            "".decode (result, "replace")
+            "".encode (result, "replace")
         except LookupError :
             ### Guard against broken messages like::
             ###   Content-Type: text/plain; charset=unknown-8bit
@@ -444,7 +443,7 @@ class _Msg_Part_ (TFL.Meta.Object) :
             if not result :
                 result = email.get_param ("name")
             if isinstance (result, tuple) :
-                result = unicode (result [2], result [0] or "us-ascii")
+                result = pyk.decoded (result [2], result [0] or "us-ascii")
             return TFL.Ascii.sanitized_filename (decoded_header (result))
     # end def filename
 
@@ -610,7 +609,7 @@ class Message_Body (_Msg_Part_) :
             wrapper = textwrap.TextWrapper \
                 (width = PMA.text_output_width, break_long_words = False)
             for line in lines :
-                line = line.decode (charset, "replace").rstrip ("\r")
+                line = pyk.decoded (line, charset).rstrip ("\r")
                 if line :
                     for l in wrapper.wrap (line or "") :
                         yield l
@@ -811,10 +810,10 @@ class Message (_Message_) :
         , "subject"
         , "X-spambayes-classification"
         )
-    short_summary_format = unicode \
+    short_summary_format = \
         ( "%(name)s %(date).12s %(sender_name).20s %(subject).45s "
         )
-    summary_format   = unicode \
+    summary_format   = \
         ( "%(number)4s %(date)-12.12s %(sender_name)-20.20s %(subject)-25.25s "
           "[%(body)-50.50s"
         )
@@ -892,6 +891,7 @@ class Message (_Message_) :
 # end class Message
 
 @pyk.adapt__bool__
+@pyk.adapt__str__
 class _Pending_Action_ (TFL.Meta.Object) :
 
     msg     = property (TFL.Getter._msg)

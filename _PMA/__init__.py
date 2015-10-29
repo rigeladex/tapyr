@@ -32,6 +32,7 @@
 #     9-Jul-2007 (CT) `text_output_width` added
 #    27-Dec-2010 (CT) `minor_version` version increased to 7
 #    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
+#    29-Oct-2015 (CT) Use `utf-8`, not `ascii`, as default `default_encoding`
 #    ««revision-date»»···
 #--
 
@@ -52,10 +53,10 @@ def _setup_PMA_properties () :
         load_config_file (sos.path.join (* config_fn), dict (PMA = PMA))
     PMA.authors              = ["Christian Tanzer", "Martin Glueck"]
     PMA.major_version        = _M = 0
-    PMA.minor_version        = _m = 7
+    PMA.minor_version        = _m = 8
     PMA.patchlevel           = _p = 0
     PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
-    PMA.default_encoding     = locale.getpreferredencoding () or "us-ascii"
+    PMA.default_encoding     = locale.getpreferredencoding () or "utf-8"
     PMA.file_system_encoding = sys.getfilesystemencoding ()
     PMA.text_output_width    = 75
     PMA.load_user_config     = load_user_config

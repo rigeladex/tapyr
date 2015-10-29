@@ -52,8 +52,14 @@
 #     2-Apr-2015 (CT) Add option `-Debug`
 #     8-May-2015 (CT) Pass encoded string to `Lib.message_from_string`
 #                     in `_as_html`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -75,11 +81,8 @@ from   _TFL.Regexp             import *
 import _TFL.sos
 
 from   itertools               import chain as ichain
-try :
-    import subprocess
-except ImportError :
-    pass ### python on the Nokia770 does not support the subprocess modul
 
+import subprocess
 import textwrap
 
 class Editor_Thread (PMA.Thread) :
@@ -122,6 +125,7 @@ class Editor_Thread (PMA.Thread) :
             ( dir         = TFL.sos.expanded_path ("~/PMA/.drafts")
             , auto_remove = False
             , create_dir  = True
+            , mode        = "wb"
             ) as (f, result) :
             f.write (buffer)
         return result
@@ -414,15 +418,15 @@ class Composer (TFL.Meta.Object) :
             email = send_cb (email)
         if email and self.smtp :
             if self.debug :
-                print email
-                print
+                print (email)
+                print ()
             self.smtp (email, envelope)
     # end def _finish__send
 
     def _formatted (self, format, msg = None) :
         mapping = PMA.Msg_Scope (msg, self.locals, self.defaults)
-        result = unicode (format, PMA.default_encoding) % mapping
-        result = self.formatted_replacers (result)
+        result  = pyk.decoded   (format, PMA.default_encoding) % mapping
+        result  = self.formatted_replacers (result)
         return result.encode (PMA.default_encoding, "replace" )
     # end def _formatted
 
@@ -505,7 +509,7 @@ def _main (cmd) :
         except KeyError :
             bcc = cmd.Bcc
         except Exception as exc :
-            print exc
+            print (exc)
     comp   = PMA.Composer \
         ( cmd.editor, cmd.user, cmd.domain, smtp
         , rst2html = cmd.HTML

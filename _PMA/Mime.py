@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,8 +17,14 @@
 # Revision Dates
 #    28-Jul-2005 (CT) Creation
 #     9-Aug-2005 (CT) s/default_charset/default_encoding/g
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -27,6 +33,7 @@ from   _PMA                    import Lib
 import _TFL.Filename
 import _TFL.sos
 
+from   _TFL.pyk                import pyk
 from   _TFL.Regexp             import *
 
 import mimetypes
@@ -60,14 +67,13 @@ class _M_Type_ (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, mt, st, filename) :
-        f = open   (filename, self.mode)
-        b = f.read ()
-        f.close    ()
+        with open (filename, self.mode) as f :
+            b = f.read ()
         return self._new (mt, st, b)
     # end def __call__
 
     def _new (self, mt, st, b) :
-        return self.MIME (b, _subtype = st)
+        return self.MIME (pyk.as_str (b, "latin-1"), _subtype = st)
     # end def _new
 
 # end class _M_Type_
@@ -86,7 +92,8 @@ class _M_Type_B_ (_M_Type_) :
 class _M_Type_Msg_ (_M_Type_) :
 
     def _new (self, mt, st, b) :
-        return self.MIME (Lib.message_from_string (b), _subtype = st)
+        return self.MIME \
+            (Lib.message_from_string (pyk.as_str (b, "latin-1")), _subtype = st)
     # end def _new
 
 # end class _M_Type_Msg_
@@ -96,7 +103,10 @@ class _M_Type_Text_ (_M_Type_) :
     mode    = "r"
 
     def _new (self, mt, st, b) :
-        return self.MIME (b, _subtype = st, _charset = PMA.default_encoding)
+        return self.MIME \
+            ( pyk.as_str (b, "latin-1")
+            , _subtype = st, _charset = PMA.default_encoding
+            )
     # end def _new
 
 # end class _M_Type_Text_

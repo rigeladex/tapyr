@@ -19,15 +19,16 @@
 #    27-Mar-2013 (CT) Add `%(receiver)s`, `%(subject)s`, `formatted_replacers`
 #    17-Mar-2014 (CT) Add `addressee` to `forward_format`, `resend_format`
 #     2-Apr-2015 (CT) Use `bcc_addr`, not `email_address`, for `Bcc`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
 from   _PMA                    import PMA
 import _PMA.Composer
+import _PMA.Matcher
 import _PMA.Mime
 import _PMA.Office
 import _PMA.Sender
-import _PMA._UI.Application
 
 from   _TFL.Regexp             import *
 

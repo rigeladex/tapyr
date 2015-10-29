@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -69,10 +69,14 @@
 #                     `item in`)
 #    20-Feb-2006 (CT) `add_messages` changed to guard against messages
 #                     already contained in `self._msg_dict`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
-from   __future__              import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _TGL                    import TGL
@@ -84,20 +88,20 @@ import _PMA.Message
 import _PMA._SCM
 import _PMA._SCM.Mailbox
 
-import _TFL._Meta.Object
-import _TFL.B64 as B64
-import _TGL.Observed_Value
 
-import _TFL.Environment
-from   _TFL.predicate          import *
-import _TFL.Record
-from   _TFL.subdirs            import subdirs
 from   _TFL                    import sos
+from   _TFL.predicate          import *
+from   _TFL.pyk                import pyk
+from   _TFL.subdirs            import subdirs
+
+import _TFL.B64 as B64
+import _TFL.Environment
+import _TFL.Record
+import _TFL._Meta.Object
+import _TGL.Observed_Value
 
 import errno
 import time
-
-import pdb
 
 class _Mailbox_ (TFL.Meta.Object) :
     """Root class for mailbox classes"""
@@ -225,7 +229,6 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     def _add (self, * messages) :
         if messages :
-            # pdb.set_trace ()
             md = self._msg_dict
             for m in messages :
                 md [m.name] = m
@@ -331,11 +334,8 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
     # end def delete_subbox
 
     def reparsed (self, msg) :
-        fp = open (msg.path, "r")
-        try :
+        with open (msg.path, "rb") as fp :
             result = self.parser.parse (fp)
-        finally :
-            fp.close ()
         return result
     # end def reparsed
 
@@ -352,11 +352,8 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
 
     def _emails_from_dir (self, path, factory) :
         for f in self._files (path) :
-            fp = open (f)
-            try :
+            with open (f, "rb") as fp :
                 m = factory (fp)
-            finally :
-                fp.close ()
             yield m
     # end def _emails_from_dir
 
@@ -369,7 +366,8 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
     # end def _files
 
     def _new_email (self, fp, headersonly = True) :
-        result = self.parser.parse (fp, headersonly = headersonly)
+        text   = pyk.as_str (fp.read (), "latin-1")
+        result = self.parser.parsestr (text, headersonly = headersonly)
         result._pma_parsed_body = not headersonly
         return result
     # end def _new_email
@@ -402,7 +400,8 @@ class _Mailbox_in_Dir_S_ (_Mailbox_in_Dir_) :
 
     def _new_email (self, fp, headersonly = True) :
         result = self.__super._new_email   (fp, headersonly)
-        result._pma_path  = sos.path.split (fp.name) [1]
+        file   = getattr (fp, "_file", fp)
+        result._pma_path  = sos.path.split (file.name) [1]
         result._pma_dir   = None
         return result
     # end def _new_email
@@ -637,7 +636,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
                 s = self._new_subbox (sos.path.join (self.path, b.name))
             s.add_messages (* b.messages)
             if transitive :
-                for sb in b._box_dict.itervalues () :
+                for sb in pyk.itervalues (b._box_dict) :
                     s.add_subbox (sb, transitive)
         self.change_list.append (PMA.SCM.Add_Subbox (s))
         self.change_count += 1
@@ -647,7 +646,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
     def import_from_mailbox (self, mailbox, transitive = False) :
         self.add_messages (* mailbox.messages)
         if transitive :
-            for b in mailbox._box_dict.itervalues () :
+            for b in pyk.itervalues (mailbox._box_dict) :
                 self.add_subbox (b, transitive)
     # end def import_from_mailbox
 

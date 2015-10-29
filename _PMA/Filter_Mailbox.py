@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2015 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -22,7 +22,6 @@
 
 from   _PMA              import PMA
 import _PMA.V_Mailbox
-import  pdb
 
 class Filter_Mailbox (PMA._V_Mailbox_) :
     """A mailbox which does not contain real messages but presents a filtered
@@ -37,8 +36,8 @@ class Filter_Mailbox (PMA._V_Mailbox_) :
             , root     = mailbox.root
             )
         if not isinstance (matcher, PMA._Matcher_) :
-            matcher          = PMA.Matcher (matcher, ** ckw)
-        self._matcher        = matcher
+            matcher    = PMA.Matcher (matcher, ** ckw)
+        self._matcher  = matcher
     # end def __init__
 
     def _eligible (self, messages) :

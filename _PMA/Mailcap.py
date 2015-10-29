@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -18,8 +18,14 @@
 #     4-Sep-2004 (CT) Creation
 #     6-Sep-2004 (CT) `needsterminal` considered in `Mailcap_Entry.system`
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -28,6 +34,7 @@ import _TFL._Meta.Object
 import _TFL.Undef
 
 from   _TFL.predicate          import *
+from   _TFL.pyk                import pyk
 from   _TFL                    import sos
 
 _undefined = TFL.Undef ()
@@ -38,7 +45,7 @@ class Mailcap_Entry (TFL.Meta.Object) :
     def __init__ (self, mime_type, cap_dict) :
         self.mime_type     = mime_type
         self.cap_dict      = cap_dict
-        self.copiousoutput = "copiousoutput"  in cap_dict
+        self.copiousoutput = "copiousoutput" in cap_dict
         self.needsterminal = "needsterminal" in cap_dict
         self.test          = cap_dict.get ("test")
     # end def __init__
