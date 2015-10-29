@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    11-Jun-2012 (CT) Creation
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -110,10 +111,10 @@ __doc__ = """
     >>> ets
     (<Leaf about: /about>, <Dir v1: /v1>, <Dir Meta: /v1/Meta>, <Dir PAP-Company: /v1/PAP-Company>, <Leaf 1: /v1/PAP-Company/1>, <Dir PAP-Person: /v1/PAP-Person>, <Dir v2: /v2>)
 
-    >>> [e.name for e in ets]
-    [u'about', u'v1', u'Meta', u'PAP-Company', u'1', u'PAP-Person', u'v2']
-    >>> [e.href for e in ets]
-    [u'about', u'v1', u'v1/Meta', u'v1/PAP-Company', u'v1/PAP-Company/1', u'v1/PAP-Person', u'v2']
+    >>> print (portable_repr ([e.name for e in ets]))
+    ['about', 'v1', 'Meta', 'PAP-Company', '1', 'PAP-Person', 'v2']
+    >>> print (portable_repr ([e.href for e in ets]))
+    ['about', 'v1', 'v1/Meta', 'v1/PAP-Company', 'v1/PAP-Company/1', 'v1/PAP-Person', 'v2']
 
     >>> print (root.href_pat_frag)
     v2|v1(?:/(?:PAP\-Person|PAP\-Company|Meta))?
@@ -155,25 +156,26 @@ __doc__ = """
     >>> print (portable_repr (root.GET.render_man.by_mime_type))
     mm_list(<class 'builtins.list'>, {'application/json' : [<class '_GTW._RST.Mime_Type.JSON'>]})
 
-    >>> GTW.RST.Mime_Type.JSON
+    >>> print (portable_repr (GTW.RST.Mime_Type.JSON))
     <class '_GTW._RST.Mime_Type.JSON'>
-    >>> GTW.RST.Mime_Type.JSON.extensions
+    >>> print (portable_repr (GTW.RST.Mime_Type.JSON.extensions))
     ('json',)
-    >>> GTW.RST.Mime_Type.JSON.mime_types
-    (u'application/json',)
+    >>> print (portable_repr (GTW.RST.Mime_Type.JSON.mime_types))
+    ('application/json',)
 
     >>> for n, r in sorted (pyk.iteritems (GTW.RST.Mime_Type.JSON.Table)) :
-    ...     print (r.name, r.extensions, r.mime_types)
-    ATOM ('atom',) (u'application/atom+xml',)
-    CSV ('csv',) (u'text/csv',)
-    HTML (u'html', u'htm') (u'text/html',)
-    HTML_T (u'html', u'htm') (u'text/html',)
-    JSON ('json',) (u'application/json',)
-    SVG ('svg',) (u'image/svg+xml',)
-    TXT ('txt',) (u'text/plain',)
-    User_Cert ('user_cert',) (u'application/x-x509-user-cert',)
-    XHTML ('xhtml',) (u'application/xhtml+xml',)
-    XML ('xml',) (u'text/xml', u'application/xml')
+    ...     print (portable_repr ((r.name, r.extensions, r.mime_types)))
+    ('ATOM', ('atom',), ('application/atom+xml',))
+    ('CSV', ('csv',), ('text/csv',))
+    ('HTML', ('html', 'htm'), ('text/html',))
+    ('HTML_T', ('html', 'htm'), ('text/html',))
+    ('JSON', ('json',), ('application/json',))
+    ('SVG', ('svg',), ('image/svg+xml',))
+    ('TXT', ('txt',), ('text/plain',))
+    ('User_Cert', ('user_cert',), ('application/x-x509-user-cert',))
+    ('XHTML', ('xhtml',), ('application/xhtml+xml',))
+    ('XML', ('xml',), ('text/xml', 'application/xml'))
+
 
     >>> root2 = Root ( HTTP = None
     ...     , language          = "en"
@@ -203,10 +205,10 @@ __doc__ = """
     >>> ets2
     (<Leaf about: /about>, <Dir v1: /v1>, <Dir Meta: /v1/Meta>, <Dir PAP-Company: /v1/PAP-Company>, <Leaf 1: /v1/PAP-Company/1>, <Dir PAP-Person: /v1/PAP-Person>, <Dir v2: /v2>, <Dir PAP-Company: /v2/PAP-Company>, <Leaf 1: /v2/PAP-Company/1>, <Dir PAP-Person: /v2/PAP-Person>)
 
-    >>> [e.name for e in ets2]
-    [u'about', u'v1', u'Meta', u'PAP-Company', u'1', u'PAP-Person', u'v2', u'PAP-Company', u'1', u'PAP-Person']
-    >>> [e.href for e in ets2]
-    [u'about', u'v1', u'v1/Meta', u'v1/PAP-Company', u'v1/PAP-Company/1', u'v1/PAP-Person', u'v2', u'v2/PAP-Company', u'v2/PAP-Company/1', u'v2/PAP-Person']
+    >>> print (portable_repr ([e.name for e in ets2]))
+    ['about', 'v1', 'Meta', 'PAP-Company', '1', 'PAP-Person', 'v2', 'PAP-Company', '1', 'PAP-Person']
+    >>> print (portable_repr ([e.href for e in ets2]))
+    ['about', 'v1', 'v1/Meta', 'v1/PAP-Company', 'v1/PAP-Company/1', 'v1/PAP-Person', 'v2', 'v2/PAP-Company', 'v2/PAP-Company/1', 'v2/PAP-Person']
 
     >>> print (root2.href_pat_frag)
     v2(?:/(?:PAP\-Person|PAP\-Company))?|v1(?:/(?:PAP\-Person|PAP\-Company|Meta))?

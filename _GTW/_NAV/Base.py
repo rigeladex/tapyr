@@ -302,6 +302,10 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -418,8 +422,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 v = unicode (v, encoding, "replace")
             try :
                 setattr (self, k, v)
-            except AttributeError, exc :
-                print self.href or "Navigation.Root", k, v, "\n   ", exc
+            except AttributeError as exc :
+                print (self.href or "Navigation.Root", k, v, "\n   ", exc)
         if self.implicit :
             self.hidden = True
     # end def __init__
@@ -658,12 +662,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
             try :
                 smtp (text)
             except Exception as exc :
-                print "Exception:", exc
+                print ("Exception:", exc)
                 print \
                     ( "When trying to send email from", email_from
                     , "to", context.get ("email_to", "<Unkown>")
                     )
-                print text
+                print (text)
                 try :
                     kw = dict \
                         ( context
@@ -681,8 +685,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 except Exception :
                     pass
         else :
-            print "*** Cannot send email because `smtp` is undefined ***"
-            print text
+            print ("*** Cannot send email because `smtp` is undefined ***")
+            print (text)
     # end def send_email
 
     def _send_error_email (self, handler, exc, tbi) :
@@ -1420,7 +1424,7 @@ class Root (_Dir_) :
             CS = MOM.Scope.load
         result = CS (self.top.App_Type, self.top.DB_Url)
         if self.DEBUG :
-            print "Loaded", result
+            print ("Loaded", result)
         return result
     # end def scope
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -26,6 +26,7 @@
 #    17-Jan-2012 (CT) Add `Ch`, `Vh`, `Vm`, `Vw`, function `Length`
 #    18-Jan-2012 (CT) Add support for arithmetic operators to `TRBL`, `TRBL0`
 #    18-Jan-2012 (CT) Factor `_TRBL_`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -91,8 +92,8 @@ class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
     >>> print (Px (3) % 2)
     1px
 
-    >>> print (Percent (100), Percent (100) / 2, Percent (100) / 3)
-    100% 50.0% 33.3333333333%
+    >>> print (Percent (100), Percent (100) / 2, Percent (100) / 2.5)
+    100% 50.0% 40.0%
 
     >>> print (Rem (2))
     2rem

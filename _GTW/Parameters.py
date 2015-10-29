@@ -30,10 +30,14 @@
 #     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
 #     9-Apr-2014 (CT) Pass `static_handler` to `GTW.CSS.Style_File`
 #    15-Apr-2014 (CT) Fix `Script_File`, `script_files`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
-from   __future__                 import print_function, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _GTW                       import GTW
 from   _TFL                       import TFL
@@ -151,6 +155,8 @@ class M_Definition (TFL.Meta.Object.__class__) :
 class Definition (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Definition)) :
     """Definition of parameters for media, i.e., CSS and JS, fragments.
 
+    >>> from _TFL.portable_repr  import portable_repr
+
     >>> class Defaults (Definition) :
     ...   foo = 1
     ...   bar = P.foo * 2
@@ -180,8 +186,9 @@ class Definition (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Definition)) :
     (4, 8)
     >>> D.nav_col.own_links.quz, E.nav_col.own_links.quz
     (0.5, 1.0)
-    >>> sorted (D.nav_col.spec.items ()), sorted (E.nav_col.spec.items ())
-    ([('a', 42), ('border', u'solid')], [('a', 137), ('border', u'solid')])
+    >>> print (portable_repr (D.nav_col.spec), portable_repr (E.nav_col.spec))
+    {'a' : 42, 'border' : 'solid'} {'a' : 137, 'border' : 'solid'}
+
     """
 
     def __init__ (self, R = None) :
@@ -238,6 +245,7 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
     # end class _MOB_
 
+    @pyk.adapt__str__
     class _Script_File_ (TFL.Meta.Object) :
         """Wrapper for a javascript `Script_File` referenced in a media fragment."""
 
@@ -257,7 +265,8 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
             if result is None :
                 fn = self.file_name
                 with open (fn, "rb") as f :
-                    result = self._body = f.read ().strip ()
+                    result = self._body = \
+                        pyk.decoded (f.read ().strip (), "utf-8", "iso-8859-1")
             return result
         # end def body
 
@@ -358,52 +367,52 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 Scope = _Parameters_Scope_ # end class
 
 __doc__ = r"""
->>> from _JNJ.Media_Defaults import Media_Defaults
->>> from _JNJ.Environment    import HTML
->>> import _GTW.jQuery
->>> import os
->>> base_dir        = os.path.abspath \
-...    (os.path.join (os.path.dirname (__file__), "..", "_GTW", "__test__"))
->>> env             = HTML (load_path = base_dir)
->>> base_media      = os.path.join (base_dir, "_test.media")
->>> os.chdir (base_dir)
+    >>> from _JNJ.Media_Defaults import Media_Defaults
+    >>> from _JNJ.Environment    import HTML
+    >>> import _GTW.jQuery
+    >>> import os
+    >>> base_dir        = os.path.abspath \
+    ...    (os.path.join (os.path.dirname (__file__), "..", "_GTW", "__test__"))
+    >>> env             = HTML (load_path = base_dir)
+    >>> base_media      = os.path.join (base_dir, "_test.media")
+    >>> os.chdir (base_dir)
 
->>> def as_string (fragments) :
-...     return "\n\n".join \
-...         (str (s) for s in sorted (fragments, key = TFL.Getter.rank))
+    >>> def as_string (fragments) :
+    ...     return "\n\n".join \
+    ...         (str (s) for s in sorted (fragments, key = TFL.Getter.rank))
 
->>> scope = Scope (Media_Defaults, env).Eval (base_media)
->>> print (as_string (scope.style_sheets))
-a, abbr, acronym, address, article, aside, audio
-  { border         : 0
-  ; font           : inherit
-  ; font-size      : 100%
-  ; margin         : 0
-  ; outline        : 0
-  ; padding        : 0
-  ; vertical-align : baseline
-  }
-<BLANKLINE>
-/* --> rules from a existing CSS file `/
-a.hide
-{
-    display:          none
-}
-/* <-- */
->>> print (as_string (scope.script_files))
-/* a test javascript file directly included */
+    >>> scope = Scope (Media_Defaults, env).Eval (base_media)
+    >>> print (as_string (scope.style_sheets))
+    a, abbr, acronym, address, article, aside, audio
+      { border         : 0
+      ; font           : inherit
+      ; font-size      : 100%
+      ; margin         : 0
+      ; outline        : 0
+      ; padding        : 0
+      ; vertical-align : baseline
+      }
+    <BLANKLINE>
+    /* --> rules from a existing CSS file `/
+    a.hide
+    {
+        display:          none
+    }
+    /* <-- */
+    >>> print (as_string (scope.script_files))
+    /* a test javascript file directly included */
 
->>> list (scope.scripts)
-[/media/GTW/js/modernizr.custom.js: text/javascript, /media/GTW/js/jquery.min.js: text/javascript, /media/GTW/js/jquery-ui.min.js: text/javascript, /media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/jQ/button_pure.js: text/javascript, /media/GTW/js/GTW/util.js: text/javascript, /media/GTW/js/GTW/jsonify.js: text/javascript, /media/GTW/js/GTW/jQ/util.js: text/javascript, /media/GTW/js/GTW/jQ/autocomplete.js: text/javascript, /media/GTW/js/GTW/jQ/e_type_selector.js: text/javascript, /media/GTW/js/GTW/L.js: text/javascript, /media/GTW/js/GTW/jQ/mf3.js: text/javascript]
+    >>> list (scope.scripts)
+    [/media/GTW/js/modernizr.custom.js: text/javascript, /media/GTW/js/jquery.js: text/javascript, /media/GTW/js/jquery-ui.js: text/javascript, /media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/jQ/button_pure.js: text/javascript, /media/GTW/js/GTW/util.js: text/javascript, /media/GTW/js/GTW/jsonify.js: text/javascript, /media/GTW/js/GTW/jQ/util.js: text/javascript, /media/GTW/js/GTW/jQ/autocomplete.js: text/javascript, /media/GTW/js/GTW/jQ/e_type_selector.js: text/javascript, /media/GTW/js/GTW/L.js: text/javascript, /media/GTW/js/GTW/jQ/mf3.js: text/javascript]
 
->>> list (scope.css_links)
-[all: /media/GTW/css/jquery.gritter.css]
+    >>> list (scope.css_links)
+    [all: /media/GTW/css/jquery.gritter.css]
 
->>> list (scope.rel_links)
-[href="/media/GTW/css/jquery.gritter.rel.css"]
+    >>> list (scope.rel_links)
+    [href="/media/GTW/css/jquery.gritter.rel.css"]
 
->>> print (as_string (scope.js_on_ready))
-/* this is a JS on ready code */
+    >>> print (as_string (scope.js_on_ready))
+    /* this is a JS on ready code */;
 
 """
 

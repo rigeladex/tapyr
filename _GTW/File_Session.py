@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -34,6 +34,7 @@
 #    14-Sep-2013 (MG) Move `fchmod` call to posix function
 #    11-Dec-2014 (CT) Remove obsolete code from `remove`
 #    11-Dec-2014 (CT) Change `save` to skip/remove empty sessions
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -95,7 +96,7 @@ if os.name == "nt" :
 
 elif os.name == "posix":
     import fcntl
-    def _lock_impl (file, exclusive, nonblocking):
+    def _lock_impl (file, exclusive, nonblocking) :
         if exclusive :
             flags = fcntl.LOCK_EX
         else :
@@ -105,10 +106,10 @@ elif os.name == "posix":
         try:
             fcntl.flock (file.fileno (), flags)
             os.fchmod   (file.fileno (), stat.S_IRUSR | stat.S_IWUSR)
-        except IOError as exc_value:
-            #  IOError: [Errno 11] Resource temporarily unavailable
-            if exc_value[0] == 11:
-                raise Lock_Failed ()
+        except IOError as exc_value :
+            #  Errno 11: Resource temporarily unavailable
+            if exc_value.errno == 11 :
+                raise Lock_Failed (file.name)
             else:
                 raise
     # end def _lock_impl
@@ -123,14 +124,13 @@ class Locked_File (object) :
        Inspired by http://code.activestate.com/recipes/65203/
 
     >>> with Locked_File ("test.lock", "w") as f:
-    ...     f.write ("Write")
+    ...     _ = f.write ("Write")
     >>> with Locked_File ("test1.lock", "w") as f :
-    ...    f.write ("Write-Read")
-    ...    with Locked_File ("test1.lock", "r", nonblocking = True) as r :
-    ...        r.read ()
-    Traceback (most recent call last):
-        ...
-    Lock_Failed
+    ...     _ = f.write ("Write-Read")
+    ...     with expect_except (Lock_Failed) :
+    ...         with Locked_File ("test1.lock", "r", nonblocking = True) as r :
+    ...             r.read ()
+    Lock_Failed: test1.lock
 
     >>> with Locked_File ("test.lock", "r") as f :
     ...    f.read (1)
