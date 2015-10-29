@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.HPS.
@@ -40,7 +40,7 @@ Pid manager for Hash-Pickle-Store::
     >>> pm.reserve (R (), 5)
     Traceback (most recent call last):
       ...
-    ValueError: Cannot reserve pid 5, already used by object `Record (pid = 5)`
+    ValueError: Cannot reserve pid 5, already used by entity `Record (pid = 5)`
     >>> pm.new (R ())
     6
     >>> pm.max_pid

@@ -90,7 +90,7 @@ class _MOM_Base_ (TFL.Q_Exp.Base) :
     <Filter_Or [Q.my_node.manager ["PAP.Association"] == 23, Q.my_node.manager ["PAP.Company"] == 23]>
 
     >>> q3.name == "ISAF"
-    <Filter_Or [Q.my_node.manager ["PAP.Association"].name == ISAF, Q.my_node.manager ["PAP.Company"].name == ISAF]>
+    <Filter_Or [Q.my_node.manager ["PAP.Association"].name == 'ISAF', Q.my_node.manager ["PAP.Company"].name == 'ISAF']>
 
     >>> Q.manager [Q.PAP.Company].owner [Q.PAP.Person]
     Q.manager ["PAP.Company"].owner ["PAP.Person"]

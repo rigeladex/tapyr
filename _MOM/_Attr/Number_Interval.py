@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -40,6 +40,7 @@ from   __future__            import unicode_literals
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_, _A_Number_
 
+from   _TFL.portable_repr    import portable_repr
 from   _TFL.pyk              import pyk
 
 import _TFL.Caller
@@ -115,18 +116,18 @@ def make (bounds_type, name = None) :
     <class 'MOM.Int_Interval' [Spec Essence]>
     >>> Int_Interval._Attributes.lower.__mro__ [:2]
     (<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Int'>)
-    >>> Int_Interval._Attributes.lower.P_Type
-    <type 'int'>
+    >>> print (portable_repr (Int_Interval._Attributes.lower.P_Type))
+    <class 'builtins.int'>
 
     >>> Float_Interval._Attributes.lower.__mro__ [:2]
     (<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Float'>)
-    >>> Float_Interval._Attributes.lower.P_Type
-    <type 'float'>
+    >>> print (portable_repr (Float_Interval._Attributes.lower.P_Type))
+    <class 'builtins.float'>
 
     >>> Frequency_Interval._Attributes.lower.__mro__ [:2]
     (<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Frequency'>)
-    >>> Frequency_Interval._Attributes.lower.P_Type
-    <type 'float'>
+    >>> print (portable_repr (Frequency_Interval._Attributes.lower.P_Type))
+    <class 'builtins.float'>
 
     """
     if name is None and bounds_type.__name__.startswith ("A_") :

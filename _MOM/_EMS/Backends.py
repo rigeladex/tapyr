@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.EMS.
@@ -25,19 +25,26 @@
 #--
 
 """
-    >>> print MOM.EMS.Backends.get ("hps:")
+    >>> print (portable_repr (MOM.EMS.Backends.get ("hps:")))
     (<class '_MOM._EMS.Hash.Manager'>, <class '_MOM._DBW._HPS.Manager.Manager'>, <class '_MOM._DBW._HPS.DBS.HPS'>)
 
-    >>> print MOM.EMS.Backends.get ("postgresql:")
+    >>> print (portable_repr (MOM.EMS.Backends.get ("postgresql:")))
     (<class '_MOM._EMS.SAW.Manager'>, <class '_MOM._DBW._SAW._PG.Manager.Manager'>, <class '_MOM._DBW._SAW._PG.DBS.DBS'>)
 
-    >>> print MOM.EMS.Backends.get ("sqlite:")
+    >>> print (portable_repr (MOM.EMS.Backends.get ("sqlite:")))
     (<class '_MOM._EMS.SAW.Manager'>, <class '_MOM._DBW._SAW._SQ.Manager.Manager'>, <class '_MOM._DBW._SAW._SQ.DBS.DBS'>)
 
 """
 
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
+
 from   _MOM                   import MOM
 import _MOM._EMS
+
+from   _TFL.portable_repr     import portable_repr
 
 _hps = ("Hash", "_HPS.Manager")
 
