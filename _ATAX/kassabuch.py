@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -24,10 +24,18 @@
 #    17-Sep-2007 (CT) Use `Account.add_file`
 #    17-Sep-2007 (CT) `main` refactored
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
-from _ATAX.accounting   import *
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
+
+from   _TFL.pyk          import pyk
+
+from _ATAX.accounting    import *
 
 par_sub_pat = re.compile ("\(([^)]+)\)")
 
@@ -39,11 +47,13 @@ def kassabuch (account, file) :
         e.desc = par_sub_pat.sub ("[\\1]", e.desc)
         if "-" in e.dir :
             file.write \
-                ( "\\A %6s %-50s (%8s) [%s]\n"
-                % (e.date, e.desc, e.gross.as_string (), e.number)
+                ( pyk.encoded
+                    ( "\\A %6s %-50s (%8s) [%s]\n"
+                    % (e.date, e.desc, e.gross.as_string (), e.number)
+                    )
                 )
         elif "+" in e.dir :
-            print "Income entries not yet implemented", e
+            print ("Income entries not yet implemented", e)
 # end def kassabuch
 
 class Command (Command) :
@@ -54,7 +64,7 @@ class Command (Command) :
 
     def _output (self, cmd, account, categories, source_currency) :
         if cmd.output :
-            file = open (cmd.output, "w")
+            file = open (cmd.output, "wb")
         else :
             file = sys.stdout
         kassabuch (account, file)

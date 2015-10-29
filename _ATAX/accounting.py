@@ -158,14 +158,18 @@
 #                     customization of calculation method
 #     4-Dec-2014 (CT) Remove debug output for `calculation_method`
 #    17-Feb-2015 (CT) Move values for `ignore` to `Config`, out of `__init__`
-#     2-Jun-2015 (CT) Add dictionary `vat_privat` index by account,
+#     2-Jun-2015 (CT) Add dictionary `vat_privat` indexed by account,
 #                     rename `vat_private` to `vat_privat_default`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
+#    29-Oct-2015 (CT) Fix usage of `vat_privat` (use `get`, not `[]`)
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _ATAX             import ATAX
 from   _TFL.Date_Time    import *
@@ -185,7 +189,6 @@ import _TGL.load_config_file
 
 import math
 import sys
-from   UserDict          import UserDict
 import glob
 
 ignor_pat              = Regexp ( r"^\s*[«%#]")
@@ -270,7 +273,7 @@ class Account_Entry (_Entry_) :
             raise
         self.desc           = desc_strip_pat.sub ("", desc)
         self.vst_korrektur  = vst_korrektur
-        self.time           = mktime             (self.dtuple)
+        self.time           = mktime             (tuple (self.dtuple))
         self.p_konto        = self._get_p_konto  (self.cat)
         self.vat_type       = ' '
         for k in 'ir' :
@@ -503,7 +506,7 @@ class Account (_Base_):
         try :
             ### `tmp' must be passed to the local-dict argument because
             ### Python adds some junk to the global-dict argument of `exec'
-            exec line in {}, tmp
+            exec (line, {}, tmp)
             if "source_currency" in tmp :
                 self.source_currency = EUC.Table [tmp ["source_currency"]]
                 del tmp ["source_currency"]
@@ -921,7 +924,7 @@ class V_Account (Account) :
               , self.vorsteuer_revCh.as_string_s ()
               )
             )
-        for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
+        for (k, d), vst in sorted (pyk.iteritems (self.vorsteuer_kzs)) :
             pyk.fprint ("%-30.30s %3s : %29s" % (d, k, vst.as_string_s ()))
         pyk.fprint \
             ( "%-30s %3s : %29s"
@@ -1030,7 +1033,7 @@ class V_Account (Account) :
                   , self.vorsteuer_revCh.as_string_s ()
                   )
                 )
-        for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
+        for (k, d), vst in sorted (pyk.iteritems (self.vorsteuer_kzs)) :
             pyk.fprint ("%-50.50s %3s : %10s" % (d, k, vst.as_string_s ()))
         if self.ust_gut :
             pyk.fprint \
@@ -1091,7 +1094,7 @@ class V_Account (Account) :
         ### recompute `ust` instead of using `self.ust` to avoid 1-cent
         ### rounding errors
         ust = sum \
-            ( ((v*r - v) for (r, v) in self.umsatz_dict.iteritems ())
+            ( ((v*r - v) for (r, v) in pyk.iteritems (self.umsatz_dict))
             , EUR (0)
             )
         return ust + self.ust_gut - self.vorsteuer - self.vorsteuer_EUst
@@ -1248,11 +1251,12 @@ class T_Account (Account) :
                     p_entry = self._fix_privat_anteil \
                         (k, pa, factor, p_soll, p_haben)
                     k_desc  = self.konto_desc.get (k, "")
+                    vat_pd  = self.vat_privat_default
                     self.ausgaben   [k] *= (1 - factor)
                     self.einnahmen  [k] *= (1 - factor)
                     self.konto_desc [k]  = "%s (abz. %s)" % \
                         (k_desc, p_entry.desc)
-                    p_vat = p_soll * (self.vat_privat [k] - 1.00)
+                    p_vat = p_soll * (self.vat_privat.get (k, vat_pd) - 1.00)
                     self._fix_ust_privat (k, k_desc, p_vat, p_entry.desc)
                 else :
                     for ke in self.k_entries [k] :
@@ -1475,19 +1479,19 @@ class H_Account (T_Account) :
 
 # end class H_Account
 
-class Konto_Desc (_Base_, UserDict) :
+class Konto_Desc (dict) :
     """Model kontenplan of austrian accounting system"""
 
     def __init__ (self, file) :
-        UserDict.__init__ (self)
-        k_d = self.data
+        dict.__init__ (self)
+        k_d = self
         d_k = self.reverse = {}
         if isinstance (file, str) :
             file = open (file, "rb")
         pat   = Regexp (r"^[0-9]")
         s_pat = Regexp (r"\s*:\s*")
-        for line in file :
-            line           = self._decoded (line)
+        for l in file :
+            line = pyk.decoded (l, "utf-8", "iso-8859-15")
             if not pat.match (line) :
                 continue
             (konto, desc)  = s_pat.split   (line)

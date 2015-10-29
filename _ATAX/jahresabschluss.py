@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -30,8 +30,14 @@
 #    17-Sep-2007 (CT) Use `Account.add_file`
 #    17-Sep-2007 (CT) `main` refactored
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from _ATAX.accounting import *
 
@@ -56,18 +62,23 @@ class Command (Command) :
         if not cmd.summary :
             account.print_konto_summary ()
             account.print_konten        ()
-            print "\f"
+            print ("\f")
         account.print_ein_aus_rechnung  ()
         if cmd.gewerbeanteil and account.g_anteil != 0 :
-            gfile = open (cmd.gewerbeanteil, "w")
-            gfile.write \
-                ( """$source_currency = "%s";\n""" % EUC.target_currency.name)
-            gfile.write \
-                ( (" 31.12.  &    &     & %8.2f & b  & 7001  & 2000  "
-                   "& -  & e &  & Büroaufwand %s \n"
-                  )
-                % (account.g_anteil, cmd.year)
-                )
+            with open (cmd.gewerbeanteil, "wb") as gfile :
+                gfile.write \
+                    ( pyk.encoded
+                        ( """$source_currency = "%s";\n"""
+                        % EUC.target_currency.name
+                        )
+                    )
+                gfile.write \
+                    ( pyk.encoded
+                        ( " 31.12.  &    &     & %8.2f & b  & 7001  & 2000  "
+                          "& -  & e &  & Büroaufwand %s\n"
+                        % (account.g_anteil, cmd.year)
+                          )
+                    )
     # end def _output
 
     def _arg_spec (self) :

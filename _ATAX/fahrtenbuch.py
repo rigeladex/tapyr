@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -22,10 +22,14 @@
 #     5-Aug-2009 (CT) `km_business`, `km_private`, and `private_percent`
 #                     factored (in class `Fahrtenbuch`)
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
-from   __future__        import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _ATAX             import ATAX
 from   _CAL              import CAL
@@ -129,11 +133,13 @@ class Fahrtenbuch (TFL.Meta.Object) :
         add    = result.add
         last   = None
         with open (file_name, "rb") as file :
-            for line in result._read_lines (file) :
+            for l in result._read_lines (file) :
+                line = pyk.decoded (l, "utf-8", "iso-8859-1")
                 try :
-                    d, km, priv, desc = [f.strip () for f in line.split ("&", 4)]
+                    d, km, priv, desc = \
+                        [f.strip () for f in line.split ("&", 4)]
                 except ValueError :
-                    print ("Split error `%s`" % line)
+                    pyk.fprint ("Split error `%s`" % line)
                 else :
                     last = result._new_entry (last, d, km, priv, desc)
                     add (last)
@@ -224,8 +230,8 @@ class Fahrtenbuch (TFL.Meta.Object) :
     # end def _new_entry
 
     def _read_lines (self, file) :
-        for line in file :
-            line = line.strip ()
+        for l in file :
+            line = pyk.decoded (l.strip (), "utf-8", "iso-8859-1")
             if line and not ignor_pat.match (line) :
                 yield line
     # end def _read_lines
@@ -240,9 +246,9 @@ def _main (cmd) :
     ATAX.Command.load_config (cmd)
     fb = Fahrtenbuch.from_file (cmd.user, cmd.fahrtenbuch)
     if not cmd.km_geld :
-        print (fb.tex ())
+        pyk.fprint (fb.tex ())
     else :
-        print (fb.km_geld ())
+        pyk.fprint (fb.km_geld ())
 # end def _main
 
 _Command = TFL.CAO.Cmd \
@@ -255,6 +261,7 @@ _Command = TFL.CAO.Cmd \
         ( "Config:P,?Config file(s)"
         , "user:S=%s" % TFL.Environment.username.capitalize ()
         , "km_geld:B?Print the factoring for the KM Geld"
+        , TFL.CAO.Opt.Output_Encoding (default = "iso-8859-15")
         )
     )
 

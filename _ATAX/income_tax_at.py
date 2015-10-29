@@ -29,11 +29,18 @@
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #     7-Jan-2010 (CT) Use `TFL.CAO.Arg.EUC` instead of `TFL.CAO.Arg.Money`
 #    20-May-2015 (CT) Add `2016` to `tax_brackets`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
+
 from   _TFL.Date_Time    import *
 from   _TFL.EU_Currency  import *
+from   _TFL.pyk          import pyk
 
 import _TFL.CAO
 
@@ -115,15 +122,19 @@ def _main (cmd) :
     tax_amount, tax_chunks = tax (amount, year)
     if cmd.verbose :
         for c, r, t in tax_chunks :
-            print "%2d%% for %14s : %14s" % \
-                (r * 100, c.as_string_s (), t.as_string_s ())
+            print \
+                ( "%2d%% for %14s : %14s"
+                % (r * 100, c.as_string_s (), t.as_string_s ())
+                )
     f = ( "In %s, for a taxable income of %s [%s]\n"
           "    you pay a tax of %s (%5.2f%%) and get %s\n"
         )
-    print f % \
-        ( year, amount, cmd ["amount:raw"], tax_amount
-        , (tax_amount / (amount / 100.0)).amount
-        , amount - tax_amount
+    print \
+        ( f
+        % ( year, amount, cmd ["amount:raw"], tax_amount
+          , (tax_amount / (amount / 100.0)).amount
+          , amount - tax_amount
+          )
         )
 # end def _main
 

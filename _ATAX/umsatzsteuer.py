@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -33,8 +33,14 @@
 #    17-Sep-2007 (CT) Use `Account.add_file`
 #    17-Sep-2007 (CT) `main` refactored
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from _ATAX.accounting import *
 

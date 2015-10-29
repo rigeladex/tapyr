@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -43,6 +43,7 @@
 #     7-Feb-2011 (CT) `cat` and `total_per_cat` added
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #     3-Jan-2014 (CT) Add `output_encoding`; use `pyk.fprint`, not `print`
+#    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -390,7 +391,7 @@ class Anlagenverzeichnis (_Mixin_, _Base_) :
               )
             )
         if len (self.total_per_cat) > 1 :
-            for k, v in sorted (self.total_per_cat.iteritems ()) :
+            for k, v in sorted (pyk.iteritems (self.total_per_cat)) :
                 pyk.fprint ((self.out_format % ("", "", "", "", k, v)))
         pyk.fprint \
             (self.new_format % ("Neuzugänge", "", "", self.total_new_value))
@@ -495,7 +496,7 @@ class Anlagenverzeichnis (_Mixin_, _Base_) :
     # end def _update_account_entry
 
     def _write (self, file, s) :
-        file.write (pyk.encoded (s))
+        file.write (pyk.as_str (s))
     # end def _write
 
 
@@ -536,8 +537,7 @@ _Command = TFL.CAO.Cmd \
     )
 
 """
-year=2007 ; \
-  python /swing/python/anlagenverzeichnis.py $year ~/EAR/anlagen_gewerbe.dat
+year=2007 ; python -m ATAX.anlagenverzeichnis $year ~/EAR/anlagen_gewerbe.dat
 """
 if __name__ == "__main__":
     _Command ()
