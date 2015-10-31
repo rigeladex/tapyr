@@ -23,6 +23,7 @@
 #                     factored (in class `Fahrtenbuch`)
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#    31-Oct-2015 (CT) Add `@pyk.adapt__str__` to `FB_Entry`
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,7 @@ import _TFL.CAO
 import _TFL.Environment
 
 @pyk.adapt__bool__
+@pyk.adapt__str__
 class FB_Entry (TFL.Meta.Object) :
     """Model one entry of a Fahrtenbuch"""
 
