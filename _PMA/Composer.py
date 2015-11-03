@@ -53,6 +53,8 @@
 #     8-May-2015 (CT) Pass encoded string to `Lib.message_from_string`
 #                     in `_as_html`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#     3-Nov-2015 (CT) Improve encoding/decoding in `_as_message`, `_as_html`
+#     3-Nov-2015 (CT) Factor `_as_text_part`, work around issue25545
 #    ««revision-date»»···
 #--
 
@@ -109,14 +111,10 @@ class Editor_Thread (PMA.Thread) :
     def _read_buffer (self, bfn) :
         result = None
         try :
-            f = open (bfn)
+            with open (bfn, "rb") as f :
+                result = f.read ()
         except (IOError, TFL.sos.error) :
             pass
-        else :
-            try :
-                result = f.read ()
-            finally :
-                f.close ()
         return result
     # end def _read_buffer
 
@@ -310,10 +308,9 @@ class Composer (TFL.Meta.Object) :
     # end def _add_header_maybe
 
     def _as_html (self, buffer) :
-        encoding   = "utf8"
+        encoding   = "utf-8"
         bm         = self.body_marker
-        head, body = tuple \
-            (p.decode (PMA.default_encoding) for p in buffer.split (bm, 1))
+        head, body = buffer.split (bm, 1)
         body       = self._remove_sig (body)
         html       = "\n".join \
             ( ( "<html>"
@@ -325,30 +322,28 @@ class Composer (TFL.Meta.Object) :
               )
             )
         html_buffer = "\n\n".join ((head, html))
-        result = Lib.message_from_string (pyk.encoded (html_buffer, encoding))
+        result = Lib.message_from_string (pyk.as_str (html_buffer, encoding))
         del result [self._rest2html_header]
-        del result ["Content-type"]
-        result ["Content-type"] = "text/html; charset=%s" % encoding
+        del result ["Content-Type"]
+        result ["Content-Type"] = "text/html; charset=%s" % encoding
         return result
     # end def _as_html
 
-    def _as_message (self, buffer) :
-        result = Lib.message_from_string (buffer.replace (self.body_marker, ""))
+    def _as_message (self, buffer_x) :
+        buffer = pyk.decoded (buffer_x, PMA.default_encoding)
+        result = Lib.message_from_string \
+            ( pyk.as_str
+                (buffer.replace (self.body_marker, ""), PMA.default_encoding)
+            )
         if self.rst2html or self._rest2html_header in buffer :
             plain    = result
             html     = self._as_html      (buffer)
             result   = self._as_multipart (html, _subtype = "alternative")
-            result.attach \
-                ( Lib.MIMEText
-                    ( _text    = plain.get_payload         (decode = True)
-                    , _subtype = plain.get_content_subtype ()
-                    , _charset = PMA.default_encoding
-                    )
-                )
+            result.attach (self._as_text_part (plain))
         else :
             self._add_header_maybe \
                 ( result
-                , "Content-type"
+                , "Content-Type"
                 , "text/plain; charset=%s" % PMA.default_encoding
                 )
         return result
@@ -362,16 +357,22 @@ class Composer (TFL.Meta.Object) :
             for k, v in email.items () :
                 if k not in ignore :
                     result [k] = v
-            cs = email.get_content_charset () or PMA.default_encoding
-            result.attach \
-                ( Lib.MIMEText
-                    ( _text    = email.get_payload         (decode = True)
-                    , _subtype = email.get_content_subtype ()
-                    , _charset = cs
-                    )
-                )
+            result.attach (self._as_text_part (email))
         return result
     # end def _as_multipart
+
+    def _as_text_part (self, email, charset = None) :
+        ### In Python 3.5, `email.get_payload` returns bytes encoded in latin-1,
+        ### even if `charset` is "utf-8"
+        ### http://bugs.python.org/issue25545
+        if charset is None :
+            charset = email.get_content_charset () or PMA.default_encoding
+        sub_typ     = email.get_content_subtype ()
+        text        = pyk.decoded \
+            (email.get_payload (decode = True), charset, "latin-1")
+        return Lib.MIMEText \
+            (_text = text, _subtype = sub_typ, _charset = charset)
+    # end def _as_text_part
 
     def _finish_edit (self, buffer, bfn) :
         if buffer :
@@ -412,8 +413,8 @@ class Composer (TFL.Meta.Object) :
     # end def _finish_resend
 
     def _finish__send (self, email, envelope = None, send_cb = None) :
-        self._add_header_maybe (email, "Mime-version",              "1.0")
-        self._add_header_maybe (email, "Content-transfer-encoding", "8bit")
+        self._add_header_maybe (email, "Mime-Version",              "1.0")
+        self._add_header_maybe (email, "Content-Transfer-Encoding", "8bit")
         if send_cb is not None :
             email = send_cb (email)
         if email and self.smtp :
@@ -427,7 +428,7 @@ class Composer (TFL.Meta.Object) :
         mapping = PMA.Msg_Scope (msg, self.locals, self.defaults)
         result  = pyk.decoded   (format, PMA.default_encoding) % mapping
         result  = self.formatted_replacers (result)
-        return result.encode (PMA.default_encoding, "replace" )
+        return result.encode (PMA.default_encoding, "replace")
     # end def _formatted
 
     def _process_attachement (self, email, name, add_headers = None) :

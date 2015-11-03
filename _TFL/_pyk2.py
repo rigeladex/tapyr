@@ -38,6 +38,7 @@
 #    13-Oct-2015 (CT) Add `copyreg`
 #    20-Oct-2015 (CT) Add `as_str`
 #    25-Oct-2015 (CT) Add `pickle_protocol`
+#     3-Nov-2015 (CT) Move argument "replace" to `else` clause of `decoded`
 #    ««revision-date»»···
 #--
 
@@ -127,13 +128,13 @@ class _Pyk_ (object) :
         if isinstance (v, str) :
             for encoding in encodings :
                 try :
-                    v = v.decode (encoding, "replace")
+                    v = v.decode (encoding)
                 except Exception as exc :
                     pass
                 else :
                     break
             else :
-                raise exc
+                v = v.decode (encoding, "replace")
         elif not isinstance (v, unicode) :
             v = unicode (v)
         return v
