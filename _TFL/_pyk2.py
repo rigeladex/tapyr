@@ -39,6 +39,7 @@
 #    20-Oct-2015 (CT) Add `as_str`
 #    25-Oct-2015 (CT) Add `pickle_protocol`
 #     3-Nov-2015 (CT) Move argument "replace" to `else` clause of `decoded`
+#     4-Nov-2015 (CT) Add `email_as_bytes`, `email_message_from_bytes`
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,18 @@ class _Pyk_ (object) :
             v = unicode (v)
         return v
     # end def decoded
+
+    @lazy_property
+    def email_as_bytes (self) :
+        from email.message import Message
+        return Message.as_string
+    # end def email_as_bytes
+
+    @lazy_property
+    def email_message_from_bytes (self) :
+        from email import message_from_string
+        return message_from_string
+    # end def email_message_from_bytes
 
     @staticmethod
     def encoded (v, encoding = None) :

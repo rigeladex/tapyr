@@ -18,6 +18,8 @@
 #    28-Jul-2005 (CT) Creation
 #     9-Aug-2005 (CT) s/default_charset/default_encoding/g
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#     4-Nov-2015 (CT) Use `pyk.email_message_from_bytes`,
+#                     not `Lib.message_from_string` because Python 3
 #    ««revision-date»»···
 #--
 
@@ -92,8 +94,8 @@ class _M_Type_B_ (_M_Type_) :
 class _M_Type_Msg_ (_M_Type_) :
 
     def _new (self, mt, st, b) :
-        return self.MIME \
-            (Lib.message_from_string (pyk.as_str (b, "latin-1")), _subtype = st)
+        msg = pyk.email_message_from_bytes (pyk.encoded (b, "latin-1"))
+        return self.MIME (msg, _subtype = st)
     # end def _new
 
 # end class _M_Type_Msg_

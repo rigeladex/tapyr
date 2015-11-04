@@ -70,6 +70,7 @@
 #    20-Feb-2006 (CT) `add_messages` changed to guard against messages
 #                     already contained in `self._msg_dict`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#     4-Nov-2015 (CT) Use `parser.parse`, not `parser.parsestr`
 #    ««revision-date»»···
 #--
 
@@ -366,8 +367,7 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
     # end def _files
 
     def _new_email (self, fp, headersonly = True) :
-        text   = pyk.as_str (fp.read (), "latin-1")
-        result = self.parser.parsestr (text, headersonly = headersonly)
+        result = self.parser.parse (fp, headersonly = headersonly)
         result._pma_parsed_body = not headersonly
         return result
     # end def _new_email

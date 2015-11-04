@@ -55,6 +55,9 @@
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #     3-Nov-2015 (CT) Improve encoding/decoding in `_as_message`, `_as_html`
 #     3-Nov-2015 (CT) Factor `_as_text_part`, work around issue25545
+#     4-Nov-2015 (CT) Use pyk.email_message_from_bytes,
+#                     not `Lib.message_from_string` because Python 3
+#     6-Nov-2015 (CT) Move `.encode` from `_formatted` to `_send`
 #    ««revision-date»»···
 #--
 
@@ -322,7 +325,8 @@ class Composer (TFL.Meta.Object) :
               )
             )
         html_buffer = "\n\n".join ((head, html))
-        result = Lib.message_from_string (pyk.as_str (html_buffer, encoding))
+        result = pyk.email_message_from_bytes \
+            (pyk.encoded (html_buffer, encoding))
         del result [self._rest2html_header]
         del result ["Content-Type"]
         result ["Content-Type"] = "text/html; charset=%s" % encoding
@@ -331,8 +335,8 @@ class Composer (TFL.Meta.Object) :
 
     def _as_message (self, buffer_x) :
         buffer = pyk.decoded (buffer_x, PMA.default_encoding)
-        result = Lib.message_from_string \
-            ( pyk.as_str
+        result = pyk.email_message_from_bytes \
+            ( pyk.encoded
                 (buffer.replace (self.body_marker, ""), PMA.default_encoding)
             )
         if self.rst2html or self._rest2html_header in buffer :
@@ -413,8 +417,9 @@ class Composer (TFL.Meta.Object) :
     # end def _finish_resend
 
     def _finish__send (self, email, envelope = None, send_cb = None) :
-        self._add_header_maybe (email, "Mime-Version",              "1.0")
-        self._add_header_maybe (email, "Content-Transfer-Encoding", "8bit")
+        self._add_header_maybe (email, "Mime-Version", "1.0")
+        if email.is_multipart () :
+            self._add_header_maybe (email, "Content-Transfer-Encoding", "8bit")
         if send_cb is not None :
             email = send_cb (email)
         if email and self.smtp :
@@ -428,7 +433,7 @@ class Composer (TFL.Meta.Object) :
         mapping = PMA.Msg_Scope (msg, self.locals, self.defaults)
         result  = pyk.decoded   (format, PMA.default_encoding) % mapping
         result  = self.formatted_replacers (result)
-        return result.encode (PMA.default_encoding, "replace")
+        return result
     # end def _formatted
 
     def _process_attachement (self, email, name, add_headers = None) :
@@ -447,8 +452,9 @@ class Composer (TFL.Meta.Object) :
             if value :
                 if "\n" in value :
                     name, rest  = value.split ("\n", 1)
-                    add_headers = Lib.message_from_string \
-                        (textwrap.dedent (rest))
+                    encoding    = PMA.default_encoding
+                    add_headers = pyk.email_message_from_bytes \
+                        (pyk.encoded (textwrap.dedent (rest), encoding))
                 else :
                     name        = value
                     add_headers = None
@@ -469,7 +475,8 @@ class Composer (TFL.Meta.Object) :
         return body.strip ()
     # end def _remove_sig
 
-    def _send (self, buffer, finish_cb) :
+    def _send (self, msg, finish_cb) :
+        buffer = pyk.encoded (msg, PMA.default_encoding)
         Editor_Thread (buffer, self.editor, finish_cb)
     # end def _send
 

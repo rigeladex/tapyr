@@ -168,6 +168,8 @@
 #                     `M_Class`, not `M_Class_SWRP`, as metaclass
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#     4-Nov-2015 (CT) Use mode "rb" for message files
+#     4-Nov-2015 (CT) Remove `message_from_string` because broken Python 3
 #    ««revision-date»»···
 #--
 
@@ -865,7 +867,7 @@ class Message (_Message_) :
             if self.mailbox :
                 result = self.mailbox.reparsed (self)
             else :
-                with open (self.path, "r") as fp :
+                with open (self.path, "rb") as fp :
                     result = Lib.message_from_file (fp)
             result._pma_dir  = getattr (self.email, "_pma_dir",  None)
             result._pma_path = getattr (self.email, "_pma_path", None)
@@ -1002,19 +1004,11 @@ class _Pending_Action_ (TFL.Meta.Object) :
 def message_from_file (filename, parser = None) :
     if parser is None :
         parser = Lib.Parser ()
-    with open (filename) as fp :
+    with open (filename, "rb") as fp :
         email = parser.parse (fp)
         email._pma_parsed_body = True
     return PMA.Message (email, sos.path.split (filename) [-1])
 # end def message_from_file
-
-def message_from_string (msg, parser = None) :
-    if parser is None :
-        parser = Lib.Parser ()
-    email = parser.parsestr (msg)
-    email._pma_parsed_body = True
-    return PMA.Message (email)
-# end def message_from_string
 
 def messages_from_args (args, base_dirs) :
     parser = Lib.Parser ()

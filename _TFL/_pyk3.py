@@ -41,6 +41,7 @@
 #    20-Oct-2015 (CT) Add `as_str`
 #    25-Oct-2015 (CT) Add `pickle_protocol`
 #     3-Nov-2015 (CT) Move argument "replace" to `else` clause of `decoded`
+#     4-Nov-2015 (CT) Add `email_as_bytes`, `email_message_from_bytes`
 #    ««revision-date»»···
 #--
 
@@ -126,11 +127,25 @@ class _Pyk_ (object) :
         return v
     as_str = decoded # end def decoded
 
+    @lazy_property
+    def email_as_bytes (self) :
+        from email.message import Message
+        return Message.as_bytes
+    # end def email_as_bytes
+
+    @lazy_property
+    def email_message_from_bytes (self) :
+        ### Don't use `email.message_from_string` in Python 3 as that is
+        ### utterly broken for strings containing non-ASCII characters
+        from email import message_from_bytes
+        return message_from_bytes
+    # end def email_message_from_bytes
+
     @staticmethod
     def encoded (v, encoding = None) :
         if encoding is None :
             encoding = pyk.user_config.output_encoding
-        if not isinstance (v, str) :
+        if not isinstance (v, (str, bytes)) :
             v = str (v)
         if isinstance (v, str) :
             v = v.encode (encoding, "replace")

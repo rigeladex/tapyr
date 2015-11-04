@@ -25,13 +25,14 @@
 #    29-Oct-2015 (CT) Simplify imports
 #                     * Python 2.7 *and* 3.5 use lowercase module names
 #    29-Oct-2015 (CT) Add `UnixMailbox`, `MHMailbox` aliase for Python 3.x
+#     4-Nov-2015 (CT) Add `encode_7or8bit`, remove `message_from_string`
 #    ««revision-date»»···
 #--
 
 from   _PMA                    import PMA
 
-from   email                   import message_from_string, message_from_file
-from   email.encoders          import encode_base64
+from   email                   import message_from_file
+from   email.encoders          import encode_base64, encode_7or8bit
 from   email.generator         import *
 from   email.header            import *
 from   email.message           import *

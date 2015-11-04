@@ -36,6 +36,11 @@
 #    20-Oct-2015 (CT) Add doctests for `SMTP_Logger`, `SMTP_Tester`
 #    22-Oct-2015 (CT) Encode `msg` argument to `server.sendmail`
 #    23-Oct-2015 (CT) Remove call to `server.close` from `close`
+#     4-Nov-2015 (CT) Work around Python-3 bugs
+#                     * Use pyk.email_as_bytes
+#                     * Use pyk.email_message_from_bytes
+#                     * Call `encoders.encode_7or8bit` to ensure a proper
+#                       setting of "Content-Transfer-Encoding"
 #    ««revision-date»»···
 #--
 
@@ -50,7 +55,7 @@ from   _TFL.portable_repr      import portable_repr
 import _TFL._Meta.Object
 import _TFL.Context
 
-from   email                   import message, message_from_string
+from   email                   import encoders, message
 from   email.header            import Header, decode_header, make_header
 from   email.utils             import formatdate
 
@@ -98,7 +103,7 @@ class SMTP (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, text, mail_opts = (), rcpt_opts = None) :
-        email = message_from_string (pyk.as_str (text, self.charset))
+        email = pyk.email_message_from_bytes (pyk.encoded (text, self.charset))
         self.send_message (email, mail_opts = mail_opts, rcpt_opts = rcpt_opts)
     # end def __call__
 
@@ -188,20 +193,25 @@ class SMTP (TFL.Meta.Object) :
                 del email [k]
         if "Date" not in email :
             email ["Date"] = formatdate ()
-        if "Content-type" not in email :
+        if "Content-Type" not in email :
             charset = self.charset
-            email ["Content-type"] = \
+            email ["Content-Type"] = \
                 """text/plain; charset="%s" """ % (charset, )
         else :
             charset = email.get_charset ()
+        if not email.is_multipart () :
+            encoders.encode_7or8bit (email)
         for k in "Subject", "To", "From", "CC", "BCC" :
             vs = email.get_all (k)
             if vs :
                 del email [k]
                 for v in vs :
                     email [k] = self.header (v, charset, header_name = k)
+        ### In Python 3, `email.as_string` is useless because it returns a
+        ### base64 encoded body if there are any non-ASCII characters
+        ### (setting Content-Transfer-Encoding to "8bit" does *not* help)
         self.send \
-            ( envelope ["From"], list (to), email.as_string ()
+            ( envelope ["From"], list (to), pyk.email_as_bytes (email)
             , mail_opts, rcpt_opts
             )
     # end def send_message
@@ -227,13 +237,14 @@ class SMTP_Logger (SMTP) :
 
     def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
         charset = self.charset
+        msg_s   = pyk.decoded (msg, charset)
         self._log \
             ( pyk.as_str ("[%s] Email via %s from %s to %s\n    %s", charset)
             , datetime.datetime.now ().replace (microsecond = 0)
             , pyk.as_str (self.mail_host, charset)
             , pyk.as_str (from_addr, charset)
             , list (pyk.as_str (t, charset) for t in to_addrs)
-            , pyk.as_str ("\n    ".join (msg.split ("\n")), charset)
+            , pyk.as_str ("\n    ".join (msg_s.split ("\n")), charset)
             )
     # end def send
 
@@ -254,7 +265,8 @@ class SMTP_Tester (SMTP) :
     Email via localhost from sender@example.com to ['receiver@example.com']
     <BLANKLINE>
     Date: Tue, 20 Oct 2015 14:42:23 -0000
-    Content-type: text/plain; charset="utf-8"
+    Content-Type: text/plain; charset="utf-8"
+    Content-Transfer-Encoding: 8bit
     Subject: Test email with some diacritics
     To: receiver@example.com
     From: sender@example.com
@@ -269,7 +281,7 @@ class SMTP_Tester (SMTP) :
             ( "Email via", self.mail_host, "from", from_addr, "to"
             , portable_repr (to_addrs), "\n"
             )
-        pyk.fprint (msg)
+        pyk.fprint (pyk.decoded (msg, self.charset))
     # end def send
 
 # end class SMTP_Tester
