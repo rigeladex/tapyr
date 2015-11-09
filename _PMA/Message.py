@@ -170,6 +170,7 @@
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #     4-Nov-2015 (CT) Use mode "rb" for message files
 #     4-Nov-2015 (CT) Remove `message_from_string` because broken Python 3
+#     9-Nov-2015 (CT) Change `body_lines` to call `pyk.decoded` before `.split`
 #    ««revision-date»»···
 #--
 
@@ -594,24 +595,24 @@ class Message_Body (_Msg_Part_) :
         lines = self.lines
         if lines is None :
             if self.body :
-                type = self.content_type
+                charset = self.charset or PMA.default_encoding
+                type    = self.content_type
                 if type == "text/plain" or type.startswith ("text/x-") :
-                    lines = self.body.split ("\n")
+                    lines = pyk.decoded (self.body, charset).split ("\n")
                     ### XXX put full-quotes-at-end into `self.parts [0]`
                 else :
                     cap = PMA.Mailcap [type]
                     if cap :
                         lines = cap.as_text (self._temp_body ())
                     if lines is None and type.startswith ("text/") :
-                        lines = self.body.split ("\n")
+                        lines = pyk.decoded (self.body, charset).split ("\n")
                 if lines is not None :
                     self.lines = lines
         if lines is not None :
-            charset = self.charset or PMA.default_encoding
             wrapper = textwrap.TextWrapper \
                 (width = PMA.text_output_width, break_long_words = False)
             for line in lines :
-                line = pyk.decoded (line, charset).rstrip ("\r")
+                line = line.rstrip ("\r")
                 if line :
                     for l in wrapper.wrap (line or "") :
                         yield l
