@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -23,6 +23,7 @@
 #    22-Mar-2011 (CT) `M_Format.__str__` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    12-Oct-2014 (CT) Adapt `HTML` to `GTW.HTML.Cleaner` using BeautifulSoup4
+#    13-Nov-2015 (CT) Adapt to changes in `markdown.Markdown` signature
 #    ««revision-date»»···
 #--
 
@@ -114,13 +115,15 @@ class ReST (_Format_) :
 class Markdown (_Format_) :
     """Formatter for text in `Markdown` markup"""
 
-    MD = None
+    MD         = None
+    extensions = \
+        ["markdown.extensions.headerid", "markdown.extensions.tables"]
 
     @classmethod
     def convert (cls, text) :
         if cls.MD is None :
             import markdown
-            cls.MD = markdown.Markdown (["headerid", "tables"])
+            cls.MD = markdown.Markdown (extensions = cls.extensions)
         return HTML.convert (cls.MD.convert (text))
     # end def convert
 
