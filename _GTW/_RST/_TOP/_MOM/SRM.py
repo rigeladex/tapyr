@@ -781,7 +781,7 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
         obj = self.obj
         if self.can_register :
             if not obj.is_team_race :
-                return pp_join (self.abs_href, "register")
+                return pp_join (self.abs_href_dynamic, "register")
             ### XXX implement registration for team race, too
     # end def href_register
 
@@ -1198,7 +1198,7 @@ class Archive (_Ancestor) :
 
     def href_display (self, obj) :
         scope = self.top.scope
-        comps = [self.abs_href, str (obj.year)]
+        comps = [self.abs_href_dynamic, str (obj.year)]
         if isinstance (obj, (scope.SRM.Page.E_Type, scope.SRM.Regatta.E_Type)) :
             comps.append (obj.event.perma_name)
         comps.append (obj.perma_name)

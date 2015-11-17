@@ -132,7 +132,7 @@ class TOP_Alias (GTW.RST.TOP._Mixin_, GTW.RST.Alias) :
         if self.hidden :
             return self.target.is_current_page (page)
         else :
-            return not self.hidden and (self.href == page.href)
+            return self.href_dynamic == page.href_dynamic
     # end def is_current_page
 
 Alias = TOP_Alias # end class

@@ -80,10 +80,14 @@
 #    29-Jun-2015 (CT) Add `preload` to `Strict Transport Security` header
 #    12-Oct-2015 (CT) Use `logging.exception`, not `logging.warning`
 #                     in `_load_I18N`
+#    18-Nov-2015 (CT) Add sub-command `generate_static_pages`
 #    ««revision-date»»···
 #--
 
-from   __future__ import unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                     import TFL
 from   _GTW                     import GTW
@@ -96,12 +100,15 @@ import _GTW.Media
 
 import _JNJ.Templateer
 
-from   _TFL                     import sos
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.pyk                 import pyk
+from   _TFL                     import sos
 
 import _TFL.SMTP
 
 import logging
+
+pjoin = sos.path.join
 
 class RST_App (TFL.Meta.Object) :
 
@@ -241,6 +248,36 @@ class GT2W_Command (GTW.OMP.Command) :
         pass
     _FCGI_ = _GT2W_FCGI_ # end class
 
+    class _GT2W_Generate_Static_Pages_ (_GT2W_Server_Base_) :
+        """Generate HTML files for static pages."""
+
+        _defaults               = dict \
+            ( Setup_Cache       = True
+            , static_root       = "../static"
+            )
+        _args                   = \
+            ( "url:S"
+                "?Url(s) of resources for which static pages are "
+                "generated (default: /)"
+            ,
+            )
+        _opts                   = \
+            ( "-dynamic_nav:B?Include dynamic links in nav-bar of static pages"
+            ,
+            )
+
+        class Static_Root (TFL.Command.Rel_Path_Option) :
+            """Root path of static HTML files"""
+
+            auto_split              = None
+            max_number              = 1
+            single_match            = True
+            skip_missing            = False
+
+        # end class Static_Root
+
+    _Generate_Static_Pages_ = _GT2W_Generate_Static_Pages_ # end class
+
     class _GT2W_Setup_Cache_ (_GT2W_Server_Base_, GTW.OMP.Command._Setup_Cache_) :
 
         _defaults               = dict \
@@ -266,7 +303,7 @@ class GT2W_Command (GTW.OMP.Command) :
     # end def app_type
 
     def cache_path (self, UTP) :
-        return sos.path.join (self.src_dir, UTP.cache_prefix + "app_cache.pck")
+        return pjoin (self.src_dir, UTP.cache_prefix + "app_cache.pck")
     # end def cache_path
 
     def fixtures (self, scope) :
@@ -283,9 +320,9 @@ class GT2W_Command (GTW.OMP.Command) :
             try :
                 self.cacher.store ()
             except EnvironmentError as exc :
-                load_cache    ()
+                load_cache ()
         else :
-            load_cache        ()
+            load_cache ()
         self.root.scope.commit ()
     # end def init_app_cache
 
@@ -345,6 +382,7 @@ class GT2W_Command (GTW.OMP.Command) :
             result        = self.root = UTP.create \
                 ( self, cmd
                 , ACAO                = cmd.ACAO
+                , App_Command         = self
                 , App_Type            = apt
                 , Create_Scope        = lambda apt, url :
                     self._load_scope (apt, url, journal_dir)
@@ -377,7 +415,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 )
             if result.Cacher :
                 mc_fix = "media/v"
-                mc_dir = sos.path.join (self.web_src_root, mc_fix)
+                mc_dir = pjoin (self.web_src_root, mc_fix)
                 cachers.append \
                     ( result.Cacher
                         ( mc_dir, mc_fix
@@ -407,6 +445,39 @@ class GT2W_Command (GTW.OMP.Command) :
             result = TFL.SMTP (name)
         return result
     # end def _get_smtp
+
+    def _handle_generate_static_pages (self, cmd) :
+        app  = self._wsgi_app \
+            (cmd, dynamic_p = False, dynamic_nav_p = cmd.dynamic_nav)
+        root = cmd.static_root
+        urls = cmd.argv
+        if not urls :
+            urls = ["/"]
+            if sos.path.isdir (root) :
+                sos.rmdir (root, deletefiles = True)
+        def _generate (cmd, p, root, tail = None) :
+            name = pjoin (root, tail or p.href_static)
+            dir  = sos.path.dirname (name)
+            if not sos.path.exists (dir) :
+                sos.mkdir_p  (dir)
+            if cmd.verbose :
+                print (name, "...", end = " ")
+            with open (name, "wb") as f :
+                f.write (pyk.encoded (p.as_static_page ()))
+            if cmd.verbose :
+                print ("done")
+        for url in urls :
+            resource = app.resource_from_href (url)
+            if resource.static_p and not resource.auth_required :
+                _generate (cmd, resource, root)
+            for p in resource.static_pages :
+                _generate (cmd, p, root)
+        if not cmd.argv :
+            for r, url in sorted (pyk.iteritems (app.redirects)) :
+                p = app.resource_from_href (url)
+                if p.static_p and not p.auth_required :
+                    _generate (cmd, p, root, r + p.static_page_suffix)
+    # end def _handle_generate_static_pages
 
     def _handle_run_server (self, cmd) :
         import werkzeug.serving
@@ -439,7 +510,7 @@ class GT2W_Command (GTW.OMP.Command) :
                     ( * cmd.languages
                     , domains    = ("messages", )
                     , use        = cmd.locale_code or "en"
-                    , locale_dir = sos.path.join (self.app_dir, "locale")
+                    , locale_dir = pjoin (self.app_dir, "locale")
                     , log_level  = cmd.log_level
                     )
             except Exception as exc :
@@ -454,14 +525,14 @@ class GT2W_Command (GTW.OMP.Command) :
             dir_map.append \
                 ( ("X",   sos.path.abspath (cmd.external_media_path)))
         dir_map.extend \
-            ( (   ("GTW", sos.path.join (self.lib_dir,      "_GTW", prefix))
-              ,   ("",    sos.path.join (self.web_src_root,         prefix))
+            ( (   ("GTW", pjoin (self.lib_dir,      "_GTW", prefix))
+              ,   ("",    pjoin (self.web_src_root,         prefix))
               )
             )
         return GTW.Werkzeug.Static_File_App (dir_map, prefix = prefix)
     # end def _static_file_app
 
-    def _wsgi_app (self, cmd) :
+    def _wsgi_app (self, cmd, ** kw) :
         if cmd.media_domain :
             GTW.Media_Base.Domain = cmd.media_domain
         self._create_cache_p = self._create_cache_p or cmd.Setup_Cache
@@ -469,7 +540,8 @@ class GT2W_Command (GTW.OMP.Command) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         self._load_I18N (cmd)
         sf_app = self._static_file_app (cmd)
-        result = root = self._get_root (cmd, apt, url, static_handler = sf_app)
+        result = root = self._get_root \
+            (cmd, apt, url, static_handler = sf_app, ** kw)
         if cmd.force_HSTS :
             GTW.RST.Response._auto_headers.update \
                 ( { "Strict-Transport-Security"

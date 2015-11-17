@@ -202,7 +202,7 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
     @getattr_safe
     def href_svg (self) :
         if self.PNS_svg_doc is not None :
-            return pp_join (self.abs_href, "graph.svg")
+            return pp_join (self.abs_href_dynamic, "graph.svg")
     # end def href_svg
 
     def _add_index (self, l) :

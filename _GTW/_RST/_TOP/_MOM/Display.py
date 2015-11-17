@@ -34,6 +34,7 @@
 #    25-Jun-2014 (CT) Factor `referral_query` and friends to `...Mixin`
 #    27-Apr-2015 (CT) Redefine `_E_Type_Archive_.Year._default_title`
 #    14-Oct-2015 (CT) Fix `Entity.changer` (pass `...pid` through `text_type`)
+#    17-Nov-2015 (CT) Set `_E_Type_Archive_.static_p`
 #    ««revision-date»»···
 #--
 
@@ -171,6 +172,8 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
 
     _real_name      = "_E_Type_Archive_"
 
+    static_p        = True
+
     _old_year       = None
 
     class Year (_E_Type_) :
@@ -259,7 +262,7 @@ class TOP_MOM_E_Type_Archive_Y (_E_Type_Archive_) :
     _real_name = "E_Type_Archive_Y"
 
     def href_display (self, obj) :
-        return pp_join (self.abs_href, str (obj.year), obj.perma_name)
+        return pp_join (self.abs_href_dynamic, str (obj.year), obj.perma_name)
     # end def href_display
 
     def page_from_obj (self, obj) :

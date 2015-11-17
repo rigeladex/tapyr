@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -21,6 +21,9 @@
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_page`
 #    10-Aug-2012 (CT) Fix `_admin` removal in `pictures` (use `isinstance`)
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
+#    17-Nov-2015 (CT) Add `Gallery.entries_transitive`
+#    17-Nov-2015 (CT) Set `Picture.hidden` to `False`
+#    17-Nov-2015 (CT) Add `.html` if `not self.top.dynamic_p` to `permalink`
 #    ««revision-date»»···
 #--
 
@@ -54,12 +57,16 @@ class Picture (_Ancestor) :
         if "name" not in kw :
             kw ["name"] = obj.name
         self.__super.__init__ (** kw)
+        self.hidden = False
     # end def __init__
 
-    @Once_Property
+    @property
     @getattr_safe
     def permalink (self) :
-        return self.parent.href_display (self.obj)
+        result = self.parent.href_display (self.obj)
+        if not self.top.dynamic_p :
+            result = "".join ((result, self.static_page_suffix))
+        return result
     # end def permalink
 
     @Once_Property
@@ -102,6 +109,7 @@ class Gallery \
     nav_off_canvas      = True
     page_template_name  = "photo"
     sort_key            = TFL.Sorted_By  ("number")
+    static_page_suffix  = "/index.html"
 
     _greet_entry        = None
 
@@ -118,6 +126,13 @@ class Gallery \
         result = (Q.OR (Q.pid.IN (rq), Q.pid == pid), )
         return result
     # end def change_query_filters
+
+    @property
+    @getattr_safe
+    def entries_transitive (self) :
+        for e in self.entries :
+            yield e
+    # end def entries_transitive
 
     @Once_Property
     @getattr_safe
@@ -167,7 +182,7 @@ class Gallery \
     # end def query_filters_d
 
     def href_display (self, obj) :
-        return pp_join (self.abs_href, obj.name)
+        return pp_join (self.abs_href_dynamic, obj.name)
     # end def href_display
 
     def is_current_dir (self, page) :
@@ -175,7 +190,11 @@ class Gallery \
     # end def is_current_dir
 
     def is_current_page (self, page) :
-        return not self.hidden and self.href in (page.href, page.parent.href)
+        return \
+            ( not self.hidden
+            and   self.href_dynamic in
+                      (page.href_dynamic, page.parent.href_dynamic)
+            )
     # end def is_current_page
 
     def _get_child (self, child, * grandchildren) :

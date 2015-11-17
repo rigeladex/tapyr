@@ -834,31 +834,31 @@ class Auth (_Ancestor) :
     @property
     @getattr_safe
     def href_activate (self) :
-        return pp_join (self.abs_href, "activate")
+        return pp_join (self.abs_href_dynamic, "activate")
     # end def href_activate
 
     @property
     @getattr_safe
     def href_login (self) :
-        return pp_join (self.abs_href, "login")
+        return pp_join (self.abs_href_dynamic, "login")
     # end def href_login
 
     @property
     @getattr_safe
     def href_logout (self) :
-        return pp_join (self.abs_href, "logout")
+        return pp_join (self.abs_href_dynamic, "logout")
     # end def href_logout
 
     @property
     @getattr_safe
     def href_register (self) :
-        return pp_join (self.abs_href, "register")
+        return pp_join (self.abs_href_dynamic, "register")
     # end def href_register
 
     @property
     @getattr_safe
     def href_request_reset_password (self) :
-        return pp_join (self.abs_href, "request_reset_password")
+        return pp_join (self.abs_href_dynamic, "request_reset_password")
     # end def href_request_reset_password
 
     @Once_Property
@@ -879,22 +879,23 @@ class Auth (_Ancestor) :
 
     def href_change_email (self, obj) :
         return self._href_q \
-            (self.abs_href, "change_email", p = str (obj.pid))
+            (self.abs_href_dynamic, "change_email", p = str (obj.pid))
     # end def href_change_email
 
     def href_change_pass (self, obj) :
         return self._href_q \
-            (self.abs_href, "change_password", p = str (obj.pid))
+            (self.abs_href_dynamic, "change_password", p = str (obj.pid))
     # end def href_change_pass
 
     def href_make_cert (self, obj) :
         if self.top.cert_auth_path :
             return self._href_q \
-                (self.abs_href, "make_cert", p = str (obj.pid))
+                (self.abs_href_dynamic, "make_cert", p = str (obj.pid))
     # end def href_make_cert
 
     def href_reset_password (self, obj) :
-        return self._href_q (self.abs_href, "reset_password", p = str (obj.pid))
+        return self._href_q \
+            (self.abs_href_dynamic, "reset_password", p = str (obj.pid))
     # end def href_reset_password
 
     def _href_q (self, * args, ** kw) :

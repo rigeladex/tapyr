@@ -50,6 +50,8 @@
 #                     (factored from `GTW.RST.TOP.Auth._Form_Cmd_.POST`)
 #    20-Mar-2015 (CT) Use `request.language` in `render_context`
 #    28-Apr-2015 (CT) Skip `hidden`  entries in `Index.next`, `.prev`
+#    17-Nov-2015 (CT) Add `as_static_page`
+#    18-Nov-2015 (CT) Remove redundant redefinition of `permalink`
 #    ««revision-date»»···
 #--
 
@@ -168,20 +170,14 @@ class _TOP_Mixin_ (_Ancestor) :
         return bool (getattr (self, "entries", []))
     # end def has_children
 
-    @Once_Property
-    @getattr_safe
-    def permalink (self) :
-        return self.abs_href
-    # end def permalink
-
     def is_current_dir (self, page) :
         return False
     # end def is_current_dir
 
     def is_current_page (self, page) :
         return \
-            (  (self.permalink == page.permalink)
-            or (self.href      == page.href)
+            (  (self.permalink    == page.permalink)
+            or (self.href_dynamic == page.href_dynamic)
             )
     # end def is_current_page
 
@@ -340,8 +336,18 @@ class _TOP_Base_ (_Ancestor) :
     @property
     @getattr_safe
     def q_href (self) :
-        return pp_join (self.abs_href, self.q_prefix)
+        return pp_join (self.abs_href_dynamic, self.q_prefix)
     # end def q_href
+
+    def as_static_page (self) :
+        """Return static HTML page for this resource."""
+        top = self.top
+        with top.LET (dynamic_p = False) :
+            app_iter, status, headers = top.test_client.get \
+                (self.abs_href_dynamic)
+            if status.startswith ("200") :
+                return "".join (pyk.decoded (chunk) for chunk in app_iter)
+    # end def as_static_page
 
     def csrf_check (self, request, response) :
         if self.csrf_check_p :

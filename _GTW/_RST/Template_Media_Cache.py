@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -28,6 +28,7 @@
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
 #    15-Apr-2014 (CT) Always create `js` cache to include `Script_File`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    19-Nov-2015 (CT) Change `_create_cache` to delete existing cached files
 #    ««revision-date»»···
 #--
 
@@ -149,6 +150,9 @@ class Template_Media_Cache (TFL.Meta.Object) :
         media_dir = self.media_dir
         if not sos.path.isdir (media_dir) :
             sos.mkdir_p (media_dir)
+        else :
+            for f in sos.listdir_ext (media_dir, name.lower ()) :
+                sos.remove (f)
         for k, (href, fn, attr) in pyk.iteritems (map) :
             with open (fn, "wb") as file :
                 if minifier is not None :

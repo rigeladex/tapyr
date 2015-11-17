@@ -73,7 +73,7 @@ class _RST_MOM_Scope_ (_Ancestor) :
     def href_e_type (self, e_type) :
         if not isinstance (e_type, pyk.string_types) :
             e_type = e_type.type_name
-        return pp_join (self.abs_href, e_type.replace (".", "-"))
+        return pp_join (self.abs_href_dynamic, e_type.replace (".", "-"))
     # end def href_obj
 
     def resource_from_e_type (self, e_type) :

@@ -93,7 +93,7 @@ class Sitemap (_Ancestor) :
 
     def show_resource_p (self, resource, user = None) :
         top = self.top
-        if resource.hidden :
+        if resource.hidden or resource.implicit :
             return False
         permissive = getattr (top, "permissive", False)
         return permissive or top.allow (resource, user)

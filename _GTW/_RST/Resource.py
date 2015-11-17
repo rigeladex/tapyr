@@ -141,6 +141,14 @@
 #    20-Oct-2015 (CT) Run `logging` arguments through `pyk.as_str`
 #    21-Oct-2015 (CT) Print `request.body`, not `request.data`,
 #                     in `send_error_email`
+#    17-Nov-2015 (CT) Add `dynamic_p` and `static_p`
+#    17-Nov-2015 (CT) Remove `isinstance` guard from `_Dir_.entries_transitive`
+#    18-Nov-2015 (CT) Split `href` into `href_dynamic` and `href_static`
+#                     + Split `abs_href` into `abs_href_dynamic` and
+#                       `abs_href_static`
+#                     + Add `static_page_suffix`
+#    18-Nov-2015 (CT) Add  `_Base_.static_pages`, `.static_roots`
+#    18-Nov-2015 (CT) Redefine `A_Link.permalink`
 #    ««revision-date»»···
 #--
 
@@ -256,6 +264,7 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
     implicit                   = False
     pid                        = None
     session_ttl_name           = "edit_session_ttl"
+    static_page_suffix         = ""
     template                   = Alias_Property ("page_template")
     template_name              = Alias_Property ("page_template_name")
 
@@ -295,7 +304,7 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
             try :
                 setattr (self, k, v)
             except AttributeError (exc) :
-                print (self.href or "/{ROOT}", k, v, "\n   ", exc)
+                print (self.href_dynamic or "/{ROOT}", k, v, "\n   ", exc)
         if self.implicit :
             self.hidden = True
         if parent :
@@ -315,7 +324,7 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         self._orig_kw = dict (kw)
         top = self.top
         if not self.implicit :
-            href = self.href
+            href = self.href_dynamic
             pid  = self.pid
             if href is not None :
                 Table = top.Table
@@ -326,7 +335,9 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
                     pass
                 else :
                     if perma != href :
-                        if perma not in Table or Table [perma].href == href :
+                        if (  perma not in Table
+                           or Table [perma].href_dynamic == href
+                           ) :
                             Table [perma] = self
             if pid is not None :
                 setattr (top.SC, pid, self)
@@ -352,14 +363,33 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         return dict (href = self.abs_href)
     # end def a_attr_dict
 
-    @Once_Property
+    @property
     @getattr_safe
     def abs_href (self) :
-        result = self.href
+        return \
+            (    self.abs_href_dynamic
+            if   self.top.dynamic_p
+            else self.abs_href_static
+            )
+    # end def href
+
+    @Once_Property
+    @getattr_safe
+    def abs_href_dynamic (self) :
+        result = self.href_dynamic
         if not result.startswith ("/") :
             return "/%s" % (result, )
         return result
-    # end def abs_href
+    # end def abs_href_dynamic
+
+    @Once_Property
+    @getattr_safe
+    def abs_href_static (self) :
+        result = self.href_static
+        if not result.startswith ("/") :
+            return "/%s" % (result, )
+        return result
+    # end def abs_href_static
 
     @Once_Property
     @getattr_safe
@@ -432,15 +462,27 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         return self.r_permissions or self.hidden or self._exclude_robots
     # end def exclude_robots
 
-    @Once_Property
+    @property
     @getattr_safe
     def href (self) :
-        pp   = self.parent.href if self.parent else self.prefix
+        return self.href_dynamic if self.top.dynamic_p else self.href_static
+    # end def href
+
+    @Once_Property
+    @getattr_safe
+    def href_dynamic (self) :
+        pp   = self.parent.href_dynamic if self.parent else self.prefix
         href = pp_join (pp, self.name)
         if href :
             return pp_norm (href)
         return ""
-    # end def href
+    # end def href_dynamic
+
+    @Once_Property
+    @getattr_safe
+    def href_static (self) :
+        return "".join ((self.href_dynamic, self.static_page_suffix))
+    # end def href_static
 
     @property
     @getattr_safe
@@ -505,7 +547,7 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
             self._page_template     = value
     # end def page_template
 
-    @Once_Property
+    @property
     @getattr_safe
     def permalink (self) :
         return self.abs_href
@@ -583,6 +625,22 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         except AttributeError :
             return (ttl.days * 86400 + ttl.seconds)
     # end def session_ttl_s
+
+    @property
+    @getattr_safe
+    def static_pages (self) :
+        for e in self.entries_transitive :
+            if e.static_p and not e.auth_required :
+                yield e
+    # end def static_pages
+
+    @property
+    @getattr_safe
+    def static_roots (self) :
+        for p in self.static_pages :
+            if isinstance (p, _Dir_) and not (p.parent and p.parent.static_p) :
+                yield p
+    # end def static_roots
 
     @property
     @getattr_safe
@@ -902,6 +960,8 @@ class RST_Leaf (_Base_) :
 
     _real_name                 = "Leaf"
 
+    static_page_suffix         = ".html"
+
     def _get_child (self, child, * grandchildren) :
         pass
     # end def _get_child
@@ -1042,6 +1102,12 @@ class RST_A_Link (_Ancestor) :
         return result
     # end def a_attr_dict
 
+    @property
+    @getattr_safe
+    def permalink (self) :
+        return self.target_url
+    # end def permalink
+
     def _handle_method (self, method, request, response) :
         raise self.top.Status.See_Other (self.target_url)
     # end def _handle_method
@@ -1083,7 +1149,8 @@ class _RST_Dir_Base_ (_Ancestor) :
                 , ** kw
                 )
             if request.brief :
-                result ["url_template"] = pp_join (resource.abs_href, "{entry}")
+                result ["url_template"] = pp_join \
+                    (resource.abs_href_dynamic, "{entry}")
             return result
         # end def _response_dict
 
@@ -1091,7 +1158,7 @@ class _RST_Dir_Base_ (_Ancestor) :
             if request.brief :
                 result = entry.name
             else :
-                result = pp_join (resource.abs_href, entry.name)
+                result = pp_join (resource.abs_href_dynamic, entry.name)
             return result
         # end def _response_entry
 
@@ -1210,6 +1277,8 @@ class _RST_Dir_ (_Ancestor) :
 
     _real_name                 = "_Dir_"
 
+    static_page_suffix         = "/index.html"
+
     class RST__Dir__GET (_Ancestor.GET) :
 
         _real_name             = "GET"
@@ -1239,9 +1308,8 @@ class _RST_Dir_ (_Ancestor) :
     def entries_transitive (self) :
         for e in self.entries :
             yield e
-            if isinstance (e, _Dir_) :
-                for d in e.entries_transitive :
-                    yield d
+            for d in e.entries_transitive :
+                yield d
     # end def entries_transitive
 
     @property
@@ -1306,9 +1374,9 @@ class RST_Dir (_Ancestor) :
 
     @Once_Property
     @getattr_safe
-    def href (self) :
+    def href_dynamic (self) :
         return self.prefix.rstrip ("/")
-    # end def href
+    # end def href_dynamic
 
 Dir = RST_Dir # end class
 
@@ -1433,6 +1501,7 @@ class RST_Root (_Ancestor) :
 
     default_locale_code        = "en"
     domain                     = ""
+    dynamic_p                  = True
     encoding                   = "utf-8"    ### output encoding
     error_email_template       = "error_email"
     i18n                       = False
@@ -1445,9 +1514,11 @@ class RST_Root (_Ancestor) :
     s_domain                   = None
     site_url                   = ""
     skip_etag                  = False
+    static_p                   = False
     use_www_debugger           = False
     user                       = None
 
+    _dynamic_nav_p             = False
     _exclude_robots            = True
     _hash_fct                  = None
     _href_pat                  = None
@@ -1488,7 +1559,7 @@ class RST_Root (_Ancestor) :
         if "copyright_start" not in kw :
             kw ["copyright_start"] = time.localtime ().tm_year
         self.pop_to_self      (kw, "name", "prefix")
-        self.pop_to_self      (kw, "smtp", prefix = "_")
+        self.pop_to_self      (kw, "dynamic_nav_p", "smtp", prefix = "_")
         self.E_Type_Desc    = self.E_Type_Desc.New (_prop_map  = {})
         self.ET_Map         = TFL.defaultdict_kd (self.E_Type_Desc)
         self.HTTP           = HTTP
@@ -1505,6 +1576,17 @@ class RST_Root (_Ancestor) :
     def __call__ (self, environ, start_response) :
         return self.wsgi_app (environ, start_response)
     # end def __call__
+
+    @property
+    @getattr_safe
+    def dynamic_nav_p (self) :
+        return self.dynamic_p or self._dynamic_nav_p
+    # end def dynamic_nav_p
+
+    @dynamic_nav_p.setter
+    def dynamic_nav_p (self, value) :
+        self._dynamic_nav_p = value
+    # end def dynamic_nav_p
 
     @Once_Property
     @getattr_safe

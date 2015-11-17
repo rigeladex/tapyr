@@ -348,10 +348,13 @@ class TOP_MOM_Entity_Mixin (Entity_Mixin_Base) :
         return self.manager.admin
     # end def admin
 
-    @Once_Property
+    @property
     @getattr_safe
     def permalink (self) :
-        return self.manager.href_display (self.obj)
+        result = self.manager.href_display (self.obj)
+        if not self.top.dynamic_p :
+            result = "".join ((result, self.static_page_suffix))
+        return result
     # end def permalink
 
 Entity_Mixin = TOP_MOM_Entity_Mixin # end class
@@ -462,7 +465,7 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
 
     def href_display (self, obj) :
         return pp_join \
-            (self.abs_href, getattr (obj, "perma_name", str (obj.pid)))
+            (self.abs_href_dynamic, getattr (obj, "perma_name", str (obj.pid)))
     # end def href_display
 
     def page_from_obj (self, obj) :

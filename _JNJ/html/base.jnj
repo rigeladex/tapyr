@@ -42,6 +42,7 @@
 ##     9-Apr-2014 (CT) Add `width=device-width` to `viewport`
 ##    20-Jun-2014 (CT) Add blocks `body_main` and `body_document`
 ##    10-Jun-2015 (CT) Factor `page_notifications.render`
+##    17-Nov-2015 (CT) Add guard for `page.top.dynamic_nav_p`
 ##    ««revision-date»»···
 ##--
 #}
@@ -104,9 +105,11 @@
         </p>
         {%- block body_document -%}
           <div id="document" class="pg_body">
-            {%- block page_notifications -%}
-              {{ PN.render (notifications) }}
-            {%- endblock page_notifications -%}
+            {%- if page.top.dynamic_nav_p %}
+              {%- block page_notifications -%}
+                {{ PN.render (notifications) }}
+              {%- endblock page_notifications -%}
+            {% endif -%}
             {%- block body_headline %}
               {%- if page.head_line %}
                 <h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.head_line|safe }}</h1>

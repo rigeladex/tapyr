@@ -364,13 +364,13 @@ class Calendar (_Mixin_, _Ancestor) :
     # end def year
 
     def day_href (self, day) :
-        return pp_join (self.abs_href, day.formatted ("%Y/%m/%d"))
+        return pp_join (self.abs_href_dynamic, day.formatted ("%Y/%m/%d"))
     # end def day_href
 
     def is_current_page (self, page) :
         ### don't guard against hidden !!!
-        p = page.href
-        s = self.calendar.href
+        p = page.href_dynamic
+        s = self.calendar.href_dynamic
         return p == s or (p.startswith (s) and p [len (s)] == "/")
     # end def is_current_dir
 

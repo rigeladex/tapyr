@@ -54,6 +54,7 @@
 ##    22-Apr-2015 (CT) Change `sitemap` macros to use `GTW.RST.TOP.Sitemap`
 ##    11-Jun-2015 (CT) Use `Auth.login_link`, not `Form.login_inline`
 ##    12-Jun-2015 (CT) Use `logged_in_form`, not `Form.logout_inline`
+##    17-Nov-2015 (CT) Add guards for `page.top.dynamic_nav_p`
 ##    ««revision-date»»···
 ##--
 #}
@@ -62,7 +63,7 @@
 
 {%- macro calendar (page) -%}
   {%- set cal = page.top.SC.Cal %}
-  {%- if cal %}
+  {%- if cal and page.top.dynamic_nav_p %}
     {%- import "html/cal/wr.jnj" as C with context %}
     <ul>
       {{ entry (cal, 0) }}
@@ -127,7 +128,7 @@
         {%- endif %}
       {%- endif %}
     {%- else %}
-      {%- if NAV.DEBUG %}
+      {%- if NAV.DEBUG and page.top.dynamic_nav_p %}
         <li><b class="no-link">{{ entry_body (link) }}</b></li>
       {% endif -%}
     {%- endif %}
@@ -155,7 +156,7 @@
 
 {%- macro language_section (page, request) -%}
   {%- set L10N = page.top.SC.L10N %}
-  {%- if L10N %}
+  {%- if L10N and page.top.dynamic_p %}
     {%- if not lang %}
       {%- set lang = page.language %}
     {% endif -%}

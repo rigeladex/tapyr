@@ -24,6 +24,9 @@
 #    15-Sep-2014 (CT) Re-introduce `change_query_filters`,
 #                     fix `change_query_types`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    17-Nov-2015 (CT) Set `static_p`
+#    18-Nov-2015 (CT) Change `Instance.__getattr__` to return `permalink` for
+#                     `link_to`
 #    ««revision-date»»···
 #--
 
@@ -52,9 +55,10 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
     """Page aggregating the most recent instances of one or more E_Types."""
 
     css_class             = "news-clip"
+    page_template_name    = "e_type_aggregator"
     query_limit           = 25
     sort_key              = TFL.Sorted_By ("-date.start", "-prio")
-    page_template_name    = "e_type_aggregator"
+    static_p              = True
 
     _exclude_robots       = False
     _old_objects          = None
@@ -90,12 +94,14 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
                 ### `ValueError`
                 return getattr (self.__super, name)
             if name == "link_to" :
-                top = self.top
+                top    = self.top
                 result = getattr (self.obj, name, None)
                 if not result :
                     left = getattr (self.obj, "left", None)
                     if left is not None :
                         result = top.obj_href (left)
+                page   = top.resource_from_href (result)
+                result = page.permalink
             else :
                 result = getattr (self.FO, name)
             return result

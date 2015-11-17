@@ -30,6 +30,7 @@
 #    10-Dec-2013 (CT) Add `href_login`; add `s_domain` to `login_url`
 #    11-Dec-2013 (CT) Add default for `csrf_check_p`
 #    10-Jun-2015 (CT) Use `response.indicate_notifications`, not home-grown code
+#    17-Nov-2015 (CT) Add `test_client`
 #    ««revision-date»»···
 #--
 
@@ -137,6 +138,13 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
             result = self._static_handler = self.HTTP.Static_File_App ("GTW", p)
         return result
     # end def static_handler
+
+    @Once_Property
+    @getattr_safe
+    def test_client (self) :
+        from werkzeug.test import Client
+        return Client (self, use_cookies = False)
+    # end def test_client
 
     def _http_response (self, resource, request, response) :
         Status = self.Status

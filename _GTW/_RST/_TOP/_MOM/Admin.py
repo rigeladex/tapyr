@@ -126,6 +126,7 @@
 #    30-Jul-2015 (CT) Add argument `essence`, `picky` to `polisher`
 #    31-Jul-2015 (CT) Handle `ValueError` from `polisher`
 #    21-Sep-2015 (CT) Add `_real_name` to `Renderer` classes
+#    17-Nov-2015 (CT) Set `static_p` to `False`
 #    ««revision-date»»···
 #--
 
@@ -175,6 +176,7 @@ class _Action_ (_Ancestor) :
     args                  = (None, )
     implicit              = True
     skip_etag             = True
+    static_p              = False
 
     _exclude_robots       = True
 
@@ -557,7 +559,7 @@ class _Changer_ (_Ancestor) :
             obj  = context ["instance"] = self.pid_query_request (pid)
         sid, session_secret = self._new_edit_session (response)
         referrer = "%s%s" % \
-            ( request.referrer or parent.abs_href
+            ( request.referrer or parent.abs_href_dynamic
             , parent.href_anchor_pid (obj)
             )
         form = self.form_instance \
@@ -817,9 +819,10 @@ class Deleter (_JSON_Action_PO_) :
 
 class Displayer (GTW.RST.TOP.MOM.Entity_Mixin, GTW.RST.TOP.Page) :
 
-    argn               = 1
-    name               = "display"
-    page_template_name = "e_type_display"
+    argn                  = 1
+    name                  = "display"
+    page_template_name    = "e_type_display"
+    static_p              = False
 
     def __init__ (self, ** kw) :
         ETM = self.parent.ETM
@@ -1252,52 +1255,52 @@ class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
     # end def eligible_objects
 
     def href_add_rev_ref (self) :
-        return pp_join (self.abs_href, "add_rev_ref")
+        return pp_join (self.abs_href_dynamic, "add_rev_ref")
     # end def href_add_rev_ref
 
     def href_complete (self) :
-        return pp_join (self.abs_href, "complete")
+        return pp_join (self.abs_href_dynamic, "complete")
     # end def href_complete
 
     def href_completed (self) :
-        return pp_join (self.abs_href, "completed")
+        return pp_join (self.abs_href_dynamic, "completed")
     # end def href_completed
 
     def href_delete (self, obj = None) :
-        result = pp_join (self.abs_href, "delete")
+        result = pp_join (self.abs_href_dynamic, "delete")
         if obj is not None :
             result = pp_join (result, str (obj.pid))
         return result
     # end def href_delete
 
     def href_instance (self, obj) :
-        return pp_join (self.abs_href, str (obj.pid))
+        return pp_join (self.abs_href_dynamic, str (obj.pid))
     # end def href_instance
 
     def href_polisher (self) :
-        return pp_join (self.abs_href, "polish")
+        return pp_join (self.abs_href_dynamic, "polish")
     # end def href_polisher
 
     def href_qx_esf_completed (self) :
-        return pp_join (self.abs_href, self.qx_prefix, "esf_completed")
+        return pp_join (self.abs_href_dynamic, self.qx_prefix, "esf_completed")
     # end def href_qx_esf_completed
 
     def href_qx_esf_completer (self) :
-        return pp_join (self.abs_href, self.qx_prefix, "esf_completer")
+        return pp_join (self.abs_href_dynamic, self.qx_prefix, "esf_completer")
     # end def href_qx_esf_completer
 
     def href_qx_esf (self) :
-        return pp_join (self.abs_href, self.qx_prefix, "esf")
+        return pp_join (self.abs_href_dynamic, self.qx_prefix, "esf")
     # end def href_qx_esf
 
     def href_undo (self, change) :
-        return pp_join (self.abs_href, "undo")
+        return pp_join (self.abs_href_dynamic, "undo")
     # end def href_undo
 
     def is_current_dir (self, page) :
         if not self.hidden :
-            p = page.href
-            s = self.href
+            p = page.href_dynamic
+            s = self.href_dynamic
             return p == s or (p.startswith (s) and p [len (s)] == "/")
     # end def is_current_dir
 
@@ -1363,6 +1366,7 @@ class E_Type \
         ( limit           = 25
         )
     dir_template_name     = "e_type_admin"
+    static_p              = False
 
     _v_entry_type_list    = _Admin_E_Type_Mixin_._v_entry_type_list [:-1] + \
         ( _QX_Dispatcher_, )
@@ -1514,11 +1518,11 @@ class E_Type \
     # end def href_anchor_pid
 
     def href_create (self) :
-        return pp_join (self.abs_href, "create")
+        return pp_join (self.abs_href_dynamic, "create")
     # end def href_create
 
     def href_change (self, obj) :
-        return pp_join (self.abs_href, "change", str (obj.pid))
+        return pp_join (self.abs_href_dynamic, "change", str (obj.pid))
     # end def href_change
 
     def href_display (self, obj = None) :
@@ -1526,19 +1530,19 @@ class E_Type \
         if man :
             return man.href_display (obj)
         elif obj is not None :
-            return pp_join (self.abs_href, "display", str (obj.pid))
+            return pp_join (self.abs_href_dynamic, "display", str (obj.pid))
     # end def href_display
 
     def href_qx_af_html (self) :
-        return pp_join (self.abs_href, self.qx_prefix, "af_html")
+        return pp_join (self.abs_href_dynamic, self.qx_prefix, "af_html")
     # end def href_qx_af_html
 
     def href_qx_asf (self) :
-        return pp_join (self.abs_href, self.qx_prefix, "asf")
+        return pp_join (self.abs_href_dynamic, self.qx_prefix, "asf")
     # end def href_qx_asf
 
     def href_qx_obf (self) :
-        return pp_join (self.abs_href, self.qx_prefix, "obf")
+        return pp_join (self.abs_href_dynamic, self.qx_prefix, "obf")
     # end def href_qx_obf
 
     def rendered (self, context, template = None) :
@@ -1620,6 +1624,7 @@ class E_Type_Alias (GTW.RST.TOP.Alias) :
         ( lambda s        : s.target.title
         , lambda s, v     : None
         )
+    static_p              = False
 
     _exclude_robots       = True
 
@@ -1636,6 +1641,7 @@ class Group (_Ancestor) :
     css_group             = "Group"
     dir_template_name     = "site_admin"
     show_aliases          = False
+    static_p              = False
 
     _exclude_robots       = True
     _auth_required        = True
@@ -1712,6 +1718,7 @@ class Site (Group) :
     """Directory displaying admin Groups."""
 
     pid                  = "Admin"
+    static_p              = False
 
     _exclude_robots      = True
     _auth_required       = True
