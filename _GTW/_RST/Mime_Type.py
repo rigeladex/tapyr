@@ -29,6 +29,8 @@
 #    15-Jun-2013 (CT) Guard `CSV.rendered` against empty `body`
 #    30-Jan-2014 (CT) Add exception information to `CSV.rendered`
 #     6-May-2015 (CT) Use `TFL.json_dump.to_string`
+#    17-Nov-2015 (CT) Add `not_picky` to `Render_Man.__call__`
+#                     + Consider `not request.accept_mimetypes` as `not_picky`
 #    ««revision-date»»···
 #--
 
@@ -354,7 +356,9 @@ class Render_Man (TFL.Meta.Object) :
                 match     = matches [0]
                 result    = match.render
                 mime_type = match.mime_type
-        if result is None and resource.ignore_picky_accept and self.renderers :
+        not_picky = \
+            resource.ignore_picky_accept or not request.accept_mimetypes
+        if result is None and not_picky and self.renderers :
             result    = self.renderers [0]
             mime_type = None
         if result is not None :
