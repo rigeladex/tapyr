@@ -100,8 +100,9 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
                     left = getattr (self.obj, "left", None)
                     if left is not None :
                         result = top.obj_href (left)
-                page   = top.resource_from_href (result)
-                result = page.permalink
+                if result :
+                    page   = top.resource_from_href (result)
+                    result = page.permalink
             else :
                 result = getattr (self.FO, name)
             return result

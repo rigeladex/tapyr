@@ -24,6 +24,7 @@
 #    17-Nov-2015 (CT) Add `Gallery.entries_transitive`
 #    17-Nov-2015 (CT) Set `Picture.hidden` to `False`
 #    17-Nov-2015 (CT) Add `.html` if `not self.top.dynamic_p` to `permalink`
+#    24-Nov-2015 (CT) Factor `GTW.RST.TOP._Gallery_`
 #    ««revision-date»»···
 #--
 
@@ -34,6 +35,7 @@ from   _TFL                     import TFL
 
 import _GTW._RST._TOP._MOM.Mixin
 import _GTW._RST._TOP.Dir
+import _GTW._RST._TOP.Gallery
 import _GTW._RST._TOP.Page
 
 from   _MOM.import_MOM          import MOM, Q
@@ -94,24 +96,16 @@ class Picture (_Ancestor) :
 
 # end class Picture
 
-_Ancestor = GTW.RST.TOP.Dir_V
-
 class Gallery \
-          ( GTW.RST.TOP.MOM.Entity_Mixin_Base
+          ( GTW.RST.TOP._Gallery_
+          , GTW.RST.TOP.MOM.Entity_Mixin_Base
           , GTW.RST.TOP.MOM.E_Type_Mixin
-          , _Ancestor
+          , GTW.RST.TOP.Dir_V
           ) :
     """Page displaying a gallery of pictures."""
 
     Entity              = Picture
-
-    dir_template_name   = "gallery"
-    nav_off_canvas      = True
-    page_template_name  = "photo"
     sort_key            = TFL.Sorted_By  ("number")
-    static_page_suffix  = "/index.html"
-
-    _greet_entry        = None
 
     def __init__ (self, ** kw) :
         kw ["ETM"] = "SWP.Picture"
@@ -129,54 +123,6 @@ class Gallery \
 
     @property
     @getattr_safe
-    def entries_transitive (self) :
-        for e in self.entries :
-            yield e
-    # end def entries_transitive
-
-    @Once_Property
-    @getattr_safe
-    def max_height_photo (self) :
-        if self.pictures :
-            return max (p.photo.height for p in self.pictures)
-        return 0
-    # end def max_height_photo
-
-    @Once_Property
-    @getattr_safe
-    def max_height_thumb (self) :
-        if self.pictures :
-            return max (p.thumb.height for p in self.pictures)
-        return 0
-    # end def max_height_thumb
-
-    @Once_Property
-    @getattr_safe
-    def max_width_photo (self) :
-        if self.pictures :
-            return max (p.photo.width for p in self.pictures)
-        return 0
-    # end def max_width_photo
-
-    @Once_Property
-    @getattr_safe
-    def max_width_thumb (self) :
-        if self.pictures :
-            return max (p.thumb.width for p in self.pictures)
-        return 0
-    # end def max_width_thumb
-
-    @property
-    @getattr_safe
-    def pictures (self) :
-        result = self.entries
-        if result and not isinstance (result [-1], self.Entity):
-            result = result [:-1]
-        return result
-    # end def pictures
-
-    @property
-    @getattr_safe
     def query_filters_d (self) :
         return self.__super.query_filters_d + (Q.left == self.obj.pid, )
     # end def query_filters_d
@@ -184,18 +130,6 @@ class Gallery \
     def href_display (self, obj) :
         return pp_join (self.abs_href_dynamic, obj.name)
     # end def href_display
-
-    def is_current_dir (self, page) :
-        return False
-    # end def is_current_dir
-
-    def is_current_page (self, page) :
-        return \
-            ( not self.hidden
-            and   self.href_dynamic in
-                      (page.href_dynamic, page.parent.href_dynamic)
-            )
-    # end def is_current_page
 
     def _get_child (self, child, * grandchildren) :
         result = self.__super._get_child (child, * grandchildren)

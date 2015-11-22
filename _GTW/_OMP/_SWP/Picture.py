@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -27,6 +27,8 @@
 #    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
 #    22-May-2013 (CT) Change `max_value` of `height` and `width` to 1280
 #    30-Oct-2013 (CT) Remove unnecessary `Picture.left.rev_ref_attr_name`
+#    25-Nov-2015 (CT) Change `_Pic_.path` from `A_String` to `A_Text`
+#                     * don't want a restrictive `max_length`
 #    ««revision-date»»···
 #--
 
@@ -77,7 +79,7 @@ class _Pic_ (_Ancestor_Essence) :
 
         # end class height
 
-        class path (A_String) :
+        class path (A_Text) :
             """Path of file holding picture."""
 
             kind               = Attr.Computed
