@@ -368,6 +368,7 @@
 #                     * Change `as_rest_cargo_ckd` to always include `utcoffset`
 #                     * Change `_from_string` to allow `utcoffset` in input
 #    25-Oct-2015 (CT) Add `A_Duration`
+#    25-Nov-2015 (CT) Add "%d-%m-%Y" to `A_Date.input_formats`
 #    ««revision-date»»···
 #--
 
@@ -2308,7 +2309,7 @@ class A_Date (_A_Date_) :
     syntax         = _ ("yyyy-mm-dd")
     ui_length      = 12
     input_formats  = \
-        ( "%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%d/%m/%Y", "%d.%m.%Y")
+        ( "%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%d/%m/%Y", "%d.%m.%Y", "%d-%m-%Y")
     _tuple_len     = 3
 
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
