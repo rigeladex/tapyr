@@ -21,6 +21,7 @@
 #    22-Apr-2015 (CT) Change `extra_excludes` to "/media/pdf" (was "/media")
 #    22-Apr-2015 (CT) Factor `.Literal.TXT`; add `skip_etag`
 #    22-Apr-2015 (CT) Add `Sitemap` to `contents`
+#    26-Nov-2015 (CT) Factor `_excluded_urls`; consider `dynamic_p`, `static_p`
 #    ««revision-date»»···
 #--
 
@@ -56,11 +57,10 @@ class Robot_Excluder (_Ancestor) :
     def contents (self) :
         top     = self.top
         dis_fmt = "Disallow: %s"
-        exclude = list \
-            (dis_fmt % (r.abs_href,) for r in top.own_links if r.exclude_robots)
-        extra  = list (dis_fmt % x for x in self.extra_excludes)
-        result = ""
-        if exclude :
+        exclude = list (dis_fmt % x for x in self._excluded_urls (top))
+        extra   = list (dis_fmt % x for x in self.extra_excludes)
+        result  = ""
+        if exclude or extra :
             result = "\n".join \
                 (iter_chain (["User-agent: *"], exclude, extra))
         sitemap = getattr (top.SC, "Sitemap", None)
@@ -75,6 +75,12 @@ class Robot_Excluder (_Ancestor) :
                     )
         return result
     # end def contents
+
+    def _excluded_urls (self, top) :
+        for r in top.own_links :
+            if r.exclude_robots and (top.dynamic_p or r.static_p) :
+                yield r.abs_href
+    # end def _excluded_urls
 
 # end class Robot_Excluder
 

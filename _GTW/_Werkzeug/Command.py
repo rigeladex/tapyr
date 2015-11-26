@@ -81,6 +81,7 @@
 #    12-Oct-2015 (CT) Use `logging.exception`, not `logging.warning`
 #                     in `_load_I18N`
 #    18-Nov-2015 (CT) Add sub-command `generate_static_pages`
+#    26-Nov-2015 (CT) Add `robots` to sub-command `generate_static_pages`
 #    ««revision-date»»···
 #--
 
@@ -455,6 +456,9 @@ class GT2W_Command (GTW.OMP.Command) :
             urls = ["/"]
             if sos.path.isdir (root) :
                 sos.rmdir (root, deletefiles = True)
+        robots = app.resource_from_href ("robots")
+        if robots is not None :
+            robots.hidden = robots.static_p
         def _generate (cmd, p, root, tail = None) :
             name = pjoin (root, tail or p.href_static)
             dir  = sos.path.dirname (name)
