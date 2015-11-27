@@ -48,6 +48,7 @@ class Robot_Excluder (_Ancestor) :
     ignore_picky_accept        = True
     implicit                   = False
     skip_etag                  = True
+    static_page_suffix         = ".txt"
 
     def __init__ (self, ** kw) :
         self.__super.__init__ (name = "robots", ** kw)
