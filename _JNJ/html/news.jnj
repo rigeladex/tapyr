@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: news.jnj -#}
 {#
-## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -25,45 +25,16 @@
 ##     8-Apr-2013 (CT) Use `e.created_by`, not `e.creator`
 ##    22-Jan-2014 (CT) Factor variable `changer`
 ##    14-Mar-2014 (CT) Add `rel_nav_buttons`
+##    27-Nov-2015 (CT) Factor macro `entry` to html/news.m.jnj
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import "STD::html/navigation.jnj" as NT with context %}
-
-{%- macro entry (e) -%}
-  <div class="news-entry">
-    <div class="news-meta">
-      <span class="news-author">{{ e.created_by }}</span>{#--#}
-      <span class="news-date">{{ GTW.firstof (e.date.start, e.date) }}</span>{#--#}
-      <div  class="news-title">
-        {%- onion e.permalink %}
-          {%- head -%}
-            <a href="{{ e.permalink }}" title="{{ GTW._T ("Permanent link") }}">
-          {%- body -%}
-            {{- GTW.firstof (e.desc, e.title) -}}
-          {%- tail -%}
-            </a>
-          {%- endonion -%}
-      </div>
-    </div>
-    {{ e.contents|safe }}
-    {%- set changer = e.changer %}
-    {%- if changer and NAV.allow (changer, request.user) %}
-      <p>{#--#}
-        <a href="{{ changer.abs_href }}"{#--#}
-           title="{{ GTW._T ('Edit this entry') }}"{#--#}
-           class="button"{#--#}
-        >{#--#}
-          {{ GTW._T ("Change") }}{#--#}
-        </a>{#--#}
-      </p>
-    {% endif -%}
-  </div>
-{%- endmacro -%} {#- entry -#}
+{%- import "html/news.m.jnj"          as NW with context %}
 
 {%- block document -%}
-  {{- entry (page) }}
+  {{- NW.entry (page) }}
   {{ NT.rel_nav_buttons (page) -}}
 {%- endblock document -%}
 

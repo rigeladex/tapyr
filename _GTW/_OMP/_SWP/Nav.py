@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -29,6 +29,7 @@
 #                     i.e., stuff related to non-AFS forms
 #    28-Jan-2014 (CT) Add `Referral`
 #    26-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
+#    27-Nov-2015 (CT) Add `Video`
 #    ««revision-date»»···
 #--
 
@@ -89,6 +90,11 @@ class Admin (object) :
             ("date", "parent_url", "perma_name", "short_title")
         , sort_key       = TFL.Sorted_By \
             ("-date.start", "parent_url", "perma_name")
+        )
+
+    Video                = dict \
+        ( ETM            = "GTW.OMP.SWP.Video"
+        , sort_key       = TFL.Sorted_By ("-date.start", "perma_name")
         )
 
 # end class Admin

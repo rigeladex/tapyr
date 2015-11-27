@@ -85,7 +85,7 @@ __doc__ = """
     (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>, <Auth Auth: /Auth>, <L10N L10N: /L10N>, <_Language_ de: /L10N/de>, <_Language_ en: /L10N/en>)
 
     >>> print (portable_repr (sorted (root3._template_names)))
-    ['account_change_email', 'account_change_password', 'account_make_cert', 'account_register', 'account_reset_password', 'calendar', 'calendar_day', 'console', 'e_type_admin', 'e_type_aggregator', 'e_type_display', 'e_type_mf3', 'gallery', 'login', 'photo', 'regatta_calendar', 'regatta_page', 'regatta_page_r', 'site_admin']
+    ['account_change_email', 'account_change_password', 'account_make_cert', 'account_register', 'account_reset_password', 'calendar', 'calendar_day', 'console', 'e_type_admin', 'e_type_aggregator', 'e_type_display', 'e_type_mf3', 'gallery', 'login', 'photo', 'regatta_calendar', 'regatta_page', 'regatta_page_r', 'site_admin', 'video']
 
     >>> auth = root3.SC.Auth
     >>> auth

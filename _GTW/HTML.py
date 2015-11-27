@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -195,9 +195,9 @@ class Video (TFL.Meta.Object) :
         if "align" in kw :
             css_classes.append ("align-%s" % (kw.pop ("align"), ))
         css_class   = " ".join (c for c in css_classes if c)
-        height      = kw.pop ("height",      self.height)
-        width       = kw.pop ("width",       self.width)
-        desc        = kw.pop ("desc",        self.watcher_url + video_id)
+        height      = kw.pop ("height", self.height)
+        width       = kw.pop ("width",  self.width)
+        desc        = kw.pop ("desc",   None) or self.watcher_url + video_id
         query       = "?" + pyk.urlencode \
             (sorted (pyk.iteritems (dict (self.q_parameters, ** kw))))
         result      = self.format % TFL.Caller.Object_Scope (self)

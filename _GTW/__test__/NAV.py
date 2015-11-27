@@ -79,6 +79,7 @@ _test_nav = """
     regatta_page
     regatta_page_r
     site_admin
+    video
 
     >>> for k in sorted (TTT.css_href_map, key = sk) :
     ...    print (k)
@@ -109,6 +110,7 @@ _test_nav = """
     login
     photo
     site_admin
+    video
 
     >>> for owl in nav_root.own_links_transitive :
     ...   if not owl.hidden:
@@ -177,6 +179,7 @@ _test_nav = """
       , 'calendar_day'
       , 'e_type_mf3'
       , 'html/static.jnj'
+      , 'video'
       ]
     , [ 401
       , 'account_change_email'

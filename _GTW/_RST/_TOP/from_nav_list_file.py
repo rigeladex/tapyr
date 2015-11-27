@@ -35,6 +35,7 @@ import _GTW._RST.Resource
 import _GTW._RST._TOP.Gallery
 import _GTW._RST._TOP.Page
 import _GTW._RST._TOP.ReST
+import _GTW._RST._TOP.Video
 
 import _ReST.To_Html
 import _GTW._RST._TOP.import_TOP
@@ -107,7 +108,7 @@ def _file_contents (name, encoding = "utf-8") :
 # end def _file_contents
 
 def _fix_dict (dct) :
-    if "desc" in dct and "title" in dct :
+    if "desc" in dct and "title" in dct and "short_title" not in dct :
         dct ["short_title"] = dct.pop ("title")
         dct ["title"]       = dct.pop ("desc")
     for k, v in list (pyk.iteritems (dct)) :
@@ -167,9 +168,7 @@ def Page_ReST_F (parent, src_dir, name, ** kw) :
         )
 # end def Page_ReST_F
 
-def Video (parent, src_dir, ** kw) :
-    print ("Video ignored:", src_dir, kw.get ("name"))
-# end def Video
+Video   = GTW.RST.TOP.Video
 
 def from_nav_list_file (parent, src_dir, nav_context = {}) :
     global _globs

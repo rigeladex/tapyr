@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: video.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -19,17 +19,15 @@
 ##
 ## Revision Dates
 ##    27-Jan-2010 (CT) Creation
+##    27-Nov-2015 (CT) Use `page.contents`, add `rel_nav_buttons`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- block document -%}
-  <div class="video">
-    <h1>{{ GTW.firstof (page.desc, page.title, page.href) }}</h1>
-
-    {{ page.embed_stanza|safe }}
-
-  </div>
+  <h2>{{ page.title }}</h2>
+  {{ page.contents|safe }}
+  {{ NT.rel_nav_buttons (page) -}}
 {%- endblock document -%}
 
 {#- __END__ jinja template: video.jnj -#}
