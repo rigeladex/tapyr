@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -171,6 +171,7 @@
 #     8-Oct-2013 (CT) Robustify `date_dt`
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
 #    24-Jan-2014 (CT) Add `A_Link`
+#    30-Nov-2015 (CT) Add `decode/encode` dance to `rendered`
 #    ««revision-date»»···
 #--
 
@@ -420,10 +421,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
         context ["page"]     = self
         context ["nav_page"] = nav_page or self
         context ["NAV"]      = self.top
+        encoding             = self.encoding
         result = self.render_to_string \
-            (template or self.template, context, self.encoding)
+            (template or self.template, context, encoding)
         if self.translator :
-            result = self.translator (result)
+            result = self.translator \
+                (result.decode (encoding)).encode (encoding)
         return result
     # end def rendered
 
