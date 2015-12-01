@@ -19,6 +19,7 @@
 #    23-Nov-2015 (CT) Creation (based on GTW.NAV methods)
 #     1-Dec-2015 (CT) Change `_entries` to use `parent.Page`, if any,
 #                     as default `Type`
+#     1-Dec-2015 (CT) Improve `_fix_dict` (no `desc` nor `short_title`)
 #    ««revision-date»»···
 #--
 
@@ -113,9 +114,12 @@ def _file_contents (name, encoding = "utf-8") :
 # end def _file_contents
 
 def _fix_dict (dct) :
-    if "desc" in dct and "title" in dct and "short_title" not in dct :
-        dct ["short_title"] = dct.pop ("title")
-        dct ["title"]       = dct.pop ("desc")
+    if "title" in dct and "short_title" not in dct :
+        if "desc" in dct :
+            dct ["short_title"] = dct.pop ("title")
+            dct ["title"]       = dct.pop ("desc")
+        else :
+            dct ["short_title"] = dct.get ("title")
     for k, v in list (pyk.iteritems (dct)) :
         if isinstance (v, pyk.byte_types) :
             dct [k] = pyk.decoded (v, "utf-8", "latin-1")
