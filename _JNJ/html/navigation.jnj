@@ -55,6 +55,8 @@
 ##    11-Jun-2015 (CT) Use `Auth.login_link`, not `Form.login_inline`
 ##    12-Jun-2015 (CT) Use `logged_in_form`, not `Form.logout_inline`
 ##    17-Nov-2015 (CT) Add guards for `page.top.dynamic_nav_p`
+##     1-Dec-2015 (CT) Don't set `current-link` for `current-section` unless
+##                     `link == nav_page`
 ##    ««revision-date»»···
 ##--
 #}
@@ -95,7 +97,7 @@
       {% endif -%}
       {%- if link.is_current_dir and link.is_current_dir (nav_page) %}
         <li>
-          <a class="current-section {{ a_kw.pop ('class', '') }}{%- if isc %} current-link{% endif -%}"
+          <a class="current-section {{ a_kw.pop ('class', '') }}{%- if link == nav_page %} current-link{% endif -%}"
              {{- a_kw|xmlattr }}><i></i>{{ entry_body (link) }}</a>
           {{ entries (link.own_links, level + 1) }}
         </li>
