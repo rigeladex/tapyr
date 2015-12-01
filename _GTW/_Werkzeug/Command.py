@@ -82,6 +82,8 @@
 #                     in `_load_I18N`
 #    18-Nov-2015 (CT) Add sub-command `generate_static_pages`
 #    26-Nov-2015 (CT) Add `robots` to sub-command `generate_static_pages`
+#     1-Dec-2015 (CT) Add guard for `scope` to `init_app_cache`
+#     1-Dec-2015 (CT) Add `.lstrip ("/")` to `_handle_generate_static_pages`
 #    ««revision-date»»···
 #--
 
@@ -324,7 +326,13 @@ class GT2W_Command (GTW.OMP.Command) :
                 load_cache ()
         else :
             load_cache ()
-        self.root.scope.commit ()
+        try :
+            scope = self.root.scope
+        except AttributeError :
+            pass
+        else :
+            if scope is not None :
+                scope.commit ()
     # end def init_app_cache
 
     def nav_admin_group (self, name, title, * pnss, ** kw) :
@@ -460,7 +468,7 @@ class GT2W_Command (GTW.OMP.Command) :
         if robots is not None :
             robots.hidden = robots.static_p
         def _generate (cmd, p, root, tail = None) :
-            name = pjoin (root, tail or p.href_static)
+            name = pjoin (root, tail or p.href_static.lstrip ("/"))
             dir  = sos.path.dirname (name)
             if not sos.path.exists (dir) :
                 sos.mkdir_p  (dir)
