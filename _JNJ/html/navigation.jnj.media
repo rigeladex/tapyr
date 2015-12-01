@@ -24,6 +24,7 @@
 #    21-Feb-2011 (CT) Use `Border`
 #    14-Mar-2014 (CT) Include `rel_nav`
 #    16-Apr-2015 (CT) Add rules for `a`, `i.fa` to `b.current-link`
+#     1-Dec-2015 (CT) Add rule for `a img`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,12 @@ style_sheet = Style_Sheet \
                         ( "a", "b"
                         , display          = "block"
                         , padding_left     = P.nav_col.li_left
+                        )
+                    , Rule
+                        ( "a img"
+                        , display          = "block"
+                        , margin           = TRBL (0, "auto")
+                        , padding          = TRBL (0, Em (0.5), 0, 0)
                         )
                     , Rule
                         ( ".no-link", ** P.nav_col.color_spec_no_link)
@@ -211,6 +218,7 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "h1"
                 , font_size      = Percent (100)
+                , font_weight    = 500
                 , line_height    = P.line_height_heading
                 , margin         = TRBL0 (b = Em (1./4))
                 , padding_left   = Em (0.50)
