@@ -17,6 +17,8 @@
 #
 # Revision Dates
 #    23-Nov-2015 (CT) Creation (based on GTW.NAV methods)
+#     1-Dec-2015 (CT) Change `_entries` to use `parent.Page`, if any,
+#                     as default `Type`
 #    ««revision-date»»···
 #--
 
@@ -78,8 +80,11 @@ def _entries (parent, src_dir, list_of_dicts) :
     for d in list_of_dicts :
         _fix_dict    (d)
         sd   = d.pop ("sub_dir", None)
-        Type = d.pop \
-            ("Type", GTW.RST.TOP.Page if sd is None else GTW.RST.TOP.Dir)
+        Type = d.pop ("Type",    None) or \
+            (    getattr (parent, "Page", GTW.RST.TOP.Page)
+            if   sd is None
+            else GTW.RST.TOP.Dir
+            )
         if sd is None :
             entry        = Type  (parent = parent, src_dir = src_dir, ** d)
         else :
