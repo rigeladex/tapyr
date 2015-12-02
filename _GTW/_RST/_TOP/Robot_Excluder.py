@@ -22,6 +22,7 @@
 #    22-Apr-2015 (CT) Factor `.Literal.TXT`; add `skip_etag`
 #    22-Apr-2015 (CT) Add `Sitemap` to `contents`
 #    26-Nov-2015 (CT) Factor `_excluded_urls`; consider `dynamic_p`, `static_p`
+#     2-Dec-2015 (CT) Fix directories and sitemap of static pages
 #    ««revision-date»»···
 #--
 
@@ -69,18 +70,22 @@ class Robot_Excluder (_Ancestor) :
             request = getattr (top, "request", None)
             if request is not None :
                 site   = request.host_url.rstrip ("/")
-                result = "\n".join \
-                    ( ( result
-                      , "".join (("Sitemap: ", site, sitemap.permalink, ".txt"))
-                      )
-                    )
+                if not site.endswith ("//localhost") :
+                    result = "\n".join \
+                        ( ( result
+                          , "".join (("Sitemap: ", site, sitemap.name, ".txt"))
+                          )
+                        )
         return result
     # end def contents
 
     def _excluded_urls (self, top) :
         for r in top.own_links :
             if r.exclude_robots and (top.dynamic_p or r.static_p) :
-                yield r.abs_href
+                if r.static_page_suffix == "/index.html" :
+                    yield r.abs_href_dynamic
+                else :
+                    yield r.abs_href_static
     # end def _excluded_urls
 
 # end class Robot_Excluder
