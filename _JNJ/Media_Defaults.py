@@ -58,6 +58,8 @@
 #    24-Mar-2015 (CT) Add `Rule.input_focus`
 #     8-Apr-2015 (CT) Change `font_family_print` to "serif" to void font
 #                     substitution by the printer
+#     2-Dec-2015 (CT) Fix `Rule.visited`
+#     2-Dec-2015 (CT) Change `nav_col.color_spec_link_current.background_color`
 #    ««revision-date»»···
 #--
 
@@ -421,7 +423,7 @@ class Media_Defaults (Definition) :
             , color            = P.R.link_color
             )
         color_spec_link_current    = P_dict \
-            ( background_color = P.R.link_color
+            ( background_color = P.R.visited_color
             , color            = P.background_color
             )
 
@@ -594,13 +596,13 @@ class Media_Defaults (Definition) :
 
         target_outline     = Rule_Pseudo \
             ( "target"
-            ,  P.R.color_spec_selected
+            , P.R.color_spec_selected
             , outline      = P.R.outline_focus
             )
 
         visited            = Rule_Pseudo \
             ( "visited"
-            ,  P.R.color_spec_visited
+            , color        = P.R.visited_color
             )
 
     # end class Rule

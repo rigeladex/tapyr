@@ -59,6 +59,7 @@
 #    11-Feb-2015 (CT) Add rule for `td .link .a`
 #    15-Feb-2015 (CT) Add rules for `.menu-icon`
 #     3-Jul-2015 (CT) Add rule for `a[data-action]`
+#     2-Dec-2015 (CT) Add `P.Rule.link`, `P.Rule.visited` to rule for `a`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,9 @@ style_sheet = Style_Sheet \
         ( "a"
         , text_decoration      = "none"
         , children             =
-            [ P.Rule.hover
+            [ P.Rule.link
+            , P.Rule.hover
+            , P.Rule.visited
             ]
         )
     , Rule
