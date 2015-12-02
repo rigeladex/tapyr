@@ -52,6 +52,7 @@
 #                       -  5 seconds with rcssmin, rjsmin
 #                       - 37 seconds with cssmin,  jsmin
 #    26-Jun-2015 (CT) Add trailing `;` to `JS_On_Ready.code`, if missing
+#     2-Dec-2015 (CT) Add `logging.warning` to `minified_css`, `minified_js`
 #    ««revision-date»»···
 #--
 
@@ -473,7 +474,7 @@ def minified_css (style, keep_bang_comments = True) :
             from cssmin import cssmin as _cssmin
             cssmin = lambda style, keep_bang_comments : _cssmin (style)
         except ImportError :
-            pass
+            logging.warning ("Couldn't import either rcssmin nor cssmin")
     if cssmin is not None :
         try :
             return cssmin (style, keep_bang_comments = keep_bang_comments)
@@ -499,7 +500,7 @@ def minified_js (code) :
             ### https://packages.debian.org/sid/python/python-jsmin
             from jsmin import jsmin
         except ImportError :
-            pass
+            logging.warning ("Couldn't import either rjsmin nor jsmin")
     if jsmin is not None :
         try :
             return jsmin (code)
