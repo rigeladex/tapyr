@@ -20,6 +20,7 @@
 #     1-Dec-2015 (CT) Change `_entries` to use `parent.Page`, if any,
 #                     as default `Type`
 #     1-Dec-2015 (CT) Improve `_fix_dict` (no `desc` nor `short_title`)
+#     2-Dec-2015 (CT) Add `logging.exception` to `from_nav_list_file`
 #    ««revision-date»»···
 #--
 
@@ -187,9 +188,14 @@ def from_nav_list_file (parent, src_dir, nav_context = {}) :
     fn = pjoin (src_dir, "navigation.list")
     fc = _file_contents (fn)
     if fc is not None :
-        dct = _exec (fc)
-        parent.add_entries \
-            (* _entries (parent, src_dir, dct ["own_links"]))
+        try :
+            dct = _exec (fc)
+        except Exception as exc :
+            import logging
+            logging.exception ("Error in %s" % (fn, ))
+        else :
+            parent.add_entries \
+                (* _entries (parent, src_dir, dct ["own_links"]))
     else :
         print ("*** navigation.list not found in directory", src_dir, "***")
 # end def from_nav_list_file
