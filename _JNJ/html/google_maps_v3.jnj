@@ -1,11 +1,11 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: google_maps_v3.jnj -#}
 {#
-## Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
-## 
+##
 ## This template is licensed under the terms of the BSD 3-Clause License
 ## <http://www.c-tanzer.at/license/bsd_3c.html>.
 ## #*** </License> ***********************************************************#
@@ -21,6 +21,7 @@
 ## Revision Dates
 ##     3-Jun-2012 (CT) Creation (based on html/google_maps.jnj)
 ##     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
+##     3-Dec-2015 (CT) Add `max-height`, `max-width`
 ##    ««revision-date»»···
 ##--
 #}
@@ -40,8 +41,10 @@
 {%- macro head (page) -%}
     <style type="text/css">
       #gmap
-          { height : {{ page.map.height|default("100%") }}
-          ; width  : {{ page.map.width|default("100%") }}
+          { height     : {{ page.map.height|default("100%") }}
+          ; max-height : 80vh
+          ; max-width  : 90vw
+          ; width      : {{ page.map.width |default("100%") }}
           }
     </style>
     <script type="text/javascript"
