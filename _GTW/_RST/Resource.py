@@ -149,6 +149,7 @@
 #                     + Add `static_page_suffix`
 #    18-Nov-2015 (CT) Add  `_Base_.static_pages`, `.static_roots`
 #    18-Nov-2015 (CT) Redefine `A_Link.permalink`
+#     3-Dec-2015 (CT) Consider `dynamic_p`, `static_p` in `template_iter`
 #    ««revision-date»»···
 #--
 
@@ -341,10 +342,11 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
                             Table [perma] = self
             if pid is not None :
                 setattr (top.SC, pid, self)
-        for k in ("page_template_name", "dir_template_name") :
-            tn = getattr (self, k, None)
-            if tn :
-                top._template_names.add (tn)
+        if top.dynamic_p or self.static_p :
+            for k in ("page_template_name", "dir_template_name") :
+                tn = getattr (self, k, None)
+                if tn :
+                    top._template_names.add (tn)
     # end def _after__init__
 
     @classmethod
@@ -873,9 +875,10 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
     # end def show_in_nav
 
     def template_iter (self) :
-        t = self.page_template
-        if t :
-            yield t
+        if self.top.dynamic_p or self.static_p :
+            t = self.page_template
+            if t :
+                yield t
     # end def template_iter
 
     def _add_other_entries (self) :
@@ -1242,11 +1245,12 @@ class _RST_Dir_Base_ (_Ancestor) :
     # end def add_entries
 
     def template_iter (self) :
-        for t in self.__super.template_iter () :
-            yield t
-        t = self.dir_template
-        if t :
-            yield t
+        if self.top.dynamic_p or self.static_p :
+            for t in self.__super.template_iter () :
+                yield t
+            t = self.dir_template
+            if t :
+                yield t
     # end def template_iter
 
     def _get_child (self, child, * grandchildren) :
@@ -1332,15 +1336,16 @@ class _RST_Dir_ (_Ancestor) :
     # end def sub_dir_iter
 
     def template_iter (self) :
-        for t in self.__super.template_iter () :
-            yield t
-        eff = self._effective
-        if eff is not self :
-            for t in eff.template_iter () :
+        if self.top.dynamic_p or self.static_p :
+            for t in self.__super.template_iter () :
                 yield t
-        for d in self.sub_dir_iter () :
-            for t in d.template_iter () :
-                yield t
+            eff = self._effective
+            if eff is not self :
+                for t in eff.template_iter () :
+                    yield t
+            for d in self.sub_dir_iter () :
+                for t in d.template_iter () :
+                    yield t
     # end def template_iter
 
     def _add_href_pat_frag_tail \
@@ -1396,12 +1401,13 @@ class RST_Dir_V (_Ancestor) :
     # end def entries
 
     def template_iter (self) :
-        for t in self.__super.template_iter () :
-            yield t
-        if self._entry_type_map :
-            for e in pyk.itervalues (self._entry_type_map) :
-                for t in e.template_iter () :
-                    yield t
+        if self.top.dynamic_p or self.static_p :
+            for t in self.__super.template_iter () :
+                yield t
+            if self._entry_type_map :
+                for e in pyk.itervalues (self._entry_type_map) :
+                    for t in e.template_iter () :
+                        yield t
     # end def template_iter
 
     def _add_href_pat_frag_tail (self, head, getter = None) :
