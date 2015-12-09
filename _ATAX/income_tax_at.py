@@ -30,6 +30,7 @@
 #     7-Jan-2010 (CT) Use `TFL.CAO.Arg.EUC` instead of `TFL.CAO.Arg.Money`
 #    20-May-2015 (CT) Add `2016` to `tax_brackets`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#     9-Dec-2015 (CT) Fix `2016` of `tax_brackets`
 #    ««revision-date»»···
 #--
 
@@ -89,7 +90,7 @@ def tax_brackets (year) :
         return \
             ( (EUR (     11000), 0.000)
             , (EUR (      7000), 0.250)
-            , (EUR (     14000), 0.350)
+            , (EUR (     13000), 0.350)
             , (EUR (     29000), 0.420)
             , (EUR (     30000), 0.480)
             , (EUR (    910000), 0.500)
