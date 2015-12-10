@@ -20,6 +20,7 @@
 #    17-Mar-2014 (CT) Add `addressee` to `forward_format`, `resend_format`
 #     2-Apr-2015 (CT) Use `bcc_addr`, not `email_address`, for `Bcc`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#    10-Dec-2015 (CT) Add `formatted_replacers_sb`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,11 @@ PMA.Composer.formatted_replacers.add \
         , u"""To:          «text»"""
         , re.IGNORECASE | re.MULTILINE
         )
+    )
+
+PMA.Composer.formatted_replacers_sb = Multi_Re_Replacer \
+    ( Re_Replacer (ur"««mail-b?cc»»\n", u"", re.IGNORECASE | re.MULTILINE)
+    , Re_Replacer (ur"««text»»\n",      u"", re.IGNORECASE | re.MULTILINE)
     )
 
 PMA.Composer.compose_format   = "\n".join \

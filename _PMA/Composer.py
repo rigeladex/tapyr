@@ -58,6 +58,7 @@
 #     4-Nov-2015 (CT) Use pyk.email_message_from_bytes,
 #                     not `Lib.message_from_string` because Python 3
 #     6-Nov-2015 (CT) Move `.encode` from `_formatted` to `_send`
+#    10-Dec-2015 (CT) Add option `-Short_body`
 #    ««revision-date»»···
 #--
 
@@ -137,16 +138,18 @@ class Editor_Thread (PMA.Thread) :
 class Composer (TFL.Meta.Object) :
     """Support interactive sending of emails"""
 
-    addressee           = ""
-    attach              = None
-    body_marker         = "--text follows this line--"
-    domain              = TFL.Environment.mailname ()
-    editor              = "emacsclient --alternate-editor vi"
-    formatted_replacers = Multi_Re_Replacer ()
-    user                = TFL.Environment.username
-    email_address       = "%s@%s" % (user, domain)
-    receiver            = ""
-    subject             = ""
+    addressee              = ""
+    attach                 = None
+    body_marker            = "--text follows this line--"
+    domain                 = TFL.Environment.mailname ()
+    editor                 = "emacsclient --alternate-editor vi"
+    formatted_replacers    = Multi_Re_Replacer ()
+    formatted_replacers_sb = Multi_Re_Replacer ()
+    user                   = TFL.Environment.username
+    email_address          = "%s@%s" % (user, domain)
+    receiver               = ""
+    short_body             = ""
+    subject                = ""
 
     compose_format = "\n".join \
         ( ( """From:        %(email_address)s"""
@@ -221,17 +224,19 @@ class Composer (TFL.Meta.Object) :
             , send_cb          = None
             , rst2html         = False
             , receiver         = None
+            , short_body       = None
             , subject          = None
             , attach           = None
             , bcc              = None
             , debug            = False
             ) :
-        if editor   is not None    : self.editor   = editor
-        if user     is not None    : self.user     = user
-        if domain   is not None    : self.domain   = domain
-        if receiver is not None    : self.receiver = receiver
-        if subject  is not None    : self.subject  = subject
-        if attach   is not None    : self.attach   = attach
+        if editor     is not None  : self.editor     = editor
+        if user       is not None  : self.user       = user
+        if domain     is not None  : self.domain     = domain
+        if receiver   is not None  : self.receiver   = receiver
+        if short_body is not None  : self.short_body = short_body
+        if subject    is not None  : self.subject    = subject
+        if attach     is not None  : self.attach     = attach
         if user is not None or domain is not None :
             self.email_address = "%s@%s" % (self.user, self.domain)
         self.bcc_addr          = self.email_address if bcc is None else bcc
@@ -334,10 +339,13 @@ class Composer (TFL.Meta.Object) :
     # end def _as_html
 
     def _as_message (self, buffer_x) :
+        bm_rep = "\n" + self.short_body if self.short_body else ""
         buffer = pyk.decoded (buffer_x, PMA.default_encoding)
         result = pyk.email_message_from_bytes \
             ( pyk.encoded
-                (buffer.replace (self.body_marker, ""), PMA.default_encoding)
+                ( buffer.replace (self.body_marker, bm_rep)
+                , PMA.default_encoding
+                )
             )
         if self.rst2html or self._rest2html_header in buffer :
             plain    = result
@@ -378,7 +386,7 @@ class Composer (TFL.Meta.Object) :
             (_text = text, _subtype = sub_typ, _charset = charset)
     # end def _as_text_part
 
-    def _finish_edit (self, buffer, bfn) :
+    def _finish_edit (self, buffer, bfn = None) :
         if buffer :
             email = self._as_message (buffer)
             self._add_header_maybe (email, "Date", Lib.formatdate)
@@ -386,10 +394,11 @@ class Composer (TFL.Meta.Object) :
             email   = self._process_attachement_headers (email)
         if email and self.smtp :
             self._finish__send (email, send_cb = self.send_cb)
-        TFL.sos.unlink (bfn)
+        if bfn is not None :
+            TFL.sos.unlink (bfn)
     # end def _finish_edit
 
-    def _finish_forward (self, msg, more_msgs, buffer, bfn) :
+    def _finish_forward (self, msg, more_msgs, buffer, bfn = None) :
         if buffer :
             email    = msg.email
             envelope = self._as_multipart (self._as_message (buffer))
@@ -397,10 +406,11 @@ class Composer (TFL.Meta.Object) :
             for m in more_msgs :
                 envelope.attach (Lib.MIMEMessage (m.email))
             self._finish__send (envelope)
-        TFL.sos.unlink (bfn)
+        if bfn is not None :
+            TFL.sos.unlink (bfn)
     # end def _finish_forward
 
-    def _finish_resend (self, msg, buffer, bfn) :
+    def _finish_resend (self, msg, buffer, bfn = None) :
         if buffer :
             email    = msg.email
             envelope = self._as_message (buffer)
@@ -413,7 +423,8 @@ class Composer (TFL.Meta.Object) :
             email ["Resent-date"]       = Lib.formatdate ()
             email ["Resent-message-id"] = Lib.make_msgid ()
             self._finish__send (email, envelope = envelope)
-        TFL.sos.unlink (bfn)
+        if bfn is not None :
+            TFL.sos.unlink (bfn)
     # end def _finish_resend
 
     def _finish__send (self, email, envelope = None, send_cb = None) :
@@ -430,9 +441,11 @@ class Composer (TFL.Meta.Object) :
     # end def _finish__send
 
     def _formatted (self, format, msg = None) :
-        mapping = PMA.Msg_Scope (msg, self.locals, self.defaults)
-        result  = pyk.decoded   (format, PMA.default_encoding) % mapping
-        result  = self.formatted_replacers (result)
+        replacer = self.formatted_replacers_sb \
+            if self.short_body else self.formatted_replacers
+        mapping  = PMA.Msg_Scope (msg, self.locals, self.defaults)
+        result   = pyk.decoded   (format, PMA.default_encoding) % mapping
+        result   = replacer      (result)
         return result
     # end def _formatted
 
@@ -477,7 +490,10 @@ class Composer (TFL.Meta.Object) :
 
     def _send (self, msg, finish_cb) :
         buffer = pyk.encoded (msg, PMA.default_encoding)
-        Editor_Thread (buffer, self.editor, finish_cb)
+        if self.short_body :
+            finish_cb (buffer)
+        else :
+            Editor_Thread (buffer, self.editor, finish_cb)
     # end def _send
 
 # end class Composer
@@ -520,12 +536,13 @@ def _main (cmd) :
             print (exc)
     comp   = PMA.Composer \
         ( cmd.editor, cmd.user, cmd.domain, smtp
-        , rst2html = cmd.HTML
-        , receiver = cmd.To
-        , subject  = cmd.subject
-        , attach   = attach
-        , bcc      = bcc
-        , debug    = cmd.Debug
+        , attach     = attach
+        , bcc        = bcc
+        , debug      = cmd.Debug
+        , receiver   = cmd.To
+        , rst2html   = cmd.HTML
+        , short_body = cmd.Short_body
+        , subject    = cmd.subject
         )
     def message_from_arg (cmd, arg) :
         try :
@@ -550,7 +567,8 @@ _Command = TFL.CAO.Cmd \
     , opts        =
         ( "-attach:P ?File to attach"
         , "-Attach_Message:P ?Message to attach"
-        , "-Bcc:S?Email(s) to be put on blind carbon copy (default: sender's email)"
+        , "-Bcc:S"
+            "?Email(s) to be put on blind carbon copy (default: sender's email)"
         , "-bounce:S?Message to resend"
         , "-config:C?File specifying defaults for options"
         , "-Debug:B?Use SMTP_Tester for debugging"
@@ -566,6 +584,8 @@ _Command = TFL.CAO.Cmd \
         , "-msg_base_dirs:Q:?Base directories for searching `message`"
         , "-reply:S?Message to reply to"
         , "-Reply_all:S?Message to reply to"
+        , "-Short_body:S"
+            "?Don't start an editor, use supplied value as body instead"
         , "-subject:S?Subject of email"
         , "-tls:B?Use SMTP in TLS (Transport Layer Security) mode."
         , "-To:S?Email of receiver"
