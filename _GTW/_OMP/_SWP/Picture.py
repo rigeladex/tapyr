@@ -57,7 +57,7 @@ class _Pic_ (_Ancestor_Essence) :
             """Directory in gallery holding pictures."""
 
             kind               = Attr.Const
-            default            = u"im"
+            default            = "im"
 
         # end class dir
 
@@ -67,7 +67,7 @@ class _Pic_ (_Ancestor_Essence) :
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Init_Only_Mixin, )
             max_length         = 10
-            default            = u".jpg"
+            default            = ".jpg"
 
         # end class extension
 
@@ -118,8 +118,8 @@ class _Thumb_ (_Ancestor_Essence) :
         class dir (_Ancestor.dir) :
             """Directory in gallery holding thumbnails."""
 
-            default            = u"th"
-            example            = u"th"
+            default            = "th"
+            example            = "th"
 
         # end class dir
 
@@ -155,7 +155,6 @@ class Picture (_Ancestor_Essence) :
         class left (_Ancestor.left) :
             """Gallery to which this picture belongs."""
 
-            import _GTW._OMP._SWP.Gallery
             role_type          = GTW.OMP.SWP.Gallery
 
         # end class left
