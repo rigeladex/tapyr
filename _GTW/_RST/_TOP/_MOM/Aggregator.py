@@ -27,6 +27,7 @@
 #    17-Nov-2015 (CT) Set `static_p`
 #    18-Nov-2015 (CT) Change `Instance.__getattr__` to return `permalink` for
 #                     `link_to`
+#    14-Dec-2015 (CT) Add `random_picture`
 #    ««revision-date»»···
 #--
 
@@ -70,8 +71,10 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
         def _render_context (self, resource, request, response, ** kw) :
             return self.__super._render_context \
                 ( resource, request, response
-                , calendar = resource.calendar
-                , clips    = resource.clips
+                , calendar       = resource.calendar
+                , clips          = resource.clips
+                , random_picture = None
+                    if resource.clips else resource.random_picture
                 , ** kw
                 )
         # end def _render_context
@@ -165,6 +168,20 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
     def query_filters_s (self) :
         return self.__super.query_filters_s + (Q.date.alive, )
     # end def query_filters_s
+
+    @Once_Property
+    @getattr_safe
+    def Random_Picture (self) :
+        return getattr (self.top.SC, "Random_Picture", None)
+    # end def Random_Picture
+
+    @property
+    @getattr_safe
+    def random_picture (self) :
+        RP = self.Random_Picture
+        if RP is not None :
+            return RP.picture.left
+    # end def random_picture
 
     def query (self) :
         qs = []

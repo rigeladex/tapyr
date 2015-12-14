@@ -22,6 +22,7 @@
 ##     6-Oct-2013 (CT) Add `with context` to import
 ##    19-Feb-2014 (CT) Move `-sep` from `clip` to `aggregator`
 ##    17-Nov-2015 (CT) Add guards for `page.top.dynamic_nav_p`
+##    14-Dec-2015 (CT) Add `random_picture`
 ##    ««revision-date»»···
 ##--
 #}
@@ -39,6 +40,24 @@
     {% endif -%}
     {{ clip (page, c) }}
   {% endfor -%}
+  {%- if random_picture and not clips %}
+    {%- set gall = page.top.page_from_obj (random_picture.left) %}
+    {%- set pic  = random_picture %}
+    <div class="photo">
+      {%- onion gall %}
+        {%- head %}
+          <a href="{{ gall.permalink }}">
+        {%- body %}
+            <img alt="{{ pic.left.title }}" {# -#}
+                 title="{{ pic.left.title }}" {# -#}
+                 src="{{ "/" + pic.photo.path }}" {# -#}
+                 height="{{ pic.photo.height }}" width="{{ pic.photo.width }}"{# -#}
+            />
+        {%- tail %}
+          </a>
+        {%- endonion %}
+    </div>
+  {% endif -%}
 {%- endmacro -%} {#- aggregator -#}
 
 {%- macro clip (page, c) -%}
