@@ -18,6 +18,7 @@
 #
 # Revision Dates
 #    14-Dec-2015 (CT) Creation
+#    15-Dec-2015 (CT) Add `Random_Picture.Manager` with method `generate`
 #    ««revision-date»»···
 #--
 
@@ -33,12 +34,35 @@ import _GTW._OMP._SWP.Picture
 
 from   _TFL.I18N                import _, _T, _Tn
 
+import random
+
 _Ancestor_Essence = GTW.OMP.SWP.Link1
+
+class _Random_Picture_Manager_ (_Ancestor_Essence.M_E_Type.Manager) :
+    """E-Type manager for `Random_Picture`."""
+
+    def generate (self) :
+        """Generate instances of `Random_Picture`."""
+        def _gen (scope) :
+            for p in scope.SWP.Picture.query \
+                    (Q.left.prio > 0, ~ Q.random_pictures) :
+                for i in range (p.left.prio) :
+                    yield p
+        offs = self.count
+        pics = list    (_gen (self.home_scope))
+        random.shuffle (pics)
+        for i, p in enumerate (pics, offs) :
+            self (p, i)
+    # end def generate
+
+# end class _Random_Picture_Manager_
 
 class Random_Picture (_Ancestor_Essence) :
     """Random picture."""
 
+    Manager               = _Random_Picture_Manager_
     electric              = True
+    refuse_links          = set (["EVT.Event"])
     show_in_UI            = False
 
     class _Attributes (_Ancestor_Essence._Attributes) :
