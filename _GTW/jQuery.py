@@ -66,6 +66,8 @@
 #    12-May-2015 (CT) Add missing dependency `GTW_L` to `query_restriction`
 #     2-Jun-2015 (CT) Remove `GTW_postify_a`
 #     9-Jun-2015 (CT) Add `.not ("a.internal")` to `GTW_Externalize`
+#    15-Dec-2015 (CT) Remove obsolete definitions
+#                     (GTW_buttonify, GTW_Input, GTW_Label)
 #    ««revision-date»»···
 #--
 
@@ -192,13 +194,6 @@ GTW.Script \
     )
 
 GTW.Script \
-    ( src      = "/media/GTW/js/GTW/jQ/buttonify.js"
-    , name     = "GTW_buttonify"
-    , rank     = -10
-    , requires = (GTW.Script._.jQuery_UI, GTW.Script._.GTW_UI_Icon_Map)
-    )
-
-GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/button_pure.js"
     , name     = "GTW_button_pure"
     , rank     = -10
@@ -279,30 +274,6 @@ GTW.Script \
 GTW.JS_On_Ready \
     ( """$(".thumbnails").gtw_gallery ({ delay : 2000 });"""
     , name = "GTW_Gallery"
-    )
-
-GTW.Script \
-    ( src      = "/media/GTW/js/GTW/jQ/input.js"
-    , name     = "GTW_Input"
-    , requires = (GTW.Script._.jQuery, )
-    )
-GTW.JS_On_Ready \
-    ( """$("[placeholder]").gtw_input_placeholders ();"""
-    , name = "GTW_Input_Placeholders"
-    )
-
-GTW.Script \
-    ( src      = "/media/GTW/js/GTW/jQ/label.js"
-    , name     = "GTW_Label"
-    , requires = (GTW.Script._.jQuery, )
-    )
-GTW.JS_On_Ready \
-    ( """$("label[for]").gtw_label_clicker ();"""
-    , name = "GTW_Label_Clicker"
-    )
-GTW.JS_On_Ready \
-    ( """$("label[for]").gtw_label_as_placeholder ();"""
-    , name = "GTW_Label_As_Placeholder"
     )
 
 GTW.Script \

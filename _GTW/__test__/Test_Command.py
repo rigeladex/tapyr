@@ -75,7 +75,6 @@ def prepr (* args) :
     print (* (portable_repr (a) for a in args))
 
 model_src        = sos.path.dirname (__file__)
-form_pickle_path = sos.path.join    (model_src, "afs_form_table.pck")
 
 Version = Product_Version \
     ( productid           = u"MOM/GTW Test Cases"
