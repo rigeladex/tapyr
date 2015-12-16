@@ -227,6 +227,7 @@
 #                     + remove spurious redefinitions of `ui_display`
 #    13-Apr-2015 (CT) Add `_json_encode` to `m_setup_etypes`
 #     5-May-2015 (CT) Remove obsolete methods `_m_entity_type`, `_m_scope`
+#    16-Dec-2015 (CT) Add `UI_Spec` to `_m_create_base_e_types`
 #    ««revision-date»»···
 #--
 
@@ -744,6 +745,8 @@ class M_Entity (M_E_Mixin) :
                     , is_partial          = s.is_partial
                     , PNS                 = s.PNS
                     , show_package_prefix = s.show_package_prefix
+                    , UI_Spec             = TFL.Meta.Alias_Property
+                        ("E_Spec.UI_Spec")
                     , _real_name          = str (tbn)
                     , __module__          = s.__module__
                     )

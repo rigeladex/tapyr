@@ -63,6 +63,7 @@
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    17-Jun-2013 (CT) Add `_MOM_Link_n_` to `_Export`
 #    14-Sep-2015 (CT) Add `_real_name` for `_Link_n_`
+#    16-Dec-2015 (CT) Add `Link1._UI_Spec_Defaults`
 #    ««revision-date»»···
 #--
 
@@ -129,6 +130,10 @@ class Link1 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link1)) :
     """Common base class for essential unary links of MOM"""
 
     is_partial            = True
+
+    _UI_Spec_Defaults     = dict \
+        ( show_in_admin   = True
+        )
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

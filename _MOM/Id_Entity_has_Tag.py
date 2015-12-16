@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Martin Glueck All rights reserved
+# Copyright (C) 2013-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,7 @@
 # Revision Dates
 #    29-Jan-2013 (MG) Creation
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
+#    16-Dec-2015 (CT) Change `entity_type_name` to `Query` attribute
 #    ««revision-date»»···
 #--
 
@@ -85,17 +86,10 @@ class Id_Entity_has_Tag (_Ancestor_Essence) :
         # end class right
 
         class entity_type_name (A_String) :
-            """Cache the type name of the entity to allow filtering on
-               database level
-            """
+            """Type name of the entity."""
 
-            kind               = Attr.Internal
-            max_length         = 60
-            auto_up_depends    = ("right", )
-
-            def computed (self, obj) :
-                return str (obj.left.type_name)
-            # end def computed
+            kind               = Attr.Query
+            query              = Q.left.type_name
 
         # end class entity_type_name
 

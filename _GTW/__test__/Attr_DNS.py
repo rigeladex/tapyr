@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2012-2015 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A-3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -61,7 +61,7 @@ _test_code = """
 from   _GTW.__test__.model       import *
 from   _MOM.import_MOM           import Q
 import _GTW._OMP._DNS.import_DNS
-import _GTW._OMP._DNS.Nav
+import _GTW._OMP._DNS.UI_Spec
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

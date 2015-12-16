@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -10,10 +10,10 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.Nav
+#    GTW.OMP.PAP.UI_Spec
 #
 # Purpose
-#    Provide configuration for GTW.NAV.E_Type.Admin entries
+#    UI specification for E_Types defined by GTW.OMP.PAP
 #
 # Revision Dates
 #    29-Jan-2010 (CT) Creation
@@ -46,18 +46,24 @@
 #    21-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
 #     4-Sep-2014 (CT) Add `Adhoc_Group`, `Id_Entity_permits_Group`,
 #                     `Person_in_Group`
+#    16-Dec-2015 (CT) Change to `UI_Spec`
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
-from   _TFL                     import TFL
 from   _GTW                     import GTW
+from   _TFL                     import TFL
 
-from   _TFL.I18N                import _
+import _GTW._OMP._PAP
 
-class Admin (object) :
-    """Provide configuration for GTW.NAV.E_Type.Admin entries"""
+import _TFL.Sorted_By
+
+class UI_Spec (object) :
+    """UI specification for E_Types defined by GTW.OMP.PAP"""
 
     property_include_rev_refs = \
         ("persons", "companies", "associations")
@@ -66,8 +72,7 @@ class Admin (object) :
         ("addresses", "emails", "phones")
 
     Address              = dict \
-        ( ETM            = "GTW.OMP.PAP.Address"
-        , list_display   = ("zip", "city", "street", "desc")
+        ( list_display   = ("zip", "city", "street", "desc")
         , MF3_Form_Spec  = dict
             ( include_rev_refs = ("gps", ) + property_include_rev_refs
             )
@@ -75,52 +80,46 @@ class Admin (object) :
         )
 
     Adhoc_Group          = dict \
-        ( ETM            = "GTW.OMP.PAP.Adhoc_Group"
+        (
         )
 
     Association          = dict \
-        ( ETM            = "GTW.OMP.PAP.Association"
-        , list_display   = ("name", "short_name", "lifetime")
+        ( list_display   = ("name", "short_name", "lifetime")
         , MF3_Form_Spec  = dict
             ( include_rev_refs = subject_include_rev_refs
             )
         )
 
     Company              = dict \
-        ( ETM            = "GTW.OMP.PAP.Company"
-        , list_display   = ("name", "short_name", "lifetime")
+        ( list_display   = ("name", "short_name", "lifetime")
         , MF3_Form_Spec  = dict
             ( include_rev_refs = subject_include_rev_refs
             )
         )
 
     Email                = dict \
-        ( ETM            = "GTW.OMP.PAP.Email"
-        , list_display   = ("ui_display", "desc")
+        ( list_display   = ("ui_display", "desc")
         , MF3_Form_Spec  = dict
             ( include_rev_refs = property_include_rev_refs
             )
         )
 
     IM_Handle            = dict \
-        ( ETM            = "GTW.OMP.PAP.IM_Handle"
-        , list_display   = ("ui_display", "desc")
+        ( list_display   = ("ui_display", "desc")
         , MF3_Form_Spec  = dict
             ( include_rev_refs = property_include_rev_refs
             )
         )
 
     Nickname             = dict \
-        ( ETM            = "GTW.OMP.PAP.Nickname"
-        , list_display   = ("ui_display", "desc")
+        ( list_display   = ("ui_display", "desc")
         , MF3_Form_Spec  = dict
             ( include_rev_refs = property_include_rev_refs
             )
         )
 
     Person               = dict \
-        ( ETM            = "GTW.OMP.PAP.Person"
-        , list_display   =
+        ( list_display   =
             ( "last_name", "first_name", "middle_name", "title"
             , "lifetime", "sex"
             )
@@ -131,80 +130,77 @@ class Admin (object) :
         )
 
     Phone                = dict \
-        ( ETM            = "GTW.OMP.PAP.Phone"
-        , list_display   = ("ui_display", "desc")
+        ( list_display   = ("ui_display", "desc")
         , MF3_Form_Spec  = dict
             ( include_rev_refs = property_include_rev_refs
             )
         )
 
     Url                  = dict \
-        ( ETM            = "GTW.OMP.PAP.Url"
-        , list_display   = ("ui_display", "desc")
+        ( list_display   = ("ui_display", "desc")
         , MF3_Form_Spec  = dict
             ( include_rev_refs = property_include_rev_refs
             )
         )
 
     Address_Position     = dict \
-        ( ETM            = "GTW.OMP.PAP.Address_Position"
+        (
         )
 
     Company_has_Address  = dict \
-        ( ETM            = "GTW.OMP.PAP.Company_has_Address"
+        (
         )
 
     Company_has_Email    = dict \
-        ( ETM            = "GTW.OMP.PAP.Company_has_Email"
+        (
         )
 
     Company_has_Phone    = dict \
-        ( ETM            = "GTW.OMP.PAP.Company_has_Phone"
+        (
         )
 
     Company_has_Url      = dict \
-        ( ETM            = "GTW.OMP.PAP.Company_has_Url"
+        (
         )
 
     Id_Entity_permits_Group = dict \
-        ( ETM            = "GTW.OMP.PAP.Id_Entity_permits_Group"
+        (
         )
 
     Person_has_Account   = dict \
-        ( ETM            = "GTW.OMP.PAP.Person_has_Account"
+        (
         )
 
     Person_has_Address   = dict \
-        ( ETM            = "GTW.OMP.PAP.Person_has_Address"
+        (
         )
 
     Person_has_Email     = dict \
-        ( ETM            = "GTW.OMP.PAP.Person_has_Email"
+        (
         )
 
     Person_has_IM_Handle = dict \
-        ( ETM            = "GTW.OMP.PAP.Person_has_IM_Handle"
+        (
         )
 
     Person_has_Nickname  = dict \
-        ( ETM            = "GTW.OMP.PAP.Person_has_Nickname"
+        (
         )
 
     Person_has_Phone     = dict \
-        ( ETM            = "GTW.OMP.PAP.Person_has_Phone"
+        (
         )
 
     Person_has_Url       = dict \
-        ( ETM            = "GTW.OMP.PAP.Person_has_Url"
+        (
         )
 
     Person_in_Group      = dict \
-        ( ETM            = "GTW.OMP.PAP.Person_in_Group"
-        , sort_key       = TFL.Sorted_By ("pid") ### XXX remove this
+        ( sort_key       = TFL.Sorted_By ("pid") ### XXX remove this
         )
 
-# end class Admin
+# end class UI_Spec
 
 if __name__ != "__main__" :
-    GTW.OMP.PAP._Export_Module ()
-### __END__ GTW.OMP.PAP.Nav
+    GTW.OMP.PAP._Export ("UI_Spec")
+### __END__ GTW.OMP.PAP.UI_Spec

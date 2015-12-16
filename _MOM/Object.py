@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -30,6 +30,7 @@
 #    18-Jun-2012 (CT) Add `_Object_Reload_Mixin_`
 #     1-Aug-2012 (CT) Add `_Object_Destroyed_Mixin_`
 #    17-Jun-2013 (CT) Remove `Named_Object`
+#    16-Dec-2015 (CT) Add `_UI_Spec_Defaults`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,10 @@ class _MOM_Object_ \
     entity_kind           = "object"
 
     epk_split_characters  = "[;,+-/|\s]"
+
+    _UI_Spec_Defaults     = dict \
+        ( show_in_admin   = True
+        )
 
     @classmethod
     def epk_splitter (cls, text) :

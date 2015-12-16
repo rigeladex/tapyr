@@ -10,10 +10,10 @@
 #
 #++
 # Name
-#    GTW.OMP.SWP.Nav
+#    GTW.OMP.SWP.UI_Spec
 #
 # Purpose
-#    Provide configuration for GTW.NAV.E_Type.Admin entries
+#    UI specification for E_Types defined by GTW.OMP.SWP
 #
 # Revision Dates
 #    16-Feb-2010 (MG) Creation (based on GTW.OMP.PAP.Nav)
@@ -30,22 +30,27 @@
 #    28-Jan-2014 (CT) Add `Referral`
 #    26-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
 #    27-Nov-2015 (CT) Add `Video`
-#    ««revision-date»»···
+#    16-Dec-2015 (CT) Change to `UI_Spec`
+#   ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
-from   _TFL                     import TFL
 from   _GTW                     import GTW
+from   _TFL                     import TFL
 
-from   _TFL.I18N                import _
+import _GTW._OMP._SWP
 
-class Admin (object) :
-    """Provide configuration for GTW.NAV.E_Type.Admin entries"""
+import _TFL.Sorted_By
+
+class UI_Spec (object) :
+    """UI specification for E_Types defined by GTW.OMP.SWP."""
 
     Clip_X               = dict \
-        ( ETM            = "GTW.OMP.SWP.Clip_X"
-        , list_display   =
+        ( list_display   =
             ( "ui_display", "short_title", "date", "created_by", "format"
             , "last_changed"
             )
@@ -53,13 +58,11 @@ class Admin (object) :
         )
 
     Gallery              = dict \
-        ( ETM            = "GTW.OMP.SWP.Gallery"
-        , sort_key       = TFL.Sorted_By ("-date.start", "perma_name")
+        ( sort_key       = TFL.Sorted_By ("-date.start", "perma_name")
         )
 
     Page                 = dict \
-        ( ETM            = "GTW.OMP.SWP.Page"
-        , list_display   =
+        ( list_display   =
             ( "ui_display", "short_title", "date", "created_by", "format"
             , "last_changed"
             )
@@ -79,26 +82,23 @@ class Admin (object) :
         )
 
     Picture              = dict \
-        ( ETM            = "GTW.OMP.SWP.Picture"
-        , sort_key       = TFL.Sorted_By \
+        ( sort_key       = TFL.Sorted_By \
             ("-left.date.start", "left.perma_name", "number")
         )
 
     Referral             = dict \
-        ( ETM            = "GTW.OMP.SWP.Referral"
-        , list_display   = \
+        ( list_display   = \
             ("date", "parent_url", "perma_name", "short_title")
         , sort_key       = TFL.Sorted_By \
             ("-date.start", "parent_url", "perma_name")
         )
 
     Video                = dict \
-        ( ETM            = "GTW.OMP.SWP.Video"
-        , sort_key       = TFL.Sorted_By ("-date.start", "perma_name")
+        ( sort_key       = TFL.Sorted_By ("-date.start", "perma_name")
         )
 
-# end class Admin
+# end class UI_Spec
 
 if __name__ != "__main__" :
-    GTW.OMP.SWP._Export_Module ()
-### __END__ GTW.OMP.SWP.Nav
+    GTW.OMP.SWP._Export ("UI_Spec")
+### __END__ GTW.OMP.SWP.UI_Spec

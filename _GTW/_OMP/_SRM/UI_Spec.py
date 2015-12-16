@@ -10,10 +10,10 @@
 #
 #++
 # Name
-#     GTW.OMP.SRM.Nav
+#     GTW.OMP.SRM.UI_Spec
 #
 # Purpose
-#    Provide configuration for GTW.NAV.E_Type.Admin entries
+#    UI specification for E_Types defined by GTW.OMP.SRM
 #
 # Revision Dates
 #    19-Apr-2010 (CT) Creation
@@ -40,30 +40,33 @@
 #     7-May-2015 (CT) Dont skip `left.left.max_crew` for `MF3_Attr_Spec_R` of
 #                     `Boat_in_Regatta`
 #    25-Oct-2015 (CT) Add `race_times` to `MF3_Form_Spec` of `Boat_in_Regatta`
+#    16-Dec-2015 (CT) Change to `UI_Spec`
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
-from   _TFL                     import TFL
 from   _GTW                     import GTW
+from   _TFL                     import TFL
 
-from   _TFL.I18N                import _
+import _GTW._OMP._SRM
 
-class Admin (object) :
-    """Provide configuration for GTW.NAV.E_Type.Admin entries"""
+import _TFL.Sorted_By
+
+class UI_Spec (object) :
+    """Provide configuration for GTW.NAV.E_Type.UI_Spec entries"""
 
     Boat               = dict \
-        ( ETM          = "GTW.OMP.SRM.Boat"
-        , sort_key     = TFL.Sorted_By ("left.name", "nation", "sail_number")
+        ( sort_key     = TFL.Sorted_By ("left.name", "nation", "sail_number")
         )
     Boat_Class         = dict \
-        ( ETM          = "GTW.OMP.SRM.Boat_Class"
-        , sort_key     = TFL.Sorted_By ("name")
+        ( sort_key     = TFL.Sorted_By ("name")
         )
     Boat_in_Regatta    = dict \
-        ( ETM          = "GTW.OMP.SRM.Boat_in_Regatta"
-        , sort_key     = TFL.Sorted_By
+        ( sort_key     = TFL.Sorted_By
             ( "-regatta.event.date.start"
             , "skipper.person.last_name"
             , "skipper.person.first_name"
@@ -84,52 +87,47 @@ class Admin (object) :
             )
         )
     Club               = dict \
-        ( ETM          = "GTW.OMP.SRM.Club"
+        (
         )
     Page               = dict \
-        ( ETM          = "GTW.OMP.SRM.Page"
-        , sort_key     = TFL.Sorted_By ("-date.start", "perma_name")
+        ( sort_key     = TFL.Sorted_By ("-date.start", "perma_name")
         , list_display =
             ( "ui_display", "created_by", "date", "format", "last_changed")
         )
 
     Person_owns_Boat   = dict \
-        ( ETM          = "GTW.OMP.SRM.Person_owns_Boat"
+        (
         )
 
     Ranking            = dict \
-        ( ETM          = "GTW.OMP.SRM.Ranking"
+        (
         )
 
     Regatta_C          = dict \
-        ( ETM          = "GTW.OMP.SRM.Regatta_C"
-        , sort_key     = TFL.Sorted_By ("-event.date.start", "boat_class.name")
+        ( sort_key     = TFL.Sorted_By ("-event.date.start", "boat_class.name")
         , list_display = ("event", "boat_class", "kind")
         )
 
     Regatta_H          = dict \
-        ( ETM          = "GTW.OMP.SRM.Regatta_H"
-        , sort_key     = TFL.Sorted_By ("-event.date.start", "boat_class.name")
+        ( sort_key     = TFL.Sorted_By ("-event.date.start", "boat_class.name")
         , list_display = ("event", "boat_class", "kind")
         )
 
     Regatta_Event      = dict \
-        ( ETM          = "GTW.OMP.SRM.Regatta_Event"
-        , sort_key     = TFL.Sorted_By ("-date.start", "name")
+        ( sort_key     = TFL.Sorted_By ("-date.start", "name")
         , list_display = ( "name", "date", "desc")
         )
 
     Regatta_in_Ranking            = dict \
-        ( ETM          = "GTW.OMP.SRM.Regatta_in_Ranking"
+        (
         )
 
     Sailor             = dict \
-        ( ETM          = "GTW.OMP.SRM.Sailor"
+        (
         )
 
     Team               = dict \
-        ( ETM          = "GTW.OMP.SRM.Team"
-        , sort_key     = TFL.Sorted_By
+        ( sort_key     = TFL.Sorted_By
             ( "-regatta.event.date.start"
             , "name"
             )
@@ -137,12 +135,11 @@ class Admin (object) :
         )
 
     Team_has_Boat_in_Regatta = dict \
-        ( ETM          = "GTW.OMP.SRM.Team_has_Boat_in_Regatta"
-        , list_display = ("team", "boat.boat")
+        ( list_display = ("team", "boat.boat")
         )
 
-# end class Admin
+# end class UI_Spec
 
 if __name__ != "__main__" :
-     GTW.OMP.SRM._Export_Module ()
-### __END__  GTW.OMP.SRM.Nav
+     GTW.OMP.SRM._Export ("UI_Spec")
+### __END__  GTW.OMP.SRM.UI_Spec

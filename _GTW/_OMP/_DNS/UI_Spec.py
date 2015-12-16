@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2012-2015 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A-3411 Weidling, Austria. rsc@runtux.com
 # ****************************************************************************
 # This module is part of the package GTW.OMP.DNS.
@@ -10,68 +10,74 @@
 #
 #++
 # Name
-#    GTW.OMP.DNS.Nav
+#    GTW.OMP.DNS.UI_Spec
 #
 # Purpose
-#    Provide configuration for GTW.NAV.E_Type.Admin entries
+#    UI specification for E_Types defined by GTW.OMP.DNS
 #
 # Revision Dates
 #     6-Sep-2012 (RS) Creation
+#    16-Dec-2015 (CT) Change to `UI_Spec`
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
-from   _TFL                     import TFL
 from   _GTW                     import GTW
+from   _TFL                     import TFL
 
-from   _TFL.I18N                import _
+import _GTW._OMP._DNS
 
-class Admin (object) :
-    """Provide configuration for GTW.NAV.E_Type.Admin entries"""
+import _TFL.Sorted_By
+
+class UI_Spec (object) :
+    """UI specification for E_Types defined by GTW.OMP.DNS"""
 
     AAAA_Record          = dict \
-        ( ETM            = "GTW.OMP.DNS.AAAA_Record"
+        (
         )
 
     A_Record             = dict \
-        ( ETM            = "GTW.OMP.DNS.A_Record"
+        (
         )
 
     CNAME_Record         = dict \
-        ( ETM            = "GTW.OMP.DNS.CNAME_Record"
+        (
         )
 
     MX_Record            = dict \
-        ( ETM            = "GTW.OMP.DNS.MX_Record"
+        (
         )
 
     NS_Record            = dict \
-        ( ETM            = "GTW.OMP.DNS.NS_Record"
+        (
         )
 
     Secondary_IP4        = dict \
-        ( ETM            = "GTW.OMP.DNS.Secondary_IP4"
+        (
         )
 
     Secondary_IP6        = dict \
-        ( ETM            = "GTW.OMP.DNS.Secondary_IP6"
+        (
         )
 
     SRV_Record           = dict \
-        ( ETM            = "GTW.OMP.DNS.SRV_Record"
+        (
         )
 
     TXT_Record           = dict \
-        ( ETM            = "GTW.OMP.DNS.TXT_Record"
+        (
         )
 
     Zone                 = dict \
-        ( ETM            = "GTW.OMP.DNS.Zone"
+        (
         )
 
-# end class Admin
+# end class UI_Spec
 
 if __name__ != "__main__" :
-    GTW.OMP.DNS._Export_Module ()
-### __END__ GTW.OMP.DNS.Nav
+    GTW.OMP.DNS._Export ("UI_Spec")
+### __END__ GTW.OMP.DNS.UI_Spec

@@ -759,9 +759,12 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
                     , default       = b_class
                     )
                   }
-                , _crew = dict
+                , _crew             = dict
                     ( max_rev_ref   = max_rr
                     , min_rev_ref   = 1 if max_rr else 0
+                    )
+                , yardstick         = dict
+                    ( skip          = True
                     )
                 )
         return result
@@ -789,14 +792,14 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
         bir    = self.top.ET_Map ["SRM.Boat_in_Regatta"]
         result = self.bir_admin
         if result is None and bir and bir.admin :
-            NA = GTW.OMP.SRM.Nav.Admin.Boat_in_Regatta
-            kw = dict \
+            UIS    = self.scope.SRM.Boat_in_Regatta.UI_Spec
+            kw     = dict \
                 ( bir.admin._orig_kw
                 , child_permission_map  =
                     _Registration_Page_.child_permission_map
                 , default_qr_kw         = dict (right___EQ = self.obj.pid)
-                , MF3_Attr_Spec         = NA ["MF3_Attr_Spec_R"]
-                , MF3_Form_Spec         = NA ["MF3_Form_Spec_R"]
+                , MF3_Attr_Spec         = UIS ["MF3_Attr_Spec_R"]
+                , MF3_Form_Spec         = UIS ["MF3_Form_Spec_R"]
                 , mf3_attr_spec         = self.mf3_attr_spec_r
                 , mf3_id_prefix         = "BiR_R"
                 , implicit              = True

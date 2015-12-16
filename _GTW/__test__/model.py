@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -45,15 +45,15 @@ import _GTW._OMP._Auth.import_Auth
 
 if sos.environ.get ("GTW_FULL_OBJECT_MODEL", "True") != "False" :
     import _GTW._OMP._EVT.import_EVT
-    import _GTW._OMP._EVT.Nav
+    import _GTW._OMP._EVT.UI_Spec
 
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
 import _GTW._OMP._SWP.import_SWP
 
-import _GTW._OMP._PAP.Nav
-import _GTW._OMP._SRM.Nav
-import _GTW._OMP._SWP.Nav
+import _GTW._OMP._PAP.UI_Spec
+import _GTW._OMP._SRM.UI_Spec
+import _GTW._OMP._SWP.UI_Spec
 
 class _GTW_Test_Command_ (GTW_Test_Command) :
 

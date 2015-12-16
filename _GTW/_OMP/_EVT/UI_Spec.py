@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -10,10 +10,10 @@
 #
 #++
 # Name
-#    GTW.OMP.EVT.Nav
+#    GTW.OMP.EVT.UI_Spec
 #
 # Purpose
-#    Provide configuration for GTW.NAV.E_Type.Admin entries
+#    UI specification for E_Types defined by GTW.OMP.EVT
 #
 # Revision Dates
 #    15-Mar-2010 (CT) Creation
@@ -26,25 +26,31 @@
 #    24-Feb-2012 (CT) Remove `Event_occurs` (too electric by far)
 #    24-Feb-2014 (CT) Change `Event.list_display` (add `short_title`; order)
 #    26-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
+#    16-Dec-2015 (CT) Change to `UI_Spec`
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
-from   _TFL                     import TFL
 from   _GTW                     import GTW
+from   _TFL                     import TFL
 
-from   _TFL.I18N                import _
+import _GTW._OMP._EVT
 
-class Admin (object) :
-    """Provide configuration for GTW.NAV.E_Type.Admin entries"""
+import _TFL.Sorted_By
+
+class UI_Spec (object) :
+    """UI specification for E_Types defined by GTW.OMP.EVT."""
 
     Calendar            = dict \
-        ( ETM           = "GTW.OMP.EVT.Calendar"
+        (
         )
+
     Event               = dict \
-        ( ETM           = "GTW.OMP.EVT.Event"
-        , list_display  = ("date", "time", "short_title", "left", "calendar")
+        ( list_display  = ("date", "time", "short_title", "left", "calendar")
         , sort_key      = TFL.Sorted_By
             ("-date.start", "-time.start", "short_title", "left")
         , MF3_Attr_Spec        = dict
@@ -56,15 +62,15 @@ class Admin (object) :
             ( include_rev_refs = ("recurrence", )
             )
         )
+
     Recurrence_Spec     = dict \
-        ( ETM           = "GTW.OMP.EVT.Recurrence_Spec"
-        , MF3_Form_Spec        = dict
+        ( MF3_Form_Spec        = dict
             ( include_rev_refs = ("rules", )
             )
         )
 
-# end class Admin
+# end class UI_Spec
 
 if __name__ != "__main__" :
-    GTW.OMP.EVT._Export_Module ()
-### __END__ GTW.OMP.EVT.Nav
+    GTW.OMP.EVT._Export ("UI_Spec")
+### __END__ GTW.OMP.EVT.UI_Spec

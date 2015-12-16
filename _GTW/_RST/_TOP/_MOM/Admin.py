@@ -127,6 +127,8 @@
 #    31-Jul-2015 (CT) Handle `ValueError` from `polisher`
 #    21-Sep-2015 (CT) Add `_real_name` to `Renderer` classes
 #    17-Nov-2015 (CT) Set `static_p` to `False`
+#    16-Dec-2015 (CT) Explicitly set `ETM` in `_pns_entries`
+#    16-Dec-2015 (CT) Use `E_Type.UI_Spec`, not `Nav.Admin ["type_base_name"]`
 #    ««revision-date»»···
 #--
 
@@ -1693,23 +1695,25 @@ class Group (_Ancestor) :
         seen     = set ()
         for pns in pnss :
             PNS = app_type.PNS_Map [pns]
-            Nav = getattr (getattr (PNS, "Nav", None), "Admin", None)
             for ET in app_type.etypes_by_pns [pns] :
                 if ET.is_relevant and ET.show_in_ui :
-                    admin = ET_Map [ET.type_name].admin
+                    tn    = ET.type_name
+                    tbn   = ET.type_base_name
+                    admin = ET_Map [tn].admin
                     if (not admin) or self.show_aliases :
                         aa = dict (getattr (ET, "admin_args", {}))
-                        aa.update (getattr (Nav, ET.type_base_name, {}))
+                        aa.update (ET.UI_Spec, ETM = tn)
                         T = E_Type
                         if admin :
                             T = E_Type_Alias
                             aa.update \
-                                ( name   = ET.ui_name
-                                , target = admin
+                                ( name          = ET.ui_name
+                                , show_in_admin = True
+                                , target        = admin
                                 )
-                        if aa and ET.type_base_name not in seen :
-                            seen.add (ET.type_base_name)
-                            yield T (parent = self, ** aa)
+                        if aa.get ("show_in_admin") and tbn not in seen :
+                            seen.add (tbn)
+                            yield T  (parent = self, ** aa)
     # end def _pns_entries
 
 # end class Group

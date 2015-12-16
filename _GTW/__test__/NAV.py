@@ -117,6 +117,10 @@ _test_nav = """
     ...     print (owl.href, owl.template.name)
     Admin site_admin
     Admin/Benutzerverwaltung site_admin
+    Admin/Benutzerverwaltung/Account e_type_admin
+    Admin/Benutzerverwaltung/Account_in_Group e_type_admin
+    Admin/Benutzerverwaltung/Certificate e_type_admin
+    Admin/Benutzerverwaltung/Group e_type_admin
     Admin/Personenverwaltung site_admin
     Admin/Personenverwaltung/Address e_type_admin
     Admin/Personenverwaltung/Address_Position e_type_admin
@@ -2294,7 +2298,7 @@ class Company_R (_Ancestor_Essence) :
 
 # end class Company_R
 
-GTW.OMP.PAP.Nav.Admin.Company_R = dict (ETM = "GTW.OMP.PAP.Company_R")
+GTW.OMP.PAP.UI_Spec.Company_R = dict (show_in_admin = True)
 
 __test__ = Scaffold.create_test_dict \
     ( dict

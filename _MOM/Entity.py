@@ -295,6 +295,7 @@
 #    30-Jul-2015 (CT) Change `_kw_polished` to handle polisher errors
 #     3-Aug-2015 (CT) Use `_init_raw_default`, not literal `False`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    16-Dec-2015 (CT) Add `UI_Spec`
 #    ««revision-date»»···
 #--
 
@@ -1152,7 +1153,11 @@ class Id_Entity \
     uniqueness_ems        = TFL.Meta.Alias_Property \
         ("_Predicates.uniqueness_ems")
 
-    _attrs_to_update_combine = ("refuse_links", )
+    _attrs_to_update_combine = ("refuse_links", "_UI_Spec_Defaults")
+
+    _UI_Spec_Defaults     = dict \
+        ( show_in_admin   = False
+        )
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -1450,6 +1455,33 @@ class Id_Entity \
               if a.has_substance (self)
             )
     # end def ui_display_format
+
+    @TFL.Meta.Class_and_Instance_Once_Property
+    def UI_Spec (soc) :
+        try :
+            UI_Spec_module = soc.PNS._Import_Module ("UI_Spec")
+        except ImportError :
+            pass
+        else :
+            try :
+                UI_Spec    = UI_Spec_module.UI_Spec
+            except AttributeError :
+                pass
+            else :
+                defaults   = soc._UI_Spec_Defaults
+                try :
+                    result = getattr (UI_Spec, soc.type_base_name)
+                except AttributeError :
+                    result = dict (defaults)
+                    setattr (UI_Spec, soc.type_base_name, result)
+                else :
+                    show_in_admin = result.get ("show_in_admin", True)
+                    for k in defaults :
+                        if k not in result :
+                            result [k] = defaults [k]
+                    result ["show_in_admin"] = show_in_admin
+                return result
+    # end def UI_Spec
 
     def add_error (self, err, kind = "object") :
         """Add `err` to error-list of predicate manager"""
