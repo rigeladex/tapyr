@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -26,6 +26,7 @@
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    16-Apr-2014 (CT) Add `Person_has_Property`
 #    15-Sep-2014 (CT) Remove `Person_has_Property`
+#    16-Dec-2015 (CT) Use `_Add_Import_Callback` as decorator
 #    ««revision-date»»···
 #--
 
@@ -49,11 +50,9 @@ import _GTW._OMP._PAP.Subject_has_Phone
 
 GTW.OMP.PAP.Subject_has_Property.m_create_role_children ("right")
 
+@GTW._Add_Import_Callback ("_GTW._OMP._Auth.Account")
 def _import_person_has_account (module) :
     import _GTW._OMP._PAP.Person_has_Account
 # end def _import_person_has_account
-
-GTW.OMP.PAP._Add_Import_Callback \
-    ("_GTW._OMP._Auth.Account", _import_person_has_account)
 
 ### __END__ GTW.OMP.PAP.import_PAP

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.NET.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -36,6 +36,7 @@
 #     2-Aug-2013 (CT) Use `A_Int.max_value...`, not literals
 #     2-Aug-2013 (CT) Add import callback for `_GTW._OMP._NET.SAW`, `.SAW_PG`
 #     6-Aug-2013 (CT) Remove composite attributes, aka, major surgery
+#    16-Dec-2015 (CT) Use `_Add_Import_Callback` as decorator
 #    ««revision-date»»···
 #--
 
@@ -197,16 +198,15 @@ class A_MAC_Address (Syntax_Re_Mixin, A_String) :
 
 # end class A_MAC_Address
 
+@GTW._Add_Import_Callback ("_MOM._DBW._SAW.Manager")
 def _import_saw (module) :
     import _GTW._OMP._NET.SAW
 # end def _import_saw
 
+@GTW._Add_Import_Callback ("_MOM._DBW._SAW._PG.Manager")
 def _import_saw_pg (module) :
     import _GTW._OMP._NET.SAW_PG
 # end def _import_saw_pg
-
-GTW.OMP.NET._Add_Import_Callback ("_MOM._DBW._SAW.Manager",     _import_saw)
-GTW.OMP.NET._Add_Import_Callback ("_MOM._DBW._SAW._PG.Manager", _import_saw_pg)
 
 __all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
 
