@@ -61,12 +61,11 @@ _test_code = r"""
       Condition `last_name_not_empty` : The attribute last_name needs a non-empty value
         last_name = None
 
-    >>> with expect_except (MOM.Error.Invariants) :
+    >>> with expect_except (MOM.Error.Invariants, save_error = errors) :
     ...     PAP.Person \
     ...     ( last_name  = u"last_name"
     ...     , first_name = u""
     ...     , raw        = True
-    ...     , on_error   = errors.append
     ...     )
     ...
     Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
@@ -93,8 +92,8 @@ _test_code = r"""
     ]
 
     >>> errors = []
-    >>> with expect_except (MOM.Error.Invariants) :
-    ...     PAP.Person (last_name = u"", first_name = u"", raw = True, on_error = errors.append)
+    >>> with expect_except (MOM.Error.Invariants, save_error = errors) :
+    ...     PAP.Person (last_name = u"", first_name = u"", raw = True)
     Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
         first_name = None
       Condition `last_name_not_empty` : The attribute last_name needs a non-empty value

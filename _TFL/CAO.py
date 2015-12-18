@@ -117,6 +117,7 @@
 #    21-Jul-2015 (CT) Use `portable_repr` to improve 3-compatibility
 #    22-Jul-2015 (CT) Add `config` and `syntax` to `Help`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    18-Dec-2015 (CT) Add optional `save_error` to `expect_except`
 #    ««revision-date»»···
 #--
 
@@ -2196,11 +2197,14 @@ class CAO (TFL.Meta.Object) :
 # end class CAO
 
 @TFL.Contextmanager
-def expect_except (* Xs) :
+def expect_except (* Xs, ** kw) :
     """Hide exception class name differences between Python 2 and 3"""
+    save_error = kw.pop ("save_error", None)
     try :
         yield
     except Xs as exc :
+        if save_error is not None :
+            save_error.append (exc)
         print ("%s: %s" % (exc.__class__.__name__, exc))
 # end def expect_except
 

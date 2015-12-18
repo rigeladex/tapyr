@@ -215,11 +215,11 @@ _test_code = """
     ]
 
     >>> errors = []
-    >>> with expect_except (MOM.Error.Invariants) :
-    ...     SRM.Boat_Class (max_crew = 4, on_error = errors.append)
+    >>> with expect_except (MOM.Error.Invariants, save_error = errors) :
+    ...     SRM.Boat_Class (max_crew = 4)
     Invariants: Boat_Class needs the attribute: ('name',); Instead it got: (max_crew = 4)
     >>> errors
-    [<Required_Missing: (Boat_Class needs the attribute: ('name',); Instead it got: (max_crew = 4)>]
+    [<Invariants: <Required_Missing: (Boat_Class needs the attribute: ('name',); Instead it got: (max_crew = 4)>>]
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
     [ { 'attributes' : ('name', )
       , 'bindings' :
@@ -238,19 +238,18 @@ _test_code = """
     ]
 
     >>> errors = []
-    >>> with expect_except (MOM.Error.Invariants) :
-    ...     SRM.Boat_Class (on_error = errors.append)
+    >>> with expect_except (MOM.Error.Invariants, save_error = errors) :
+    ...     SRM.Boat_Class ()
     Invariants: Condition `name_not_empty` : The attribute name needs a non-empty value
         name = None
-      Boat_Class needs the attribute: ('name',); Instead it got: ()
 
     >>> errors
-    [<Required_Missing: (Boat_Class needs the attribute: ('name',); Instead it got: ()>, <Invariants: <Required_Empty: SRM.Boat_Class ('',), Condition `name_not_empty` : The attribute name needs a non-empty value
-        name = None>>]
+    [<Invariants: <Required_Empty: SRM.Boat_Class ('',), Condition `name_not_empty` : The attribute name needs a non-empty value
+          name = None>>]
 
     >>> errors = []
-    >>> with expect_except (MOM.Error.Invariants) :
-    ...     SRM.Boat (sail_number = "187042", raw = True, on_error = errors.append)
+    >>> with expect_except (MOM.Error.Invariants, save_error = errors) :
+    ...     SRM.Boat (sail_number = "187042", raw = True)
     Invariants: Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = 187042)
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
     [ { 'attributes' : ('left', )
@@ -271,29 +270,13 @@ _test_code = """
     ]
 
     >>> errors = []
-    >>> with expect_except (MOM.Error.Invariants) :
-    ...     SRM.Boat (sail_number = "-187042", raw = True, on_error = errors.append)
+    >>> with expect_except (MOM.Error.Invariants, save_error = errors) :
+    ...     SRM.Boat (sail_number = "-187042", raw = True)
     Invariants: Condition `AC_check_sail_number_1` : 0 <= sail_number <= 999999
         sail_number = -187042
-      Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = -187042)
 
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
-    [ { 'attributes' : ('left', )
-      , 'bindings' :
-          [ ( 'left'
-            , None
-            )
-          , ( 'sail_number'
-            , '-187042'
-            )
-          ]
-      , 'description' : 'Instead it got: (sail_number = -187042)'
-      , 'explanation' : 'All required attributes must be supplied'
-      , 'head' : "Boat needs the attributes: ('left', 'sail_number')"
-      , 'is_required' : True
-      , 'missing_t' : {'left' : ['name']}
-      }
-    , { 'attributes' : ['sail_number']
+    [ { 'attributes' : ['sail_number']
       , 'bindings' :
           [ ( 'sail_number'
             , '-187042'

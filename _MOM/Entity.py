@@ -296,6 +296,8 @@
 #     3-Aug-2015 (CT) Use `_init_raw_default`, not literal `False`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    16-Dec-2015 (CT) Add `UI_Spec`
+#    18-Dec-2015 (CT) Change `_main__init__` to not pass `on_error` to
+#                     `epk_as_kw`
 #    ««revision-date»»···
 #--
 
@@ -1788,9 +1790,11 @@ class Id_Entity \
     # end def _json_encode
 
     def _main__init__ (self, * epk, ** kw) :
+        ### `epk_as_kw` needs to raise errors to avoid follow-up errors
+        ### --> override `on_error` in `kw` when calling `epk_as_kw`
         self.implicit = kw.pop ("implicit", False)
         raw           = bool (kw.pop ("raw", self._init_raw_default))
-        akw           = self.epk_as_kw (* epk, ** kw)
+        akw           = self.epk_as_kw (* epk, ** dict (kw, on_error = None))
         ukw           = dict (self._kw_undeprecated (akw))
         pkw           = self._kw_polished (ukw) if raw else ukw
         setter        = self.__super._set_raw if raw else self.__super._set_ckd
