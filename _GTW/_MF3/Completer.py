@@ -46,6 +46,7 @@
 #    11-May-2015 (CT) Change `choose` to use `completer_choose_value_iter`
 #                     + To include all field values for completed entity
 #                       and nested entity fields
+#    18-Dec-2015 (CT) Add guard for exceptions to `aq_filters` and `choices`
 #    ««revision-date»»···
 #--
 
@@ -214,7 +215,12 @@ class _MF3_Completer_ (TFL.Meta.Object) :
                     name = fmap.get (k)
                     if name is not None :
                         aq = getattr (AQ, name)
-                        yield aq.AC (v)
+                        try :
+                            yield aq.AC (v)
+                        except Exception :
+                            ### invalid input can trigger any number of
+                            ### exceptions: ignore
+                            pass
         return tuple (_gen (self, ETM, values))
     # end def aq_filters
 
@@ -239,7 +245,10 @@ class _MF3_Completer_ (TFL.Meta.Object) :
             if aq is not None :
                 v      = values.get (elem.id)
                 if not (v == "" or v is None) :
-                    aq_fs  = (aq.AC (v), )
+                    try :
+                        aq_fs  = (aq.AC (v), )
+                    except Exception :
+                        pass ### ignore errors due to invalid values
             else :
                 ### XXX nested attribute of nested E_Type
                 logging.warning \
