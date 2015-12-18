@@ -25,6 +25,7 @@
 #    29-Apr-2015 (CT) Change `_error_as_json_cargo` to use
 #                     `MOM.Error.as_json_cargo`
 #    29-Apr-2015 (CT) Add optional arguments `errors` to `List.__init__`
+#    18-Dec-2015 (CT) Fix `__repr__` of `Wrapper` and `List` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -231,7 +232,8 @@ class Wrapper (TFL.Meta.Object) :
     # end def _error_as_json_cargo__Required_Missing
 
     def __repr__ (self) :
-        return "%r;ERR-%d: %r" % (self.entity, self.index, self.error)
+        result = "%s;ERR-%d: %s" % (self.entity, self.index, self.error)
+        return pyk.reprify (result)
     # end def __repr__
 
 # end class Wrapper
@@ -311,7 +313,7 @@ class List (TFL.Meta.Object) :
     # end def __len__
 
     def __repr__ (self) :
-        return b"%r: %d errors" % (self.entity, len (self))
+        return pyk.reprify ("%s: %d errors" % (self.entity, len (self)))
     # end def __repr__
 
 # end class List
