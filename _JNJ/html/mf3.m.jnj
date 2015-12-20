@@ -45,6 +45,8 @@
 ##    29-Apr-2015 (CT) Change `do_description` to always add `aside` element,
 ##                     even if empty
 ##     2-Jun-2015 (CT) Factor and simplify `action_button`
+##    20-Dec-2015 (CT) Use `elem.aside` and `.aside_x`, not home-grown code
+##    20-Dec-2015 (CT) Add `class="?"` to label if `elem.aside`
 ##    ««revision-date»»···
 ##--
 #}
@@ -54,16 +56,27 @@
 {%- from   "html/action_button.m.jnj" import action_button with context %}
 
 {%- macro do_description (page, form, elem, t_module) -%}
-  {%- set desc = GTW._T (elem.ui_description or elem.description) %}
-  {%- if desc -%}
-    {%- set labl = GTW._T (elem.label) %}
-    {%- set expl = GTW._T (elem.explanation) %}
-    <aside class="Desc" {%- if expl %} title="{{ expl|safe }}"{% endif -%}>
-      {%- if desc != labl %}
-        {{- desc|safe -}}
+  {%- set desc    = GTW._T (elem.aside) %}
+  {%- set aside_x = elem.aside_x %}
+  <aside class="Desc">
+    {%- if desc -%}
+      {{- desc|safe -}}
+      {%- if aside_x -%}
+        <a class="button pure-button" {# -#}
+           data-action="more_aside" {# -#}
+           tabindex="-1" {# -#}
+           title="{{ GTW._T ("Display more detailed explanation") }}" {# -#}
+        >{# -#}
+          <i class="fa fa-ellipsis-h"></i>{# -#}
+        </a>{# -#}
+        <div class="Expl">
+          {%- for text in aside_x %}
+            <p>{{- GTW._T (text)|safe -}}</p>
+          {% endfor -%}
+        </div>
       {% endif -%}
-    </aside>
-  {%- endif -%}
+    {% endif -%}
+  </aside>
 {%- endmacro -%} {#- do_description -#}
 
 {%- macro do_elements (page, form, elem, t_module) -%}
@@ -158,7 +171,8 @@
 {%- macro do_label (page, form, elem, t_module) -%}
   {%- set prefix = kwargs.pop ("label_prefix", "") %}
   {%- set label  = kwargs.pop ("label", "") %}
-  <label for="{{ elem.id }}">{# -#}
+  {%- set aside  = elem.aside %}
+  <label for="{{ elem.id }}" {%- if aside %} class="desc-p"{% endif -%}>{# -#}
     {%- if prefix %}{{ prefix }} {% endif -%}
     {{ label or GTW._T (elem.label) -}}
     {%- if elem.required and not elem.prefilled %}<b>*</b>{% endif -%}

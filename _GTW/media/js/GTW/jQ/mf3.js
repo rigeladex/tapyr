@@ -65,6 +65,9 @@
 //    12-May-2015 (CT) Add `need_blur` to fix `polisher` breaking `completer`
 //     1-Jun-2015 (CT) Add `remove_undo`, adapt `action_callback.remove`
 //    31-Jul-2015 (CT) Change `polish_field` to handle `feedback`
+//    21-Dec-2015 (CT) Add `action_callback.more_aside`
+//    21-Dec-2015 (CT) Add `show_field_desc_cb`
+//                     + remove `aside` from `field_focus_cb`
 //    ««revision-date»»···
 //--
 
@@ -89,6 +92,8 @@
               , display_id_ref           : ".value.display.id_ref"
               , entity_list              : ".Entity-List"
               , err_msg                  : "div.error-msg"
+              , field_desc               : "aside.Desc"
+              , field_expl               : ".Expl"
               , form_element             : "form[id]"
               , form_errors              : "div.form-errors"
               , focusables               :
@@ -97,6 +102,7 @@
               , id_field                 : ".Field :input[id]"
               , input_field              :
                   ".Field :input[id]:not(.prefilled):not(.readonly)"
+              , label_with_desc          : "label.desc-p"
               , status                   : "b"
               , submit                   : "[type=submit]"
               }
@@ -177,6 +183,12 @@
             , close : function close (ev) {
                 close_section ($(this));
                 return false;
+              }
+            , more_aside : function more_aside (ev) {
+                var S     = options.selectors;
+                var a$    = $(this);
+                var x$    = a$.next (S.field_expl);
+                x$.toggle ();
               }
             , open : function open (ev) {
                 var S     = options.selectors;
@@ -561,7 +573,6 @@
         var field_blur_cb = function field_blur_cb (ev) {
             var S         = options.selectors;
             var f$        = $(this);
-            var a$        = f$.siblings ().filter ($("aside"));
             var c$        = f$.closest  (S.composite_field);
             var ft        = f$.data     ("field_type");
             var need_blur = f$.data     ("need_blur");
@@ -625,20 +636,12 @@
             var S         = options.selectors;
             var values    = options.form_spec.cargo.field_values;
             var f$        = $(this);
-            var a$        = f$.siblings ().filter ($("aside"));
             var c$        = f$.closest (S.composite_field);
-            var ca$       = $("aside", c$);
             var F_id      = f$.prop ("id");
             var ft        = f$.data ("field_type");
             var fv        = values [F_id];
             f$.data ("old_value", ft.get_cargo (fv))
               .data ("need_blur", true);
-            // hide `aside` elements of field that had focus before
-            // + this is done here, not in `field_blur_cb`, to avoid
-            //   unnecessary layout changes
-            $("aside", options.form$).removeClass ("open");
-            a$.addClass  ("open");
-            ca$.addClass ("open");
         };
         var field_type =
             { checkbox   :
@@ -1048,6 +1051,18 @@
                 };
             };
         };
+        var show_field_desc_cb = function show_field_desc_cb (ev) {
+            var S            = options.selectors;
+            var target$      = $(ev.target);
+            var show_p       = window.getComputedStyle
+                (document.body, ":after").getPropertyValue ("font-size");
+            var x$;
+            if (show_p != "0px") {
+                x$ = target$.siblings ().filter (S.field_desc);
+                x$.toggleClass ("open");
+            };
+            return true;
+        };
         var submit_cb = function submit_cb (ev) {
             var S            = options.selectors;
             var form$        = options.form$;
@@ -1119,6 +1134,8 @@
         var err_ref   = selectors.err_msg + " a";
         options.form$ = this;
         this.delegate  (err_ref, "click", form_errors.goto_field);
+        this.delegate
+            (selectors.label_with_desc, "click", show_field_desc_cb);
         // bind `submit_cb` to `click` of submit buttons (need button name)
         // disable `submit` event for form to avoid IE to do normal form
         // submit after running `submit_cb`

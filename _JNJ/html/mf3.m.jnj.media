@@ -36,6 +36,9 @@
 #                     + Disable pointer-events for input elements
 #                     + Reduce opacity of form
 #                     + Display warning in P.color_status_bad
+#    20-Dec-2015 (CT) Change rules for `aside`
+#                     + per default, display `aside`
+#                     + add rules for `.expl`, `.button[data-action=more]`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +51,11 @@ Include ("html/ui_dialog.media")
 
 style_sheet = Style_Sheet \
     ( Rule
+        ( "body:after"
+        , content              = "''"
+        , font_size            = 0
+        )
+    , Rule
         ( "form"
         , font_size            = Em (0.875)
         , children             =
@@ -218,7 +226,6 @@ style_sheet = Style_Sheet \
                         ( "Field-Composite.horizontal"
                         , border           = 0
                         , margin           = TRBL0 (b = Em (0.5))
-                        , padding          = 0
                         , children             =
                             [ Rule
                                 ( "div"
@@ -392,15 +399,39 @@ style_sheet = Style_Sheet \
                     [ Rule_Child
                         ( "aside"
                         , color                = P.color_half_grey
-                        , display              = "none"
-                        , margin               = TRBL0 (l = P.pure.aside_indent)
+                        , margin               = TRBL0
+                            ( b                = Em (0.5)
+                            , l                = P.pure.aside_indent
+                            )
                         , padding_left         = Em (0.5)
-                        , visibility           = "hidden"
                         , children             =
-                            [ Rule_Class
+                            [ Rule_Child
+                                ( ".button[data-action=more_aside]"
+                                , Border (radius = Em (1.0), width = 0)
+                                , cursor               = "help"
+                                , margin               = TRBL0 (l = Em (0.5))
+                                , padding              = Em (0.5)
+                                , children             =
+                                    [ Rule
+                                        ( "i.fa"
+                                        , color                = P.color.m_blue
+                                        )
+                                    ]
+                                )
+                            , Rule_Child
+                                ( ".Expl"
+                                , display              = "none"
+                                , margin               = TRBL0 (t = Em (0.5))
+                                , children             =
+                                    [ Rule
+                                        ( "p"
+                                        , margin       = TRBL0 (t = Em (0.5))
+                                        )
+                                    ]
+                                )
+                            , Rule_Class
                                 ( "open"
                                 , display              = "block"
-                                , visibility           = "visible"
                                 )
                             , Rule
                                 ( ".error-msg"
@@ -426,7 +457,6 @@ style_sheet = Style_Sheet \
                             [ Rule_Child
                                 ( "aside"
                                 , display              = "block"
-                                , visibility           = "visible"
                                 )
                             ]
                         )
@@ -582,11 +612,25 @@ style_sheet = Style_Sheet \
                 ( "form"
                 , children        =
                     [ Rule
-                        ( ".Field"
-                        , children             =
+                        ( "section", "div"
+                        , children         =
                             [ Rule_Class
-                                ( ".mf3-control-group-h"
-                                , display              = "block"
+                                ( "Field"
+                                , children             =
+                                    [ Rule_Class
+                                        ( ".mf3-control-group-h"
+                                        , display              = "block"
+                                        )
+                                    ]
+                                )
+                            , Rule_Class
+                                ( "Field-Composite.horizontal"
+                                , children             =
+                                    [ Rule_Child
+                                        ( "label"
+                                        , padding_top          = 0
+                                        )
+                                    ]
                                 )
                             ]
                         )
@@ -598,6 +642,10 @@ style_sheet = Style_Sheet \
         ( Media.Query ("screen", P.breakpoint.quite_narrow)
         , rules               =
             [ Rule
+                ( "body:after"
+                , font_size           = Px (1)
+                )
+            , Rule
                 ( ".pure-form"
                 , children        =
                     [ Rule
@@ -618,21 +666,52 @@ style_sheet = Style_Sheet \
                                     ]
                                 )
                             , Rule_Class
-                                ( "Field"
+                                ( "Field", "Field-Composite"
                                 , children             =
                                     [ Rule
                                         ( "label"
-                                        , margin_top           = Rem (0.5)
+                                        , max_width            = Percent (95)
+                                        , padding              = TRBL
+                                            (Em (0.5), 0, 0)
+                                        , position             = "relative"
+                                        , children             =
+                                            [ Rule_Class
+                                                ( "desc-p"
+                                                , cursor           = "help"
+                                                , children         =
+                                                    [ P.Rule.hover
+                                                    , Rule_Pseudo
+                                                        ( "after"
+                                                        , bottom      = Rem (0.05)
+                                                        , color       =
+                                                            P.color.m_blue
+                                                        , content     = "'?'"
+                                                        , font_size   = Rem (1.0)
+                                                        , font_weight = "bold"
+                                                        , position    = "absolute"
+                                                        , right       = Rem (1.0)
+                                                        )
+                                                    ]
+                                                )
+                                            ]
                                         )
                                     ]
                                 )
                             , Rule_Class
                                 ( "Field", "Field-Entity", "Field-Composite"
+                                , "Field-Composite.horizontal"
                                 , padding_left         = Rem (0.5)
                                 , children             =
                                     [ Rule
                                         ( "aside"
-                                        , margin           = TRBL (0)
+                                        , display              = "none"
+                                        , margin_left          = 0
+                                        , children             =
+                                            [ Rule_Class
+                                                ( "open"
+                                                , display      = "block"
+                                                )
+                                            ]
                                         )
                                     ]
                                 )
@@ -644,8 +723,12 @@ style_sheet = Style_Sheet \
                                 ( "section", "div"
                                 , children             =
                                     [ Rule_Class
-                                        ( "Field-Entity", "Field-Composite"
+                                        ( "Field-Entity"
                                         , margin_top           = Rem (1.5)
+                                        )
+                                    , Rule_Class
+                                        ( "Field-Composite"
+                                        , margin_top           = Rem (0.5)
                                         )
                                     ]
                                 )

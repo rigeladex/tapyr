@@ -95,6 +95,8 @@
 #    15-Jun-2015 (CT) Add all invariants in `_Entity_Mixin_._create_instance`
 #                     * remove the guard `not exc.any_required_empty`
 #    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
+#    20-Dec-2015 (CT) Add properties `aside` and `aside_x` to `_Field_Base_`
+#    20-Dec-2015 (CT) Add `syntax` to `_Field_Base_._attr_prop_map`
 #    ««revision-date»»···
 #--
 
@@ -857,12 +859,13 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
     collapsed               = False
     default                 = _Base_.undef
     prefilled               = False
+    syntax                  = None
     template_module         = None
 
     _attr_prop_map          = dict \
         ( ( (k, k) for k in
             ( "css_align",   "css_class"
-            , "description", "explanation", "ui_description"
+            , "description", "explanation", "ui_description", "syntax"
             , "ui_name"
             )
           )
@@ -933,6 +936,30 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
             result._add_auto_attributes (E_Type, ** kw)
         return result
     # end def Auto
+
+    @TFL.Meta.Once_Property
+    def aside (self) :
+        desc   = self.ui_description or self.description
+        expl   = self.explanation
+        labl   = self.label
+        result = ""
+        if desc :
+            result = desc if desc != labl else expl
+        elif expl != labl :
+            result = expl
+        return result
+    # end def aside
+
+    @TFL.Meta.Once_Property
+    def aside_x (self) :
+        result = []
+        expl   = self.explanation
+        if expl and expl != self.aside :
+            result.append (expl)
+        if self.syntax :
+            result.append (self.syntax)
+        return result
+    # end def aside_x
 
     @TFL.Meta.Once_Property
     def completer (self) :

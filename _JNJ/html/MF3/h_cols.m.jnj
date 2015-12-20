@@ -1,10 +1,10 @@
 {#- jinja template: html/h_cols.m.jnj -#}
 {#
-## Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
-## 
+##
 ## This template is licensed under the terms of the BSD 3-Clause License
 ## <http://www.c-tanzer.at/license/bsd_3c.html>.
 ## #*** </License> ***********************************************************#
@@ -21,6 +21,7 @@
 ##    28-Aug-2014 (CT) Add `do_description` to `Field_Composite`
 ##    28-Aug-2014 (CT) Change class of `Field_Composite` to
 ##                     `Field-Composite horizontal`
+##    21-Dec-2015 (CT) Change `Field-Composite` to use `do_label`
 ##    ««revision-date»»···
 ##--
 #}
@@ -40,9 +41,9 @@
 {%- macro Field_Composite (page, form, elem, t_module) -%}
   {%- if GTW.len (elem.field_elements) > 1 %}
     <div class="Field-Composite horizontal pure-control-group">
-      <label>
-        {{- GTW._T (elem.label) -}}
-      </label>
+      {{ GTW.call_macro
+          ("do_label", page, form, elem, t_module, templ_name = t_module)
+      }}
       <div class="Fields">
         {{ GTW.call_macro
           ("do_elements", page, form, elem, t_module, templ_name = t_module)
