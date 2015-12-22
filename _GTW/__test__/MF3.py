@@ -22,6 +22,7 @@
 #    27-Aug-2014 (CT) Add test `skip`
 #    30-Mar-2015 (CT) Add test `single_primary`
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    22-Dec-2015 (CT) Add test `max_rev_ref`
 #    ««revision-date»»···
 #--
 
@@ -1933,6 +1934,38 @@ _test_element = """
 
 """
 
+_test_max_rev_ref = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> scope.db_meta_data.dbid = '2d802327-5c99-49ca-9af7-2ddc6b4c648b'
+
+    >>> EVT = scope.EVT
+    >>> F_E = MF3_E.Entity.Auto (EVT.Event, id_prefix = "E", attr_spec = dict (recurrence = dict (include_rev_refs = ("rules", ))), include_rev_refs = ("recurrence", ))
+    >>> f_e = F_E (scope)
+    >>> _   = f_e ["recurrence"].add ()
+
+    >>> show_elements (f_e, "max_rev_ref")
+    <Entity E-64> ---
+    <Field_Entity E-64:left> ---
+    <Field_Composite E-64:date> ---
+    <Field E-64:date.start> ---
+    <Field E-64:date.finish> ---
+    <Field_Composite E-64:time> ---
+    <Field E-64:time.start> ---
+    <Field E-64:time.finish> ---
+    <Field_Entity E-64:calendar> ---
+    <Field E-64:detail> ---
+    <Field E-64:short_title> ---
+    <Field_Rev_Ref E-64:recurrence> 1
+    <Entity_Rev_Ref E-64:recurrence/1> ---
+    <Field E-64:recurrence::dates/1> ---
+    <Field E-64:recurrence::date_exceptions/1> ---
+    <Field_Rev_Ref E-64:recurrence::rules/1> 2147483648
+    <Field_Ref_Hidden E-64:recurrence::left/1> ---
+
+"""
+
 _test_single_primary = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -2125,6 +2158,7 @@ _test_skip = r"""
 __test__ = Scaffold.create_test_dict \
     ( dict
         ( element        = _test_element
+        , max_rev_ref    = _test_max_rev_ref
         , single_primary = _test_single_primary
         , skip           = _test_skip
         )

@@ -68,6 +68,7 @@
 //    21-Dec-2015 (CT) Add `action_callback.more_aside`
 //    21-Dec-2015 (CT) Add `show_field_desc_cb`
 //                     + remove `aside` from `field_focus_cb`
+//    22-Dec-2015 (CT) Fix `action_callback.add_rev_ref` `add_rev_ref` hiding
 //    ««revision-date»»···
 //--
 
@@ -148,7 +149,10 @@
                         rr$ = c$.children
                             (S.container_rev_ref).not (".removed");
                         if (rr$.length >= max_rr) {
-                            ab$ = $("[data-action=\"add_rev_ref\"]", c$);
+                            // restrict `ab$` to direct children of `c$` to
+                            // avoid clobbering buttons of nested rev_refs
+                            ab$ = c$.children (".action-button").find
+                                ("[data-action=\"add_rev_ref\"]");
                             ab$.hide ();
                         };
                     } else {
