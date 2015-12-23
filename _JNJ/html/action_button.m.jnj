@@ -19,6 +19,7 @@
 ## Revision Dates
 ##     2-Jun-2015 (CT) Creation (factored from mf3.m.jnj, ETR/table.m.jnj)
 ##     2-Jun-2015 (CT) Remove `zero_width_space` from `action_button`
+##    23-Dec-2015 (CT) Add optional argument `ref` to `action_button`
 ##    ««revision-date»»···
 ##--
 #}
@@ -30,10 +31,12 @@
     , i_add_cls    = None
     , a_cls        = None
     , tabindex     = "-1"
+    , ref          = None
     )
 -%}
   {%- set akw = GTW.filtered_dict
-        ( kwargs, { "data-action" : action }
+        ( kwargs
+        , { "data-action" : action, "data-ref" : ref }
         , class    = GTW.filtered_join (" ", (a_cls, "pure-button"))
         , tabindex = tabindex
         , title    = title.strip ()

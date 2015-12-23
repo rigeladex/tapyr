@@ -69,6 +69,8 @@
 //    21-Dec-2015 (CT) Add `show_field_desc_cb`
 //                     + remove `aside` from `field_focus_cb`
 //    22-Dec-2015 (CT) Fix `action_callback.add_rev_ref` `add_rev_ref` hiding
+//    23-Dec-2015 (CT) Factor `toggle_add_rev_ref` to DRY and fix
+//                     `max_rev_ref` handling
 //    ««revision-date»»···
 //--
 
@@ -140,21 +142,11 @@
                     if (! answer ["error"]) {
                         var fsu    = answer ["form_spec_update"];
                         var html   = answer ["html"];
-                        var max_rr = c$.data ("max-rev-ref");
-                        var rr$, ab$;
                         c$.append (html);
                         $GTW.inspect.update_transitive (form_spec, fsu);
                         new$ = c$.children ().last ();
-                        setup_sub_form (new$);
-                        rr$ = c$.children
-                            (S.container_rev_ref).not (".removed");
-                        if (rr$.length >= max_rr) {
-                            // restrict `ab$` to direct children of `c$` to
-                            // avoid clobbering buttons of nested rev_refs
-                            ab$ = c$.children (".action-button").find
-                                ("[data-action=\"add_rev_ref\"]");
-                            ab$.hide ();
-                        };
+                        setup_sub_form     (new$);
+                        toggle_add_rev_ref (c$);
                     } else {
                         $GTW.show_message
                             ("Ajax completion error: ", answer.error);
@@ -216,7 +208,6 @@
                 var f_values     = cargo.field_values;
                 var sigs         = cargo.sigs;
                 var F_id         = d$.prop ("id");
-                var max_rr       = p$.data ("max-rev-ref");
                 var url          = options.url.remove;
                 var cleanup_one  = function cleanup_one (id) {
                     remove_cache.vals [id] = f_values [id];
@@ -226,7 +217,6 @@
                 };
                 var cleanup    = function cleanup (answer) {
                     var feedback, undo_p;
-                    var rr$, ab$;
                     cleanup_one (elem_pid);
                     $(":input[id]", c$).each
                         ( function (n) {
@@ -263,11 +253,7 @@
                     } else {
                         c$.remove ();
                     };
-                    rr$ = p$.children (S.container_rev_ref).not (".removed");
-                    if (rr$.length < max_rr) {
-                        ab$ = $("[data-action=\"add_rev_ref\"]", p$);
-                        ab$.show ();
-                    };
+                    toggle_add_rev_ref (p$);
                 };
                 var data, success_cb;
                 if (elem_pid !== "") {
@@ -949,13 +935,11 @@
             var p$           = c$.closest (S.entity_list);
             var remove_cache = c$.data    ("remove_cache");
             var undo         = c$.data    ("remove_undo");
-            var max_rr       = p$.data ("max-rev-ref");
             var form_spec    = options.form_spec;
             var cargo        = form_spec.cargo;
             var f_values     = cargo.field_values;
             var sigs         = cargo.sigs;
             var success_cb   = function success_cb (response, status) {
-                var rr$, ab$;
                 if (! response ["error"]) {
                     $.extend         (cargo.field_values, remove_cache.vals);
                     $.extend         (cargo.sigs,         remove_cache.sigs);
@@ -963,11 +947,7 @@
                         .data        ("remove_undo",      undefined)
                         .removeClass ("removed");
                     $("p.feedback", c$).remove ();
-                    rr$ = c$.children (S.container_rev_ref).not (".removed");
-                    if (rr$.length >= max_rr) {
-                        ab$ = $("[data-action=\"add_rev_ref\"]", c$);
-                        ab$.hide ();
-                    };
+                    toggle_add_rev_ref (p$);
                 } else {
                     $GTW.show_message ("Ajax Error: " + response ["error"]);
                 };
@@ -1127,6 +1107,13 @@
                 , "Submit"
                 );
             return false;
+        };
+        var toggle_add_rev_ref = function toggle_add_rev_ref (c$) {
+            var S      = options.selectors;
+            var max_rr = c$.data     ("max-rev-ref");
+            var rr$    = c$.children (S.container_rev_ref).not (".removed");
+            var ab$    = $("[data-ref=\"" + c$.prop ("id") + "\"]", c$);
+            ab$.toggle (rr$.length < max_rr);
         };
         var translated = function translated (text) {
             var result = text;
