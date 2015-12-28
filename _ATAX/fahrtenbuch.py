@@ -24,6 +24,7 @@
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    31-Oct-2015 (CT) Add `@pyk.adapt__str__` to `FB_Entry`
+#    28-Dec-2015 (CT) Fix `__str__` (use `pyk.text_type`, not `str`)
 #    ««revision-date»»···
 #--
 
@@ -239,7 +240,7 @@ class Fahrtenbuch (TFL.Meta.Object) :
     # end def _read_lines
 
     def __str__ (self) :
-        return "\n".join (str (e) for e in self.entries)
+        return "\n".join (pyk.text_type (e) for e in self.entries)
     # end def __str__
 
 # end class Fahrtenbuch
