@@ -43,6 +43,7 @@
 ##    20-Jun-2014 (CT) Add blocks `body_main` and `body_document`
 ##    10-Jun-2015 (CT) Factor `page_notifications.render`
 ##    17-Nov-2015 (CT) Add guard for `page.top.dynamic_nav_p`
+##    31-Dec-2015 (CT) Add `rel_nav_buttons` to `pg_nav_show`
 ##    ««revision-date»»···
 ##--
 #}
@@ -50,6 +51,7 @@
 {%- import (html_version or "html/5.jnj")   as X -%}
 {%- import "html/media_fragments.jnj"       as MF with context %}
 {%- import "html/navigation.jnj"            as NF with context %}
+{%- import "STD::html/navigation.jnj"       as NT with context %}
 {%- import "html/page_notifications.m.jnj"  as PN with context %}
 
 {%- call X.html (lang = page.language|default ("en")) -%}
@@ -102,6 +104,7 @@
           <a href="#navigate" title="{{- GTW._T ("Show navigation") -}}">
             {{- GTW.Dingbats.trigram_for_heaven -}}
           </a>
+          {{ NT.rel_nav_buttons (page, start_tag = '<span class="rel-nav">', end_tag="</span>") -}}
         </p>
         {%- block body_document -%}
           <div id="document" class="pg_body">

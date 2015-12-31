@@ -60,6 +60,7 @@
 #                     substitution by the printer
 #     2-Dec-2015 (CT) Fix `Rule.visited`
 #     2-Dec-2015 (CT) Change `nav_col.color_spec_link_current.background_color`
+#    31-Dec-2015 (CT) Change `pg_nav_show` to allow embedded rel-nav buttons
 #    ««revision-date»»···
 #--
 
@@ -555,21 +556,21 @@ class Media_Defaults (Definition) :
 
         pg_nav_show        = Rule \
             ( ".pg_nav_show"
-            , font_size        = Percent (200)
+            , background_color = P.R.nav_col.background_color
             , display          = "block"
+            , font_size        = Percent (200)
+            , overflow         = "hidden"
             , visibility       = "visible"
+            , width            = Vw (100)
             , children         = [P.R.Rule.pg_nav_show_a]
             )
 
-        pg_nav_show_a      = Rule \
+        pg_nav_show_a      = Rule_Child \
             ( "a"
-            , background_color = P.R.nav_col.background_color
             , color            = P.R.color_selected
             , font_weight      = "bold"
-            , display          = "block"
-            , overflow         = "hidden"
+            , display          = "inline-block"
             , padding          = TRBL (Em (0.25), Em (0.50))
-            , width            = Percent (95)
             , children         = [P.R.Rule.hover]
             , ** Border (radius = Px (10))
             )

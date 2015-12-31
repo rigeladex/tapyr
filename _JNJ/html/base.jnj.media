@@ -60,6 +60,7 @@
 #    15-Feb-2015 (CT) Add rules for `.menu-icon`
 #     3-Jul-2015 (CT) Add rule for `a[data-action]`
 #     2-Dec-2015 (CT) Add `P.Rule.link`, `P.Rule.visited` to rule for `a`
+#    31-Dec-2015 (CT) Add `rel-nav` rules to `pg_nav_show`
 #    ««revision-date»»···
 #--
 
@@ -204,11 +205,30 @@ style_sheet = Style_Sheet \
                 ( ".pg_nav_show"
                 , display          = "none"
                 , outline          = 0
+                , position         = "relative"
                 , visibility       = "hidden"
                 , children         =
                     [ Rule
                         ( "a"
                         , outline  = 0
+                        )
+                    , Rule_Child
+                        ( ".rel-nav"
+                        , font_size        = Rem (1.75)
+                        , position         = "absolute"
+                        , right            = 0
+                        , top              = 0
+                        , children         =
+                            [ Rule
+                                ( "a"
+                                , background       = "transparent"
+                                , border           = 0
+                                , display          = "inline-block"
+                                , margin           = 0
+                                , padding          = TRBL (Em (0.5), Em (0.75))
+                                , children         = [P.Rule.hover]
+                                )
+                            ]
                         )
                     ]
                 )

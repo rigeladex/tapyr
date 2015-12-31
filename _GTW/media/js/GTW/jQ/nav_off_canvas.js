@@ -1,4 +1,4 @@
-// Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This script is licensed under the terms of the BSD 3-Clause License
@@ -14,6 +14,7 @@
 //
 // Revision Dates
 //    20-Feb-2014 (CT) Creation
+//    31-Dec-2015 (CT) Use `nav_show$.children` to find nav-button
 //    ««revision-date»»···
 //--
 
@@ -41,8 +42,8 @@
                   var nav_show$ = $(this);
                   var b$, c$;
                   if (nav_show$.is (":visible")) {
-                      b$ = $(S.button, nav_show$);
-                      c$ = nav_show$.closest (S.container);
+                      b$ = nav_show$.children (S.button);
+                      c$ = nav_show$.closest  (S.container);
                       b$.click
                         ( function nav_show_click (ev) {
                             var is_off = c$.hasClass (options.nav_off_class);
