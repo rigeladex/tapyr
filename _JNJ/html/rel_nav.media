@@ -19,7 +19,7 @@
 #    14-Mar-2014 (CT) Creation
 #     5-Dec-2014 (CT) Use pure buttons for `.rel-nav`
 #    31-Dec-2015 (CT) Add rule for `visibility` of `.pure-button-disabled`
-     ««revision-date»»···
+#    ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
