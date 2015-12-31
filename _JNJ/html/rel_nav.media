@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -18,7 +18,8 @@
 # Revision Dates
 #    14-Mar-2014 (CT) Creation
 #     5-Dec-2014 (CT) Use pure buttons for `.rel-nav`
-#    ««revision-date»»···
+#    31-Dec-2015 (CT) Add rule for `visibility` of `.pure-button-disabled`
+     ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
@@ -27,13 +28,17 @@ style_sheet = Style_Sheet \
         , children             =
             [ Rule
                 ( ".fa"
-                , color            = P.color_target
-                , children         =
+                , color                = P.color_target
+                , children             =
                     [ Rule
                         ( "b"
                         , P.Rule.hidden
                         )
                     ]
+                )
+            , Rule
+                ( ".pure-button-disabled"
+                , visibility           = "hidden"
                 )
             ]
         )
