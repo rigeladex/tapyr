@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -19,6 +19,7 @@
 #    14-Mar-2014 (CT) Creation
 #     5-Dec-2014 (CT) Use pure buttons for `.rel-nav`
 #    31-Dec-2015 (CT) Add rule for `visibility` of `.pure-button-disabled`
+#     2-Jan-2016 (CT) Add rule for ".pg_body .rel-nav"
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,34 @@ style_sheet = Style_Sheet \
             , Rule
                 ( ".pure-button-disabled"
                 , visibility           = "hidden"
+                )
+            ]
+        )
+    , Rule
+        ( ".pg_body .rel-nav"
+        , height               = Em (2.0)
+        , position             = "relative"
+        , width                = Percent (100)
+        , children             =
+            [ Rule
+                ( "a:first-child"
+                , position     = "absolute"
+                , left         = 0
+                )
+            , Rule
+                ( "a:nth-last-child(3)"
+                , position     = "absolute"
+                , left         = Em (3.0)
+                )
+            , Rule
+                ( "a:nth-child(3)"
+                , position     = "absolute"
+                , right        = Em (4.0)
+                )
+            , Rule
+                ( "a:last-child"
+                , position     = "absolute"
+                , right        = Em (1.0)
                 )
             ]
         )

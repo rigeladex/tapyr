@@ -1,6 +1,6 @@
 {#- jinja template: html/ETR/table.m.jnj -#}
 {#
-## Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -26,6 +26,7 @@
 ##     2-Jun-2015 (CT) Factor and simplify `AB.action_button`
 ##     2-Jun-2015 (CT) Add `zero_width_space` to `action_button`
 ##     9-Jun-2015 (CT) Re-add `href` to `action_button_create`
+##     2-Jan-2016 (CT) Pass `first_last_p` to `rel_nav_buttons`
 ##    ««revision-date»»···
 ##--
 #}
@@ -175,7 +176,7 @@
 {%- endmacro -%} {#- E_Type_head -#}
 
 {%- macro E_Type_tail (renderer) -%}
-  {{ NT.rel_nav_buttons (renderer.resource) }}
+  {{ NT.rel_nav_buttons (renderer.resource, first_last_p = True) }}
 {%- endmacro -%} {#- E_Type_tail -#}
 
 {%- macro Instance (renderer) -%}
