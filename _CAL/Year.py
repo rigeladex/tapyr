@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -142,7 +142,7 @@ class Day (_Ordinal_) :
         self.sort_appointments ()
         d = self.date
         l = CAL.Date (d.year, 12, 31)
-        holi = self.is_holiday
+        holi = self.is_holiday or ""
         if holi :
             holi = "%26s" % ("=%s=" % (TFL.I18N.encode_o (holi), ),)
         return "\n".join \
