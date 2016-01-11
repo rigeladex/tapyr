@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -23,10 +23,14 @@
 #    22-Apr-2015 (CT) Add `Sitemap` to `contents`
 #    26-Nov-2015 (CT) Factor `_excluded_urls`; consider `dynamic_p`, `static_p`
 #     2-Dec-2015 (CT) Fix directories and sitemap of static pages
+#    11-Jan-2016 (CT) Add missing `/` to `Sitemap` url
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -73,7 +77,8 @@ class Robot_Excluder (_Ancestor) :
                 if not site.endswith ("//localhost") :
                     result = "\n".join \
                         ( ( result
-                          , "".join (("Sitemap: ", site, sitemap.name, ".txt"))
+                          , "".join
+                              (("Sitemap: ", site, "/", sitemap.name, ".txt"))
                           )
                         )
         return result
