@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -31,6 +31,7 @@
 #    11-Dec-2013 (CT) Add default for `csrf_check_p`
 #    10-Jun-2015 (CT) Use `response.indicate_notifications`, not home-grown code
 #    17-Nov-2015 (CT) Add `test_client`
+#    15-Jan-2016 (CT) Add imports for `GTW.jQuery` and `.V5a`
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,9 @@ from   _TFL                     import TFL
 
 import _GTW._RST.Resource
 import _GTW._RST._TOP.Dir
+
+import _GTW.jQuery
+import _GTW.V5a
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe

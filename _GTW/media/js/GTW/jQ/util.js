@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -20,6 +20,8 @@
 //                     remove call of `alert` from `options.error`
 //    15-Apr-2014 (CT) Put request info into `options.error` of `gtw_ajax_2json`
 //    30-Apr-2014 (CT) Don't use `jsonify` in `gtw_ajax_2json` for `GET`
+//    20-Jan-2016 (CT) Remove `fix_a_nospam`, `gtw_externalize`
+//                     * use `$V5a...` instead
 //    ««revision-date»»···
 //--
 
@@ -54,32 +56,6 @@
         };
         $.ajax (options);
     };
-    $.fn.gtw_externalize = function () {
-        this.click
-            ( function (event) {
-                  window.open (this.href).focus ();
-                  if (event && "preventDefault" in event) {
-                      event.preventDefault ();
-                  };
-              }
-            ).addClass ("external");
-        return this;
-    };
-    $GTW.update
-        ( { fix_a_nospam   : function ($) {
-                $("a.nospam").each (
-                    function () {
-                        var data = $(this).next ("b.nospam").attr ("title");
-                        if (data != null) {
-                            var aia = $GTW.as_int_array (data);
-                            $(this).replaceWith
-                                (String.fromCharCode.apply (null, aia));
-                        };
-                    }
-                );
-            }
-          }
-        );
   } (jQuery)
 );
 

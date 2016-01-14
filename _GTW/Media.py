@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -53,6 +53,7 @@
 #                       - 37 seconds with cssmin,  jsmin
 #    26-Jun-2015 (CT) Add trailing `;` to `JS_On_Ready.code`, if missing
 #     2-Dec-2015 (CT) Add `logging.warning` to `minified_css`, `minified_js`
+#    20-Jan-2016 (CT) Add `_clean_minified_js` to remove superfluous `;`
 #    ««revision-date»»···
 #--
 
@@ -70,8 +71,10 @@ import _TFL._Meta.M_Unique_If_Named
 from   _TFL._Meta.Once_Property           import Once_Property
 from   _TFL._Meta.Property                import Alias_Property
 from   _TFL.pyk                           import pyk
+from   _TFL.Regexp                        import \
+    Regexp, Re_Replacer, Multi_Re_Replacer, re
 
-from   posixpath import join as pjoin
+from   posixpath                          import join as pjoin
 
 import logging
 
@@ -483,6 +486,13 @@ def minified_css (style, keep_bang_comments = True) :
     return style
 # end def minified_css
 
+_clean_minified_js = Multi_Re_Replacer \
+    ( Re_Replacer (r";+\}",    "}")
+    , Re_Replacer (r";+\(",    ";(")
+    , Re_Replacer (r";?\s*\Z", "\n")
+    , Re_Replacer (r"\A;\s*",  "")
+    )
+
 def minified_js (code) :
     """Return minified javascript `code`.
 
@@ -492,7 +502,8 @@ def minified_js (code) :
        .. _`jsmin`: https://bitbucket.org/dcs/jsmin/
        .. _`rjsmin`: http://opensource.perlig.de/rjsmin/
     """
-    jsmin = None
+    jsmin  = None
+    result = code
     try :
         from rjsmin import jsmin
     except ImportError :
@@ -503,10 +514,10 @@ def minified_js (code) :
             logging.warning ("Couldn't import either rjsmin nor jsmin")
     if jsmin is not None :
         try :
-            return jsmin (code)
+            result = jsmin (code)
         except Exception as exc :
             logging.error ("Exception during minified_js\n    %s" % (exc, ))
-    return code
+    return _clean_minified_js (result)
 # end def minified_js
 
 if __name__ != "__main__":

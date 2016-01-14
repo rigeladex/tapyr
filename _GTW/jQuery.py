@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -68,11 +68,15 @@
 #     9-Jun-2015 (CT) Add `.not ("a.internal")` to `GTW_Externalize`
 #    15-Dec-2015 (CT) Remove obsolete definitions
 #                     (GTW_buttonify, GTW_Input, GTW_Label)
+#    20-Jan-2016 (CT) Remove GTW_Externalize, de_obfuscate_a,
+#                     GTW_nav_off_canvas, GTW_pixpander
+#    20-Jan-2016 (CT) Add `V5a_history_push`
 #    ««revision-date»»···
 #--
 
 from   _GTW import GTW
 import _GTW.Media
+import _GTW.V5a
 
 GTW.Script \
     ( src       = "/media/GTW/js/modernizr.custom.js"
@@ -163,7 +167,10 @@ GTW.Script \
 GTW.Script \
     ( src      = "/media/GTW/js/GTW/util.js"
     , name     = "GTW_util"
-    , requires = (GTW.Script._.Modernizr, GTW.Script._.GTW)
+    , requires =
+        ( GTW.Script._.GTW
+        , GTW.Script._.V5a_history_push
+        )
     )
 
 GTW.Script \
@@ -175,18 +182,6 @@ GTW.Script \
         , GTW.Script._.GTW_jsonify
         )
     )
-GTW.JS_On_Ready \
-    ( """$("a[href^='http://'], a[href^='https://'], a[href^='//']").not ("a.internal").gtw_externalize ();"""
-    , name = "GTW_Externalize"
-    )
-
-GTW.JS_On_Ready \
-    ( """$("form a").not ("a.button, a.internal, a.pure-button, a.ui-icon").gtw_externalize ();"""
-    , name = "GTW_Form_Externalize"
-    )
-
-GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
-
 GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/autocomplete.js"
     , name     = "GTW_autocomplete"
@@ -203,12 +198,6 @@ GTW.Script \
 GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/hd_input.js"
     , name     = "GTW_hd_input"
-    , requires = (GTW.Script._.jQuery, )
-    )
-
-GTW.Script \
-    ( src      = "/media/GTW/js/GTW/jQ/nav_off_canvas.js"
-    , name     = "GTW_nav_off_canvas"
     , requires = (GTW.Script._.jQuery, )
     )
 
@@ -239,6 +228,7 @@ GTW.Script \
         , GTW.Script._.GTW_jq_util
         , GTW.Script._.GTW_util
         , GTW.Script._.GTW_L
+        , GTW.Script._.V5a_history_push
         )
     )
 
@@ -277,21 +267,12 @@ GTW.JS_On_Ready \
     )
 
 GTW.Script \
-    ( src      = "/media/GTW/js/GTW/jQ/pixpander.js"
-    , name     = "GTW_pixpander"
-    , requires = (GTW.Script._.jQuery, )
-    )
-GTW.JS_On_Ready \
-    ( """$("a[href$='.jpg'] > img, a[href$='.png'] > img").gtw_pixpander ();"""
-    , name = "GTW_pixpander"
-    )
-
-GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/week_roller.js"
     , name = "GTW_week_roller"
     , requires =
         ( GTW.Script._.jQuery_UI
         , GTW.Script._.GTW_util
+        , GTW.Script._.V5a_history_push
         )
     )
 GTW.JS_On_Ready \

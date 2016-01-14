@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -25,6 +25,8 @@
 #    14-Mar-2014 (CT) Include `rel_nav`
 #    16-Apr-2015 (CT) Add rules for `a`, `i.fa` to `b.current-link`
 #     1-Dec-2015 (CT) Add rule for `a img`
+#    15-Jan-2016 (CT) Add rule for `h1 a`; use absolute position, not float
+#    17-Jan-2016 (CT) Add rule for `.no-js .pg_nav .pg_nav_hide`
 #    ««revision-date»»···
 #--
 
@@ -222,11 +224,16 @@ style_sheet = Style_Sheet \
                 , line_height    = P.line_height_heading
                 , margin         = TRBL0 (b = Em (1./4))
                 , padding_left   = Em (0.50)
+                , position       = "relative"
                 , children       =
                     [ Rule
-                        ( "b"
-                        , float          = "right"
-                        , padding_right  = Em (0.5)
+                        ( "a", "b"
+                        , position       = "absolute"
+                        , right          = Em (0.5)
+                        )
+                    , Rule
+                        ( "a", "a:link", "a:visited"
+                        , ** P.nav_col.color_spec_heading
                         )
                     ]
                 , ** P.nav_col.color_spec_heading
@@ -301,6 +308,15 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "#weblinks .nav-link img"
                 , margin_left     = Percent (2.5)
+                )
+            ]
+        )
+    , Rule
+        ( ".no-js .pg_nav"
+        , children         =
+            [ Rule
+                ( ".pg_nav_hide"
+                , display          = "none"
                 )
             ]
         )

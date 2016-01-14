@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    10-Jun-2015 (CT) Creation
+#    17-Jan-2016 (CT) Use `V5a_page_notifications`
 #    ««revision-date»»···
 #--
 
@@ -102,14 +103,7 @@ style_sheet = Style_Sheet \
         )
     )
 
-JS_On_Ready \
-    ( """$(".page-notifications label").on """
-          """( "click" """
-          """, function (ev) """
-              """{ $(this).closest (".page-notifications").hide (); """
-                """return false; """
-              """}"""
-          """)"""
-    )
+Script      (GTW.Script._.V5a_page_notifications)
+JS_On_Ready (GTW.JS_On_Ready._.V5a_page_notifications)
 
 ### __END__ html/page_notifications.m.jnj.media

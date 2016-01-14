@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -83,6 +83,7 @@
 //                     (`flipfit` truncates on the left of completion info)
 //    28-Apr-2015 (CT) Add guards for undefined `af_map [label]`
 //                     to `attr_select` and`order_by`
+//    20-Jan-2016 (CT) Use `$V5a.history_push`, not `$GTW.push_history`
 //    ««revision-date»»···
 //--
 ( function ($, undefined) {
@@ -1078,7 +1079,7 @@
                     };
                 };
             };
-            $GTW.push_history
+            $V5a.history_push
                 (qr$.prop ("action") + "?" + serialized_form (qr$));
         };
         var submit_cb = function submit_cb (ev) {

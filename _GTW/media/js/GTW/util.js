@@ -1,5 +1,5 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -27,6 +27,7 @@
 //    29-Apr-2013 (CT) Add `show_message`
 //     1-May-2014 (CT) Change `show_message` to use `inspect.show` if available
 //    15-Jan-2015 (CT) Use `String.match`, not `String.search`
+//    20-Jan-2016 (CT) Delegate to $V5a.history_push, remove obsolete functions
 //    ««revision-date»»···
 //--
 
@@ -34,23 +35,8 @@
     "use strict";
 
     $GTW.update
-        ( { as_int_array   : function (data) {
-                var list   = data.split (",");
-                var pat    = /^\s*\d+\s*([-+]\s*\d+)?\s*$/;
-                var result = new Array ();
-                for (var i = 0; i < list.length; i+= 1) {
-                    var x = list [i];
-                    if (x.match (pat)) {
-                        result.push (eval (x));
-                    };
-                };
-                return result;
-            }
-          , push_history   : function (url, title, state) {
-                if (Modernizr.history) {
-                    window.history.pushState (state, title, url);
-                };
-                /* else { XXX ??? } */
+        ( { push_history   : function (url, title, state) {
+                return $V5a.history_push (url, title, state);
             }
           , show_message   : function show_message () {
                 var args = [].slice.apply (arguments); // convert to real array
@@ -68,29 +54,7 @@
             }
           }
         );
-    if (! Array.prototype.indexOf) {
-        Array.prototype.indexOf = function indexOf (elem, start) {
-            var len = this.length;
-            if (start === undefined) {
-                start = 0;
-            } else {
-                start = (start > 0) ? Math.floor (start) : Math.ceil (start);
-                if (start < 0) {
-                    start += len;
-                    if (start < 0) {
-                        start = 0;
-                    }
-                }
-            }
-            for (var i = start; i < len; i++) {
-                if (i in this && this [i] === elem) {
-                    return i;
-                }
-            }
-            return -1;
-        };
-    }
-  }
-) ();
+  } ()
+);
 
 // __END__ GTW_util.js

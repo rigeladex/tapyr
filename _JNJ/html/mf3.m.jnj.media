@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -39,6 +39,7 @@
 #    20-Dec-2015 (CT) Change rules for `aside`
 #                     + per default, display `aside`
 #                     + add rules for `.expl`, `.button[data-action=more]`
+#    18-Jan-2016 (CT) Use `V5a_Form_externalize`
 #    ««revision-date»»···
 #--
 
@@ -747,6 +748,7 @@ Script  (GTW.Script._.GTW_jq_mf3)
 ### XXX remove when mf3.js is finished
 Script  (GTW.Script._.GTW_inspect)
 
-JS_On_Ready (GTW.JS_On_Ready._.GTW_Form_Externalize)
+Script      (GTW.Script._.V5a_externalize)
+JS_On_Ready (GTW.JS_On_Ready._.V5a_Form_externalize)
 
 ### __END__ html/mf3.jnj.media

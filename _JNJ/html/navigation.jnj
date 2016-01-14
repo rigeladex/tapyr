@@ -58,6 +58,7 @@
 ##     1-Dec-2015 (CT) Don't set `current-link` for `current-section` unless
 ##                     `link == nav_page`
 ##     2-Jan-2016 (CT) Add optional arg `first_last_p` to `rel_nav_buttons`
+##    15-Jan-2016 (CT) Add `close_button` to section `Navigation`
 ##    ««revision-date»»···
 ##--
 #}
@@ -313,13 +314,22 @@
   {{ rel_link (page, href, title, "angle-left", GTW._T ("Prev"), rel = "prev") }}
 {%- endmacro -%} {#- rel_prev -#}
 
-{%- macro section (link_list, name = None) -%}
+{%- macro section (link_list, name = None, close_button = False) -%}
   {%- if link_list %}
     {%- set section_caller = kwargs.pop ("caller", None) -%}
     {%- set section_class = kwargs.pop ("class", "").strip ()
     -%}
     {% call X.section (class = section_class, ** kwargs) -%}
-      {% if name -%}<h1>{{ name }}</h1>{% endif %}
+      {% if name -%}
+        <h1>
+          {{- name }}
+          {%- if close_button %}
+            <a class="pg_nav_hide" href="#nav_off" title="{{- GTW._T ("Hide navigation") -}}">
+              {{- GTW.Dingbats.cross_mark -}}
+            </a>
+          {% endif -%}
+        </h1>
+      {%- endif %}
       {{ entries (link_list, 0) }}
       {%- if section_caller %}{{ section_caller () }}{% endif -%}
     {% endcall %} {# X.section #}
@@ -372,7 +382,7 @@
 
 {%- macro main (page) -%}
   {%- set main_caller = kwargs.pop ("caller", None) -%}
-  {% call section (page.top.own_links, "Navigation") -%}
+  {% call section (page.top.own_links, "Navigation", close_button = True) -%}
     {{ calendar (page) }}
   {% endcall %} {# section #}
   {%- if main_caller %}
