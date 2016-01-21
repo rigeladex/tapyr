@@ -18,6 +18,7 @@
 # Revision Dates
 #    14-Jan-2016 (CT) Creation
 #    20-Jan-2016 (CT) ...Creation
+#    21-Jan-2016 (CT) Add `V5a_gallery`
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,12 @@ GTW.Script \
     )
 
 GTW.Script \
+    ( src       = "/media/GTW/js/V5a/scroll_to.js"
+    , name      = "V5a_scroll_to"
+    , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
     ( src       = "/media/GTW/js/V5a/string_to_int_array.js"
     , name      = "V5a_string_to_int_array"
     , requires  = (GTW.Script._.V5a, )
@@ -137,10 +144,27 @@ GTW.JS_On_Ready \
 
 GTW.JS_On_Ready \
     ( """$V5a.externalize """
-      """({selectors : {external : "form a"}"""
-      """, skip_classes : ["button", "internal", "pure-button", "ui-icon"]"""
-      """});"""
+      """( { selectors : {external : "form a"}"""
+        """, skip_classes : ["button", "internal", "pure-button", "ui-icon"]"""
+        """}"""
+      """);"""
     , name      = "V5a_Form_externalize"
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/gallery.js"
+    , name      = "V5a_gallery"
+    , requires  =
+        ( GTW.Script._.V5a_bind
+        , GTW.Script._.V5a_merge
+        , GTW.Script._.V5a_query
+        , GTW.Script._.V5a_scroll_to
+        )
+    )
+
+GTW.JS_On_Ready \
+    ( """$V5a.gallery ();"""
+    , name      = "V5a_gallery"
     )
 
 GTW.Script \

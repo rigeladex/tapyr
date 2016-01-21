@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -27,6 +27,7 @@
 #    13-Sep-2011 (CT) `Style_File` added
 #     9-Apr-2014 (CT) Add `static_handler` to `Style_File`
 #    10-Oct-2014 (CT) Use `@pyk.adapt__str__` abnd `pyk.decoded`
+#    22-Jan-2016 (CT) Use `pyk.text_type`, not `str`, in `__str__`
 #    ««revision-date»»···
 #--
 
@@ -99,7 +100,7 @@ class Style_Sheet (_Style_Sheet_) :
     # end def __iter__
 
     def __str__ (self) :
-        return "\n\n".join (str (r) for r in self)
+        return "\n\n".join (pyk.text_type (r) for r in self)
     # end def __str__
 
 # end class Style_Sheet

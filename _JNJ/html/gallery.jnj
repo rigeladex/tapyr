@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: gallery.jnj -#}
 {#
-## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -27,6 +27,7 @@
 ##                     (fix HTML conformance)
 ##     8-Apr-2014 (CT) Remove `max-width` from css rule for `.inline .photo`
 ##    23-Jun-2015 (CT) Use `pure-button` with font-awesome icons
+##    22-Jan-2016 (CT) Use <ul>, not <div>, inside `.thumbnails`
 ##    ««revision-date»»···
 ##--
 #}
@@ -38,7 +39,6 @@
 {%- endmacro -%} {#- button -#}
 
 {%- macro buttons (page) %}
-  {%- set gallery_title = "%s %s" % (GTW._T ('Gallery'), page.title) %}
   <p class="photo-nav">
     {{ button (GTW._ ("First"), "fast-backward", GTW._T ("First picture")) }}
     {{ button (GTW._ ("Prev"),  "backward",      GTW._T ("Previous picture")) }}
@@ -54,27 +54,30 @@
     {%- if page.pictures %}
       <div class="inline">
         {{ buttons (page) }}
-        <div class="photo">
-          <img alt="{{ GTW._T ('Selected picture')}}"
-               src="{{ "/" + page.pictures [0].thumb.path }}"
+        <p class="photo">
+          <img alt="{{ GTW._T ('Selected picture')}}" {# -#}
+               src="{{ "/" + page.pictures [0].thumb.path }}"{# -#}
           />
-        </div>
+        </p>
         {{ buttons (page) }}
       </div>
     {% endif -%}
     <div class="thumbnails">
-      <div class="box">
+      <ul class="list">
         {%- for pic in page.pictures %}
           {%- if pic.obj %}
-            <a href="{{ pic.permalink }}">
-             <img alt="{{ pic.title }}" title="{{ pic.title }}"
-                  src="{{ "/" + pic.thumb.path }}"
-                  height="{{ pic.thumb.height }}" width="{{ pic.thumb.width }}"
-             />
-            </a>
+            <li>{# -#}
+              <a href="{{ pic.permalink }}">{# -#}
+               <img alt="{{ pic.title }}" title="{{ pic.title }}" {# -#}
+                    src="{{ "/" + pic.thumb.path }}" {# -#}
+                    height="{{ pic.thumb.height }}" {# -#}
+                    width="{{ pic.thumb.width }}" {# -#}
+               />{# -#}
+              </a>{# -#}
+            </li>
           {% endif -%}
         {% endfor -%}
-      </div>
+      </ul>
     </div>
   </div>
 {%- endmacro -%} {#- gallery -#}
@@ -83,15 +86,16 @@
   {{- super () -}}
   <style type="text/css">
      .inline .photo
-       { height    : {{ page.max_height_photo -}}px
-       ; width     : {{ page.max_width_photo -}}px
+       { height : {{ page.max_height_photo -}}px
+       ; width  : {{ page.max_width_photo -}}px
        }
      .thumbnails a
-       { height    : {{ page.max_height_thumb + 6 -}}px
-       ; width     : {{ page.max_width_thumb + 6 -}}px
+       { height : {{ page.max_height_thumb + 6 -}}px
+       ; width  : {{ page.max_width_thumb + 6 -}}px
        }
-     .thumbnails.inline .box
-       { width  : {{ (page.max_width_thumb + 16) * GTW.len (page.pictures) }}px
+     .thumbnails.inline .list
+       { width  : {# -#}
+           {{ (page.max_width_thumb + 12) * GTW.len (page.pictures) + 6 }}px
        }
    </style>
 {% endblock styles -%}

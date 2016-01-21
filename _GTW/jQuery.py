@@ -71,6 +71,7 @@
 #    20-Jan-2016 (CT) Remove GTW_Externalize, de_obfuscate_a,
 #                     GTW_nav_off_canvas, GTW_pixpander
 #    20-Jan-2016 (CT) Add `V5a_history_push`
+#    21-Jan-2016 (CT) Remove GTW_Gallery
 #    ««revision-date»»···
 #--
 
@@ -254,16 +255,6 @@ GTW.Script \
         , GTW.Script._.GTW_util
         , GTW.Script._.GTW_L
         )
-    )
-
-GTW.Script \
-    ( src      = "/media/GTW/js/GTW/jQ/gallery.js"
-    , name     = "GTW_Gallery"
-    , requires = (GTW.Script._.jQuery_UI, )
-    )
-GTW.JS_On_Ready \
-    ( """$(".thumbnails").gtw_gallery ({ delay : 2000 });"""
-    , name = "GTW_Gallery"
     )
 
 GTW.Script \

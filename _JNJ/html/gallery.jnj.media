@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -21,10 +21,14 @@
 #     8-Apr-2014 (CT) Add `max_width` for `.inline .photo`;
 #                     remove `max_width` from `.inline .photo-nav`
 #    23-Jun-2015 (CT) Change rule for `button` for font-awesome icons
+#    21-Jan-2016 (CT) Use `V5a_gallery`, not `GTW_Gallery`
 #    ««revision-date»»···
 #--
 
-from   __future__ import division
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 style_sheet = Style_Sheet \
     ( Rule
@@ -61,9 +65,9 @@ style_sheet = Style_Sheet \
                 , children         =
                     [ Rule
                         ( ".photo"
-                        , display    = "block"
-                        , margin     = "auto"
-                        , max_width  = Percent (100)
+                        , display          = "block"
+                        , margin           = "auto"
+                        , max_width        = Percent (100)
                         )
                     , Rule
                         ( ".photo-nav"
@@ -78,15 +82,12 @@ style_sheet = Style_Sheet \
             ]
         )
     , Rule
-        ( ".photo-nav img"
-        , margin                     = TRBL (0, Px (2))
-        )
-    , Rule
         ( ".thumbnails"
         , font_style                 = "italic"
         , children                   =
             [ Rule_Class
                 ( "inline"
+                , display            = "block"
                 , overflow           = "auto"
                 , position           = "relative"
                 )
@@ -109,11 +110,30 @@ style_sheet = Style_Sheet \
                         )
                     ]
                 )
+            , Rule
+                ( ".list"
+                , display            = "block"
+                , list_style         = "none"
+                , margin             = 0
+                , padding            = 0
+                , children           =
+                    [ Rule
+                        ( "li"
+                        , display            = "inline-block"
+                        , margin             = 0
+                        , padding            = 0
+                        )
+                    ]
+                )
             ]
+        )
+    , Rule
+        ( ".js .gallery .inline"
+        , display            = "block"
         )
     )
 
-Script      (GTW.Script._.GTW_Gallery)
-JS_On_Ready (GTW.JS_On_Ready._.GTW_Gallery)
+Script      (GTW.Script._.V5a_gallery)
+JS_On_Ready (GTW.JS_On_Ready._.V5a_gallery)
 
 ### __END__ html/gallery.jnj.media
