@@ -22,6 +22,7 @@
 //    30-Apr-2014 (CT) Don't use `jsonify` in `gtw_ajax_2json` for `GET`
 //    20-Jan-2016 (CT) Remove `fix_a_nospam`, `gtw_externalize`
 //                     * use `$V5a...` instead
+//    22-Jan-2016 (CT) Use `JSON.stringify`, not `$GTW.jsonify`
 //    ««revision-date»»···
 //--
 
@@ -42,7 +43,7 @@
             );
         var data = options.data;
         if ((options.type != "GET") && (typeof data !== "string")) {
-            options.data = $GTW.jsonify (data);
+            options.data = JSON.stringify (data);
         };
         if (! ("error" in options)) {
             options.error = function (xhr_instance, status, exc) {

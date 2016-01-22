@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -403,7 +403,7 @@ __doc__ = r"""
     /* a test javascript file directly included */
 
     >>> list (scope.scripts)
-    [/media/GTW/js/modernizr.custom.js: text/javascript, /media/GTW/js/jquery.js: text/javascript, /media/GTW/js/jquery-ui.js: text/javascript, /media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/jQ/button_pure.js: text/javascript, /media/GTW/js/GTW/util.js: text/javascript, /media/GTW/js/GTW/jsonify.js: text/javascript, /media/GTW/js/GTW/jQ/util.js: text/javascript, /media/GTW/js/GTW/jQ/autocomplete.js: text/javascript, /media/GTW/js/GTW/jQ/e_type_selector.js: text/javascript, /media/GTW/js/GTW/L.js: text/javascript, /media/GTW/js/GTW/jQ/mf3.js: text/javascript]
+    [/media/GTW/js/jquery.js: text/javascript, /media/GTW/js/jquery-ui.js: text/javascript, /media/GTW/js/V5a/V5a.js: text/javascript, /media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/jQ/button_pure.js: text/javascript, /media/GTW/js/V5a/history_test.js: text/javascript, /media/GTW/js/V5a/history_push.js: text/javascript, /media/GTW/js/GTW/util.js: text/javascript, /media/GTW/js/GTW/jQ/util.js: text/javascript, /media/GTW/js/GTW/jQ/autocomplete.js: text/javascript, /media/GTW/js/GTW/jQ/e_type_selector.js: text/javascript, /media/GTW/js/GTW/L.js: text/javascript, /media/GTW/js/GTW/jQ/mf3.js: text/javascript]
 
     >>> list (scope.css_links)
     [all: /media/GTW/css/jquery.gritter.css]

@@ -72,6 +72,7 @@
 #                     GTW_nav_off_canvas, GTW_pixpander
 #    20-Jan-2016 (CT) Add `V5a_history_push`
 #    21-Jan-2016 (CT) Remove GTW_Gallery
+#    22-Jan-2016 (CT) Remove jQuery_Gritter, GTW_UI_Icon_Map, GTW_jsonify
 #    ««revision-date»»···
 #--
 
@@ -111,22 +112,7 @@ else :
         , requires  = (GTW.Script._.jQuery, )
         )
 
-GTW.Script \
-    ( src       = "/media/GTW/js/jquery.gritter.js"
-    , name      = "jQuery_Gritter"
-    , requires  = (GTW.Script._.jQuery, )
-    )
-
 GTW.CSS_Link ("/media/GTW/css/jquery-ui.css", name = "jQuery_UI")
-GTW.CSS_Link \
-    ( "/media/GTW/css/jquery.gritter.css"
-    , media_type = "screen"
-    , name       = "jQuery_Gritter"
-    )
-GTW.JS_On_Ready \
-    ( '$.gritter.Convert_Patagraphs_to_Gitter ("notifications");'
-    , name = "jQuery_Gritter"
-    )
 
 GTW.Script \
     ( src      = "/media/GTW/js/leaflet.min.js"
@@ -141,21 +127,8 @@ GTW.Script \
     )
 
 GTW.Script \
-    ( src      = "/media/GTW/js/GTW/UI_Icon_Map.js"
-    , name     = "GTW_UI_Icon_Map"
-    , rank     = -40
-    , requires = (GTW.Script._.GTW, )
-    )
-
-GTW.Script \
     ( src      = "/media/GTW/js/GTW/inspect.js"
     , name     = "GTW_inspect"
-    , requires = (GTW.Script._.GTW, )
-    )
-
-GTW.Script \
-    ( src      = "/media/GTW/js/GTW/jsonify.js"
-    , name     = "GTW_jsonify"
     , requires = (GTW.Script._.GTW, )
     )
 
@@ -180,7 +153,6 @@ GTW.Script \
     , requires =
         ( GTW.Script._.GTW_util
         , GTW.Script._.jQuery
-        , GTW.Script._.GTW_jsonify
         )
     )
 GTW.Script \
