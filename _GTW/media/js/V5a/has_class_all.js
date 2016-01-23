@@ -22,16 +22,13 @@
     "use strict";
 
     $.has_class_all = function has_class_all (el, classes) {
+        var classes    = $.arg_to_array (class_spec);
         var el_classes = el.classList;
-        for (var i = 0, li = classes.length, c; i < li; i++) {
-            c = classes [i];
-            if (! el_classes.contains (c)) {
-                return false;
-            };
-        };
-        return true;
+        var result     = classes.every
+            (function (name) { return el_classes.contains (name); });
+        return result;
     };
-} ($V5a)
+  } ($V5a)
 );
 
 // __END__ V5a/has_class_all.js

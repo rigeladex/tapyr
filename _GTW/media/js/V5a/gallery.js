@@ -136,9 +136,8 @@
                 for (var ck in controls) {
                     if (ck in cb) {
                         ( function (k) {
-                            $.bind
-                                ( $.query (controls [k], gallery_el)
-                                , "click"
+                            $.$$( controls [k], gallery_el).bind
+                                ( "click"
                                 , function (ev) {
                                     (k === "play") || cb.stop (ev);
                                     return cb [k] (ev);
@@ -148,14 +147,14 @@
                         ) (ck);
                     };
                 };
-                $.for_each
-                    ( thumbnail_els
-                    , function (thumbnail_el, i) {
-                          thumbnail_el.setAttribute ("data-index", i);
-                      }
-                    );
-                $.bind (photo_el,      "click", cb.photo_click);
-                $.bind (thumbnail_els, "click", cb.show);
+                $.bind (photo_el, "click", cb.photo_click);
+                $.$$ (thumbnail_els)
+                    .bind ("click", cb.show)
+                    .for_each
+                        ( function (el, i) {
+                            el.setAttribute ("data-index", i);
+                          }
+                        );
                 th_container_el.classList.add (O.inline_class);
                 show (0);
             };

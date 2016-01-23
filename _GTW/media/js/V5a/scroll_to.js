@@ -35,7 +35,7 @@
         , size           : "height"
         };
     function scroll_to (el, rel_pos, S) {
-        var parent       = el.offsetParent;
+        var parent       = el.offsetParent || el;
         var el_offset    = el [S.offset];
         var el_size      = el.getBoundingClientRect     () [S.size];
         var vp_size      = parent.getBoundingClientRect () [S.size];

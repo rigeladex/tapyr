@@ -7,13 +7,13 @@
 //
 //++
 // Name
-//    V5a/has_class_any.js
+//    V5a/wrapped_add_class.js
 //
 // Purpose
-//    Vanilla javascript functions testing if an element has any of classes
+//    Vanilla javascript wrapper function adding a class to all wrapped nodes
 //
 // Revision Dates
-//    18-Jan-2016 (CT) Creation
+//    24-Jan-2016 (CT) Creation
 //    ««revision-date»»···
 //--
 
@@ -21,14 +21,12 @@
 ( function ($) {
     "use strict";
 
-    $.has_class_any = function has_class_any (el, class_spec) {
-        var classes    = $.arg_to_array (class_spec);
-        var el_classes = el.classList;
-        var result     = classes.some
-            (function (name) { return el_classes.contains (name); });
-        return result;
+    $.$$.prototype.add_class = function add_class (class_spec) {
+        this.for_each_arg
+            (class_spec, function (el, name) { el.classList.add (name); });
+        return this;
     };
   } ($V5a)
 );
 
-// __END__ V5a/has_class_any.js
+// __END__ V5a/wrapped_add_class.js

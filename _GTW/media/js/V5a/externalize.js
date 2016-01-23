@@ -23,24 +23,17 @@
 
     $.externalize = $.merge
         ( function externalize (opts) {
-            var O  = $.merge ({}, externalize.defaults,  opts);
-            var S  = $.merge ({}, externalize.selectors, O ["selectors"]);
-            var ls = $.query (S.external);
-            $.for_each
-                ( ls
-                , function (el) {
-                    if (! $.has_class_any (el, O.skip_classes)) {
-                        el.classList.add (O.x_class);
-                        $.bind
-                            ( el, "click"
-                            , function (ev) {
-                                window.open (el.href).focus ();
-                                $.prevent_default (ev);
-                              }
-                            );
-                    };
-                  }
-                );
+            var O   = $.merge ({}, externalize.defaults,  opts);
+            var S   = $.merge ({}, externalize.selectors, O ["selectors"]);
+            var ls$ = $.$$    (S.external).has_class_none (O.skip_classes);
+            ls$ .add_class (O.x_class)
+                .bind
+                    ( "click"
+                    , function (ev) {
+                        window.open (this.href).focus ();
+                        $.prevent_default (ev);
+                      }
+                    );
           }
         , { defaults  :
               { skip_classes    : ["internal"]

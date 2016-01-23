@@ -23,9 +23,9 @@
 
     $.history_push = function history_push (url, title, state) {
         if ($.supports.history) {
-            window.history.pushState (state, title, url);
+            history.pushState (state, title, url);
         } else {
-            try { window.location.hash = url; } catch (exc) {};
+            try { location.hash = url; } catch (e) {};
         };
     };
   } ($V5a)

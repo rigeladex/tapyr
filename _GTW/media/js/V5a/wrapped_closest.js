@@ -7,13 +7,14 @@
 //
 //++
 // Name
-//    V5a/has_class_any.js
+//    V5a/wrapped_closest.js
 //
 // Purpose
-//    Vanilla javascript functions testing if an element has any of classes
+//    Vanilla javascript wrapper finding all the matching closest ancestors
+//    of the wrapped nodes
 //
 // Revision Dates
-//    18-Jan-2016 (CT) Creation
+//    24-Jan-2016 (CT) Creation
 //    ««revision-date»»···
 //--
 
@@ -21,14 +22,12 @@
 ( function ($) {
     "use strict";
 
-    $.has_class_any = function has_class_any (el, class_spec) {
-        var classes    = $.arg_to_array (class_spec);
-        var el_classes = el.classList;
-        var result     = classes.some
-            (function (name) { return el_classes.contains (name); });
+    $.$$.prototype.closest = function closest (selector) {
+        var result = this.reduce
+            (function (node) { return $.closest (node, selector || "*"); });
         return result;
     };
   } ($V5a)
 );
 
-// __END__ V5a/has_class_any.js
+// __END__ V5a/wrapped_closest.js

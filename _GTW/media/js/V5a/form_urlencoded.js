@@ -7,13 +7,13 @@
 //
 //++
 // Name
-//    V5a/has_class_any.js
+//    V5a/form_urlencoded.js
 //
 // Purpose
-//    Vanilla javascript functions testing if an element has any of classes
+//    Vanilla javascript function encoding an object as x-www-form-urlencoded
 //
 // Revision Dates
-//    18-Jan-2016 (CT) Creation
+//    26-Jan-2016 (CT) Creation
 //    ««revision-date»»···
 //--
 
@@ -21,14 +21,17 @@
 ( function ($) {
     "use strict";
 
-    $.has_class_any = function has_class_any (el, class_spec) {
-        var classes    = $.arg_to_array (class_spec);
-        var el_classes = el.classList;
-        var result     = classes.some
-            (function (name) { return el_classes.contains (name); });
-        return result;
+    function ue (s) {
+        // leaves characters /[-_.!~*'()]/ as un-encoded as encodeURIComponent
+        return encodeURIComponent (s).replace ("%20", "+");;
+    };
+
+    $.form_urlencoded = function form_urlencoded (obj) {
+        var result = Object.keys
+            (obj || {}, function (k) { return ue (k) + "=" + ue (obj [k]); });
+        return result.join ("&");
     };
   } ($V5a)
 );
 
-// __END__ V5a/has_class_any.js
+// __END__ V5a/form_urlencoded.js

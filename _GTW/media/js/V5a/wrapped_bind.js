@@ -7,13 +7,13 @@
 //
 //++
 // Name
-//    V5a/has_class_any.js
+//    V5a/wrapped_bind.js
 //
 // Purpose
-//    Vanilla javascript functions testing if an element has any of classes
+//    Bind and unbind event listeners for elements of a wrapped set.
 //
 // Revision Dates
-//    18-Jan-2016 (CT) Creation
+//    24-Jan-2016 (CT) Creation
 //    ««revision-date»»···
 //--
 
@@ -21,14 +21,16 @@
 ( function ($) {
     "use strict";
 
-    $.has_class_any = function has_class_any (el, class_spec) {
-        var classes    = $.arg_to_array (class_spec);
-        var el_classes = el.classList;
-        var result     = classes.some
-            (function (name) { return el_classes.contains (name); });
-        return result;
+    $.$$.prototype.bind = function bind (ev_spec, handler, capture) {
+        var ev_map = $.event_map (ev_spec, handler);
+        return this.for_each (function (n) { $._bind (n, ev_map, capture); });
+    };
+
+    $.$$.prototype.unbind = function unbind (ev_spec) {
+        var ev_list = $.arg_to_array (ev_spec);
+        return this.for_each (function (n) { $._unbind (n, ev_list); });
     };
   } ($V5a)
 );
 
-// __END__ V5a/has_class_any.js
+// __END__ V5a/wrapped_bind.js

@@ -18,6 +18,8 @@
 # Revision Dates
 #    10-Jun-2015 (CT) Creation
 #    17-Jan-2016 (CT) Use `V5a_page_notifications`
+#    27-Jan-2016 (CT) Add `cursor` to `label`
+#    27-Jan-2016 (CT) Remove redundant `visibility`
 #    ««revision-date»»···
 #--
 
@@ -35,10 +37,10 @@ style_sheet = Style_Sheet \
             [ Rule
                 ( "label + input[type=checkbox]"
                 , display          = "none"
-                , visibility       = "collapse"
                 )
             , Rule
                 ( "label"
+                , cursor           = "pointer"
                 , display          = "inline-block"
                 , margin           = TRBL (Em (1/2), Em (3/4))
                 , vertical_align   = "top"
@@ -83,7 +85,6 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "label + input[type=checkbox]:checked + ul"
                 , display          = "none"
-                , visibility       = "collapse"
                 )
             ]
         )

@@ -7,13 +7,13 @@
 //
 //++
 // Name
-//    V5a/has_class_any.js
+//    V5a/wrapped_remove.js
 //
 // Purpose
-//    Vanilla javascript functions testing if an element has any of classes
+//    Remove all nodes of wrapped set from document
 //
 // Revision Dates
-//    18-Jan-2016 (CT) Creation
+//    25-Jan-2016 (CT) Creation
 //    ««revision-date»»···
 //--
 
@@ -21,14 +21,10 @@
 ( function ($) {
     "use strict";
 
-    $.has_class_any = function has_class_any (el, class_spec) {
-        var classes    = $.arg_to_array (class_spec);
-        var el_classes = el.classList;
-        var result     = classes.some
-            (function (name) { return el_classes.contains (name); });
-        return result;
+    $.$$.prototype.remove = function remove () {
+        return this.for_each (function (n) { n.parentNode.removeChild (n) }; );
     };
   } ($V5a)
 );
 
-// __END__ V5a/has_class_any.js
+// __END__ V5a/wrapped_remove.js

@@ -7,13 +7,13 @@
 //
 //++
 // Name
-//    V5a/has_class_any.js
+//    V5a/siblings.js
 //
 // Purpose
-//    Vanilla javascript functions testing if an element has any of classes
+//    Return all siblings of element
 //
 // Revision Dates
-//    18-Jan-2016 (CT) Creation
+//    27-Jan-2016 (CT) Creation
 //    ««revision-date»»···
 //--
 
@@ -21,14 +21,12 @@
 ( function ($) {
     "use strict";
 
-    $.has_class_any = function has_class_any (el, class_spec) {
-        var classes    = $.arg_to_array (class_spec);
-        var el_classes = el.classList;
-        var result     = classes.some
-            (function (name) { return el_classes.contains (name); });
+    $.siblings = function siblings (el) {
+        var result = $.filter
+            (el.parentNode.children, function (c) { return c !== el; });
         return result;
     };
   } ($V5a)
 );
 
-// __END__ V5a/has_class_any.js
+// __END__ V5a/siblings.js

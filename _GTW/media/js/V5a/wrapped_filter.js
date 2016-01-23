@@ -7,13 +7,13 @@
 //
 //++
 // Name
-//    V5a/has_class_any.js
+//    V5a/wrapped_filter.js
 //
 // Purpose
-//    Vanilla javascript functions testing if an element has any of classes
+//    Vanilla javascript filter method for $V5a.wrapped
 //
 // Revision Dates
-//    18-Jan-2016 (CT) Creation
+//    24-Jan-2016 (CT) Creation
 //    ««revision-date»»···
 //--
 
@@ -21,14 +21,15 @@
 ( function ($) {
     "use strict";
 
-    $.has_class_any = function has_class_any (el, class_spec) {
-        var classes    = $.arg_to_array (class_spec);
-        var el_classes = el.classList;
-        var result     = classes.some
-            (function (name) { return el_classes.contains (name); });
-        return result;
+    $.$$.prototype.filter = function filter (arg) {
+        var pred =
+            ( (typeof arg === "function")
+            ? function (node) { return arg (node); }
+            : function (node) { return $.matches (node, arg || "*"); }
+            )
+        return new $.$$ (this.wrapped.filter (pred));
     };
   } ($V5a)
 );
 
-// __END__ V5a/has_class_any.js
+// __END__ V5a/wrapped_filter.js

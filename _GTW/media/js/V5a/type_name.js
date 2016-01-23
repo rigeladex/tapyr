@@ -32,7 +32,7 @@
         } else {
             var s  = Object.prototype.toString.call (obj);
             result = (s.match (pat) [1] || "").toLowerCase ();
-            if (result == "number" && isNaN (obj)) {
+            if (result === "number" && isNaN (obj)) {
                 result = "nan";
             };
         };

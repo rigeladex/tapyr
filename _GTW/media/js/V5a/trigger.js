@@ -14,17 +14,38 @@
 //
 // Revision Dates
 //    14-Jan-2016 (CT) Creation
+//    25-Jan-2016 (CT) Factor `create_event`, try modern API first
 //    ««revision-date»»···
 //--
+
+// https://developer.mozilla.org/en-US/docs/Web/API/document.createEvent
+// https://developer.mozilla.org/en-US/docs/Web/API/Event/Event
+// https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
+// https://developer.mozilla.org/en-US/docs/Web/Events
+// https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
 
 ;
 ( function ($) {
     "use strict";
 
-    $.trigger = function trigger (target, ev_type, properties) {
-        var ev = document.createEvent ("HTMLEvents");
-        ev.initEvent (ev_type, true, true);
-        target.dispatchEvent ($.extend (ev, properties));
+    var default_ev_opts = { bubbles : true, cancelable : true };
+
+    $.create_event = function create_event (ev_name, ev_opts, EV_Type) {
+        var opts = $.merge ({}, default_ev_opts, ev_opts);
+        EV_Type = EV_Type || Event;
+        try {
+            return new EV_Type (ev_name, opts);
+        }  catch (e) {
+            var tn = EV_Type.name || "Event";
+            var ev = document.createEvent (tn);
+            ev.initEvent (ev_name, opts.bubbles, opts.cancelable, opts);
+            return ev;
+        };
+    };
+
+    $.trigger = function trigger (target, ev_name, ev_opts, EV_Type) {
+        var ev = $.create_event (ev_name, ev_opts, EV_Type);
+        target.dispatchEvent (ev);
     };
   } ($V5a)
 );

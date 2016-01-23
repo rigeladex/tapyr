@@ -29,9 +29,9 @@
             $.for_each
                 ( pn_els
                 , function (pn) {
-                    var els = $.query (S.active_element, pn);
-                    $.bind
-                        ( els, "click"
+                    var els$ = $.$$ (S.active_element, pn);
+                    els$.bind
+                        ( "click"
                         , function pn_hide (ev) {
                             pn.style.display = "none";
                             $.prevent_default (ev);

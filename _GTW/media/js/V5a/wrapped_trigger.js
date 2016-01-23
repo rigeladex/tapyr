@@ -7,13 +7,13 @@
 //
 //++
 // Name
-//    V5a/has_class_any.js
+//    V5a/wrapped_trigger.js
 //
 // Purpose
-//    Vanilla javascript functions testing if an element has any of classes
+//    Trigger an event for all elements of a wrapped set
 //
 // Revision Dates
-//    18-Jan-2016 (CT) Creation
+//    25-Jan-2016 (CT) Creation
 //    ««revision-date»»···
 //--
 
@@ -21,14 +21,11 @@
 ( function ($) {
     "use strict";
 
-    $.has_class_any = function has_class_any (el, class_spec) {
-        var classes    = $.arg_to_array (class_spec);
-        var el_classes = el.classList;
-        var result     = classes.some
-            (function (name) { return el_classes.contains (name); });
-        return result;
+    $.$$.prototype.trigger = function trigger (ev_name, ev_opts, EV_Type) {
+        var ev = $.create_event (ev_name, ev_opts, EV_Type);
+        return this.for_each (function (n) { n.dispatchEvent (ev); });
     };
   } ($V5a)
 );
 
-// __END__ V5a/has_class_any.js
+// __END__ V5a/wrapped_trigger.js

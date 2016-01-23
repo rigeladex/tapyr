@@ -43,7 +43,7 @@
                     $.bind
                         ( link, "click"
                         , function pixpander_cb (ev) {
-                            if (img.src == src) {
+                            if (img.src === src) {
                                 show (ev, img, href, "",   "auto");
                             } else {
                                 show (ev, img, src,  style, width);

@@ -19,6 +19,8 @@
 #    14-Jan-2016 (CT) Creation
 #    20-Jan-2016 (CT) ...Creation
 #    21-Jan-2016 (CT) Add `V5a_gallery`
+#    23-Jan-2016 (CT) Add `V5a_wrapped`...
+#    26-Jan-2016 (CT) Add `V5a_ajax`...
 #    ««revision-date»»···
 #--
 
@@ -38,14 +40,44 @@ GTW.Script \
     )
 
 GTW.Script \
+    ( src       = "/media/GTW/js/V5a/event_map.js"
+    , name      = "V5a_event_map"
+    , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
     ( src       = "/media/GTW/js/V5a/bind.js"
     , name      = "V5a_bind"
+    , requires  = (GTW.Script._.V5a_event_map, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/error.js"
+    , name      = "V5a_error"
     , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/ajax.js"
+    , name      = "V5a_ajax"
+    , requires  =
+        ( GTW.Script._.V5a_bind
+        , GTW.Script._.V5a_error
+        , ### if a client of V5a_ajax wants to use
+          ### "application/x-www-form-urlencoded", it needs to require
+          ### GTW.Script._.V5a_form_urlencoded
+        )
     )
 
 GTW.Script \
     ( src       = "/media/GTW/js/V5a/extend.js"
     , name      = "V5a_extend"
+    , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/form_urlencoded.js"
+    , name      = "V5a_form_urlencoded"
     , requires  = (GTW.Script._.V5a, )
     )
 
@@ -74,8 +106,26 @@ GTW.Script \
     )
 
 GTW.Script \
+    ( src       = "/media/GTW/js/V5a/matches.js"
+    , name      = "V5a_matches"
+    , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/closest.js"
+    , name      = "V5a_closest"
+    , requires  = (GTW.Script._.V5a_matches, )
+    )
+
+GTW.Script \
     ( src       = "/media/GTW/js/V5a/merge.js"
     , name      = "V5a_merge"
+    , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/parse_html.js"
+    , name      = "V5a_parse_html"
     , requires  = (GTW.Script._.V5a, )
     )
 
@@ -92,6 +142,18 @@ GTW.Script \
     )
 
 GTW.Script \
+    ( src       = "/media/GTW/js/V5a/select.js"
+    , name      = "V5a_select"
+    , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/siblings.js"
+    , name      = "V5a_siblings"
+    , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
     ( src       = "/media/GTW/js/V5a/string_to_int_array.js"
     , name      = "V5a_string_to_int_array"
     , requires  = (GTW.Script._.V5a, )
@@ -100,13 +162,149 @@ GTW.Script \
 GTW.Script \
     ( src       = "/media/GTW/js/V5a/trigger.js"
     , name      = "V5a_trigger"
-    , requires  = (GTW.Script._.V5a_extend, )
+    , requires  = (GTW.Script._.V5a_merge, )
     )
 
 GTW.Script \
     ( src       = "/media/GTW/js/V5a/type_name.js"
     , name      = "V5a_type_name"
     , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped.js"
+    , name      = "V5a_wrapped"
+    , requires  = (GTW.Script._.V5a_select, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_add_class.js"
+    , name      = "V5a_wrapped_add_class"
+    , requires  = (GTW.Script._.V5a_wrapped, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_attr.js"
+    , name      = "V5a_wrapped_attr"
+    , requires  = (GTW.Script._.V5a_wrapped, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_bind.js"
+    , name      = "V5a_wrapped_bind"
+    , requires  =
+        ( GTW.Script._.V5a_bind
+        , GTW.Script._.V5a_wrapped
+        )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_reduce.js"
+    , name      = "V5a_wrapped_reduce"
+    , requires  = (GTW.Script._.V5a_wrapped, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_closest.js"
+    , name      = "V5a_wrapped_closest"
+    , requires  =
+        ( GTW.Script._.V5a_closest
+        , GTW.Script._.V5a_wrapped_reduce
+        )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_filter.js"
+    , name      = "V5a_wrapped_filter"
+    , requires  = (GTW.Script._.V5a_wrapped, GTW.Script._.V5a_matches)
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_has_class.js"
+    , name      = "V5a_wrapped_has_class"
+    , requires  = (GTW.Script._.V5a_wrapped_filter, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_children.js"
+    , name      = "V5a_wrapped_children"
+    , requires  =
+        ( GTW.Script._.V5a_wrapped_filter
+        , GTW.Script._.V5a_wrapped_reduce
+        )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_find.js"
+    , name      = "V5a_wrapped_find"
+    , requires  = (GTW.Script._.V5a_wrapped_reduce, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_insert_html.js"
+    , name      = "V5a_wrapped_insert_html"
+    , requires  = (GTW.Script._.V5a_wrapped, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_parent.js"
+    , name      = "V5a_wrapped_parent"
+    , requires  =
+        ( GTW.Script._.V5a_wrapped_filter
+        , GTW.Script._.V5a_wrapped_reduce
+        )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_prop.js"
+    , name      = "V5a_wrapped_prop"
+    , requires  = (GTW.Script._.V5a_wrapped, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_remove.js"
+    , name      = "V5a_wrapped_remove"
+    , requires  = (GTW.Script._.V5a_wrapped, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_remove_class.js"
+    , name      = "V5a_wrapped_remove_class"
+    , requires  = (GTW.Script._.V5a_wrapped, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_siblings.js"
+    , name      = "V5a_wrapped_siblings"
+    , requires  =
+        ( GTW.Script._.V5a_siblings
+        , GTW.Script._.V5a_wrapped_filter
+        , GTW.Script._.V5a_wrapped_reduce
+        )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_style.js"
+    , name      = "V5a_wrapped_style"
+    , requires  =
+        ( GTW.Script._.V5a_merge
+        , GTW.Script._.V5a_wrapped
+        )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_toggle_class.js"
+    , name      = "V5a_wrapped_toggle_class"
+    , requires  = (GTW.Script._.V5a_wrapped, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/wrapped_trigger.js"
+    , name      = "V5a_wrapped_trigger"
+    , requires  =
+        ( GTW.Script._.V5a_trigger
+        , GTW.Script._.V5a_wrapped
+        )
     )
 
 ### scripts
@@ -130,10 +328,10 @@ GTW.Script \
     ( src       = "/media/GTW/js/V5a/externalize.js"
     , name      = "V5a_externalize"
     , requires  =
-        ( GTW.Script._.V5a_bind
-        , GTW.Script._.V5a_has_class_any
-        , GTW.Script._.V5a_merge
-        , GTW.Script._.V5a_query
+        ( GTW.Script._.V5a_merge
+        , GTW.Script._.V5a_wrapped_add_class
+        , GTW.Script._.V5a_wrapped_has_class
+        , GTW.Script._.V5a_wrapped_bind
         )
     )
 
@@ -155,10 +353,10 @@ GTW.Script \
     ( src       = "/media/GTW/js/V5a/gallery.js"
     , name      = "V5a_gallery"
     , requires  =
-        ( GTW.Script._.V5a_bind
-        , GTW.Script._.V5a_merge
+        ( GTW.Script._.V5a_merge
         , GTW.Script._.V5a_query
         , GTW.Script._.V5a_scroll_to
+        , GTW.Script._.V5a_wrapped_bind
         )
     )
 
@@ -171,9 +369,9 @@ GTW.Script \
     ( src       = "/media/GTW/js/V5a/nav_off_canvas.js"
     , name      = "V5a_nav_off_canvas"
     , requires  =
-        ( GTW.Script._.V5a_bind
-        , GTW.Script._.V5a_merge
+        ( GTW.Script._.V5a_merge
         , GTW.Script._.V5a_query
+        , GTW.Script._.V5a_wrapped_bind
         )
     )
 GTW.JS_On_Ready \
@@ -185,9 +383,9 @@ GTW.Script \
     ( src       = "/media/GTW/js/V5a/page_notifications.js"
     , name      = "V5a_page_notifications"
     , requires  =
-        ( GTW.Script._.V5a_bind
-        , GTW.Script._.V5a_merge
+        ( GTW.Script._.V5a_merge
         , GTW.Script._.V5a_query
+        , GTW.Script._.V5a_wrapped_bind
         )
     )
 GTW.JS_On_Ready \
