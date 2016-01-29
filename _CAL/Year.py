@@ -64,6 +64,8 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    29-Jan-2016 (CT) Add `__add__`, `__sub__`
 #    29-Jan-2016 (CT) Use Once_Property, not manually managed `populate`
+#    29-Jan-2016 (CT) Change signature of `Day` to resemble `Year`
+#    29-Jan-2016 (CT) Add `Quarter`
 #    ««revision-date»»···
 #--
 
@@ -89,6 +91,8 @@ import _TFL._Meta.Once_Property
 import _TFL.Accessor
 import _TFL.CAO
 import _TFL.I18N
+
+import itertools
 
 @totally_ordered
 class _Ordinal_ (TFL.Meta.Object) :
@@ -148,7 +152,7 @@ class Day (_Ordinal_) :
     month_name = property (lambda s : s.date.formatted ("%B"))
     number     = property (TFL.Getter.date.day)
 
-    def __new__ (cls, cal, date) :
+    def __new__ (cls, date, cal) :
         Table = cal._days
         if isinstance (date, pyk.string_types) :
             date = CAL.Date.from_string (date)
@@ -210,7 +214,7 @@ class Day (_Ordinal_) :
     # end def Year
 
     def __add__ (self, rhs) :
-        return self.__class__ (self._cal, self.date + rhs)
+        return self.__class__ (self.date + rhs, self._cal)
     # end def __add__
 
     def __getattr__ (self, name) :
@@ -476,6 +480,88 @@ class Month (TFL.Meta.Object) :
 
 # end class Month
 
+class Quarter (TFL.Meta.Object) :
+    """Model a single quarter (year) in a calendar.
+
+       >>> y = Year()
+       >>> q = y.Q1
+       >>> q
+       Quarter (2016, 1)
+
+       >>> q.head
+       Day ("2016/04/01")
+
+       >>> q.tail
+       Day ("2016/06/30")
+
+       >>> for i in range (-5, 6) :
+       ...   print ("%2d" % i, q + i)
+       ...
+       -5 2014/Q4
+       -4 2015/Q1
+       -3 2015/Q2
+       -2 2015/Q3
+       -1 2015/Q4
+        0 2016/Q1
+        1 2016/Q2
+        2 2016/Q3
+        3 2016/Q4
+        4 2017/Q1
+        5 2017/Q2
+    """
+
+    abbr   = TFL.Meta.Once_Property (lambda s : "Q%s" % (s.quarter))
+    name   = TFL.Meta.Once_Property \
+        (lambda s : "%4s/%s" % (s.year.number, s.abbr))
+
+    head   = property (TFL.Getter.days [0])
+    number = property (TFL.Getter.quarter)
+    tail   = property (TFL.Getter.days [-1])
+
+    def __init__ (self, year, quarter) :
+        self.year    = year
+        self.quarter = quarter
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def days (self) :
+        return list (itertools.chain (* tuple (m.days for m in self.months)))
+    # end def days
+
+    @TFL.Meta.Once_Property
+    def months (self) :
+        m = self.number * 3
+        return self.year.months [m:m+3]
+    # end def months
+
+    def __add__ (self, rhs) :
+        yd, q = divmod (self.quarter + rhs, 4)
+        y     = self.year + yd if yd else self.year
+        if q == 0 :
+            q  = 4
+            y -= 1
+        return self.__class__ (y, q)
+    # end def __add__
+
+    def __len__ (self) :
+        return len (self.days)
+    # end def __len__
+
+    def __repr__ (self) :
+        return "%s (%s, %s)" % \
+            (self.__class__.__name__, self.year.number, self.quarter)
+    # end def __repr__
+
+    def __str__ (self) :
+        return self.name
+    # end def __str__
+
+    def __sub__ (self, rhs) :
+        return self + - rhs
+    # end def __sub__
+
+# end class Quarter
+
 class Year (TFL.Meta.Object) :
     """Model a single year in a calendar.
 
@@ -510,6 +596,10 @@ class Year (TFL.Meta.Object) :
     """
 
     number          = property (TFL.Getter.year)
+    q1 = Q1         = property (TFL.Getter.quarters [0])
+    q2 = Q2         = property (TFL.Getter.quarters [1])
+    q3 = Q3         = property (TFL.Getter.quarters [2])
+    q4 = Q4         = property (TFL.Getter.quarters [3])
 
     def __new__ (cls, year = None, cal = None) :
         if cal is None :
@@ -527,24 +617,23 @@ class Year (TFL.Meta.Object) :
     # end def __new__
 
     def _init_ (self, year, cal) :
-        D           = CAL.Date
-        self.year   = year
-        self.cal    = cal
-        self.months = months = []
-        self.weeks  = weeks  = []
-        self.mmap   = mmap   = {}
-        self.wmap   = wmap   = {}
-        for m in range (1, 13) :
-            month   = mmap [m] = Month (self, m)
-            months.append (month)
-        self.head   = h = cal.day [D (year = year, month = 1,  day = 1)]
-        self.tail   = t = cal.day [D (year = year, month = 12, day = 31)]
+        D             = CAL.Date
+        self.year     = year
+        self.cal      = cal
+        self.head     = h = cal.day [D (year = year, month = 1,  day = 1)]
+        self.tail     = t = cal.day [D (year = year, month = 12, day = 31)]
+        self.months   = [Month (self, m) for m in range (1, 13)]
+        self.mmap     = {m.number : m for m in self.months}
+        self.quarters = [Quarter (self, q) for q in range (1, 5)]
+        self.qmap     = {q.number : q for q in self.quarters}
+        self.weeks    = weeks  = []
+        self.wmap     = wmap   = {}
         for w, d in self._week_creation_iter (D, cal, year, h) :
             week = Week (self, w, d)
             wmap [week.number] = week
             weeks.append (week)
             if week :
-                cal._weeks [week.ordinal] = week
+                cal.week [week.ordinal] = week
         self.holidays = CAL.holidays (self)
     # end def _init_
 

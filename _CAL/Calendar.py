@@ -102,7 +102,7 @@ class Calendar (TFL.Meta.Object) :
     # end def __init__
 
     def _new_day (self, date) :
-        return CAL.Day (self, date)
+        return CAL.Day (date, self)
     # end def _new_day
 
     def _new_week (self, wko) :
