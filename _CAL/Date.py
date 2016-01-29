@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -56,10 +56,14 @@
 #    28-Feb-2014 (CT) Use future `print_function`
 #     4-Mar-2014 (CT) Add subtraction test cases for `Month_Delta`
 #     6-May-2015 (CT) Add tests for `jsonified`
+#    29-Jan-2016 (CT) Change `_default_format` to "%Y-%m-%d"
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
@@ -212,7 +216,7 @@ class Date (CAL._DTW_) :
         }
 
     _Type            = datetime.date
-    _default_format  = "%d-%m-%Y"
+    _default_format  = "%Y-%m-%d"
     _kind            = "date"
     _init_arg_names  = ("year", "month", "day")
     _timetuple_slice = lambda s, tt : tt [:3]

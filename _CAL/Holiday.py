@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,10 +29,14 @@
 #     5-Nov-2004 (CT) Use `//` for int division
 #    16-Jun-2010 (CT) Use unicode for holiday names
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#    29-Jan-2016 (CT) Modernize, DRY
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _CAL                    import CAL
 from   _TFL                    import TFL
@@ -96,24 +100,24 @@ def easter_date (y) :
 # end def easter_date
 
 fixed_holidays = \
-  { ( 1,  1) : u"Neujahr"
-  , ( 1,  6) : u"Hl. Drei Könige"
-  , ( 5,  1) : u"Mai-Feiertag"
-  , ( 8, 15) : u"Mariä Himmelfahrt"
-  , (10, 26) : u"Nationalfeiertag"
-  , (11,  1) : u"Allerheiligen"
-  , (12,  8) : u"Mariä Empfängnis"
-  , (12, 25) : u"1. Weihnachtstag"
-  , (12, 26) : u"2. Weihnachtstag"
+  { ( 1,  1) : "Neujahr"
+  , ( 1,  6) : "Hl. Drei Könige"
+  , ( 5,  1) : "Mai-Feiertag"
+  , ( 8, 15) : "Mariä Himmelfahrt"
+  , (10, 26) : "Nationalfeiertag"
+  , (11,  1) : "Allerheiligen"
+  , (12,  8) : "Mariä Empfängnis"
+  , (12, 25) : "1. Weihnachtstag"
+  , (12, 26) : "2. Weihnachtstag"
   }
 
 easter_dependent_holidays = \
-  {  0       : u"Ostersonntag"
-  ,  1       : u"Ostermontag"
-  , 39       : u"Christi Himmelfahrt"
-  , 49       : u"Pfingstsonntag"
-  , 50       : u"Pfingstmontag"
-  , 60       : u"Fronleichnam"
+  {  0       : "Ostersonntag"
+  ,  1       : "Ostermontag"
+  , 39       : "Christi Himmelfahrt"
+  , 49       : "Pfingstsonntag"
+  , 50       : "Pfingstmontag"
+  , 60       : "Fronleichnam"
   }
 
 def holidays (Y) :
@@ -129,15 +133,35 @@ def holidays (Y) :
     return result
 # end def holidays
 
-def _main (cmd) :
-    from _TFL.predicate import sorted
+def _show (year) :
+    """
+    >>> _show (2016)
+      1 2016/01/01 Neujahr
+      6 2016/01/06 Hl. Drei Könige
+     87 2016/03/27 Ostersonntag
+     88 2016/03/28 Ostermontag
+    122 2016/05/01 Mai-Feiertag
+    126 2016/05/05 Christi Himmelfahrt
+    136 2016/05/15 Pfingstsonntag
+    137 2016/05/16 Pfingstmontag
+    147 2016/05/26 Fronleichnam
+    228 2016/08/15 Mariä Himmelfahrt
+    300 2016/10/26 Nationalfeiertag
+    306 2016/11/01 Allerheiligen
+    343 2016/12/08 Mariä Empfängnis
+    360 2016/12/25 1. Weihnachtstag
+    361 2016/12/26 2. Weihnachtstag
+
+    """
     import _CAL.Year
-    year = CAL.Date (cmd.year, 1, 1)
-    Y    = CAL.Year (cmd.year)
-    Y.populate ()
-    for ordinal, name in sorted (pyk.iteritems (holidays (year))) :
-        o = ordinal - year.ordinal + 1
-        print ("%3d %s %s" % (o, Y.cal._days [ordinal], name))
+    Y = CAL.Year (year)
+    O = Y.head.ordinal - 1
+    for ordinal, name in sorted (pyk.iteritems (holidays (Y))) :
+        print ("%3d %s %s" % (ordinal - O, Y.cal.day [ordinal], name))
+# end def _show
+
+def _main (cmd) :
+    _show (cmd.year)
 # end def _main
 
 today    = CAL.Date ()

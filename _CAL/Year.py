@@ -62,10 +62,14 @@
 #    28-Feb-2014 (CT) Use future `print_function`
 #     6-May-2015 (CT) Add `_import_cb_json_dump`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    29-Jan-2016 (CT) Add `__add__`, `__sub__`
 #    ««revision-date»»···
 #--
 
-from   __future__                 import print_function
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _CAL                       import CAL
 from   _TFL                       import TFL
@@ -103,7 +107,37 @@ class _Ordinal_ (TFL.Meta.Object) :
 # end class _Ordinal_
 
 class Day (_Ordinal_) :
-    """Model a single day in a calendar"""
+    """Model a single day in a calendar
+
+       >>> y = Year (2016)
+       >>> d = y.weeks [4].fri
+       >>> for i in range (0, 70, 7) :
+       ...   print ("%2d" % i, d + i, d + i + 3)
+        0 2016/01/29 2016/02/01
+        7 2016/02/05 2016/02/08
+       14 2016/02/12 2016/02/15
+       21 2016/02/19 2016/02/22
+       28 2016/02/26 2016/02/29
+       35 2016/03/04 2016/03/07
+       42 2016/03/11 2016/03/14
+       49 2016/03/18 2016/03/21
+       56 2016/03/25 2016/03/28
+       63 2016/04/01 2016/04/04
+
+       >>> for i in range (0, 70, 7) :
+       ...   print ("%2d" % i, d - i, d - i + 3)
+        0 2016/01/29 2016/02/01
+        7 2016/01/22 2016/01/25
+       14 2016/01/15 2016/01/18
+       21 2016/01/08 2016/01/11
+       28 2016/01/01 2016/01/04
+       35 2015/12/25 2015/12/28
+       42 2015/12/18 2015/12/21
+       49 2015/12/11 2015/12/14
+       56 2015/12/04 2015/12/07
+       63 2015/11/27 2015/11/30
+
+    """
 
     day_abbr   = property (lambda s : s.date.formatted ("%a"))
     day_name   = property (lambda s : s.date.formatted ("%A"))
@@ -174,6 +208,10 @@ class Day (_Ordinal_) :
         return self._cal.year [self.year]
     # end def Year
 
+    def __add__ (self, rhs) :
+        return self.__class__ (self._cal, self.date + rhs)
+    # end def __add__
+
     def __getattr__ (self, name) :
         if name.startswith ("__") and name.endswith ("__") :
             ### Placate inspect.unwrap of Python 3.5,
@@ -191,11 +229,68 @@ class Day (_Ordinal_) :
         return self.date.formatted ("%Y/%m/%d")
     # end def __str__
 
+    def __sub__ (self, rhs) :
+        return self + - rhs
+    # end def __sub__
+
 # end class Day
 
 @pyk.adapt__bool__
 class Week (_Ordinal_) :
-    """Model a single week in a calendar"""
+    """Model a single week in a calendar
+
+       >>> y = Year (2016)
+       >>> w = y.weeks [39]
+       >>> for i in range (20) :
+       ...   v = w + i
+       ...   print ("%2d" % i, v, v.mon, v.sun)
+        0 week 39 2016/09/26 2016/10/02
+        1 week 40 2016/10/03 2016/10/09
+        2 week 41 2016/10/10 2016/10/16
+        3 week 42 2016/10/17 2016/10/23
+        4 week 43 2016/10/24 2016/10/30
+        5 week 44 2016/10/31 2016/11/06
+        6 week 45 2016/11/07 2016/11/13
+        7 week 46 2016/11/14 2016/11/20
+        8 week 47 2016/11/21 2016/11/27
+        9 week 48 2016/11/28 2016/12/04
+       10 week 49 2016/12/05 2016/12/11
+       11 week 50 2016/12/12 2016/12/18
+       12 week 51 2016/12/19 2016/12/25
+       13 week 52 2016/12/26 2017/01/01
+       14 week 01 2017/01/02 2017/01/08
+       15 week 02 2017/01/09 2017/01/15
+       16 week 03 2017/01/16 2017/01/22
+       17 week 04 2017/01/23 2017/01/29
+       18 week 05 2017/01/30 2017/02/05
+       19 week 06 2017/02/06 2017/02/12
+
+       >>> w = y.weeks [13]
+       >>> for i in range (20) :
+       ...   v = w - i
+       ...   print ("%2d" % i, v, v.mon, v.sun)
+        0 week 13 2016/03/28 2016/04/03
+        1 week 12 2016/03/21 2016/03/27
+        2 week 11 2016/03/14 2016/03/20
+        3 week 10 2016/03/07 2016/03/13
+        4 week 09 2016/02/29 2016/03/06
+        5 week 08 2016/02/22 2016/02/28
+        6 week 07 2016/02/15 2016/02/21
+        7 week 06 2016/02/08 2016/02/14
+        8 week 05 2016/02/01 2016/02/07
+        9 week 04 2016/01/25 2016/01/31
+       10 week 03 2016/01/18 2016/01/24
+       11 week 02 2016/01/11 2016/01/17
+       12 week 01 2016/01/04 2016/01/10
+       13 week 53 2015/12/28 2016/01/03
+       14 week 52 2015/12/21 2015/12/27
+       15 week 51 2015/12/14 2015/12/20
+       16 week 50 2015/12/07 2015/12/13
+       17 week 49 2015/11/30 2015/12/06
+       18 week 48 2015/11/23 2015/11/29
+       19 week 47 2015/11/16 2015/11/22
+
+    """
 
     tue        = property (TFL.Getter.days [1])
     wed        = property (TFL.Getter.days [2])
@@ -204,6 +299,7 @@ class Week (_Ordinal_) :
     sat        = property (TFL.Getter.days [5])
     sun        = property (TFL.Getter.days [6])
 
+    cal        = property (TFL.Getter.year.cal)
     ordinal    = property (TFL.Getter.mon.wk_ordinal)
 
     _day_names = ("Mo", "Tu", "We", "Th", "Fr", "Sa", "So")
@@ -231,6 +327,24 @@ class Week (_Ordinal_) :
             days.extend (cal.day [d.date + i] for i in range (1, 7))
     # end def populate
 
+    def __add__ (self, rhs) :
+        cal  = self.cal
+        mon  = cal.day    [self.mon.date + (7 * rhs)]
+        thu  = mon + 3
+        year = cal.year   [thu.year]
+        week = year.wmap [thu.week]
+        return self.__class__ (year, week, mon)
+    # end def __add__
+
+    def __bool__ (self) :
+        n = self.number
+        return (   (n > 0)
+               and (  (n < 53)
+                   or (int (self.year) == int (self.thu.year))
+                   )
+               )
+    # end def __bool__
+
     def __getattr__ (self, name) :
         if name == "days" :
             self.populate ()
@@ -242,15 +356,6 @@ class Week (_Ordinal_) :
         return self.number
     # end def __int__
 
-    def __bool__ (self) :
-        n = self.number
-        return (   (n > 0)
-               and (  (n < 53)
-                   or (int (self.year) == int (self.thu.year))
-                   )
-               )
-    # end def __bool__
-
     def __str__ (self) :
         return "week %2.2d" % (self.number, )
     # end def __str__
@@ -259,10 +364,66 @@ class Week (_Ordinal_) :
         return "week %2.2d <%s to %s>" % (self.number, self.mon, self.sun)
     # end def __repr__
 
+    def __sub__ (self, rhs) :
+        return self + - rhs
+    # end def __sub__
+
 # end class Week
 
 class Month (TFL.Meta.Object) :
-    """Model a single month in a calendar"""
+    """Model a single month in a calendar.
+
+       >>> y = Year (2016)
+       >>> m = y.months [5]
+       >>> for i in range (20) :
+       ...   print ("%2d" % i, m + i)
+       ...
+        0 2016/06
+        1 2016/07
+        2 2016/08
+        3 2016/09
+        4 2016/10
+        5 2016/11
+        6 2016/12
+        7 2017/01
+        8 2017/02
+        9 2017/03
+       10 2017/04
+       11 2017/05
+       12 2017/06
+       13 2017/07
+       14 2017/08
+       15 2017/09
+       16 2017/10
+       17 2017/11
+       18 2017/12
+       19 2018/01
+
+       >>> for i in range (20) :
+       ...   print ("%2d" % i, m - i)
+       ...
+        0 2016/06
+        1 2016/05
+        2 2016/04
+        3 2016/03
+        4 2016/02
+        5 2016/01
+        6 2015/12
+        7 2015/11
+        8 2015/10
+        9 2015/09
+       10 2015/08
+       11 2015/07
+       12 2015/06
+       13 2015/05
+       14 2015/04
+       15 2015/03
+       16 2015/02
+       17 2015/01
+       18 2014/12
+       19 2014/11
+
+    """
 
     abbr   = property (lambda s : s.head.formatted ("%b"))
     head   = property (TFL.Getter.days [0])
@@ -291,6 +452,15 @@ class Month (TFL.Meta.Object) :
                     break
     # end def populate
 
+    def __add__ (self, rhs) :
+        yd, m = divmod (self.month + rhs, 12)
+        y     = self.year + yd if yd else self.year
+        if m == 0 :
+            m  = 12
+            y -= 1
+        return self.__class__ (y, m)
+    # end def __add__
+
     def __getattr__ (self, name) :
         if name == "days" :
             self.populate ()
@@ -310,6 +480,10 @@ class Month (TFL.Meta.Object) :
     def __str__ (self) :
         return self.head.formatted ("%Y/%m")
     # end def __str__
+
+    def __sub__ (self, rhs) :
+        return self + - rhs
+    # end def __sub__
 
 # end class Month
 
@@ -430,6 +604,10 @@ class Year (TFL.Meta.Object) :
             d = cal.day [d.date + 7]
     # end def _week_creation_iter
 
+    def __add__ (self, rhs) :
+        return self.__class__ (self.year + rhs, cal = self.cal)
+    # end def __add__
+
     def __getattr__ (self, name) :
         if name in ("days", "dmap") :
             self.populate ()
@@ -452,6 +630,10 @@ class Year (TFL.Meta.Object) :
     def __str__ (self) :
         return "%s" % (self.year, )
     # end def __str__
+
+    def __sub__ (self, rhs) :
+        return self + - rhs
+    # end def __sub__
 
 # end class Year
 
