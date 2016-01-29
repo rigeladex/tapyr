@@ -63,6 +63,7 @@
 #     6-May-2015 (CT) Add `_import_cb_json_dump`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    29-Jan-2016 (CT) Add `__add__`, `__sub__`
+#    29-Jan-2016 (CT) Use Once_Property, not manually managed `populate`
 #    ««revision-date»»···
 #--
 
@@ -314,18 +315,19 @@ class Week (_Ordinal_) :
             self.number = 0
     # end def _init_
 
+    @TFL.Meta.Once_Property
+    def days (self) :
+        d      = self.mon
+        cal    = self.year.cal
+        result = [d]
+        result.extend (cal.day [d.date + i] for i in range (1, 7))
+        return result
+    # end def days
+
     def as_cal (self) :
         line = " ".join (("%2d" % d.day) for d in self.days)
         return "%2.2d %s" % (self.number, line)
     # end def as_cal
-
-    def populate (self) :
-        if "days" not in self.__dict__ :
-            d         = self.mon
-            cal       = self.year.cal
-            self.days = days = [d]
-            days.extend (cal.day [d.date + i] for i in range (1, 7))
-    # end def populate
 
     def __add__ (self, rhs) :
         cal  = self.cal
@@ -344,13 +346,6 @@ class Week (_Ordinal_) :
                    )
                )
     # end def __bool__
-
-    def __getattr__ (self, name) :
-        if name == "days" :
-            self.populate ()
-            return self.days
-        raise AttributeError (name)
-    # end def __getattr__
 
     def __int__ (self) :
         return self.number
@@ -436,21 +431,22 @@ class Month (TFL.Meta.Object) :
         self.month = month
     # end def __init__
 
-    def populate (self) :
-        if "days" not in self.__dict__ :
-            Y = self.year
-            n = self.month
-            d = Y.dmap [(Y.number, n, 1)]
-            i = d.rjd - 1
-            self.days = days = []
-            while d.month == n :
-                days.append (d)
-                i += 1
-                try :
-                    d = Y.days [i]
-                except IndexError :
-                    break
-    # end def populate
+    @TFL.Meta.Once_Property
+    def days (self) :
+        Y = self.year
+        n = self.month
+        d = Y.dmap [(Y.number, n, 1)]
+        i = d.rjd - 1
+        result = days = []
+        while d.month == n :
+            days.append (d)
+            i += 1
+            try :
+                d = Y.days [i]
+            except IndexError :
+                break
+        return result
+    # end def days
 
     def __add__ (self, rhs) :
         yd, m = divmod (self.month + rhs, 12)
@@ -460,13 +456,6 @@ class Month (TFL.Meta.Object) :
             y -= 1
         return self.__class__ (y, m)
     # end def __add__
-
-    def __getattr__ (self, name) :
-        if name == "days" :
-            self.populate ()
-            return self.days
-        raise AttributeError (name)
-    # end def __getattr__
 
     def __len__ (self) :
         return len (self.days)
@@ -522,7 +511,7 @@ class Year (TFL.Meta.Object) :
 
     number          = property (TFL.Getter.year)
 
-    def __new__ (cls, year = None, cal = None, populate = False) :
+    def __new__ (cls, year = None, cal = None) :
         if cal is None :
             import _CAL.Calendar
             cal = CAL.Calendar ()
@@ -533,11 +522,11 @@ class Year (TFL.Meta.Object) :
         if year in Table :
             return Table [year]
         self = Table [year] = TFL.Meta.Object.__new__ (cls)
-        self._init_ (year, cal, populate)
+        self._init_ (year, cal)
         return self
     # end def __new__
 
-    def _init_ (self, year, cal, populate) :
+    def _init_ (self, year, cal) :
         D           = CAL.Date
         self.year   = year
         self.cal    = cal
@@ -557,9 +546,21 @@ class Year (TFL.Meta.Object) :
             if week :
                 cal._weeks [week.ordinal] = week
         self.holidays = CAL.holidays (self)
-        if populate :
-            self.populate ()
     # end def _init_
+
+    @TFL.Meta.Once_Property
+    def days (self) :
+        result =  [d for d in self.weeks  [0].days [self.head.weekday:]]
+        for w in self.weeks [1:-1] :
+            result.extend (w.days)
+        result.extend (d for d in self.weeks [-1].days [:self.tail.weekday + 1])
+        return result
+    # end def days
+
+    @TFL.Meta.Once_Property
+    def dmap (self) :
+        return {d.id : d for d in self.days}
+    # end def dmap
 
     def as_plan (self) :
         return "\n\n".join \
@@ -575,17 +576,6 @@ class Year (TFL.Meta.Object) :
                  ] + [""]
         return "\n".join (result)
     # end def as_cal
-
-    def populate (self) :
-        self.days = days \
-                  =  [d for d in self.weeks  [0].days [self.head.weekday:]]
-        for w in self.weeks [1:-1] :
-            days.extend (w.days)
-        days.extend (d for d in self.weeks [-1].days [:self.tail.weekday + 1])
-        self.dmap = dmap = {}
-        for d in days :
-            dmap [d.id] = d
-    # end def populate
 
     def sort_appointments (self) :
         for d in self.days :
@@ -607,13 +597,6 @@ class Year (TFL.Meta.Object) :
     def __add__ (self, rhs) :
         return self.__class__ (self.year + rhs, cal = self.cal)
     # end def __add__
-
-    def __getattr__ (self, name) :
-        if name in ("days", "dmap") :
-            self.populate ()
-            return getattr (self, name)
-        raise AttributeError (name)
-    # end def __getattr__
 
     def __int__ (self) :
         return self.year

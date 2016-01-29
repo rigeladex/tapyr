@@ -21,6 +21,7 @@
 #    10-Dec-2004 (CT) Small fixes
 #    11-Aug-2007 (CT) Imports corrected
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
+#    29-Jan-2016 (CT) Remove `populate` from call to `CAL.Year`
 #    ««revision-date»»···
 #--
 
@@ -122,7 +123,7 @@ class Calendar (TFL.Meta.Object) :
     # end def _new_week
 
     def _new_year (self, year) :
-        return CAL.Year (year, cal = self, populate = False)
+        return CAL.Year (year, cal = self)
     # end def _new_year
 
 # end class Calendar
