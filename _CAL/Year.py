@@ -66,6 +66,8 @@
 #    29-Jan-2016 (CT) Use Once_Property, not manually managed `populate`
 #    29-Jan-2016 (CT) Change signature of `Day` to resemble `Year`
 #    29-Jan-2016 (CT) Add `Quarter`
+#     1-Feb-2016 (CT) Pass `cal.country` to `CAL.holidays`
+#     2-Feb-2016 (CT) Add translation markup `_`
 #    ««revision-date»»···
 #--
 
@@ -81,6 +83,7 @@ import _CAL.Appointment
 import _CAL.Date
 import _CAL.Holiday
 
+from   _TFL.I18N                  import _, _T, _Tn
 from   _TFL.predicate             import *
 from   _TFL.pyk                   import pyk
 from   _TFL                       import sos
@@ -307,7 +310,8 @@ class Week (_Ordinal_) :
     cal        = property (TFL.Getter.year.cal)
     ordinal    = property (TFL.Getter.mon.wk_ordinal)
 
-    _day_names = ("Mo", "Tu", "We", "Th", "Fr", "Sa", "So")
+    _day_names = \
+        (_ ("Mo"), _ ("Tu"), _ ("We"), _ ("Th"), _ ("Fr"), _ ("Sa"), _ ("Su"))
 
     def __init__ (self, year, number, mon) :
         self.year   = year
@@ -634,7 +638,7 @@ class Year (TFL.Meta.Object) :
             weeks.append (week)
             if week :
                 cal.week [week.ordinal] = week
-        self.holidays = CAL.holidays (self)
+        self.holidays = CAL.holidays (year, cal.country)
     # end def _init_
 
     @TFL.Meta.Once_Property

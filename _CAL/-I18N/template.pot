@@ -1,0 +1,284 @@
+# Translations template for MOM/GTW/JNJ.
+# Copyright (C) 2016 Mag. Christian Tanzer, Martin Glueck
+# This file is distributed under the same license as the MOM/GTW/JNJ
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
+"POT-Creation-Date: 2016-02-02 18:18+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.1.1\n"
+
+#: _CAL/Holiday.py:120
+msgid "All Saints' Day"
+msgstr ""
+
+#: _CAL/Holiday.py:133
+msgid "Ascension Day"
+msgstr ""
+
+#: _CAL/Holiday.py:100
+msgid "Assumption Day"
+msgstr ""
+
+#: _CAL/Holiday.py:97
+msgid "August Holiday"
+msgstr ""
+
+#: _CAL/Holiday.py:116
+msgid "Austrian National Day"
+msgstr ""
+
+#: _CAL/Holiday.py:128
+msgid "Boxing Day"
+msgstr ""
+
+#: _CAL/Holiday.py:126
+msgid "Christmas Day"
+msgstr ""
+
+#: _CAL/Holiday.py:113
+msgid "Columbus Day"
+msgstr ""
+
+#: _CAL/Holiday.py:136
+msgid "Corpus Christi"
+msgstr ""
+
+#: _CAL/Holiday.py:132
+msgid "Easter Monday"
+msgstr ""
+
+#: _CAL/Holiday.py:131
+msgid "Easter Sunday"
+msgstr ""
+
+#: _CAL/Holiday.py:66
+msgid "Epiphany"
+msgstr ""
+
+#: _CAL/Holiday.py:125
+msgid "Feast of the Immaculate Conception"
+msgstr ""
+
+#: _CAL/Holiday.py:107
+msgid "Federal Day of Thanksgiving, Repentance and Prayer"
+msgstr ""
+
+#: _CAL/Year.py:313
+msgid "Fr"
+msgstr ""
+
+#: _CAL/Holiday.py:110
+msgid "German Unity Day"
+msgstr ""
+
+#: _CAL/Holiday.py:130
+msgid "Good Friday"
+msgstr ""
+
+#: _CAL/Holiday.py:70
+msgid "Inauguration Day"
+msgstr ""
+
+#: _CAL/Holiday.py:95
+msgid "Independence Day"
+msgstr ""
+
+#: _CAL/Holiday.py:92
+msgid "June Holiday"
+msgstr ""
+
+#: _CAL/Holiday.py:77 _CAL/Holiday.py:104
+msgid "Labor Day"
+msgstr ""
+
+#: _CAL/Holiday.py:101
+msgid "Late Summer Bank Holiday"
+msgstr ""
+
+#: _CAL/Holiday.py:67
+msgid "Martin Luther King Day"
+msgstr ""
+
+#: _CAL/Holiday.py:81
+msgid "May Day"
+msgstr ""
+
+#: _CAL/Holiday.py:78
+msgid "May Day Bank Holiday"
+msgstr ""
+
+#: _CAL/Holiday.py:89
+msgid "Memorial Day"
+msgstr ""
+
+#: _CAL/Year.py:313
+msgid "Mo"
+msgstr ""
+
+#: _CAL/Holiday.py:65
+msgid "New Year's Day"
+msgstr ""
+
+#: _CAL/Holiday.py:117
+msgid "October Holiday"
+msgstr ""
+
+#: _CAL/Year.py:313
+msgid "Sa"
+msgstr ""
+
+#: _CAL/Holiday.py:76
+msgid "Saint Patrick's Day"
+msgstr ""
+
+#: _CAL/Holiday.py:86
+msgid "Spring Bank Holiday"
+msgstr ""
+
+#: _CAL/Holiday.py:127
+msgid "St. Stephen's Day"
+msgstr ""
+
+#: _CAL/Year.py:313
+msgid "Su"
+msgstr ""
+
+#: _CAL/Holiday.py:96
+msgid "Swiss National Day"
+msgstr ""
+
+#: _CAL/Year.py:313
+msgid "Th"
+msgstr ""
+
+#: _CAL/Holiday.py:122
+msgid "Thanksgiving"
+msgstr ""
+
+#: _CAL/Year.py:313
+msgid "Tu"
+msgstr ""
+
+#: _CAL/Holiday.py:121
+msgid "Veterans Day"
+msgstr ""
+
+#: _CAL/Holiday.py:73
+msgid "Washington's Birthday"
+msgstr ""
+
+#: _CAL/Year.py:313
+msgid "We"
+msgstr ""
+
+#: _CAL/Holiday.py:135
+msgid "Whit Monday"
+msgstr ""
+
+#: _CAL/Holiday.py:134
+msgid "Whit Sunday"
+msgstr ""
+
+#: _CAL/Date.py:209
+msgid "apr"
+msgstr ""
+
+#: _CAL/Date.py:209
+msgid "april"
+msgstr ""
+
+#: _CAL/Date.py:213
+msgid "aug"
+msgstr ""
+
+#: _CAL/Date.py:213
+msgid "august"
+msgstr ""
+
+#: _CAL/Date.py:217
+msgid "dec"
+msgstr ""
+
+#: _CAL/Date.py:217
+msgid "december"
+msgstr ""
+
+#: _CAL/Date.py:207
+msgid "feb"
+msgstr ""
+
+#: _CAL/Date.py:207
+msgid "february"
+msgstr ""
+
+#: _CAL/Date.py:206
+msgid "jan"
+msgstr ""
+
+#: _CAL/Date.py:206
+msgid "january"
+msgstr ""
+
+#: _CAL/Date.py:212
+msgid "jul"
+msgstr ""
+
+#: _CAL/Date.py:212
+msgid "july"
+msgstr ""
+
+#: _CAL/Date.py:211
+msgid "jun"
+msgstr ""
+
+#: _CAL/Date.py:211
+msgid "june"
+msgstr ""
+
+#: _CAL/Date.py:208
+msgid "mar"
+msgstr ""
+
+#: _CAL/Date.py:208
+msgid "march"
+msgstr ""
+
+#: _CAL/Date.py:210
+msgid "may"
+msgstr ""
+
+#: _CAL/Date.py:216
+msgid "nov"
+msgstr ""
+
+#: _CAL/Date.py:216
+msgid "november"
+msgstr ""
+
+#: _CAL/Date.py:215
+msgid "oct"
+msgstr ""
+
+#: _CAL/Date.py:215
+msgid "october"
+msgstr ""
+
+#: _CAL/Date.py:214
+msgid "sep"
+msgstr ""
+
+#: _CAL/Date.py:214
+msgid "september"
+msgstr ""
+

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,6 +37,7 @@
 #    29-Mar-2012 (CT) Add `_xtra_arg_names` and `_xtra_kw` (to support `tzinfo`)
 #     6-May-2015 (CT) Add `_import_cb_json_dump`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#     2-Feb-2016 (CT) Add `new_dtw`, `_Type_Table`, `_DTW_Meta_`
 #    ««revision-date»»···
 #--
 
@@ -47,16 +48,31 @@ from   _TFL.pyk                   import pyk
 from   _TFL._Meta.totally_ordered import totally_ordered
 
 import _TFL._Meta.Object
+import _TFL._Meta.Property
 import _TFL.Accessor
 
 import datetime
 import time
 
+class _DTW_Meta_ (TFL.Meta.Object.__class__) :
+    """Meta class for _DTW_"""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        TT = cls._Type_Table
+        for T in (cls._Type, getattr (cls, "Class", None)) :
+            if T is not None :
+                TT [T] = cls
+    # end def __init__
+
+# end class _DTW_Meta_
+
 @totally_ordered
-class _DTW_ (TFL.Meta.Object) :
+class _DTW_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _DTW_Meta_)) :
     """Root for `datetime` wrappers"""
 
     _Type            = None
+    _Type_Table      = {}
     _default_format  = None
     _kind            = None
     _init_arg_names  = ()
@@ -98,6 +114,14 @@ class _DTW_ (TFL.Meta.Object) :
                     attrs [name] = xkw.pop (name)
             self._body = self._new_object (attrs)
     # end def __init__
+
+    @TFL.Meta.Class_and_Instance_Method
+    def new_dtw (soc, body) :
+        T = soc._Type_Table.get (body.__class__)
+        if T is not None :
+            return T (** {soc._kind : body})
+        raise TypeError ("Can't create a new wrapper from %s: %s" % (soc, body))
+    # end def new_dtw
 
     def formatted (self, format = None) :
         if format is None :

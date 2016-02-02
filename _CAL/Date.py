@@ -57,6 +57,7 @@
 #     4-Mar-2014 (CT) Add subtraction test cases for `Month_Delta`
 #     6-May-2015 (CT) Add tests for `jsonified`
 #    29-Jan-2016 (CT) Change `_default_format` to "%Y-%m-%d"
+#     2-Feb-2016 (CT) Add translation markup `_`
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,7 @@ import _TFL.Accessor
 import _TFL.CAO
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.Math_Func           import horner
 from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import *
@@ -201,18 +203,18 @@ class Date (CAL._DTW_) :
         )
 
     months = \
-        { 'jan' :  1, 'january'   :   1,  1 : "jan"
-        , 'feb' :  2, 'february'  :   2,  2 : "feb"
-        , 'mar' :  3, 'march'     :   3,  3 : "mar"
-        , 'apr' :  4, 'april'     :   4,  4 : "apr"
-        , 'may' :  5, 'may'       :   5,  5 : "may"
-        , 'jun' :  6, 'june'      :   6,  6 : "jun"
-        , 'jul' :  7, 'july'      :   7,  7 : "jul"
-        , 'aug' :  8, 'august'    :   8,  8 : "aug"
-        , 'sep' :  9, 'september' :   9,  9 : "sep"
-        , 'oct' : 10, 'october'   :  10, 10 : "oct"
-        , 'nov' : 11, 'november'  :  11, 11 : "nov"
-        , 'dec' : 12, 'december'  :  12, 12 : "dec"
+        { _ ("jan") :  1, _ ("january")   :   1,  1 : "jan"
+        , _ ("feb") :  2, _ ("february")  :   2,  2 : "feb"
+        , _ ("mar") :  3, _ ("march")     :   3,  3 : "mar"
+        , _ ("apr") :  4, _ ("april")     :   4,  4 : "apr"
+        , _ ("may") :  5, _ ("may")       :   5,  5 : "may"
+        , _ ("jun") :  6, _ ("june")      :   6,  6 : "jun"
+        , _ ("jul") :  7, _ ("july")      :   7,  7 : "jul"
+        , _ ("aug") :  8, _ ("august")    :   8,  8 : "aug"
+        , _ ("sep") :  9, _ ("september") :   9,  9 : "sep"
+        , _ ("oct") : 10, _ ("october")   :  10, 10 : "oct"
+        , _ ("nov") : 11, _ ("november")  :  11, 11 : "nov"
+        , _ ("dec") : 12, _ ("december")  :  12, 12 : "dec"
         }
 
     _Type            = datetime.date

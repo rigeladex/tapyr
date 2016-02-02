@@ -30,6 +30,9 @@
 #    16-Jun-2010 (CT) Use unicode for holiday names
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    29-Jan-2016 (CT) Modernize, DRY
+#     1-Feb-2016 (CT) Add country dependent holidays; remove obsolete code
+#     2-Feb-2016 (CT) Factor `CAL.Day_Rule`
+#     2-Feb-2016 (CT) Add I18N, german and swiss holidays
 #    ««revision-date»»···
 #--
 
@@ -42,105 +45,109 @@ from   _CAL                    import CAL
 from   _TFL                    import TFL
 from   _TFL.pyk                import pyk
 
+from   _TFL.I18N                import _, _T, _Tn
+
 import _CAL.Date
+import _CAL.Day_Rule
 import _CAL.Delta
+
 import _TFL.CAO
+import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 
-def easter_date_gauss (year) :
-    """Returns date of easter sunday computed by Gauß' rule as given by
-       H.H.Voigt: `Abriß der Astronomie`.
+class Holidays (CAL.Day_Rule.Set) :
+
+    F = CAL.Day_Rule.Fixed
+    E = CAL.Day_Rule.Easter_Dependent
+
+    ### https://en.wikipedia.org/wiki/List_of_holidays_by_country
+    _rules = \
+        ( F (_ ("New Year's Day"),                      1,  1)
+        , F (_ ("Epiphany"),                            1,  6, "AT")
+        , F (_ ("Martin Luther King Day")
+             , 1, 1, "US", delta = dict (weekday = F.RD.MO (3))
+            )
+        , F (_ ("Inauguration Day")
+            , 1, 20, "US", y_filter = lambda y : (y % 4 == 1)
+            )
+        , F (_ ("Washington's Birthday")
+            , 2, 1, "US", delta = dict (weekday = F.RD.MO (3))
+            )
+        , F (_ ("Saint Patrick's Day"),                 3, 17, "IE")
+        , F (_ ("Labor Day"),                           5,  1, "AT", "DE")
+        , F (_ ("May Day Bank Holiday")
+            , 5,  1, "UK", delta = dict (weekday = F.RD.MO (1))
+            )
+        , F (_ ("May Day")
+            , 5,  1, "IE"
+            , delta = dict (weekday = F.RD.MO (1))
+            , y_filter = lambda y : y >= 1994
+            )
+        , F (_ ("Spring Bank Holiday")
+            , 5,  31, "UK", delta = dict (weekday = F.RD.MO (-1))
+            )
+        , F (_ ("Memorial Day")
+            , 5,  31, "US", delta = dict (weekday = F.RD.MO (-1))
+            )
+        , F (_ ("June Holiday")
+            , 6,  1, "IE", delta = dict (weekday = F.RD.MO (1))
+            )
+        , F (_ ("Independence Day"),                    7,  4, "US")
+        , F (_ ("Swiss National Day"),                  8,  1, "CH")
+        , F (_ ("August Holiday")
+            , 8,  1, "IE", delta = dict (weekday = F.RD.MO (1))
+            )
+        , F (_ ("Assumption Day"),                      8, 15, "AT")
+        , F (_ ("Late Summer Bank Holiday")
+            , 8,  31, "UK", delta = dict (weekday = F.RD.MO (-1))
+            )
+        , F (_ ("Labor Day")
+            , 9,  1, "US", delta = dict (weekday = F.RD.MO (1))
+            )
+        , F (_ ("Federal Day of Thanksgiving, Repentance and Prayer")
+            , 9, 1, "CH", delta = dict (weekday = F.RD.SU (3))
+            )
+        , F (_ ("German Unity Day"),                   10,  3, "DE"
+            , y_filter = lambda y : y >= 1990
+            )
+        , F (_ ("Columbus Day")
+            , 10,  1, "US", delta = dict (weekday = F.RD.MO (2))
+            )
+        , F (_ ("Austrian National Day"),              10, 26, "AT")
+        , F (_ ("October Holiday")
+            , 10,  31, "IE", delta = dict (weekday = F.RD.MO (-1))
+            )
+        , F (_ ("All Saints' Day"),                    11,  1, "AT")
+        , F (_ ("Veterans Day"),                       11, 11, "US")
+        , F (_ ("Thanksgiving")
+            , 11,  1, "US", delta = dict (weekday = F.RD.TH (4))
+            )
+        , F (_ ("Feast of the Immaculate Conception"), 12,  8, "AT")
+        , F (_ ("Christmas Day"),                      12, 25, "AT", "CH", "DE", "IE", "UK", "US")
+        , F (_ ("St. Stephen's Day"),                  12, 26, "AT", "CH", "DE", "IE")
+        , F (_ ("Boxing Day"),                         12, 26, "UK")
+        # easter dependent movable holidays
+        , E (_ ("Good Friday"),     -2, "CH", "DE", "UK")
+        , E (_ ("Easter Sunday"),    0, "AT", "CH", "DE", "UK")
+        , E (_ ("Easter Monday"),    1, "AT", "CH", "DE", "IE", "UK")
+        , E (_ ("Ascension Day"),   39, "AT", "CH", "DE")
+        , E (_ ("Whit Sunday"),     49, "AT", "CH", "DE")
+        , E (_ ("Whit Monday"),     50, "AT", "CH", "DE")
+        , E (_ ("Corpus Christi"),  60, "AT")
+        )
+
+# end class Holidays
+
+holidays = Holidays ()
+
+def _show (year, country, lang = "de") :
     """
-    if   1583 <= year <= 1699 :
-        m, n = 22, 2
-    elif 1700 <= year <= 1799 :
-        m, n = 23, 3
-    elif 1800 <= year <= 1899 :
-        m, n = 23, 4
-    elif 1900 <= year <= 2099 :
-        m, n = 24, 5
-    elif 2100 <= year <= 2199 :
-        m, n = 24, 6
-    elif 2200 <= year <= 2299 :
-        m, n = 25, 0
-    else :
-        raise NotImplementedError \
-            ("Only implemented for years between 1583 and 2299")
-    a   = year                   % 19
-    b   = year                   %  4
-    c   = year                   %  7
-    d   = (19*a + m)             % 30
-    e   = ( 2*b + 4*c + 6*d + n) %  7
-    day = 22 + d + e
-    if day <= 31 :
-        month = 3
-    else :
-        day   = d + e - 9
-        month = 4
-        if day in (25, 26) and d == 28 and e == 6 and a > 10 :
-            ### print (d, e, a, (d == 28, e == 6, a > 10))
-            day -= 7
-    return (year, month, day)
-# end def easter_date_gauss
-
-def easter_date (y) :
-    """Returns date of easter sunday computed by Spencer Jones algorithm as
-       given by Jean Meeus: Astronomical Algorithms.
-    """
-    a    = y % 19
-    b, c = divmod (y, 100)
-    d, e = divmod (b, 4)
-    f    = (b + 8) // 25
-    g    = (b - f + 1) // 3
-    h    = (19*a + b - d - g + 15) % 30
-    i, k = divmod (c, 4)
-    l    = (32 + 2*e + 2*i - h - k) % 7
-    m    = (a + 11*h + 22*l) // 451
-    n, p = divmod (h + l - 7*m + 114, 31)
-    return (y, n, p+1)
-# end def easter_date
-
-fixed_holidays = \
-  { ( 1,  1) : "Neujahr"
-  , ( 1,  6) : "Hl. Drei Könige"
-  , ( 5,  1) : "Mai-Feiertag"
-  , ( 8, 15) : "Mariä Himmelfahrt"
-  , (10, 26) : "Nationalfeiertag"
-  , (11,  1) : "Allerheiligen"
-  , (12,  8) : "Mariä Empfängnis"
-  , (12, 25) : "1. Weihnachtstag"
-  , (12, 26) : "2. Weihnachtstag"
-  }
-
-easter_dependent_holidays = \
-  {  0       : "Ostersonntag"
-  ,  1       : "Ostermontag"
-  , 39       : "Christi Himmelfahrt"
-  , 49       : "Pfingstsonntag"
-  , 50       : "Pfingstmontag"
-  , 60       : "Fronleichnam"
-  }
-
-def holidays (Y) :
-    result  = {}
-    year    = Y.year
-    for h, n in pyk.iteritems (fixed_holidays) :
-        result [CAL.Date (year, * h).ordinal] = n
-    y, m, d = easter_date (year)
-    ED      = CAL.Date (y, m, d)
-    for d, n in pyk.iteritems (easter_dependent_holidays) :
-        D = ED + CAL.Date_Delta (days = d)
-        result [D.ordinal] = n
-    return result
-# end def holidays
-
-def _show (year) :
-    """
-    >>> _show (2016)
+    >>> _show (2016, "AT")
       1 2016/01/01 Neujahr
       6 2016/01/06 Hl. Drei Könige
      87 2016/03/27 Ostersonntag
      88 2016/03/28 Ostermontag
-    122 2016/05/01 Mai-Feiertag
+    122 2016/05/01 Tag der Arbeit
     126 2016/05/05 Christi Himmelfahrt
     136 2016/05/15 Pfingstsonntag
     137 2016/05/16 Pfingstmontag
@@ -152,16 +159,107 @@ def _show (year) :
     360 2016/12/25 1. Weihnachtstag
     361 2016/12/26 2. Weihnachtstag
 
+    >>> _show (2016, "DE")
+      1 2016/01/01 Neujahr
+     85 2016/03/25 Karfreitag
+     87 2016/03/27 Ostersonntag
+     88 2016/03/28 Ostermontag
+    122 2016/05/01 Tag der Arbeit
+    126 2016/05/05 Christi Himmelfahrt
+    136 2016/05/15 Pfingstsonntag
+    137 2016/05/16 Pfingstmontag
+    277 2016/10/03 Tag der Deutschen Einheit
+    360 2016/12/25 1. Weihnachtstag
+    361 2016/12/26 2. Weihnachtstag
+
+    >>> _show (2016, "CH", lang = "en")
+      1 2016/01/01 New Year's Day
+     85 2016/03/25 Good Friday
+     87 2016/03/27 Easter Sunday
+     88 2016/03/28 Easter Monday
+    126 2016/05/05 Ascension Day
+    136 2016/05/15 Whit Sunday
+    137 2016/05/16 Whit Monday
+    214 2016/08/01 Swiss National Day
+    262 2016/09/18 Federal Day of Thanksgiving, Repentance and Prayer
+    360 2016/12/25 Christmas Day
+    361 2016/12/26 St. Stephen's Day
+
+    >>> _show (2016, "IE")
+      1 2016/01/01 Neujahr
+     77 2016/03/17 Saint Patrick's Day
+     88 2016/03/28 Ostermontag
+    123 2016/05/02 Mai-Feiertag
+    158 2016/06/06 Juni-Feiertag
+    214 2016/08/01 August-Feiertag
+    305 2016/10/31 Oktober-Feiertag
+    360 2016/12/25 1. Weihnachtstag
+    361 2016/12/26 2. Weihnachtstag
+
+    >>> _show (2016, "UK")
+      1 2016/01/01 Neujahr
+     85 2016/03/25 Karfreitag
+     87 2016/03/27 Ostersonntag
+     88 2016/03/28 Ostermontag
+    123 2016/05/02 Bankfeiertag
+    151 2016/05/30 Bankfeiertag
+    242 2016/08/29 Bankfeiertag
+    360 2016/12/25 1. Weihnachtstag
+    361 2016/12/26 2. Weihnachtstag
+
+    >>> _show (2017, "UK", lang = "en")
+      1 2017/01/01 New Year's Day
+    104 2017/04/14 Good Friday
+    106 2017/04/16 Easter Sunday
+    107 2017/04/17 Easter Monday
+    121 2017/05/01 May Day Bank Holiday
+    149 2017/05/29 Spring Bank Holiday
+    240 2017/08/28 Late Summer Bank Holiday
+    359 2017/12/25 Christmas Day
+    360 2017/12/26 Boxing Day
+
+    >>> _show (2016, "US", lang = "en")
+      1 2016/01/01 New Year's Day
+     18 2016/01/18 Martin Luther King Day
+     46 2016/02/15 Washington's Birthday
+    151 2016/05/30 Memorial Day
+    186 2016/07/04 Independence Day
+    249 2016/09/05 Labor Day
+    284 2016/10/10 Columbus Day
+    316 2016/11/11 Veterans Day
+    329 2016/11/24 Thanksgiving
+    360 2016/12/25 Christmas Day
+
+    >>> _show (2017, "US", lang = "en")
+      1 2017/01/01 New Year's Day
+     16 2017/01/16 Martin Luther King Day
+     20 2017/01/20 Inauguration Day
+     51 2017/02/20 Washington's Birthday
+    149 2017/05/29 Memorial Day
+    185 2017/07/04 Independence Day
+    247 2017/09/04 Labor Day
+    282 2017/10/09 Columbus Day
+    315 2017/11/11 Veterans Day
+    327 2017/11/23 Thanksgiving
+    359 2017/12/25 Christmas Day
+
+    >>> _show (2016, "ANY")
+      1 2016/01/01 Neujahr
+
     """
     import _CAL.Year
+    import sos
+    ld = sos.path.join (sos.path.dirname \
+        (__file__).rsplit ("/", 1) [0], "locale")
+    TFL.I18N.load ("de", use = lang, locale_dir = ld)
     Y = CAL.Year (year)
     O = Y.head.ordinal - 1
-    for ordinal, name in sorted (pyk.iteritems (holidays (Y))) :
-        print ("%3d %s %s" % (ordinal - O, Y.cal.day [ordinal], name))
+    for ordinal, name in sorted (pyk.iteritems (holidays (year, country))) :
+        print ("%3d %s %s" % (ordinal - O, Y.cal.day [ordinal], _T (name)))
 # end def _show
 
 def _main (cmd) :
-    _show (cmd.year)
+    _show (cmd.year, cmd.country, cmd.language)
 # end def _main
 
 today    = CAL.Date ()
@@ -171,6 +269,10 @@ _Command = TFL.CAO.Cmd \
     , args          =
         ( "year:I=%d?Year for which to show holidays" % (year, )
         ,
+        )
+    , opts          =
+        ( "-country:S=AT?Country for which to show holidays"
+        , "-language:S=de?Language to use for holiday names"
         )
     , max_args      = 1
     )

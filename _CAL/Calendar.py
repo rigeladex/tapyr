@@ -22,6 +22,7 @@
 #    11-Aug-2007 (CT) Imports corrected
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    29-Jan-2016 (CT) Remove `populate` from call to `CAL.Year`
+#     1-Feb-2016 (CT) Add `country`
 #    ««revision-date»»···
 #--
 
@@ -94,11 +95,14 @@ class Calendar (TFL.Meta.Object) :
     week            = property (TFL.Getter._weeks)
     year            = property (TFL.Getter._years)
 
-    def __init__ (self, name = None, root_path = None) :
-        self.name   = name
-        self._days  = _Cal_Dict_ (self, self._new_day)
-        self._weeks = _Cal_Dict_ (self, self._new_week)
-        self._years = _Cal_Dict_ (self, self._new_year)
+    _undefined      = object ()
+
+    def __init__ (self, name = None, country = _undefined) :
+        self.name    = name
+        self.country = country if country is not self._undefined else "AT"
+        self._days   = _Cal_Dict_ (self, self._new_day)
+        self._weeks  = _Cal_Dict_ (self, self._new_week)
+        self._years  = _Cal_Dict_ (self, self._new_year)
     # end def __init__
 
     def _new_day (self, date) :
