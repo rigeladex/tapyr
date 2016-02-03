@@ -58,6 +58,7 @@
 #     6-May-2015 (CT) Add tests for `jsonified`
 #    29-Jan-2016 (CT) Change `_default_format` to "%Y-%m-%d"
 #     2-Feb-2016 (CT) Add translation markup `_`
+#     3-Feb-2016 (CT) Add `periods`, `inc_month`
 #    ««revision-date»»···
 #--
 
@@ -186,6 +187,51 @@ class Date (CAL._DTW_) :
        >>> Date.from_julian (40000, kind = "MJD")
        Date (1968, 5, 24)
 
+       >>> def _show_periods (d) :
+       ...   print (d, "::")
+       ...   for p, (h, t) in sorted (pyk.iteritems (d.periods)) :
+       ...     print ("%-7s" % p, h, t)
+
+       >>> d = Date (2016, 2, 3)
+
+       >>> _show_periods (d)
+       2016-02-03 ::
+       month   2016-02-01 2016-02-29
+       quarter 2016-01-01 2016-03-31
+       week    2016-02-01 2016-02-07
+       year    2016-01-01 2016-12-31
+
+       >>> _show_periods (d + 94)
+       2016-05-07 ::
+       month   2016-05-01 2016-05-31
+       quarter 2016-04-01 2016-06-30
+       week    2016-05-02 2016-05-08
+       year    2016-01-01 2016-12-31
+
+       >>> _show_periods (d + 194)
+       2016-08-15 ::
+       month   2016-08-01 2016-08-31
+       quarter 2016-07-01 2016-09-30
+       week    2016-08-15 2016-08-21
+       year    2016-01-01 2016-12-31
+
+       >>> _show_periods (d + 294)
+       2016-11-23 ::
+       month   2016-11-01 2016-11-30
+       quarter 2016-10-01 2016-12-31
+       week    2016-11-21 2016-11-27
+       year    2016-01-01 2016-12-31
+
+       >>> for i in range (-4, 15, 3) :
+       ...     print ("%s + %2d months --> %s" % (d, i, d.inc_month (i)))
+       2016-02-03 + -4 months --> 2015-10-03
+       2016-02-03 + -1 months --> 2016-01-03
+       2016-02-03 +  2 months --> 2016-04-03
+       2016-02-03 +  5 months --> 2016-07-03
+       2016-02-03 +  8 months --> 2016-10-03
+       2016-02-03 + 11 months --> 2017-01-03
+       2016-02-03 + 14 months --> 2017-04-03
+
     """
 
     ### Julian date offsets to Rata Die (Jan 1, 1)
@@ -207,7 +253,7 @@ class Date (CAL._DTW_) :
         , _ ("feb") :  2, _ ("february")  :   2,  2 : "feb"
         , _ ("mar") :  3, _ ("march")     :   3,  3 : "mar"
         , _ ("apr") :  4, _ ("april")     :   4,  4 : "apr"
-        , _ ("may") :  5, _ ("may")       :   5,  5 : "may"
+        , _ ("may") :  5,                         5 : "may"
         , _ ("jun") :  6, _ ("june")      :   6,  6 : "jun"
         , _ ("jul") :  7, _ ("july")      :   7,  7 : "jul"
         , _ ("aug") :  8, _ ("august")    :   8,  8 : "aug"
@@ -358,22 +404,24 @@ class Date (CAL._DTW_) :
     # end def ordinal
 
     @Once_Property
+    def periods (self) :
+        w = self - self.weekday
+        m = self.replace (day = 1)
+        q = m.replace    (month = (self.quarter - 1) * 3 + 1)
+        y = m.replace    (month = 1)
+        result = \
+            { _ ("week")    : (w, w + 6)
+            , _ ("month")   : (m, m.inc_month (1) - 1)
+            , _ ("quarter") : (q, q.inc_month (3) - 1)
+            , _ ("year")    : (y, y.replace (year  = y.year  + 1) - 1)
+            }
+        return result
+    # end def periods
+
+    @Once_Property
     def quarter (self) :
         return (self.month - 1) // 3 + 1
     # end def quarter
-
-    def replace (self, ** kw) :
-        if self.yad is None or "day" in kw :
-            result      = self.__super.replace (** kw)
-        else :
-            kw ["day"]   = 1
-            yad          = self.yad
-            result       = self.__super.replace (** kw)
-            result._body = result._body.replace \
-                (day = self._day_from_end (yad, result.month, result.year))
-            result.yad   = yad
-        return result
-    # end def replace
 
     @Once_Property
     def rjd (self) :
@@ -423,6 +471,29 @@ class Date (CAL._DTW_) :
     def weekday (self) :
         return self._body.weekday ()
     # end def weekday
+
+    def inc_month (self, delta) :
+        m = self.month + delta
+        if 1 <= m <= 12 :
+            kw = dict (month = m)
+        else :
+            yd, m = divmod (m - 1, 12)
+            kw = dict (month = m + 1, year = self.year + yd)
+        return self.replace (** kw)
+    # end def inc_month
+
+    def replace (self, ** kw) :
+        if self.yad is None or "day" in kw :
+            result = self.__super.replace (** kw)
+        else :
+            kw ["day"]   = 1
+            yad          = self.yad
+            result       = self.__super.replace (** kw)
+            result._body = result._body.replace \
+                (day = self._day_from_end (yad, result.month, result.year))
+            result.yad   = yad
+        return result
+    # end def replace
 
     def _day_from_end (self, yad, month, year) :
         from _CAL.Year import Year
