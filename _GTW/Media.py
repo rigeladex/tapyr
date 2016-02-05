@@ -54,6 +54,7 @@
 #    26-Jun-2015 (CT) Add trailing `;` to `JS_On_Ready.code`, if missing
 #     2-Dec-2015 (CT) Add `logging.warning` to `minified_css`, `minified_js`
 #    20-Jan-2016 (CT) Add `_clean_minified_js` to remove superfluous `;`
+#     5-Feb-2016 (CT) Add encoding dance around `_clean_minified_js` call
 #    ««revision-date»»···
 #--
 
@@ -517,7 +518,10 @@ def minified_js (code) :
             result = jsmin (code)
         except Exception as exc :
             logging.error ("Exception during minified_js\n    %s" % (exc, ))
-    return _clean_minified_js (result)
+    return pyk.encoded \
+        ( _clean_minified_js (pyk.decoded (result, "utf-8", "latin-1"))
+        , "utf-8"
+        )
 # end def minified_js
 
 if __name__ != "__main__":
