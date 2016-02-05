@@ -1,24 +1,34 @@
 # Translations template for MOM/GTW/JNJ.
-# Copyright (C) 2015 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2016 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-07-31 13:30+0200\n"
+"POT-Creation-Date: 2016-02-05 11:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-15\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.3\n"
+"Generated-By: Babel 2.1.1\n"
 
-#: _GTW/_OMP/_PAP/Person.py:166 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/_E164/Error.py:59
+#, python-format
+msgid "; subscriber number must have at least %s digits; got %s digits instead"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/_E164/Error.py:74
+#, python-format
+msgid "; subscriber number must have at most %s digits; got %s digits instead"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Person.py:169 _GTW._OMP._PAP.Person:0
 msgid "Academic title"
 msgstr ""
 
@@ -101,11 +111,11 @@ msgstr ""
 msgid "Company linked to Url"
 msgstr ""
 
-#: _GTW._OMP._PAP.Address:0
+#: _GTW._OMP._PAP.Address:0 _GTW/_OMP/_PAP/_E164/Country.py:278
 msgid "Country"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Phone.py:76 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Phone.py:90 _GTW._OMP._PAP.Phone:0
 msgid "Country code"
 msgstr ""
 
@@ -177,10 +187,6 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Address_Position:0
 msgid "Geographical position of an Address."
-msgstr ""
-
-#: _GTW/_OMP/_PAP/graph.py:85
-msgid "Graph displaying PAP partial object model"
 msgstr ""
 
 #: _MOM._Attr.Position:0
@@ -309,7 +315,7 @@ msgid ""
 "a city or district, a mobile provider, or a specific service."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Phone.py:96 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Phone.py:110 _GTW._OMP._PAP.Phone:0
 msgid "Network destination code"
 msgstr ""
 
@@ -322,7 +328,7 @@ msgstr ""
 msgid "Office"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/graph.py:86
+#: _GTW/_OMP/_PAP/graph.py:87
 msgid "PAP graph"
 msgstr ""
 
@@ -539,7 +545,7 @@ msgstr ""
 msgid "Subject linked to Url"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Phone.py:112 _GTW._OMP._PAP.Phone:0
+#: _GTW/_OMP/_PAP/Phone.py:128 _GTW._OMP._PAP.Phone:0
 msgid "Subscriber number"
 msgstr ""
 
@@ -549,7 +555,7 @@ msgid ""
 "extension)"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Person.py:167
+#: _GTW/_OMP/_PAP/Person.py:170
 msgid "Title"
 msgstr ""
 
@@ -561,12 +567,12 @@ msgstr ""
 msgid "Uniform resource locator, aka URL"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/_E164/Polisher.py:73
+#: _GTW/_OMP/_PAP/_E164/Polisher.py:82
 #, python-format
 msgid "Unknown country code %s"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/_E164/Polisher.py:101
+#: _GTW/_OMP/_PAP/_E164/Polisher.py:110
 #, python-format
 msgid "Unknown network destination code %s"
 msgstr ""
@@ -587,11 +593,31 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
+#: _GTW._OMP._PAP.Phone:0
+msgid ""
+"Value for `ndc` must contain at least `ndc_min_length`\n"
+"digits, must not be longer than `ndc_max_length` digits."
+msgstr ""
+
+#: _GTW._OMP._PAP.Phone:0
+msgid ""
+"Value for `sn` must contain at least `sn_min_length`\n"
+"digits, must not be longer than `sn_max_length` digits."
+msgstr ""
+
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code"
 msgstr ""
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code of address"
+msgstr ""
+
+#: _GTW._OMP._PAP.Phone:0
+msgid "ndc_length_valid"
+msgstr ""
+
+#: _GTW._OMP._PAP.Phone:0
+msgid "sn_length_valid"
 msgstr ""
 

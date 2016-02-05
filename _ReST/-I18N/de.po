@@ -8,17 +8,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-07-23 11:06+0200\n"
+"POT-Creation-Date: 2016-02-05 11:50+0100\n"
 "PO-Revision-Date: 2014-08-31 11:43+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
+"Language: de\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.3\n"
+"Generated-By: Babel 2.1.1\n"
 
-#: _ReST/To_Html.py:87
+#: _ReST/To_Html.py:91
 #, python-format
 msgid ""
 "Conversion from re-structured text to html failed with exception:\n"
