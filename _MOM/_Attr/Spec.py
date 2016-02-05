@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -68,6 +68,7 @@
 #    25-Sep-2014 (CT) Add `polish_attr`
 #    30-Jul-2015 (CT) Don't sort `polish_attr` by `ui_rank`, sort by `rank`
 #    14-Aug-2015 (CT) Add `q_able_no_edit`
+#     5-Feb-2016 (CT) Sort `polish_attr` by `ui_rank`, not `(rank, name)`
 #    ««revision-date»»···
 #--
 
@@ -145,7 +146,7 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec)) :
         e_type.polish_attr      = tuple \
             ( sorted
                 ( (a for a in e_type.edit_attr if a.attr.polisher is not None)
-                , key = TFL.Sorted_By ("rank", "name")
+                , key = TFL.Sorted_By ("ui_rank")
                 )
             )
         e_type.primary_required = pr = list \

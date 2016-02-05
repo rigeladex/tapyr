@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -303,6 +303,7 @@
 #    16-Dec-2015 (CT) Add `UI_Spec`
 #    18-Dec-2015 (CT) Change `_main__init__` to not pass `on_error` to
 #                     `epk_as_kw`
+#     5-Feb-2016 (CT) Add `polish_empty`
 #    ««revision-date»»···
 #--
 
@@ -842,8 +843,8 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         if on_error is None :
             on_error = soc._raise_attr_error
         for attr in soc.polish_attr :
-            if attr.name in result :
-                val  = result [attr.name]
+            if attr.name in result or attr.polisher.polish_empty :
+                val  = result.get (attr.name)
                 try :
                     result = attr.polisher \
                         ( attr, result

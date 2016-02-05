@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package _GTW.__test__.
@@ -21,6 +21,7 @@
 #    18-Sep-2013 (CT) Add `show_query` (uses `compile` to show `params`)
 #    27-Jan-2014 (CT) Factor `formatted` to `MOM.DBW.SAW.Q_Result`
 #    12-Mar-2015 (CT) Add `fixed_booleans` for sqlalchemy 0.9.8
+#     5-Feb-2016 (CT) Factor `show_table`
 #    ««revision-date»»···
 #--
 
@@ -318,21 +319,25 @@ def show_sequences (apt) :
             print ("%-40s : %s" % (ETW.type_name, seqs))
 # end def show_sequences
 
+def show_table (apt, ETW) :
+    T = ETW.e_type
+    ST = ETW.sa_table
+    second = ("(%s)" % (ETW.parent.type_name, )) if ETW.parent else ""
+    third  = "" if T.relevant_root is T \
+              else (T.relevant_root and T.relevant_root.type_name)
+    head   = (" ".join ((T.type_name, second, third or ""))).strip ()
+    head   = ("%s <Table %s>" % (head, ETW.sa_table)).strip ()
+    print \
+        ( "%s%s" % (head, nl), "  "
+        , formatted_table (ETW.sa_table, nl, indent)
+        )
+# end def show_table
+
 def show_tables (apt, pred = pred) :
     for ETW in apt._SAW.e_types_t :
         if not pred (ETW) :
             continue
-        T = ETW.e_type
-        ST = ETW.sa_table
-        second = ("(%s)" % (ETW.parent.type_name, )) if ETW.parent else ""
-        third  = "" if T.relevant_root is T \
-                  else (T.relevant_root and T.relevant_root.type_name)
-        head   = (" ".join ((T.type_name, second, third or ""))).strip ()
-        head   = ("%s <Table %s>" % (head, ETW.sa_table)).strip ()
-        print \
-            ( "%s%s" % (head, nl), "  "
-            , formatted_table (ETW.sa_table, nl, indent)
-            )
+        show_table (apt, ETW)
     for seq in apt._SAW.sequences :
         print \
             ( "<Table for %s>%s" % (seq.attr, nl), "  "

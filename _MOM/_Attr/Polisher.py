@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -28,6 +28,7 @@
 #    30-Jul-2015 (CT) Add arguments `essence`, `picky` to
 #                     `_Polisher_.__call__`, `._polished`
 #    31-Jul-2015 (CT) Factor `_attr_value`
+#     5-Feb-2016 (CT) Add `polish_empty`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,8 @@ import _TFL.predicate
 class _Polisher_ (TFL.Meta.Object) :
     """Base class for Polishers"""
 
-    guard = None
+    guard        = None
+    polish_empty = False
 
     def __init__ (self, ** kw) :
         for k, v in pyk.iteritems (kw) :
@@ -69,7 +71,9 @@ class _Polisher_ (TFL.Meta.Object) :
         if isinstance (value, pyk.string_types) :
             guard  = self.guard
             value  = value.strip ()
-            if value and (guard is None or guard (value)) :
+            if (   (self.polish_empty or value)
+               and (guard is None     or guard (value))
+               ) :
                 polished = self._polished \
                     (attr, name, value, value_dict, essence, picky)
                 result.update (polished)
