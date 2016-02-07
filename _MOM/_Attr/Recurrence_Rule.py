@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -40,6 +40,7 @@
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
+#     7-Feb-2016 (CT) Derive `A_Weekday_RR.Pickler` from `Pickler_As_String`
 #    ««revision-date»»···
 #--
 
@@ -69,23 +70,11 @@ class A_Weekday_RR (A_Attr_Type) :
     Names  = (_("MO"), _("TU"), _("WE"), _("TH"), _("FR"), _("SA"), _("SU"))
     Table  = dict ((k, getattr (dateutil.rrule, k)) for k in Names)
 
-    class Pickler (TFL.Meta.Object) :
+    class Pickler (Pickler_As_String) :
 
         class Type (_A_Binary_String_) :
             max_length = 8
         # end class Type
-
-        @classmethod
-        def as_cargo (cls, attr_kind, attr_type, value) :
-            if value is not None :
-                return attr_type.as_string (value)
-        # end def as_cargo
-
-        @classmethod
-        def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
-            if cargo is not None :
-                return attr_type.from_string (cargo)
-        # end def from_cargo
 
     # end class Pickler
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -378,6 +378,7 @@
 #    10-Dec-2015 (CT) Add `__sphinx__members`
 #    11-Dec-2015 (CT) Factor `attr_types_of_module`;
 #                     add `module` to `is_attr_type`
+#     7-Feb-2016 (CT) Factor `Pickler_As_String`
 #    ««revision-date»»···
 #--
 
@@ -2223,6 +2224,25 @@ class _A_String_ \
 
 # end class _A_String_
 
+class Pickler_As_String (TFL.Meta.Object) :
+    """Pickler to pickles an attribute as a string."""
+
+    Type = _A_String_
+
+    @classmethod
+    def as_cargo (cls, attr_kind, attr_type, value) :
+        if value is not None :
+            return attr_type.as_string (value)
+    # end def as_cargo
+
+    @classmethod
+    def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
+        if cargo is not None :
+            return attr_type._from_string (cargo)
+    # end def from_cargo
+
+# end class Pickler_As_String
+
 class _A_String_Ascii_ (_A_String_) :
     """Base class for ascii-string-valued attributes of an object."""
 
@@ -2251,15 +2271,7 @@ class _A_Named_Object_ \
        directly put into a database).
     """
 
-    class Pickler (TFL.Meta.Object) :
-
-        Type = _A_String_
-
-        @classmethod
-        def as_cargo (cls, attr_kind, attr_type, value) :
-            if value is not None :
-                return attr_type.as_string (value)
-        # end def as_cargo
+    class Pickler (Pickler_As_String) :
 
         @classmethod
         def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
@@ -3506,6 +3518,7 @@ __sphinx__members  = attr_types_of_module () + \
     , "attr_types_of_module"
     , "is_attr_type"
     , "Pickled_Type_Spec"
+    , "Pickler_As_String"
     )
 
 __all__ = __sphinx__members + ("decimal", "Q")

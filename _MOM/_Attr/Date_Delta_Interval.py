@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -20,6 +20,7 @@
 #     3-Mar-2014 (CT) Creation
 #    11-Mar-2014 (CT) Use `_Overrides`
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
+#     7-Feb-2016 (CT) Factor `Pickler_As_String`
 #    ««revision-date»»···
 #--
 
@@ -29,7 +30,6 @@ from   __future__                  import absolute_import, unicode_literals
 from   _CAL                        import CAL
 
 from   _MOM.import_MOM             import *
-from   _MOM.import_MOM             import _A_Composite_, _A_String_
 from   _MOM._Attr.Date_Interval    import *
 
 from   _TFL.I18N                   import _, _T, _Tn
@@ -47,24 +47,7 @@ class A_Date_or_Delta (A_Attr_Type) :
     output_format  = "%Y-%m-%d"
     typ            = _ ("Date")
     ui_length      = 48
-
-    class Pickler (TFL.Meta.Object) :
-
-        Type = _A_String_
-
-        @classmethod
-        def as_cargo (cls, attr_kind, attr_type, value) :
-            if value is not None :
-                return attr_type.as_string (value)
-        # end def as_cargo
-
-        @classmethod
-        def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
-            if cargo is not None :
-                return attr_type._from_string (cargo)
-        # end def from_cargo
-
-    # end class Pickler
+    Pickler        = Pickler_As_String
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -85,7 +68,7 @@ class A_Date_or_Delta (A_Attr_Type) :
             if isinstance (value, datetime.date) :
                 return pyk.text_type (value.strftime (soc._output_format ()))
             else :
-                return str (value)
+                return pyk.text_type (value)
         return ""
     # end def as_string
 
