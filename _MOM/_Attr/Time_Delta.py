@@ -17,6 +17,9 @@
 #
 # Revision Dates
 #     7-Feb-2016 (CT) Creation
+#     8-Feb-2016 (CT) Add guard for `None` to `cooked`,
+#                     unpack `CAL.Time_Delta` value
+#     8-Feb-2016 (CT) Add test
 #    ««revision-date»»···
 #--
 
@@ -45,25 +48,26 @@ class A_Time_Delta (A_Attr_Type) :
     Pickler        = Pickler_As_String
     syntax         = _ \
         ( "hh:mm:ss, the seconds `ss` are optional\n"
-        , "One can also use values like::\n"
-        , "    30m"
-        , "    20 minutes"
-        , "    1.5h10.25m7.125s"
-        , "    1.5 hours 10.25 minutes 7.125 seconds"
-        , "    1.5 hours, 10.25 minutes, 7.125 seconds"
+          "One can also use values like::\n"
+          "    30m"
+          "    20 minutes"
+          "    1.5h10.25m7.125s"
+          "    1.5 hours 10.25 minutes 7.125 seconds"
+          "    1.5 hours, 10.25 minutes, 7.125 seconds"
         )
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        msg = "%s expected, got %r" % (soc.typ, value)
-        if isinstance (value, pyk.string_types) :
-            try :
-                value = CAL.Time_Delta.from_string (value)
-            except ValueError :
-                raise MOM.Error.Attribute_Syntax (None, soc, value, msg)
-        elif not isinstance (value, (datetime.timedelta)) :
-            raise TypeError (msg)
-        return value
+        if value is not None :
+            msg = "%s expected, got %r" % (soc.typ, value)
+            if isinstance (value, pyk.string_types) :
+                try :
+                    value = CAL.Time_Delta.from_string (value)._body
+                except ValueError :
+                    raise MOM.Error.Attribute_Syntax (None, soc, value, msg)
+            elif not isinstance (value, (datetime.timedelta)) :
+                raise TypeError (msg)
+            return value
     # end def cooked
 
     @TFL.Meta.Class_and_Instance_Method
@@ -87,6 +91,27 @@ class A_Time_Delta (A_Attr_Type) :
 
 __attr_types = Attr.attr_types_of_module ()
 __all__      = __attr_types
+
+__doc__ = """
+     >>> a = A_Time_Delta.cooked ("1.5h10.25m7.125s")
+     >>> print (A_Time_Delta.as_string (a))
+     1:40:22.125000
+     >>> a
+     datetime.timedelta(0, 6022, 125000)
+
+     >>> b = A_Time_Delta.cooked ("1.5h")
+     >>> print (A_Time_Delta.as_string (b))
+     1:30
+     >>> b
+     datetime.timedelta(0, 5400)
+
+     >>> c = A_Time_Delta.cooked ("1:30")
+     >>> print (A_Time_Delta.as_string (c))
+     1:30
+     >>> c
+     datetime.timedelta(0, 5400)
+
+"""
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __attr_types)
