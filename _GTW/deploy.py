@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.
@@ -52,6 +52,8 @@
 #    17-Mar-2015 (CT) Factor `_app_path`
 #     8-Apr-2015 (CT) Add `compile_options = "-q"` to `_defaults`
 #     5-Aug-2015 (CT) Remove `_handler_prefix` (obsoleted by `handler_name`)
+#    10-Feb-2016 (CT) Adapt `_handle_babel_compile` to changed `TFL.Babel`
+#    10-Feb-2016 (CT) Change `_P` to apply `normpath` to `app_dir`
 #    ««revision-date»»···
 #--
 
@@ -286,15 +288,15 @@ class GTWD_Command (TFL.Command.Root_Command) :
         args    = \
              ( "-m", "_TFL.Babel", "compile"
              , "-combine"
-             , "-import_file",     cmd.app_module
+             , "-import_file", cmd.app_module
              , "-use_fuzzy"
              )
-        app_dir = sos.path.dirname (sos.path.join (P.app_dir, cmd.app_module))
-        with cwd (app_dir) :
+        app_module_dir = sos.path.dirname (cmd.app_module)
+        with cwd (P.app_dir) :
             if cmd.verbose or cmd.dry_run :
                 print ("cd", self.pbl.path ())
             for l in cmd.languages :
-                l_dir  = pjoin ("locale", l, "LC_MESSAGES")
+                l_dir  = pjoin (app_module_dir, "locale", l, "LC_MESSAGES")
                 l_args = args + \
                     ( "-languages",   l
                     , "-output_file", pjoin (l_dir, "messages.mo")
@@ -442,7 +444,8 @@ class GTWD_Command (TFL.Command.Root_Command) :
             , root     = pbl.path (root)
             )
         result.selected = getattr (result, atv, atv)
-        result.app_dir  = pjoin (result.prefix, result.selected, cmd.app_dir)
+        result.app_dir  = sos.path.normpath \
+            (pjoin (result.prefix, result.selected, cmd.app_dir))
         result.py_path  = pbl.env ["PYTHONPATH"] = self._python_path (result)
         result.lib_dirs = result.py_path.split (":")
         result.python   = pbl [cmd.py_path] \

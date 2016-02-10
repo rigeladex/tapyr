@@ -6,7 +6,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Project-Id-Version: MOM/GTW/JNJ 1.0 [de]\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2016-02-05 11:50+0100\n"
 "PO-Revision-Date: 2016-02-05 11:25+0100\n"
@@ -301,4 +301,3 @@ msgstr "Jährlich"
 
 #~ msgid "Graph displaying EVT partial object model"
 #~ msgstr "Graphische Darstellung des EVT Modells"
-

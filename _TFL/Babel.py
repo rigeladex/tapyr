@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -26,6 +26,7 @@
 #    17-Feb-2010 (CT) `compile` changed to use `__import__` instead of
 #                     `execfile`
 #    26-Feb-2010 (CT) `process_count` forced to `1`
+#    10-Feb-2016 (CT) Add `root_dir` to `from_sys_modules`; put it in front
 #    ««revision-date»»···
 #--
 
@@ -60,16 +61,25 @@ class Language_File_Collection (object) :
     # end def __init__
 
     @classmethod
-    def from_sys_modules (cls, lang = None, suffix = "") :
+    def from_sys_modules (cls, lang = None, suffix = "", root_dir = None) :
         directories = set ()
-        i18n_dirs   = set ()
+        i18n_dirs   = []
+        path        = os.path
         for mod in sys.modules.values () :
             if isinstance (getattr (mod, "__file__", None), pyk.string_types) :
-                directories.add (os.path.dirname (mod.__file__))
+                directories.add (path.abspath (path.dirname (mod.__file__)))
+        if root_dir :
+            ### Put `root_dir` in front all `i18n_dirs`
+            ### + the sequence of the other directories is non-deterministic
+            ### + the first PO-File read defines meta data like project name
+            ###   and version
+            rdir = path.abspath (root_dir)
+            i18n_dirs.append    (rdir)
+            directories.discard (rdir)
         for directory in directories :
-            i18n = os.path.join (directory, "-I18N")
-            if os.path.isdir (i18n) :
-                i18n_dirs.add (directory)
+            i18n = path.join (directory, "-I18N")
+            if path.isdir (i18n) :
+                i18n_dirs.append (directory)
         return cls (i18n_dirs, lang, suffix)
     # end def from_sys_modules
 
@@ -303,7 +313,7 @@ def compile (cmd) :
         with TFL.Context.list_push (sys.path, d) :
             m = __import__ (f)
         lang_coll = Language_File_Collection.from_sys_modules \
-            (cmd.languages, cmd.file_suffix)
+            (cmd.languages, cmd.file_suffix, d or "./")
     else :
         lang_coll = Language_File_Collection \
             (cmd.argv, cmd.languages, cmd.file_suffix)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -26,6 +26,9 @@
 #     9-Dec-2013 (CT) Fix 3-compatibility
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    10-Feb-2016 (CT) Fix guard for missing `catalog` in `__init__`
+#    10-Feb-2016 (CT) Change merge not to overwrite `Project-Id-Version`...
+#    10-Feb-2016 (CT) Add `guard` to `load`, adapt callers of `load`
 #    ««revision-date»»···
 #--
 
@@ -63,7 +66,7 @@ class PO_File (TFL.Meta.Object) :
                  , sort               = True
                  , catalog            = None
                  ) :
-        if not catalog :
+        if catalog is None :
             catalog = Catalog \
                 ( project            = project
                 , version            = version
@@ -84,13 +87,17 @@ class PO_File (TFL.Meta.Object) :
 
     @classmethod
     def combined (cls, * file_names, ** kw) :
-        result = cls.load (file_names [0], ** kw)
-        verbose = kw.get ("verbose")
-        if verbose :
-            print ("Combine translations from", file_names [0], end = " ")
-        for file in file_names [1:] :
+        file_iter  = iter (file_names)
+        verbose    = kw.get ("verbose")
+        for file in file_iter :
+            result = cls.load (file, ** kw)
+            if result is not None :
+                if verbose :
+                    print ("Combine translations from", file, end = " ")
+                break
+        for file in file_iter :
             if verbose :
-                print (file)
+                print (file, end = " ")
             result.merge (file)
         if verbose :
             print ()
@@ -154,10 +161,14 @@ class PO_File (TFL.Meta.Object) :
 
     @classmethod
     def load (cls, file_name, locale = None, * args, ** kw) :
-        return cls \
-            ( catalog = read_po (open (file_name, "U"), locale = locale)
-            , * args, ** kw
-            )
+        try :
+            f = open (file_name, "U")
+        except IOError :
+            pass
+        else :
+            with f :
+                pof = read_po (f, locale = locale)
+                return cls (catalog = pof, * args, ** kw)
     # end def load
 
     def _make_dir (self, file_name) :
@@ -166,16 +177,18 @@ class PO_File (TFL.Meta.Object) :
             os.makedirs (dir_name)
     # end def _make_dir
 
-    def merge (self, filename) :
-        other = self.__class__.load (filename)
-        for msg in other :
-            d = dict ( (k, getattr (msg, k))
-                     for k in ( "id", "string", "locations"
-                              , "flags", "auto_comments"
-                              , "user_comments", "previous_id", "lineno"
-                              )
-                     )
-            self.add (** d)
+    def merge (self, file_name) :
+        other = self.__class__.load (file_name)
+        if other is not None :
+            for msg in other :
+                if msg.id : ### Don't overwrite Project-Id-Version...
+                    d = dict ( (k, getattr (msg, k))
+                             for k in ( "id", "string", "locations"
+                                      , "flags", "auto_comments"
+                                      , "user_comments", "previous_id", "lineno"
+                                      )
+                             )
+                    self.add (** d)
     # end def merge
 
     def save (self, file_name, fuzzy = None, ** kw) :

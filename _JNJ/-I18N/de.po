@@ -1,12 +1,12 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2015 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2016 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Project-Id-Version: MOM/GTW/JNJ 1.0 [de]\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2016-02-05 11:50+0100\n"
 "PO-Revision-Date: 2012-05-23 11:37+0200\n"
@@ -1078,4 +1078,3 @@ msgstr "das Benutzerkonto"
 
 #~ msgid "Submit"
 #~ msgstr "Sicher alle Werte in den Formularfeldern"
-
