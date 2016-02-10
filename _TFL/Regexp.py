@@ -335,7 +335,7 @@ class Dict_Replacer (Re_Replacer) :
                 (pyk.iterkeys (map), key = lambda k : (-len (k), k))
             )
         if __head or __tail :
-            pattern     = "".join (__head, "(", pattern, ")", __tail)
+            pattern     = "".join ((__head, "(", pattern, ")", __tail))
             self._group = 1
         regexp = Regexp (pattern, __flags)
         self.__super.__init__ (regexp, self._replacer, __flags)
