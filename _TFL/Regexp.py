@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,6 +43,7 @@
 #    13-Oct-2014 (CT) Add `Multi_Regexp.sub` and `.subn`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    10-Feb-2016 (CT) Add `__head` and `__tail` args to `Dict_Replacer`
 #    ««revision-date»»···
 #--
 
@@ -324,20 +325,24 @@ class Dict_Replacer (Re_Replacer) :
        TeX interprets `\\endash` as an en-dash and `\\emdash` as an em-dash
     """
 
-    def __init__ (self, __dict = {}, __flags = 0, ** kw) :
+    _group = 0
+
+    def __init__ \
+            (self, __dict = {}, __flags = 0, __head = "", __tail = "", ** kw) :
         self._map = map = dict (__dict, ** kw)
-        regexp    = Regexp \
-            ( "|".join
-                ( re.escape (k) for k in sorted
-                    (pyk.iterkeys (map), key = lambda k : (-len (k), k))
-                )
-            , __flags
+        pattern   = "|".join \
+            ( re.escape (k) for k in sorted
+                (pyk.iterkeys (map), key = lambda k : (-len (k), k))
             )
+        if __head or __tail :
+            pattern     = "".join (__head, "(", pattern, ")", __tail)
+            self._group = 1
+        regexp = Regexp (pattern, __flags)
         self.__super.__init__ (regexp, self._replacer, __flags)
     # end def __init__
 
     def _replacer (self, match) :
-        return self._map [match.group (0)]
+        return self._map [match.group (self._group)]
     # end def _replacer
 
 # end class Dict_Replacer
