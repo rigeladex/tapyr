@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test.
@@ -21,6 +21,7 @@
 #     6-Sep-2010 (CT) Adapted to change of Recurrence_Rule and Recurrence_Spec
 #     7-Sep-2010 (CT) Tests for update of `Event_occurs` added
 #     8-Sep-2010 (CT) Tests for Event without `Recurrence_Rule` added
+#    15-Feb-2016 (CT) Add test for localized weekday names
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,11 @@ _test_code = """
 
     >>> rr2 = RR (start = "20100801", count = 5, unit = "Daily", week_day = ("TU", "TH"))
     >>> prepr (rr2.ui_display)
+    '20100803, 20100805, 20100810, 20100812, 20100817'
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...     rr2_de = RR (start = "20100801", count = 5, unit = "Daily", week_day = ("Di", "Do"))
+    ...     prepr (rr2_de.ui_display)
     '20100803, 20100805, 20100810, 20100812, 20100817'
 
     >>> rr3 = RR (start = "20100801", count = 5, unit = "Weekly", week_day = ("TU", "TH"))

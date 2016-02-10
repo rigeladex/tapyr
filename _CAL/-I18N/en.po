@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CAL 1.0 [en]\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2016-02-10 18:54+0100\n"
+"POT-Creation-Date: 2016-02-11 11:33+0100\n"
 "PO-Revision-Date: 2016-02-02 13:23+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language: en\n"
@@ -19,359 +19,363 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
 
-#: _CAL/Holiday.py:120
+#: _CAL/Holiday.py:121
 msgid "All Saints' Day"
 msgstr ""
 
-#: _CAL/Holiday.py:133
+#: _CAL/Holiday.py:134
 msgid "Ascension Day"
 msgstr ""
 
-#: _CAL/Holiday.py:100
+#: _CAL/Holiday.py:101
 msgid "Assumption Day"
 msgstr ""
 
-#: _CAL/Holiday.py:97
+#: _CAL/Holiday.py:98
 msgid "August Holiday"
 msgstr ""
 
-#: _CAL/Holiday.py:116
+#: _CAL/Holiday.py:117
 msgid "Austrian National Day"
 msgstr ""
 
-#: _CAL/Holiday.py:128
+#: _CAL/Holiday.py:129
 msgid "Boxing Day"
 msgstr ""
 
-#: _CAL/Holiday.py:126
+#: _CAL/Holiday.py:127
 msgid "Christmas Day"
 msgstr ""
 
-#: _CAL/Holiday.py:113
+#: _CAL/Holiday.py:114
 msgid "Columbus Day"
 msgstr ""
 
-#: _CAL/Holiday.py:136
+#: _CAL/Holiday.py:137
 msgid "Corpus Christi"
 msgstr ""
 
-#: _CAL/Holiday.py:132
+#: _CAL/Holiday.py:133
 msgid "Easter Monday"
 msgstr ""
 
-#: _CAL/Holiday.py:131
+#: _CAL/Holiday.py:132
 msgid "Easter Sunday"
 msgstr ""
 
-#: _CAL/Holiday.py:66
+#: _CAL/Holiday.py:67
 msgid "Epiphany"
 msgstr ""
 
-#: _CAL/Holiday.py:125
+#: _CAL/Holiday.py:126
 msgid "Feast of the Immaculate Conception"
 msgstr ""
 
-#: _CAL/Holiday.py:107
+#: _CAL/Holiday.py:108
 msgid "Federal Day of Thanksgiving, Repentance and Prayer"
 msgstr ""
 
-#: _CAL/G8R.py:72 _CAL/Year.py:314
+#: _CAL/G8R.py:152 _CAL/Year.py:314
 msgid "Fr"
 msgstr ""
 
-#: _CAL/G8R.py:73
+#: _CAL/G8R.py:153
 msgid "Fri"
 msgstr ""
 
-#: _CAL/G8R.py:75
+#: _CAL/G8R.py:155
 msgid "Friday"
 msgstr ""
 
-#: _CAL/Holiday.py:110
+#: _CAL/Holiday.py:111
 msgid "German Unity Day"
 msgstr ""
 
-#: _CAL/Holiday.py:130
+#: _CAL/Holiday.py:131
 msgid "Good Friday"
 msgstr ""
 
-#: _CAL/Holiday.py:70
+#: _CAL/Holiday.py:71
 msgid "Inauguration Day"
 msgstr ""
 
-#: _CAL/Holiday.py:95
+#: _CAL/Holiday.py:96
 msgid "Independence Day"
 msgstr ""
 
-#: _CAL/Holiday.py:92
+#: _CAL/Holiday.py:93
 msgid "June Holiday"
 msgstr ""
 
-#: _CAL/Holiday.py:77 _CAL/Holiday.py:104
+#: _CAL/Holiday.py:78 _CAL/Holiday.py:105
 msgid "Labor Day"
 msgstr ""
 
-#: _CAL/Holiday.py:101
+#: _CAL/Holiday.py:102
 msgid "Late Summer Bank Holiday"
 msgstr ""
 
-#: _CAL/Holiday.py:67
+#: _CAL/Holiday.py:68
 msgid "Martin Luther King Day"
 msgstr ""
 
-#: _CAL/Holiday.py:81
+#: _CAL/Holiday.py:82
 msgid "May Day"
 msgstr ""
 
-#: _CAL/Holiday.py:78
+#: _CAL/Holiday.py:79
 msgid "May Day Bank Holiday"
 msgstr ""
 
-#: _CAL/Holiday.py:89
+#: _CAL/Holiday.py:90
 msgid "Memorial Day"
 msgstr ""
 
-#: _CAL/G8R.py:72 _CAL/Year.py:314
+#: _CAL/G8R.py:152 _CAL/Year.py:314
 msgid "Mo"
 msgstr ""
 
-#: _CAL/G8R.py:73
+#: _CAL/G8R.py:153
 msgid "Mon"
 msgstr ""
 
-#: _CAL/G8R.py:74
+#: _CAL/G8R.py:154
 msgid "Monday"
 msgstr ""
 
-#: _CAL/Holiday.py:65
+#: _CAL/Holiday.py:66
 msgid "New Year's Day"
 msgstr ""
 
-#: _CAL/Holiday.py:117
+#: _CAL/Holiday.py:118
 msgid "October Holiday"
 msgstr ""
 
-#: _CAL/G8R.py:72 _CAL/Year.py:314
+#: _CAL/G8R.py:152 _CAL/Year.py:314
 msgid "Sa"
 msgstr ""
 
-#: _CAL/Holiday.py:76
+#: _CAL/Holiday.py:77
 msgid "Saint Patrick's Day"
 msgstr ""
 
-#: _CAL/G8R.py:73
+#: _CAL/G8R.py:153
 msgid "Sat"
 msgstr ""
 
-#: _CAL/G8R.py:75
+#: _CAL/G8R.py:155
 msgid "Saturday"
 msgstr ""
 
-#: _CAL/Holiday.py:86
+#: _CAL/Holiday.py:87
 msgid "Spring Bank Holiday"
 msgstr ""
 
-#: _CAL/Holiday.py:127
+#: _CAL/Holiday.py:128
 msgid "St. Stephen's Day"
 msgstr ""
 
-#: _CAL/G8R.py:72 _CAL/Year.py:314
+#: _CAL/G8R.py:152 _CAL/Year.py:314
 msgid "Su"
 msgstr ""
 
-#: _CAL/G8R.py:73
+#: _CAL/G8R.py:153
 msgid "Sun"
 msgstr ""
 
-#: _CAL/G8R.py:75
+#: _CAL/G8R.py:155
 msgid "Sunday"
 msgstr ""
 
-#: _CAL/Holiday.py:96
+#: _CAL/Holiday.py:97
 msgid "Swiss National Day"
 msgstr ""
 
-#: _CAL/G8R.py:72 _CAL/Year.py:314
+#: _CAL/G8R.py:152 _CAL/Year.py:314
 msgid "Th"
 msgstr ""
 
-#: _CAL/Holiday.py:122
+#: _CAL/Holiday.py:123
 msgid "Thanksgiving"
 msgstr ""
 
-#: _CAL/G8R.py:73
+#: _CAL/G8R.py:153
 msgid "Thu"
 msgstr ""
 
-#: _CAL/G8R.py:74
+#: _CAL/G8R.py:154
 msgid "Thursday"
 msgstr ""
 
-#: _CAL/G8R.py:72 _CAL/Year.py:314
+#: _CAL/G8R.py:152 _CAL/Year.py:314
 msgid "Tu"
 msgstr ""
 
-#: _CAL/G8R.py:73
+#: _CAL/G8R.py:153
 msgid "Tue"
 msgstr ""
 
-#: _CAL/G8R.py:74
+#: _CAL/G8R.py:154
 msgid "Tuesday"
 msgstr ""
 
-#: _CAL/Holiday.py:121
+#: _CAL/Holiday.py:122
 msgid "Veterans Day"
 msgstr ""
 
-#: _CAL/Holiday.py:73
+#: _CAL/Holiday.py:74
 msgid "Washington's Birthday"
 msgstr ""
 
-#: _CAL/G8R.py:72 _CAL/Year.py:314
+#: _CAL/G8R.py:152 _CAL/Year.py:314
 msgid "We"
 msgstr ""
 
-#: _CAL/G8R.py:73
+#: _CAL/G8R.py:153
 msgid "Wed"
 msgstr ""
 
-#: _CAL/G8R.py:74
+#: _CAL/G8R.py:154
 msgid "Wednesday"
 msgstr ""
 
-#: _CAL/Holiday.py:135
+#: _CAL/Holiday.py:136
 msgid "Whit Monday"
 msgstr ""
 
-#: _CAL/Holiday.py:134
+#: _CAL/Holiday.py:135
 msgid "Whit Sunday"
 msgstr ""
 
-#: _CAL/Date.py:255 _CAL/G8R.py:51
+#: _CAL/Date.py:255 _CAL/G8R.py:125
 msgid "apr"
 msgstr ""
 
-#: _CAL/Date.py:255 _CAL/G8R.py:51
+#: _CAL/Date.py:255 _CAL/G8R.py:125
 msgid "april"
 msgstr ""
 
-#: _CAL/Date.py:259 _CAL/G8R.py:55
+#: _CAL/Date.py:259 _CAL/G8R.py:129
 msgid "aug"
 msgstr ""
 
-#: _CAL/Date.py:259 _CAL/G8R.py:55
+#: _CAL/Date.py:259 _CAL/G8R.py:129
 msgid "august"
 msgstr ""
 
-#: _CAL/G8R.py:64
+#: _CAL/G8R.py:139
 msgid "d"
 msgstr ""
 
-#: _CAL/G8R.py:64
+#: _CAL/G8R.py:139
 msgid "day"
 msgstr ""
 
-#: _CAL/G8R.py:64
+#: _CAL/G8R.py:139
 msgid "days"
 msgstr ""
 
-#: _CAL/Date.py:263 _CAL/G8R.py:59
+#: _CAL/Date.py:263 _CAL/G8R.py:133
 msgid "dec"
 msgstr ""
 
-#: _CAL/Date.py:263 _CAL/G8R.py:59
+#: _CAL/Date.py:263 _CAL/G8R.py:133
 msgid "december"
 msgstr ""
 
-#: _CAL/Date.py:253 _CAL/G8R.py:49
+#: _CAL/Date.py:253 _CAL/G8R.py:123
 msgid "feb"
 msgstr ""
 
-#: _CAL/Date.py:253 _CAL/G8R.py:49
+#: _CAL/Date.py:253 _CAL/G8R.py:123
 msgid "february"
 msgstr ""
 
-#: _CAL/G8R.py:65
+#: _CAL/G8R.py:140
 msgid "h"
 msgstr ""
 
-#: _CAL/G8R.py:65
+#: _CAL/G8R.py:140
 msgid "hour"
 msgstr ""
 
-#: _CAL/G8R.py:65
+#: _CAL/G8R.py:140
 msgid "hours"
 msgstr ""
 
-#: _CAL/Date.py:252 _CAL/G8R.py:48
+#: _CAL/Date.py:252 _CAL/G8R.py:122
 msgid "jan"
 msgstr ""
 
-#: _CAL/Date.py:252 _CAL/G8R.py:48
+#: _CAL/Date.py:252 _CAL/G8R.py:122
 msgid "january"
 msgstr ""
 
-#: _CAL/Date.py:258 _CAL/G8R.py:54
+#: _CAL/Date.py:258 _CAL/G8R.py:128
 msgid "jul"
 msgstr ""
 
-#: _CAL/Date.py:258 _CAL/G8R.py:54
+#: _CAL/Date.py:258 _CAL/G8R.py:128
 msgid "july"
 msgstr ""
 
-#: _CAL/Date.py:257 _CAL/G8R.py:53
+#: _CAL/Date.py:257 _CAL/G8R.py:127
 msgid "jun"
 msgstr ""
 
-#: _CAL/Date.py:257 _CAL/G8R.py:53
+#: _CAL/Date.py:257 _CAL/G8R.py:127
 msgid "june"
 msgstr ""
 
-#: _CAL/G8R.py:66
+#: _CAL/G8R.py:141
 msgid "m"
 msgstr ""
 
-#: _CAL/Date.py:254 _CAL/G8R.py:50
+#: _CAL/Date.py:254 _CAL/G8R.py:124
 msgid "mar"
 msgstr ""
 
-#: _CAL/Date.py:254 _CAL/G8R.py:50
+#: _CAL/Date.py:254 _CAL/G8R.py:124
 msgid "march"
 msgstr ""
 
-#: _CAL/Date.py:256 _CAL/G8R.py:52
+#: _CAL/Date.py:256 _CAL/G8R.py:126
 msgid "may"
 msgstr ""
 
-#: _CAL/G8R.py:66
+#: _CAL/G8R.py:141
 msgid "min"
 msgstr ""
 
-#: _CAL/G8R.py:66
+#: _CAL/G8R.py:141
 msgid "minute"
 msgstr ""
 
-#: _CAL/G8R.py:66
+#: _CAL/G8R.py:141
 msgid "minutes"
 msgstr ""
 
-#: _CAL/Date.py:414
+#: _CAL/Date.py:414 _CAL/G8R.py:144
 msgid "month"
 msgstr ""
 
-#: _CAL/Date.py:262 _CAL/G8R.py:58
+#: _CAL/G8R.py:144
+msgid "months"
+msgstr ""
+
+#: _CAL/Date.py:262 _CAL/G8R.py:132
 msgid "nov"
 msgstr ""
 
-#: _CAL/Date.py:262 _CAL/G8R.py:58
+#: _CAL/Date.py:262 _CAL/G8R.py:132
 msgid "november"
 msgstr ""
 
-#: _CAL/Date.py:261 _CAL/G8R.py:57
+#: _CAL/Date.py:261 _CAL/G8R.py:131
 msgid "oct"
 msgstr ""
 
-#: _CAL/Date.py:261 _CAL/G8R.py:57
+#: _CAL/Date.py:261 _CAL/G8R.py:131
 msgid "october"
 msgstr ""
 
@@ -379,44 +383,52 @@ msgstr ""
 msgid "quarter"
 msgstr ""
 
-#: _CAL/G8R.py:67
+#: _CAL/G8R.py:142
 msgid "s"
 msgstr ""
 
-#: _CAL/G8R.py:67
+#: _CAL/G8R.py:142
 msgid "sec"
 msgstr ""
 
-#: _CAL/G8R.py:67
+#: _CAL/G8R.py:142
 msgid "second"
 msgstr ""
 
-#: _CAL/G8R.py:67
+#: _CAL/G8R.py:142
 msgid "seconds"
 msgstr ""
 
-#: _CAL/Date.py:260 _CAL/G8R.py:56
+#: _CAL/Date.py:260 _CAL/G8R.py:130
 msgid "sep"
 msgstr ""
 
-#: _CAL/Date.py:260 _CAL/G8R.py:56
+#: _CAL/Date.py:260 _CAL/G8R.py:130
 msgid "september"
 msgstr ""
 
-#: _CAL/Date.py:413 _CAL/G8R.py:68
+#: _CAL/Date.py:413 _CAL/G8R.py:143
 msgid "week"
 msgstr ""
 
-#: _CAL/G8R.py:68
+#: _CAL/G8R.py:143
 msgid "weeks"
 msgstr ""
 
-#: _CAL/G8R.py:68
+#: _CAL/G8R.py:143
 msgid "wk"
 msgstr ""
 
-#: _CAL/Date.py:416
+#: _CAL/G8R.py:145
+msgid "y"
+msgstr ""
+
+#: _CAL/Date.py:416 _CAL/G8R.py:145
 msgid "year"
+msgstr ""
+
+#: _CAL/G8R.py:145
+msgid "years"
 msgstr ""
 
 #~ msgid "So"

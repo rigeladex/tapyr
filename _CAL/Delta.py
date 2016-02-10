@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -45,6 +45,7 @@
 #     7-Mar-2014 (CT) Change `Month_Delta` operators to include `days`
 #    17-Jun-2014 (RS) Fix parsing of `Date_Time_Delta` (didn't roundtrip)
 #                     semantic change: single number, e.g., `2` is now invalid
+#    11-Feb-2016 (CT) Use `CAL.G8R.Units` to allow localized delta units
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,7 @@ from   _CAL                       import CAL
 from   _TFL                       import TFL
 
 import _CAL._DTW_
+import _CAL.G8R
 
 import _TFL.Accessor
 import _TFL.CAO
@@ -73,7 +75,7 @@ class _Delta_ (CAL._DTW_) :
 
     @classmethod
     def from_string (cls, s) :
-        match = cls.delta_pattern.match (s)
+        match = cls.delta_pattern.match (CAL.G8R.Units (s))
         if match :
             return cls (** cls._from_string_match_kw (s, match))
         else :
@@ -246,6 +248,16 @@ class Time_Delta (_DT_Delta_) :
     Time_Delta (1, 40, 22, 125, 0)
     >>> Time_Delta.from_string ("1.5 hours 10.25 minutes 7.125 seconds")
     Time_Delta (1, 40, 22, 125, 0)
+
+    >>> Time_Delta.from_string ("1.5 Stunden 10.25 Minuten 7.125 sekunden")
+    Traceback (most recent call last):
+      ...
+    ValueError: 1.5 Stunden 10.25 Minuten 7.125 sekunden
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...     Time_Delta.from_string ("1.5 Stunden 10.25 Minuten 7.125 sekunden")
+    Time_Delta (1, 40, 22, 125, 0)
+
     """
 
     seconds          = property (TFL.Getter._body.seconds)
@@ -354,6 +366,12 @@ class Date_Delta (_DT_Delta_) :
     >>> print (datetime.date (2014,  3,  4) + Date_Delta.from_string ("-28 days"))
     2014-02-04
 
+    >>> with TFL.I18N.test_language ("de") :
+    ...     print (Date_Delta.from_string ("2 Wochen -3 Tage"))
+    ...     print (Date_Delta.from_string ("-2 Wochen -3 Tage"))
+    11 days, 0:00:00
+    -17 days, 0:00:00
+
     """
 
     days             = property (TFL.Getter._body.days)
@@ -447,6 +465,12 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
     >>> print (Date_Time_Delta.from_string ("2d2:0"))
     2 days, 2:00:00
 
+    >>> with TFL.I18N.test_language ("de") :
+    ...     print (Date_Time_Delta.from_string ("2wochen 2 Tage 16:44:45"))
+    ...     print (Date_Time_Delta.from_string ("2wochen 2 Tage 16 Stunden 44 minuten 45 sekunden"))
+    16 days, 16:44:45
+    16 days, 16:44:45
+
     """
 
     _init_arg_names = ("days", ) + Time_Delta._init_arg_names + ("weeks", )
@@ -534,7 +558,15 @@ class Month_Delta (_Delta_) :
     >>> print (Month_Delta.from_string ("-1y3w-3d"))
     -12 months, +18 days
 
+    >>> with TFL.I18N.test_language ("de") :
+    ...     print (Month_Delta.from_string ("-1j3w-3t"))
+    -12 months, +18 days
+
     >>> print (Month_Delta.from_string ("+2 years 3 months, 2 weeks -3 days"))
+    +27 months, +11 days
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...     print (Month_Delta.from_string ("+2 Jahre 3 Monate, 2 Wochen -3 Tage"))
     +27 months, +11 days
 
     >>> md1 = Month_Delta.from_string ("+2 years 3 months, 2 weeks -3 days")

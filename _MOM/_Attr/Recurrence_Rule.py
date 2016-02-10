@@ -42,16 +42,20 @@
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #     7-Feb-2016 (CT) Derive `A_Weekday_RR.Pickler` from `Pickler_As_String`
 #    15-Feb-2016 (CT) Remove spurious import of `datetime`
+#    15-Feb-2016 (CT) Use `CAL.G8R.Week_Days` to allow localized weekday names
 #    ««revision-date»»···
 #--
 
 from   __future__            import unicode_literals
 
+from   _CAL                  import CAL
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import \
      ( _A_Binary_String_
      , _A_Typed_List_
      )
+
+import _CAL.G8R
 
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.pyk              import pyk
@@ -92,7 +96,8 @@ class A_Weekday_RR (A_Attr_Type) :
         if isinstance (value, int) :
             value = soc.Table [soc.Names [value]]
         elif isinstance (value, pyk.string_types) :
-            value = soc.Table [value]
+            v = CAL.G8R.Week_Days.globalized (value)
+            value = soc.Table [v]
         if value is not None and not isinstance (value, soc.P_Type) :
             raise ValueError \
                 ( _T ("Value `%r` is not of type %s") % (value, soc.P_Type)
@@ -103,7 +108,8 @@ class A_Weekday_RR (A_Attr_Type) :
 
     def _from_string (self, s, obj, glob, locl) :
         if s :
-            return self.cooked (self._call_eval (s, ** self.Table))
+            v = CAL.G8R.Week_Days.globalized (s).upper ()
+            return self.cooked (self._call_eval (v, ** self.Table))
     # end def _from_string
 
 # end class A_Weekday_RR

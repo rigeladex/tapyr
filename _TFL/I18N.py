@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -48,6 +48,7 @@
 #                     (3-compatibility for `gettext.NullTranslations`)
 #    31-Mar-2014 (CT) Use `print` in doctest of `context` (3-compatibility)
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    11-Feb-2016 (CT) Add `test_language`
 #    ««revision-date»»···
 #--
 
@@ -229,6 +230,17 @@ def safe_eval (value, encoding = None) :
         raise
     return result
 # end def safe_eval
+
+@TFL.Contextmanager
+def test_language (lang) :
+    """Load and use language `lang` from `locale` in library directory."""
+    from _TFL.sos import path
+    ld = path.join \
+         (path.abspath (path.dirname (path.dirname (__file__))), "locale")
+    load (lang, locale_dir = ld)
+    with context (lang) :
+        yield
+# end def test_language
 
 def ugettext (text, trans = None) :
     """Return the localized translation of `text` (as unicode)."""

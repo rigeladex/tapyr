@@ -33,6 +33,7 @@
 #     1-Feb-2016 (CT) Add country dependent holidays; remove obsolete code
 #     2-Feb-2016 (CT) Factor `CAL.Day_Rule`
 #     2-Feb-2016 (CT) Add I18N, german and swiss holidays
+#    11-Feb-2016 (CT) Factor `TFL.I18N.test_language`
 #    ««revision-date»»···
 #--
 
@@ -248,14 +249,11 @@ def _show (year, country, lang = "de") :
 
     """
     import _CAL.Year
-    import sos
-    ld = sos.path.join (sos.path.dirname \
-        (__file__).rsplit ("/", 1) [0], "locale")
-    TFL.I18N.load ("de", use = lang, locale_dir = ld)
-    Y = CAL.Year (year)
-    O = Y.head.ordinal - 1
-    for ordinal, name in sorted (pyk.iteritems (holidays (year, country))) :
-        print ("%3d %s %s" % (ordinal - O, Y.cal.day [ordinal], _T (name)))
+    with TFL.I18N.test_language (lang) :
+        Y = CAL.Year (year)
+        O = Y.head.ordinal - 1
+        for ordinal, name in sorted (pyk.iteritems (holidays (year, country))) :
+            print ("%3d %s %s" % (ordinal - O, Y.cal.day [ordinal], _T (name)))
 # end def _show
 
 def _main (cmd) :
