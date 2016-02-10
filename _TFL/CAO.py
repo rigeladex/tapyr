@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -120,6 +120,7 @@
 #                     `auto_split` isn't set
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    18-Dec-2015 (CT) Add optional `save_error` to `expect_except`
+#    10-Feb-2016 (CT) Factor `Cmd.cao` from `__call__`
 #    ««revision-date»»···
 #--
 
@@ -1693,26 +1694,9 @@ class Cmd (TFL.Meta.Object) :
            Arguments for calling the :class:`CAO` instance can be specified
            via the keyword arguments `args` and `kw`.
         """
-        handler_args = _kw.pop ("args", ())
-        handler_kw   = _kw.pop ("kw",   {})
-        if _kw :
-            assert not _argv, "Cannot specify both `_argv` and `_kw`"
-            cao = self.use (** _kw)
-        else :
-            help = False
-            if _argv is None :
-                help  = True
-                _argv = sys.argv [1:]
-            try :
-                cao = self.parse (_argv)
-            except Exception as exc :
-                if help :
-                    pyk.fprint (exc, "Usage :", sep = "\n\n")
-                    cao = CAO (self)
-                    self.help (cao, indent = 4)
-                    return
-                else :
-                    raise
+        handler_args = _kw.pop  ("args", ())
+        handler_kw   = _kw.pop  ("kw",   {})
+        cao          = self.cao (_argv, ** _kw)
         return cao (* handler_args, ** handler_kw)
     # end def __call__
 
@@ -1724,6 +1708,33 @@ class Cmd (TFL.Meta.Object) :
             result = max (result, self._sub_cmd_choice._max_name_length)
         return result + 1
     # end def _max_name_length
+
+    def cao (self, _argv = None, ** _kw) :
+        """Return an instance of :class:`CAO`.
+
+           `cao` works by calling :meth:`use` (if keyword arguments
+           other than `args` and `kw` are given) or :meth:`parse` (with
+           the positional arguments, if any, or :data:`sys.argv [1:]`).
+        """
+        if _kw :
+            assert not _argv, "Cannot specify both `_argv` and `_kw`"
+            result = self.use (** _kw)
+        else :
+            help = False
+            if _argv is None :
+                help  = True
+                _argv = sys.argv [1:]
+            try :
+                result = self.parse (_argv)
+            except Exception as exc :
+                if help :
+                    pyk.fprint (exc, "Usage :", sep = "\n\n")
+                    self.help (CAO (self), indent = 4)
+                    return
+                else :
+                    raise
+        return result
+    # end def cao
 
     def parse (self, argv) :
         """Parse arguments, options, and sub-commands specified in `argv`
