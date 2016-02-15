@@ -38,6 +38,7 @@
 #     6-May-2015 (CT) Add `_import_cb_json_dump`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #     2-Feb-2016 (CT) Add `new_dtw`, `_Type_Table`, `_DTW_Meta_`
+#    12-Feb-2016 (CT) Change `new_dtw` to use `T._kind`, not `cls._kind`
 #    ««revision-date»»···
 #--
 
@@ -119,7 +120,7 @@ class _DTW_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _DTW_Meta_)) :
     def new_dtw (soc, body) :
         T = soc._Type_Table.get (body.__class__)
         if T is not None :
-            return T (** {soc._kind : body})
+            return T (** {T._kind : body})
         raise TypeError ("Can't create a new wrapper from %s: %s" % (soc, body))
     # end def new_dtw
 

@@ -46,6 +46,7 @@
 #    17-Jun-2014 (RS) Fix parsing of `Date_Time_Delta` (didn't roundtrip)
 #                     semantic change: single number, e.g., `2` is now invalid
 #    11-Feb-2016 (CT) Use `CAL.G8R.Units` to allow localized delta units
+#    11-Feb-2016 (CT) Factor `_Delta_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -70,8 +71,8 @@ from   _TFL._Meta.totally_ordered import totally_ordered
 import datetime
 import operator
 
-class _Delta_ (CAL._DTW_) :
-    """Root class for delta classes"""
+class _Delta_Mixin_ (TFL.Meta.Object) :
+    """Mixin for delta classes"""
 
     @classmethod
     def from_string (cls, s) :
@@ -85,8 +86,10 @@ class _Delta_ (CAL._DTW_) :
     @classmethod
     def _from_string_match_kw (cls, s, match) :
         assert match
-        kw = TFL.defaultdict (int)
-        for k, v in pyk.iteritems (match.groupdict ()) :
+        kw   = TFL.defaultdict (int)
+        mdct = match if isinstance (match, dict) \
+            else match.groupdict ()
+        for k, v in pyk.iteritems (mdct) :
             if v :
                 if k.startswith ("sub") :
                     n    = k [3:]
@@ -132,6 +135,11 @@ class _Delta_ (CAL._DTW_) :
                     kw [k] += int (v)
         return kw
     # end def _from_string_match_kw
+
+# end class _Delta_Mixin_
+
+class _Delta_ (_Delta_Mixin_, CAL._DTW_) :
+    """Root class for delta classes"""
 
     def __radd__ (self, rhs) :
         return self + rhs
@@ -783,5 +791,5 @@ class _Time_Delta_Arg_ (_Delta_Arg_) :
 # end class _Time_Delta_Arg_
 
 if __name__ != "__main__" :
-    CAL._Export ("*", "_Delta_", "Delta")
+    CAL._Export ("*", "_Delta_Mixin_", "_Delta_", "Delta")
 ### __END__ CAL.Delta

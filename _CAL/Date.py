@@ -59,6 +59,7 @@
 #    29-Jan-2016 (CT) Change `_default_format` to "%Y-%m-%d"
 #     2-Feb-2016 (CT) Add translation markup `_`
 #     3-Feb-2016 (CT) Add `periods`, `inc_month`
+#    15-Feb-2016 (CT) Use `CAL.G8R.Months` to support localized month names
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,7 @@ from   _CAL                     import CAL
 from   _TFL                     import TFL
 
 import _CAL._DTW_
+import _CAL.G8R
 
 import _TFL.Accessor
 import _TFL.CAO
@@ -187,6 +189,9 @@ class Date (CAL._DTW_) :
        >>> Date.from_julian (40000, kind = "MJD")
        Date (1968, 5, 24)
 
+       >>> with TFL.I18N.test_language ("de") :
+       ...     print (Date.from_string ("31-Oktober-2004"))
+       2004-10-31
        >>> def _show_periods (d) :
        ...   print (d, "::")
        ...   for p, (h, t) in sorted (pyk.iteritems (d.periods)) :
@@ -277,7 +282,7 @@ class Date (CAL._DTW_) :
           r"(?P<day>   \d{2,2})"
         , r"(?P<day>   \d{1,2})"
           r"([-./])"
-          r"(?P<month> \d{1,2} | [a-z]{3,3})"
+          r"(?P<month> \d{1,2} | [a-z]{3,})"
           r"\2"
           r"(?P<year>  \d{4,4})"
         , r"(?P<month> [a-z]{3,})"
@@ -507,8 +512,12 @@ class Date (CAL._DTW_) :
         for k, v in pyk.iteritems (match.groupdict ()) :
             if v :
                 v = v.lower ()
-                if k == "month" and v in cls.months :
-                    v = cls.months [v]
+                if k == "month" :
+                    v = CAL.G8R.Months (v)
+                    if v in cls.months :
+                        v = cls.months [v]
+                    else :
+                        v = int (v)
                 else :
                     v = int (v)
                 kw [k] = v
