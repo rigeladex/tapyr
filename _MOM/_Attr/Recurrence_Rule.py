@@ -41,6 +41,7 @@
 #     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #     7-Feb-2016 (CT) Derive `A_Weekday_RR.Pickler` from `Pickler_As_String`
+#    15-Feb-2016 (CT) Remove spurious import of `datetime`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,6 @@ from   _TFL.pyk              import pyk
 
 import _TFL.r_eval
 
-import datetime
 import dateutil.rrule
 
 class A_Weekday_RR (A_Attr_Type) :
