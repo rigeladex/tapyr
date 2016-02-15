@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2014-2016 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A--3411 Weidling, Austria. rsc@runtux.com
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -99,7 +99,7 @@ class A_Date_Time_Delta (_Ancestor_Essence) :
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, in_s, obj, glob, locl) :
+    def _from_string (soc, in_s, obj = None, glob = {}, locl = {}) :
         s = in_s.strip ()
         if s :
             dtd = CAL.Date_Time_Delta.from_string (s)

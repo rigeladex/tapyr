@@ -106,7 +106,7 @@ class A_Weekday_RR (A_Attr_Type) :
         return value
     # end def cooked
 
-    def _from_string (self, s, obj, glob, locl) :
+    def _from_string (self, s, obj = None, glob = {}, locl = {}) :
         if s :
             v = CAL.G8R.Week_Days.globalized (s).upper ()
             return self.cooked (self._call_eval (v, ** self.Table))

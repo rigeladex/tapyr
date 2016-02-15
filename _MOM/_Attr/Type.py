@@ -1043,7 +1043,7 @@ class A_Attr_Type \
     # end def _fix_det
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj, glob, locl) :
+    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
         return soc.cooked (s)
     # end def _from_string
 
@@ -1467,7 +1467,7 @@ class _A_Named_Value_ \
     # end def eligible_raw_values
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj, glob, locl) :
+    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
         try :
             return soc.Table [s]
         except KeyError :
@@ -1563,7 +1563,7 @@ class _A_Number_ (A_Attr_Type) :
     # end def _checkers
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, value, obj, glob, locl) :
+    def _from_string (soc, value, obj = None, glob = {}, locl = {}) :
         if value :
             try :
                 return soc.P_Type (value)
@@ -2369,7 +2369,7 @@ class _A_Typed_Collection_ \
     # end def _C_as_string
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj, glob, locl) :
+    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
         C_fs  = soc.C_Type._from_string
         comps = soc._C_split (s.strip ())
         return soc.R_Type (C_fs (c, obj, glob, locl) for c in comps)
@@ -2492,7 +2492,7 @@ class _A_Unit_ \
     # end def eligible_raw_values
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj, glob, locl) :
+    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
         factor = 1
         pat    = soc._unit_pattern
         if pat.search (s) :
@@ -2539,7 +2539,7 @@ class A_Angle (_A_Float_) :
     # end def cooked
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, value, obj, glob, locl) :
+    def _from_string (soc, value, obj = None, glob = {}, locl = {}) :
         if value is not None :
             pat = soc._dms_pattern
             if soc._dms_pattern.search (value) :
@@ -2593,7 +2593,7 @@ class _A_Boolean_ (Atomic_Json_Mixin, _A_Named_Value_) :
     # end def cooked
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj, glob, locl) :
+    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
         return soc.cooked (s)
     # end def _from_string
 
@@ -2907,7 +2907,7 @@ class A_Dirname (_A_Filename_) :
 
     typ         = _ ("Directory")
 
-    def _from_string (self, s, obj, glob, locl) :
+    def _from_string (self, s, obj = None, glob = {}, locl = {}) :
         s = self.__super._from_string (s, obj, glob, locl)
         if s :
             if sos.altsep :
@@ -3009,7 +3009,7 @@ class A_Enum \
     # end def cooked
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj, glob, locl) :
+    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
         if s :
             Table  = soc.Table
             result = soc.cooked (soc.C_Type._from_string (s, obj, glob, locl))
@@ -3052,7 +3052,7 @@ class A_Euro_Amount (_A_Decimal_) :
     # end class Pickler
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, value, obj, glob, locl) :
+    def _from_string (soc, value, obj = None, glob = {}, locl = {}) :
         ### when called for the class, `soc.__super` doesn't
         ### work while `super (A_Euro_Amount, soc)` does
         if value :
@@ -3067,7 +3067,7 @@ class A_Filename (_A_Filename_) :
 
     typ         = _ ("Filename")
 
-    def _from_string (self, s, obj, glob, locl) :
+    def _from_string (self, s, obj = None, glob = {}, locl = {}) :
         s = self.__super._from_string (s, obj, glob, locl)
         if s and self.do_check :
             self._check_dir   (sos.path.dirname (s))
