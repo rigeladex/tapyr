@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -24,6 +24,7 @@
 #    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
 #     7-Jun-2013 (CT) Change `COPY` to iterate over `other`, not `other._kw`
 #    12-Oct-2015 (CT) Add Python-3 future imports
+#    16-Feb-2016 (CT) Store `root_pid`, not `root_epk`
 #    ««revision-date»»···
 #--
 
@@ -71,9 +72,9 @@ class _MOM_DB_Meta_Data_ (TFL.Record) :
             , dbv_hash      = app_type.db_version_hash
             , guid          =
                 kw.pop ("guid", None) or getattr (scope, "guid", None)
-            , readonly      = kw.pop ("readonly", False)
-            , root_epk      =
-                kw.pop ("root_epk", None) or getattr (scope, "root_epk", ())
+            , readonly      = kw.pop  ("readonly", False)
+            , root_pid      =
+                kw.pop ("root_pid", None) or getattr (scope, "_root_pid", None)
             , ** kw
             )
         return result

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -50,6 +50,7 @@
 #    15-Oct-2014 (CT) Pass `db_meta_data` to `Incompatible_DB_Version`
 #    23-Apr-2015 (CT) Change `pid_query` to use optimized `ETW.pid_query`
 #                     - remove `Id_Entity_Query_pid`
+#    16-Feb-2016 (CT) Use `root_pid`, not `root_epk`, in `load_root`
 #    ««revision-date»»···
 #--
 
@@ -490,13 +491,9 @@ class Session_S (_Session_) :
     # end def expunge
 
     def load_root (self, scope) :
-        meta_data     = self.db_meta_data
-        if meta_data.root_epk :
-            epk       = list (meta_data.root_epk)
-            type_name = root_epk.pop ()
-            etm       = scope [root_type_name]
-            epk       = dict ((k,v) for (k,v) in zip (etm.epk_sig, epk))
-            return etm.query (** epk).one ()
+        root_pid = self.db_meta_data.root_pid
+        if root_pid is not None :
+            return self.pid_query (root_pid, scope.Root_Type)
     # end def load_root
 
     def pid_query (self, pid, Type = None) :

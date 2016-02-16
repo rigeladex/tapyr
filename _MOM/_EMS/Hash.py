@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -91,6 +91,7 @@
 #    21-Aug-2013 (CT) Redefine `query` to kludgely support `MD_Change`
 #    25-Aug-2013 (CT) Change `_add` to check `hpk in table` (optimization)
 #    28-Aug-2013 (CT) Change `instance` to use `relevant_roots`, not `query`
+#    22-Feb-2016 (CT) Change `load_root` do not call `scope._setup_root`
 #    ««revision-date»»···
 #--
 
@@ -213,7 +214,6 @@ class Manager (MOM.EMS._Manager_) :
         self.cm.max_cid = info.max_cid
         self.pm.max_pid = info.max_pid
         scope.guid      = info.guid
-        scope._setup_root       (scope.app_type, info.root_epk)
         scope.add_init_callback (self._load_objects)
     # end def load_root
 

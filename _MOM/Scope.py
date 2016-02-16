@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -114,6 +114,12 @@
 #     6-Aug-2015 (CT) Improve documentation (access to E_Type_Managers)
 #    12-Aug-2015 (CT) Remove obsolete `compute_defaults_internal`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    16-Feb-2016 (CT) Add `Root_Type`
+#    16-Feb-2016 (CT) Change `add_from_pickle_cargo` to call `_register_root`
+#                     if `pid == self.root_pid`
+#    22-Feb-2016 (CT) Change `copy` to set `result.root_pid`
+#    22-Feb-2016 (CT) Convert `qname` to property
+#    22-Feb-2016 (CT) Change `root_epk` to `root_spec` (callable or epk-tuple)
 #    ««revision-date»»···
 #--
 
@@ -128,7 +134,7 @@ import _MOM._SCM.Summary
 import _MOM._SCM.Tracker
 
 from   _TFL.Gauge_Logger      import Gauge_Logger
-from   _TFL.predicate         import split_hst, rsplit_hst
+from   _TFL.predicate         import callable, split_hst, rsplit_hst
 from   _TFL.pyk               import pyk
 from   _TFL.Regexp            import Re_Replacer
 
@@ -222,13 +228,18 @@ class Scope (TFL.Meta.Object) :
     max_cid                = property (TFL.Getter.ems.max_cid)
     max_pid                = property (TFL.Getter.ems.max_pid)
     max_surrs              = property (TFL.Getter.ems.max_surrs)
-    name                   = property (lambda s : s.qname or s.bname)
+    name                   = property (lambda s : s.qname)
     readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
     reserve_surrogates     = True
     T_Extension            = property (TFL.Getter.app_type._T_Extension)
     uncommitted_changes    = property (TFL.Getter.ems.uncommitted_changes)
 
     PNS_Proxy              = None
+
+    @property
+    def qname (self) :
+        return self.bname or self.app_type.name
+    # end def qname
 
     @TFL.Meta.Once_Property
     def relevant_roots (self) :
@@ -237,6 +248,38 @@ class Scope (TFL.Meta.Object) :
         return sorted \
             (pyk.itervalues (Top.relevant_roots), key = Top.m_sorted_by)
     # end def relevant_roots
+
+    @property
+    def root_pid (self) :
+        try :
+            return self.db_meta_data.root_pid
+        except AttributeError :
+            pass
+    # end def root_pid
+
+    @root_pid.setter
+    def root_pid (self, value) :
+        root_pid = self.root_pid
+        if not (root_pid is None or root_pid == value) :
+            raise TypeError \
+                ( "Root pid of scope %s was already set to %r; "
+                  "cannot change to %r"
+                % (self, root_pid, value)
+                )
+        try :
+            dbmd = self.db_meta_data
+        except AttributeError :
+            self._root_pid = value
+        else :
+            dbmd.root_pid = value
+    # end def root_pid
+
+    @TFL.Meta.Once_Property
+    def Root_Type (self) :
+        RTN = self.app_type.Root_Type_Name
+        if RTN :
+            return self.etypes [RTN]
+    # end def Root_Type
 
     @TFL.Meta.Once_Property
     def _Example (self) :
@@ -299,33 +342,38 @@ class Scope (TFL.Meta.Object) :
     # end def load
 
     @classmethod
-    def new (cls, app_type, db_url, root_epk = (), user = None) :
+    def new (cls, app_type, db_url, user = None, root_spec = None) :
         """Create a scope for `app_type` for a new database `db_url`.
 
            If `app_type` has a :attr:`~_MOM.App_Type.App_Type.Root_Type`,
-           `new` requires a proper `root_epk` tuple to be passed in.
+           `new` requires a `root_spec` passed in.
+
+           `root_spec` must be one of:
+
+           * a proper epk-tuple for :attr:`~_MOM.App_Type.App_Type.Root_Type`
+
+           * a callable that takes the scope as its single parameter and
+             returns the root object.
         """
         db_url = app_type.Url (db_url)
-        with cls._init_context (app_type, db_url, user, root_epk) as self :
+        with cls._init_context (app_type, db_url, user, root_spec) as self :
             app_type  = self.app_type
             self.guid = self._new_guid ()
             self.ems  = ems = app_type.EMS.new (self, db_url)
-            with self._init_root_context (root_epk) :
-                self._setup_root   (app_type, root_epk)
+            with self._init_root_context (root_spec) :
+                self._setup_root   (app_type, root_spec)
                 ems.register_scope ()
         return self
     # end def new
 
     @classmethod
     @TFL.Contextmanager
-    def _init_context (cls, app_type, db_url, user, root_epk = ()) :
+    def _init_context (cls, app_type, db_url, user, root_spec = None) :
         self                = cls.__new__ (cls)
         self.app_type       = app_type
         self.db_url         = db_url
         self.user           = user
-        self.root_epk       = root_epk
-        self.bname          = "__".join (str (e) for e in root_epk)
-        self.qname          = self.bname or app_type.name
+        self.bname          = ""
         self.id             = self._new_id ()
         self.root           = None
         self.historian      = MOM.SCM.Tracker (self)
@@ -351,7 +399,7 @@ class Scope (TFL.Meta.Object) :
     # end def _init_context
 
     @TFL.Contextmanager
-    def _init_root_context (self, root_epk = ()) :
+    def _init_root_context (self, root_spec = None) :
         yield
     # end def _init_root_context
 
@@ -394,6 +442,8 @@ class Scope (TFL.Meta.Object) :
                     )
             else :
                 self.ems.add (result, pid = pid)
+                if pid == self.root_pid :
+                    self._register_root (result)
                 if not result.init_finished :
                     result._finish__init__ ()
                 return result
@@ -466,8 +516,8 @@ class Scope (TFL.Meta.Object) :
                or self.db_url.path != db_url.path
                )
         with self.as_active () :
-            result = self.__class__.new \
-                (app_type, db_url, self.root_epk, user = self.user)
+            result = self.__class__.new (app_type, db_url, user = self.user)
+            result.root_pid = self.root_pid
             for e in sorted (self, key = TFL.Getter.pid) :
                 result.add_from_pickle_cargo (* e.as_pickle_cargo ())
             for c in self.query_changes ().order_by (TFL.Sorted_By ("cid")) :
@@ -774,10 +824,12 @@ class Scope (TFL.Meta.Object) :
 
     def _register_root (self, root) :
         if root is not None :
-            self.root = root
-            self._roots [root.Essence.type_base_name] = root
-            if not self.root_epk :
-                self.root_epk = root.epk
+            if self.root is None :
+                self.root     = self._roots [root.type_base_name] = root
+                self.root_pid = root.pid
+                self.bname    = root.ui_display
+            else :
+                raise TypeError ("Root was already set to %r" % (self.root, ))
     # end def _register_root
 
     def _run_init_callbacks (self) :
@@ -796,10 +848,20 @@ class Scope (TFL.Meta.Object) :
                 _pkg_ns [outer] = Pkg_NS (self, pns, outer)
     # end def _setup_pkg_ns
 
-    def _setup_root (self, app_type, root_epk) :
-        if root_epk and app_type.Root_Type :
-            Root_Type = self [app_type.Root_Type.type_name]
-            self._register_root (Root_Type (* root_epk))
+    def _setup_root (self, app_type, root_spec) :
+        RT = self.Root_Type
+        if root_spec and RT :
+            if callable (root_spec) :
+                result = root_spec (self)
+                if not isinstance (result, RT.Essence) :
+                    raise TypeError \
+                        ( "%s returned %s %r, expected %s"
+                        % (root_spec, result.__class__, result, RT)
+                        )
+            else :
+                result = RT (* root_spec)
+            self._register_root (result)
+            return result
     # end def _setup_root
 
     def __getattr__ (self, name) :

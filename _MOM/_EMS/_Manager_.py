@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -244,7 +244,7 @@ class _Manager_ (TFL.Meta.Object) :
 
     @subclass_responsibility
     def load_root (self) :
-        """Redefine to load `guid`, `pid`, and `root` of scope from database."""
+        """Redefine to load `root` of scope from database."""
     # end def load_root
 
     def pid_query (self, pid, Type = None) :
