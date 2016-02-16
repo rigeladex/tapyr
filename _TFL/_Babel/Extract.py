@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -24,6 +24,8 @@
 #                     the translation was found
 #    23-Oct-2014 (CT) Add missing `__future__` import of `print_function`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    16-Feb-2016 (CT) Use `os.path.relpath`, not `babel.util.relpath`
+#                     (broke in Babel 2.2)
 #    ««revision-date»»···
 #--
 
@@ -39,7 +41,7 @@ import _TFL._Babel.PO_File
 import  os
 import  sys
 
-from    babel.util             import pathmatch, relpath
+from    babel.util             import pathmatch
 from    babel.messages.extract import empty_msgid_warning
 
 class Existing_Translations (object) :
@@ -94,7 +96,7 @@ def Extract (dirname, template_file, config, cmd) :
     for root, dirnames, filenames in os.walk (absname) :
         dirnames.sort  ()
         for filename in sorted (filenames) :
-            filename = relpath \
+            filename = os.path.relpath \
                 (os.path.join (root, filename).replace (os.sep, '/'), dirname)
             try :
                 for method_name, pattern in config.patterns.items () :
