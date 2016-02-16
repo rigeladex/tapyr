@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -52,6 +52,7 @@ from   werkzeug.security             import safe_str_cmp as _wz_safe_str_cmp
 from   werkzeug.wrappers             import Request
 
 import json
+import logging
 
 def safe_str_cmp (lhs, rhs) :
     l = pyk.encoded (lhs, "iso-8859-1")
@@ -91,11 +92,17 @@ class _WZG_Request_ \
     @Once_Property
     def json (self) :
         result = {}
-        if "json" in self.environ.get ("CONTENT_TYPE", "") :
+        if "json" in self.environ.get ("CONTENT_TYPE", "").lower () :
             try :
-                result = json.loads (self.body)
+                ### For json, encoding should always be utf-8
+                body = pyk.decoded (self.data, "utf-8")
             except Exception as exc :
-                pass
+                logging.exception ("*** Json decoding error")
+            else :
+                try :
+                    result = json.loads (body)
+                except Exception as exc :
+                    pass
         return result
     # end def json
 
