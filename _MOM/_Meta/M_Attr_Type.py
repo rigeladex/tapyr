@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -67,6 +67,7 @@
 #    11-Mar-2014 (CT) Add `Composite` to simplify attribute redefinition
 #    27-Feb-2015 (CT) Change `_do_overrides` to use `New`, unique `__name__`
 #    15-Aug-2015 (CT) Add `is_abstract`, `A_Type`
+#    22-Feb-2016 (CT) Change `Unit` to allow `_default_unit != 1`
 #    ««revision-date»»···
 #--
 
@@ -474,7 +475,7 @@ class Unit (Root) :
                             du = n
                             setattr (cls, "_default_unit", du)
                             break
-                if du and ud [du] == 1.0 :
+                if du is not None :
                     syntax = "\n".join \
                         ( s for s in
                             ( getattr (cls, "_syntax_spec_head", "")
@@ -492,7 +493,7 @@ class Unit (Root) :
                 elif __debug__ :
                     print \
                         ( "Attribute type %s doesn't specify a `_default_unit`"
-                          "with value 1.0 in `_unit_dict`"
+                          "nor a unit with value 1.0 in `_unit_dict`"
                         % name
                         )
             elif __debug__ :

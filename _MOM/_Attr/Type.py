@@ -379,6 +379,7 @@
 #    11-Dec-2015 (CT) Factor `attr_types_of_module`;
 #                     add `module` to `is_attr_type`
 #     7-Feb-2016 (CT) Factor `Pickler_As_String`
+#    22-Feb-2016 (CT) Change `_A_Unit_` to allow `_default_unit != 1`
 #    ««revision-date»»···
 #--
 
@@ -2453,7 +2454,7 @@ class _A_Unit_ \
        units.
     """
 
-    _default_unit    = None ### set by meta class
+    _default_unit    = None ### set by meta class if None
     needs_raw_value  = True
     _unit_dict       = {}
     _unit_pattern    = Regexp \
@@ -2474,8 +2475,10 @@ class _A_Unit_ \
         ### when called for the class, `soc.__super` doesn't
         ### work while `super (_A_Unit_, soc)` does
         if value is not None :
+            factor = soc._unit_dict [soc._default_unit]
+            v      = value / factor
             return "%s %s" % \
-               (super (_A_Unit_, soc).as_string (value), soc._default_unit)
+               (super (_A_Unit_, soc).as_string (v), soc._default_unit)
         return ""
     # end def as_string
 
@@ -2493,7 +2496,7 @@ class _A_Unit_ \
 
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
-        factor = 1
+        factor = soc._unit_dict [soc._default_unit]
         pat    = soc._unit_pattern
         if pat.search (s) :
             unit = pat.unit

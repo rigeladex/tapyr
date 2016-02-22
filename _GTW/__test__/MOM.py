@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -63,12 +63,14 @@
 #                     add tests for `up_ex_q`
 #    17-Jun-2014 (RS) `Date_Time_Delta`, `Int_Interval`, `Int_Interval_C`
 #    23-Jun-2014 (RS) Add `reaction_time_range` to test `Int_Interval_C`
+#    22-Feb-2016 (CT) Add test for `height`, an attribute with unit
 #    ««revision-date»»···
 #--
 
 from   __future__  import print_function, unicode_literals
 
 from   _MOM.import_MOM            import *
+from   _MOM.import_MOM            import _A_Unit_
 from   _MOM._Attr.Date_Interval   import *
 from   _MOM._Attr.Number_Interval import A_Float_Interval
 from   _MOM._Attr.Number_Interval import A_Int_Interval_C
@@ -206,6 +208,24 @@ class Person (_Ancestor_Essence) :
             ui_name     = "Middle name"
 
         # end class middle_name
+
+        class height (_A_Unit_, A_Int) :
+            """Height of person"""
+
+            kind               = Attr.Optional
+            typ                = "height"
+            _default_unit      = "m"
+            _unit_dict         = dict \
+                ( { "in"   : 25.4 }
+                , cm       = 1.0e1
+                , dm       = 1.0e2
+                , ft       = 304.8
+                , m        = 1.0e3
+                , mm       = 1
+                , yd       = 9144
+                )
+
+        # end class height
 
     # end class _Attributes
 
@@ -1033,7 +1053,7 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Person.necessary
     []
     >>> ET_Person.optional
-    []
+    [height `height`]
 
     >>> ET_Mouse.primary
     [Name `name`]
@@ -1048,7 +1068,7 @@ The app-type specific entity-types are ready to be used by
     >>> prepr ((last_name_prop.name, last_name_prop.ui_name))
     ('last_name', 'Last name')
     >>> sorted (ET_Person._Attributes._own_names)
-    ['first_name', 'last_name', 'middle_name', 'owns_trap_links', 'sets_trap_links', 'traps']
+    ['first_name', 'height', 'last_name', 'middle_name', 'owns_trap_links', 'sets_trap_links', 'traps']
 
     >>> color_prop = ET_Mouse.attr_prop ("color")
     >>> prepr ((color_prop.name, color_prop.ui_name))
@@ -2179,6 +2199,35 @@ Setting attribute values with Queries
 
     >>> sorted (scope.BMT.Trap.query (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
     [(2, 25.0, 50.0), (3, 25.0, 75.0)]
+
+Attributes with unit
+------------------------
+
+    >>> _ = p.set_raw (height = "1.57")
+    >>> p.height
+    1570
+
+    ### the original raw value didn't specify a unit (default is meter)
+    ### --> `raw_attr` doesn't show  unit
+    >>> print (p.raw_attr ("height"))
+    1.57
+
+    >>> p.height += 20
+
+    ### the raw value was changed due to the addition
+    ### --> `raw_attr` shows the unit, which is still meter
+    >>> print (p.raw_attr ("height"))
+    1.59 m
+
+    >>> _ = p.set_raw (height = "175 cm")
+    >>> p.height
+    1750
+
+    ### an explicit unit was specified in the last assignment
+    ### --> `raw_attr` shows that unit
+    >>> print (p.raw_attr ("height"))
+    175 cm
+
 
 """
 
