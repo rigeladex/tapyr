@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -171,6 +171,7 @@
 #     4-Nov-2015 (CT) Use mode "rb" for message files
 #     4-Nov-2015 (CT) Remove `message_from_string` because broken Python 3
 #     9-Nov-2015 (CT) Change `body_lines` to call `pyk.decoded` before `.split`
+#    23-Feb-2016 (CT) Change `_main` to encode `subject` after `%`, not before
 #    ««revision-date»»···
 #--
 
@@ -1053,14 +1054,14 @@ def _main (cmd) :
         if cmd.Print :
             from plumbum  import local as pbl
             from _TFL.FCM import open_tempfile
-            subject = msg.scope.subject.encode (encoding, "replace")
+            subject = msg.scope.subject
             pbl.env ["LC_ALL"] = "en_US.%s" % encoding.replace ("-", "")
             with open_tempfile () as (file, temp_name) :
                 file.write (txt)
                 file.close ()
                 a2ps = pbl ["a2ps"] \
                     [ "-s", "-8", "-nL", "-nu", "-nS"
-                    , "-H%s" % (subject, )
+                    , pyk.encoded ("-H%s" % (subject, ), encoding)
                     , "-P%s" % (cmd.printer_name, )
                     , temp_name
                     ]
