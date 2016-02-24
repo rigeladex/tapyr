@@ -36,6 +36,18 @@ _test_code = """
     >>> c2  = PAP.Company ("John Doe, Inc.", "Paris")
     >>> c3  = PAP.Company ("Jane Doe, Inc.", "Paris")
 
+    >>> print (PAP.Company_1P.E_Type.vat_idn.description)
+    VAT identification number of Company_1P.
+
+    >>> print (p1.ui_display, ": VAT-IDN =", p1.vat_idn)
+    Doe Jane, Dr. : VAT-IDN = None
+
+    >>> print (c1.ui_display, ": VAT-IDN =", c1.vat_idn)
+    Doe Jane, Dr. : VAT-IDN = None
+
+    >>> print (c2.ui_display, ": VAT-IDN =", c2.vat_idn)
+    John Doe, Inc., Paris : VAT-IDN = None
+
     >>> eu1 = PAP.Person_has_VAT_IDN  (p1, vin = "GB999 9999 73")
 
     >>> _   = PAP.Company_has_VAT_IDN (c1, vin = "GB999 9999 73")
@@ -62,6 +74,15 @@ _test_code = """
     Traceback (most recent call last):
       ...
     Integrity_Error: ...
+
+    >>> print (p1.ui_display, ": VAT-IDN =", p1.vat_idn)
+    Doe Jane, Dr. : VAT-IDN = GB999999973
+
+    >>> print (c1.ui_display, ": VAT-IDN =", c1.vat_idn)
+    Doe Jane, Dr. : VAT-IDN = GB999999973
+
+    >>> print (c2.ui_display, ": VAT-IDN =", c2.vat_idn)
+    John Doe, Inc., Paris : VAT-IDN = FR83404833048
 
     ### The contents of `Integrity_Error` exceptions due to unique constraints
     ### differs between different database backends --> use `...` instead

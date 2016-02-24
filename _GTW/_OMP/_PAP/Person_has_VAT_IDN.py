@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    24-Feb-2016 (CT) Creation
+#    24-Feb-2016 (CT) Inject attribute `vat_idn` into `Person`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,8 @@ from   _TFL.I18N                   import _
 from   _GTW._OMP._PAP.VAT_IDN      import A_VAT_IDN
 
 import _GTW._OMP._PAP.Subject_has_VAT_IDN
+
+from   _TFL.Decorator             import eval_function_body
 
 _Ancestor_Essence = PAP.Subject_has_VAT_IDN
 
@@ -63,6 +66,17 @@ class Person_has_VAT_IDN (_Ancestor_Essence) :
     # end class _Attributes
 
 # end class Person_has_VAT_IDN
+
+@eval_function_body
+def _inject_vat_idn () :
+    class vat_idn (A_VAT_IDN) :
+        """VAT identification number of Company."""
+
+        kind                = Attr.Query
+        query               = Q.vat_idn_link.vin
+    # end class vat_idn
+    PAP.Person.add_attribute (vat_idn, override = True)
+# end def _inject_vat_idn
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")

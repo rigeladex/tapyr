@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    24-Feb-2016 (CT) Creation
+#    24-Feb-2016 (CT) Add `left.link_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,7 @@ class Subject_has_VAT_IDN (_Ancestor_Essence) :
             role_type          = PAP.Subject
             is_partial         = True
             max_links          = 1
+            link_ref_attr_name = "vat_idn_link"
 
         # end class left
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -233,6 +233,7 @@
 #    16-Aug-2015 (CT) Change `_m_init_prop_specs` to reset `immaterial`
 #    13-Nov-2015 (CT) Add `M_E_Type.__lt__` to allow sorting of E_Types
 #    16-Dec-2015 (CT) Add `UI_Spec` to `_m_create_base_e_types`
+#    24-Feb-2016 (CT) Change `_m_add_prop` to allow early calls
 #    ««revision-date»»···
 #--
 
@@ -745,7 +746,24 @@ class M_Entity (M_E_Mixin) :
 
     def _m_add_prop (cls, prop, _Properties, verbose, override = False) :
         name = prop.__name__
-        if (not override) and name in _Properties._names :
+        prop_names = getattr (_Properties, "_names", None)
+        if prop_names is None :
+            ### `_Properties._names` isn't set up yet
+            ### --> just add `prop` to `_Properties`
+            if (not override) and name in _Properties.__dict__ :
+                if __debug__ :
+                    if verbose :
+                        p = gettatr (_Properties, name)
+                        print \
+                            ( "Property %s.%s already defined as %s [%s]"
+                            % ( cls.type_name, name
+                              , getattr (p,    "kind")
+                              , getattr (prop, "kind")
+                              )
+                            )
+            else :
+                setattr (_Properties, name, prop)
+        elif (not override) and name in prop_names :
             if __debug__ :
                 if verbose :
                     p = _Properties._names.get (name)
