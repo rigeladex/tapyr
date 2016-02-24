@@ -68,6 +68,7 @@
 #    27-Feb-2015 (CT) Change `_do_overrides` to use `New`, unique `__name__`
 #    15-Aug-2015 (CT) Add `is_abstract`, `A_Type`
 #    22-Feb-2016 (CT) Change `Unit` to allow `_default_unit != 1`
+#    24-Feb-2016 (CT) Add `is_partial` to `Root.__new__`
 #    ««revision-date»»···
 #--
 
@@ -92,6 +93,7 @@ class Root (MOM.Meta.M_Prop_Type) :
               or (name.startswith ("_") and name.endswith ("_"))
               )
             )
+        dct.setdefault ("is_partial", False)
         return meta.__mc_super.__new__ (meta, name, bases, dct)
     # end def __new__
 

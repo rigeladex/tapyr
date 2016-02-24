@@ -66,6 +66,11 @@ _Ancestor_Essence = PAP.Company
 class Company_1P (_Ancestor_Essence) :
     """A one-person company"""
 
+    ### For Company_1P, the `person` holds the VAT_IDN, not the company
+    ### - one person can have more than one `Company_1P`, but all share the
+    ###   person's single `VAT_IDN`
+    refuse_links          = set (["PAP.Company_has_VAT_IDN"])
+
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes

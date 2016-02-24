@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -25,6 +25,7 @@
 #    12-Sep-2012 (CT) Add `extension`
 #    16-Apr-2013 (CT) Update `auto_derive_np_kw` instead of explicit class
 #    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
+#    24-Feb-2016 (CT) Remove incorrect `is_partial = True` from `right`
 #    ««revision-date»»···
 #--
 
@@ -58,7 +59,6 @@ def _setup_Subject_has_Phone_auto_derivation ():
 
     _kw ["right"].update \
         ( __doc__    = """Phone number of %(left.role_name)s"""
-        , is_partial = True
         )
 
 ### __END__ GTW.OMP.PAP.Subject_has_Phone

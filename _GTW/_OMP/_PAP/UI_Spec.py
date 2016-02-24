@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -47,6 +47,8 @@
 #     4-Sep-2014 (CT) Add `Adhoc_Group`, `Id_Entity_permits_Group`,
 #                     `Person_in_Group`
 #    16-Dec-2015 (CT) Change to `UI_Spec`
+#     9-Feb-2016 (CT) Add `Company_1P`
+#    24-Feb-2016 (CT) Add `Company_has_VAT_IDN`, `Person_has_VAT_IDN`
 #    ««revision-date»»···
 #--
 
@@ -92,6 +94,14 @@ class UI_Spec (object) :
 
     Company              = dict \
         ( list_display   = ("name", "short_name", "lifetime")
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs = subject_include_rev_refs
+            )
+        )
+
+    Company_1P           = dict \
+        ( list_display   =
+            ( "ui_display", "short_name", "lifetime")
         , MF3_Form_Spec  = dict
             ( include_rev_refs = subject_include_rev_refs
             )
@@ -163,6 +173,10 @@ class UI_Spec (object) :
         (
         )
 
+    Company_has_VAT_IDN  = dict \
+        ( list_display   = ("left.ui_display", "vin")
+        )
+
     Id_Entity_permits_Group = dict \
         (
         )
@@ -193,6 +207,10 @@ class UI_Spec (object) :
 
     Person_has_Url       = dict \
         (
+        )
+
+    Person_has_VAT_IDN   = dict \
+        ( list_display   = ("left.ui_display", "vin")
         )
 
     Person_in_Group      = dict \

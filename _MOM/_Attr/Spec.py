@@ -69,6 +69,7 @@
 #    30-Jul-2015 (CT) Don't sort `polish_attr` by `ui_rank`, sort by `rank`
 #    14-Aug-2015 (CT) Add `q_able_no_edit`
 #     5-Feb-2016 (CT) Sort `polish_attr` by `ui_rank`, not `(rank, name)`
+#    24-Feb-2016 (CT) Add `not prop.prop.is_partial` to `_db_attr` guard
 #    ««revision-date»»···
 #--
 
@@ -259,7 +260,7 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec)) :
         self.__super._setup_prop (e_type, name, kind, prop)
         if not (prop.electric or prop.is_primary) :
             self._user_attr.append (prop)
-        if prop.save_to_db :
+        if prop.save_to_db and not prop.prop.is_partial :
             self._db_attr.append (prop)
         if callable (prop.sync) :
             self._syncable.append (prop)
