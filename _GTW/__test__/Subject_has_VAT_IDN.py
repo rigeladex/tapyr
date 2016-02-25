@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    24-Feb-2016 (CT) Creation
+#    25-Feb-2016 (CT) Add tests for `Wrong_Type`
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,19 @@ _test_code = """
 
     >>> eu1 = PAP.Person_has_VAT_IDN  (p1, vin = "GB999 9999 73")
 
-    >>> _   = PAP.Company_has_VAT_IDN (c1, vin = "GB999 9999 73")
+    >>> _   = PAP.Person_has_VAT_IDN  (c3, vin = "GB999 9999 72")
+    Traceback (most recent call last):
+      ...
+    Wrong_Type: Company 'Jane Doe, Inc., Paris' not eligible for attribute left,
+        must be instance of Person
+
+    >>> _   = PAP.Company_has_VAT_IDN (p2, vin = "GB999 9999 72")
+    Traceback (most recent call last):
+      ...
+    Wrong_Type: Person 'Doe John' not eligible for attribute left,
+        must be instance of Company
+
+    >>> _   = PAP.Company_has_VAT_IDN (c1, vin = "GB999 9999 72")
     Traceback (most recent call last):
       ...
     Wrong_Type: Company_1P 'Doe Jane, Dr.' not eligible for attribute left,
