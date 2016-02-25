@@ -18,6 +18,7 @@
 # Revision Dates
 #     8-Feb-2016 (CT) Creation
 #    24-Feb-2016 (CT) Change `VAT_IDN.__init__` to accept `VAT_IDN` instances
+#    25-Feb-2016 (CT) Add `__eq__`, `__hash__`
 #    ««revision-date»»···
 #--
 
@@ -236,6 +237,15 @@ class VAT_IDN (TFL.Meta.Object) :
     def value (self) :
         return self._value
     # end def value
+
+    def __eq__ (self, rhs) :
+        r = rhs.value if isinstance (rhs, VAT_IDN) else rhs
+        return self.value == r
+    # end def __eq__
+
+    def __hash__ (self) :
+        return hash (self.value)
+    # end def __hash__
 
     def __repr__ (self) :
         return pyk.reprify (self.value)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -868,13 +868,13 @@ _test_element = """
     , 'pid' : 1
     , 'sid' : 0
     , 'sigs' :
-        { 'Z-26' : 'LIK3AyfLWxqCKALsALBufgqG2byxcgHgH3YFcQ'
-        , 'Z-26:phones/1' : '7UEXbSkX05AGhz2dh-JWw-Vy52Hh4fNqCeyqXQ'
-        , 'Z-26:phones/2' : 'uCFE3jU3Ly3UjkijTwh8FNFgodNHX5oDlZ7idQ'
-        , 'Z-26:phones::right/1' : 'oGs7kTmj7C7UPdcaI-FQlQokWDXlQ7ZvB5wixw'
-        , 'Z-26:phones::right/2' : 'mbro5WcZeIL_4vyJ5LzQXVNIYFDhvjwdosR19Q'
-        , 'Z-26:phones::right@3' : 'gkTiCHvamRDyIpZVlUCeR-9apTI5ErhiKgIOoQ'
-        , 'Z-26:phones@3' : 'AkzioCnxzAGL-R6uBvx313ZMNetrPyYg-EJEHA'
+        { 'Z-26' : 'dxIDJ3yZVcgB4EOzcrzloZ-PespkJUDvqZDpNQ'
+        , 'Z-26:phones/1' : '5Emb8noyfH6y9iXocwihOVKUY7Fl87CwfK_snQ'
+        , 'Z-26:phones/2' : 'ABEse4QgSmUV2kHs11jPb0YZoX17UQpbPsZWTg'
+        , 'Z-26:phones::right/1' : 'kBHk1wYXSwdUar1xHmKmvYCokwZLYqPrxtc-_Q'
+        , 'Z-26:phones::right/2' : '7BUGMsG-u3B_iQcFEVGES3DI2bFYHBGVfYXdsA'
+        , 'Z-26:phones::right@3' : 'RI8lMuuAH4Aq2IAf3BH8tKLwvhc8ZgyvLniDyg'
+        , 'Z-26:phones@3' : 'luUj-F9qHmVLs2-5J14hRA_jl0uSYQDtBBhuhA'
         }
     }
 

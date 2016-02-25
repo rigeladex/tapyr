@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -53,7 +53,7 @@ _test_code = r"""
     >>> scope.commit ()
     >>> with expect_except (MOM.Error.Invariants) :
     ...     SWP.Page_V ("foo", text = "V")
-    Invariants: The attribute values for ('perma_name',) must be unique for each object
+    Invariants: The attribute values for 'perma_name' must be unique for each object
       The new definition of Page V SWP.Page_V ('foo',) would clash with 1 existing entities
       Already existing:
         SWP.Page_U ('foo',)
@@ -95,6 +95,7 @@ _test_code = r"""
     Auth.Account_Activation                        False  ('left',)
     Auth.Account_Password_Change_Required          False  ('left',)
     EVT.Recurrence_Spec                            False  ('left',)
+    PAP.Address_Position                           False  ('left',)
     SRM.Regatta                                    False  ('left', 'boat_class')
     SRM.Regatta_C                                  False  ('left', 'boat_class')
     SRM.Regatta_H                                  False  ('left', 'boat_class')
@@ -105,7 +106,6 @@ _test_code = r"""
     SRM.Team                                       False  ('left', 'name')
     SRM.Sailor                                     False  ('left', 'nation', 'mna_number', 'club')
     SWP.Picture                                    False  ('left', 'number')
-    PAP.Address_Position                           False  ('left', 'position')
     SRM.Race_Result                                False  ('left', 'race')
     Auth.Account_in_Group                          False  ('left', 'right')
     PAP.Company_has_Address                        False  ('left', 'right')
@@ -203,7 +203,7 @@ _test_code = r"""
     PAP.Person                                     True   False  False
     PAP.Url                                        True   False  False
     PAP.Link                                       False  True   True
-    PAP.Link1                                      False  True   True
+    PAP.Link1                                      False  False  False
     PAP.Address_Position                           True   False  False
     PAP._Link_n_                                   False  True   True
     PAP.Link2                                      False  True   True
@@ -382,6 +382,7 @@ _test_code = r"""
     Auth.Account_Activation                        =                     ('left',)
     Auth.Account_Password_Change_Required          =                     ('left',)
     EVT.Recurrence_Spec                            =                     ('left',)
+    PAP.Address_Position                           =                     ('left',)
     SRM.Regatta                                    =                     ('left', 'boat_class')
     SRM.Regatta_C                                  SRM.Regatta           ('left', 'boat_class')
     SRM.Regatta_H                                  SRM.Regatta           ('left', 'boat_class')
@@ -392,7 +393,6 @@ _test_code = r"""
     SRM.Team                                       =                     ('left', 'name')
     SRM.Sailor                                     =                     ('left', 'nation', 'mna_number', 'club')
     SWP.Picture                                    =                     ('left', 'number')
-    PAP.Address_Position                           =                     ('left', 'position')
     SRM.Race_Result                                =                     ('left', 'race')
     Auth.Account_in_Group                          =                     ('left', 'right')
     PAP.Company_has_Address                        PAP.Subject_has_Property  ('left', 'right')

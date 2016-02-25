@@ -380,6 +380,7 @@
 #                     add `module` to `is_attr_type`
 #     7-Feb-2016 (CT) Factor `Pickler_As_String`
 #    22-Feb-2016 (CT) Change `_A_Unit_` to allow `_default_unit != 1`
+#    25-Feb-2016 (CT) Add `@getattr_safe` to property `A_Link_Role.unique_p`
 #    ««revision-date»»···
 #--
 
@@ -401,6 +402,7 @@ import _MOM._Attr.Selector
 import _MOM._Meta.M_Attr_Type
 import _MOM._Prop.Type
 
+from   _TFL.Decorator        import getattr_safe
 from   _TFL.I18N             import _, _T
 from   _TFL.portable_repr    import portable_repr
 from   _TFL.predicate        import uniq
@@ -3282,6 +3284,7 @@ class A_Link_Role \
     # end def ui_name
 
     @TFL.Meta.Class_and_Instance_Once_Property
+    @getattr_safe
     def unique_p (self) :
         return self.max_links == 1 and self.e_type.number_of_roles == 1
     # end def unique_p

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Martin Glueck All rights reserved
+# Copyright (C) 2011-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -160,14 +160,14 @@ _attr_ac_query = """
     >>> a3p.position
     MOM.Position (48.190111, 16.26867)
     >>> a3.gps
-    PAP.Address_Position (('glasauergasse 32/3', '1130', 'wien', 'austria'), (48.190111, 16.26867))
+    PAP.Address_Position (('glasauergasse 32/3', '1130', 'wien', 'austria'))
 
     >>> a4 = PAP.Address ("Glasauergasse 32/2", "1130", "Wien", "Austria", raw = True)
     >>> a4p = PAP.Address_Position (a4, position = ("48d 11m 25s", "16d 16m 7s"), raw = True)
     >>> a4p.position
     MOM.Position (48.1902777778, 16.2686111111)
     >>> print (a4p)
-    (('glasauergasse 32/2', '1130', 'wien', 'austria'), (48.1902777778, 16.2686111111))
+    (('glasauergasse 32/2', '1130', 'wien', 'austria'))
     >>> print (a4p.position)
     (48.1902777778, 16.2686111111)
     >>> print (a4p.attr_prop ("position").as_code (a4p.position))
@@ -196,7 +196,7 @@ _attr_ac_query = """
     Q.position.lat == 48.1902777778
 
     >>> PAP.Address_Position.query_s (apq).all ()
-    [PAP.Address_Position (('glasauergasse 32/2', '1130', 'wien', 'austria'), (48.1902777778, 16.2686111111))]
+    [PAP.Address_Position (('glasauergasse 32/2', '1130', 'wien', 'austria'))]
 
 """
 

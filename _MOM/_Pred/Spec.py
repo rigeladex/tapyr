@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -30,6 +30,8 @@
 #    31-May-2013 (CT) Factor `_prop_map_name`
 #    15-Aug-2015 (CT) Change `_setup_attr_checker` to use kind `Region`
 #                     for `electric` attributes
+#    25-Feb-2016 (CT) Change `_create_properties` to create `Unique` predicates
+#                     for attributes with `unique_p` set
 #    ««revision-date»»···
 #--
 
@@ -87,16 +89,27 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Pred_Spec)) :
 
     def _create_properties (self, e_type) :
         self.__super._create_properties (e_type)
-        for n, a in pyk.iteritems (e_type.attributes) :
-            self._setup_attr_checker (e_type, a)
+        up_set = set ()
         if e_type.epk_sig :
-            uniq_epk = MOM.Pred.Unique.New_Pred \
+            up = MOM.Pred.Unique.New_Pred \
                 ( * e_type.epk_sig
                 , name_suffix = "epk"
                 , rank        = -100
                 , __module__  = e_type.__module__
                 )
-            self._add_prop (e_type, uniq_epk.name, uniq_epk)
+            self._add_prop (e_type, up.name, up)
+            up_set.add (e_type.epk_sig)
+        for n, a in pyk.iteritems (e_type.attributes) :
+            self._setup_attr_checker (e_type, a)
+            if a.unique_p and (n, ) not in up_set :
+                up = MOM.Pred.Unique.New_Pred \
+                    ( n
+                    , name_suffix = n
+                    , rank        = -99
+                    , __module__  = e_type.__module__
+                    )
+                self._add_prop (e_type, up.name, up)
+                up_set.add ((n, ))
     # end def _create_properties
 
     def _kind_list_name (self, kind) :

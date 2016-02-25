@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -100,6 +100,7 @@
 #                     determine the `etypes` of `roles`
 #     7-Apr-2015 (CT) Redefine `_m_default_ui_name` to improve auto-`ui_name`
 #    16-Aug-2015 (CT) Add `auto_derived_p`, `auto_derived_root`
+#    25-Feb-2016 (CT) Change `_m_setup_roles` to always set `number_of_roles`
 #    ««revision-date»»···
 #--
 
@@ -511,10 +512,10 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
         role_types = tuple \
             (r.role_type for r in Roles if r.role_type is not None)
         rns = set ()
+        cls.number_of_roles = len (Roles)
         if len (role_types) == len (Roles) :
             type_base_names = [rt.type_base_name for rt in role_types]
-            cls.number_of_roles = nor      = len (Roles)
-            cls.role_map        = role_map = {}
+            cls.role_map    = role_map = {}
             for i, r in enumerate (Roles) :
                 if r.role_name in rns :
                     crs = tuple (s for s in Roles if s.role_name == r.role_name)

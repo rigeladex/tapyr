@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.SRM.
@@ -19,6 +19,7 @@
 #    17-Aug-2014 (CT) Creation
 #    30-Mar-2015 (CT) Set `treshold` for `Ranking.name` to `0`;
 #                     ditto for `Regatta_in_Ranking.right`
+#    25-Feb-2016 (CT) Set `nick.unique_p`, don't define explicit `Pred.Unique`
 #    ««revision-date»»···
 #--
 
@@ -56,24 +57,11 @@ class Ranking (_Ancestor_Essence) :
 
             kind               = Attr.Required
             max_length         = 8
+            unique_p           = True
 
         # end class nick
 
     # end class _Attributes
-
-    class _Predicates (_Ancestor_Essence._Predicates) :
-
-        _Ancestor = _Ancestor_Essence._Predicates
-
-        unique_nick = Pred.Unique.New_Pred \
-            ( "nick"
-            , name = "unique_nick"
-            , __doc__ =
-                """The value of the attribute `nick` must be unique over all
-                   instances of `Ranking`.
-                """
-            )
-    # end class _Predicates
 
     def points (self, boat_in_regatta) :
         """Ranking list points of `boat_in_regatta`"""

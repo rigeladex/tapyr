@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Pred.
@@ -54,6 +54,7 @@
 #     2-Apr-2015 (CT) Don't put `FO` object into `val_disp`,
 #                     convert them with `pyk.text_type` to string
 #    15-Aug-2015 (CT) Add stub for `_Condition_.predicates`
+#    25-Feb-2016 (CT) Improve automatic `__doc__` of `New_Pred`
 #    ««revision-date»»···
 #--
 
@@ -507,6 +508,7 @@ class Unique \
 
        DBW backend sets `ems_check` to `False` if database performs the check
     """
+
     ems_check = True
 
     @classmethod
@@ -520,7 +522,10 @@ class Unique \
         if not kw.get ("__doc__") :
             kw ["__doc__"] = \
                 ( "The attribute values for %s must be unique for each object"
-                % portable_repr (attrs)
+                % ( portable_repr (attrs) if len (attrs) > 1
+                      else repr (attrs [0])
+                  ,
+                  )
                 )
         if not kw.get ("__module__") :
             kw ["__module__"] = TFL.Caller.globals () ["__name__"]

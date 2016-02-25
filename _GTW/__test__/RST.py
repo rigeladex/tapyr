@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -2028,7 +2028,7 @@ _test_example_1 = r"""
     Auth.Certificate : ('foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), 'foo', 'Auth.Certificate')
     Auth.Group : ('foo', 'Auth.Group')
     PAP.Address : ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address')
-    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), (('height', '1764.0'), ('lat', '42'), ('lon', '137')), 'PAP.Address_Position')
+    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Address_Position')
     PAP.Company : ('John Doe, Inc.', 'NY', 'PAP.Company')
     PAP.Company_has_Address : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company_has_Email : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
@@ -2086,7 +2086,7 @@ _test_example_2 = r"""
     Auth.Certificate : ('foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), 'foo', 'Auth.Certificate')
     Auth.Group : ('foo', 'Auth.Group')
     PAP.Address : ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address')
-    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), (('height', '1764.0'), ('lat', '42'), ('lon', '137')), 'PAP.Address_Position')
+    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Address_Position')
     PAP.Company : ('John Doe, Inc.', 'NY', 'PAP.Company')
     PAP.Company_has_Address : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company_has_Email : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
@@ -2165,7 +2165,7 @@ _test_example_3 = r"""
     PAP.Company_has_Email : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
     PAP.Company_has_Address : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company : ('John Doe, Inc.', 'NY', 'PAP.Company')
-    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), (('height', '1764.0'), ('lat', '42'), ('lon', '137')), 'PAP.Address_Position')
+    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Address_Position')
     PAP.Address : ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address')
     Auth.Group : ('foo', 'Auth.Group')
     Auth.Certificate : ('foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), 'foo', 'Auth.Certificate')
@@ -2200,7 +2200,7 @@ _test_example_4 = r"""
     Auth.Certificate : ('foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), 'foo', 'Auth.Certificate')
     Auth.Group : ('foo', 'Auth.Group')
     PAP.Address : ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address')
-    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), (('height', '1764.0'), ('lat', '42'), ('lon', '137')), 'PAP.Address_Position')
+    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Address_Position')
     PAP.Company : ('John Doe, Inc.', 'NY', 'PAP.Company')
     PAP.Company_has_Address : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company_has_Email : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
@@ -2254,7 +2254,7 @@ _test_example_4 = r"""
     Auth.Certificate : ('foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), 'foo', 'Auth.Certificate')
     Auth.Group : ('foo', 'Auth.Group')
     PAP.Address : ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address')
-    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), (('height', '1764.0'), ('lat', '42'), ('lon', '137')), 'PAP.Address_Position')
+    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Address_Position')
     PAP.Company : ('John Doe, Inc.', 'NY', 'PAP.Company')
     PAP.Company_has_Address : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company_has_Email : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
@@ -2331,7 +2331,7 @@ _test_example_4 = r"""
     PAP.Company_has_Email : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
     PAP.Company_has_Address : (('John Doe, Inc.', 'NY', 'PAP.Company'), ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company : ('John Doe, Inc.', 'NY', 'PAP.Company')
-    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), (('height', '1764.0'), ('lat', '42'), ('lon', '137')), 'PAP.Address_Position')
+    PAP.Address_Position : (('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address'), 'PAP.Address_Position')
     PAP.Address : ('Mystery Lane 42', '9876', 'Middletown', 'Land Of The Brave', 'PAP.Address')
     Auth.Group : ('foo', 'Auth.Group')
     Auth.Certificate : ('foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), 'foo', 'Auth.Certificate')

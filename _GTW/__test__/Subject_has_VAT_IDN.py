@@ -86,7 +86,10 @@ _test_code = """
     >>> _   = PAP.Person_has_VAT_IDN  (p2, vin = "FR83,404,833,048") # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
-    Integrity_Error: ...
+    Invariants: The attribute values for 'vin' must be unique for each object
+      The new definition of Person_has_VAT_IDN PAP.Person_has_VAT_IDN (('Doe', 'John', '', '', 'PAP.Person'), 'FR83404833048') would clash with 1 existing entities
+      Already existing:
+        PAP.Company_has_VAT_IDN (('John Doe, Inc.', 'Paris', 'PAP.Company'), 'FR83404833048')
 
     >>> print (p1.ui_display, ": VAT-IDN =", p1.vat_idn)
     Doe Jane, Dr. : VAT-IDN = GB999999973
@@ -97,12 +100,13 @@ _test_code = """
     >>> print (c2.ui_display, ": VAT-IDN =", c2.vat_idn)
     John Doe, Inc., Paris : VAT-IDN = FR83404833048
 
-    ### The contents of `Integrity_Error` exceptions due to unique constraints
-    ### differs between different database backends --> use `...` instead
     >>> _   = PAP.Company_has_VAT_IDN (c3, vin = "GB999 9999 73") # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
-    Integrity_Error: ...
+    Invariants: The attribute values for 'vin' must be unique for each object
+      The new definition of Company_has_VAT_IDN PAP.Company_has_VAT_IDN (('Jane Doe, Inc.', 'Paris', 'PAP.Company'), 'GB999999973') would clash with 1 existing entities
+      Already existing:
+        PAP.Person_has_VAT_IDN (('Doe', 'Jane', '', 'Dr.', 'PAP.Person'), 'GB999999973')
 
 """
 

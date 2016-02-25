@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -797,7 +797,7 @@ _test_attr_wrappers = """
       Kind_Wrapper_S : Address `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_C : Position `position`
-          _Composite_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          _Composite_Mixin_, Required, _Required_Mixin_, _User_, _DB_Attr_
         MOM.Position
           Kind_Wrapper : Float `height`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
@@ -11478,7 +11478,7 @@ _test_unique = """
     PAP.Phone                      cc, ndc, sn
     PAP.Person                     first_name, last_name, middle_name, title
     PAP.Url                        value
-    PAP.Address_Position           left, position__height, position__lat, position__lon
+    PAP.Address_Position           left
     PAP.Person_has_Account         left, right
     SRM._Boat_Class_               name
     SRM.Boat_Class                 name =
@@ -11584,7 +11584,7 @@ _test_unique = """
         DBW Uniqueness predicate: unique_epk ('value',)
     PAP.Address_Position
         EMS
-        DBW Uniqueness predicate: unique_epk ('left', 'position')
+        DBW Uniqueness predicate: unique_epk ('left',)
     PAP.Person_has_Account
         EMS
         DBW Uniqueness predicate: unique_epk ('left', 'right')

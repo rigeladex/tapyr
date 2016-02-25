@@ -276,9 +276,10 @@ class Manager (MOM.EMS._Manager_) :
         table = self._tables [root.type_name]
         hpk   = entity.hpk
         if hpk in table :
-            ### `hpk in table` is way more efficient, uniqueness predicate
-            ### gives nicer (and backend-independent) error message
-            ### --> trigger error of uniqueness predicate
+            ### `hpk in table` is way more efficient than predicate checking
+            ### the uniqueness predicate gives a nicer (and
+            ### backend-independent) error message
+            ### --> let redundant check of uniqueness predicate trigger error
             self._check_uniqueness (entity, entity.E_Type.uniqueness_dbw)
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)

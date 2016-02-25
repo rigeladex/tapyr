@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -161,7 +161,7 @@ _test_code = """
     2
     >>> with expect_except (MOM.Error.Invariants) :
     ...     d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
-    Invariants: The attribute values for ('name',) must be unique for each object
+    Invariants: The attribute values for 'name' must be unique for each object
       The new definition of Boat_Class SRM.Boat_Class ('Optimist',) would clash with 1 existing entities
       Already existing:
         SRM.Boat_Class ('Optimist',)

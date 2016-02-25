@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,7 @@
 # Revision Dates
 #    11-Oct-2012 (CT) Creation
 #    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
+#    25-Feb-2016 (CT) Change kind `Required`, not `Primary`, for `position`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ class Address_Position (_Ancestor_Essence) :
         class position (A_Position) :
             """Geographical position"""
 
-            kind               = Attr.Primary
+            kind               = Attr.Required
 
         # end class position
 
