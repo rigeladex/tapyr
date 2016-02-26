@@ -1,6 +1,6 @@
 {#- jinja template: apache.m.jnj -#}
 {#
-## Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -36,6 +36,7 @@
 ##                     not `RewriteRule`; add `rewrite_to_https`
 ##    21-Apr-2015 (CT) Create separate `VirtualHost` for aliases in
 ##                     `gtw_host_80_redirect`; add optional argument `real_name`
+##    26-Feb-2016 (CT) Add `ssl_chain`
 ##    ««revision-date»»···
 ##--
 #}
@@ -135,6 +136,7 @@
         , address   = "*"
         , port      = "443"
         , aliases   = ()
+        , ssl_chain = ()
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
@@ -150,7 +152,7 @@
       , ** kwargs
       )
   -%}
-    {{ use_ssl (ssl_key_name, ** kwargs) }}
+    {{ use_ssl (ssl_key_name, ssl_chain = ssl_chain, ** kwargs) }}
     {% if _caller %}{{ _caller () }}{% endif -%}
   {% endcall %} {# gtw_host #}
 {% endmacro -%} {#- gtw_host_ssl -#}
@@ -161,6 +163,7 @@
         , address   = "*"
         , port      = "443"
         , aliases     = ()
+        , ssl_chain = ()
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
@@ -173,6 +176,7 @@
       , admin        = admin
       , app_root     = app_root
       , aliases      = aliases
+      , ssl_chain    = ssl_chain
       , ** kwargs
       )
   -%}
@@ -269,11 +273,15 @@
         ( ssl_key_name
         , ssl_protocol = "all -SSLv2 -SSLv3"
         , ssl_ciphers  = "EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA"
+        , ssl_chain    = ()
         )
 -%}
   {% set cert_ext = config_options.get ("cert_extension", "pem") -%}
   SSLEngine on
   SSLCertificateFile    /etc/ssl/certs/{{- ssl_key_name -}}.{{ cert_ext }}
+  {% for c in ssl_chain -%}
+    SSLCertificateChainFile /etc/ssl/certs/{{- c }}
+  {% endfor -%}
   SSLCertificateKeyFile /etc/ssl/private/{{- ssl_key_name -}}.key
   SSLProtocol           {{ ssl_protocol }}
   SSLHonorCipherOrder   On

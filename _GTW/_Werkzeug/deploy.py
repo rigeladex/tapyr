@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -48,6 +48,7 @@
 #    19-Mar-2015 (CT) Add `-apache2_4`, `-document_root` to `create_config`
 #                     put `config_options` into `globals` of `templateer `
 #    19-Mar-2015 (CT) Add option `-cert_extension` to `create_config`
+#    26-Feb-2016 (CT) Add option `-ssl_chain` to `create_config`
 #    ««revision-date»»···
 #--
 
@@ -163,6 +164,7 @@ application = command (%(args)s)
             , "-server_aliases:T#8?Alias names for virtual host"
             , "-server_name:S?Fully qualified domain name of virtual host"
             , "-ssl_key_name:S?Name of SSL key to use for HTTPS"
+            , "-ssl_chain:T#4?Names of files containing SSL chain certificates"
             , "-use_wsgi:B?Define unix user that the wsgi process should be run as"
             , "-user:S?Run wsgi process as user specified "
             , "-template_dirs:P?Directories containing templates for config"
@@ -294,6 +296,7 @@ application = command (%(args)s)
             , script         = cmd.script_path
             , server_name    = cmd.server_name
             , ssl_key_name   = cmd.ssl_key_name
+            , ssl_chain      = cmd.ssl_chain
             , templ_name     = cmd.macro_module
             , user           = cmd.user
             )
