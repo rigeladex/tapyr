@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -43,8 +43,11 @@
 #    12-Nov-2007 (CT)  `horner` added
 #    15-Jun-2010 (CT)  `periodic_pattern_gen` removed (needs to go into
 #                      different module)
+#    26-Feb-2016 (CT) Import `division` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__  import division
 
 from   _TFL import TFL
 
