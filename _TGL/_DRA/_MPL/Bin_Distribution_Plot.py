@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -26,6 +26,8 @@
 #    11-Aug-2009 (CT) Import `ma` from `numpy` instead of deprecated
 #                     `matplotlib.numerix`
 #    13-Jul-2014 (CT) Add `vmin` and `vmax`
+#    27-Feb-2016 (CT) Add `AutoMinorLocator` for y-axis
+#    27-Feb-2016 (CT) Change `grid` defaults
 #    ««revision-date»»···
 #--
 
@@ -38,16 +40,16 @@ import _TFL._Meta.Object
 
 import pylab
 import numpy.ma              as     ma
-from   matplotlib.ticker     import FuncFormatter
+from   matplotlib.ticker     import FuncFormatter, AutoMinorLocator
 
 class Bin_Distribution_Plot (TFL.Meta.Object) :
     """Matplotlib plot for Bin_Distribution"""
 
     cmap              = pylab.cm.YlOrRd
     grid              = dict \
-        ( color       = "#E5D3C9"
+        ( color       = "#CCCCCC"
         , linestyle   = "-"
-        , linewidth   = 0.1
+        , linewidth   = 0.5
         )
     shading           = "flat"
     vmin              = 0.0
@@ -106,6 +108,7 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         yloc = self.y_locator (yb, yd, self.y_tick_offset, self.y_pad)
         ax.xaxis.set_major_locator   (xloc)
         ax.yaxis.set_major_locator   (yloc)
+        ax.yaxis.set_minor_locator   (AutoMinorLocator ())
         ax.xaxis.set_major_formatter (x_formatter)
         ax.yaxis.set_major_formatter (y_formatter)
         pylab.pcolor \
