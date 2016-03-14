@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -59,6 +59,7 @@
 #                     not `Lib.message_from_string` because Python 3
 #     6-Nov-2015 (CT) Move `.encode` from `_formatted` to `_send`
 #    10-Dec-2015 (CT) Add option `-Short_body`
+#    14-Mar-2016 (CT) Change option types from `S` to `U` for `-subject`...
 #    ««revision-date»»···
 #--
 
@@ -584,12 +585,12 @@ _Command = TFL.CAO.Cmd \
         , "-msg_base_dirs:Q:?Base directories for searching `message`"
         , "-reply:S?Message to reply to"
         , "-Reply_all:S?Message to reply to"
-        , "-Short_body:S"
+        , "-Short_body:U"
             "?Don't start an editor, use supplied value as body instead"
-        , "-subject:S?Subject of email"
+        , "-subject:U?Subject of email"
         , "-tls:B?Use SMTP in TLS (Transport Layer Security) mode."
-        , "-To:S?Email of receiver"
-        , "-user:S?Name of sender"
+        , "-To:U?Email of receiver"
+        , "-user:U?Name of sender"
         )
         , description =
           "Send mail message (newly composed or reply to existing email)"
