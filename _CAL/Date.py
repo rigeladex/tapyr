@@ -385,6 +385,20 @@ class Date (CAL._DTW_) :
             raise ValueError (s)
     # end def from_string
 
+    @classmethod
+    def str_dates_in_range (cls, after, before, str_dates) :
+        """Yield `(date, str)` for all elements of `str_dates` in `(before, after)`."""
+        for sd in str_dates :
+            try :
+                d = cls.from_string (sd)
+            except ValueError :
+                pass
+            else :
+                if after  and d <= after  : continue
+                if before and d >= before : continue
+                yield d, sd
+    # end def str_dates_in_range
+
     @Once_Property
     def JC_J2000 (self) :
         """Julian Century relative to 2000"""
