@@ -20,6 +20,9 @@
 #    11-Feb-2016 (CT) Derive from `_Delta_Mixin_`, add `delta_pattern`
 #    11-Feb-2016 (CT) Add `from_string` and plus/minus operators
 #    15-Feb-2016 (CT) Add `as_string`, `__str__`, weekday aliases
+#    29-Mar-2016 (CT) Change `delta_pattern` to interpret `m` as `month`
+#                     (not `minutes`); allow `min` and `sec` for `minutes` and
+#                     `seconds`
 #    ««revision-date»»···
 #--
 
@@ -191,16 +194,16 @@ class Relative_Delta (CAL._Delta_Mixin_) :
         ( r",?\s*"
           r"(?:(?P<years> [-+]? \d+) (?: \. (?P<subyears> \d+) )?\s* y(?:ears?)?)?"
           r",?\s*"
-          r"(?:(?P<months>[-+]? \d+) \s* (?:months?)? )?"
+          r"(?:(?P<months>[-+]? \d+) \s* m(?:onths?)? )?"
           r",?\s*"
           r"(?:(?P<weeks> [-+]? \d+) \s* w(?:eeks?)?  )?"
           r",?\s*"
           r"(?:(?P<days>  [-+]? \d+) \s* d(?:ays?)?   )?"
           r"(?:(?P<hours>   [-+]?\d+) (?: \. (?P<subhours> \d+) )?\s* h(?:ours?)?)?"
           r",?\s*"
-          r"(?:(?P<minutes> [-+]?\d+) (?: \. (?P<subminutes> \d+) )?\s* m(?:inutes?)?)?"
+          r"(?:(?P<minutes> [-+]?\d+) (?: \. (?P<subminutes> \d+) )?\s* min(?:utes?)?)?"
           r",?\s*"
-          r"(?:(?P<seconds> [-+]?\d+) (?: \. (?P<subseconds> \d+) )?\s* s(?:econds?)?)?"
+          r"(?:(?P<seconds> [-+]?\d+) (?: \. (?P<subseconds> \d+) )?\s* s(?:ec(?:onds?)?)?)?"
           r"$"
         , flags = re.VERBOSE | re.IGNORECASE
         )
