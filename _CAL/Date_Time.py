@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #    15-Sep-2014 (CT) Add `_Date_Time_Arg_` to `CAO` as `[Arg|Opt].Date_Time`
 #    19-Sep-2014 (CT) Add `from_string_x`
 #     6-May-2015 (CT) Add tests for `jsonified`
+#    29-Mar-2016 (CT) Derive `_Date_Time_Arg_` from `CAO.Opt.Date`, not `.Str`
 #    ««revision-date»»···
 #--
 
@@ -356,17 +357,12 @@ class Date_Time_M (CAL._Mutable_DTW_) :
 
 # end class Date_Time_M
 
-class _Date_Time_Arg_ (TFL.CAO.Str) :
+class _Date_Time_Arg_ (TFL.CAO.Opt.Date) :
     """Argument or option with a (calendary) date/time value"""
 
     _real_name = "Date_Time"
 
-    def cook (self, value, cao = None) :
-        if value == "now" :
-            return Date_Time ()
-        if value :
-            return Date_Time.from_string (value)
-    # end def cook
+    _CAL_Type  = Date_Time
 
 # end class _Date_Time_Arg_
 

@@ -60,6 +60,7 @@
 #     2-Feb-2016 (CT) Add translation markup `_`
 #     3-Feb-2016 (CT) Add `periods`, `inc_month`
 #    15-Feb-2016 (CT) Use `CAL.G8R.Months` to support localized month names
+#    29-Mar-2016 (CT) Add support for delta to `_Date_Arg_`
 #    ««revision-date»»···
 #--
 
@@ -595,11 +596,30 @@ class _Date_Arg_ (TFL.CAO.Str) :
 
     _real_name = "Date"
 
+    _CAL_Type  = Date
+    _delta_pat = Regexp ("^[-+]")
+
     def cook (self, value, cao = None) :
+        T = self._CAL_Type
         if value == "now" :
-            return Date ()
-        if value :
-            return Date.from_string (value)
+            result = T ()
+        elif value :
+            if self._delta_pat.match (value) :
+                import _CAL.Relative_Delta
+                delta  = CAL.Relative_Delta.from_string (value)
+                now    = T ()
+                result = now + delta
+                if type (result) is not T :
+                    raise TypeError \
+                        ( "Wrong delta %r forces Date_Time '%s', "
+                          "need Date instead"
+                        % (value, result)
+                        )
+            else :
+                result = T.from_string (value)
+        else :
+            result = None
+        return result
     # end def cook
 
 # end class _Date_Arg_
