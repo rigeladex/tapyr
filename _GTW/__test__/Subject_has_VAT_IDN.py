@@ -18,6 +18,7 @@
 # Revision Dates
 #    24-Feb-2016 (CT) Creation
 #    25-Feb-2016 (CT) Add tests for `Wrong_Type`
+#    14-Apr-2016 (CT) Use `expect_except` to support Python 3.x
 #    ««revision-date»»···
 #--
 
@@ -51,21 +52,18 @@ _test_code = """
 
     >>> eu1 = PAP.Person_has_VAT_IDN  (p1, vin = "GB999 9999 73")
 
-    >>> _   = PAP.Person_has_VAT_IDN  (c3, vin = "GB999 9999 72")
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Wrong_Type) :
+    ...     _ = PAP.Person_has_VAT_IDN  (c3, vin = "GB999 9999 72")
     Wrong_Type: Company 'Jane Doe, Inc., Paris' not eligible for attribute left,
         must be instance of Person
 
-    >>> _   = PAP.Company_has_VAT_IDN (p2, vin = "GB999 9999 72")
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Wrong_Type) :
+    ...     _ = PAP.Company_has_VAT_IDN (p2, vin = "GB999 9999 72")
     Wrong_Type: Person 'Doe John' not eligible for attribute left,
         must be instance of Company
 
-    >>> _   = PAP.Company_has_VAT_IDN (c1, vin = "GB999 9999 72")
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Wrong_Type) :
+    ...     _ = PAP.Company_has_VAT_IDN (c1, vin = "GB999 9999 72")
     Wrong_Type: Company_1P 'Doe Jane, Dr.' not eligible for attribute left,
         must be instance of Company, but not Company_1P
 
@@ -83,9 +81,8 @@ _test_code = """
     >>> print (eu2.ui_display)
     John Doe, Inc., Paris, FR83404833048
 
-    >>> _   = PAP.Person_has_VAT_IDN  (p2, vin = "FR83,404,833,048") # doctest:+ELLIPSIS
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     _ = PAP.Person_has_VAT_IDN  (p2, vin = "FR83,404,833,048") # doctest:+ELLIPSIS
     Invariants: The attribute values for 'vin' must be unique for each object
       The new definition of Person_has_VAT_IDN PAP.Person_has_VAT_IDN (('Doe', 'John', '', '', 'PAP.Person'), 'FR83404833048') would clash with 1 existing entities
       Already existing:
@@ -100,9 +97,8 @@ _test_code = """
     >>> print (c2.ui_display, ": VAT-IDN =", c2.vat_idn)
     John Doe, Inc., Paris : VAT-IDN = FR83404833048
 
-    >>> _   = PAP.Company_has_VAT_IDN (c3, vin = "GB999 9999 73") # doctest:+ELLIPSIS
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     _ = PAP.Company_has_VAT_IDN (c3, vin = "GB999 9999 73") # doctest:+ELLIPSIS
     Invariants: The attribute values for 'vin' must be unique for each object
       The new definition of Company_has_VAT_IDN PAP.Company_has_VAT_IDN (('Jane Doe, Inc.', 'Paris', 'PAP.Company'), 'GB999999973') would clash with 1 existing entities
       Already existing:
