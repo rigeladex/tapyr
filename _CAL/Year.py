@@ -68,6 +68,8 @@
 #    29-Jan-2016 (CT) Add `Quarter`
 #     1-Feb-2016 (CT) Pass `cal.country` to `CAL.holidays`
 #     2-Feb-2016 (CT) Add translation markup `_`
+#    19-Apr-2016 (CT) Export `Year` only, not `*`;
+#                     add `Day`, ..., `Week` to `Year`
 #    ««revision-date»»···
 #--
 
@@ -605,6 +607,11 @@ class Year (TFL.Meta.Object) :
     q3 = Q3         = property (TFL.Getter.quarters [2])
     q4 = Q4         = property (TFL.Getter.quarters [3])
 
+    Day             = Day
+    Month           = Month
+    Quarter         = Quarter
+    Week            = Week
+
     def __new__ (cls, year = None, cal = None) :
         if cal is None :
             import _CAL.Calendar
@@ -773,7 +780,7 @@ _Command = TFL.CAO.Cmd \
     )
 
 if __name__ != "__main__" :
-    CAL._Export ("*")
+    CAL._Export ("Year")
 else :
     _Command ()
 ### __END__ CAL.Year

@@ -23,6 +23,7 @@
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    29-Jan-2016 (CT) Remove `populate` from call to `CAL.Year`
 #     1-Feb-2016 (CT) Add `country`
+#    19-Apr-2016 (CT) Use `CAL.Year.Day`, not `CAL.Day`
 #    ««revision-date»»···
 #--
 
@@ -106,7 +107,7 @@ class Calendar (TFL.Meta.Object) :
     # end def __init__
 
     def _new_day (self, date) :
-        return CAL.Day (date, self)
+        return CAL.Year.Day (date, self)
     # end def _new_day
 
     def _new_week (self, wko) :
