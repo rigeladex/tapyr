@@ -47,6 +47,7 @@
 #                     semantic change: single number, e.g., `2` is now invalid
 #    11-Feb-2016 (CT) Use `CAL.G8R.Units` to allow localized delta units
 #    11-Feb-2016 (CT) Factor `_Delta_Mixin_`
+#    19-Apr-2016 (CT) Add `Month_Delta.__mul__`
 #    ««revision-date»»···
 #--
 
@@ -554,6 +555,8 @@ class Month_Delta (_Delta_) :
     True
     >>> print (md, abs (md))
     -1 months +1 month
+    >>> print (md * 3, abs (md) * 15)
+    -3 months +15 months
 
     >>> print (Month_Delta.from_string ("1y3m"))
     +15 months
@@ -721,6 +724,10 @@ class Month_Delta (_Delta_) :
         except AttributeError :
             return False
     # end def __lt__
+
+    def __mul__ (self, rhs) :
+        return self.__class__ (self.months * rhs, days = self.days * rhs)
+    # end def __mul__
 
     def __neg__ (self) :
         return self.__class__ (months = - self.months, days = - self.days)
