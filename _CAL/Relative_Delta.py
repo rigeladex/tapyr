@@ -23,6 +23,8 @@
 #    29-Mar-2016 (CT) Change `delta_pattern` to interpret `m` as `month`
 #                     (not `minutes`); allow `min` and `sec` for `minutes` and
 #                     `seconds`
+#    20-Apr-2016 (CT) Change `month_pattern` to allow digits, too
+#    20-Apr-2016 (CT) Use `CAL.Date.month_from_string`, not home-grown code
 #    14-May-2016 (CT) Add `_Relative_Delta_Arg_`
 #    ««revision-date»»···
 #--
@@ -147,6 +149,9 @@ class Relative_Delta (CAL._Delta_Mixin_) :
     ...     rd = RD.from_string ("monat = Oktober, +1 Monat -1 Tag")
     ...     print (rd)
     ...     rd
+    ...     rd = RD.from_string ("monat = mai")
+    ...     print (rd)
+    ...     rd
     ...     print (rd0, "-->", G8R.localized (rd0.as_string))
     ...     print (rd1, "-->", G8R.localized (rd1.as_string))
     ...     print (rd2, "-->", G8R.localized (rd2.as_string))
@@ -158,6 +163,8 @@ class Relative_Delta (CAL._Delta_Mixin_) :
     Relative_Delta (hour = 23, months = 1, year = 2019)
     month = 10, +1 month, -1 days
     Relative_Delta (days = -1, month = 10, months = 1)
+    month = 5
+    Relative_Delta (month = 5)
     yearday = 84, FR(+1) --> jahrtag = 84, fr(+1)
     MO(-2) --> mo(-2)
     +2 years, +3 months --> +2 jahre, +3 monate
@@ -218,7 +225,7 @@ class Relative_Delta (CAL._Delta_Mixin_) :
         ( r",?\s*"
           r"(?P<unit> month)"
           r"\s*=\s* "
-          r"(?P<value> [a-z]+)"
+          r"(?P<value> (?: [a-z]+|[0-9]{1,2}))"
         , flags = re.VERBOSE | re.IGNORECASE
         )
 
@@ -270,11 +277,7 @@ class Relative_Delta (CAL._Delta_Mixin_) :
             spans.append (match.span ())
         match = cls.month_pattern.search (s)
         if match :
-            value = CAL.G8R.Months (match.group ("value"))
-            try :
-                kw ["month"] = CAL.Date.months [value]
-            except KeyError :
-                raise ValueError ("Invalid value for month: %s" % value)
+            kw ["month"] = CAL.Date.month_from_string (match.group ("value"))
             spans.append (match.span ())
         ### Weekday instance
         s      = CAL.G8R.Week_Days (s)

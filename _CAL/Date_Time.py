@@ -34,6 +34,8 @@
 #    19-Sep-2014 (CT) Add `from_string_x`
 #     6-May-2015 (CT) Add tests for `jsonified`
 #    29-Mar-2016 (CT) Derive `_Date_Time_Arg_` from `CAO.Opt.Date`, not `.Str`
+#    21-Apr-2016 (CT) Add check for tail to `_from_string_match_kw`
+#    21-Apr-2016 (CT) Redefine `from_string` to pass `check_tail=False`
 #    ««revision-date»»···
 #--
 
@@ -231,6 +233,11 @@ class Date_Time (CAL.Date, CAL.Time) :
     # end def from_ical
 
     @classmethod
+    def from_string (cls, s) :
+        return cls.__c_super.from_string (s, check_tail = False)
+    # end def from_string
+
+    @classmethod
     def from_string_x (cls, s, ** kw) :
         """Convert `s` to `Date_Time`.
 
@@ -304,9 +311,12 @@ class Date_Time (CAL.Date, CAL.Time) :
         assert match
         kw = super (Date_Time, cls)._from_string_match_kw (s, match)
         t  = s [match.end () :].lstrip ().lstrip ("T")
-        if t and cls.time_pattern.match (t) :
-            match = cls.time_pattern.last_match
-            kw.update (CAL.Time._from_string_match_kw (t, match))
+        if t :
+            match = cls.time_pattern.match (t)
+            if match and match.end () == len (t.rstrip ()) :
+                kw.update (CAL.Time._from_string_match_kw (t, match))
+            else :
+                raise ValueError (s)
         return kw
     # end def _from_string_match_kw
 

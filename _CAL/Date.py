@@ -61,6 +61,9 @@
 #     3-Feb-2016 (CT) Add `periods`, `inc_month`
 #    15-Feb-2016 (CT) Use `CAL.G8R.Months` to support localized month names
 #    29-Mar-2016 (CT) Add support for delta to `_Date_Arg_`
+#    19-Apr-2016 (CT) DRY `_from_string_match_kw`
+#    20-Apr-2016 (CT) Factor `month_from_string`
+#    21-Apr-2016 (CT) Add check for tail to `from_string`
 #    14-May-2016 (CT) Strip leading `+` from delta arg for `_Date_Arg_`
 #    ««revision-date»»···
 #--
@@ -379,13 +382,30 @@ class Date (CAL._DTW_) :
     # end def from_ordinal
 
     @classmethod
-    def from_string (cls, s) :
+    def from_string (cls, s, check_tail = True) :
         match = cls.date_pattern.match (s)
-        if match :
+        if match and ((not check_tail) or match.end () == len (s.rstrip ())) :
             return cls (** cls._from_string_match_kw (s, match))
         else :
             raise ValueError (s)
     # end def from_string
+
+    @classmethod
+    def month_from_string (cls, s) :
+        v = CAL.G8R.Months (s.lower ())
+        try :
+            result = cls.months [v]
+        except KeyError :
+            try :
+                result = int (s)
+            except Exception as exc :
+                error = exc
+            else :
+                error = None
+            if error or not (1 <= result <= 12) :
+                raise ValueError ("Illegal value for month: '%s'" % s)
+        return result
+    # end def month_from_string
 
     @classmethod
     def str_dates_in_range (cls, after, before, str_dates) :
@@ -527,16 +547,9 @@ class Date (CAL._DTW_) :
         kw = {}
         for k, v in pyk.iteritems (match.groupdict ()) :
             if v :
-                v = v.lower ()
                 if k == "month" :
-                    v = CAL.G8R.Months (v)
-                    if v in cls.months :
-                        v = cls.months [v]
-                    else :
-                        v = int (v)
-                else :
-                    v = int (v)
-                kw [k] = v
+                    v = cls.month_from_string (v)
+                kw [k] = int (v)
         return kw
     # end def _from_string_match_kw
 
