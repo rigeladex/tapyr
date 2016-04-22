@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -129,6 +129,7 @@
 #    17-Nov-2015 (CT) Set `static_p` to `False`
 #    16-Dec-2015 (CT) Explicitly set `ETM` in `_pns_entries`
 #    16-Dec-2015 (CT) Use `E_Type.UI_Spec`, not `Nav.Admin ["type_base_name"]`
+#    26-Apr-2016 (CT) Add `pre_complete` guard to `Completer._rendered_post`
 #    ««revision-date»»···
 #--
 
@@ -768,7 +769,7 @@ class Completer (_JSON_Action_PO_) :
         completer    = field.completer
         if completer is not None :
             polisher = field.polisher
-            if polisher is not None :
+            if polisher is not None and polisher.pre_complete :
                 try :
                     values   = json ["field_values"]
                     pd       = self._polished \

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -35,6 +35,10 @@
 #    11-Mar-2014 (CT) Use `_Overrides`
 #    24-Jun-2014 (CT) Fix `A_Date_Interval_C.computed__finish`
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
+#    22-Apr-2016 (CT) Add `polisher` to `start`, `finish`
+#                     + add `finish` to `start.completer`
+#    25-Apr-2016 (CT) Add `unit_pat` to  `_Finish_Polisher_`
+#    26-Apr-2016 (CT) Set `pre_complete` to `False`
 #    ««revision-date»»···
 #--
 
@@ -43,8 +47,70 @@ from   __future__            import unicode_literals
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_
 
+from   _CAL                  import CAL
+import _CAL.Period
+
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.pyk              import pyk
+from   _TFL.Regexp           import Regexp, re
+
+class _Finish_Polisher_ (MOM.Attr.Polisher._Polisher_) :
+    """Polisher for `finish` attribute of `Date_Interval`."""
+
+    add_year     = False
+    future_p     = False
+    pre_complete = False
+    start_attr   = "start"
+
+    unit_pat     = Regexp \
+        ( r"\s*(?P<unit> week|month|quarter|year)\s*$"
+        , flags  = re.VERBOSE | re.IGNORECASE
+        )
+
+    def _polished (self, attr, name, value, value_dict, essence, picky) :
+        result   = {}
+        unit_pat = self.unit_pat
+        if unit_pat.match (value) :
+            start = self._attr_value \
+                (attr, self.start_attr, None, value_dict, essence)
+            if start :
+                d = CAL.Date.from_string (start)
+                P = getattr (CAL.Period, unit_pat.unit.capitalize ())
+                p = P.from_date (d)
+                result [self.start_attr] = pyk.text_type (p.start)
+                result [name]            = pyk.text_type (p.finis)
+        else :
+            p = CAL.Period.from_string \
+                (value, add_year = self.add_year, future_p = self.future_p)
+            if p is not None :
+                result [name] = pyk.text_type (p.finis)
+        return result
+    # end def _polished
+
+# end class _Finish_Polisher_
+
+class _Start_Polisher_ (MOM.Attr.Polisher._Polisher_) :
+    """Polisher for `start` attribute of `Date_Interval`."""
+
+    add_year     = False
+    future_p     = False
+    finish_attr  = "finish"
+    pre_complete = False
+
+    def _polished (self, attr, name, value, value_dict, essence, picky) :
+        result = {}
+        p = CAL.Period.from_string \
+            (value, add_year = self.add_year, future_p = self.future_p)
+        if p is not None :
+            finish = self._attr_value \
+                (attr, self.finish_attr, None, value_dict, essence)
+            result [name] = pyk.text_type (p.start)
+            if p.days > 1 and not finish :
+                result [self.finish_attr] = pyk.text_type (p.finis)
+        return result
+    # end def _polished
+
+# end class _Start_Polisher_
 
 _Ancestor_Essence = MOM.An_Entity
 
@@ -100,6 +166,9 @@ class Date_Interval (_Ancestor_Essence) :
             kind               = Attr.Optional
             example            = "2038-01-19"
             rank               = 2
+            completer          = MOM.Attr.Completer_Spec \
+                (4, Attr.Selector.Name ("start"))
+            polisher           = _Finish_Polisher_ (add_year = True)
 
         # end class finish
 
@@ -109,6 +178,9 @@ class Date_Interval (_Ancestor_Essence) :
             kind               = Attr.Necessary
             example            = "1970-01-01"
             rank               = 1
+            completer          = MOM.Attr.Completer_Spec \
+                (4, Attr.Selector.Name ("finish"))
+            polisher           = _Start_Polisher_ (add_year = True)
 
         # end class start
 
@@ -192,5 +264,5 @@ __attr_types      = Attr.attr_types_of_module ()
 __sphinx__members = ("Date_Interval", ) + __attr_types
 
 if __name__ != "__main__" :
-    MOM.Attr._Export (* __attr_types)
+    MOM.Attr._Export ("_Finish_Polisher_", "_Start_Polisher_", * __attr_types)
 ### __END__ MOM.Attr.Date_Interval

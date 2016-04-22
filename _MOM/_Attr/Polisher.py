@@ -29,6 +29,7 @@
 #                     `_Polisher_.__call__`, `._polished`
 #    31-Jul-2015 (CT) Factor `_attr_value`
 #     5-Feb-2016 (CT) Add `polish_empty`
+#    26-Apr-2016 (CT) Add `pre_complete`
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,7 @@ class _Polisher_ (TFL.Meta.Object) :
 
     guard        = None
     polish_empty = False
+    pre_complete = True
 
     def __init__ (self, ** kw) :
         for k, v in pyk.iteritems (kw) :

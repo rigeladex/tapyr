@@ -21,6 +21,8 @@
 #    11-Mar-2014 (CT) Use `_Overrides`
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #     7-Feb-2016 (CT) Factor `Pickler_As_String`
+#    25-Apr-2016 (CT) DRY `A_Date_or_Delta.as_string`, `._from_string`
+#    25-Apr-2016 (CT) Add `polisher` to `start`, `delta_or_finish`
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    ««revision-date»»···
 #--
@@ -45,7 +47,6 @@ class A_Date_or_Delta (A_Attr_Type) :
 
     example        = "+2 years 3 months, 2 weeks -3 days"
     completer      = MOM.Attr.Completer_Spec  (4)
-    output_format  = "%Y-%m-%d"
     typ            = _ ("Date")
     ui_length      = 48
     Pickler        = Pickler_As_String
@@ -67,7 +68,7 @@ class A_Date_or_Delta (A_Attr_Type) :
     def as_string (soc, value) :
         if value is not None :
             if isinstance (value, datetime.date) :
-                return pyk.text_type (value.strftime (soc._output_format ()))
+                return A_Date.as_string (value)
             else :
                 return pyk.text_type (value)
         return ""
@@ -80,16 +81,7 @@ class A_Date_or_Delta (A_Attr_Type) :
             if s.startswith ("+") :
                 result = CAL.Month_Delta.from_string (s)
             else :
-                for f in A_Date.input_formats :
-                    try :
-                        result = time.strptime (s, f)
-                    except ValueError :
-                        pass
-                    else :
-                        result = datetime.date (result [0:3])
-                        break
-                else :
-                    raise MOM.Error.Attribute_Syntax (obj, soc, s)
+                result = A_Date._from_string (s)
             return result
     # end def _from_string
 
@@ -118,6 +110,14 @@ class A_Date_Delta_Interval (A_Date_Interval) :
                 , Kind_Mixins      = (Attr.Computed_Set_Mixin, )
                 , computed         = computed__finish
                 , auto_up_depends  = ("delta_or_finish", "start")
+                , completer        = None
+                , polisher         = None
+                )
+            , start = dict
+                ( completer        = MOM.Attr.Completer_Spec
+                    (4, Attr.Selector.Name ("delta_or_finish"))
+                , polisher         = MOM.Attr._Start_Polisher_
+                    (add_year = True, finish_attr = "delta_or_finish")
                 )
             )
 
@@ -126,6 +126,9 @@ class A_Date_Delta_Interval (A_Date_Interval) :
 
             kind               = Attr.Optional
             example            = "+2 years 3 months, 2 weeks -3 days"
+            completer          = MOM.Attr.Completer_Spec \
+                (4, Attr.Selector.Name ("start"))
+            polisher           = MOM.Attr._Finish_Polisher_ (add_year = True)
             rank               = 2
             syntax             = _ \
                 ( "A leading `+` indicates a length value; otherwise a date "
