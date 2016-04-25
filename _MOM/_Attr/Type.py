@@ -381,6 +381,8 @@
 #     7-Feb-2016 (CT) Factor `Pickler_As_String`
 #    22-Feb-2016 (CT) Change `_A_Unit_` to allow `_default_unit != 1`
 #    25-Feb-2016 (CT) Add `@getattr_safe` to property `A_Link_Role.unique_p`
+#    25-Apr-2016 (CT) Convert rest of `from_string`, `_from_string` definitions
+#                     to `Class_and_Instance_Method`
 #    ««revision-date»»···
 #--
 
@@ -1005,6 +1007,7 @@ class A_Attr_Type \
             return obj, self.kind, value
     # end def FO_nested
 
+    @TFL.Meta.Class_and_Instance_Method
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         try :
             if s is not None :
@@ -1899,6 +1902,7 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
         return self.P_Type.sorted_by_epk
     # end def sorted_by
 
+    @TFL.Meta.Class_and_Instance_Method
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         if isinstance (s, MOM.Entity) :
             return s ### `check_type` called by `kind._set_cooked_value`
@@ -1927,6 +1931,7 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
                     yield c
     # end def _gen_etypes_transitive
 
+    @TFL.Meta.Class_and_Instance_Method
     def _get_object (self, obj, epk, raw = False) :
         if epk and isinstance (epk [-1], self.P_Type.Type_Name_Type) :
             tn = epk [-1]
@@ -1949,6 +1954,7 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
 class _A_MD_Change_ (_A_SPK_Entity_) :
     """Attribute referring to a MD_Change instance"""
 
+    @TFL.Meta.Class_and_Instance_Method
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         if isinstance (s, MOM.Entity) :
             return s ### `check_type` called by `kind._set_cooked_value`
@@ -2336,6 +2342,7 @@ class _A_Typed_Collection_ \
         return ""
     # end def as_string
 
+    @TFL.Meta.Class_and_Instance_Method
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         result = None
         t      = s or []
@@ -2912,8 +2919,11 @@ class A_Dirname (_A_Filename_) :
 
     typ         = _ ("Directory")
 
+    @TFL.Meta.Class_and_Instance_Method
     def _from_string (self, s, obj = None, glob = {}, locl = {}) :
-        s = self.__super._from_string (s, obj, glob, locl)
+        ### when called for the class, `self.__super` doesn't
+        ### work while `super (A_Dirname, self)` does
+        s = super (A_Dirname, self)._from_string (s, obj, glob, locl)
         if s :
             if sos.altsep :
                 s = s.replace (sos.altsep, sos.sep)
@@ -3072,8 +3082,11 @@ class A_Filename (_A_Filename_) :
 
     typ         = _ ("Filename")
 
+    @TFL.Meta.Class_and_Instance_Method
     def _from_string (self, s, obj = None, glob = {}, locl = {}) :
-        s = self.__super._from_string (s, obj, glob, locl)
+        ### when called for the class, `self.__super` doesn't
+        ### work while `super (A_Filename, self)` does
+        s = super (A_Filename, self)._from_string (s, obj, glob, locl)
         if s and self.do_check :
             self._check_dir   (sos.path.dirname (s))
             self._check_read  (s)
