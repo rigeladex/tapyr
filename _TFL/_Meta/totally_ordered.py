@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,6 +20,8 @@
 #    22-Sep-2009 (CT) `equality_operators ["__eq__"]` change to use only `<`
 #    19-Nov-2009 (CT) `_Orders_.__hash__` added (3-compatibility)
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    25-Apr-2016 (CT) Implement `__ne__` based on `==`, not on `<`
+#                     (to avoid errors from non-comparable types)
 #    ««revision-date»»···
 #--
 
@@ -176,14 +178,14 @@ class _Orders_ (TFL.Meta.Object) :
     ###     TypeError: unbound method __eq__() must be called with _Orders_
     ###         instance as first argument (got T_ge instance instead)
     ###
-    ### Both `__eq__` and `__ne__` only use the `<` operator as that is the
+    ### `__eq__` only uses the `<` operator as that is the
     ### one most likely to be defined (being used by Pythons inbuilt `sort`)
     ###
-    ### Using more than one operator for implementing `__eq__` (or `__ne__`)
+    ### Using more than one operator for implementing `__eq__`
     ### gives wrong results for some implementations of the base operator
     equality_operators = dict \
         ( __eq__ = lambda self, rhs : not (self < rhs or rhs < self)
-        , __ne__ = lambda self, rhs :     (self < rhs or rhs < self)
+        , __ne__ = lambda self, rhs : not (self == rhs)
         )
 
     for name, func in pyk.iteritems (equality_operators) :
