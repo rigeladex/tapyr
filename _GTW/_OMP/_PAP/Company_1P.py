@@ -19,6 +19,7 @@
 #     5-Feb-2016 (CT) Creation
 #     9-Feb-2016 (CT) Redefine `ui_display` to DRY result
 #    22-Feb-2016 (CT) Remove `unique_p` from `person`
+#    26-Apr-2016 (CT) Add `buddies` to `_Name_Polisher_`
 #    10-May-2016 (CT) Add missing `P_Type` to attribute `person`
 #    ««revision-date»»···
 #--
@@ -42,6 +43,7 @@ import _GTW._OMP._PAP.Person
 class _Name_Polisher_ (MOM.Attr.Polisher._Polisher_) :
     """Polisher for `name` attribute of `Company_1P`"""
 
+    buddies      = ("person", )
     polish_empty = True
 
     def _attr_value (self, attr, name, value, value_dict, essence) :

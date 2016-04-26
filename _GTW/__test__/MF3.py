@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
-# Glasauergasse 32, A--w1130 Wien, Austria. tanzer@swing.co.at
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
 #
@@ -24,6 +24,7 @@
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    22-Dec-2015 (CT) Add test `max_rev_ref`
 #    22-Apr-2016 (CT) Adapt to change of `Date_Interval.start.completer`
+#    26-Apr-2016 (CT) Adapt to `buddies` in `as_json_cargo`
 #    ««revision-date»»···
 #--
 
@@ -687,6 +688,79 @@ _test_element = """
         }
     , 'Z-26:sex' : {}
     , 'Z-26:title' : {}
+    }
+
+    >>> show_completers (f_p, "q_name", "completer.buddies_id", "polisher.id")
+    Type   q_name           completer.buddies_id  polisher.id
+    ==============================
+    F      last_name        1  5
+    F      first_name       1  6
+    F      middle_name      1  7
+    F      title            2  2
+    F      lifetime.start   3  8
+    F      lifetime.finish  4  8
+
+    >>> print (formatted (f_p.as_json_cargo ["buddies"]))
+    { 1 :
+        [ 'X-26:first_name'
+        , 'X-26:last_name'
+        , 'X-26:middle_name'
+        , 'X-26:title'
+        ]
+    , 2 : ['X-26:title']
+    , 3 : ['X-26:lifetime.start']
+    , 4 : ['X-26:lifetime.finish']
+    , 5 : ['X-26:last_name']
+    , 6 : ['X-26:first_name']
+    , 7 : ['X-26:middle_name']
+    , 8 :
+        [ 'X-26:lifetime.finish'
+        , 'X-26:lifetime.start'
+        ]
+    }
+
+    >>> show_completers (f_p_z, "q_name", "completer.buddies_id", "polisher.id")
+    Type   q_name            completer.buddies_id  polisher.id
+    ==================================
+    F      last_name         1  9
+    F      first_name        1  10
+    F      middle_name       1  11
+    F      title             2  2
+    F      lifetime.start    3  12
+    F      lifetime.finish   4  12
+    F      phones.right.cc   5  7
+    F      phones.right.ndc  6  7
+    F      phones.right.sn   7  7
+    F      phones.desc       8  None
+
+    >>> print (formatted (f_p_z.as_json_cargo ["buddies"]))
+    { 1 :
+        [ 'Z-26:first_name'
+        , 'Z-26:last_name'
+        , 'Z-26:middle_name'
+        , 'Z-26:title'
+        ]
+    , 2 : ['Z-26:title']
+    , 3 : ['Z-26:lifetime.start']
+    , 4 : ['Z-26:lifetime.finish']
+    , 5 : ['Z-26:phones::right.cc@3']
+    , 6 :
+        [ 'Z-26:phones::right.cc@3'
+        , 'Z-26:phones::right.ndc@3'
+        ]
+    , 7 :
+        [ 'Z-26:phones::right.cc@3'
+        , 'Z-26:phones::right.ndc@3'
+        , 'Z-26:phones::right.sn@3'
+        ]
+    , 8 : ['Z-26:phones::desc@3']
+    , 9 : ['Z-26:last_name']
+    , 10 : ['Z-26:first_name']
+    , 11 : ['Z-26:middle_name']
+    , 12 :
+        [ 'Z-26:lifetime.finish'
+        , 'Z-26:lifetime.start'
+        ]
     }
 
     >>> print (portable_repr (sorted (f_p._Element_Map)))
@@ -1489,8 +1563,8 @@ _test_element = """
     F       left.sail_number_x        ('sail_number_x', 'left', 'sail_number', 'nation')
     F       right.left.name           ('name', 'date')
     F_C     right.left.date           ('date', 'name')
-    F       right.left.date.start     ('start', 'finish')
-    F       right.left.date.finish    ('finish', 'start')
+    F       right.left.date.start     ('start',)
+    F       right.left.date.finish    ('finish',)
     F       right.boat_class.name     ('name',)
     F_E     skipper.left              ('left', 'nation', 'mna_number', 'club')
     F       skipper.left.last_name    ('last_name', 'first_name', 'middle_name', 'title')
@@ -1529,8 +1603,8 @@ _test_element = """
     F       left.sail_number_x        (<Field R-108:left.sail_number_x>, <Field_Entity R-108:left.left>, <Field R-108:left.sail_number>, <Field R-108:left.nation>)
     F       right.left.name           (<Field R-108:right.left.name>, <Field R-108:right.left.date.start>, <Field R-108:right.left.date.finish>)
     F_C     right.left.date           (<Field R-108:right.left.date.start>, <Field R-108:right.left.date.finish>, <Field R-108:right.left.name>)
-    F       right.left.date.start     (<Field R-108:right.left.date.start>, <Field R-108:right.left.date.finish>)
-    F       right.left.date.finish    (<Field R-108:right.left.date.finish>, <Field R-108:right.left.date.start>)
+    F       right.left.date.start     (<Field R-108:right.left.date.start>,)
+    F       right.left.date.finish    (<Field R-108:right.left.date.finish>,)
     F       right.boat_class.name     (<Field R-108:right.boat_class.name>,)
     F_E     skipper.left              (<Field_Entity R-108:skipper.left>, <Field R-108:skipper.left.last_name>, <Field R-108:skipper.left.first_name>, <Field R-108:skipper.left.middle_name>, <Field R-108:skipper.left.title>, <Field R-108:skipper.nation>, <Field R-108:skipper.mna_number>, <Field R-108:skipper.club.name>, <Field_Entity R-108:skipper.club>)
     F       skipper.left.last_name    (<Field R-108:skipper.left.last_name>, <Field_Entity R-108:skipper.left>, <Field R-108:skipper.left.first_name>, <Field R-108:skipper.left.middle_name>, <Field R-108:skipper.left.title>, <Field R-108:skipper.nation>, <Field R-108:skipper.mna_number>, <Field R-108:skipper.club.name>, <Field_Entity R-108:skipper.club>)
@@ -1549,8 +1623,8 @@ _test_element = """
     F       left.sail_number_x        entity_p = True, names = ['sail_number_x', 'left', 'sail_number', 'nation'], treshold = 1
     F       right.left.name           entity_p = True, names = ['name', 'date'], treshold = 1
     F_C     right.left.date           entity_p = True, names = ['date', 'name'], treshold = 1
-    F       right.left.date.start     entity_p = False, names = ['start', 'finish'], treshold = 4
-    F       right.left.date.finish    entity_p = False, names = ['finish', 'start'], treshold = 4
+    F       right.left.date.start     entity_p = False, names = ['start'], treshold = 4
+    F       right.left.date.finish    entity_p = False, names = ['finish'], treshold = 4
     F       right.boat_class.name     entity_p = True, names = ['name'], treshold = 1
     F_E     skipper.left              entity_p = True, names = ['left', 'nation', 'mna_number', 'club'], treshold = 1
     F       skipper.left.last_name    entity_p = True, names = ['last_name', 'first_name', 'middle_name', 'title'], treshold = 1
@@ -1563,100 +1637,145 @@ _test_element = """
 
     >>> show_completers (f_bir, "q_name", "completer.id", "completer.as_json_cargo")
     Type    q_name                    completer.id  completer.as_json_cargo
-    ============================================================================================================================================================================================================================================================================================================================================
-    F       left.left.name            1     entity_p = True, fields = ['R-108:left.left.name'], treshold = 1
-    F       left.sail_number          2     entity_p = True, fields = ['R-108:left.left', 'R-108:left.nation', 'R-108:left.sail_number', 'R-108:left.sail_number_x'], treshold = 1
-    F       left.sail_number_x        2     entity_p = True, fields = ['R-108:left.left', 'R-108:left.nation', 'R-108:left.sail_number', 'R-108:left.sail_number_x'], treshold = 1
-    F       right.left.name           3     entity_p = True, fields = ['R-108:right.left.date.finish', 'R-108:right.left.date.start', 'R-108:right.left.name'], treshold = 1
-    F_C     right.left.date           None  entity_p = True, fields = ['R-108:right.left.date.finish', 'R-108:right.left.date.start', 'R-108:right.left.name'], treshold = 1
-    F       right.left.date.start     4     entity_p = False, fields = ['R-108:right.left.date.finish', 'R-108:right.left.date.start'], treshold = 4
-    F       right.left.date.finish    4     entity_p = False, fields = ['R-108:right.left.date.finish', 'R-108:right.left.date.start'], treshold = 4
-    F       right.boat_class.name     5     entity_p = True, fields = ['R-108:right.boat_class.name'], treshold = 1
-    F_E     skipper.left              0     entity_p = True, fields = ['R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'], treshold = 1
-    F       skipper.left.last_name    0     entity_p = True, fields = ['R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'], treshold = 1
-    F       skipper.left.first_name   0     entity_p = True, fields = ['R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'], treshold = 1
-    F       skipper.left.middle_name  0     entity_p = True, fields = ['R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'], treshold = 1
-    F       skipper.left.title        6     entity_p = False, fields = ['R-108:skipper.left.title'], treshold = 0
-    F       skipper.mna_number        0     entity_p = True, fields = ['R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'], treshold = 1
-    F_E     skipper.club              0     entity_p = True, fields = ['R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'], treshold = 1
-    F       skipper.club.name         0     entity_p = True, fields = ['R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'], treshold = 1
+    ========================================================================================
+    F       left.left.name            2     buddies_id = 2, entity_p = True, treshold = 1
+    F       left.sail_number          3     buddies_id = 3, entity_p = True, treshold = 1
+    F       left.sail_number_x        3     buddies_id = 3, entity_p = True, treshold = 1
+    F       right.left.name           4     buddies_id = 4, entity_p = True, treshold = 1
+    F_C     right.left.date           None  buddies_id = 4, entity_p = True, treshold = 1
+    F       right.left.date.start     5     buddies_id = 5, entity_p = False, treshold = 4
+    F       right.left.date.finish    6     buddies_id = 6, entity_p = False, treshold = 4
+    F       right.boat_class.name     7     buddies_id = 7, entity_p = True, treshold = 1
+    F_E     skipper.left              1     buddies_id = 1, entity_p = True, treshold = 1
+    F       skipper.left.last_name    1     buddies_id = 1, entity_p = True, treshold = 1
+    F       skipper.left.first_name   1     buddies_id = 1, entity_p = True, treshold = 1
+    F       skipper.left.middle_name  1     buddies_id = 1, entity_p = True, treshold = 1
+    F       skipper.left.title        8     buddies_id = 8, entity_p = False, treshold = 0
+    F       skipper.mna_number        1     buddies_id = 1, entity_p = True, treshold = 1
+    F_E     skipper.club              1     buddies_id = 1, entity_p = True, treshold = 1
+    F       skipper.club.name         1     buddies_id = 1, entity_p = True, treshold = 1
 
     >>> show_completers (f_bir, "q_name", "completer.id", "completer.sig")
     Type    q_name                    completer.id  completer.sig
-    ===============================================================================================================================================================================================================================================================================================================
-    F       left.left.name            1     (('R-108:left.left.name',), 1, True)
-    F       left.sail_number          2     (('R-108:left.left', 'R-108:left.nation', 'R-108:left.sail_number', 'R-108:left.sail_number_x'), 1, True)
-    F       left.sail_number_x        2     (('R-108:left.left', 'R-108:left.nation', 'R-108:left.sail_number', 'R-108:left.sail_number_x'), 1, True)
-    F       right.left.name           3     (('R-108:right.left.date.finish', 'R-108:right.left.date.start', 'R-108:right.left.name'), 1, True)
-    F_C     right.left.date           None  (('R-108:right.left.date.finish', 'R-108:right.left.date.start', 'R-108:right.left.name'), 1, True)
-    F       right.left.date.start     4     (('R-108:right.left.date.finish', 'R-108:right.left.date.start'), 4, False)
-    F       right.left.date.finish    4     (('R-108:right.left.date.finish', 'R-108:right.left.date.start'), 4, False)
-    F       right.boat_class.name     5     (('R-108:right.boat_class.name',), 1, True)
-    F_E     skipper.left              0     (('R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'), 1, True)
-    F       skipper.left.last_name    0     (('R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'), 1, True)
-    F       skipper.left.first_name   0     (('R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'), 1, True)
-    F       skipper.left.middle_name  0     (('R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'), 1, True)
-    F       skipper.left.title        6     (('R-108:skipper.left.title',), 0, False)
-    F       skipper.mna_number        0     (('R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'), 1, True)
-    F_E     skipper.club              0     (('R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'), 1, True)
-    F       skipper.club.name         0     (('R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation'), 1, True)
+    =======================================================
+    F       left.left.name            2     (2, 1, True)
+    F       left.sail_number          3     (3, 1, True)
+    F       left.sail_number_x        3     (3, 1, True)
+    F       right.left.name           4     (4, 1, True)
+    F_C     right.left.date           None  (4, 1, True)
+    F       right.left.date.start     5     (5, 4, False)
+    F       right.left.date.finish    6     (6, 4, False)
+    F       right.boat_class.name     7     (7, 1, True)
+    F_E     skipper.left              1     (1, 1, True)
+    F       skipper.left.last_name    1     (1, 1, True)
+    F       skipper.left.first_name   1     (1, 1, True)
+    F       skipper.left.middle_name  1     (1, 1, True)
+    F       skipper.left.title        8     (8, 0, False)
+    F       skipper.mna_number        1     (1, 1, True)
+    F_E     skipper.club              1     (1, 1, True)
+    F       skipper.club.name         1     (1, 1, True)
+
+    >>> show_completers (f_bir, "q_name", "completer.buddies_id", "polisher.id")
+    Type    q_name                    completer.buddies_id  polisher.id
+    ===========================================
+    F       left.left.name            2  None
+    F       left.sail_number          3  9
+    F       left.sail_number_x        3  None
+    F       right.left.name           4  None
+    F_C     right.left.date           4  None
+    F       right.left.date.start     5  10
+    F       right.left.date.finish    6  10
+    F       right.boat_class.name     7  None
+    F_E     skipper.left              1  None
+    F       skipper.left.last_name    1  11
+    F       skipper.left.first_name   1  12
+    F       skipper.left.middle_name  1  13
+    F       skipper.left.title        8  8
+    F       skipper.mna_number        1  None
+    F_E     skipper.club              1  None
+    F       skipper.club.name         1  None
+
+    >>> print (formatted (f_bir.as_json_cargo ["buddies"]))
+    { 1 :
+        [ 'R-108:skipper.club'
+        , 'R-108:skipper.club.name'
+        , 'R-108:skipper.left'
+        , 'R-108:skipper.left.first_name'
+        , 'R-108:skipper.left.last_name'
+        , 'R-108:skipper.left.middle_name'
+        , 'R-108:skipper.left.title'
+        , 'R-108:skipper.mna_number'
+        , 'R-108:skipper.nation'
+        ]
+    , 2 : ['R-108:left.left.name']
+    , 3 :
+        [ 'R-108:left.left'
+        , 'R-108:left.nation'
+        , 'R-108:left.sail_number'
+        , 'R-108:left.sail_number_x'
+        ]
+    , 4 :
+        [ 'R-108:right.left.date.finish'
+        , 'R-108:right.left.date.start'
+        , 'R-108:right.left.name'
+        ]
+    , 5 : ['R-108:right.left.date.start']
+    , 6 : ['R-108:right.left.date.finish']
+    , 7 : ['R-108:right.boat_class.name']
+    , 8 : ['R-108:skipper.left.title']
+    , 9 :
+        [ 'R-108:left.nation'
+        , 'R-108:left.sail_number'
+        , 'R-108:left.sail_number_x'
+        ]
+    , 10 :
+        [ 'R-108:right.left.date.finish'
+        , 'R-108:right.left.date.start'
+        ]
+    , 11 : ['R-108:skipper.left.last_name']
+    , 12 : ['R-108:skipper.left.first_name']
+    , 13 : ['R-108:skipper.left.middle_name']
+    }
 
     >>> show_completers_js (f_bir)
-    { 0 :
-        { 'entity_p' : True
-        , 'fields' :
-            [ 'R-108:skipper.club'
-            , 'R-108:skipper.club.name'
-            , 'R-108:skipper.left'
-            , 'R-108:skipper.left.first_name'
-            , 'R-108:skipper.left.last_name'
-            , 'R-108:skipper.left.middle_name'
-            , 'R-108:skipper.left.title'
-            , 'R-108:skipper.mna_number'
-            , 'R-108:skipper.nation'
-            ]
-        , 'treshold' : 1
-        }
-    , 1 :
-        { 'entity_p' : True
-        , 'fields' : ['R-108:left.left.name']
+    { 1 :
+        { 'buddies_id' : 1
+        , 'entity_p' : True
         , 'treshold' : 1
         }
     , 2 :
-        { 'entity_p' : True
-        , 'fields' :
-            [ 'R-108:left.left'
-            , 'R-108:left.nation'
-            , 'R-108:left.sail_number'
-            , 'R-108:left.sail_number_x'
-            ]
+        { 'buddies_id' : 2
+        , 'entity_p' : True
         , 'treshold' : 1
         }
     , 3 :
-        { 'entity_p' : True
-        , 'fields' :
-            [ 'R-108:right.left.date.finish'
-            , 'R-108:right.left.date.start'
-            , 'R-108:right.left.name'
-            ]
+        { 'buddies_id' : 3
+        , 'entity_p' : True
         , 'treshold' : 1
         }
     , 4 :
-        { 'entity_p' : False
-        , 'fields' :
-            [ 'R-108:right.left.date.finish'
-            , 'R-108:right.left.date.start'
-            ]
-        , 'treshold' : 4
-        }
-    , 5 :
-        { 'entity_p' : True
-        , 'fields' : ['R-108:right.boat_class.name']
+        { 'buddies_id' : 4
+        , 'entity_p' : True
         , 'treshold' : 1
         }
+    , 5 :
+        { 'buddies_id' : 5
+        , 'entity_p' : False
+        , 'treshold' : 4
+        }
     , 6 :
-        { 'entity_p' : False
-        , 'fields' : ['R-108:skipper.left.title']
+        { 'buddies_id' : 6
+        , 'entity_p' : False
+        , 'treshold' : 4
+        }
+    , 7 :
+        { 'buddies_id' : 7
+        , 'entity_p' : True
+        , 'treshold' : 1
+        }
+    , 8 :
+        { 'buddies_id' : 8
+        , 'entity_p' : False
         , 'treshold' : 0
         }
     }
@@ -1709,8 +1828,8 @@ _test_element = """
     F       left.sail_number_x        ('R-108:left.left', 'R-108:left.nation', 'R-108:left.sail_number', 'R-108:left.sail_number_x')
     F       right.left.name           ('R-108:right.left.date.finish', 'R-108:right.left.date.start', 'R-108:right.left.name')
     F_C     right.left.date           ('R-108:right.left.date.finish', 'R-108:right.left.date.start', 'R-108:right.left.name')
-    F       right.left.date.start     ('R-108:right.left.date.finish', 'R-108:right.left.date.start')
-    F       right.left.date.finish    ('R-108:right.left.date.finish', 'R-108:right.left.date.start')
+    F       right.left.date.start     ('R-108:right.left.date.start',)
+    F       right.left.date.finish    ('R-108:right.left.date.finish',)
     F       right.boat_class.name     ('R-108:right.boat_class.name',)
     F_E     skipper.left              ('R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation')
     F       skipper.left.last_name    ('R-108:skipper.club', 'R-108:skipper.club.name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.last_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.mna_number', 'R-108:skipper.nation')
@@ -1729,8 +1848,8 @@ _test_element = """
     F       left.sail_number_x        ('R-108:left.sail_number_x', 'R-108:left.left', 'R-108:left.sail_number', 'R-108:left.nation')
     F       right.left.name           ('R-108:right.left.name', 'R-108:right.left.date.start', 'R-108:right.left.date.finish')
     F_C     right.left.date           ('R-108:right.left.date.start', 'R-108:right.left.date.finish', 'R-108:right.left.name')
-    F       right.left.date.start     ('R-108:right.left.date.start', 'R-108:right.left.date.finish')
-    F       right.left.date.finish    ('R-108:right.left.date.finish', 'R-108:right.left.date.start')
+    F       right.left.date.start     ('R-108:right.left.date.start',)
+    F       right.left.date.finish    ('R-108:right.left.date.finish',)
     F       right.boat_class.name     ('R-108:right.boat_class.name',)
     F_E     skipper.left              ('R-108:skipper.left', 'R-108:skipper.left.last_name', 'R-108:skipper.left.first_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.nation', 'R-108:skipper.mna_number', 'R-108:skipper.club.name', 'R-108:skipper.club')
     F       skipper.left.last_name    ('R-108:skipper.left.last_name', 'R-108:skipper.left', 'R-108:skipper.left.first_name', 'R-108:skipper.left.middle_name', 'R-108:skipper.left.title', 'R-108:skipper.nation', 'R-108:skipper.mna_number', 'R-108:skipper.club.name', 'R-108:skipper.club')
@@ -1749,8 +1868,8 @@ _test_element = """
     F       left.sail_number_x        SRM.Boat           ('sail_number_x', 'left', 'sail_number', 'nation')
     F       right.left.name           SRM.Regatta_Event  ('name', 'date.start', 'date.finish')
     F_C     right.left.date           SRM.Regatta_Event  ('date.start', 'date.finish', 'name')
-    F       right.left.date.start     SRM.Regatta_Event  ('date.start', 'date.finish')
-    F       right.left.date.finish    SRM.Regatta_Event  ('date.finish', 'date.start')
+    F       right.left.date.start     SRM.Regatta_Event  ('date.start',)
+    F       right.left.date.finish    SRM.Regatta_Event  ('date.finish',)
     F       right.boat_class.name     SRM._Boat_Class_   ('name',)
     F_E     skipper.left              SRM.Sailor         ('left', 'left.last_name', 'left.first_name', 'left.middle_name', 'left.title', 'nation', 'mna_number', 'club.name', 'club')
     F       skipper.left.last_name    SRM.Sailor         ('left.last_name', 'left', 'left.first_name', 'left.middle_name', 'left.title', 'nation', 'mna_number', 'club.name', 'club')
@@ -1763,28 +1882,28 @@ _test_element = """
 
     >>> show_elements_x (f_p, "q_name", "completer.id", "completer.as_json_cargo")
     Type    q_name           completer.id  completer.as_json_cargo
-    ================================================================================================================================================
+    ===============================================================================
     E       None             None  None
-    F       last_name        0     entity_p = True, fields = ['X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'], treshold = 1
-    F       first_name       0     entity_p = True, fields = ['X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'], treshold = 1
-    F       middle_name      0     entity_p = True, fields = ['X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'], treshold = 1
-    F       title            1     entity_p = False, fields = ['X-26:title'], treshold = 0
+    F       last_name        1     buddies_id = 1, entity_p = True, treshold = 1
+    F       first_name       1     buddies_id = 1, entity_p = True, treshold = 1
+    F       middle_name      1     buddies_id = 1, entity_p = True, treshold = 1
+    F       title            2     buddies_id = 2, entity_p = False, treshold = 0
     F_C     lifetime         None  None
-    F       lifetime.start   2     entity_p = False, fields = ['X-26:lifetime.finish', 'X-26:lifetime.start'], treshold = 4
-    F       lifetime.finish  2     entity_p = False, fields = ['X-26:lifetime.finish', 'X-26:lifetime.start'], treshold = 4
+    F       lifetime.start   3     buddies_id = 3, entity_p = False, treshold = 4
+    F       lifetime.finish  4     buddies_id = 4, entity_p = False, treshold = 4
     F       sex              None  None
 
     >>> show_elements_x (f_p, "q_name", "completer.id", "completer.sig")
     Type    q_name           completer.id  completer.sig
-    ===================================================================================================================
+    ==============================================
     E       None             None  None
-    F       last_name        0     (('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'), 1, True)
-    F       first_name       0     (('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'), 1, True)
-    F       middle_name      0     (('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'), 1, True)
-    F       title            1     (('X-26:title',), 0, False)
+    F       last_name        1     (1, 1, True)
+    F       first_name       1     (1, 1, True)
+    F       middle_name      1     (1, 1, True)
+    F       title            2     (2, 0, False)
     F_C     lifetime         None  None
-    F       lifetime.start   2     (('X-26:lifetime.finish', 'X-26:lifetime.start'), 4, False)
-    F       lifetime.finish  2     (('X-26:lifetime.finish', 'X-26:lifetime.start'), 4, False)
+    F       lifetime.start   3     (3, 4, False)
+    F       lifetime.finish  4     (4, 4, False)
     F       sex              None  None
 
     >>> show_completers (f_p, "q_name", "completer.name", "completer.entity_p")
@@ -1814,8 +1933,8 @@ _test_element = """
     F      first_name       ('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title')
     F      middle_name      ('X-26:middle_name', 'X-26:last_name', 'X-26:first_name', 'X-26:title')
     F      title            ('X-26:title',)
-    F      lifetime.start   ('X-26:lifetime.start', 'X-26:lifetime.finish')
-    F      lifetime.finish  ('X-26:lifetime.finish', 'X-26:lifetime.start')
+    F      lifetime.start   ('X-26:lifetime.start',)
+    F      lifetime.finish  ('X-26:lifetime.finish',)
 
     >>> show_completers (f_p, "q_name", "completer.etn", "completer.attr_names")
     Type   q_name           completer.etn  completer.attr_names
@@ -1824,31 +1943,28 @@ _test_element = """
     F      first_name       PAP.Person  ('first_name', 'last_name', 'middle_name', 'title')
     F      middle_name      PAP.Person  ('middle_name', 'last_name', 'first_name', 'title')
     F      title            PAP.Person  ('title',)
-    F      lifetime.start   PAP.Person  ('lifetime.start', 'lifetime.finish')
-    F      lifetime.finish  PAP.Person  ('lifetime.finish', 'lifetime.start')
+    F      lifetime.start   PAP.Person  ('lifetime.start',)
+    F      lifetime.finish  PAP.Person  ('lifetime.finish',)
 
     >>> show_completers_js (f_p)
-    { 0 :
-        { 'entity_p' : True
-        , 'fields' :
-            [ 'X-26:first_name'
-            , 'X-26:last_name'
-            , 'X-26:middle_name'
-            , 'X-26:title'
-            ]
+    { 1 :
+        { 'buddies_id' : 1
+        , 'entity_p' : True
         , 'treshold' : 1
         }
-    , 1 :
-        { 'entity_p' : False
-        , 'fields' : ['X-26:title']
+    , 2 :
+        { 'buddies_id' : 2
+        , 'entity_p' : False
         , 'treshold' : 0
         }
-    , 2 :
-        { 'entity_p' : False
-        , 'fields' :
-            [ 'X-26:lifetime.finish'
-            , 'X-26:lifetime.start'
-            ]
+    , 3 :
+        { 'buddies_id' : 3
+        , 'entity_p' : False
+        , 'treshold' : 4
+        }
+    , 4 :
+        { 'buddies_id' : 4
+        , 'entity_p' : False
         , 'treshold' : 4
         }
     }
@@ -1906,8 +2022,8 @@ _test_element = """
     F       left.sail_number_x        (<Field R-108:left.sail_number_x>, <Field_Entity R-108:left.left>, <Field R-108:left.sail_number>, <Field R-108:left.nation>)
     F       right.left.name           (<Field R-108:right.left.name>, <Field R-108:right.left.date.start>, <Field R-108:right.left.date.finish>)
     F_C     right.left.date           (<Field R-108:right.left.date.start>, <Field R-108:right.left.date.finish>)
-    F       right.left.date.start     (<Field R-108:right.left.date.start>, <Field R-108:right.left.date.finish>)
-    F       right.left.date.finish    (<Field R-108:right.left.date.finish>, <Field R-108:right.left.date.start>)
+    F       right.left.date.start     (<Field R-108:right.left.date.start>,)
+    F       right.left.date.finish    (<Field R-108:right.left.date.finish>,)
     F       right.boat_class.name     (<Field R-108:right.boat_class.name>,)
     F_E     skipper.left              (<Field_Entity R-108:skipper.left>, <Field R-108:skipper.left.last_name>, <Field R-108:skipper.left.first_name>, <Field R-108:skipper.left.middle_name>, <Field R-108:skipper.left.title>, <Field R-108:skipper.nation>, <Field R-108:skipper.mna_number>, <Field R-108:skipper.club.name>, <Field_Entity R-108:skipper.club>)
     F       skipper.left.last_name    (<Field R-108:skipper.left.last_name>, <Field R-108:skipper.left.first_name>, <Field R-108:skipper.left.middle_name>, <Field R-108:skipper.left.title>)
@@ -1925,8 +2041,8 @@ _test_element = """
     F      first_name       (<Field X-26:first_name>, <Field X-26:last_name>, <Field X-26:middle_name>, <Field X-26:title>)
     F      middle_name      (<Field X-26:middle_name>, <Field X-26:last_name>, <Field X-26:first_name>, <Field X-26:title>)
     F      title            (<Field X-26:title>,)
-    F      lifetime.start   (<Field X-26:lifetime.start>, <Field X-26:lifetime.finish>)
-    F      lifetime.finish  (<Field X-26:lifetime.finish>, <Field X-26:lifetime.start>)
+    F      lifetime.start   (<Field X-26:lifetime.start>,)
+    F      lifetime.finish  (<Field X-26:lifetime.finish>,)
 
 
 """
@@ -1979,7 +2095,21 @@ _test_single_primary = r"""
     >>> f_rir     = F_RiR             (scope)
 
     >>> print (formatted (f_b.as_json_cargo))
-    { 'cargo' :
+    { 'buddies' :
+        { 1 : ['S-78:left.name']
+        , 2 :
+            [ 'S-78:left'
+            , 'S-78:nation'
+            , 'S-78:sail_number'
+            , 'S-78:sail_number_x'
+            ]
+        , 3 :
+            [ 'S-78:nation'
+            , 'S-78:sail_number'
+            , 'S-78:sail_number_x'
+            ]
+        }
+    , 'cargo' :
         { 'field_values' :
             { 'S-78:left' : {'init' : {}}
             , 'S-78:left.name' : {}
@@ -1996,26 +2126,34 @@ _test_single_primary = r"""
         }
     , 'checkers' : {}
     , 'completers' :
-        { 0 :
-            { 'entity_p' : True
-            , 'fields' : ['S-78:left.name']
+        { 1 :
+            { 'buddies_id' : 1
+            , 'entity_p' : True
             , 'treshold' : 1
             }
-        , 1 :
-            { 'entity_p' : True
-            , 'fields' :
-                [ 'S-78:left'
-                , 'S-78:nation'
-                , 'S-78:sail_number'
-                , 'S-78:sail_number_x'
-                ]
+        , 2 :
+            { 'buddies_id' : 2
+            , 'entity_p' : True
             , 'treshold' : 1
             }
         }
     }
 
     >>> print (formatted (f_b_r.as_json_cargo))
-    { 'cargo' :
+    { 'buddies' :
+        { 1 :
+            [ 'S_r-78:left'
+            , 'S_r-78:nation'
+            , 'S_r-78:sail_number'
+            , 'S_r-78:sail_number_x'
+            ]
+        , 2 :
+            [ 'S_r-78:nation'
+            , 'S_r-78:sail_number'
+            , 'S_r-78:sail_number_x'
+            ]
+        }
+    , 'cargo' :
         { 'field_values' :
             { 'S_r-78:left' : {'init' : {}}
             , 'S_r-78:name' : {}
@@ -2028,21 +2166,22 @@ _test_single_primary = r"""
         }
     , 'checkers' : {}
     , 'completers' :
-        { 0 :
-            { 'entity_p' : True
-            , 'fields' :
-                [ 'S_r-78:left'
-                , 'S_r-78:nation'
-                , 'S_r-78:sail_number'
-                , 'S_r-78:sail_number_x'
-                ]
+        { 1 :
+            { 'buddies_id' : 1
+            , 'entity_p' : True
             , 'treshold' : 1
             }
         }
     }
 
     >>> print (formatted (f_rir.as_json_cargo))
-    { 'cargo' :
+    { 'buddies' :
+        { 1 :
+            [ 'S-114:left'
+            , 'S-114:right'
+            ]
+        }
+    , 'cargo' :
         { 'field_values' :
             { 'S-114:factor' : {'edit' : '1.0'}
             , 'S-114:left' : {'init' : {}}
@@ -2053,20 +2192,14 @@ _test_single_primary = r"""
         }
     , 'checkers' : {}
     , 'completers' :
-        { 0 :
-            { 'entity_p' : True
-            , 'fields' :
-                [ 'S-114:left'
-                , 'S-114:right'
-                ]
+        { 1 :
+            { 'buddies_id' : 1
+            , 'entity_p' : True
             , 'treshold' : 1
             }
-        , 1 :
-            { 'entity_p' : True
-            , 'fields' :
-                [ 'S-114:left'
-                , 'S-114:right'
-                ]
+        , 2 :
+            { 'buddies_id' : 1
+            , 'entity_p' : True
             , 'treshold' : 0
             }
         }

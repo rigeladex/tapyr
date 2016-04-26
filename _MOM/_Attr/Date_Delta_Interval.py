@@ -114,9 +114,7 @@ class A_Date_Delta_Interval (A_Date_Interval) :
                 , polisher         = None
                 )
             , start = dict
-                ( completer        = MOM.Attr.Completer_Spec
-                    (4, Attr.Selector.Name ("delta_or_finish"))
-                , polisher         = MOM.Attr._Start_Polisher_
+                ( polisher         = MOM.Attr._Start_Polisher_
                     (add_year = True, finish_attr = "delta_or_finish")
                 )
             )
@@ -126,8 +124,7 @@ class A_Date_Delta_Interval (A_Date_Interval) :
 
             kind               = Attr.Optional
             example            = "+2 years 3 months, 2 weeks -3 days"
-            completer          = MOM.Attr.Completer_Spec \
-                (4, Attr.Selector.Name ("start"))
+            completer          = MOM.Attr.Completer_Spec (2)
             polisher           = MOM.Attr._Finish_Polisher_ (add_year = True)
             rank               = 2
             syntax             = _ \

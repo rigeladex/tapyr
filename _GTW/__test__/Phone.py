@@ -18,6 +18,7 @@
 # Revision Dates
 #     3-Aug-2015 (CT) Creation
 #    15-Sep-2015 (CT) Adapt to bug fixes in `E164.Country`
+#    27-Apr-2016 (CT) Add test for `sn.polisher`
 #    22-May-2016 (CT) Add test for `ndc_length_valid`
 #    ««revision-date»»···
 #--
@@ -68,6 +69,11 @@ _test_code = """
 
     >>> print (at1.ndc_min_length, at1.ndc_max_length, at1.sn_min_length, at1.sn_max_length)
     1 4 3 9
+
+    Test polisher splitting `cc` and `ndc` from raw value passed for `sn`
+    >>> _ = at1.set_raw (sn = "+43 664 9876543")
+    >>> print (at1.ui_display)
+    +43-664-987 65 43
 
     >>> scope.rollback ()
 

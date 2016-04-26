@@ -39,6 +39,7 @@
 #                     + add `finish` to `start.completer`
 #    25-Apr-2016 (CT) Add `unit_pat` to  `_Finish_Polisher_`
 #    26-Apr-2016 (CT) Set `pre_complete` to `False`
+#    26-Apr-2016 (CT) Factor `_Date_Interval_Date_Polisher_`, add `buddies`
 #    ««revision-date»»···
 #--
 
@@ -54,14 +55,28 @@ from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.pyk              import pyk
 from   _TFL.Regexp           import Regexp, re
 
-class _Finish_Polisher_ (MOM.Attr.Polisher._Polisher_) :
-    """Polisher for `finish` attribute of `Date_Interval`."""
+class _Date_Interval_Date_Polisher_ (MOM.Attr.Polisher._Polisher_) :
 
     add_year     = False
-    future_p     = False
+    future_p     = True
     pre_complete = False
-    start_attr   = "start"
 
+    finish_attr  = None
+    start_attr   = None
+
+    def __init__ (self, ** kw) :
+        self.__super.__init__ (** kw)
+        if not self.buddies :
+            self.buddies = tuple \
+                (a for a in (self.finish_attr, self.start_attr) if a)
+    # end def __init__
+
+# end class _Date_Interval_Date_Polisher_
+
+class _Finish_Polisher_ (_Date_Interval_Date_Polisher_) :
+    """Polisher for `finish` attribute of `Date_Interval`."""
+
+    start_attr   = "start"
     unit_pat     = Regexp \
         ( r"\s*(?P<unit> week|month|quarter|year)\s*$"
         , flags  = re.VERBOSE | re.IGNORECASE
@@ -89,13 +104,10 @@ class _Finish_Polisher_ (MOM.Attr.Polisher._Polisher_) :
 
 # end class _Finish_Polisher_
 
-class _Start_Polisher_ (MOM.Attr.Polisher._Polisher_) :
+class _Start_Polisher_ (_Date_Interval_Date_Polisher_) :
     """Polisher for `start` attribute of `Date_Interval`."""
 
-    add_year     = False
-    future_p     = False
     finish_attr  = "finish"
-    pre_complete = False
 
     def _polished (self, attr, name, value, value_dict, essence, picky) :
         result = {}
@@ -166,8 +178,6 @@ class Date_Interval (_Ancestor_Essence) :
             kind               = Attr.Optional
             example            = "2038-01-19"
             rank               = 2
-            completer          = MOM.Attr.Completer_Spec \
-                (4, Attr.Selector.Name ("start"))
             polisher           = _Finish_Polisher_ (add_year = True)
 
         # end class finish
@@ -178,8 +188,6 @@ class Date_Interval (_Ancestor_Essence) :
             kind               = Attr.Necessary
             example            = "1970-01-01"
             rank               = 1
-            completer          = MOM.Attr.Completer_Spec \
-                (4, Attr.Selector.Name ("finish"))
             polisher           = _Start_Polisher_ (add_year = True)
 
         # end class start

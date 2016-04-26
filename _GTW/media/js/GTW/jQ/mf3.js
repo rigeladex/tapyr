@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -71,6 +71,7 @@
 //    22-Dec-2015 (CT) Fix `action_callback.add_rev_ref` `add_rev_ref` hiding
 //    23-Dec-2015 (CT) Factor `toggle_add_rev_ref` to DRY and fix
 //                     `max_rev_ref` handling
+//    26-Apr-2016 (CT) Use `form_spec.buddies`
 //    ««revision-date»»···
 //--
 
@@ -354,7 +355,8 @@
                 var form_spec    = options.form_spec;
                 var cargo        = form_spec.cargo;
                 var f_completer  = form_spec.completers [c_id];
-                var field_values = completer.get_values (f_completer);
+                var field_values = completer.get_values
+                    (f_completer.buddies_id);
                 var data         =
                     { complete_entity : f_completer ["entity_p"] || false
                     , field_values    : field_values
@@ -398,13 +400,15 @@
               }
             , get_completions_cb : function get_completions_cb
                     (f$, request, response_cb, f_completer, answer) {
+                var fields = options.form_spec.buddies
+                    [f_completer.buddies_id];
                 var l, n   = answer.completions;
                 var rl     = answer.fields -
                     (f_completer ["entity_p"] && ! answer.partial); // skip pid
                 var v      = answer.fields - 1;
                 var result = [];
                 if (n > 0 && answer.fields > 0) {
-                    l = Math.min (rl, f_completer.fields.length);
+                    l = Math.min (rl, fields.length);
                     f$.data ("gtw_mf3_completer_response", answer);
                     for ( var i = 0, li = answer.matches.length, match
                         ; i < li
@@ -422,9 +426,10 @@
                 };
                 response_cb (result);
               }
-            , get_values : function get_values (f_completer) {
-                var fields = f_completer.fields;
-                var values = options.form_spec.cargo.field_values;
+            , get_values : function get_values (buddies_id) {
+                var f_spec = options.form_spec;
+                var fields = f_spec.buddies [buddies_id];
+                var values = f_spec.cargo.field_values;
                 var result = {};
                 var id, f$, ft, fv, val;
                 for (var i = 0, li = fields.length; i < li; i++) {
@@ -496,7 +501,7 @@
                         data  =
                             { complete_entity : true
                             , field_values    :
-                                completer.get_values (f_completer)
+                                completer.get_values (f_completer.buddies_id)
                             , form_pid        : cargo.pid
                             , pid             : item.value
                             , sid             : cargo.sid
@@ -878,12 +883,11 @@
               }
             };
         var polish_field = function polish_field (f$, F_id, new_value) {
-            var c_id         = f$.data ("completer");
+            var buddies_id   = f$.data ("polisher");
             var form_spec    = options.form_spec;
             var cargo        = form_spec.cargo;
-            var f_completer  = form_spec.completers [c_id];
-            var field_values, data;
-            var success_cb = function success_cb (answer, status, xhr) {
+            var field_values = completer.get_values (buddies_id);
+            var success_cb   = function success_cb (answer, status, xhr) {
                 var a$;
                 if (! answer ["error"]) {
                     a$ = f$.siblings ().filter ($("aside"));
@@ -906,11 +910,7 @@
                         ("Ajax polisher error: ", answer.error);
                 };
             };
-            if (f_completer) {
-                field_values = completer.get_values (f_completer);
-            } else {
-                field_values = {};
-            };
+            var data;
             field_values [F_id] = new_value;
             data =
                 { field_values    : field_values

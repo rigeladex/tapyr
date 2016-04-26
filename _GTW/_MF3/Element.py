@@ -97,6 +97,8 @@
 #    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
 #    20-Dec-2015 (CT) Add properties `aside` and `aside_x` to `_Field_Base_`
 #    20-Dec-2015 (CT) Add `syntax` to `_Field_Base_._attr_prop_map`
+#    26-Apr-2016 (CT) Add `buddies` to `as_json_cargo`,
+#                     factor `cargo_as_json_cargo`
 #    22-May-2016 (CT) Add guard `self.required` to `_create_instance`
 #    ««revision-date»»···
 #--
@@ -110,6 +112,7 @@ from   _TFL                     import TFL
 
 import _GTW._MF3.Completer
 import _GTW._MF3.Error
+import _GTW._MF3.Polisher
 
 from   _MOM.import_MOM          import Q
 
@@ -477,6 +480,14 @@ class _Base_ (TFL.Meta.Object) :
                 yield tm
     # end def template_module_iter
 
+    def _mapped_id (self, map, sig) :
+        try :
+            result = map [sig]
+        except KeyError :
+            result = map [sig] = len (map) + 1
+        return result
+    # end def _mapped_id
+
     def _my_cargo (self, cargo) :
         return cargo ["field_values"].get (self.id, {})
     # end def _my_cargo
@@ -600,6 +611,11 @@ class _Entity_Mixin_ (_Base_) :
         )
     _reset_properties   = ("sig", )
 
+    def __init__ (self, essence = None, ** kw) :
+        self.buddies_map = {}
+        self.__super.__init__ (essence, ** kw)
+    # end def __init__
+
     def __call__ (self, scope, cargo) :
         essence = self.essence
         errors  = self._submission_errors = GTW.MF3.Error.List (self)
@@ -657,20 +673,41 @@ class _Entity_Mixin_ (_Base_) :
 
     @TFL.Meta.Once_Property
     def as_json_cargo (self) :
+        result     = dict \
+            ( buddies      = self.buddies_as_json_cargo
+            , cargo        = self.cargo_as_json_cargo
+            , checkers     = self.checkers_as_json_cargo
+            , completers   = self.completers_as_json_cargo
+            )
+        return result
+    # end def as_json_cargo
+
+    @TFL.Meta.Once_Property
+    def buddies_as_json_cargo (self) :
+        ### prime `.buddies_map` by touching all completers and polishers
+        def _gen () :
+            for e in self.elements_transitive () :
+                if e.polisher :
+                    yield e.polisher.id
+        _ = self.completers_as_json_cargo
+        _ = tuple (_gen ())
+        return dict \
+            (  (id, list (fields))
+            for fields, id in pyk.iteritems (self.buddies_map)
+            )
+    # end def checkers_as_json_cargo
+
+    @TFL.Meta.Once_Property
+    def cargo_as_json_cargo (self) :
         def _gen (self, elems) :
             for e in elems :
                 for k, v in e.fields_as_json_cargo () :
                     yield k, v
-        result = dict \
-            ( cargo             = dict
-                ( field_values  = dict (_gen (self, self.entity_elements))
-                , sigs          = self.sigs_as_json_cargo
-                )
-            , checkers          = self.checkers_as_json_cargo
-            , completers        = self.completers_as_json_cargo
+        return dict \
+            ( field_values  = dict (_gen (self, self.entity_elements))
+            , sigs          = self.sigs_as_json_cargo
             )
-        return result
-    # end def as_json_cargo
+    # end def cargo_as_json_cargo
 
     @TFL.Meta.Once_Property
     def checkers_as_json_cargo (self) :
@@ -1492,7 +1529,9 @@ class Field (_Field_) :
 
     @TFL.Meta.Once_Property
     def polisher (self) :
-        return self.attr.polisher
+        a_polisher = self.attr.polisher
+        if a_polisher is not None and not (self.readonly or self.skip) :
+            return GTW.MF3.Polisher (self)
     # end def polisher
 
     @property

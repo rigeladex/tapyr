@@ -70,6 +70,7 @@
 #    14-Aug-2015 (CT) Add `q_able_no_edit`
 #     5-Feb-2016 (CT) Sort `polish_attr` by `ui_rank`, not `(rank, name)`
 #    24-Feb-2016 (CT) Add `not prop.prop.is_partial` to `_db_attr` guard
+#    26-Apr-2016 (CT) Add `polisher.Instance` to `_setup_attrs`
 #    ««revision-date»»···
 #--
 
@@ -254,6 +255,8 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec)) :
                     x.dependent_attrs.add (a)
             if isinstance (a.completer, MOM.Attr.Completer_Spec) :
                 a.attr.completer = a.completer (a, e_type)
+            if isinstance (a.polisher, MOM.Attr.Polisher._Polisher_) :
+                a.attr.polisher = a.polisher.Instance (a)
     # end def _setup_attrs
 
     def _setup_prop (self, e_type, name, kind, prop) :

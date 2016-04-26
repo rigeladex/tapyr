@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.MF3.
@@ -47,6 +47,8 @@
 #                     + To include all field values for completed entity
 #                       and nested entity fields
 #    18-Dec-2015 (CT) Add guard for exceptions to `aq_filters` and `choices`
+#    26-Apr-2016 (CT) Add `buddies` to, and remove `fields` from,
+#                     `as_json_cargo` and `sig`; factor `elem._mapped_id`
 #    ««revision-date»»···
 #--
 
@@ -97,9 +99,9 @@ class _MF3_Completer_ (TFL.Meta.Object) :
     @property
     def as_json_cargo (self) :
         result = dict \
-            ( entity_p = self.entity_p
-            , fields   = list (self.fields)
-            , treshold = self.treshold
+            ( buddies_id  = self.buddies_id
+            , entity_p    = self.entity_p
+            , treshold    = self.treshold
             )
         return result
     # end def as_json_cargo
@@ -113,6 +115,12 @@ class _MF3_Completer_ (TFL.Meta.Object) :
                 yield e.q_name [p_len:]
         return tuple (_gen (self))
     # end def attr_names
+
+    @TFL.Meta.Once_Property
+    def buddies_id (self) :
+        elem = self.elem
+        return elem._mapped_id (elem.root.buddies_map, self.fields)
+    # end def buddies_id
 
     @TFL.Meta.Once_Property
     def elems (self) :
@@ -165,13 +173,8 @@ class _MF3_Completer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def id (self) :
-        completer_map = self.elem.root.completer_map
-        sig           = self.sig
-        try :
-            result = completer_map [sig]
-        except KeyError :
-            result = completer_map [sig] = len (completer_map)
-        return result
+        elem = self.elem
+        return elem._mapped_id (elem.root.completer_map, self.sig)
     # end def id
 
     @TFL.Meta.Once_Property
@@ -191,7 +194,7 @@ class _MF3_Completer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def sig (self) :
-        return (self.fields, self.treshold, self.entity_p)
+        return (self.buddies_id, self.treshold, self.entity_p)
     # end def sig
 
     def add_inner (self, inner) :

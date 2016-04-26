@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -53,6 +53,7 @@
 #    29-Apr-2015 (CT) Remove obsolete predicate `valid_vintage`
 #    30-Jul-2015 (CT) Add arguments `essence`, `picky` to
 #                     `_Sail_Number_Polisher_`
+#    26-Apr-2016 (CT) Add `buddies` to `_Sail_Number_Polisher_`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,8 @@ from   _TFL.Regexp              import Multi_Regexp, Regexp, re
 
 class _Sail_Number_Polisher_ (MOM.Attr.Polisher.Match_Split) :
     """Polisher splitting a sail-number into nation, sail_number, sail_number_x"""
+
+    buddies      = ("nation", "sail_number", "sail_number_x")
 
     def __init__ (self, ** kw) :
         matcher = Regexp \

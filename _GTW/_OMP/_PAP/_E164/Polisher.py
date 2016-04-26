@@ -20,6 +20,7 @@
 #    31-Jul-2015 (CT) Finish creation
 #     7-Oct-2015 (CT) Change `SN._polished` to not assign `strict_err` with `as`
 #                     (Python 3 compatibility!)
+#    26-Apr-2016 (CT) Add `buddies` to `_E164_Polisher_`
 #    22-May-2016 (CT) Add guard `c_match.attr_dict.get (name)` to
 #                     `SN._polished_non_strict`
 #    ««revision-date»»···
@@ -46,6 +47,8 @@ import _GTW._OMP._PAP._E164.Error
 import _MOM._Attr.Polisher
 
 class _E164_Polisher_ (MOM.Attr.Polisher._Polisher_) :
+
+    buddies        = ("cc", "ndc", "sn")
 
     _cleanup_value = Multi_Re_Replacer \
         ( Re_Replacer (r"[ \t]+", " ") ### compress space, tab

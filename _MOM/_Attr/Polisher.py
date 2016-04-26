@@ -30,6 +30,7 @@
 #    31-Jul-2015 (CT) Factor `_attr_value`
 #     5-Feb-2016 (CT) Add `polish_empty`
 #    26-Apr-2016 (CT) Add `pre_complete`
+#    26-Apr-2016 (CT) Add `Instance`, `buddies`
 #    ««revision-date»»···
 #--
 
@@ -41,15 +42,16 @@ from   _TFL                  import TFL
 
 import _MOM._Attr
 
+from   _TFL.predicate        import uniq
 from   _TFL.pyk              import pyk
 from   _TFL.Regexp           import *
 
 import _TFL._Meta.Object
-import _TFL.predicate
 
 class _Polisher_ (TFL.Meta.Object) :
     """Base class for Polishers"""
 
+    buddies      = ()
     guard        = None
     polish_empty = False
     pre_complete = True
@@ -82,6 +84,10 @@ class _Polisher_ (TFL.Meta.Object) :
         return result
     # end def __call__
 
+    def Instance (self, attr) :
+        return _Polisher_Instance_ (self, attr)
+    # end def Instance
+
     def _attr_value (self, attr, name, value, value_dict, essence) :
         result = value
         if result is None :
@@ -97,6 +103,36 @@ class _Polisher_ (TFL.Meta.Object) :
     # end def _polished
 
 # end class _Polisher_
+
+class _Polisher_Instance_ (TFL.Meta.Object) :
+    """Polisher instance for a specific instance of MOM.Attr.Kind."""
+
+    def __init__ (self, polisher, attr) :
+        self.attr      = attr
+        self.name      = attr.name
+        self.polisher  = polisher
+    # end def __init__
+
+    def __call__ (self, * args, ** kw) :
+        return self.polisher (* args, ** kw)
+    # end def __call__
+
+    @TFL.Meta.Once_Property
+    def names (self) :
+        return tuple (uniq ((self.name, ) + self.polisher.buddies))
+    # end def names
+
+    def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
+        result = getattr (self.polisher, name)
+        setattr (self, name, result)
+        return result
+    # end def __getattr__
+
+# end class _Polisher_Instance_
 
 class Match_Split (_Polisher_) :
     """Polisher splitting a value into several attribute values."""
