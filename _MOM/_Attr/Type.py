@@ -383,6 +383,7 @@
 #    25-Feb-2016 (CT) Add `@getattr_safe` to property `A_Link_Role.unique_p`
 #    25-Apr-2016 (CT) Convert rest of `from_string`, `_from_string` definitions
 #                     to `Class_and_Instance_Method`
+#    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    ««revision-date»»···
 #--
 
@@ -1008,10 +1009,10 @@ class A_Attr_Type \
     # end def FO_nested
 
     @TFL.Meta.Class_and_Instance_Method
-    def from_string (self, s, obj = None, glob = {}, locl = {}) :
+    def from_string (self, s, obj = None) :
         try :
             if s is not None :
-                return self._from_string (s, obj, glob, locl)
+                return self._from_string (s, obj)
         except MOM.Error.Attribute_Syntax as exc :
             if s :
                 raise
@@ -1049,7 +1050,7 @@ class A_Attr_Type \
     # end def _fix_det
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         return soc.cooked (s)
     # end def _from_string
 
@@ -1306,7 +1307,7 @@ class _A_Composite_ \
     # end def example
 
     @TFL.Meta.Class_and_Instance_Method
-    def from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def from_string (soc, s, obj = None) :
         P_Type = soc.P_Type
         if isinstance (s, P_Type) :
             result = s
@@ -1414,7 +1415,7 @@ class _A_Date_ (A_Attr_Type) :
     # end def _checkers
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         s = s.strip ()
         if s :
             for f in soc.input_formats :
@@ -1473,7 +1474,7 @@ class _A_Named_Value_ \
     # end def eligible_raw_values
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         try :
             return soc.Table [s]
         except KeyError :
@@ -1569,7 +1570,7 @@ class _A_Number_ (A_Attr_Type) :
     # end def _checkers
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, value, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, value, obj = None) :
         if value :
             try :
                 return soc.P_Type (value)
@@ -1903,7 +1904,7 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
     # end def sorted_by
 
     @TFL.Meta.Class_and_Instance_Method
-    def from_string (self, s, obj = None, glob = {}, locl = {}) :
+    def from_string (self, s, obj = None) :
         if isinstance (s, MOM.Entity) :
             return s ### `check_type` called by `kind._set_cooked_value`
         elif isinstance (s, pyk.int_types) :
@@ -1955,7 +1956,7 @@ class _A_MD_Change_ (_A_SPK_Entity_) :
     """Attribute referring to a MD_Change instance"""
 
     @TFL.Meta.Class_and_Instance_Method
-    def from_string (self, s, obj = None, glob = {}, locl = {}) :
+    def from_string (self, s, obj = None) :
         if isinstance (s, MOM.Entity) :
             return s ### `check_type` called by `kind._set_cooked_value`
         elif isinstance (s, pyk.int_types) :
@@ -2343,14 +2344,14 @@ class _A_Typed_Collection_ \
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
-    def from_string (self, s, obj = None, glob = {}, locl = {}) :
+    def from_string (self, s, obj = None) :
         result = None
         t      = s or []
         if isinstance (t, pyk.string_types) :
-            result = self._from_string (s, obj, glob, locl)
+            result = self._from_string (s, obj)
         elif t :
             C_fs   = self.C_Type.from_string
-            result = self.R_Type (C_fs (c, obj, glob, locl) for c in t)
+            result = self.R_Type (C_fs (c, obj) for c in t)
         return result
     # end def from_string
 
@@ -2379,10 +2380,10 @@ class _A_Typed_Collection_ \
     # end def _C_as_string
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         C_fs  = soc.C_Type._from_string
         comps = soc._C_split (s.strip ())
-        return soc.R_Type (C_fs (c, obj, glob, locl) for c in comps)
+        return soc.R_Type (C_fs (c, obj) for c in comps)
     # end def _from_string
 
 # end class _A_Typed_Collection_
@@ -2504,7 +2505,7 @@ class _A_Unit_ \
     # end def eligible_raw_values
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         factor = soc._unit_dict [soc._default_unit]
         pat    = soc._unit_pattern
         if pat.search (s) :
@@ -2518,7 +2519,7 @@ class _A_Unit_ \
                     % (unit, soc.eligible_raw_values ())
                     )
                 raise MOM.Error.Attribute_Syntax (obj, soc, s, msg)
-        return super (_A_Unit_, soc)._from_string (s, obj, glob, locl) * factor
+        return super (_A_Unit_, soc)._from_string (s, obj) * factor
     # end def _from_string
 
 # end class _A_Unit_
@@ -2551,7 +2552,7 @@ class A_Angle (_A_Float_) :
     # end def cooked
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, value, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, value, obj = None) :
         if value is not None :
             pat = soc._dms_pattern
             if soc._dms_pattern.search (value) :
@@ -2563,8 +2564,7 @@ class A_Angle (_A_Float_) :
                 if pat.sign == '-' :
                     result = -result
             else :
-                result = super (A_Angle, soc)._from_string \
-                    (value, obj, glob, locl)
+                result = super (A_Angle, soc)._from_string (value, obj)
         return soc.cooked (result)
     # end def _from_string
 
@@ -2605,7 +2605,7 @@ class _A_Boolean_ (Atomic_Json_Mixin, _A_Named_Value_) :
     # end def cooked
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         return soc.cooked (s)
     # end def _from_string
 
@@ -2864,7 +2864,7 @@ class A_Date_Time (_A_Date_) :
     # end def now
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         utcoffset     = None
         utcoffset_pat = soc.utcoffset_pat
         if utcoffset_pat.search (s) :
@@ -2872,7 +2872,7 @@ class A_Date_Time (_A_Date_) :
             om        = int (utcoffset_pat.om)
             s         = s [: utcoffset_pat.start ()]
             utcoffset = datetime.timedelta (0, (oh * 60 + om) * 60)
-        result  = super (A_Date_Time, soc)._from_string (s, obj, glob, locl)
+        result  = super (A_Date_Time, soc)._from_string (s, obj)
         if utcoffset is None :
             utcoffset = TFL.user_config.time_zone.utcoffset (result)
         result -= utcoffset
@@ -2920,10 +2920,10 @@ class A_Dirname (_A_Filename_) :
     typ         = _ ("Directory")
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (self, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (self, s, obj = None) :
         ### when called for the class, `self.__super` doesn't
         ### work while `super (A_Dirname, self)` does
-        s = super (A_Dirname, self)._from_string (s, obj, glob, locl)
+        s = super (A_Dirname, self)._from_string (s, obj)
         if s :
             if sos.altsep :
                 s = s.replace (sos.altsep, sos.sep)
@@ -2950,7 +2950,7 @@ class A_Duration (_A_Number_) :
         )
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         s = s.strip ()
         if s :
             ps     = reversed (s.split (":", 3))
@@ -3024,10 +3024,10 @@ class A_Enum \
     # end def cooked
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         if s :
             Table  = soc.Table
-            result = soc.cooked (soc.C_Type._from_string (s, obj, glob, locl))
+            result = soc.cooked (soc.C_Type._from_string (s, obj))
             if result in Table :
                 return result
             else :
@@ -3067,12 +3067,12 @@ class A_Euro_Amount (_A_Decimal_) :
     # end class Pickler
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, value, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, value, obj = None) :
         ### when called for the class, `soc.__super` doesn't
         ### work while `super (A_Euro_Amount, soc)` does
         if value :
             return super (A_Euro_Amount, soc)._from_string \
-                (soc._string_cleaner (value), obj, glob, locl)
+                (soc._string_cleaner (value), obj)
     # end def _from_string
 
 # end class A_Euro_Amount
@@ -3083,10 +3083,10 @@ class A_Filename (_A_Filename_) :
     typ         = _ ("Filename")
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (self, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (self, s, obj = None) :
         ### when called for the class, `self.__super` doesn't
         ### work while `super (A_Filename, self)` does
-        s = super (A_Filename, self)._from_string (s, obj, glob, locl)
+        s = super (A_Filename, self)._from_string (s, obj)
         if s and self.do_check :
             self._check_dir   (sos.path.dirname (s))
             self._check_read  (s)

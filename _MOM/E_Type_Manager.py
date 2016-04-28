@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -491,7 +491,7 @@ class Object (Id_Entity) :
         for (pka, v) in zip (self._etype.primary, epk) :
             if v is not None :
                 try :
-                    yield pka.from_string (v, None)
+                    yield pka.from_string (v)
                 except MOM.Error.No_Such_Entity :
                     yield None
             else :
@@ -640,7 +640,7 @@ class Link (Id_Entity) :
             if not isinstance (v, (dict, tuple, list, int)) :
                 if not (v.startswith ("(") and v.endswith (")")) :
                     v = (v, )
-            result = r.from_string (v, None)
+            result = r.from_string (v)
         return result
     # end def _cooked_role
 
@@ -652,7 +652,7 @@ class Link (Id_Entity) :
                     ### `raw` is specified
                     v = self._cooked_role (pka, v)
                 elif v is not None :
-                    v = pka.from_string   (v, None)
+                    v = pka.from_string   (v)
             except MOM.Error.No_Such_Entity :
                 v = None
             yield v

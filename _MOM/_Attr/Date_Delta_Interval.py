@@ -21,6 +21,7 @@
 #    11-Mar-2014 (CT) Use `_Overrides`
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #     7-Feb-2016 (CT) Factor `Pickler_As_String`
+#    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,7 @@ class A_Date_or_Delta (A_Attr_Type) :
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         s = s.strip ()
         if s :
             if s.startswith ("+") :

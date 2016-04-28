@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -75,6 +75,7 @@
 #    23-Jan-2015 (CT) Add `_ui_name_short_T`
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #     6-May-2015 (CT) Use `TFL.json_dump.to_string`
+#    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    ««revision-date»»···
 #--
 
@@ -497,7 +498,7 @@ class _Type_ (TFL.Meta.BaM (_Base_, metaclass = _M_Type_)) :
     def _cooker (self, value) :
         attr = self._attr
         if isinstance (value, pyk.string_types) :
-            return attr.from_string (value, None, {}, {})
+            return attr.from_string (value)
         else :
             return attr.cooked (value)
     # end def _cooker

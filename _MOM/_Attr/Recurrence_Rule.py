@@ -43,6 +43,7 @@
 #     7-Feb-2016 (CT) Derive `A_Weekday_RR.Pickler` from `Pickler_As_String`
 #    15-Feb-2016 (CT) Remove spurious import of `datetime`
 #    15-Feb-2016 (CT) Use `CAL.G8R.Week_Days` to allow localized weekday names
+#    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    ««revision-date»»···
 #--
 
@@ -106,7 +107,7 @@ class A_Weekday_RR (A_Attr_Type) :
         return value
     # end def cooked
 
-    def _from_string (self, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (self, s, obj = None) :
         if s :
             v = CAL.G8R.Week_Days.globalized (s).upper ()
             return self.cooked (self._call_eval (v, ** self.Table))

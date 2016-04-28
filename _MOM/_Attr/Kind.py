@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -221,6 +221,8 @@
 #    27-Aug-2014 (CT) Add guard for `None` to `_get_computed`
 #    17-Oct-2014 (CT) Change `db_sig` to wrap kind-specific sig in tuple
 #    11-Dec-2015 (CT) Add property `_SPK_Mixin_.typ`
+#    28-Apr-2016 (CT) Remove unused `set_raw`
+#    28-Apr-2016 (CT) Remove argument `glob` from call of `from_string`
 #    ««revision-date»»···
 #--
 
@@ -425,8 +427,7 @@ class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
         attr    = self.attr
         default = self.default
         if default is None and attr.raw_default :
-            default = attr.default = attr.from_string \
-                (attr.raw_default, obj, obj.globals ())
+            default = attr.default = attr.from_string (attr.raw_default, obj)
         return self._set_raw \
             (obj, attr.raw_default, default, changed = True)
     # end def reset
@@ -436,24 +437,6 @@ class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
         if value is not None :
             self._set_cooked_value (obj, value, changed = True)
     # end def set_pickle_cargo
-
-    def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False, changed = 42) :
-        if glob_dict is None :
-            glob_dict = obj.globals ()
-        value = None
-        if raw_value :
-            try :
-                value = self.attr.from_string (raw_value, obj, glob_dict)
-                self.attr.check_invariant     (obj, value)
-            except Exception as exc :
-                if dont_raise :
-                    if __debug__ :
-                        logging.exception \
-                            ("set_raw %s %r -> %r" % (obj, raw_value, value))
-                else :
-                    raise
-        return self._set_raw (obj, raw_value, value, changed)
-    # end def set_raw
 
     def sync_cooked (self, obj, raw_value) :
         if __debug__ :
@@ -1006,7 +989,7 @@ class _Raw_Value_Mixin_ (Kind) :
         value     = None
         if raw_value :
             try :
-                value = self.attr.from_string (raw_value, obj, obj.globals ())
+                value = self.attr.from_string (raw_value, obj)
             except Exception as exc :
                 if __debug__ :
                     logging.exception \

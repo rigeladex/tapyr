@@ -38,6 +38,7 @@
 #     6-Aug-2013 (CT) Remove composite attributes, aka, major surgery
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #    16-Dec-2015 (CT) Use `_Add_Import_Callback` as decorator
+#    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,7 @@ class _A_CIDR_ (A_Attr_Type) :
     # end class Pickler
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, value, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, value, obj = None) :
         if value :
             # this may raise a ValueError
             return soc.P_Type (value)

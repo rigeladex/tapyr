@@ -20,6 +20,7 @@
 #     8-Feb-2016 (CT) Add guard for `None` to `cooked`,
 #                     unpack `CAL.Time_Delta` value
 #     8-Feb-2016 (CT) Add test
+#    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    ««revision-date»»···
 #--
 
@@ -81,7 +82,7 @@ class A_Time_Delta (A_Attr_Type) :
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, s, obj = None) :
         s = s.strip ()
         if s :
             return soc.cooked (s)

@@ -19,6 +19,7 @@
 #    16-Jun-2014 (RS) Creation
 #    11-Jul-2014 (CT) Derive from `A_Attr_Type`, set `Pickler.Type` to `A_Float`
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
+#    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    ««revision-date»»···
 #--
 
@@ -99,7 +100,7 @@ class A_Date_Time_Delta (_Ancestor_Essence) :
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, in_s, obj = None, glob = {}, locl = {}) :
+    def _from_string (soc, in_s, obj = None) :
         s = in_s.strip ()
         if s :
             dtd = CAL.Date_Time_Delta.from_string (s)
