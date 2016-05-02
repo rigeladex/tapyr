@@ -391,6 +391,7 @@
 #    28-Apr-2016 (CT) Add `A_Time_List`
 #    28-Apr-2016 (CT) Change `A_Date_Time.as_string` to elide `:00`
 #                     + ditto for `A_Time.as_string`
+#     2-May-2016 (CT) Add `_A_Typed_Collection_.allow_primary = False`
 #     5-May-2016 (CT) Add `_A_Date_.not_in_past` and corresponding checker
 #     5-May-2016 (CT) Use `Object_Init`, not `Object`, for `not_in_past` checker
 #     6-May-2016 (CT) Add guard `not playback_p` to `not_in_past` predicate
@@ -2385,6 +2386,7 @@ class _A_Typed_Collection_ \
     """
 
     Kind_Mixins       = (MOM.Attr._Typed_Collection_Mixin_, )
+    allow_primary     = False
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :

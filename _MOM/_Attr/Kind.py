@@ -223,6 +223,10 @@
 #    11-Dec-2015 (CT) Add property `_SPK_Mixin_.typ`
 #    28-Apr-2016 (CT) Remove unused `set_raw`
 #    28-Apr-2016 (CT) Remove argument `glob` from call of `from_string`
+#     2-May-2016 (CT) Fix typo in `%`-format
+#                     of `_Typed_Collection_Mixin_._check_sanity`
+#     2-May-2016 (CT) Allow `allow_primary`
+#                     in `_Typed_Collection_Mixin_._check_sanity`
 #    ««revision-date»»···
 #--
 
@@ -383,9 +387,9 @@ class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
         if obj is not None :
             val = self.get_value (obj)
             if val is not None :
-                result = self.attr.as_string (val) or u""
+                result = self.attr.as_string (val) or ""
             else :
-                result = u""
+                result = ""
         else :
             result = self.raw_default
         return result
@@ -474,9 +478,9 @@ class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
            ) :
             d = attr_type.as_string (default)
             if d == "" and default is not None :
-                d = u"%s" % default
+                d = "%s" % default
             raise ValueError \
-                ( u""">>> %s.%s: got `%s` instead of "%s" as `raw_default`"""
+                ( """>>> %s.%s: got `%s` instead of "%s" as `raw_default`"""
                 % (attr_type, self.name, default, d)
                 )
     # end def _check_sanity_default
@@ -587,7 +591,7 @@ class _SPK_Mixin_ (Kind) :
         ### don't resolve forward or lazy reference
         result = self.__super.get_value (obj)
         if result is None :
-            result = u""
+            result = ""
         elif not isinstance (result, int) :
             result = result.spk
         return result
@@ -638,7 +642,7 @@ class _EPK_Mixin_ (_SPK_Mixin_) :
         ref = self.get_value (obj)
         if ref is not None :
             return ref.epk_raw
-        return u""
+        return ""
     # end def get_raw_epk
 
     def sort_key (self, obj) :
@@ -849,15 +853,16 @@ class _Typed_Collection_Mixin_ (_Co_Base_) :
         self.__super.__init__ (Attr_Type, e_type)
         attr = self.attr
         if self.record_changes :
-            PT = MOM.Attr.M_Coll.Table.get (attr.R_Type)
+            RT = attr.R_Type
+            PT = MOM.Attr.M_Coll.Table.get (RT)
             if PT is not None :
                 attr.R_Type = PT.New (attr_name = attr.name)
-            elif attr.R_Type is not tuple :
+            elif RT is not tuple :
                 if __debug__ :
-                    logging.exception \
+                    logging.error \
                         ( "%s: R_Type %r doesn't have a correspondence in "
                           "MOM.Attr.Coll; is it immutable?"
-                        % (attr, attr.R_Type)
+                        % (attr, RT)
                         )
     # end def __init__
 
@@ -868,9 +873,11 @@ class _Typed_Collection_Mixin_ (_Co_Base_) :
 
     def _check_sanity (self, attr_type, e_type) :
         if __debug__ :
-            if isinstance (self, _Primary_) :
+            if isinstance (self, _Primary_) and not attr_type.allow_primary :
                 raise TypeError \
-                    ("%s cannot be of primary kind %" % (attr_type, self.kind))
+                    ( "%r cannot be of primary kind %s"
+                    % (attr_type, self.kind)
+                    )
             C_Type = attr_type.C_Type
             if not C_Type :
                 raise TypeError ("%s needs to define `C_Type`" % attr_type)
@@ -943,7 +950,7 @@ class _Raw_Value_Mixin_ (Kind) :
 
     def get_raw (self, obj) :
         if obj is not None :
-            result = getattr (obj, self.attr.raw_name, u"")
+            result = getattr (obj, self.attr.raw_name, "")
         else :
             result = self.raw_default
         return result
