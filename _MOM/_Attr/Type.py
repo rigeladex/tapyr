@@ -384,6 +384,13 @@
 #    25-Apr-2016 (CT) Convert rest of `from_string`, `_from_string` definitions
 #                     to `Class_and_Instance_Method`
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
+#    28-Apr-2016 (CT) Convert `_C_split` to `Class_and_Instance_Method`
+#    28-Apr-2016 (CT) Factor `_from_string_comps`
+#    28-Apr-2016 (CT) Add `value_range`, `value_range_delta`,
+#                     `C_range_sep`, `C_range_splitter`
+#    28-Apr-2016 (CT) Add `A_Time_List`
+#    28-Apr-2016 (CT) Change `A_Date_Time.as_string` to elide `:00`
+#                     + ditto for `A_Time.as_string`
 #     5-May-2016 (CT) Add `_A_Date_.not_in_past` and corresponding checker
 #     5-May-2016 (CT) Use `Object_Init`, not `Object`, for `not_in_past` checker
 #     6-May-2016 (CT) Add guard `not playback_p` to `not_in_past` predicate
@@ -1168,14 +1175,15 @@ class _A_Collection_ (A_Attr_Type) :
         return (self.C_Type.as_code (v) for v in value)
     # end def _C_as_code
 
-    def _C_split (self, s) :
-        if s in ("[]", "") :
+    @TFL.Meta.Class_and_Instance_Method
+    def _C_split (soc, s) :
+        if s in ("[]", "()", "") :
             return []
         if s.startswith ("[") and s.endswith ("]") :
             s = s [1:-1]
         elif s.startswith ("(") and s.endswith (")") :
             s = s [1:-1]
-        return (x for x in (r.strip () for r in s.split (self.C_sep)) if x)
+        return (x for x in (r.strip () for r in s.split (soc.C_sep)) if x)
     # end def _C_split
 
 # end class _A_Collection_
@@ -1400,6 +1408,22 @@ class _A_Date_ (A_Attr_Type) :
             return pyk.text_type (value.strftime (soc._output_format ()))
         return ""
     # end def as_string
+
+    @TFL.Meta.Class_and_Instance_Method
+    def value_range (soc, head, tail, obj) :
+        ### `value_range` is inclusive
+        from _CAL._DTW_ import _DTW_
+        import _CAL.Date_Time
+        d = soc.value_range_delta (obj)
+        n = _DTW_.new_dtw (head)
+        t = _DTW_.new_dtw (tail)
+        while n <= t :
+            yield n._body
+            try :
+                n += d
+            except OverflowError :
+                break
+    # end def value_range
 
     def _checkers (self, e_type, kind) :
         for c in self.__super._checkers (e_type, kind) :
@@ -2410,17 +2434,87 @@ class _A_Typed_Collection_ \
 
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj = None) :
-        C_fs  = soc.C_Type._from_string
         comps = soc._C_split (s.strip ())
-        return soc.R_Type (C_fs (c, obj) for c in comps)
+        return soc.R_Type (soc._from_string_comps (comps, obj))
     # end def _from_string
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string_comps (soc, comps, obj) :
+        C_fs  = soc.C_Type._from_string
+        return (C_fs (c, obj) for c in comps)
+    # end def _from_string_comps
 
 # end class _A_Typed_Collection_
 
-class _A_Typed_List_ (_A_Typed_Collection_) :
+class _A_Typed_List_ \
+          ( TFL.Meta.BaM
+              ( _A_Typed_Collection_
+              , metaclass = MOM.Meta.M_Attr_Type.Typed_List
+              )
+          ) :
     """Base class for list-valued attributes with strict type."""
 
-    R_Type         = list
+    C_range_sep      = Regexp (r"(?: - | ?(?:–|\.\.) ?)")
+    C_range_splitter = None
+    R_Type           = list
+
+    class _Range_Splitter_ (TFL.Meta.Object) :
+        """Split a range specification."""
+
+        split        = None
+
+        def __init__ (self, sep = None) :
+            if self is not None :
+                self.sep = sep
+        # end def __init__
+
+        def __call__ (self, attr, comps, obj) :
+            C_Type = attr.C_Type
+            C_fs   = C_Type._from_string
+            split  = self.split
+            for c in comps :
+                r  = split (c) if split is not None else None
+                if r is None :
+                    yield C_fs (c, obj)
+                else :
+                    for d in self.value_range (attr, r, obj, C_Type, C_fs) :
+                        yield d
+        # end def __call__
+
+        def value_range (self, attr, range, obj, C_Type, C_fs) :
+            h, t = tuple (C_fs (x, obj) for x in range)
+            for d in C_Type.value_range (h, t, obj) :
+                yield d
+        # end def value_range
+
+    # end class _Range_Splitter_
+
+    class _Range_Splitter_Regexp_ (_Range_Splitter_) :
+        """Split a range specification by a regular expression."""
+
+        def split (self, c) :
+            sep = self.sep
+            if sep.search (c) :
+                return sep.split (c, 1)
+        # end def __call__
+
+    # end class _Range_Splitter_Regexp_
+
+    class _Range_Splitter_Sep_ (_Range_Splitter_) :
+        """Split a range specification by a string separator."""
+
+        def split (self, c) :
+            sep = self.sep
+            if sep in c :
+                return c.split (sep, 1)
+        # end def __call__
+
+    # end class _Range_Splitter_Sep_
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string_comps (soc, comps, obj) :
+        return soc.C_range_splitter (soc, comps, obj)
+    # end def _from_string_comps
 
 # end class _A_Typed_List_
 
@@ -2794,6 +2888,12 @@ class A_Date (_A_Date_) :
         return datetime.datetime.now ().date ()
     # end def now
 
+    @TFL.Meta.Class_and_Instance_Method
+    def value_range_delta (self, obj) :
+        from _CAL.Delta import Date_Delta
+        return Date_Delta (1)
+    # end def value_range_delta
+
 # end class A_Date
 
 class A_Date_List (_A_Typed_List_) :
@@ -2867,7 +2967,10 @@ class A_Date_Time (_A_Date_) :
             t   = v.time ()
             fmt = A_Date.input_formats [0] if t == t.min \
                 else soc._output_format ()
-            return v.strftime (fmt)
+            result = v.strftime (fmt)
+            if result.endswith (":00") :
+                result = result [:-3]
+            return result
         return ""
     # end def as_string
 
@@ -2891,6 +2994,12 @@ class A_Date_Time (_A_Date_) :
     def now (cls) :
         return datetime.datetime.utcnow ()
     # end def now
+
+    @TFL.Meta.Class_and_Instance_Method
+    def value_range_delta (self, obj) :
+        from _CAL.Delta import Date_Time_Delta
+        return Date_Time_Delta (1)
+    # end def value_range_delta
 
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj = None) :
@@ -3154,6 +3263,12 @@ class A_Int_List (_A_Typed_List_) :
 
     typ            = _ ("Int_List")
     C_Type         = A_Int
+
+    @TFL.Meta.Class_and_Instance_Method
+    def value_range (soc, h, t, obj) :
+        ### `value_range` is inclusive
+        return range (h, t + 1)
+    # end def value_range
 
 # end class A_Int_List
 
@@ -3504,6 +3619,16 @@ class A_Time (_A_Date_) :
     # end def as_rest_cargo_ckd
 
     @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        ### when called for the class, `soc.__super` doesn't
+        ### work while `super (A_Time, soc)` does
+        result = super (A_Time, soc).as_string (value)
+        if result.endswith (":00") :
+            result = result [:-3]
+        return result
+    # end def as_string
+
+    @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         if isinstance (value, datetime.datetime) :
             value = value.time ()
@@ -3522,7 +3647,22 @@ class A_Time (_A_Date_) :
         return datetime.datetime.now ().time ()
     # end def now
 
+    @TFL.Meta.Class_and_Instance_Method
+    def value_range_delta (soc, obj) :
+        from _CAL.Delta import Time_Delta
+        return Time_Delta (1)
+    # end def value_range_delta
+
 # end class A_Time
+
+class A_Time_List (_A_Typed_List_) :
+    """List of times."""
+
+    typ            = _ ("Time_List")
+    C_range_sep    = Regexp (r"(?: ?(?:-|–|\.\.) ?)")
+    C_Type         = A_Time
+
+# end class A_Time_List
 
 class A_Url (_A_String_) :
     """URL (including local file name)."""

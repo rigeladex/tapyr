@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -66,7 +66,7 @@ _test_code = r"""
     >>> reg.set_raw (result = dict (date = "26.5.2009 10:20", software = "calculated with REGATTA.yellow8.com", status = "final", raw = True))
     1
     >>> prepr ((pyk.text_type (reg.FO.result)))
-    '2009-05-26 10:20:00, calculated with REGATTA.yellow8.com, final'
+    '2009-05-26 10:20, calculated with REGATTA.yellow8.com, final'
     >>> scope.commit ()
 
     >>> scope.MOM.Id_Entity.query ().order_by (TFL.Sorted_By ("pid")).attrs ("pid", "type_name").all ()
@@ -582,7 +582,7 @@ _test_delayed  = r"""
     >>> reg.set_raw (result = dict (date = "26.5.2009 10:20", software = "calculated with REGATTA.yellow8.com", status = "final", raw = True))
     1
     >>> prepr ((pyk.text_type (reg.FO.result)))
-    '2009-05-26 10:20:00, calculated with REGATTA.yellow8.com, final'
+    '2009-05-26 10:20, calculated with REGATTA.yellow8.com, final'
 
     >>> show_ora (bir)  ### before scope.add
     ---

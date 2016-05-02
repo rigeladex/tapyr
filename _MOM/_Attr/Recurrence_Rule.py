@@ -44,6 +44,8 @@
 #    15-Feb-2016 (CT) Remove spurious import of `datetime`
 #    15-Feb-2016 (CT) Use `CAL.G8R.Week_Days` to allow localized weekday names
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
+#    28-Apr-2016 (CT) Convert `_from_string` to `Class_and_Instance_Method`
+#    28-Apr-2016 (CT) Add `value_range`
 #    ««revision-date»»···
 #--
 
@@ -60,7 +62,6 @@ import _CAL.G8R
 
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.pyk              import pyk
-
 import _TFL.r_eval
 
 import dateutil.rrule
@@ -107,10 +108,22 @@ class A_Weekday_RR (A_Attr_Type) :
         return value
     # end def cooked
 
-    def _from_string (self, s, obj = None) :
+    @TFL.Meta.Class_and_Instance_Method
+    def value_range (soc, h, t, obj) :
+        Names = soc.Names
+        l     = len (Names)
+        n     = h.weekday
+        tail  = (t.weekday + 1) % l ### `value_range` is inclusive
+        while n != tail :
+            yield n
+            n = (n + 1) % l
+    # end def value_range
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj = None) :
         if s :
             v = CAL.G8R.Week_Days.globalized (s).upper ()
-            return self.cooked (self._call_eval (v, ** self.Table))
+            return soc.cooked (soc._call_eval (v, ** soc.Table))
     # end def _from_string
 
 # end class A_Weekday_RR
@@ -118,8 +131,8 @@ class A_Weekday_RR (A_Attr_Type) :
 class A_Weekday_RR_List (_A_Typed_List_) :
     """A list of weekday specifications in recurrence rule"""
 
-    typ    = "Weekday_RR_List"
-    C_Type = A_Weekday_RR
+    typ         = "Weekday_RR_List"
+    C_Type      = A_Weekday_RR
 
 # end class A_Weekday_RR_List
 

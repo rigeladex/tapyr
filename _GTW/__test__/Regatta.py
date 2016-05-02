@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -59,19 +59,19 @@ _test_code = """
     SRM.Regatta_H (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('yardstick', ))
 
     >>> reg.result
-    SRM.Regatta_Result ('2008-05-01 04:00:00')
+    SRM.Regatta_Result ('2008-05-01 04:00')
 
     >>> TFL.user_config.time_zone = None
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_ckd (reg.result)
     '2008-05-01T04:00:00+00:00'
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_raw (reg.result)
-    '2008-05-01 04:00:00'
+    '2008-05-01 04:00'
 
     >>> TFL.user_config.time_zone = "Europe/Vienna"
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_ckd (reg.result)
     '2008-05-01T06:00:00+02:00'
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_raw (reg.result)
-    '2008-05-01 06:00:00'
+    '2008-05-01 06:00'
 
     >>> TFL.user_config.time_zone = "America/New_York"
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_ckd (reg.result)

@@ -69,6 +69,7 @@
 #    15-Aug-2015 (CT) Add `is_abstract`, `A_Type`
 #    22-Feb-2016 (CT) Change `Unit` to allow `_default_unit != 1`
 #    24-Feb-2016 (CT) Add `is_partial` to `Root.__new__`
+#    29-Apr-2016 (CT) Add `Typed_List`
 #    ««revision-date»»···
 #--
 
@@ -446,6 +447,24 @@ class Typed_Collection (Root) :
     # end def _elements_from_cargo_s
 
 # end class Typed_Collection
+
+class Typed_List (Typed_Collection) :
+    """Meta class for MOM.Attr._A_Typed_List_ classes."""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        sep      = cls.C_range_sep
+        splitter = dct.get ("C_range_splitter")
+        if sep is not None or splitter is None :
+            RS   = cls._Range_Splitter_ if sep is None else \
+                (    cls._Range_Splitter_Sep_
+                       if isinstance (sep, pyk.string_types)
+                else cls._Range_Splitter_Regexp_
+                )
+            cls.C_range_splitter = RS (sep)
+    # end def __init__
+
+# end class Typed_List
 
 class Unit (Root) :
     """Meta class for MOM.Attr._A_Unit_ classes.

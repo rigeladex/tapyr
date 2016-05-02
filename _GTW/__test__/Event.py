@@ -84,6 +84,10 @@ _test_code = """
     >>> prepr (rr2.ui_display)
     '20100803, 20100805, 20100810, 20100812, 20100817'
 
+    >>> rr2a = RR (start = "20100801", count = 5, unit = "Daily", week_day = ("TH..MO"))
+    >>> prepr (rr2a.ui_display)
+    '20100801, 20100802, 20100805, 20100806, 20100807'
+
     >>> with TFL.I18N.test_language ("de") :
     ...     rr2_de = RR (start = "20100801", count = 5, unit = "Daily", week_day = ("Di", "Do"))
     ...     prepr (rr2_de.ui_display)
@@ -96,6 +100,10 @@ _test_code = """
     >>> rr4 = RR (start = "20100801", count = 5, unit = "Daily", week_day = ("TU", "TH"), restrict_pos = "1")
     >>> prepr (rr4.ui_display)
     '20100803, 20100805, 20100810, 20100812, 20100817'
+
+    >>> rr4a = RR (start = "20100801", count = 5, unit = "Daily", week_day = ("TU - TH"), restrict_pos = "1")
+    >>> prepr (rr4a.ui_display)
+    '20100803, 20100804, 20100805, 20100810, 20100811'
 
     >>> rr5 = RR (start = "20100801", count = 5, unit = "Weekly", week_day = ("TU", "TH"), restrict_pos = "1")
     >>> prepr (rr5.ui_display)
@@ -193,12 +201,12 @@ _test_code = """
     '20081104, 20121106, 20161108, 20201103, 20241105, 20281107'
 
     The 3rd instance into the month of one of Tuesday, Wednesday or Thursday,
-    >>> rr27 = RR (start = "20101101", count = 5, unit = "Monthly", week_day = "TU, WE, TH", restrict_pos = "3")
+    >>> rr27 = RR (start = "20101101", count = 5, unit = "Monthly", week_day = "TU - TH", restrict_pos = "3")
     >>> prepr (rr27.ui_display)
     '20101104, 20101207, 20110106, 20110203, 20110303'
 
     The 2nd to last weekday of the month,
-    >>> rr28 = RR (start = "20100701", count = 5, unit = "Monthly", week_day = "MO, TU, WE, TH, FR", restrict_pos = "-2")
+    >>> rr28 = RR (start = "20100701", count = 5, unit = "Monthly", week_day = "MO..FR", restrict_pos = "-2")
     >>> prepr (rr28.ui_display)
     '20100729, 20100830, 20100929, 20101028, 20101129'
 
@@ -208,6 +216,18 @@ _test_code = """
     >>> rrz = RR (rsy.epk_raw, start = "20100801", unit = "Yearly", week_day = "SA,SU", is_exception = "yes", raw = True)
     >>> prepr (rsy.ui_display)
     '20100802, 20100803, 20100804, 20100805, 20100806'
+
+    >>> prepr (A_Time_List.as_string (A_Time_List.from_string ("10:42")))
+    '10:42'
+
+    >>> prepr (A_Time_List.as_string (A_Time_List.from_string ("10:42-13:53")))
+    '10:42,11:42,12:42,13:42'
+
+    >>> prepr (A_Date_List.as_string (A_Date_List.from_string ("2016-04-28..2016-05-01")))
+    '2016-04-28,2016-04-29,2016-04-30,2016-05-01'
+
+    >>> prepr (A_Date_Time_List.as_string (A_Date_Time_List.from_string ("2016-04-28 10:00 - 2016-04-30 10:00")))
+    '2016-04-28 10:00,2016-04-29 10:00,2016-04-30 10:00'
 
 """
 
