@@ -49,6 +49,7 @@
 #    16-Dec-2015 (CT) Change to `UI_Spec`
 #     9-Feb-2016 (CT) Add `Company_1P`
 #    24-Feb-2016 (CT) Add `Company_has_VAT_IDN`, `Person_has_VAT_IDN`
+#     3-May-2016 (CT) Add `Subject_has_Property`
 #    ««revision-date»»···
 #--
 
@@ -215,6 +216,10 @@ class UI_Spec (object) :
 
     Person_in_Group      = dict \
         ( sort_key       = TFL.Sorted_By ("pid") ### XXX remove this
+        )
+
+    Subject_has_Property = dict \
+        (
         )
 
 # end class UI_Spec
