@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -36,6 +36,7 @@
 #    10-Jul-2013 (CT) Define `ui_attr` as `Pred (Q.show_in_ui, q_able)`
 #     2-Mar-2014 (CT) Add `ui_attr_transitive`
 #    21-Aug-2014 (CT) Add `ignore_missing` to `Name` and `_Name_Selection_`
+#     3-May-2016 (CT) Add `mandatory`
 #    ««revision-date»»···
 #--
 
@@ -377,6 +378,7 @@ user               = Kind     ("user_attr")
 ui_attr            = Pred     (Q.show_in_ui,        q_able)
 ui_attr_transitive = Pred     (Q.q_able_transitive, ui_attr)
 editable           = List     (primary,             user)
+mandatory          = List     (primary,             required)
 
 P_optional         = Not_Pred (Q.is_required,       user)
 P_required         = Pred     (Q.is_required,       user)
