@@ -130,6 +130,7 @@
 #    16-Dec-2015 (CT) Explicitly set `ETM` in `_pns_entries`
 #    16-Dec-2015 (CT) Use `E_Type.UI_Spec`, not `Nav.Admin ["type_base_name"]`
 #    26-Apr-2016 (CT) Add `pre_complete` guard to `Completer._rendered_post`
+#     3-May-2016 (CT) Factor `Group._etype_entry`, allow strings in `etypes`
 #    ««revision-date»»···
 #--
 
@@ -1678,13 +1679,36 @@ class Group (_Ancestor) :
         self.__super._add_index (0)
     # end def _add_index
 
+    def _etype_entry (self, ET) :
+        ET_Map = self.top.ET_Map
+        tn     = ET.type_name
+        admin  = ET_Map [tn].admin
+        if (not admin) or self.show_aliases :
+            aa = dict (getattr (ET, "admin_args", {}))
+            aa.update (ET.UI_Spec, ETM = tn)
+            T = E_Type
+            if admin :
+                T = E_Type_Alias
+                aa.update \
+                    ( name          = ET.ui_name
+                    , show_in_admin = True
+                    , target        = admin
+                    )
+            if aa.get ("show_in_admin") :
+                return T (parent = self, ** aa)
+    # end def _etype_entry
+
     def _filter_etype_entries (self, * args) :
         seen = set ()
         for e in iter_chain (* args) :
-            if isinstance (e, tuple) :
+            if isinstance (e, pyk.string_types) :
+                e = self._etype_entry (self.top.scope [e].E_Type)
+                if e is None :
+                    continue
+            elif isinstance (e, tuple) :
                 cls, args, kw = e
                 e = cls (* args, ** dict (kw, parent = self))
-            etn = e.ETM.type_name
+            etn = e.type_name
             if etn not in seen :
                 seen.add (etn)
                 yield e
@@ -1698,23 +1722,12 @@ class Group (_Ancestor) :
             PNS = app_type.PNS_Map [pns]
             for ET in app_type.etypes_by_pns [pns] :
                 if ET.is_relevant and ET.show_in_ui :
-                    tn    = ET.type_name
-                    tbn   = ET.type_base_name
-                    admin = ET_Map [tn].admin
-                    if (not admin) or self.show_aliases :
-                        aa = dict (getattr (ET, "admin_args", {}))
-                        aa.update (ET.UI_Spec, ETM = tn)
-                        T = E_Type
-                        if admin :
-                            T = E_Type_Alias
-                            aa.update \
-                                ( name          = ET.ui_name
-                                , show_in_admin = True
-                                , target        = admin
-                                )
-                        if aa.get ("show_in_admin") and tbn not in seen :
+                    tbn = ET.type_base_name
+                    if tbn not in seen :
+                        e = self._etype_entry (ET)
+                        if e is not None :
                             seen.add (tbn)
-                            yield T  (parent = self, ** aa)
+                            yield e
     # end def _pns_entries
 
 # end class Group
