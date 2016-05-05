@@ -304,6 +304,7 @@
 #    18-Dec-2015 (CT) Change `_main__init__` to not pass `on_error` to
 #                     `epk_as_kw`
 #     5-Feb-2016 (CT) Add `polish_empty`
+#     5-May-2016 (CT) Add support for predicates of kind `object_init`
 #    ««revision-date»»···
 #--
 
@@ -691,11 +692,11 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         self._attr_man.reset_syncable ()
     # end def reset_syncable
 
-    def set (self, on_error = None, ** kw) :
+    def set (self, _pred_kinds = None, on_error = None, ** kw) :
         """Set attributes  from cooked values specified in `kw`."""
         assert "raw" not in kw
         ukw = dict (self._kw_undeprecated (kw))
-        return self._set_ckd_inner (on_error, ** kw)
+        return self._set_ckd_inner (_pred_kinds, on_error, ** kw)
     # end def set
 
     def set_attr_iter (self, attr_dict, on_error = None) :
@@ -723,12 +724,12 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
                 attr.set_pickle_cargo  (self, v)
     # end def set_pickle_cargo
 
-    def set_raw (self, on_error = None, ** kw) :
+    def set_raw (self, _pred_kinds = None, on_error = None, ** kw) :
         """Set attributes from raw values specified in `kw`."""
         assert "raw" not in kw
         ukw = dict (self._kw_undeprecated (kw))
         pkw = self._kw_polished (ukw, on_error)
-        return self._set_raw_inner (on_error, ** pkw)
+        return self._set_raw_inner (_pred_kinds, on_error, ** pkw)
     # end def set_raw
 
     def sync_attributes (self) :
@@ -777,17 +778,24 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
             raise error
     # end def _kw_check_required
 
-    def _kw_check_predicates (self, _kind = "object", on_error = None, ** kw) :
-        result = self.is_correct (kw, _kind)
+    def _kw_check_predicates (self, _kinds = None, on_error = None, ** kw) :
+        result = True
+        errors = []
+        if _kinds is None :
+            _kinds = ["object"]
+        for _kind in _kinds :
+            kr = self.is_correct (kw, _kind)
+            if not kr :
+                errors.extend (self._pred_man.errors [_kind])
+                result = False
         if not result :
-            errors = self._pred_man.errors [_kind]
             if on_error is None :
                 on_error = self._raise_attr_error
             on_error (MOM.Error.Invariants (errors))
         return result
     # end def _kw_check_predicates
 
-    def _kw_raw_check_predicates (self, on_error = None, ** kw) :
+    def _kw_raw_check_predicates (self, _kinds = None, on_error = None, ** kw) :
         Err    = MOM.Error
         ckd_kw = {}
         to_do  = []
@@ -830,7 +838,8 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
                 ckd_kw [name] = None
         if errors :
             on_error (MOM.Error.Invariants (errors))
-        result = self._kw_check_predicates (on_error = on_error, ** ckd_kw)
+        result = self._kw_check_predicates \
+            (_kinds = _kinds, on_error = on_error, ** ckd_kw)
         return result, to_do
     # end def _kw_raw_check_predicates
 
@@ -917,12 +926,14 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
             yield a, name, value, a.get_raw (self), a.get_raw_pid (self)
     # end def _record_iter_raw
 
-    def _set_ckd (self, on_error = None, ** kw) :
+    def _set_ckd (self, _pred_kinds = None, on_error = None, ** kw) :
         man = self._attr_man
         tc  = man.total_changes
         man.reset_pending ()
         if kw :
-            if self._kw_check_predicates (on_error = on_error, ** kw) :
+            is_correct = self._kw_check_predicates \
+                (_kinds = _pred_kinds, on_error = on_error, ** kw)
+            if is_correct :
                 for name, val, attr in self.set_attr_iter (kw, on_error) :
                     attr._set_cooked (self, val)
         if man.updates_pending :
@@ -933,22 +944,22 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         return man.total_changes - tc
     # end def _set_ckd
 
-    def _set_ckd_inner (self, on_error = None, ** kw) :
+    def _set_ckd_inner (self, _pred_kinds = None, on_error = None, ** kw) :
         gen = \
             (   (name, attr.get_raw_pid (self))
             for attr, name, value in self._record_iter (kw)
             if  attr.get_value (self) != value
             )
         with self._record_context (gen, self.SCM_Change_Attr) :
-            return self._set_ckd (on_error, ** kw)
+            return self._set_ckd (_pred_kinds, on_error, ** kw)
     # end def _set_ckd_inner
 
-    def _set_raw (self, on_error = None, ** kw) :
+    def _set_raw (self, _pred_kinds = None, on_error = None, ** kw) :
         man = self._attr_man
         tc  = man.total_changes
         if kw :
             is_correct, to_do = self._kw_raw_check_predicates \
-                (on_error = on_error, ** kw)
+                (_kinds = _pred_kinds, on_error = on_error, ** kw)
             man.reset_pending ()
             if is_correct :
                 for attr, raw_val, val in to_do :
@@ -958,14 +969,14 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         return man.total_changes - tc
     # end def _set_raw
 
-    def _set_raw_inner (self, on_error = None, ** kw) :
+    def _set_raw_inner (self, _pred_kinds = None, on_error = None, ** kw) :
         gen = \
             (   (name, raw_pid)
             for attr, name, value, raw, raw_pid in self._record_iter_raw (kw)
             if  raw != value
             )
         with self._record_context (gen, self.SCM_Change_Attr) :
-            return self._set_raw (on_error, ** kw)
+            return self._set_raw (_pred_kinds, on_error, ** kw)
     # end def _set_raw_inner
 
     def _store_attr_error (self, exc) :
@@ -1097,28 +1108,28 @@ class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
         self._kw_check_required (* args, ** skw)
         if skw :
             setter = self._set_raw if raw else self._set_ckd
-            setter (** skw)
+            setter (_pred_kinds = ("object_init", "object"), ** skw)
     # end def _main__init__
 
     def _repr (self, type_name) :
         return u"%s (%s)" % (type_name, self.attr_as_code ().rstrip (", "))
     # end def _repr
 
-    def _set_ckd_inner (self, on_error = None, ** kw) :
+    def _set_ckd_inner (self, _pred_kinds = None, on_error = None, ** kw) :
         owner_attr = self.owner_attr
         if owner_attr is None or self.electric or not owner_attr.record_changes :
-            return self._set_ckd (on_error, ** kw)
+            return self._set_ckd (_pred_kinds, on_error, ** kw)
         elif owner_attr and owner_attr.is_primary :
             ### Change in primary attribute might be a `rename`
             return self.owner.set (** {self.attr_name : self.copy (** kw)})
         else :
-            return self.__super._set_ckd_inner (on_error, ** kw)
+            return self.__super._set_ckd_inner (_pred_kinds, on_error, ** kw)
     # end def _set_ckd_inner
 
-    def _set_raw_inner (self, on_error = None, ** kw) :
+    def _set_raw_inner (self, _pred_kinds = None, on_error = None, ** kw) :
         owner_attr = self.owner_attr
         if owner_attr is None or self.electric or not owner_attr.record_changes :
-            return self._set_raw (on_error, ** kw)
+            return self._set_raw (_pred_kinds, on_error, ** kw)
         elif owner_attr and owner_attr.is_primary :
             ### Change in primary attribute might be a `rename`
             return self.owner.set \
@@ -1833,6 +1844,10 @@ class Id_Entity \
         akw           = self.epk_as_kw (* epk, ** dict (kw, on_error = None))
         ukw           = dict (self._kw_undeprecated (akw))
         pkw           = self._kw_polished (ukw) if raw else ukw
+        checker       = \
+            (  self._kw_raw_check_predicates
+            if raw else self._kw_check_predicates
+            )
         setter        = self.__super._set_raw if raw else self.__super._set_ckd
             ### Need to use `__super.` methods here because it's not a `rename`
         try :
@@ -1841,14 +1856,10 @@ class Id_Entity \
         except MOM.Error.Required_Missing as exc :
             self._pred_man.missing_required = exc
             pkw.update (self._init_epk (epk))
-            checker = \
-                (  self._kw_raw_check_predicates
-                if raw else self._kw_check_predicates
-                )
             checker (** pkw)
             raise MOM.Error.Invariants (self._pred_man)
         pkw.update (self._init_epk (epk))
-        setter (** pkw)
+        setter (_pred_kinds = ("object_init", "object"), ** pkw)
         required_errors = self._pred_man.required_errors
         if required_errors :
             raise MOM.Error.Invariants (self._pred_man)
@@ -1880,23 +1891,23 @@ class Id_Entity \
                 delattr (self, a)
     # end def _reset_epk
 
-    def _set_ckd (self, on_error = None, ** kw) :
+    def _set_ckd (self, _pred_kinds = None, on_error = None, ** kw) :
         result = 0
         if kw :
             new_epk, pkas_raw, pkas_ckd = self._extract_primary_ckd (kw)
             if pkas_ckd and tuple (new_epk) != self.epk [:-1] :
                 result += self._rename (new_epk, pkas_raw, pkas_ckd)
-            result += self.__super._set_ckd (on_error, ** kw)
+            result += self.__super._set_ckd (_pred_kinds, on_error, ** kw)
         return result
     # end def _set_ckd
 
-    def _set_raw (self, on_error = None, ** kw) :
+    def _set_raw (self, _pred_kinds = None, on_error = None, ** kw) :
         result = 0
         if kw :
             new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
             if pkas_ckd and tuple (new_epk) != self.epk [:-1] :
                 result += self._rename (new_epk, pkas_raw, pkas_ckd)
-            result += self.__super._set_raw (on_error, ** kw)
+            result += self.__super._set_raw (_pred_kinds, on_error, ** kw)
         return result
     # end def _set_raw
 

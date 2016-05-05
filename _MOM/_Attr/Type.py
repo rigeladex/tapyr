@@ -384,6 +384,8 @@
 #    25-Apr-2016 (CT) Convert rest of `from_string`, `_from_string` definitions
 #                     to `Class_and_Instance_Method`
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
+#     5-May-2016 (CT) Add `_A_Date_.not_in_past` and corresponding checker
+#     5-May-2016 (CT) Use `Object_Init`, not `Object`, for `not_in_past` checker
 #    ««revision-date»»···
 #--
 
@@ -1365,6 +1367,7 @@ class _A_Date_ (A_Attr_Type) :
 
     needs_raw_value    = False
     not_in_future      = False
+    not_in_past        = False
     _tuple_off         = 0
 
     class _Doc_Map_ (A_Attr_Type._Doc_Map_) :
@@ -1372,6 +1375,11 @@ class _A_Date_ (A_Attr_Type) :
         not_in_future = """
             A true value of `not_in_future` means that the date/time value of
             the attribute must not lie in the future at the moment it is set.
+        """
+
+        not_in_past = """
+            A true value of `not_in_past` means that the date/time value of
+            the attribute must not lie in the past at the moment it is set.
         """
 
     # end class _Doc_Map_
@@ -1409,6 +1417,24 @@ class _A_Date_ (A_Attr_Type) :
                     , kind       = MOM.Pred.Object
                     , name       = p_name
                     , __doc__    = _ ("Value must not be in the future")
+                    )
+                )
+            yield check
+        if self.not_in_past :
+            name   = self.name
+            p_name = "%s__not_in_past" % name
+            check  = MOM.Pred.Condition.__class__ \
+                ( p_name, (MOM.Pred.Condition, )
+                , dict
+                    ( assertion  = "%s >= now" % (name, )
+                    , attributes = (name, )
+                    , bindings   = dict
+                        ( now    = "Q.%s.NOW" % (self.Q_Name, )
+                        )
+                    , kind       = MOM.Pred.Object_Init
+                    , name       = p_name
+                    , __doc__    =
+                        _ ("Value must be in the future, not the past")
                     )
                 )
             yield check

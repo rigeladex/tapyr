@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.SWP.
@@ -19,6 +19,7 @@
 #    17-Jun-2013 (CT) Creation (recovered from late `_SWP.Entity` module)
 #    28-Jan-2014 (CT) Add `hidden` and `prio` (move from `SWP.Page_Mixin`)
 #    13-Mar-2015 (CT) Add `check` against `/` to `perma_name`
+#    27-Feb-2015 (CT) Add `not_in_past` to `date.start`  and `.finish`
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,13 @@ class Object_PN (_Ancestor_Essence) :
 
         class date (A_Date_Interval_N) :
             """Publication (`start`) and expiration date (`finish`)"""
+
+            class _Attributes :
+                _Overrides     = dict \
+                    ( finish   = dict (not_in_past = True)
+                    , start    = dict (not_in_past = True)
+                    )
+            # end class _Attributes
 
             kind               = Attr.Optional
 

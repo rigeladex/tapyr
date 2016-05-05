@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -35,6 +35,7 @@
 #    21-Oct-2015 (CT) Add `p_type_cleaner`, `json_cleaner`,
 #                     improve Python-3 compatibility
 #    21-Oct-2015 (CT) Add `pyk.decoded` for `ro.content` to `traverse`
+#     5-May-2016 (CT) Improve `date_cleaner` regexp
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,7 @@ date_cleaner = Multi_Re_Replacer \
         , r"'date' : <datetime>"
         )
     , Re_Replacer
-        ( r"'default_value' : '\d{4}-\d{2}-\d{2}'"
+        ( r"'(default_value|date)' : '\d{4}-\d{2}-\d{2}'"
         , r"'date' : <date instance>"
         )
     )

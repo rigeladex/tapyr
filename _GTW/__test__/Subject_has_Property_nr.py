@@ -142,6 +142,7 @@ _test_ancestors = """
     SRM.Regatta_Event                    < MOM.Id_Entity
     SWP.Id_Entity                        < MOM.Id_Entity
     SWP.Object                           < MOM.Id_Entity
+    MOM.Date_Interval_N_date
     SWP.Object_PN                        < MOM.Id_Entity
     SWP.Page_Mixin
     SWP.Page                             < MOM.Id_Entity
@@ -260,6 +261,7 @@ _test_ancestors = """
     SRM.Regatta_Event                    mom_id_entity
     SWP.Id_Entity                        mom_id_entity
     SWP.Object                           mom_id_entity
+    MOM.Date_Interval_N_date             None
     SWP.Object_PN                        mom_id_entity
     SWP.Page_Mixin                       None
     SWP.Page                             mom_id_entity
@@ -895,6 +897,13 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Q : Int `year`
           Query, _Cached_, _Volatile_, _System_
+    MOM.Date_Interval_N_date
+      Kind_Wrapper_Q : Boolean `alive`
+          _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_Date : Date `finish`
+          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper_Date : Date `start`
+          _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
     SWP.Object_PN
       Kind_Wrapper_R : Link_Ref_List `clips`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -926,7 +935,7 @@ _test_attr_wrappers = """
           _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper_C : Date_Interval `date`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
-        MOM.Date_Interval_N
+        MOM.Date_Interval_N_date
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
@@ -993,7 +1002,7 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_C : Date_Interval `date`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
-        MOM.Date_Interval_N
+        MOM.Date_Interval_N_date
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
@@ -1068,7 +1077,7 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_C : Date_Interval `date`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
-        MOM.Date_Interval_N
+        MOM.Date_Interval_N_date
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
@@ -2320,6 +2329,10 @@ _test_q_able = """
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
+    <SAW : MOM.Date_Interval_N_date []>
+      <SAW : Boolean `alive`>
+      <SAW : Date `finish` [finish]>
+      <SAW : Date `start` [start]>
     <SAW : SWP.Object_PN [mom_id_entity]>
       <SAW : Link_Ref_List `clips`>
       <SAW : Rev_Ref `creation`>
@@ -3519,6 +3532,10 @@ _test_q_able = """
       last_cid                      : last_cid
       pid                           : pid
       type_name                     : type_name
+    <SAW : MOM.Date_Interval_N_date []>
+      alive                         : alive
+      finish                        : finish
+      start                         : start
     <SAW : SWP.Object_PN [mom_id_entity]>
       clips                         : clips
       creation                      : creation
@@ -4983,7 +5000,7 @@ _test_qc_map = """
         clips                     : <SAW : Link_Ref_List `clips`>
         contents                  : swp_page.contents
         creation                  : <SAW : Rev_Ref `creation`>
-        date                      : <Col-Mapper for MOM.Date_Interval_N>
+        date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
             finish                : swp_page.date__finish
             start                 : swp_page.date__start
@@ -5009,7 +5026,7 @@ _test_qc_map = """
         clips                     : <SAW : Link_Ref_List `clips`>
         contents                  : swp_page.contents
         creation                  : <SAW : Rev_Ref `creation`>
-        date                      : <Col-Mapper for MOM.Date_Interval_N>
+        date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
             finish                : swp_page.date__finish
             start                 : swp_page.date__start
@@ -5084,7 +5101,7 @@ _test_qc_map = """
         clips                     : <SAW : Link_Ref_List `clips`>
         contents                  : swp_page.contents
         creation                  : <SAW : Rev_Ref `creation`>
-        date                      : <Col-Mapper for MOM.Date_Interval_N>
+        date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
             finish                : swp_page.date__finish
             start                 : swp_page.date__start
@@ -5110,7 +5127,7 @@ _test_qc_map = """
     <SAW : SWP.Gallery [swp_gallery : mom_id_entity]>
         clips                     : <SAW : Link_Ref_List `clips`>
         creation                  : <SAW : Rev_Ref `creation`>
-        date                      : <Col-Mapper for MOM.Date_Interval_N>
+        date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
             finish                : swp_gallery.date__finish
             start                 : swp_gallery.date__start
@@ -5165,7 +5182,7 @@ _test_qc_map = """
     <SAW : SWP.Referral [swp_referral : mom_id_entity]>
         clips                     : <SAW : Link_Ref_List `clips`>
         creation                  : <SAW : Rev_Ref `creation`>
-        date                      : <Col-Mapper for MOM.Date_Interval_N>
+        date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
             finish                : swp_referral.date__finish
             start                 : swp_referral.date__start
@@ -5191,7 +5208,7 @@ _test_qc_map = """
         clips                     : <SAW : Link_Ref_List `clips`>
         contents                  : swp_page.contents
         creation                  : <SAW : Rev_Ref `creation`>
-        date                      : <Col-Mapper for MOM.Date_Interval_N>
+        date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
             finish                : swp_page.date__finish
             start                 : swp_page.date__start
@@ -10967,6 +10984,7 @@ _test_tables = """
     MOM.Date_Interval                        : None
     MOM.Date_Interval_C                      : None
     MOM.Date_Interval_N                      : None
+    MOM.Date_Interval_N_date                 : None
     MOM.Date_Interval_lifetime               : None
     MOM.Date_Time_Interval                   : None
     MOM.Date_Time_Interval_C                 : None

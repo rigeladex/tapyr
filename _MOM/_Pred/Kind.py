@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -24,6 +24,7 @@
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
 #    29-Jan-2013 (CT) Add `Uniqueness`
 #    30-Jan-2013 (CT) Add `Kind.__repr__`
+#     5-May-2016 (CT) Add `Object_Init`, factor `_Object_`
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,21 @@ class Kind (MOM.Prop.Kind) :
 
 # end class Kind
 
-class Object (Kind) :
+class _Object_ (Kind) :
+    """Base class for predicate kinds for object-local invariants."""
+
+    def __init__ (self, pred_type, e_type) :
+        self.__super.__init__ (pred_type, e_type)
+        assert "is_used" not in self.pred.guard_attr, \
+            ( "System-dependent attribute `is_used` can't be used in guard "
+              "of %s invariant %s!"
+            % (self.name, self.kind)
+            )
+    # end def __init__
+
+# end class _Object_
+
+class Object (_Object_) :
     """Predicate kind for object-local invariant.
 
        Object predicates must be satisfied at all times. They can only refer
@@ -81,15 +96,6 @@ class Object (Kind) :
 
     kind = "object"
 
-    def __init__ (self, pred_type, e_type) :
-        self.__super.__init__ (pred_type, e_type)
-        assert "is_used" not in self.pred.guard_attr, \
-            ( "System-dependent attribute `is_used` can't be used in guard "
-              "of object invariant %s!"
-            % self.name
-            )
-    # end def __init__
-
     def get_attr_value (self, obj, attr) :
         ### Don't want computed values here because they might
         ### refer to attribute values about to be changed (and thus
@@ -101,6 +107,20 @@ class Object (Kind) :
     # end def get_attr_value
 
 # end class Object
+
+class Object_Init (_Object_) :
+    """Predicate kind for object_init invariant.
+
+       Object-init predicates must be satisfied at the time of object creation.
+       They can only refer to attributes of a single instance of the essential
+       class or association for which the predicate is defined.
+
+       Object-init predicates are checked before the object is created.
+    """
+
+    kind = "object_init"
+
+# end class Object_Init
 
 class Region (Kind) :
     """Predicate kind for region-wide invariant.
@@ -159,10 +179,11 @@ __doc__ = """
     class gets instantiated by :class:`~_MOM._Pred.Spec.Spec` which passes
     the `type` to the kind's `__init__`.
 
-    This module provides four kinds of predicates: :class:`Object`,
-    :class:`Region`, :class:`System`, and :class:`Uniqueness`. A specific
-    application or application domain can define additional kinds of
-    predicates by providing additional classes derived from :class:`Kind`.
+    This module provides five kinds of predicates: :class:`Object`,
+    :class:`Object_Init`, :class:`Region`, :class:`System`, and
+    :class:`Uniqueness`. A specific application or application domain can
+    define additional kinds of predicates by providing additional classes
+    derived from :class:`Kind`.
 
 
 """

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -29,16 +29,24 @@
 #     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #    28-Jul-2013 (CT) Replace `tn_pid` by `type_name` and `pid`
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
+#     5-May-2016 (CT) Add `date_cleaner`, use `A_Date.now`
 #    ««revision-date»»···
 #--
 
 from   __future__  import print_function, unicode_literals
 
+from   _TFL.Regexp import Re_Replacer, re
+
+date_cleaner = Re_Replacer \
+    ( r"'start', '\d{4}-\d{2}-\d{2}'"
+    , r"'start', <date instance>"
+    )
+
 test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> date = (("start", "2012-06-10"), )
+    >>> date = (("start", A_Date.as_string (A_Date.now ())), )
     >>> MOM  = scope.MOM
     >>> PAP  = scope.PAP
     >>> SWP  = scope.SWP
@@ -69,10 +77,10 @@ test_code = r"""
 
     >>> q = scope.query_changes (type_name = "SWP.Page").order_by (Q.cid)
     >>> for c in q.all () :
-    ...     print (c)
-    <Create SWP.Page ('title_1', 'SWP.Page'), new-values = {'contents' : '<p>text 1</p>\n', 'date' : (('start', '2012-06-10'),), 'last_cid' : '2', 'text' : 'text 1'}>
-    <Create SWP.Page ('title_2', 'SWP.Page'), new-values = {'contents' : '<p>text 2</p>\n', 'date' : (('start', '2012-06-10'),), 'last_cid' : '3', 'text' : 'text 2'}>
-    <Create SWP.Page ('title_3', 'SWP.Page'), new-values = {'contents' : '<p>text 3</p>\n', 'date' : (('start', '2012-06-10'),), 'last_cid' : '4', 'text' : 'text 3'}>
+    ...     print (date_cleaner (str (c)))
+    <Create SWP.Page ('title_1', 'SWP.Page'), new-values = {'contents' : '<p>text 1</p>\n', 'date' : (('start', <date instance>),), 'last_cid' : '2', 'text' : 'text 1'}>
+    <Create SWP.Page ('title_2', 'SWP.Page'), new-values = {'contents' : '<p>text 2</p>\n', 'date' : (('start', <date instance>),), 'last_cid' : '3', 'text' : 'text 2'}>
+    <Create SWP.Page ('title_3', 'SWP.Page'), new-values = {'contents' : '<p>text 3</p>\n', 'date' : (('start', <date instance>),), 'last_cid' : '4', 'text' : 'text 3'}>
 
     >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("type_name", "pid").all ()
     [('PAP.Person', 1), ('SWP.Page', 2), ('SWP.Page', 3), ('SWP.Page', 4), ('MOM.Document', 5), ('MOM.Document', 6), ('MOM.Document', 7)]
@@ -450,7 +458,7 @@ test_code = r"""
 """
 
 import _MOM.Document
-from   _GTW.__test__.model      import *
+from   _GTW.__test__.model       import *
 
 __test__ = Scaffold.create_test_dict (test_code)
 

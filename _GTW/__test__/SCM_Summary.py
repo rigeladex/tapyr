@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -27,6 +27,7 @@
 #    24-Apr-2013 (CT) Add test `no_net`; adapt to change of `MOM.SCM.Summary`
 #     5-May-2015 (CT) Add tests for `as_json_cargo`
 #     5-May-2015 (CT) Add test for `scope.add_after_commit_callback`
+#     5-May-2016 (CT) Use `A_Date.now`
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,7 @@ _basic = r"""
 
     >>> scope.add_after_commit_callback (log_commits)
 
+    >>> date = (("start", A_Date.as_string (A_Date.now ())), )
     >>> PAP   = scope.PAP
     >>> SRM   = scope.SRM
     >>> EVT   = scope.EVT
@@ -89,8 +91,8 @@ _basic = r"""
     >>> bir   = SRM.Boat_in_Regatta (b, reg, skipper = s)
     >>> r1    = SRM.Race_Result (bir, 1, points = 8)
     >>> r2    = SRM.Race_Result (bir, 2, points = 4)
-    >>> p1    = SWP.Page ("event-1-text", text = "Text for the 1. event", date = (("start", "2010-09-08"), ))
-    >>> p2    = SWP.Page ("event-2-text", text = "Text for the 2. event", date = (("start", "2010-09-08"), ))
+    >>> p1    = SWP.Page ("event-1-text", text = "Text for the 1. event", date = date)
+    >>> p2    = SWP.Page ("event-2-text", text = "Text for the 2. event", date = date)
     >>> e1    = EVT.Event (p1.epk, ("2010-08-18", ))
     >>> rs1   = RS (e1, date_exceptions = ["2010-08-15"])
     >>> rr1   = RR (rs1, start = "20100801", count = 7, unit = "Weekly", raw = True)
@@ -135,8 +137,8 @@ _basic = r"""
     <Create SRM.Boat_in_Regatta ((('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat'), (('Himmelfahrt', (('finish', '2008-05-01'), ('start', '2008-05-01')), 'SRM.Regatta_Event'), ('Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '<n>', 'registration_date' : '<today>', 'skipper' : 9}>
     <Create SRM.Race_Result (((('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat'), (('Himmelfahrt', (('finish', '2008-05-01'), ('start', '2008-05-01')), 'SRM.Regatta_Event'), ('Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), '1', 'SRM.Race_Result'), new-values = {'last_cid' : '<n>', 'points' : '8'}>
     <Create SRM.Race_Result (((('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat'), (('Himmelfahrt', (('finish', '2008-05-01'), ('start', '2008-05-01')), 'SRM.Regatta_Event'), ('Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), '2', 'SRM.Race_Result'), new-values = {'last_cid' : '<n>', 'points' : '4'}>
-    <Create SWP.Page ('event-1-text', 'SWP.Page'), new-values = {'contents' : '<p>Text for the 1. event</p>\n', 'date' : (('start', '2010-09-08'),), 'last_cid' : '<n>', 'text' : 'Text for the 1. event'}>
-    <Create SWP.Page ('event-2-text', 'SWP.Page'), new-values = {'contents' : '<p>Text for the 2. event</p>\n', 'date' : (('start', '2010-09-08'),), 'last_cid' : '<n>', 'text' : 'Text for the 2. event'}>
+    <Create SWP.Page ('event-1-text', 'SWP.Page'), new-values = {'contents' : '<p>Text for the 1. event</p>\n', 'date' : (('start', '<today>'),), 'last_cid' : '<n>', 'text' : 'Text for the 1. event'}>
+    <Create SWP.Page ('event-2-text', 'SWP.Page'), new-values = {'contents' : '<p>Text for the 2. event</p>\n', 'date' : (('start', '<today>'),), 'last_cid' : '<n>', 'text' : 'Text for the 2. event'}>
     <Create EVT.Event (('event-1-text', 'SWP.Page'), (('start', '2010-08-18'),), '', '', 'EVT.Event'), new-values = {'last_cid' : '<n>'}>
     <Create EVT.Event_occurs ((('event-1-text', 'SWP.Page'), (('start', '2010-08-18'),), '', '', 'EVT.Event'), '2010-08-18', '', 'EVT.Event_occurs'), new-values = {'last_cid' : '<n>'}>
     <Create EVT.Recurrence_Spec ((('event-1-text', 'SWP.Page'), (('start', '2010-08-18'),), '', '', 'EVT.Event'), 'EVT.Recurrence_Spec'), new-values = {'date_exceptions' : '2010-08-15', 'last_cid' : '<n>'}>
@@ -228,9 +230,9 @@ _basic = r"""
     <Change Summary for pid 15: newborn>
         <Create SRM.Race_Result (((('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat'), (('Himmelfahrt', (('finish', '2008-05-01'), ('start', '2008-05-01')), 'SRM.Regatta_Event'), ('Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), '2', 'SRM.Race_Result'), new-values = {'last_cid' : '<n>', 'points' : '4'}>
     <Change Summary for pid 16: newborn>
-        <Create SWP.Page ('event-1-text', 'SWP.Page'), new-values = {'contents' : '<p>Text for the 1. event</p>\n', 'date' : (('start', '2010-09-08'),), 'last_cid' : '<n>', 'text' : 'Text for the 1. event'}>
+        <Create SWP.Page ('event-1-text', 'SWP.Page'), new-values = {'contents' : '<p>Text for the 1. event</p>\n', 'date' : (('start', '<today>'),), 'last_cid' : '<n>', 'text' : 'Text for the 1. event'}>
     <Change Summary for pid 17: newborn>
-        <Create SWP.Page ('event-2-text', 'SWP.Page'), new-values = {'contents' : '<p>Text for the 2. event</p>\n', 'date' : (('start', '2010-09-08'),), 'last_cid' : '<n>', 'text' : 'Text for the 2. event'}>
+        <Create SWP.Page ('event-2-text', 'SWP.Page'), new-values = {'contents' : '<p>Text for the 2. event</p>\n', 'date' : (('start', '<today>'),), 'last_cid' : '<n>', 'text' : 'Text for the 2. event'}>
     <Change Summary for pid 18: newborn>
         <Create EVT.Event (('event-1-text', 'SWP.Page'), (('start', '2010-08-18'),), '', '', 'EVT.Event'), new-values = {'last_cid' : '<n>'}>
     <Change Summary for pid 19: newborn, just died>
@@ -381,8 +383,8 @@ _basic = r"""
     13 [('last_cid', (old = None, new = '14')), ('registration_date', (old = None, new = '<today>')), ('skipper', (old = None, new = 9))]
     14 [('discarded', (old = 'no', new = 'yes')), ('last_cid', (old = None, new = '33')), ('points', (old = None, new = '8'))]
     15 [('last_cid', (old = None, new = '16')), ('points', (old = None, new = '4'))]
-    16 [('contents', (old = None, new = '<p>Text for the 1. event</p>\n')), ('date', (old = None, new = (('start', '2010-09-08'),))), ('last_cid', (old = None, new = '17')), ('text', (old = None, new = 'Text for the 1. event'))]
-    17 [('contents', (old = None, new = '<p>Text for the 2. event</p>\n')), ('date', (old = None, new = (('start', '2010-09-08'),))), ('last_cid', (old = None, new = '18')), ('text', (old = None, new = 'Text for the 2. event'))]
+    16 [('contents', (old = None, new = '<p>Text for the 1. event</p>\n')), ('date', (old = None, new = (('start', '<today>'),))), ('last_cid', (old = None, new = '17')), ('text', (old = None, new = 'Text for the 1. event'))]
+    17 [('contents', (old = None, new = '<p>Text for the 2. event</p>\n')), ('date', (old = None, new = (('start', '<today>'),))), ('last_cid', (old = None, new = '18')), ('text', (old = None, new = 'Text for the 2. event'))]
     18 [('last_cid', (old = None, new = '19'))]
     20 [('date_exceptions', (old = None, new = '2010-08-15')), ('dates', (old = '', new = '2010-09-08,2010-10-08')), ('last_cid', (old = None, new = '51'))]
     21 [('count', (old = None, new = '7')), ('last_cid', (old = None, new = '23')), ('start', (old = None, new = '2010-08-01')), ('unit', (old = None, new = 'Weekly'))]

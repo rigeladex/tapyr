@@ -175,14 +175,14 @@ _test_code = """
     [SRM.Boat (('optimist', ), 42, '', 'OE'), SRM.Boat (('optimist', ), 1107, 'AUT', '')]
 
     >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### before invariant errors
-    [('object', []), ('region', []), ('system', []), ('uniqueness', [])]
+    [('object', []), ('object_init', []), ('region', []), ('system', []), ('uniqueness', [])]
 
     >>> with expect_except (MOM.Error.Invariant) :
     ...     b.b_class.max_crew = 0
     Invariant: Condition `AC_check_max_crew_0` : 1 <= max_crew <= 4
         max_crew = 0
     >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `setattr`
-    [('object', []), ('region', []), ('system', []), ('uniqueness', [])]
+    [('object', []), ('object_init', []), ('region', []), ('system', []), ('uniqueness', [])]
 
 
     >>> errors = []
@@ -192,14 +192,14 @@ _test_code = """
         max_crew = 0
     >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `.set (max_crew = 0)`
     [('object', [<Invariant: SRM.Boat_Class ('Optimist',), Condition `AC_check_max_crew_0` : 1 <= max_crew <= 4
-        max_crew = 0>]), ('region', []), ('system', []), ('uniqueness', [])]
+        max_crew = 0>]), ('object_init', []), ('region', []), ('system', []), ('uniqueness', [])]
     >>> errors
     []
     >>> b.b_class.set (max_crew = 5, on_error = errors.append)
     0
     >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `.set (max_crew = 5)`
     [('object', [<Invariant: SRM.Boat_Class ('Optimist',), Condition `AC_check_max_crew_0` : 1 <= max_crew <= 4
-        max_crew = 5>]), ('region', []), ('system', []), ('uniqueness', [])]
+        max_crew = 5>]), ('object_init', []), ('region', []), ('system', []), ('uniqueness', [])]
     >>> errors
     [<Invariants: <Invariant: SRM.Boat_Class ('Optimist',), Condition `AC_check_max_crew_0` : 1 <= max_crew <= 4
         max_crew = 5>>]
