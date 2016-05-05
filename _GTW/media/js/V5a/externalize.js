@@ -14,6 +14,7 @@
 //
 // Revision Dates
 //    18-Jan-2016 (CT) Creation
+//     5-May-2016 (CT) Reset `opener` of new window to disable tab-nabbing
 //    ««revision-date»»···
 //--
 
@@ -30,7 +31,12 @@
                 .bind
                     ( "click"
                     , function (ev) {
-                        window.open (this.href).focus ();
+                        // reset `opener` to disable tab-nabbing
+                        // cf. https://mathiasbynens.github.io/rel-noopener/
+                        var w      = window.open ();
+                        w.opener   = null;
+                        w.location = this.href;
+                        w.focus ();
                         $.prevent_default (ev);
                       }
                     );
