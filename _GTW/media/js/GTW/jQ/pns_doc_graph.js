@@ -1,4 +1,4 @@
-// Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -16,6 +16,7 @@
 // Revision Dates
 //    25-Sep-2012 (CT) Creation
 //    26-Sep-2012 (CT) Use `.click` not `.on` to bind `cb_click_node`
+//     5-May-2016 (CT) Use `$V5a.new_window`, not home-grown code
 //    ««revision-date»»···
 //--
 
@@ -39,7 +40,7 @@
             var target$ = $(ev.target).closest (selectors.node);
             var name    = target$.attr ("id");
             var url     = options.qurl + name;
-            window.open (url).focus ();
+            $V5a.new_window (url);
         };
         options.svg$ = this;
         this.find  (selectors.node)

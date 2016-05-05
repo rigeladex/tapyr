@@ -21,6 +21,7 @@
 #    21-Jan-2016 (CT) Add `V5a_gallery`
 #    23-Jan-2016 (CT) Add `V5a_wrapped`...
 #    26-Jan-2016 (CT) Add `V5a_ajax`...
+#     5-May-2016 (CT) Add `V5a_new_window`
 #    ««revision-date»»···
 #--
 
@@ -120,6 +121,12 @@ GTW.Script \
 GTW.Script \
     ( src       = "/media/GTW/js/V5a/merge.js"
     , name      = "V5a_merge"
+    , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/new_window.js"
+    , name      = "V5a_new_window"
     , requires  = (GTW.Script._.V5a, )
     )
 
@@ -329,6 +336,7 @@ GTW.Script \
     , name      = "V5a_externalize"
     , requires  =
         ( GTW.Script._.V5a_merge
+        , GTW.Script._.V5a_new_window
         , GTW.Script._.V5a_wrapped_add_class
         , GTW.Script._.V5a_wrapped_has_class
         , GTW.Script._.V5a_wrapped_bind

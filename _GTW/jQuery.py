@@ -73,6 +73,7 @@
 #    20-Jan-2016 (CT) Add `V5a_history_push`
 #    21-Jan-2016 (CT) Remove GTW_Gallery
 #    22-Jan-2016 (CT) Remove jQuery_Gritter, GTW_UI_Icon_Map, GTW_jsonify
+#     5-May-2016 (CT) Add `V5a_new_window`
 #    ««revision-date»»···
 #--
 
@@ -177,7 +178,7 @@ GTW.Script \
 GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/pns_doc_graph.js"
     , name     = "GTW_pns_doc_graph"
-    , requires = (GTW.Script._.jQuery, )
+    , requires = (GTW.Script._.jQuery, GTW.Script._.V5a_new_window)
     )
 
 GTW.Script \
