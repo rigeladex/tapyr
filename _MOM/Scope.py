@@ -120,6 +120,7 @@
 #    22-Feb-2016 (CT) Change `copy` to set `result.root_pid`
 #    22-Feb-2016 (CT) Convert `qname` to property
 #    22-Feb-2016 (CT) Change `root_epk` to `root_spec` (callable or epk-tuple)
+#     6-May-2016 (CT) Add class attribute `playback_p`
 #    ««revision-date»»···
 #--
 
@@ -205,6 +206,7 @@ class Scope (TFL.Meta.Object) :
 
     active                 = None
     ilk                    = "S"
+    playback_p             = False
     Table                  = {}
 
     after_commit_callback  = TFL.Ordered_Set ()

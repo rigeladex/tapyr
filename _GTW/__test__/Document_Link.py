@@ -30,6 +30,7 @@
 #    28-Jul-2013 (CT) Replace `tn_pid` by `type_name` and `pid`
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #     5-May-2016 (CT) Add `date_cleaner`, use `A_Date.now`
+#     6-May-2016 (CT) Add test for `start__not_in_past`, `playback_p`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,18 @@ test_code = r"""
     >>> pa2  = SWP.Page   ("title_2", text = "text 2", date = date, raw = True)
     >>> pa3  = SWP.Page   ("title_3", text = "text 3", date = date, raw = True)
     >>> scope.commit     ()
+
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     pa4  = SWP.Page   ("title_4", text = "text 4", date = ("2012-06-10", ), raw = True)
+    Invariants: Condition `start__not_in_past` : Value must be in the future, not the past (start >= now)
+        date.start = 2012-06-10
+
+    >>> with scope.LET (playback_p = True) :
+    ...     pa4  = SWP.Page   ("title_4", text = "text 4", date = ("2012-06-10", ), raw = True)
+    >>> pa4
+    SWP.Page ('title_4')
+
+    >>> scope.rollback ()
 
     >>> _ = MOM.Document (per, "//foo.bar/baz")
     >>> _ = MOM.Document (per, "//foo.bar/qux")

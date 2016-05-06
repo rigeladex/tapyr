@@ -305,6 +305,7 @@
 #                     `epk_as_kw`
 #     5-Feb-2016 (CT) Add `polish_empty`
 #     5-May-2016 (CT) Add support for predicates of kind `object_init`
+#     6-May-2016 (CT) Add computed attribute `playback_p`
 #    ««revision-date»»···
 #--
 
@@ -393,6 +394,17 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
             # end def computed
 
         # end class FO
+
+        class playback_p (A_Boolean) :
+
+            kind               = Attr.Computed
+            hidden             = True
+
+            def computed (self, obj) :
+                return obj.home_scope.playback_p
+            # end def computed
+
+        # end class playback_p
 
         class ui_display (A_String) :
             """Display in user interface"""

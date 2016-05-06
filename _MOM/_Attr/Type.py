@@ -386,6 +386,7 @@
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #     5-May-2016 (CT) Add `_A_Date_.not_in_past` and corresponding checker
 #     5-May-2016 (CT) Use `Object_Init`, not `Object`, for `not_in_past` checker
+#     6-May-2016 (CT) Add guard `not playback_p` to `not_in_past` predicate
 #    ««revision-date»»···
 #--
 
@@ -1431,6 +1432,8 @@ class _A_Date_ (A_Attr_Type) :
                     , bindings   = dict
                         ( now    = "Q.%s.NOW" % (self.Q_Name, )
                         )
+                    , guard      = "not playback_p"
+                    , guard_attr = ("playback_p", )
                     , kind       = MOM.Pred.Object_Init
                     , name       = p_name
                     , __doc__    =
