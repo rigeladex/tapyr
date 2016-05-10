@@ -19,6 +19,7 @@
 #     5-Feb-2016 (CT) Creation
 #     9-Feb-2016 (CT) Redefine `ui_display` to DRY result
 #    22-Feb-2016 (CT) Remove `unique_p` from `person`
+#    10-May-2016 (CT) Add missing `P_Type` to attribute `person`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,7 @@ from   _GTW._OMP._PAP              import PAP
 from   _TFL.I18N                   import _
 
 import _GTW._OMP._PAP.Company
+import _GTW._OMP._PAP.Person
 
 class _Name_Polisher_ (MOM.Attr.Polisher._Polisher_) :
     """Polisher for `name` attribute of `Company_1P`"""
@@ -79,6 +81,7 @@ class Company_1P (_Ancestor_Essence) :
             """Person owning the company"""
 
             kind               = Attr.Primary
+            P_Type             = PAP.Person
             ui_allow_new       = True
             ui_rank            = -1
 
