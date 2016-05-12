@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -26,6 +26,7 @@
 #    24-Jan-2014 (CT) Add `A_Link`
 #    12-Mar-2014 (CT) Add `Alias.independent_permissions_p`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    12-May-2016 (CT) Redefine `A_Link.as_static_page` to `pass`
 #    ««revision-date»»···
 #--
 
@@ -141,6 +142,11 @@ class TOP_A_Link (GTW.RST.TOP._Mixin_, GTW.RST.A_Link) :
     """A link to another URL"""
 
     _real_name = "A_Link"
+
+    def as_static_page (self) :
+        """There is no static HTML page for this resource: it's just a link!"""
+        pass
+    # end def as_static_page
 
 A_Link = TOP_A_Link # end class
 

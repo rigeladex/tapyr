@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -84,6 +84,7 @@
 #    26-Nov-2015 (CT) Add `robots` to sub-command `generate_static_pages`
 #     1-Dec-2015 (CT) Add guard for `scope` to `init_app_cache`
 #     1-Dec-2015 (CT) Add `.lstrip ("/")` to `_handle_generate_static_pages`
+#    12-May-2016 (CT) Guard `asp is not None` in `_handle_generate_static_pages`
 #    ««revision-date»»···
 #--
 
@@ -474,8 +475,10 @@ class GT2W_Command (GTW.OMP.Command) :
                 sos.mkdir_p  (dir)
             if cmd.verbose :
                 print (name, "...", end = " ")
-            with open (name, "wb") as f :
-                f.write (pyk.encoded (p.as_static_page ()))
+            asp = p.as_static_page ()
+            if asp is not None :
+                with open (name, "wb") as f :
+                    f.write (pyk.encoded (asp))
             if cmd.verbose :
                 print ("done")
         for url in urls :

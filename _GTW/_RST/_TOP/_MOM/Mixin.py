@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -37,6 +37,9 @@
 #    16-Apr-2015 (CT) Pass `default` to `getattr_safe` for `fields_default`
 #    27-Apr-2015 (CT) Factor `E_Type_Mixin_Base._default_title`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    12-May-2016 (CT) Change`referral_query` to use `abs_href_dynamic`
+#                     - Using `abs_href` breaks queries for
+#                       `Referral`/`A_Link` pairs
 #    ««revision-date»»···
 #--
 
@@ -107,7 +110,8 @@ class _TOP_MOM_Mixin_Base_ (GTW.RST.MOM.Mixin) :
 
     @property
     def referral_query (self) :
-        return self.referral_query_unbound.bind (parent_url = self.abs_href)
+        return self.referral_query_unbound.bind \
+            (parent_url = self.abs_href_dynamic)
     # end def referral_query
 
     def _add_referral_entries (self) :
