@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,6 +29,7 @@
 #    31-Mar-2008 (CT) Doctests adapted to change of RTS to consider `dst` for
 #                     local times
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#    13-May-2016 (CT) Add option `-Location`, allow more than one argument
 #    ««revision-date»»···
 #--
 
@@ -316,33 +317,40 @@ class RTS_Sun (CAL.Sky.RTS) :
 # end class RTS_Sun
 
 def _main (cmd) :
-    date = CAL.Date.from_string (cmd.date)
-    rts  = RTS_Sun.On_Day (date, CAL.Sky.Location (cmd.latitude, cmd.longitude))
-    print \
-        ( "Sunrise : %s, transit : %s, sunset : %s"
-        % (rts.rise, rts.transit, rts.set)
-        )
-    if cmd.day_length :
-        print ("Day length: %02d:%02d" % (rts.day_length).hh_mm)
-    if cmd.transit :
-        print ("Rise    azimuth : %6.2f degrees" % rts.rise.azimuth.degrees)
-        print ("Transit height  : %6.2f degrees" % rts.transit.altitude.degrees)
-        print ("Set     azimuth : %6.2f degrees" % rts.set.azimuth.degrees)
-    if cmd.civil_twilight :
+    if cmd.latitude and cmd.longitude :
+        location = CAL.Sky.Location \
+            (cmd.latitude, cmd.longitude, cmd.Location or None)
+    else :
+        location = CAL.Sky.Location.Table [cmd.Location]
+    print (location, "*" * 20)
+    for d in cmd.argv :
+        date = CAL.Date.from_string (d)
+        rts  = RTS_Sun.On_Day (date, location)
         print \
-            ( "Civil  twilight starts %s, ends %s"
-            % (rts.civil_twilight_start, rts.civil_twilight_finis)
+            ( "Date : %s, Sunrise : %s, transit : %s, sunset : %s"
+            % (date, rts.rise, rts.transit, rts.set)
             )
-    if cmd.nautic_twilight :
-        print \
-            ( "Nautic twilight starts %s, ends %s"
-            % (rts.nautic_twilight_start, rts.nautic_twilight_finis)
-            )
-    if cmd.astro_twilight :
-        print \
-            ( "Astro  twilight starts %s, ends %s"
-            % (rts.astro_twilight_start, rts.astro_twilight_finis)
-            )
+        if cmd.day_length :
+            print ("Day length: %02d:%02d" % (rts.day_length).hh_mm)
+        if cmd.transit :
+            print ("Rise    azimuth : %6.2f degrees" % rts.rise.azimuth.degrees)
+            print ("Transit height  : %6.2f degrees" % rts.transit.altitude.degrees)
+            print ("Set     azimuth : %6.2f degrees" % rts.set.azimuth.degrees)
+        if cmd.civil_twilight :
+            print \
+                ( "Civil  twilight starts %s, ends %s"
+                % (rts.civil_twilight_start, rts.civil_twilight_finis)
+                )
+        if cmd.nautic_twilight :
+            print \
+                ( "Nautic twilight starts %s, ends %s"
+                % (rts.nautic_twilight_start, rts.nautic_twilight_finis)
+                )
+        if cmd.astro_twilight :
+            print \
+                ( "Astro  twilight starts %s, ends %s"
+                % (rts.astro_twilight_start, rts.astro_twilight_finis)
+                )
 # end def _main
 
 _Command = TFL.CAO.Cmd \
@@ -355,13 +363,13 @@ _Command = TFL.CAO.Cmd \
         ( "astro_twilight:B?Show astro twilight (-18 degrees below horizon)"
         , "civil_twilight:B?Show civil twilight (-6 degrees below horizon)"
         , "day_length:B?Show length of day in hours"
-        , "latitude:F=48.2333333333?Latitude (north is positive)"
-        , "longitude:F=-16.3333333333?Longitude (negative is east of Greenwich)"
+        , "latitude:F?Latitude (north is positive)"
+        , "Location:S=Vienna?Location of observer"
+        , "longitude:F?Longitude (negative is east of Greenwich)"
         , "-nautic_twilight:B"
             "?Show time of nautic twilight (sun -12 degrees below horizon)"
         , "-transit:B?Show transit height"
         )
-    , max_args      = 1
     )
 
 if __name__ != "__main__":
