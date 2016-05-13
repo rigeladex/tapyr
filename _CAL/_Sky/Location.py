@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -13,20 +13,28 @@
 #
 # Purpose
 #    Model terrestrial location of observer
-#    ««text»»···
 #
 # Revision Dates
 #    14-Nov-2007 (CT) Creation
+#    13-May-2016 (CT) Add `__str__`
+#    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 import _CAL._Sky
 import _TFL._Meta.Object
 
 from   _TFL.Angle               import Angle_D, Angle_R
 
+@pyk.adapt__str__
 class Location (TFL.Meta.Object) :
     """Model terrestrial location of observer."""
 
@@ -55,12 +63,25 @@ class Location (TFL.Meta.Object) :
         return result
     # end def _normalized
 
+    def __str__ (self) :
+        lon    = self.longitude
+        lat    = self.latitude
+        if lon.degrees > 180.0 :
+            lon -= 360.0
+        result = "%s %s, %s %s" % \
+            ( abs (lon), "E" if lon.degrees < 0.0 else "W"
+            , abs (lat), "S" if lat.degrees < 0.0 else "N"
+            )
+        if self.name :
+            result = "%s [%s]" % (self.name, result)
+        return result
+    # end def __str__
+
 # end class Location
 
-Location (Angle_D (48, 14), Angle_D (-16, -22), "Vienna")
+Location (Angle_D (48, 14),     Angle_D (-16, -22), "Vienna")
+Location (Angle_D (37, 50, 20), Angle_D (  8,  47), "Porto Covo")
 
 if __name__ != "__main__" :
     CAL.Sky._Export ("*")
 ### __END__ Location
-
-
