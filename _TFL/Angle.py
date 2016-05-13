@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -21,6 +21,7 @@
 #    23-Dec-2010 (CT) Doctest fixed (don't use `repr` of floating point numbers)
 #    13-Oct-2014 (CT) Use `portable_repr`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    13-May-2016 (CT) Add `__abs__`, `__gt__`
 #    ««revision-date»»···
 #--
 
@@ -123,6 +124,11 @@ class _Angle_ (TFL.Meta.Object) :
         return self.__class__ (int (self) // rhs)
     # end def __floordiv__
 
+    def __gt__ (self, rhs) :
+        r = getattr (rhs, "degrees", rhs)
+        return self.degrees > r
+    # end def __gt__
+
     def __hash__ (self) :
         return hash (self.degrees)
     # end def __hash__
@@ -178,6 +184,12 @@ class Angle_D (_Angle_) :
        >>> print ("%14.12f %14.12f %14.1f" % (a.sin, a.cos, a.tan))
        0.707106781187 0.707106781187 1.0
 
+       >>> a < 30, a > 30, a < 60, a > 60
+       (False, True, True, False)
+
+       >>> a <= 30, a >= 30, a <= 60, a >= 60
+       (False, True, True, False)
+
     """
 
     name = "degrees"
@@ -195,6 +207,11 @@ class Angle_D (_Angle_) :
     def radians (self) :
         return math.radians (self.degrees)
     # end def radians
+
+    def __abs__ (self) :
+        """Absolute value of angle"""
+        return self.__class__ (abs (self.degrees))
+    # end def __abs__
 
     def __float__ (self) :
         return self.degrees
@@ -234,6 +251,11 @@ class Angle_R (_Angle_) :
     def degrees (self) :
         return math.degrees (self.radians)
     # end def degrees
+
+    def __abs__ (self) :
+        """Absolute value of angle"""
+        return self.__class__ (abs (self.radians))
+    # end def __abs__
 
     def __float__ (self) :
         return self.radians
