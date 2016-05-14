@@ -23,6 +23,7 @@
 #    29-Mar-2016 (CT) Change `delta_pattern` to interpret `m` as `month`
 #                     (not `minutes`); allow `min` and `sec` for `minutes` and
 #                     `seconds`
+#    14-May-2016 (CT) Add `_Relative_Delta_Arg_`
 #    ««revision-date»»···
 #--
 
@@ -400,6 +401,17 @@ class Relative_Delta (CAL._Delta_Mixin_) :
     # end def __sub__
 
 # end class Relative_Delta
+
+class _Relative_Delta_Arg_ (TFL.CAO.Str) :
+    """Argument or option with a (calendary) relative-delta value"""
+
+    _real_name = "Relative_Delta"
+
+    def cook (self, value, cao = None) :
+        return Relative_Delta.from_string (value)
+    # end def cook
+
+# end class _Delta_Arg_
 
 if __name__ != "__main__" :
     CAL._Export ("*")

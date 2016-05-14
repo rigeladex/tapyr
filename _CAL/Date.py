@@ -61,6 +61,7 @@
 #     3-Feb-2016 (CT) Add `periods`, `inc_month`
 #    15-Feb-2016 (CT) Use `CAL.G8R.Months` to support localized month names
 #    29-Mar-2016 (CT) Add support for delta to `_Date_Arg_`
+#    14-May-2016 (CT) Strip leading `+` from delta arg for `_Date_Arg_`
 #    ««revision-date»»···
 #--
 
@@ -606,7 +607,7 @@ class _Date_Arg_ (TFL.CAO.Str) :
         elif value :
             if self._delta_pat.match (value) :
                 import _CAL.Relative_Delta
-                delta  = CAL.Relative_Delta.from_string (value)
+                delta  = CAL.Relative_Delta.from_string (value.lstrip ("+"))
                 now    = T ()
                 result = now + delta
                 if type (result) is not T :
