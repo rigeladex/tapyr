@@ -1,6 +1,6 @@
 {#- jinja template: html/action_button.m.jnj -#}
 {#
-## Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -20,6 +20,7 @@
 ##     2-Jun-2015 (CT) Creation (factored from mf3.m.jnj, ETR/table.m.jnj)
 ##     2-Jun-2015 (CT) Remove `zero_width_space` from `action_button`
 ##    23-Dec-2015 (CT) Add optional argument `ref` to `action_button`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -47,7 +48,7 @@
             (" ", ("fa", "fa-%s" % (icon_name, ), i_add_cls))
         )
   -%}
-  <a{{ akw|xmlattr }}><i{{ ikw|xmlattr }}></i>{#- -#}
+  <a{{ GTW.xmlattr (akw) }}><i{{ GTW.xmlattr (ikw) }}></i>{#- -#}
     <b>{{ text.strip () }}</b>{#- -#}
   </a>{#- -#}
 {%- endmacro -%} {#- action_button -#}

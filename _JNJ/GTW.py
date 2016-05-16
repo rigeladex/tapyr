@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -60,6 +60,8 @@
 #    23-Jan-2015 (CT) Add `html_char_ref`
 #    10-Jun-2015 (CT) Add `uuid`
 #    13-Nov-2015 (CT) Define `dir`, `setattr` as functions to avoid sphinx errors
+#    16-May-2016 (CT) Add `xmlattr`
+#    16-May-2016 (CT) Add guard for `Undefined` to `filtered_dict`
 #    ««revision-date»»···
 #--
 
@@ -171,13 +173,14 @@ class GTW (TFL.Meta.Object) :
 
     def filtered_dict (self, * ds, ** kw) :
         """Return a dict will all non-empty values of `ds` and `kw`."""
+        Undef  = self.Undefined
         result = {}
         for d in ds :
             result.update (d)
         result.update (kw)
         return dict \
             (  (k, v) for k, v in pyk.iteritems (result)
-            if v is not None and v != ""
+            if v is not None and v != "" and not isinstance (v, Undef)
             )
     # end def filtered_dict
 
@@ -342,6 +345,21 @@ class GTW (TFL.Meta.Object) :
 
     vimeo_video   = staticmethod (HTML.vimeo_video)
     youtube_video = staticmethod (HTML.youtube_video)
+
+    def xmlattr (self, * ds, ** kw) :
+        """Convert (sorted) items of dict `d` to SGML/XML attribute string.
+
+           This is similar to jinja's `xmlattr` filter but ensures
+           deterministic output by sorting by attribute name.
+        """
+        from jinja2.utils import escape
+        d      = self.filtered_dict (* ds, ** kw)
+        result = " ".join \
+            ( '%s="%s"' % (escape (k), escape (v))
+            for k, v in sorted (pyk.iteritems (d), key = TFL.Getter [0])
+            )
+        return (" " + result) if result else ""
+    # end def xmlattr
 
     zip           = staticmethod (zip)
     _T            = staticmethod (_T)

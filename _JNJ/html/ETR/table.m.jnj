@@ -27,6 +27,7 @@
 ##     2-Jun-2015 (CT) Add `zero_width_space` to `action_button`
 ##     9-Jun-2015 (CT) Re-add `href` to `action_button_create`
 ##     2-Jan-2016 (CT) Pass `first_last_p` to `rel_nav_buttons`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -93,7 +94,7 @@
   {{ GTW.call_macro
        ("E_Type_head", renderer, templ_name = renderer.template_module)
   -}}
-  <table{{ GTW.filtered_dict (class = cls, id = renderer.css_id)|xmlattr }}>
+  <table{{ GTW.xmlattr (class = cls, id = renderer.css_id) }}>
     {{ GTW.call_macro
          ("E_Type_caption", renderer, templ_name = renderer.template_module)
     -}}
@@ -181,10 +182,10 @@
 
 {%- macro Instance (renderer) -%}
   {%- set obj = renderer.obj %}
-  <tr{{ GTW.filtered_dict ({"data-href" : renderer.obj_href}, class = renderer.css_class, id = renderer.css_id)|xmlattr}}>
+  <tr{{ GTW.xmlattr ({"data-href" : renderer.obj_href}, class = renderer.css_class, id = renderer.css_id) }}>
     {%- for field in renderer.fields %}
       {%- for f in field.td_cols %}
-        <td{{ GTW.filtered_dict (class = f.css_class_dyn (obj, renderer))|xmlattr }}>
+        <td{{ GTW.xmlattr (class = f.css_class_dyn (obj, renderer)) }}>
           {{- f.as_html (obj, renderer) -}}
         </td>
       {% endfor -%}
@@ -210,7 +211,7 @@
   {%- if colspan > 1 %}
     {%- do kw.update (colspan = colspan) %}
   {% endif -%}
-  <th{{ GTW.filtered_dict (kw)|xmlattr}}>
+  <th{{ GTW.xmlattr (kw) }}>
     {{- field.ui_name -}}
   </th>
 {%- endmacro -%} {#- th_field -#}

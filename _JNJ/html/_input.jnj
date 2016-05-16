@@ -1,6 +1,6 @@
 {#- jinja template: _input.jnj -#}
 {#
-## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -27,6 +27,7 @@
 ##                     `selected` (otherwise FF8 displays the empty value)
 ##    23-Feb-2012 (CT) Change `option` to always compare `value` to `selected`
 ##     3-Apr-2015 (CT) Factor `vc` in `option`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -35,12 +36,12 @@
   {%- set vc = value if (value != None) else content %}
   {%- set sa = ' selected="selected"' if selected and vc == selected else "" -%}
   {%- set va = (' value="%s"' % (value, )) if value != None else "" -%}
-  <option{{ va }}{{ sa }}{{ kwargs|xmlattr }}>{{ GTW._T (content) }}</option>
+  <option{{ va }}{{ sa }}{{ GTW.xmlattr (kwargs) }}>{{ GTW._T (content) }}</option>
 {%- endmacro -%} {#- option -#}
 
 {%- macro select (name, choices = (), selected = None) -%}
   {%- set caller = kwargs.pop ("caller", None) -%}
-  <select name="{{ name }}"{{ kwargs|xmlattr }}>
+  <select name="{{ name }}"{{ GTW.xmlattr (kwargs) }}>
     {%- if not selected %}
       {{ option ("---", "", "") }}
     {% endif -%}
@@ -68,7 +69,7 @@
 {%- macro textarea (cols, rows) -%}
   {%- set value  = kwargs.pop ("value",  None) -%}
   {%- set caller = kwargs.pop ("caller", None) -%}
-  <textarea cols="{{ cols }}" rows="{{ rows }}"{{ kwargs|xmlattr }}>
+  <textarea cols="{{ cols }}" rows="{{ rows }}"{{ GTW.xmlattr (kwargs) }}>
     {%- if value -%}
       {{ value }}
     {%- elif caller -%}

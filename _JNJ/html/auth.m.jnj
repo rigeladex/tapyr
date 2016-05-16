@@ -1,6 +1,6 @@
 {#- jinja template: auth.m.jnj -#}
 {#
-## Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -24,6 +24,7 @@
 ##                     rename `display_errors` to `errors_display`
 ##    13-Jun-2015 (CT) Add `register_form`, `make_client_cert_form`,
 ##                     `keygen_input`, and `text_input`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -33,7 +34,7 @@
 {%- macro cc_login_button (page, cc_href, tag = "div", tag_class = None) -%}
   {%- if cc_href %}
     <{{ tag }} title="{{ GTW._T ("Login with a previously created client certificate") }}" {# -#}
-      {{ GTW.filtered_dict (class = tag_class, ** kwargs)|xmlattr}}{# -#}
+      {{ GTW.xmlattr (class = tag_class, ** kwargs) }}{# -#}
     >
       <a class="pure-button" href="{{ cc_href }}">{# -#}
         <i class="fa fa-certificate"></i>

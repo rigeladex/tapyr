@@ -59,6 +59,7 @@
 ##                     `link == nav_page`
 ##     2-Jan-2016 (CT) Add optional arg `first_last_p` to `rel_nav_buttons`
 ##    15-Jan-2016 (CT) Add `close_button` to section `Navigation`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -100,7 +101,7 @@
       {%- if link.is_current_dir and link.is_current_dir (nav_page) %}
         <li>
           <a class="current-section {{ a_kw.pop ('class', '') }}{%- if link == nav_page %} current-link{% endif -%}"
-             {{- a_kw|xmlattr }}><i></i>{{ entry_body (link) }}</a>
+             {{- GTW.xmlattr (a_kw) }}><i></i>{{ entry_body (link) }}</a>
           {{ entries (link.own_links, level + 1) }}
         </li>
       {%- else -%}
@@ -124,7 +125,7 @@
         {%- else -%}
           {%- if href -%}
             <li class="nav-link">
-              <a {{ a_kw|xmlattr }}>{{ entry_body (link) }}</a>
+              <a {{ GTW.xmlattr (a_kw) }}>{{ entry_body (link) }}</a>
             </li>
           {%- else -%}
             <li><b class="no-link">{{ entry_body (link) }}</b></li>
@@ -264,7 +265,7 @@
         )
   %}
   {%- if enabled %}{%- do akw.update (href = href) %}{% endif -%}
-  <a{{ akw|xmlattr }}>{#- -#}
+  <a{{ GTW.xmlattr (akw) }}>{#- -#}
     <i class="fa fa-{{ symbol }}">{#- -#}
       {%- if contents %}
         <b>{{- contents -}}</b>{#- -#}

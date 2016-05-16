@@ -1,6 +1,6 @@
 {#- jinja template: html/x.jnj -#}
 {#
-## Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -23,6 +23,7 @@
 ##     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
 ##    15-Mar-2013 (CT) Remove obsolete macro `shiv` (use `modernizr` instead)
 ##     6-Oct-2013 (CT) Add `with context` to import
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -39,7 +40,7 @@
 {%- endmacro -%}
 
 {%- macro footer () -%}
-<div class="footer {{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>{{ caller () }}</div>
+<div class="footer {{ kwargs.pop ('class', '') }}"{{ GTW.xmlattr (kwargs) }}>{{ caller () }}</div>
 {%- endmacro -%}
 
 {%- macro head () -%}
@@ -49,20 +50,20 @@
 {%- endmacro -%}
 
 {%- macro header () -%}
-<div class="header {{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>{{ caller () }}</div>
+<div class="header {{ kwargs.pop ('class', '') }}"{{ GTW.xmlattr (kwargs) }}>{{ caller () }}</div>
 {%- endmacro -%}
 
 {%- macro link_stylesheet (uri) -%}
-<link href="{{ uri }}" rel="stylesheet" type="text/css"{{ kwargs|xmlattr }}/>
+<link href="{{ uri }}" rel="stylesheet" type="text/css"{{ GTW.xmlattr (kwargs) }}/>
 {%- endmacro -%}
 
 {%- macro meta_content_url (url) -%}
   {%- do kwargs.pop("caller", "") -%}
-  <meta http-equiv="Content-URL" content="{{ url }}"{{ kwargs|xmlattr }}/>
+  <meta http-equiv="Content-URL" content="{{ url }}"{{ GTW.xmlattr (kwargs) }}/>
 {%- endmacro -%}
 
 {%- macro nav () -%}
-<div class="nav {{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>
+<div class="nav {{ kwargs.pop ('class', '') }}"{{ GTW.xmlattr (kwargs) }}>
   {{ caller () }}
 </div>
 {%- endmacro -%}
@@ -75,7 +76,7 @@
 {%- endmacro -%} {#- script -#}
 
 {%- macro section () -%}
-<div class="section {{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>
+<div class="section {{ kwargs.pop ('class', '') }}"{{ GTW.xmlattr (kwargs) }}>
   {{ caller () }}
 </div>
 {%- endmacro -%}

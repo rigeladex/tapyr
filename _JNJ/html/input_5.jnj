@@ -1,6 +1,6 @@
 {#- jinja template:  html/input_5.jnj -#}
 {#
-## Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -38,6 +38,7 @@
 ##    21-Nov-2014 (CT) Add `hd_input`
 ##    11-Jun-2015 (CT) Add optional keyword argument `primary` to `button_pure`
 ##    13-Jun-2015 (CT) Add `keygen`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -75,7 +76,7 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 
 {%- macro _input (typ, kw) -%}
   {% call(options, okw) with_opts_kw (kw) -%}
-    <input type="{{ typ }}"{{ okw|xmlattr }}
+    <input type="{{ typ }}"{{ GTW.xmlattr (okw) }}
       {%- if options %} {{ options }}{% endif -%}
     />
   {% endcall %} {# with_opts_kw #}
@@ -94,7 +95,7 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 {%- macro button () -%}
   {%- set button_caller = kwargs.pop ("caller") -%}
   {% call(opts, kw) with_opts_kw (kwargs) -%}
-    <button{{ kw|xmlattr }}{% if opts %} {{ opts }}{% endif -%}>
+    <button{{ GTW.xmlattr (kw) }}{% if opts %} {{ opts }}{% endif -%}>
       {{ button_caller () }}
     </button>
   {% endcall %} {# with_opts_kw #}
@@ -117,7 +118,7 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
   %}
   {% call button (class = class, ** kwargs) -%}
     <i class="{{ i_cls }}"></i>
-    {%- if text      %}<b>{{ text }}</b>{% endif -%}
+    {%- if text %}<b>{{ text }}</b>{% endif -%}
   {% endcall %} {# button #}
 {%- endmacro -%} {#- button_pure -#}
 
@@ -155,7 +156,7 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 
 {%- macro keygen () -%}
   {% call(opts, kw) with_opts_kw (kwargs) -%}
-    <keygen {{ kw|xmlattr }}{% if opts %} {{ opts }}{% endif -%}>
+    <keygen {{ GTW.xmlattr (kw) }}{% if opts %} {{ opts }}{% endif -%}>
   {% endcall %} {# with_opts_kw #}
 {%- endmacro -%} {#- keygen -#}
 

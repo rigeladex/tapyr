@@ -1,6 +1,6 @@
 {#- jinja template: form.jnj -#}
 {#
-## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -93,6 +93,7 @@
 ##    12-Jun-2015 (CT) Remove `logout_inline`, `password_change`,
 ##                     `display_errors`
 ##    13-Jun-2015 (CT) Add `button_control`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -118,7 +119,7 @@
       , ** kwargs
       )
   -%}
-  <form{{ fkw|xmlattr }}>
+  <form{{ GTW.xmlattr (fkw) }}>
     {{ caller () }}
     {%- set anti_csrf_token =
           include_ACT and response and response.anti_csrf_token (action)

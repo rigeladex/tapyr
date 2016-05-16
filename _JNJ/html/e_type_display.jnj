@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: e_type_display.jnj -#}
 {#
-## Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -21,6 +21,7 @@
 ##    11-Mar-2014 (CT) Creation
 ##    29-Jan-2015 (CT) Make compatible with `Renderer`
 ##     4-Feb-2015 (CT) Pass `renderer` to `as_html`, `css_class_dyn`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -39,7 +40,7 @@
               <th scope="row">
                 {{- f.ui_name -}}
               </th>
-              <td{{ GTW.filtered_dict (class = f.css_class)|xmlattr }}>
+              <td{{ GTW.xmlattr (class = f.css_class) }}>
                 <p>
                   {{- v.replace ("\n\n", "</p><p>") or "&nbsp;" -}}
                 </p>

@@ -1,10 +1,10 @@
 {#- jinja template: html/e_type_doc.m.jnj -#}
 {#
-## Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This module is part of the package JNJ.
-## 
+##
 ## This module is licensed under the terms of the BSD 3-Clause License
 ## <http://www.c-tanzer.at/license/bsd_3c.html>.
 ## #*** </License> ***********************************************************#
@@ -26,6 +26,7 @@
 ##    28-Mar-2014 (CT) Add support for `queryable` attributes
 ##    28-Mar-2014 (CT) Add link-ref-attributes to `e_type_cross_refs`
 ##     1-Apr-2014 (CT) Add `max_value`, `min_value` to `attributes`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -178,7 +179,7 @@
 
 {%- macro header (name) -%}
   {%- set tag = kwargs.pop ("tag", "h2") -%}
-  <{{ tag }} {{ kwargs|xmlattr -}}>{{ name }}</{{ tag }}>
+  <{{ tag }} {{ GTW.xmlattr (kwargs) -}}>{{ name }}</{{ tag }}>
 {%- endmacro -%} {#- header -#}
 
 {%- macro e_type_cross_refs (cross_refs) -%}

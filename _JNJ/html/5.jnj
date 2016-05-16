@@ -1,6 +1,6 @@
 {#- jinja template: html/5.jnj -#}
 {#
-## Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -25,6 +25,7 @@
 ##    15-Mar-2013 (CT) Remove obsolete macro `shiv` (use `modernizr` instead)
 ##     6-Oct-2013 (CT) Add `with context` to import
 ##     9-Apr-2014 (CT) Add `body`
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -37,7 +38,7 @@
 </body>
 {%- endmacro -%} {#- body -#}
 {%- macro footer () -%}
-<footer{{ kwargs|xmlattr }}>{{ caller () }}</footer>
+<footer{{ GTW.xmlattr (kwargs) }}>{{ caller () }}</footer>
 {%- endmacro -%}
 
 {%- macro head () -%}
@@ -47,7 +48,7 @@
 {%- endmacro -%}
 
 {%- macro header () -%}
-<header{{ kwargs|xmlattr }}>{{ caller () }}</header>
+<header{{ GTW.xmlattr (kwargs) }}>{{ caller () }}</header>
 {%- endmacro -%}
 
 {%- macro html (lang) -%}
@@ -58,16 +59,16 @@
 {%- endmacro -%}
 
 {%- macro link_stylesheet (uri) -%}
-<link href="{{ uri }}" rel="stylesheet"{{ kwargs|xmlattr }}/>
+<link href="{{ uri }}" rel="stylesheet"{{ GTW.xmlattr (kwargs) }}/>
 {%- endmacro -%}
 
 {%- macro meta_content_url (url) -%}
   {%- do kwargs.pop("caller", "") -%}
-  <!-- Content-URL="{{ url }}"{{ kwargs|xmlattr }}-->
+  <!-- Content-URL="{{ url }}"{{ GTW.xmlattr (kwargs) }}-->
 {%- endmacro -%}
 
 {%- macro nav () -%}
-<nav{{ kwargs|xmlattr }}>
+<nav{{ GTW.xmlattr (kwargs) }}>
   {{ caller () }}
 </nav>
 {%- endmacro -%}
@@ -80,7 +81,7 @@
 {%- endmacro -%} {#- script -#}
 
 {%- macro section () -%}
-<section{{ kwargs|xmlattr }}>
+<section{{ GTW.xmlattr (kwargs) }}>
   {{ caller () }}
 </section>
 {%- endmacro -%}

@@ -1,6 +1,6 @@
 {#- jinja template:  html/input_x.jnj -#}
 {#
-## Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -27,6 +27,7 @@
 ##    21-Nov-2011 (CT) Add `option`
 ##    30-Nov-2011 (CT) Add `disabled` and `required` to `attr5`
 ##     6-Oct-2013 (CT) Add `with context` to import
+##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    ««revision-date»»···
 ##--
 #}
@@ -44,7 +45,7 @@
 {%- macro _input (typ, cls, kw) -%}
   {%- do kw.pop ("caller", "") -%}
   {%- for a5 in attr5 %}{%- do kw.pop (a5, "") -%}{% endfor -%}
-  <input type="{{ typ }}" class="{{ cls }} {{ kw.pop ('class', '') }}"{{ kw|xmlattr }}{{ kwargs|xmlattr }}/>
+  <input type="{{ typ }}" class="{{ cls }} {{ kw.pop ('class', '') }}"{{ GTW.xmlattr (kw, kwargs) }}/>
 {%- endmacro -%} {#- _input -#}
 
 {%- macro checkbox () -%}
