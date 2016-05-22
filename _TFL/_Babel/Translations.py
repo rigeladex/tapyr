@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -21,13 +21,21 @@
 #    12-Oct-2015 (CT) Adapt `_parse` to Python 3.5 changes
 #                     of `gettext.GNUTranslations._parse`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    22-May-2016 (CT) Disable `unicode_literals` to avoid exception from 2.7.3
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import
 from   __future__  import division
 from   __future__  import print_function
-from   __future__  import unicode_literals
+
+### 22-May-2016 08:29
+### Debian 7.10 uses Python 2.7.3, which fails with::
+        #   File ".../_TFL/_Babel/Translations.py", line 54, in _parse
+        #     magic = unpack ("<I", buf [:4]) [0]
+        # TypeError: Struct() argument 1 must be string, not unicode
+### if `unicode_literals` is imported from the __future__
+#from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _TFL.pyk                import pyk
