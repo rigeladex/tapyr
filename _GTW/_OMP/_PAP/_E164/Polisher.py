@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.E164.
@@ -20,6 +20,8 @@
 #    31-Jul-2015 (CT) Finish creation
 #     7-Oct-2015 (CT) Change `SN._polished` to not assign `strict_err` with `as`
 #                     (Python 3 compatibility!)
+#    22-May-2016 (CT) Add guard `c_match.attr_dict.get (name)` to
+#                     `SN._polished_non_strict`
 #    ««revision-date»»···
 #--
 
@@ -164,7 +166,7 @@ class SN (_E164_Polisher_) :
             (self, attr, name, value, value_dict, essence, picky) :
         c_match = E164.Country.match (value)
         result  = {}
-        if c_match :
+        if c_match and c_match.attr_dict.get (name) :
             result.update (c_match.attr_dict)
         else :
             result = MOM.Attr.Polisher.phone_sn_split \

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -18,6 +18,7 @@
 # Revision Dates
 #     3-Aug-2015 (CT) Creation
 #    15-Sep-2015 (CT) Adapt to bug fixes in `E164.Country`
+#    22-May-2016 (CT) Add test for `ndc_length_valid`
 #    ««revision-date»»···
 #--
 
@@ -135,6 +136,17 @@ _test_code = """
     123456789012    : +43-1-1234 5678 9012
     Invariants: Can't set primary attribute Phone.sn to '1234567890123'.
         Not a proper phone number for Country (43) [Austria]: 1-1234567890123; subscriber number must have at most 12 digits; got 13 digits instead
+
+
+    >>> _ = PAP.Phone (sn = "918273", cc = "43", raw = 1)
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     scope.commit ()
+    Invariants: Condition `ndc_length_valid` : Value for `ndc` must contain at least `ndc_min_length`
+    digits, must not be longer than `ndc_max_length` digits. (ndc_min_length <= length <= ndc_max_length)
+        length = 0 << len (ndc)
+        ndc = None
+        ndc_max_length = 4
+        ndc_min_length = 1
 
 """
 

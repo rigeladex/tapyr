@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.MF3.
@@ -97,6 +97,7 @@
 #    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
 #    20-Dec-2015 (CT) Add properties `aside` and `aside_x` to `_Field_Base_`
 #    20-Dec-2015 (CT) Add `syntax` to `_Field_Base_._attr_prop_map`
+#    22-May-2016 (CT) Add guard `self.required` to `_create_instance`
 #    ««revision-date»»···
 #--
 
@@ -754,7 +755,7 @@ class _Entity_Mixin_ (_Base_) :
                     error = self._required_missing_error (exc, svs)
                 except Exception :
                     pass
-                if error is None :
+                if error is None and self.required :
                     if count == 1 :
                         result = matches.one ()
                     else :

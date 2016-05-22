@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -46,6 +46,9 @@
 #     3-Aug-2015 (CT) Set `_init_raw_default` to `True`
 #     3-Aug-2015 (CT) Redefine `ui_display.computed` to use `formatted_sn`
 #     4-Aug-2015 (CT) Add `cc_info`, `ndc_info`
+#    22-May-2016 (CT) Correct `ndc_length_valid`, `sn_length_valid`
+#                     + Use `attr_none`, not `attributes`, for `ndc`, `sn`
+#    22-May-2016 (CT) Override `epkified` to check `min_length` of `epk`
 #    ««revision-date»»···
 #--
 
@@ -276,7 +279,8 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
             kind               = Pred.Region
             assertion          = "ndc_min_length <= length <= ndc_max_length"
-            attributes         = ("ndc", "ndc_max_length", "ndc_min_length")
+            attributes         = ("ndc_max_length", "ndc_min_length")
+            attr_none          = ("ndc", )
             bindings           = dict \
                 ( length       = "len (ndc)"
                 )
@@ -290,7 +294,8 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
             kind               = Pred.Region
             assertion          = "sn_min_length <= length <= sn_max_length"
-            attributes         = ("sn", "sn_max_length", "sn_min_length")
+            attributes         = ("sn_max_length", "sn_min_length")
+            attr_none          = ("sn", )
             bindings           = dict \
                 ( length       = "len (sn)"
                 )
@@ -298,6 +303,24 @@ class _PAP_Phone_ (_Ancestor_Essence) :
         # end class sn_length_valid
 
     # end class _Predicates
+
+    @classmethod
+    def epkified (cls, * epk, ** kw) :
+        on_error = kw.get ("on_error", None) or cls._raise_attr_error
+        result   = epk, kw = cls.__c_super.epkified (* epk, ** kw)
+        def _gen (cls, epk) :
+            for ak, v in zip (cls.primary, epk) :
+                ml = ak.attr.min_length
+                if ml and (v is None or len (v) < ml) :
+                    yield ak.name
+        missing = list (_gen (cls, epk))
+        if missing :
+            error = MOM.Error.Required_Missing \
+                (cls, missing, missing, epk, kw, "primary")
+            on_error (error)
+            raise error
+        return result
+    # end def epkified
 
 Phone = _PAP_Phone_ # end class
 
