@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -62,6 +62,9 @@
 #    21-Sep-2015 (CT) Add permission `Can_Register`
 #    22-Oct-2015 (CT) Make `_response_body_csv` Python-3 compatible
 #                     (use `pyk.as_str (s)`, not `pyk.text_type (s).encoded`)
+#    24-May-2016 (CT) Add `sorted` to `Field_Regatta_Kinds`;
+#                     Use `Is cancelled`, not `Cancelled` as text for cancelled
+#                     regattas (L10N)
 #    ««revision-date»»···
 #--
 
@@ -1166,8 +1169,8 @@ class Archive (_Ancestor) :
             # end def ui_name
 
             def as_html (self, o, renderer) :
-                regattas = self._value_getter (o)
-                canc     = _T ("Cancelled")
+                regattas = sorted (self._value_getter (o), key = Q.name)
+                canc     = _T ("Is cancelled")
                 return "<br>".join \
                     ((r.kind if not r.is_cancelled else canc) for r in regattas)
             # end def as_html
