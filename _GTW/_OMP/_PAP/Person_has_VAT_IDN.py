@@ -18,6 +18,7 @@
 # Revision Dates
 #    24-Feb-2016 (CT) Creation
 #    24-Feb-2016 (CT) Inject attribute `vat_idn` into `Person`
+#    27-May-2016 (CT) Add missing import for `PAP.Person`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,7 @@ from   _TFL.I18N                   import _
 
 from   _GTW._OMP._PAP.VAT_IDN      import A_VAT_IDN
 
+import _GTW._OMP._PAP.Person
 import _GTW._OMP._PAP.Subject_has_VAT_IDN
 
 from   _TFL.Decorator             import eval_function_body
