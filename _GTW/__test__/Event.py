@@ -22,6 +22,7 @@
 #     7-Sep-2010 (CT) Tests for update of `Event_occurs` added
 #     8-Sep-2010 (CT) Tests for Event without `Recurrence_Rule` added
 #    15-Feb-2016 (CT) Add test for localized weekday names
+#    19-May-2016 (CT) Add `test_qr`, `test_qr_de`
 #    ««revision-date»»···
 #--
 
@@ -231,9 +232,1462 @@ _test_code = """
 
 """
 
-from _GTW.__test__.model import *
+_test_qr = r"""
+    >>> nav_root = create_app () # doctest:+ELLIPSIS
+    Cache ...
+
+    >>> scope = nav_root.scope
+    >>> ead   = nav_root.ET_Map ["EVT.Event"].admin
+    >>> ETT   = ead.Templateer.get_template ("e_type")
+    >>> QR    = ead.QR
+    >>> afl   = QR.Filter (ead.E_Type, "left")
+
+    >>> print ((formatted (afl)))
+    Record
+      ( AQ = <left.AQ [Attr.Type.Querier Id_Entity]>
+      , Class = 'Entity'
+      , attr = Id_Entity `left`
+      , children_np =
+        [ Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = String `name`
+                  , full_name = 'left[PAP.Company].name'
+                  , id = 'left[PAP.Company]__name'
+                  , name = 'name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Company]/Name'
+                  )
+              , Record
+                  ( attr = String `registered_in`
+                  , full_name = 'left[PAP.Company].registered_in'
+                  , id = 'left[PAP.Company]__registered_in'
+                  , name = 'registered_in'
+                  , sig_key = 3
+                  , ui_name = 'Object[Company]/Registered in'
+                  )
+              ]
+            , full_name = 'left[PAP.Company]'
+            , id = 'left[PAP.Company]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'PAP.Company'
+            , ui_name = 'Object[Company]'
+            , ui_type_name = 'Company'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = String `last_name`
+                  , full_name = 'left[PAP.Person].last_name'
+                  , id = 'left[PAP.Person]__last_name'
+                  , name = 'last_name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Person]/Last name'
+                  )
+              , Record
+                  ( attr = String `first_name`
+                  , full_name = 'left[PAP.Person].first_name'
+                  , id = 'left[PAP.Person]__first_name'
+                  , name = 'first_name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Person]/First name'
+                  )
+              , Record
+                  ( attr = String `middle_name`
+                  , full_name = 'left[PAP.Person].middle_name'
+                  , id = 'left[PAP.Person]__middle_name'
+                  , name = 'middle_name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Person]/Middle name'
+                  )
+              , Record
+                  ( attr = String `title`
+                  , full_name = 'left[PAP.Person].title'
+                  , id = 'left[PAP.Person]__title'
+                  , name = 'title'
+                  , sig_key = 3
+                  , ui_name = 'Object[Person]/Academic title'
+                  )
+              ]
+            , full_name = 'left[PAP.Person]'
+            , id = 'left[PAP.Person]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'PAP.Person'
+            , ui_name = 'Object[Person]'
+            , ui_type_name = 'Person'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SRM.Page].perma_name'
+                  , id = 'left[SRM.Page]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Regatta_Page]/Name'
+                  )
+              , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `event`
+                  , attrs =
+                    [ Record
+                        ( attr = String `name`
+                        , full_name = 'left[SRM.Page].event.name'
+                        , id = 'left[SRM.Page]__event__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'Object[Regatta_Page]/Event/Name'
+                        )
+                    , Record
+                        ( attr = Date_Interval `date`
+                        , attrs =
+                          [ Record
+                              ( attr = Date `start`
+                              , full_name = 'left[SRM.Page].event.date.start'
+                              , id = 'left[SRM.Page]__event__date__start'
+                              , name = 'start'
+                              , sig_key = 0
+                              , ui_name = 'Object[Regatta_Page]/Event/Date/Start'
+                              )
+                          , Record
+                              ( attr = Date `finish`
+                              , full_name = 'left[SRM.Page].event.date.finish'
+                              , id = 'left[SRM.Page]__event__date__finish'
+                              , name = 'finish'
+                              , sig_key = 0
+                              , ui_name = 'Object[Regatta_Page]/Event/Date/Finish'
+                              )
+                          ]
+                        , full_name = 'left[SRM.Page].event.date'
+                        , id = 'left[SRM.Page]__event__date'
+                        , name = 'date'
+                        , ui_name = 'Object[Regatta_Page]/Event/Date'
+                        )
+                    ]
+                  , full_name = 'left[SRM.Page].event'
+                  , id = 'left[SRM.Page]__event'
+                  , name = 'event'
+                  , sig_key = 2
+                  , type_name = 'SRM.Regatta_Event'
+                  , ui_name = 'Object[Regatta_Page]/Event'
+                  , ui_type_name = 'Regatta_Event'
+                  )
+              ]
+            , full_name = 'left[SRM.Page]'
+            , id = 'left[SRM.Page]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SRM.Page'
+            , ui_name = 'Object[Regatta_Page]'
+            , ui_type_name = 'Regatta_Page'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( Class = 'Entity'
+                  , attr = Regatta_Event `left`
+                  , attrs =
+                    [ Record
+                        ( attr = String `name`
+                        , full_name = 'left[SRM.Regatta_C].left.name'
+                        , id = 'left[SRM.Regatta_C]__left__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'Object[Regatta_C]/Event/Name'
+                        )
+                    , Record
+                        ( attr = Date_Interval `date`
+                        , attrs =
+                          [ Record
+                              ( attr = Date `start`
+                              , full_name = 'left[SRM.Regatta_C].left.date.start'
+                              , id = 'left[SRM.Regatta_C]__left__date__start'
+                              , name = 'start'
+                              , sig_key = 0
+                              , ui_name = 'Object[Regatta_C]/Event/Date/Start'
+                              )
+                          , Record
+                              ( attr = Date `finish`
+                              , full_name = 'left[SRM.Regatta_C].left.date.finish'
+                              , id = 'left[SRM.Regatta_C]__left__date__finish'
+                              , name = 'finish'
+                              , sig_key = 0
+                              , ui_name = 'Object[Regatta_C]/Event/Date/Finish'
+                              )
+                          ]
+                        , full_name = 'left[SRM.Regatta_C].left.date'
+                        , id = 'left[SRM.Regatta_C]__left__date'
+                        , name = 'date'
+                        , ui_name = 'Object[Regatta_C]/Event/Date'
+                        )
+                    ]
+                  , full_name = 'left[SRM.Regatta_C].left'
+                  , id = 'left[SRM.Regatta_C]__left'
+                  , name = 'left'
+                  , sig_key = 2
+                  , type_name = 'SRM.Regatta_Event'
+                  , ui_name = 'Object[Regatta_C]/Event'
+                  , ui_type_name = 'Regatta_Event'
+                  )
+              , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `boat_class`
+                  , full_name = 'left[SRM.Regatta_C].boat_class'
+                  , id = 'left[SRM.Regatta_C]__boat_class'
+                  , name = 'boat_class'
+                  , sig_key = 2
+                  , type_name = 'SRM.Boat_Class'
+                  , ui_name = 'Object[Regatta_C]/Boat class'
+                  , ui_type_name = 'Boat_Class'
+                  )
+              ]
+            , full_name = 'left[SRM.Regatta_C]'
+            , id = 'left[SRM.Regatta_C]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SRM.Regatta_C'
+            , ui_name = 'Object[Regatta_C]'
+            , ui_type_name = 'Regatta_C'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = String `name`
+                  , full_name = 'left[SRM.Regatta_Event].name'
+                  , id = 'left[SRM.Regatta_Event]__name'
+                  , name = 'name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Regatta_Event]/Name'
+                  )
+              , Record
+                  ( attr = Date_Interval `date`
+                  , attrs =
+                    [ Record
+                        ( attr = Date `start`
+                        , full_name = 'left[SRM.Regatta_Event].date.start'
+                        , id = 'left[SRM.Regatta_Event]__date__start'
+                        , name = 'start'
+                        , sig_key = 0
+                        , ui_name = 'Object[Regatta_Event]/Date/Start'
+                        )
+                    , Record
+                        ( attr = Date `finish`
+                        , full_name = 'left[SRM.Regatta_Event].date.finish'
+                        , id = 'left[SRM.Regatta_Event]__date__finish'
+                        , name = 'finish'
+                        , sig_key = 0
+                        , ui_name = 'Object[Regatta_Event]/Date/Finish'
+                        )
+                    ]
+                  , full_name = 'left[SRM.Regatta_Event].date'
+                  , id = 'left[SRM.Regatta_Event]__date'
+                  , name = 'date'
+                  , ui_name = 'Object[Regatta_Event]/Date'
+                  )
+              ]
+            , full_name = 'left[SRM.Regatta_Event]'
+            , id = 'left[SRM.Regatta_Event]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SRM.Regatta_Event'
+            , ui_name = 'Object[Regatta_Event]'
+            , ui_type_name = 'Regatta_Event'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( Class = 'Entity'
+                  , attr = Regatta_Event `left`
+                  , attrs =
+                    [ Record
+                        ( attr = String `name`
+                        , full_name = 'left[SRM.Regatta_H].left.name'
+                        , id = 'left[SRM.Regatta_H]__left__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'Object[Regatta_H]/Event/Name'
+                        )
+                    , Record
+                        ( attr = Date_Interval `date`
+                        , attrs =
+                          [ Record
+                              ( attr = Date `start`
+                              , full_name = 'left[SRM.Regatta_H].left.date.start'
+                              , id = 'left[SRM.Regatta_H]__left__date__start'
+                              , name = 'start'
+                              , sig_key = 0
+                              , ui_name = 'Object[Regatta_H]/Event/Date/Start'
+                              )
+                          , Record
+                              ( attr = Date `finish`
+                              , full_name = 'left[SRM.Regatta_H].left.date.finish'
+                              , id = 'left[SRM.Regatta_H]__left__date__finish'
+                              , name = 'finish'
+                              , sig_key = 0
+                              , ui_name = 'Object[Regatta_H]/Event/Date/Finish'
+                              )
+                          ]
+                        , full_name = 'left[SRM.Regatta_H].left.date'
+                        , id = 'left[SRM.Regatta_H]__left__date'
+                        , name = 'date'
+                        , ui_name = 'Object[Regatta_H]/Event/Date'
+                        )
+                    ]
+                  , full_name = 'left[SRM.Regatta_H].left'
+                  , id = 'left[SRM.Regatta_H]__left'
+                  , name = 'left'
+                  , sig_key = 2
+                  , type_name = 'SRM.Regatta_Event'
+                  , ui_name = 'Object[Regatta_H]/Event'
+                  , ui_type_name = 'Regatta_Event'
+                  )
+              , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `boat_class`
+                  , full_name = 'left[SRM.Regatta_H].boat_class'
+                  , id = 'left[SRM.Regatta_H]__boat_class'
+                  , name = 'boat_class'
+                  , sig_key = 2
+                  , type_name = 'SRM.Handicap'
+                  , ui_name = 'Object[Regatta_H]/Handicap'
+                  , ui_type_name = 'Handicap'
+                  )
+              ]
+            , full_name = 'left[SRM.Regatta_H]'
+            , id = 'left[SRM.Regatta_H]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SRM.Regatta_H'
+            , ui_name = 'Object[Regatta_H]'
+            , ui_type_name = 'Regatta_H'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( Class = 'Entity'
+                  , attr = Object_PN `left`
+                  , children_np =
+                    [ Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SRM.Page].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SRM.Page]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Object[Clip_O]/Object[Regatta_Page]/Name'
+                              )
+                          , Record
+                              ( Class = 'Entity'
+                              , attr = Entity `event`
+                              , attrs =
+                                [ Record
+                                    ( attr = String `name`
+                                    , full_name = 'left[SWP.Clip_O].left[SRM.Page].event.name'
+                                    , id = 'left[SWP.Clip_O]__left[SRM.Page]__event__name'
+                                    , name = 'name'
+                                    , sig_key = 3
+                                    , ui_name = 'Object[Clip_O]/Object[Regatta_Page]/Event/Name'
+                                    )
+                                , Record
+                                    ( attr = Date_Interval `date`
+                                    , attrs =
+                                      [ Record
+                                          ( attr = Date `start`
+                                          , full_name = 'left[SWP.Clip_O].left[SRM.Page].event.date.start'
+                                          , id = 'left[SWP.Clip_O]__left[SRM.Page]__event__date__start'
+                                          , name = 'start'
+                                          , sig_key = 0
+                                          , ui_name = 'Object[Clip_O]/Object[Regatta_Page]/Event/Date/Start'
+                                          )
+                                      , Record
+                                          ( attr = Date `finish`
+                                          , full_name = 'left[SWP.Clip_O].left[SRM.Page].event.date.finish'
+                                          , id = 'left[SWP.Clip_O]__left[SRM.Page]__event__date__finish'
+                                          , name = 'finish'
+                                          , sig_key = 0
+                                          , ui_name = 'Object[Clip_O]/Object[Regatta_Page]/Event/Date/Finish'
+                                          )
+                                      ]
+                                    , full_name = 'left[SWP.Clip_O].left[SRM.Page].event.date'
+                                    , id = 'left[SWP.Clip_O]__left[SRM.Page]__event__date'
+                                    , name = 'date'
+                                    , ui_name = 'Object[Clip_O]/Object[Regatta_Page]/Event/Date'
+                                    )
+                                ]
+                              , full_name = 'left[SWP.Clip_O].left[SRM.Page].event'
+                              , id = 'left[SWP.Clip_O]__left[SRM.Page]__event'
+                              , name = 'event'
+                              , sig_key = 2
+                              , type_name = 'SRM.Regatta_Event'
+                              , ui_name = 'Object[Clip_O]/Object[Regatta_Page]/Event'
+                              , ui_type_name = 'Regatta_Event'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SRM.Page]'
+                        , id = 'left[SWP.Clip_O]__left[SRM.Page]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SRM.Page'
+                        , ui_name = 'Object[Clip_O]/Object[Regatta_Page]'
+                        , ui_type_name = 'Regatta_Page'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Clip_X].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Clip_X]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Object[Clip_O]/Object[Clip_X]/Name'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Clip_X]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Clip_X]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Clip_X'
+                        , ui_name = 'Object[Clip_O]/Object[Clip_X]'
+                        , ui_type_name = 'Clip_X'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Gallery].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Gallery]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Object[Clip_O]/Object[Gallery]/Name'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Gallery]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Gallery]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Gallery'
+                        , ui_name = 'Object[Clip_O]/Object[Gallery]'
+                        , ui_type_name = 'Gallery'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Page].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Page]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Object[Clip_O]/Object[Page]/Name'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Page]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Page]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Page'
+                        , ui_name = 'Object[Clip_O]/Object[Page]'
+                        , ui_type_name = 'Page'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Page_Y].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Page_Y]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Object[Clip_O]/Object[Page_Y]/Name'
+                              )
+                          , Record
+                              ( attr = Int `year`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Page_Y].year'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Page_Y]__year'
+                              , name = 'year'
+                              , sig_key = 0
+                              , ui_name = 'Object[Clip_O]/Object[Page_Y]/Year'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Page_Y]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Page_Y]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Page_Y'
+                        , ui_name = 'Object[Clip_O]/Object[Page_Y]'
+                        , ui_type_name = 'Page_Y'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Url `parent_url`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Referral].parent_url'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Referral]__parent_url'
+                              , name = 'parent_url'
+                              , sig_key = 3
+                              , ui_name = 'Object[Clip_O]/Object[Referral]/Parent url'
+                              )
+                          , Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Referral].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Referral]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Object[Clip_O]/Object[Referral]/Name'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Referral]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Referral]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Referral'
+                        , ui_name = 'Object[Clip_O]/Object[Referral]'
+                        , ui_type_name = 'Referral'
+                        )
+                    ]
+                  , default_child = 'SWP.Page'
+                  , full_name = 'left[SWP.Clip_O].left'
+                  , id = 'left[SWP.Clip_O]__left'
+                  , name = 'left'
+                  , sig_key = 2
+                  , type_name = 'SWP.Object_PN'
+                  , ui_name = 'Object[Clip_O]/Object'
+                  , ui_type_name = 'Object_PN'
+                  )
+              , Record
+                  ( attr = Date_Interval `date_x`
+                  , attrs =
+                    [ Record
+                        ( attr = Date `start`
+                        , full_name = 'left[SWP.Clip_O].date_x.start'
+                        , id = 'left[SWP.Clip_O]__date_x__start'
+                        , name = 'start'
+                        , sig_key = 0
+                        , ui_name = 'Object[Clip_O]/date/Start'
+                        )
+                    , Record
+                        ( attr = Date `finish`
+                        , full_name = 'left[SWP.Clip_O].date_x.finish'
+                        , id = 'left[SWP.Clip_O]__date_x__finish'
+                        , name = 'finish'
+                        , sig_key = 0
+                        , ui_name = 'Object[Clip_O]/date/Finish'
+                        )
+                    ]
+                  , full_name = 'left[SWP.Clip_O].date_x'
+                  , id = 'left[SWP.Clip_O]__date_x'
+                  , name = 'date_x'
+                  , ui_name = 'Object[Clip_O]/date'
+                  )
+              ]
+            , full_name = 'left[SWP.Clip_O]'
+            , id = 'left[SWP.Clip_O]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Clip_O'
+            , ui_name = 'Object[Clip_O]'
+            , ui_type_name = 'Clip_O'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Clip_X].perma_name'
+                  , id = 'left[SWP.Clip_X]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Clip_X]/Name'
+                  )
+              ]
+            , full_name = 'left[SWP.Clip_X]'
+            , id = 'left[SWP.Clip_X]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Clip_X'
+            , ui_name = 'Object[Clip_X]'
+            , ui_type_name = 'Clip_X'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Gallery].perma_name'
+                  , id = 'left[SWP.Gallery]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Gallery]/Name'
+                  )
+              ]
+            , full_name = 'left[SWP.Gallery]'
+            , id = 'left[SWP.Gallery]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Gallery'
+            , ui_name = 'Object[Gallery]'
+            , ui_type_name = 'Gallery'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Page].perma_name'
+                  , id = 'left[SWP.Page]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Page]/Name'
+                  )
+              ]
+            , full_name = 'left[SWP.Page]'
+            , id = 'left[SWP.Page]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Page'
+            , ui_name = 'Object[Page]'
+            , ui_type_name = 'Page'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Page_Y].perma_name'
+                  , id = 'left[SWP.Page_Y]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Page_Y]/Name'
+                  )
+              , Record
+                  ( attr = Int `year`
+                  , full_name = 'left[SWP.Page_Y].year'
+                  , id = 'left[SWP.Page_Y]__year'
+                  , name = 'year'
+                  , sig_key = 0
+                  , ui_name = 'Object[Page_Y]/Year'
+                  )
+              ]
+            , full_name = 'left[SWP.Page_Y]'
+            , id = 'left[SWP.Page_Y]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Page_Y'
+            , ui_name = 'Object[Page_Y]'
+            , ui_type_name = 'Page_Y'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Url `parent_url`
+                  , full_name = 'left[SWP.Referral].parent_url'
+                  , id = 'left[SWP.Referral]__parent_url'
+                  , name = 'parent_url'
+                  , sig_key = 3
+                  , ui_name = 'Object[Referral]/Parent url'
+                  )
+              , Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Referral].perma_name'
+                  , id = 'left[SWP.Referral]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Object[Referral]/Name'
+                  )
+              ]
+            , full_name = 'left[SWP.Referral]'
+            , id = 'left[SWP.Referral]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Referral'
+            , ui_name = 'Object[Referral]'
+            , ui_type_name = 'Referral'
+            )
+        ]
+      , edit = None
+      , full_name = 'left'
+      , id = 'left___AC'
+      , name = 'left___AC'
+      , op =
+        Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 2
+      , type_name = 'MOM.Id_Entity'
+      , ui_name = 'Object'
+      , ui_type_name = 'Id_Entity'
+      , value = None
+      )
+
+"""
+
+_test_qr_de = r"""
+    >>> nav_root = create_app () # doctest:+ELLIPSIS
+    Cache ...
+
+    >>> scope = nav_root.scope
+    >>> ead   = nav_root.ET_Map ["EVT.Event"].admin
+    >>> ETT   = ead.Templateer.get_template ("e_type")
+    >>> QR    = ead.QR
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...     afl = QR.Filter (ead.E_Type, "left")
+    ...     print ((formatted (afl)))
+    Record
+      ( AQ = <left.AQ [Attr.Type.Querier Id_Entity]>
+      , Class = 'Entity'
+      , attr = Id_Entity `left`
+      , children_np =
+        [ Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = String `name`
+                  , full_name = 'left[PAP.Company].name'
+                  , id = 'left[PAP.Company]__name'
+                  , name = 'name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Firma]/Name'
+                  )
+              , Record
+                  ( attr = String `registered_in`
+                  , full_name = 'left[PAP.Company].registered_in'
+                  , id = 'left[PAP.Company]__registered_in'
+                  , name = 'registered_in'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Firma]/Registriert in'
+                  )
+              ]
+            , full_name = 'left[PAP.Company]'
+            , id = 'left[PAP.Company]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'PAP.Company'
+            , ui_name = 'Objekt[Firma]'
+            , ui_type_name = 'Firma'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = String `last_name`
+                  , full_name = 'left[PAP.Person].last_name'
+                  , id = 'left[PAP.Person]__last_name'
+                  , name = 'last_name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Person]/Nachname'
+                  )
+              , Record
+                  ( attr = String `first_name`
+                  , full_name = 'left[PAP.Person].first_name'
+                  , id = 'left[PAP.Person]__first_name'
+                  , name = 'first_name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Person]/Vorname'
+                  )
+              , Record
+                  ( attr = String `middle_name`
+                  , full_name = 'left[PAP.Person].middle_name'
+                  , id = 'left[PAP.Person]__middle_name'
+                  , name = 'middle_name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Person]/Mittelname'
+                  )
+              , Record
+                  ( attr = String `title`
+                  , full_name = 'left[PAP.Person].title'
+                  , id = 'left[PAP.Person]__title'
+                  , name = 'title'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Person]/Akademischer Titel'
+                  )
+              ]
+            , full_name = 'left[PAP.Person]'
+            , id = 'left[PAP.Person]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'PAP.Person'
+            , ui_name = 'Objekt[Person]'
+            , ui_type_name = 'Person'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SRM.Page].perma_name'
+                  , id = 'left[SRM.Page]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Regatta Seite]/Name'
+                  )
+              , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `event`
+                  , attrs =
+                    [ Record
+                        ( attr = String `name`
+                        , full_name = 'left[SRM.Page].event.name'
+                        , id = 'left[SRM.Page]__event__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'Objekt[Regatta Seite]/Ereignis/Name'
+                        )
+                    , Record
+                        ( attr = Date_Interval `date`
+                        , attrs =
+                          [ Record
+                              ( attr = Date `start`
+                              , full_name = 'left[SRM.Page].event.date.start'
+                              , id = 'left[SRM.Page]__event__date__start'
+                              , name = 'start'
+                              , sig_key = 0
+                              , ui_name = 'Objekt[Regatta Seite]/Ereignis/Datum/Anfang'
+                              )
+                          , Record
+                              ( attr = Date `finish`
+                              , full_name = 'left[SRM.Page].event.date.finish'
+                              , id = 'left[SRM.Page]__event__date__finish'
+                              , name = 'finish'
+                              , sig_key = 0
+                              , ui_name = 'Objekt[Regatta Seite]/Ereignis/Datum/Ende'
+                              )
+                          ]
+                        , full_name = 'left[SRM.Page].event.date'
+                        , id = 'left[SRM.Page]__event__date'
+                        , name = 'date'
+                        , ui_name = 'Objekt[Regatta Seite]/Ereignis/Datum'
+                        )
+                    ]
+                  , full_name = 'left[SRM.Page].event'
+                  , id = 'left[SRM.Page]__event'
+                  , name = 'event'
+                  , sig_key = 2
+                  , type_name = 'SRM.Regatta_Event'
+                  , ui_name = 'Objekt[Regatta Seite]/Ereignis'
+                  , ui_type_name = 'Regattaveranstaltung'
+                  )
+              ]
+            , full_name = 'left[SRM.Page]'
+            , id = 'left[SRM.Page]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SRM.Page'
+            , ui_name = 'Objekt[Regatta Seite]'
+            , ui_type_name = 'Regatta Seite'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( Class = 'Entity'
+                  , attr = Regatta_Event `left`
+                  , attrs =
+                    [ Record
+                        ( attr = String `name`
+                        , full_name = 'left[SRM.Regatta_C].left.name'
+                        , id = 'left[SRM.Regatta_C]__left__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'Objekt[Klassenregatta]/Ereignis/Name'
+                        )
+                    , Record
+                        ( attr = Date_Interval `date`
+                        , attrs =
+                          [ Record
+                              ( attr = Date `start`
+                              , full_name = 'left[SRM.Regatta_C].left.date.start'
+                              , id = 'left[SRM.Regatta_C]__left__date__start'
+                              , name = 'start'
+                              , sig_key = 0
+                              , ui_name = 'Objekt[Klassenregatta]/Ereignis/Datum/Anfang'
+                              )
+                          , Record
+                              ( attr = Date `finish`
+                              , full_name = 'left[SRM.Regatta_C].left.date.finish'
+                              , id = 'left[SRM.Regatta_C]__left__date__finish'
+                              , name = 'finish'
+                              , sig_key = 0
+                              , ui_name = 'Objekt[Klassenregatta]/Ereignis/Datum/Ende'
+                              )
+                          ]
+                        , full_name = 'left[SRM.Regatta_C].left.date'
+                        , id = 'left[SRM.Regatta_C]__left__date'
+                        , name = 'date'
+                        , ui_name = 'Objekt[Klassenregatta]/Ereignis/Datum'
+                        )
+                    ]
+                  , full_name = 'left[SRM.Regatta_C].left'
+                  , id = 'left[SRM.Regatta_C]__left'
+                  , name = 'left'
+                  , sig_key = 2
+                  , type_name = 'SRM.Regatta_Event'
+                  , ui_name = 'Objekt[Klassenregatta]/Ereignis'
+                  , ui_type_name = 'Regattaveranstaltung'
+                  )
+              , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `boat_class`
+                  , full_name = 'left[SRM.Regatta_C].boat_class'
+                  , id = 'left[SRM.Regatta_C]__boat_class'
+                  , name = 'boat_class'
+                  , sig_key = 2
+                  , type_name = 'SRM.Boat_Class'
+                  , ui_name = 'Objekt[Klassenregatta]/Bootsklasse'
+                  , ui_type_name = 'Bootsklasse'
+                  )
+              ]
+            , full_name = 'left[SRM.Regatta_C]'
+            , id = 'left[SRM.Regatta_C]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SRM.Regatta_C'
+            , ui_name = 'Objekt[Klassenregatta]'
+            , ui_type_name = 'Klassenregatta'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = String `name`
+                  , full_name = 'left[SRM.Regatta_Event].name'
+                  , id = 'left[SRM.Regatta_Event]__name'
+                  , name = 'name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Regattaveranstaltung]/Name'
+                  )
+              , Record
+                  ( attr = Date_Interval `date`
+                  , attrs =
+                    [ Record
+                        ( attr = Date `start`
+                        , full_name = 'left[SRM.Regatta_Event].date.start'
+                        , id = 'left[SRM.Regatta_Event]__date__start'
+                        , name = 'start'
+                        , sig_key = 0
+                        , ui_name = 'Objekt[Regattaveranstaltung]/Datum/Anfang'
+                        )
+                    , Record
+                        ( attr = Date `finish`
+                        , full_name = 'left[SRM.Regatta_Event].date.finish'
+                        , id = 'left[SRM.Regatta_Event]__date__finish'
+                        , name = 'finish'
+                        , sig_key = 0
+                        , ui_name = 'Objekt[Regattaveranstaltung]/Datum/Ende'
+                        )
+                    ]
+                  , full_name = 'left[SRM.Regatta_Event].date'
+                  , id = 'left[SRM.Regatta_Event]__date'
+                  , name = 'date'
+                  , ui_name = 'Objekt[Regattaveranstaltung]/Datum'
+                  )
+              ]
+            , full_name = 'left[SRM.Regatta_Event]'
+            , id = 'left[SRM.Regatta_Event]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SRM.Regatta_Event'
+            , ui_name = 'Objekt[Regattaveranstaltung]'
+            , ui_type_name = 'Regattaveranstaltung'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( Class = 'Entity'
+                  , attr = Regatta_Event `left`
+                  , attrs =
+                    [ Record
+                        ( attr = String `name`
+                        , full_name = 'left[SRM.Regatta_H].left.name'
+                        , id = 'left[SRM.Regatta_H]__left__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'Objekt[Handicapregatta]/Ereignis/Name'
+                        )
+                    , Record
+                        ( attr = Date_Interval `date`
+                        , attrs =
+                          [ Record
+                              ( attr = Date `start`
+                              , full_name = 'left[SRM.Regatta_H].left.date.start'
+                              , id = 'left[SRM.Regatta_H]__left__date__start'
+                              , name = 'start'
+                              , sig_key = 0
+                              , ui_name = 'Objekt[Handicapregatta]/Ereignis/Datum/Anfang'
+                              )
+                          , Record
+                              ( attr = Date `finish`
+                              , full_name = 'left[SRM.Regatta_H].left.date.finish'
+                              , id = 'left[SRM.Regatta_H]__left__date__finish'
+                              , name = 'finish'
+                              , sig_key = 0
+                              , ui_name = 'Objekt[Handicapregatta]/Ereignis/Datum/Ende'
+                              )
+                          ]
+                        , full_name = 'left[SRM.Regatta_H].left.date'
+                        , id = 'left[SRM.Regatta_H]__left__date'
+                        , name = 'date'
+                        , ui_name = 'Objekt[Handicapregatta]/Ereignis/Datum'
+                        )
+                    ]
+                  , full_name = 'left[SRM.Regatta_H].left'
+                  , id = 'left[SRM.Regatta_H]__left'
+                  , name = 'left'
+                  , sig_key = 2
+                  , type_name = 'SRM.Regatta_Event'
+                  , ui_name = 'Objekt[Handicapregatta]/Ereignis'
+                  , ui_type_name = 'Regattaveranstaltung'
+                  )
+              , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `boat_class`
+                  , full_name = 'left[SRM.Regatta_H].boat_class'
+                  , id = 'left[SRM.Regatta_H]__boat_class'
+                  , name = 'boat_class'
+                  , sig_key = 2
+                  , type_name = 'SRM.Handicap'
+                  , ui_name = 'Objekt[Handicapregatta]/Vermessungsformel'
+                  , ui_type_name = 'Vermessungsformel'
+                  )
+              ]
+            , full_name = 'left[SRM.Regatta_H]'
+            , id = 'left[SRM.Regatta_H]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SRM.Regatta_H'
+            , ui_name = 'Objekt[Handicapregatta]'
+            , ui_type_name = 'Handicapregatta'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( Class = 'Entity'
+                  , attr = Object_PN `left`
+                  , children_np =
+                    [ Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SRM.Page].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SRM.Page]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Objekt[Schnipsel]/Objekt[Regatta Seite]/Name'
+                              )
+                          , Record
+                              ( Class = 'Entity'
+                              , attr = Entity `event`
+                              , attrs =
+                                [ Record
+                                    ( attr = String `name`
+                                    , full_name = 'left[SWP.Clip_O].left[SRM.Page].event.name'
+                                    , id = 'left[SWP.Clip_O]__left[SRM.Page]__event__name'
+                                    , name = 'name'
+                                    , sig_key = 3
+                                    , ui_name = 'Objekt[Schnipsel]/Objekt[Regatta Seite]/Ereignis/Name'
+                                    )
+                                , Record
+                                    ( attr = Date_Interval `date`
+                                    , attrs =
+                                      [ Record
+                                          ( attr = Date `start`
+                                          , full_name = 'left[SWP.Clip_O].left[SRM.Page].event.date.start'
+                                          , id = 'left[SWP.Clip_O]__left[SRM.Page]__event__date__start'
+                                          , name = 'start'
+                                          , sig_key = 0
+                                          , ui_name = 'Objekt[Schnipsel]/Objekt[Regatta Seite]/Ereignis/Datum/Anfang'
+                                          )
+                                      , Record
+                                          ( attr = Date `finish`
+                                          , full_name = 'left[SWP.Clip_O].left[SRM.Page].event.date.finish'
+                                          , id = 'left[SWP.Clip_O]__left[SRM.Page]__event__date__finish'
+                                          , name = 'finish'
+                                          , sig_key = 0
+                                          , ui_name = 'Objekt[Schnipsel]/Objekt[Regatta Seite]/Ereignis/Datum/Ende'
+                                          )
+                                      ]
+                                    , full_name = 'left[SWP.Clip_O].left[SRM.Page].event.date'
+                                    , id = 'left[SWP.Clip_O]__left[SRM.Page]__event__date'
+                                    , name = 'date'
+                                    , ui_name = 'Objekt[Schnipsel]/Objekt[Regatta Seite]/Ereignis/Datum'
+                                    )
+                                ]
+                              , full_name = 'left[SWP.Clip_O].left[SRM.Page].event'
+                              , id = 'left[SWP.Clip_O]__left[SRM.Page]__event'
+                              , name = 'event'
+                              , sig_key = 2
+                              , type_name = 'SRM.Regatta_Event'
+                              , ui_name = 'Objekt[Schnipsel]/Objekt[Regatta Seite]/Ereignis'
+                              , ui_type_name = 'Regattaveranstaltung'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SRM.Page]'
+                        , id = 'left[SWP.Clip_O]__left[SRM.Page]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SRM.Page'
+                        , ui_name = 'Objekt[Schnipsel]/Objekt[Regatta Seite]'
+                        , ui_type_name = 'Regatta Seite'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Clip_X].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Clip_X]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Objekt[Schnipsel]/Objekt[Schnipsel/X]/Name'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Clip_X]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Clip_X]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Clip_X'
+                        , ui_name = 'Objekt[Schnipsel]/Objekt[Schnipsel/X]'
+                        , ui_type_name = 'Schnipsel/X'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Gallery].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Gallery]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Objekt[Schnipsel]/Objekt[Gallerie]/Name'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Gallery]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Gallery]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Gallery'
+                        , ui_name = 'Objekt[Schnipsel]/Objekt[Gallerie]'
+                        , ui_type_name = 'Gallerie'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Page].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Page]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Objekt[Schnipsel]/Objekt[Seite]/Name'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Page]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Page]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Page'
+                        , ui_name = 'Objekt[Schnipsel]/Objekt[Seite]'
+                        , ui_type_name = 'Seite'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Page_Y].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Page_Y]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Objekt[Schnipsel]/Objekt[Seite/J]/Name'
+                              )
+                          , Record
+                              ( attr = Int `year`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Page_Y].year'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Page_Y]__year'
+                              , name = 'year'
+                              , sig_key = 0
+                              , ui_name = 'Objekt[Schnipsel]/Objekt[Seite/J]/Jahr'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Page_Y]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Page_Y]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Page_Y'
+                        , ui_name = 'Objekt[Schnipsel]/Objekt[Seite/J]'
+                        , ui_type_name = 'Seite/J'
+                        )
+                    , Record
+                        ( Class = 'Entity'
+                        , attr = Left `left`
+                        , attrs =
+                          [ Record
+                              ( attr = Url `parent_url`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Referral].parent_url'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Referral]__parent_url'
+                              , name = 'parent_url'
+                              , sig_key = 3
+                              , ui_name = 'Objekt[Schnipsel]/Objekt[Querverweis]/Parent url'
+                              )
+                          , Record
+                              ( attr = Date-Slug `perma_name`
+                              , full_name = 'left[SWP.Clip_O].left[SWP.Referral].perma_name'
+                              , id = 'left[SWP.Clip_O]__left[SWP.Referral]__perma_name'
+                              , name = 'perma_name'
+                              , sig_key = 3
+                              , ui_name = 'Objekt[Schnipsel]/Objekt[Querverweis]/Name'
+                              )
+                          ]
+                        , full_name = 'left[SWP.Clip_O].left[SWP.Referral]'
+                        , id = 'left[SWP.Clip_O]__left[SWP.Referral]'
+                        , name = 'left'
+                        , sig_key = 2
+                        , type_name = 'SWP.Referral'
+                        , ui_name = 'Objekt[Schnipsel]/Objekt[Querverweis]'
+                        , ui_type_name = 'Querverweis'
+                        )
+                    ]
+                  , default_child = 'SWP.Page'
+                  , full_name = 'left[SWP.Clip_O].left'
+                  , id = 'left[SWP.Clip_O]__left'
+                  , name = 'left'
+                  , sig_key = 2
+                  , type_name = 'SWP.Object_PN'
+                  , ui_name = 'Objekt[Schnipsel]/Objekt'
+                  , ui_type_name = 'Object_PN'
+                  )
+              , Record
+                  ( attr = Date_Interval `date_x`
+                  , attrs =
+                    [ Record
+                        ( attr = Date `start`
+                        , full_name = 'left[SWP.Clip_O].date_x.start'
+                        , id = 'left[SWP.Clip_O]__date_x__start'
+                        , name = 'start'
+                        , sig_key = 0
+                        , ui_name = 'Objekt[Schnipsel]/Datum/Anfang'
+                        )
+                    , Record
+                        ( attr = Date `finish`
+                        , full_name = 'left[SWP.Clip_O].date_x.finish'
+                        , id = 'left[SWP.Clip_O]__date_x__finish'
+                        , name = 'finish'
+                        , sig_key = 0
+                        , ui_name = 'Objekt[Schnipsel]/Datum/Ende'
+                        )
+                    ]
+                  , full_name = 'left[SWP.Clip_O].date_x'
+                  , id = 'left[SWP.Clip_O]__date_x'
+                  , name = 'date_x'
+                  , ui_name = 'Objekt[Schnipsel]/Datum'
+                  )
+              ]
+            , full_name = 'left[SWP.Clip_O]'
+            , id = 'left[SWP.Clip_O]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Clip_O'
+            , ui_name = 'Objekt[Schnipsel]'
+            , ui_type_name = 'Schnipsel'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Clip_X].perma_name'
+                  , id = 'left[SWP.Clip_X]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Schnipsel/X]/Name'
+                  )
+              ]
+            , full_name = 'left[SWP.Clip_X]'
+            , id = 'left[SWP.Clip_X]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Clip_X'
+            , ui_name = 'Objekt[Schnipsel/X]'
+            , ui_type_name = 'Schnipsel/X'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Gallery].perma_name'
+                  , id = 'left[SWP.Gallery]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Gallerie]/Name'
+                  )
+              ]
+            , full_name = 'left[SWP.Gallery]'
+            , id = 'left[SWP.Gallery]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Gallery'
+            , ui_name = 'Objekt[Gallerie]'
+            , ui_type_name = 'Gallerie'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Page].perma_name'
+                  , id = 'left[SWP.Page]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Seite]/Name'
+                  )
+              ]
+            , full_name = 'left[SWP.Page]'
+            , id = 'left[SWP.Page]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Page'
+            , ui_name = 'Objekt[Seite]'
+            , ui_type_name = 'Seite'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Page_Y].perma_name'
+                  , id = 'left[SWP.Page_Y]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Seite/J]/Name'
+                  )
+              , Record
+                  ( attr = Int `year`
+                  , full_name = 'left[SWP.Page_Y].year'
+                  , id = 'left[SWP.Page_Y]__year'
+                  , name = 'year'
+                  , sig_key = 0
+                  , ui_name = 'Objekt[Seite/J]/Jahr'
+                  )
+              ]
+            , full_name = 'left[SWP.Page_Y]'
+            , id = 'left[SWP.Page_Y]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Page_Y'
+            , ui_name = 'Objekt[Seite/J]'
+            , ui_type_name = 'Seite/J'
+            )
+        , Record
+            ( Class = 'Entity'
+            , attr = Left `left`
+            , attrs =
+              [ Record
+                  ( attr = Url `parent_url`
+                  , full_name = 'left[SWP.Referral].parent_url'
+                  , id = 'left[SWP.Referral]__parent_url'
+                  , name = 'parent_url'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Querverweis]/Parent url'
+                  )
+              , Record
+                  ( attr = Date-Slug `perma_name`
+                  , full_name = 'left[SWP.Referral].perma_name'
+                  , id = 'left[SWP.Referral]__perma_name'
+                  , name = 'perma_name'
+                  , sig_key = 3
+                  , ui_name = 'Objekt[Querverweis]/Name'
+                  )
+              ]
+            , full_name = 'left[SWP.Referral]'
+            , id = 'left[SWP.Referral]'
+            , name = 'left'
+            , sig_key = 2
+            , type_name = 'SWP.Referral'
+            , ui_name = 'Objekt[Querverweis]'
+            , ui_type_name = 'Querverweis'
+            )
+        ]
+      , edit = None
+      , full_name = 'left'
+      , id = 'left___AC'
+      , name = 'left___AC'
+      , op =
+        Record
+          ( desc = 'W\xe4hle Entit\xe4ten aus, deren Attributwert gleich dem angegebenen Wert ist'
+          , label = 'auto-complete'
+          )
+      , sig_key = 2
+      , type_name = 'MOM.Id_Entity'
+      , ui_name = 'Objekt'
+      , ui_type_name = 'Id-Entit\xe4t'
+      , value = None
+      )
+
+"""
+
+from   _GTW.__test__.model import *
 import datetime
 
-__test__ = Scaffold.create_test_dict (_test_code)
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( test_main        = _test_code
+        , test_qr          = _test_qr
+        , test_qr_de       = _test_qr_de
+        )
+    )
 
 ### __END__ GTW.__test.Event

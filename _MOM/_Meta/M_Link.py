@@ -101,6 +101,8 @@
 #     7-Apr-2015 (CT) Redefine `_m_default_ui_name` to improve auto-`ui_name`
 #    16-Aug-2015 (CT) Add `auto_derived_p`, `auto_derived_root`
 #    25-Feb-2016 (CT) Change `_m_setup_roles` to always set `number_of_roles`
+#     1-Jun-2016 (CT) Change `_m_create_auto_children` to honor `refuse_e_types`
+#                     and `refuse_links`
 #    ««revision-date»»···
 #--
 
@@ -168,6 +170,10 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                     ( pyk.itervalues (r.E_Type.children_np)
                     , key = TFL.Getter.i_rank
                     )
+                if not
+                    (  cls.type_name in c.refuse_links
+                    or c.type_name   in r.refuse_e_types
+                    )
                 )
             for r in cls.Roles
             if  r.auto_derive_np and r.E_Type.children_np
@@ -216,7 +222,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
             if cls.type_name in etype.refuse_links :
                 return
             rets.append ((role, etype))
-        if any ((tn in etype.refuse_links) for role, etype in rets):
+        if any ((cls.type_name in etype.refuse_links) for role, etype in rets):
             return
         elif tn not in cls._type_names :
             if tn in cls.auto_derive_np_kw :

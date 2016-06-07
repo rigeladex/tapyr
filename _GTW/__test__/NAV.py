@@ -31,6 +31,7 @@
 #     2-Jan-2015 (CT) Adapt to another change of macro `entity_selector_form`
 #    27-Jan-2015 (CT) Add template `e_type_admin|ETR_table`
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    18-May-2016 (CT) Factor `create_app` to `_GTW.__test__.model`
 #    ««revision-date»»···
 #--
 
@@ -349,38 +350,38 @@ _test_qr = """
                   , attrs =
                     [ Record
                         ( attr = String `name`
-                        , full_name = 'owner.name'
-                        , id = 'owner__name'
+                        , full_name = 'affiliate.owner[PAP.Company].name'
+                        , id = 'affiliate__owner[PAP.Company]__name'
                         , name = 'name'
                         , sig_key = 3
-                        , ui_name = 'Owner[Company]/Name'
+                        , ui_name = 'Affiliate/Owner[Company]/Name'
                         )
                     , Record
                         ( attr = String `registered_in`
-                        , full_name = 'owner.registered_in'
-                        , id = 'owner__registered_in'
+                        , full_name = 'affiliate.owner[PAP.Company].registered_in'
+                        , id = 'affiliate__owner[PAP.Company]__registered_in'
                         , name = 'registered_in'
                         , sig_key = 3
-                        , ui_name = 'Owner[Company]/Registered in'
+                        , ui_name = 'Affiliate/Owner[Company]/Registered in'
                         )
                     ]
-                  , full_name = 'owner'
-                  , id = 'owner'
+                  , full_name = 'affiliate.owner[PAP.Company]'
+                  , id = 'affiliate__owner[PAP.Company]'
                   , name = 'owner'
                   , sig_key = 2
                   , type_name = 'PAP.Company'
-                  , ui_name = 'Owner[Company]'
+                  , ui_name = 'Affiliate/Owner[Company]'
                   , ui_type_name = 'Company'
                   )
               , Record
                   ( Class = 'Entity'
                   , attr = Entity `owner`
-                  , full_name = 'owner'
-                  , id = 'owner'
+                  , full_name = 'affiliate.owner[PAP.Company_R]'
+                  , id = 'affiliate__owner[PAP.Company_R]'
                   , name = 'owner'
                   , sig_key = 2
                   , type_name = 'PAP.Company_R'
-                  , ui_name = 'Owner[Company_R]'
+                  , ui_name = 'Affiliate/Owner[Company_R]'
                   , ui_type_name = 'Company_R'
                   )
               , Record
@@ -389,43 +390,43 @@ _test_qr = """
                   , attrs =
                     [ Record
                         ( attr = String `last_name`
-                        , full_name = 'owner.last_name'
-                        , id = 'owner__last_name'
+                        , full_name = 'affiliate.owner[PAP.Person].last_name'
+                        , id = 'affiliate__owner[PAP.Person]__last_name'
                         , name = 'last_name'
                         , sig_key = 3
-                        , ui_name = 'Owner[Person]/Last name'
+                        , ui_name = 'Affiliate/Owner[Person]/Last name'
                         )
                     , Record
                         ( attr = String `first_name`
-                        , full_name = 'owner.first_name'
-                        , id = 'owner__first_name'
+                        , full_name = 'affiliate.owner[PAP.Person].first_name'
+                        , id = 'affiliate__owner[PAP.Person]__first_name'
                         , name = 'first_name'
                         , sig_key = 3
-                        , ui_name = 'Owner[Person]/First name'
+                        , ui_name = 'Affiliate/Owner[Person]/First name'
                         )
                     , Record
                         ( attr = String `middle_name`
-                        , full_name = 'owner.middle_name'
-                        , id = 'owner__middle_name'
+                        , full_name = 'affiliate.owner[PAP.Person].middle_name'
+                        , id = 'affiliate__owner[PAP.Person]__middle_name'
                         , name = 'middle_name'
                         , sig_key = 3
-                        , ui_name = 'Owner[Person]/Middle name'
+                        , ui_name = 'Affiliate/Owner[Person]/Middle name'
                         )
                     , Record
                         ( attr = String `title`
-                        , full_name = 'owner.title'
-                        , id = 'owner__title'
+                        , full_name = 'affiliate.owner[PAP.Person].title'
+                        , id = 'affiliate__owner[PAP.Person]__title'
                         , name = 'title'
                         , sig_key = 3
-                        , ui_name = 'Owner[Person]/Academic title'
+                        , ui_name = 'Affiliate/Owner[Person]/Academic title'
                         )
                     ]
-                  , full_name = 'owner'
-                  , id = 'owner'
+                  , full_name = 'affiliate.owner[PAP.Person]'
+                  , id = 'affiliate__owner[PAP.Person]'
                   , name = 'owner'
                   , sig_key = 2
                   , type_name = 'PAP.Person'
-                  , ui_name = 'Owner[Person]'
+                  , ui_name = 'Affiliate/Owner[Person]'
                   , ui_type_name = 'Person'
                   )
               ]
@@ -737,38 +738,38 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = String `name`
-                          , full_name = 'owner.name'
-                          , id = 'owner__name'
+                          , full_name = 'affiliate.owner[PAP.Company].name'
+                          , id = 'affiliate__owner[PAP.Company]__name'
                           , name = 'name'
                           , sig_key = 3
-                          , ui_name = 'Owner[Company]/Name'
+                          , ui_name = 'Affiliate/Owner[Company]/Name'
                           )
                       , Record
                           ( attr = String `registered_in`
-                          , full_name = 'owner.registered_in'
-                          , id = 'owner__registered_in'
+                          , full_name = 'affiliate.owner[PAP.Company].registered_in'
+                          , id = 'affiliate__owner[PAP.Company]__registered_in'
                           , name = 'registered_in'
                           , sig_key = 3
-                          , ui_name = 'Owner[Company]/Registered in'
+                          , ui_name = 'Affiliate/Owner[Company]/Registered in'
                           )
                       ]
-                    , full_name = 'owner'
-                    , id = 'owner'
+                    , full_name = 'affiliate.owner[PAP.Company]'
+                    , id = 'affiliate__owner[PAP.Company]'
                     , name = 'owner'
                     , sig_key = 2
                     , type_name = 'PAP.Company'
-                    , ui_name = 'Owner[Company]'
+                    , ui_name = 'Affiliate/Owner[Company]'
                     , ui_type_name = 'Company'
                     )
                 , Record
                     ( Class = 'Entity'
                     , attr = Entity `owner`
-                    , full_name = 'owner'
-                    , id = 'owner'
+                    , full_name = 'affiliate.owner[PAP.Company_R]'
+                    , id = 'affiliate__owner[PAP.Company_R]'
                     , name = 'owner'
                     , sig_key = 2
                     , type_name = 'PAP.Company_R'
-                    , ui_name = 'Owner[Company_R]'
+                    , ui_name = 'Affiliate/Owner[Company_R]'
                     , ui_type_name = 'Company_R'
                     )
                 , Record
@@ -777,43 +778,43 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = String `last_name`
-                          , full_name = 'owner.last_name'
-                          , id = 'owner__last_name'
+                          , full_name = 'affiliate.owner[PAP.Person].last_name'
+                          , id = 'affiliate__owner[PAP.Person]__last_name'
                           , name = 'last_name'
                           , sig_key = 3
-                          , ui_name = 'Owner[Person]/Last name'
+                          , ui_name = 'Affiliate/Owner[Person]/Last name'
                           )
                       , Record
                           ( attr = String `first_name`
-                          , full_name = 'owner.first_name'
-                          , id = 'owner__first_name'
+                          , full_name = 'affiliate.owner[PAP.Person].first_name'
+                          , id = 'affiliate__owner[PAP.Person]__first_name'
                           , name = 'first_name'
                           , sig_key = 3
-                          , ui_name = 'Owner[Person]/First name'
+                          , ui_name = 'Affiliate/Owner[Person]/First name'
                           )
                       , Record
                           ( attr = String `middle_name`
-                          , full_name = 'owner.middle_name'
-                          , id = 'owner__middle_name'
+                          , full_name = 'affiliate.owner[PAP.Person].middle_name'
+                          , id = 'affiliate__owner[PAP.Person]__middle_name'
                           , name = 'middle_name'
                           , sig_key = 3
-                          , ui_name = 'Owner[Person]/Middle name'
+                          , ui_name = 'Affiliate/Owner[Person]/Middle name'
                           )
                       , Record
                           ( attr = String `title`
-                          , full_name = 'owner.title'
-                          , id = 'owner__title'
+                          , full_name = 'affiliate.owner[PAP.Person].title'
+                          , id = 'affiliate__owner[PAP.Person]__title'
                           , name = 'title'
                           , sig_key = 3
-                          , ui_name = 'Owner[Person]/Academic title'
+                          , ui_name = 'Affiliate/Owner[Person]/Academic title'
                           )
                       ]
-                    , full_name = 'owner'
-                    , id = 'owner'
+                    , full_name = 'affiliate.owner[PAP.Person]'
+                    , id = 'affiliate__owner[PAP.Person]'
                     , name = 'owner'
                     , sig_key = 2
                     , type_name = 'PAP.Person'
-                    , ui_name = 'Owner[Person]'
+                    , ui_name = 'Affiliate/Owner[Person]'
                     , ui_type_name = 'Person'
                     )
                 ]
@@ -845,23 +846,23 @@ _test_qr = """
               , attrs =
                 [ Record
                     ( attr = String `name`
-                    , full_name = 'owner.name'
-                    , id = 'owner__name'
+                    , full_name = 'owner[PAP.Company].name'
+                    , id = 'owner[PAP.Company]__name'
                     , name = 'name'
                     , sig_key = 3
                     , ui_name = 'Owner[Company]/Name'
                     )
                 , Record
                     ( attr = String `registered_in`
-                    , full_name = 'owner.registered_in'
-                    , id = 'owner__registered_in'
+                    , full_name = 'owner[PAP.Company].registered_in'
+                    , id = 'owner[PAP.Company]__registered_in'
                     , name = 'registered_in'
                     , sig_key = 3
                     , ui_name = 'Owner[Company]/Registered in'
                     )
                 ]
-              , full_name = 'owner'
-              , id = 'owner'
+              , full_name = 'owner[PAP.Company]'
+              , id = 'owner[PAP.Company]'
               , name = 'owner'
               , sig_key = 2
               , type_name = 'PAP.Company'
@@ -874,23 +875,23 @@ _test_qr = """
               , attrs =
                 [ Record
                     ( attr = String `name`
-                    , full_name = 'owner.name'
-                    , id = 'owner__name'
+                    , full_name = 'owner[PAP.Company_R].name'
+                    , id = 'owner[PAP.Company_R]__name'
                     , name = 'name'
                     , sig_key = 3
                     , ui_name = 'Owner[Company_R]/Name'
                     )
                 , Record
                     ( attr = String `registered_in`
-                    , full_name = 'owner.registered_in'
-                    , id = 'owner__registered_in'
+                    , full_name = 'owner[PAP.Company_R].registered_in'
+                    , id = 'owner[PAP.Company_R]__registered_in'
                     , name = 'registered_in'
                     , sig_key = 3
                     , ui_name = 'Owner[Company_R]/Registered in'
                     )
                 ]
-              , full_name = 'owner'
-              , id = 'owner'
+              , full_name = 'owner[PAP.Company_R]'
+              , id = 'owner[PAP.Company_R]'
               , name = 'owner'
               , sig_key = 2
               , type_name = 'PAP.Company_R'
@@ -903,39 +904,39 @@ _test_qr = """
               , attrs =
                 [ Record
                     ( attr = String `last_name`
-                    , full_name = 'owner.last_name'
-                    , id = 'owner__last_name'
+                    , full_name = 'owner[PAP.Person].last_name'
+                    , id = 'owner[PAP.Person]__last_name'
                     , name = 'last_name'
                     , sig_key = 3
                     , ui_name = 'Owner[Person]/Last name'
                     )
                 , Record
                     ( attr = String `first_name`
-                    , full_name = 'owner.first_name'
-                    , id = 'owner__first_name'
+                    , full_name = 'owner[PAP.Person].first_name'
+                    , id = 'owner[PAP.Person]__first_name'
                     , name = 'first_name'
                     , sig_key = 3
                     , ui_name = 'Owner[Person]/First name'
                     )
                 , Record
                     ( attr = String `middle_name`
-                    , full_name = 'owner.middle_name'
-                    , id = 'owner__middle_name'
+                    , full_name = 'owner[PAP.Person].middle_name'
+                    , id = 'owner[PAP.Person]__middle_name'
                     , name = 'middle_name'
                     , sig_key = 3
                     , ui_name = 'Owner[Person]/Middle name'
                     )
                 , Record
                     ( attr = String `title`
-                    , full_name = 'owner.title'
-                    , id = 'owner__title'
+                    , full_name = 'owner[PAP.Person].title'
+                    , id = 'owner[PAP.Person]__title'
                     , name = 'title'
                     , sig_key = 3
                     , ui_name = 'Owner[Person]/Academic title'
                     )
                 ]
-              , full_name = 'owner'
-              , id = 'owner'
+              , full_name = 'owner[PAP.Person]'
+              , id = 'owner[PAP.Person]'
               , name = 'owner'
               , sig_key = 2
               , type_name = 'PAP.Person'
@@ -974,19 +975,19 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = Email `name`
-                          , full_name = 'c_user.name'
-                          , id = 'c_user__name'
+                          , full_name = 'creation.c_user[Auth.Account].name'
+                          , id = 'creation__c_user[Auth.Account]__name'
                           , name = 'name'
                           , sig_key = 3
-                          , ui_name = 'C user[Account]/Name'
+                          , ui_name = 'Creation/C user[Account]/Name'
                           )
                       ]
-                    , full_name = 'c_user'
-                    , id = 'c_user'
+                    , full_name = 'creation.c_user[Auth.Account]'
+                    , id = 'creation__c_user[Auth.Account]'
                     , name = 'c_user'
                     , sig_key = 2
                     , type_name = 'Auth.Account'
-                    , ui_name = 'C user[Account]'
+                    , ui_name = 'Creation/C user[Account]'
                     , ui_type_name = 'Account'
                     )
                 , Record
@@ -995,43 +996,43 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = String `last_name`
-                          , full_name = 'c_user.last_name'
-                          , id = 'c_user__last_name'
+                          , full_name = 'creation.c_user[PAP.Person].last_name'
+                          , id = 'creation__c_user[PAP.Person]__last_name'
                           , name = 'last_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Last name'
+                          , ui_name = 'Creation/C user[Person]/Last name'
                           )
                       , Record
                           ( attr = String `first_name`
-                          , full_name = 'c_user.first_name'
-                          , id = 'c_user__first_name'
+                          , full_name = 'creation.c_user[PAP.Person].first_name'
+                          , id = 'creation__c_user[PAP.Person]__first_name'
                           , name = 'first_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/First name'
+                          , ui_name = 'Creation/C user[Person]/First name'
                           )
                       , Record
                           ( attr = String `middle_name`
-                          , full_name = 'c_user.middle_name'
-                          , id = 'c_user__middle_name'
+                          , full_name = 'creation.c_user[PAP.Person].middle_name'
+                          , id = 'creation__c_user[PAP.Person]__middle_name'
                           , name = 'middle_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Middle name'
+                          , ui_name = 'Creation/C user[Person]/Middle name'
                           )
                       , Record
                           ( attr = String `title`
-                          , full_name = 'c_user.title'
-                          , id = 'c_user__title'
+                          , full_name = 'creation.c_user[PAP.Person].title'
+                          , id = 'creation__c_user[PAP.Person]__title'
                           , name = 'title'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Academic title'
+                          , ui_name = 'Creation/C user[Person]/Academic title'
                           )
                       ]
-                    , full_name = 'c_user'
-                    , id = 'c_user'
+                    , full_name = 'creation.c_user[PAP.Person]'
+                    , id = 'creation__c_user[PAP.Person]'
                     , name = 'c_user'
                     , sig_key = 2
                     , type_name = 'PAP.Person'
-                    , ui_name = 'C user[Person]'
+                    , ui_name = 'Creation/C user[Person]'
                     , ui_type_name = 'Person'
                     )
                 ]
@@ -1069,19 +1070,19 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = Email `name`
-                          , full_name = 'user.name'
-                          , id = 'user__name'
+                          , full_name = 'creation.user[Auth.Account].name'
+                          , id = 'creation__user[Auth.Account]__name'
                           , name = 'name'
                           , sig_key = 3
-                          , ui_name = 'User[Account]/Name'
+                          , ui_name = 'Creation/User[Account]/Name'
                           )
                       ]
-                    , full_name = 'user'
-                    , id = 'user'
+                    , full_name = 'creation.user[Auth.Account]'
+                    , id = 'creation__user[Auth.Account]'
                     , name = 'user'
                     , sig_key = 2
                     , type_name = 'Auth.Account'
-                    , ui_name = 'User[Account]'
+                    , ui_name = 'Creation/User[Account]'
                     , ui_type_name = 'Account'
                     )
                 , Record
@@ -1090,43 +1091,43 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = String `last_name`
-                          , full_name = 'user.last_name'
-                          , id = 'user__last_name'
+                          , full_name = 'creation.user[PAP.Person].last_name'
+                          , id = 'creation__user[PAP.Person]__last_name'
                           , name = 'last_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Last name'
+                          , ui_name = 'Creation/User[Person]/Last name'
                           )
                       , Record
                           ( attr = String `first_name`
-                          , full_name = 'user.first_name'
-                          , id = 'user__first_name'
+                          , full_name = 'creation.user[PAP.Person].first_name'
+                          , id = 'creation__user[PAP.Person]__first_name'
                           , name = 'first_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/First name'
+                          , ui_name = 'Creation/User[Person]/First name'
                           )
                       , Record
                           ( attr = String `middle_name`
-                          , full_name = 'user.middle_name'
-                          , id = 'user__middle_name'
+                          , full_name = 'creation.user[PAP.Person].middle_name'
+                          , id = 'creation__user[PAP.Person]__middle_name'
                           , name = 'middle_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Middle name'
+                          , ui_name = 'Creation/User[Person]/Middle name'
                           )
                       , Record
                           ( attr = String `title`
-                          , full_name = 'user.title'
-                          , id = 'user__title'
+                          , full_name = 'creation.user[PAP.Person].title'
+                          , id = 'creation__user[PAP.Person]__title'
                           , name = 'title'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Academic title'
+                          , ui_name = 'Creation/User[Person]/Academic title'
                           )
                       ]
-                    , full_name = 'user'
-                    , id = 'user'
+                    , full_name = 'creation.user[PAP.Person]'
+                    , id = 'creation__user[PAP.Person]'
                     , name = 'user'
                     , sig_key = 2
                     , type_name = 'PAP.Person'
-                    , ui_name = 'User[Person]'
+                    , ui_name = 'Creation/User[Person]'
                     , ui_type_name = 'Person'
                     )
                 ]
@@ -1169,19 +1170,19 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = Email `name`
-                          , full_name = 'c_user.name'
-                          , id = 'c_user__name'
+                          , full_name = 'last_change.c_user[Auth.Account].name'
+                          , id = 'last_change__c_user[Auth.Account]__name'
                           , name = 'name'
                           , sig_key = 3
-                          , ui_name = 'C user[Account]/Name'
+                          , ui_name = 'Last change/C user[Account]/Name'
                           )
                       ]
-                    , full_name = 'c_user'
-                    , id = 'c_user'
+                    , full_name = 'last_change.c_user[Auth.Account]'
+                    , id = 'last_change__c_user[Auth.Account]'
                     , name = 'c_user'
                     , sig_key = 2
                     , type_name = 'Auth.Account'
-                    , ui_name = 'C user[Account]'
+                    , ui_name = 'Last change/C user[Account]'
                     , ui_type_name = 'Account'
                     )
                 , Record
@@ -1190,43 +1191,43 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = String `last_name`
-                          , full_name = 'c_user.last_name'
-                          , id = 'c_user__last_name'
+                          , full_name = 'last_change.c_user[PAP.Person].last_name'
+                          , id = 'last_change__c_user[PAP.Person]__last_name'
                           , name = 'last_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Last name'
+                          , ui_name = 'Last change/C user[Person]/Last name'
                           )
                       , Record
                           ( attr = String `first_name`
-                          , full_name = 'c_user.first_name'
-                          , id = 'c_user__first_name'
+                          , full_name = 'last_change.c_user[PAP.Person].first_name'
+                          , id = 'last_change__c_user[PAP.Person]__first_name'
                           , name = 'first_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/First name'
+                          , ui_name = 'Last change/C user[Person]/First name'
                           )
                       , Record
                           ( attr = String `middle_name`
-                          , full_name = 'c_user.middle_name'
-                          , id = 'c_user__middle_name'
+                          , full_name = 'last_change.c_user[PAP.Person].middle_name'
+                          , id = 'last_change__c_user[PAP.Person]__middle_name'
                           , name = 'middle_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Middle name'
+                          , ui_name = 'Last change/C user[Person]/Middle name'
                           )
                       , Record
                           ( attr = String `title`
-                          , full_name = 'c_user.title'
-                          , id = 'c_user__title'
+                          , full_name = 'last_change.c_user[PAP.Person].title'
+                          , id = 'last_change__c_user[PAP.Person]__title'
                           , name = 'title'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Academic title'
+                          , ui_name = 'Last change/C user[Person]/Academic title'
                           )
                       ]
-                    , full_name = 'c_user'
-                    , id = 'c_user'
+                    , full_name = 'last_change.c_user[PAP.Person]'
+                    , id = 'last_change__c_user[PAP.Person]'
                     , name = 'c_user'
                     , sig_key = 2
                     , type_name = 'PAP.Person'
-                    , ui_name = 'C user[Person]'
+                    , ui_name = 'Last change/C user[Person]'
                     , ui_type_name = 'Person'
                     )
                 ]
@@ -1264,19 +1265,19 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = Email `name`
-                          , full_name = 'user.name'
-                          , id = 'user__name'
+                          , full_name = 'last_change.user[Auth.Account].name'
+                          , id = 'last_change__user[Auth.Account]__name'
                           , name = 'name'
                           , sig_key = 3
-                          , ui_name = 'User[Account]/Name'
+                          , ui_name = 'Last change/User[Account]/Name'
                           )
                       ]
-                    , full_name = 'user'
-                    , id = 'user'
+                    , full_name = 'last_change.user[Auth.Account]'
+                    , id = 'last_change__user[Auth.Account]'
                     , name = 'user'
                     , sig_key = 2
                     , type_name = 'Auth.Account'
-                    , ui_name = 'User[Account]'
+                    , ui_name = 'Last change/User[Account]'
                     , ui_type_name = 'Account'
                     )
                 , Record
@@ -1285,43 +1286,43 @@ _test_qr = """
                     , attrs =
                       [ Record
                           ( attr = String `last_name`
-                          , full_name = 'user.last_name'
-                          , id = 'user__last_name'
+                          , full_name = 'last_change.user[PAP.Person].last_name'
+                          , id = 'last_change__user[PAP.Person]__last_name'
                           , name = 'last_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Last name'
+                          , ui_name = 'Last change/User[Person]/Last name'
                           )
                       , Record
                           ( attr = String `first_name`
-                          , full_name = 'user.first_name'
-                          , id = 'user__first_name'
+                          , full_name = 'last_change.user[PAP.Person].first_name'
+                          , id = 'last_change__user[PAP.Person]__first_name'
                           , name = 'first_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/First name'
+                          , ui_name = 'Last change/User[Person]/First name'
                           )
                       , Record
                           ( attr = String `middle_name`
-                          , full_name = 'user.middle_name'
-                          , id = 'user__middle_name'
+                          , full_name = 'last_change.user[PAP.Person].middle_name'
+                          , id = 'last_change__user[PAP.Person]__middle_name'
                           , name = 'middle_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Middle name'
+                          , ui_name = 'Last change/User[Person]/Middle name'
                           )
                       , Record
                           ( attr = String `title`
-                          , full_name = 'user.title'
-                          , id = 'user__title'
+                          , full_name = 'last_change.user[PAP.Person].title'
+                          , id = 'last_change__user[PAP.Person]__title'
                           , name = 'title'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Academic title'
+                          , ui_name = 'Last change/User[Person]/Academic title'
                           )
                       ]
-                    , full_name = 'user'
-                    , id = 'user'
+                    , full_name = 'last_change.user[PAP.Person]'
+                    , id = 'last_change__user[PAP.Person]'
                     , name = 'user'
                     , sig_key = 2
                     , type_name = 'PAP.Person'
-                    , ui_name = 'User[Person]'
+                    , ui_name = 'Last change/User[Person]'
                     , ui_type_name = 'Person'
                     )
                 ]
@@ -1670,262 +1671,197 @@ _test_esf = """
 
     >>> print ((formatted (afa)))
     Record
-    ( AQ = <affiliate.AQ [Attr.Type.Querier Id_Entity]>
-    , Class = 'Entity'
-    , attr = Entity `affiliate`
-    , attrs =
+      ( AQ = <affiliate.AQ [Attr.Type.Querier Id_Entity]>
+      , Class = 'Entity'
+      , attr = Entity `affiliate`
+      , attrs =
         [ Record
-          ( attr = String `name`
-          , full_name = 'affiliate.name'
-          , id = 'affiliate__name'
-          , name = 'name'
-          , sig_key = 3
-          , ui_name = 'Affiliate/Name'
-          )
+            ( attr = String `name`
+            , full_name = 'affiliate.name'
+            , id = 'affiliate__name'
+            , name = 'name'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Name'
+            )
         , Record
-          ( attr = String `registered_in`
-          , full_name = 'affiliate.registered_in'
-          , id = 'affiliate__registered_in'
-          , name = 'registered_in'
-          , sig_key = 3
-          , ui_name = 'Affiliate/Registered in'
-          )
+            ( attr = String `registered_in`
+            , full_name = 'affiliate.registered_in'
+            , id = 'affiliate__registered_in'
+            , name = 'registered_in'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Registered in'
+            )
         , Record
-          ( attr = Date_Interval `lifetime`
-          , attrs =
+            ( attr = Date_Interval `lifetime`
+            , attrs =
               [ Record
-                ( attr = Date `start`
-                , full_name = 'affiliate.lifetime.start'
-                , id = 'affiliate__lifetime__start'
-                , name = 'start'
-                , sig_key = 0
-                , ui_name = 'Affiliate/Lifetime/Start'
-                )
+                  ( attr = Date `start`
+                  , full_name = 'affiliate.lifetime.start'
+                  , id = 'affiliate__lifetime__start'
+                  , name = 'start'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Start'
+                  )
               , Record
-                ( attr = Date `finish`
-                , full_name = 'affiliate.lifetime.finish'
-                , id = 'affiliate__lifetime__finish'
-                , name = 'finish'
-                , sig_key = 0
-                , ui_name = 'Affiliate/Lifetime/Finish'
-                )
+                  ( attr = Date `finish`
+                  , full_name = 'affiliate.lifetime.finish'
+                  , id = 'affiliate__lifetime__finish'
+                  , name = 'finish'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Finish'
+                  )
               , Record
-                ( attr = Boolean `alive`
-                , choices =
+                  ( attr = Boolean `alive`
+                  , choices =
                     [ 'no'
                     , 'yes'
                     ]
-                , full_name = 'affiliate.lifetime.alive'
-                , id = 'affiliate__lifetime__alive'
-                , name = 'alive'
-                , sig_key = 1
-                , ui_name = 'Affiliate/Lifetime/Alive'
-                )
+                  , full_name = 'affiliate.lifetime.alive'
+                  , id = 'affiliate__lifetime__alive'
+                  , name = 'alive'
+                  , sig_key = 1
+                  , ui_name = 'Affiliate/Lifetime/Alive'
+                  )
               ]
-          , full_name = 'affiliate.lifetime'
-          , id = 'affiliate__lifetime'
-          , name = 'lifetime'
-          , ui_name = 'Affiliate/Lifetime'
-          )
+            , full_name = 'affiliate.lifetime'
+            , id = 'affiliate__lifetime'
+            , name = 'lifetime'
+            , ui_name = 'Affiliate/Lifetime'
+            )
         , Record
-          ( attr = String `short_name`
-          , full_name = 'affiliate.short_name'
-          , id = 'affiliate__short_name'
-          , name = 'short_name'
-          , sig_key = 3
-          , ui_name = 'Affiliate/Short name'
-          )
+            ( attr = String `short_name`
+            , full_name = 'affiliate.short_name'
+            , id = 'affiliate__short_name'
+            , name = 'short_name'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Short name'
+            )
         , Record
-          ( Class = 'Entity'
-          , attr = Entity `affiliate`
-          , full_name = 'affiliate.affiliate'
-          , id = 'affiliate__affiliate'
-          , name = 'affiliate'
-          , sig_key = 2
-          , type_name = 'PAP.Company_R'
-          , ui_name = 'Affiliate/Affiliate'
-          , ui_type_name = 'Company_R'
-          )
+            ( Class = 'Entity'
+            , attr = Entity `affiliate`
+            , full_name = 'affiliate.affiliate'
+            , id = 'affiliate__affiliate'
+            , name = 'affiliate'
+            , sig_key = 2
+            , type_name = 'PAP.Company_R'
+            , ui_name = 'Affiliate/Affiliate'
+            , ui_type_name = 'Company_R'
+            )
         , Record
-          ( Class = 'Entity'
-          , attr = Entity `owner`
-          , children_np =
+            ( Class = 'Entity'
+            , attr = Entity `owner`
+            , children_np =
               [ Record
-                ( Class = 'Entity'
-                , attr = Entity `owner`
-                , attrs =
+                  ( Class = 'Entity'
+                  , attr = Entity `owner`
+                  , attrs =
                     [ Record
-                      ( attr = String `name`
-                      , full_name = 'owner.name'
-                      , id = 'owner__name'
-                      , name = 'name'
-                      , sig_key = 3
-                      , ui_name = 'Owner[Company]/Name'
-                      )
+                        ( attr = String `name`
+                        , full_name = 'affiliate.owner[PAP.Company].name'
+                        , id = 'affiliate__owner[PAP.Company]__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner[Company]/Name'
+                        )
                     , Record
-                      ( attr = String `registered_in`
-                      , full_name = 'owner.registered_in'
-                      , id = 'owner__registered_in'
-                      , name = 'registered_in'
-                      , sig_key = 3
-                      , ui_name = 'Owner[Company]/Registered in'
-                      )
+                        ( attr = String `registered_in`
+                        , full_name = 'affiliate.owner[PAP.Company].registered_in'
+                        , id = 'affiliate__owner[PAP.Company]__registered_in'
+                        , name = 'registered_in'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner[Company]/Registered in'
+                        )
                     ]
-                , full_name = 'owner'
-                , id = 'owner'
-                , name = 'owner'
-                , sig_key = 2
-                , type_name = 'PAP.Company'
-                , ui_name = 'Owner[Company]'
-                , ui_type_name = 'Company'
-                )
+                  , full_name = 'affiliate.owner[PAP.Company]'
+                  , id = 'affiliate__owner[PAP.Company]'
+                  , name = 'owner'
+                  , sig_key = 2
+                  , type_name = 'PAP.Company'
+                  , ui_name = 'Affiliate/Owner[Company]'
+                  , ui_type_name = 'Company'
+                  )
               , Record
-                ( Class = 'Entity'
-                , attr = Entity `owner`
-                , full_name = 'owner'
-                , id = 'owner'
-                , name = 'owner'
-                , sig_key = 2
-                , type_name = 'PAP.Company_R'
-                , ui_name = 'Owner[Company_R]'
-                , ui_type_name = 'Company_R'
-                )
+                  ( Class = 'Entity'
+                  , attr = Entity `owner`
+                  , full_name = 'affiliate.owner[PAP.Company_R]'
+                  , id = 'affiliate__owner[PAP.Company_R]'
+                  , name = 'owner'
+                  , sig_key = 2
+                  , type_name = 'PAP.Company_R'
+                  , ui_name = 'Affiliate/Owner[Company_R]'
+                  , ui_type_name = 'Company_R'
+                  )
               , Record
-                ( Class = 'Entity'
-                , attr = Entity `owner`
-                , attrs =
+                  ( Class = 'Entity'
+                  , attr = Entity `owner`
+                  , attrs =
                     [ Record
-                      ( attr = String `last_name`
-                      , full_name = 'owner.last_name'
-                      , id = 'owner__last_name'
-                      , name = 'last_name'
-                      , sig_key = 3
-                      , ui_name = 'Owner[Person]/Last name'
-                      )
+                        ( attr = String `last_name`
+                        , full_name = 'affiliate.owner[PAP.Person].last_name'
+                        , id = 'affiliate__owner[PAP.Person]__last_name'
+                        , name = 'last_name'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner[Person]/Last name'
+                        )
                     , Record
-                      ( attr = String `first_name`
-                      , full_name = 'owner.first_name'
-                      , id = 'owner__first_name'
-                      , name = 'first_name'
-                      , sig_key = 3
-                      , ui_name = 'Owner[Person]/First name'
-                      )
+                        ( attr = String `first_name`
+                        , full_name = 'affiliate.owner[PAP.Person].first_name'
+                        , id = 'affiliate__owner[PAP.Person]__first_name'
+                        , name = 'first_name'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner[Person]/First name'
+                        )
                     , Record
-                      ( attr = String `middle_name`
-                      , full_name = 'owner.middle_name'
-                      , id = 'owner__middle_name'
-                      , name = 'middle_name'
-                      , sig_key = 3
-                      , ui_name = 'Owner[Person]/Middle name'
-                      )
+                        ( attr = String `middle_name`
+                        , full_name = 'affiliate.owner[PAP.Person].middle_name'
+                        , id = 'affiliate__owner[PAP.Person]__middle_name'
+                        , name = 'middle_name'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner[Person]/Middle name'
+                        )
                     , Record
-                      ( attr = String `title`
-                      , full_name = 'owner.title'
-                      , id = 'owner__title'
-                      , name = 'title'
-                      , sig_key = 3
-                      , ui_name = 'Owner[Person]/Academic title'
-                      )
+                        ( attr = String `title`
+                        , full_name = 'affiliate.owner[PAP.Person].title'
+                        , id = 'affiliate__owner[PAP.Person]__title'
+                        , name = 'title'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner[Person]/Academic title'
+                        )
                     ]
-                , full_name = 'owner'
-                , id = 'owner'
-                , name = 'owner'
-                , sig_key = 2
-                , type_name = 'PAP.Person'
-                , ui_name = 'Owner[Person]'
-                , ui_type_name = 'Person'
-                )
+                  , full_name = 'affiliate.owner[PAP.Person]'
+                  , id = 'affiliate__owner[PAP.Person]'
+                  , name = 'owner'
+                  , sig_key = 2
+                  , type_name = 'PAP.Person'
+                  , ui_name = 'Affiliate/Owner[Person]'
+                  , ui_type_name = 'Person'
+                  )
               ]
-          , default_child = 'PAP.Person'
-          , full_name = 'affiliate.owner'
-          , id = 'affiliate__owner'
-          , name = 'owner'
-          , sig_key = 2
-          , type_name = 'PAP.Subject'
-          , ui_name = 'Affiliate/Owner'
-          , ui_type_name = 'Subject'
-          )
+            , default_child = 'PAP.Person'
+            , full_name = 'affiliate.owner'
+            , id = 'affiliate__owner'
+            , name = 'owner'
+            , sig_key = 2
+            , type_name = 'PAP.Subject'
+            , ui_name = 'Affiliate/Owner'
+            , ui_type_name = 'Subject'
+            )
         ]
-    , edit = None
-    , full_name = 'affiliate'
-    , id = 'affiliate___AC'
-    , name = 'affiliate___AC'
-    , op = Record
-        ( desc = 'Select entities where the attribute is equal to the specified value'
-        , label = 'auto-complete'
-        )
-    , sig_key = 2
-    , type_name = 'PAP.Company_R'
-    , ui_name = 'Affiliate'
-    , ui_type_name = 'Company_R'
-    , value = None
-    )
-
-    >>> afa.filters = QR.Filter_Atoms (afa)
-    >>> print ((formatted (afa.filters)))
-    ( Record
-      ( AQ = <name.AQ [Attr.Type.Querier String]>
-      , attr = String `name`
       , edit = None
-      , full_name = 'name'
-      , id = 'name___AC'
-      , name = 'name___AC'
-      , op = Record
-          ( desc = 'Select entities where the attribute value starts with the specified value'
+      , full_name = 'affiliate'
+      , id = 'affiliate___AC'
+      , name = 'affiliate___AC'
+      , op =
+        Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
           , label = 'auto-complete'
           )
-      , sig_key = 3
-      , ui_name = 'Name'
+      , sig_key = 2
+      , type_name = 'PAP.Company_R'
+      , ui_name = 'Affiliate'
+      , ui_type_name = 'Company_R'
       , value = None
       )
-    , Record
-      ( AQ = <registered_in.AQ [Attr.Type.Querier String]>
-      , attr = String `registered_in`
-      , edit = None
-      , full_name = 'registered_in'
-      , id = 'registered_in___AC'
-      , name = 'registered_in___AC'
-      , op = Record
-          ( desc = 'Select entities where the attribute value starts with the specified value'
-          , label = 'auto-complete'
-          )
-      , sig_key = 3
-      , ui_name = 'Registered in'
-      , value = None
-      )
-    )
-
-    >>> ETT = crad.Templateer.get_template ("e_type")
-    >>> print ((ETT.call_macro ("entity_selector_form", crad, afa)))
-    <form class = "pure-form pure-form-stacked" title="Select Company_R for attribute Affiliate">
-        <div class="pure-controls">
-                      <button class="pure-button pure-button-primary" name="APPLY" title="Use the currently selected Company_R" type="submit">
-          <i class="fa"></i><b>Apply</b>
-        </button>
-                    <button class="pure-button" name="CLEAR" title="Reset fields" type="button">
-          <i class="fa"></i><b>Clear</b>
-        </button>
-                    <button class="pure-button" name="CANCEL" title="Leave form without selecting Company_R" type="button">
-          <i class="fa"></i><b>Cancel</b>
-        </button>
-        </div>
-        <input type="hidden" name="__esf_for_attr__" value="affiliate___AC">
-        <input type="hidden" name="__esf_for_type__" value="PAP.Company_R">
-          <div class="pure-control-group attr-filter" title="Name">
-        <label for="name___AC">Name</label>
-        <span class="value">
-                    <input type="text" class="value" id="name___AC" name="name___AC"/>
-       </span>
-        <a class="disabler"></a>
-      </div>
-          <div class="pure-control-group attr-filter" title="Registered in">
-        <label for="registered_in___AC">Registered in</label>
-        <span class="value">
-                    <input type="text" class="value" id="registered_in___AC" name="registered_in___AC"/>
-       </span>
-        <a class="disabler"></a>
-      </div>
-    </form>
 
     >>> afos = QR.Filter (crad.E_Type, "owner")
     >>> afos.AQ.E_Type.polymorphic_epk
@@ -1933,163 +1869,130 @@ _test_esf = """
 
     >>> print ((formatted (afos)))
     Record
-    ( AQ = <owner.AQ [Attr.Type.Querier Id_Entity]>
-    , Class = 'Entity'
-    , attr = Entity `owner`
-    , children_np =
+      ( AQ = <owner.AQ [Attr.Type.Querier Id_Entity]>
+      , Class = 'Entity'
+      , attr = Entity `owner`
+      , children_np =
         [ Record
-          ( Class = 'Entity'
-          , attr = Entity `owner`
-          , attrs =
+            ( Class = 'Entity'
+            , attr = Entity `owner`
+            , attrs =
               [ Record
-                ( attr = String `name`
-                , full_name = 'owner.name'
-                , id = 'owner__name'
-                , name = 'name'
-                , sig_key = 3
-                , ui_name = 'Owner[Company]/Name'
-                )
+                  ( attr = String `name`
+                  , full_name = 'owner[PAP.Company].name'
+                  , id = 'owner[PAP.Company]__name'
+                  , name = 'name'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Company]/Name'
+                  )
               , Record
-                ( attr = String `registered_in`
-                , full_name = 'owner.registered_in'
-                , id = 'owner__registered_in'
-                , name = 'registered_in'
-                , sig_key = 3
-                , ui_name = 'Owner[Company]/Registered in'
-                )
+                  ( attr = String `registered_in`
+                  , full_name = 'owner[PAP.Company].registered_in'
+                  , id = 'owner[PAP.Company]__registered_in'
+                  , name = 'registered_in'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Company]/Registered in'
+                  )
               ]
-          , full_name = 'owner'
-          , id = 'owner'
-          , name = 'owner'
-          , sig_key = 2
-          , type_name = 'PAP.Company'
-          , ui_name = 'Owner[Company]'
-          , ui_type_name = 'Company'
-          )
+            , full_name = 'owner[PAP.Company]'
+            , id = 'owner[PAP.Company]'
+            , name = 'owner'
+            , sig_key = 2
+            , type_name = 'PAP.Company'
+            , ui_name = 'Owner[Company]'
+            , ui_type_name = 'Company'
+            )
         , Record
-          ( Class = 'Entity'
-          , attr = Entity `owner`
-          , attrs =
+            ( Class = 'Entity'
+            , attr = Entity `owner`
+            , attrs =
               [ Record
-                ( attr = String `name`
-                , full_name = 'owner.name'
-                , id = 'owner__name'
-                , name = 'name'
-                , sig_key = 3
-                , ui_name = 'Owner[Company_R]/Name'
-                )
+                  ( attr = String `name`
+                  , full_name = 'owner[PAP.Company_R].name'
+                  , id = 'owner[PAP.Company_R]__name'
+                  , name = 'name'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Company_R]/Name'
+                  )
               , Record
-                ( attr = String `registered_in`
-                , full_name = 'owner.registered_in'
-                , id = 'owner__registered_in'
-                , name = 'registered_in'
-                , sig_key = 3
-                , ui_name = 'Owner[Company_R]/Registered in'
-                )
+                  ( attr = String `registered_in`
+                  , full_name = 'owner[PAP.Company_R].registered_in'
+                  , id = 'owner[PAP.Company_R]__registered_in'
+                  , name = 'registered_in'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Company_R]/Registered in'
+                  )
               ]
-          , full_name = 'owner'
-          , id = 'owner'
-          , name = 'owner'
-          , sig_key = 2
-          , type_name = 'PAP.Company_R'
-          , ui_name = 'Owner[Company_R]'
-          , ui_type_name = 'Company_R'
-          )
+            , full_name = 'owner[PAP.Company_R]'
+            , id = 'owner[PAP.Company_R]'
+            , name = 'owner'
+            , sig_key = 2
+            , type_name = 'PAP.Company_R'
+            , ui_name = 'Owner[Company_R]'
+            , ui_type_name = 'Company_R'
+            )
         , Record
-          ( Class = 'Entity'
-          , attr = Entity `owner`
-          , attrs =
+            ( Class = 'Entity'
+            , attr = Entity `owner`
+            , attrs =
               [ Record
-                ( attr = String `last_name`
-                , full_name = 'owner.last_name'
-                , id = 'owner__last_name'
-                , name = 'last_name'
-                , sig_key = 3
-                , ui_name = 'Owner[Person]/Last name'
-                )
+                  ( attr = String `last_name`
+                  , full_name = 'owner[PAP.Person].last_name'
+                  , id = 'owner[PAP.Person]__last_name'
+                  , name = 'last_name'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Person]/Last name'
+                  )
               , Record
-                ( attr = String `first_name`
-                , full_name = 'owner.first_name'
-                , id = 'owner__first_name'
-                , name = 'first_name'
-                , sig_key = 3
-                , ui_name = 'Owner[Person]/First name'
-                )
+                  ( attr = String `first_name`
+                  , full_name = 'owner[PAP.Person].first_name'
+                  , id = 'owner[PAP.Person]__first_name'
+                  , name = 'first_name'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Person]/First name'
+                  )
               , Record
-                ( attr = String `middle_name`
-                , full_name = 'owner.middle_name'
-                , id = 'owner__middle_name'
-                , name = 'middle_name'
-                , sig_key = 3
-                , ui_name = 'Owner[Person]/Middle name'
-                )
+                  ( attr = String `middle_name`
+                  , full_name = 'owner[PAP.Person].middle_name'
+                  , id = 'owner[PAP.Person]__middle_name'
+                  , name = 'middle_name'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Person]/Middle name'
+                  )
               , Record
-                ( attr = String `title`
-                , full_name = 'owner.title'
-                , id = 'owner__title'
-                , name = 'title'
-                , sig_key = 3
-                , ui_name = 'Owner[Person]/Academic title'
-                )
+                  ( attr = String `title`
+                  , full_name = 'owner[PAP.Person].title'
+                  , id = 'owner[PAP.Person]__title'
+                  , name = 'title'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Person]/Academic title'
+                  )
               ]
-          , full_name = 'owner'
-          , id = 'owner'
-          , name = 'owner'
-          , sig_key = 2
-          , type_name = 'PAP.Person'
-          , ui_name = 'Owner[Person]'
-          , ui_type_name = 'Person'
-          )
+            , full_name = 'owner[PAP.Person]'
+            , id = 'owner[PAP.Person]'
+            , name = 'owner'
+            , sig_key = 2
+            , type_name = 'PAP.Person'
+            , ui_name = 'Owner[Person]'
+            , ui_type_name = 'Person'
+            )
         ]
-    , default_child = 'PAP.Person'
-    , edit = None
-    , full_name = 'owner'
-    , id = 'owner___AC'
-    , name = 'owner___AC'
-    , op = Record
-        ( desc = 'Select entities where the attribute is equal to the specified value'
-        , label = 'auto-complete'
-        )
-    , sig_key = 2
-    , type_name = 'PAP.Subject'
-    , ui_name = 'Owner'
-    , ui_type_name = 'Subject'
-    , value = None
-    )
-
-    >>> afos.filters  = QR.Filter_Atoms (afos)
-    >>> print ((formatted (afos.filters)))
-    ( Record
-      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
-      , attr = Date `start`
+      , default_child = 'PAP.Person'
       , edit = None
-      , full_name = 'lifetime.start'
-      , id = 'lifetime__start___AC'
-      , name = 'lifetime__start___AC'
-      , op = Record
+      , full_name = 'owner'
+      , id = 'owner___AC'
+      , name = 'owner___AC'
+      , op =
+        Record
           ( desc = 'Select entities where the attribute is equal to the specified value'
           , label = 'auto-complete'
           )
-      , sig_key = 0
-      , ui_name = 'Lifetime/Start'
+      , sig_key = 2
+      , type_name = 'PAP.Subject'
+      , ui_name = 'Owner'
+      , ui_type_name = 'Subject'
       , value = None
       )
-    , Record
-      ( AQ = <lifetime.finish.AQ [Attr.Type.Querier Date]>
-      , attr = Date `finish`
-      , edit = None
-      , full_name = 'lifetime.finish'
-      , id = 'lifetime__finish___AC'
-      , name = 'lifetime__finish___AC'
-      , op = Record
-          ( desc = 'Select entities where the attribute is equal to the specified value'
-          , label = 'auto-complete'
-          )
-      , sig_key = 0
-      , ui_name = 'Lifetime/Finish'
-      , value = None
-      )
-    )
 
     >>> afop = QR.Filter (crad.E_Type, "owner[PAP.Person]")
     >>> afop.AQ.E_Type.polymorphic_epk
@@ -2097,167 +2000,58 @@ _test_esf = """
 
     >>> print ((formatted (afop)))
     Record
-    ( AQ = <owner.AQ [Attr.Type.Querier _Id_Entity_NP_]>
-    , Class = 'Entity'
-    , attr = Entity `owner`
-    , attrs =
+      ( AQ = <owner[PAP.Person].AQ [Attr.Type.Querier _Id_Entity_NP_]>
+      , Class = 'Entity'
+      , attr = Entity `owner`
+      , attrs =
         [ Record
-          ( attr = String `last_name`
-          , full_name = 'owner.last_name'
-          , id = 'owner__last_name'
-          , name = 'last_name'
-          , sig_key = 3
-          , ui_name = 'Owner[Person]/Last name'
-          )
+            ( attr = String `last_name`
+            , full_name = 'owner[PAP.Person].last_name'
+            , id = 'owner[PAP.Person]__last_name'
+            , name = 'last_name'
+            , sig_key = 3
+            , ui_name = 'Owner[Person]/Last name'
+            )
         , Record
-          ( attr = String `first_name`
-          , full_name = 'owner.first_name'
-          , id = 'owner__first_name'
-          , name = 'first_name'
-          , sig_key = 3
-          , ui_name = 'Owner[Person]/First name'
-          )
+            ( attr = String `first_name`
+            , full_name = 'owner[PAP.Person].first_name'
+            , id = 'owner[PAP.Person]__first_name'
+            , name = 'first_name'
+            , sig_key = 3
+            , ui_name = 'Owner[Person]/First name'
+            )
         , Record
-          ( attr = String `middle_name`
-          , full_name = 'owner.middle_name'
-          , id = 'owner__middle_name'
-          , name = 'middle_name'
-          , sig_key = 3
-          , ui_name = 'Owner[Person]/Middle name'
-          )
+            ( attr = String `middle_name`
+            , full_name = 'owner[PAP.Person].middle_name'
+            , id = 'owner[PAP.Person]__middle_name'
+            , name = 'middle_name'
+            , sig_key = 3
+            , ui_name = 'Owner[Person]/Middle name'
+            )
         , Record
-          ( attr = String `title`
-          , full_name = 'owner.title'
-          , id = 'owner__title'
-          , name = 'title'
-          , sig_key = 3
-          , ui_name = 'Owner[Person]/Academic title'
-          )
+            ( attr = String `title`
+            , full_name = 'owner[PAP.Person].title'
+            , id = 'owner[PAP.Person]__title'
+            , name = 'title'
+            , sig_key = 3
+            , ui_name = 'Owner[Person]/Academic title'
+            )
         ]
-    , edit = None
-    , full_name = 'owner'
-    , id = 'owner[PAP.Person]'
-    , name = 'owner[PAP.Person]'
-    , op = Record
-        ( desc = 'Select entities where the attribute is equal to the specified value'
-        , label = 'auto-complete'
-        )
-    , sig_key = 2
-    , type_name = 'PAP.Person'
-    , ui_name = 'Owner[Person]'
-    , ui_type_name = 'Person'
-    , value = None
-    )
-
-    >>> afop.filters  = QR.Filter_Atoms (afop)
-
-    >>> print ((formatted (afop.filters)))
-    ( Record
-      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
-      , attr = String `last_name`
       , edit = None
-      , full_name = 'last_name'
-      , id = 'last_name___AC'
-      , name = 'last_name___AC'
-      , op = Record
-          ( desc = 'Select entities where the attribute value starts with the specified value'
+      , full_name = 'owner[PAP.Person]'
+      , id = 'owner[PAP.Person]'
+      , name = 'owner[PAP.Person]'
+      , op =
+        Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
           , label = 'auto-complete'
           )
-      , sig_key = 3
-      , ui_name = 'Last name'
+      , sig_key = 2
+      , type_name = 'PAP.Person'
+      , ui_name = 'Owner[Person]'
+      , ui_type_name = 'Person'
       , value = None
       )
-    , Record
-      ( AQ = <first_name.AQ [Attr.Type.Querier String_FL]>
-      , attr = String `first_name`
-      , edit = None
-      , full_name = 'first_name'
-      , id = 'first_name___AC'
-      , name = 'first_name___AC'
-      , op = Record
-          ( desc = 'Select entities where the attribute value starts with the specified value'
-          , label = 'auto-complete'
-          )
-      , sig_key = 3
-      , ui_name = 'First name'
-      , value = None
-      )
-    , Record
-      ( AQ = <middle_name.AQ [Attr.Type.Querier String]>
-      , attr = String `middle_name`
-      , edit = None
-      , full_name = 'middle_name'
-      , id = 'middle_name___AC'
-      , name = 'middle_name___AC'
-      , op = Record
-          ( desc = 'Select entities where the attribute value starts with the specified value'
-          , label = 'auto-complete'
-          )
-      , sig_key = 3
-      , ui_name = 'Middle name'
-      , value = None
-      )
-    , Record
-      ( AQ = <title.AQ [Attr.Type.Querier String]>
-      , attr = String `title`
-      , edit = None
-      , full_name = 'title'
-      , id = 'title___AC'
-      , name = 'title___AC'
-      , op = Record
-          ( desc = 'Select entities where the attribute value starts with the specified value'
-          , label = 'auto-complete'
-          )
-      , sig_key = 3
-      , ui_name = 'Academic title'
-      , value = None
-      )
-    )
-
-    >>> print (ETT.call_macro ("entity_selector_form", crad, afop))
-    <form class = "pure-form pure-form-stacked" title="Select Person for attribute Owner[Person]">
-        <div class="pure-controls">
-                      <button class="pure-button pure-button-primary" name="APPLY" title="Use the currently selected Person" type="submit">
-          <i class="fa"></i><b>Apply</b>
-        </button>
-                    <button class="pure-button" name="CLEAR" title="Reset fields" type="button">
-          <i class="fa"></i><b>Clear</b>
-        </button>
-                    <button class="pure-button" name="CANCEL" title="Leave form without selecting Person" type="button">
-          <i class="fa"></i><b>Cancel</b>
-        </button>
-        </div>
-        <input type="hidden" name="__esf_for_attr__" value="owner[PAP.Person]">
-        <input type="hidden" name="__esf_for_type__" value="PAP.Person">
-          <div class="pure-control-group attr-filter" title="Last name">
-        <label for="last_name___AC">Last name</label>
-        <span class="value">
-                    <input type="text" class="value" id="last_name___AC" name="last_name___AC"/>
-       </span>
-        <a class="disabler"></a>
-      </div>
-          <div class="pure-control-group attr-filter" title="First name">
-        <label for="first_name___AC">First name</label>
-        <span class="value">
-                    <input type="text" class="value" id="first_name___AC" name="first_name___AC"/>
-       </span>
-        <a class="disabler"></a>
-      </div>
-          <div class="pure-control-group attr-filter" title="Middle name">
-        <label for="middle_name___AC">Middle name</label>
-        <span class="value">
-                    <input type="text" class="value" id="middle_name___AC" name="middle_name___AC"/>
-       </span>
-        <a class="disabler"></a>
-      </div>
-          <div class="pure-control-group attr-filter" title="Academic title">
-        <label for="title___AC">Academic title</label>
-        <span class="value">
-                    <input type="text" class="value" id="title___AC" name="title___AC"/>
-       </span>
-        <a class="disabler"></a>
-      </div>
-    </form>
 
 """
 
@@ -2308,17 +2102,6 @@ __test__ = Scaffold.create_test_dict \
         , test_qr  = _test_qr
         )
     )
-
-def create_app () :
-    return Scaffold \
-        ( [ "wsgi"
-          , "-db_url",      "hps://"
-          , "-db_name",     "test"
-          , "-load_I18N",   "no"
-          , "-Setup_Cache", "yes"
-          ]
-        )
-# end def create_app
 
 def _monkey_patch_xmlattr () :
     ### The jinja filter `xmlattr` isn't determistic

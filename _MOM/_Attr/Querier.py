@@ -76,6 +76,30 @@
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #     6-May-2015 (CT) Use `TFL.json_dump.to_string`
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
+#     4-May-2016 (CT) Add and use `seen_refuse_e_types`
+#     4-May-2016 (CT) Change `_polymorphic` to check `selectable_e_types`
+#     4-May-2016 (CT) Change `E_Types_AQ` to use `derived_attr`
+#                     and pass `_attr_selector` to `_Id_Entity_NP_`
+#    11-May-2016 (CT) Factor `_getattr_transitive`, support `type_restriction`
+#                     + Add `pattern_fragment` and `regexp`
+#    12-May-2016 (CT) Redefine `_Id_Entity_NP_._full_name`, `._id`, `._q_name`
+#                     + Append `[type_name]`
+#    18-May-2016 (CT) Add `_id_sep`, `_op_sep`, `_ui_sep` to `_Base_`
+#    19-May-2016 (CT) Use `E_Type.ui_name_T`, not `_T (E_Type.ui_name)`
+#    20-May-2016 (CT) Use `E_Type.type_name`, not `E_Type`, to index
+#                     `seen_etypes` (Python-3 compatibility)
+#    20-May-2016 (CT) Pass `outer` to `_Id_Entity_NP_`
+#                     + Fix `_attr_selector` in `_Id_Entity_NP_.__init__`
+#                       (don't want `outer._attr_selector` there!)
+#    24-May-2016 (CT) Change `Id_Entity.__getitem__` to return `self`
+#                     `if self.E_Type.type_name == key`; raise `KeyError`
+#    30-May-2016 (CT) Add `E_Type._polymorphic`
+#    31-May-2016 (CT) Define `Select` for `_Type_`, `_Id_Entity_NP_`
+#     1-Jun-2016 (CT) Change `_getattr_transitive` to allow empty `head`
+#     1-Jun-2016 (CT) Add `E_Type.__getitem__` to allow access to `children_np`
+#     6-Jun-2016 (CT) Change `_attr_selector.setter` to allow `.mandatory`
+#     6-Jun-2016 (CT) Add `__` guard to `__getattr__`
+#    10-Jun-2016 (CT) Add `E_Type.QC`, `.QR`
 #    ««revision-date»»···
 #--
 
@@ -91,8 +115,9 @@ import _TFL._Meta.Object
 from   _TFL.Decorator        import getattr_safe
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.defaultdict      import defaultdict_int as ETC
-from   _TFL.predicate        import filtered_join, split_hst, uniq
+from   _TFL.predicate        import filtered_join, first, split_hst, uniq
 from   _TFL.pyk              import pyk
+from   _TFL.Regexp           import Regexp, re
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -102,10 +127,87 @@ id_sep = "__"
 op_sep = "___"
 ui_sep = "/"
 
+class pattern_fragment :
+    """Class is namespace for pattern fragments"""
+
+    type_restriction = r"[A-Za-z0-9_.]+"
+
+    name_1           = r"[a-zA-Z0-9]+ (?: _[a-zA-Z0-9]+)*"
+    name_1_tr        = " ".join \
+        ( ( name_1                               ### leading name
+          ,   r"(?: "
+          ,     r"\[", type_restriction, r"\]"   ### type_name
+          ,     id_sep                           ### name separator
+          ,     name_1                           ### trailing name
+          ,   r")?"
+          )
+        )
+    name             = " ".join \
+        ( ( r"(?P<name>"
+          ,   name_1_tr                          ### leading name
+          ,   r"(?: "
+          ,     id_sep                           ### name separator
+          ,     name_1_tr                        ### trailing name
+          ,   r")*"
+          , r")"
+          )
+        )
+    operation        = r"(?P<op> [A-Z]+)"
+
+### end class pattern_fragment
+
+class regexp :
+    """Class is namespace for regular expression objects"""
+
+    _pf              = pattern_fragment
+
+    attr             = Regexp \
+        ( "".join ((_pf.name, op_sep, _pf.operation, r"$"))
+        , re.VERBOSE
+        )
+
+    attr_opt         = Regexp \
+        ( "".join ((_pf.name, r"(?:", op_sep, _pf.operation, r")?", r"$"))
+        , re.VERBOSE
+        )
+
+    id_seps          = Regexp \
+        ( "".join
+            ( ( "(?: \.|"
+              ,   id_sep
+              , r")"
+              )
+            )
+        , re.VERBOSE
+        )
+
+    type_restriction = Regexp \
+        ( "".join
+            ( ( r"\["
+              ,   r"""['"]?""" ### use of a group here would break `split`
+              ,     r"(?P<type>"
+              ,       _pf.type_restriction
+              ,     r")"
+              ,   r"""['"]?""" ### use of a backreference would break `split`
+              , r"\]"
+              , "(?: \.|"
+              ,   id_sep
+              , r")?" ### remove trailing separator, if any, from `split` result
+              )
+            )
+        , re.VERBOSE
+        )
+
+### end class regexp
+
 class _Base_ (TFL.Meta.Object) :
 
+    E_Types_CNP      = None
+    _id_sep          = id_sep
     _nesting_level   = 0
+    _op_sep          = op_sep
     _recursion_limit = 2
+    _ui_sep          = ui_sep
 
     @property    ### depends on currently selected language (I18N/L10N)
     @getattr_safe###
@@ -140,10 +242,17 @@ class _Base_ (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def _polymorphic (self) :
-        cet = self.E_Type
-        result = False
-        if cet is not None and cet.has_identity :
-            result = cet.polymorphic_epk
+        ET     = self.E_Type
+        cnp    = getattr (self._attr, "selectable_e_types", None)
+        result = \
+            (   ET is not None
+            and ET.has_identity
+            and ET.polymorphic_epk
+            and cnp
+            and not (len (cnp) == 1 and first (cnp) == ET.type_name)
+                ### if there aren't any selectable_e_types except `ET`
+                ### --> not polymorphic in the context of `self._attr`
+            )
         return result
     # end def _polymorphic
 
@@ -198,7 +307,8 @@ class _Container_ (_Base_) :
     # end def _attrs
 
     def _as_json_cargo (self, seen_etypes) :
-        seen_etypes [self.E_Type] += 1
+        ET = self.E_Type
+        seen_etypes [ET.type_name] += 1
         result = self.__super._as_json_cargo (seen_etypes)
         if self._do_recurse (self, self._recursion_limit, seen_etypes) :
             if not self._polymorphic :
@@ -210,7 +320,8 @@ class _Container_ (_Base_) :
     # end def _as_json_cargo
 
     def _as_template_elem (self, seen_etypes) :
-        seen_etypes [self.E_Type] += 1
+        ET = self.E_Type
+        seen_etypes [ET.type_name] += 1
         result = self.__super._as_template_elem (seen_etypes)
         if self._do_recurse (self, self._recursion_limit, seen_etypes) :
             if not self._polymorphic :
@@ -224,7 +335,7 @@ class _Container_ (_Base_) :
     # end def _as_template_elem
 
     def _atoms (self, seen_etypes) :
-        seen_etypes [self.E_Type] += 1
+        seen_etypes [self.E_Type.type_name] += 1
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
@@ -233,7 +344,7 @@ class _Container_ (_Base_) :
     # end def _atoms
 
     def _attrs_transitive (self, seen_etypes) :
-        seen_etypes [self.E_Type] += 1
+        seen_etypes [self.E_Type.type_name] += 1
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
@@ -248,13 +359,52 @@ class _Container_ (_Base_) :
         result = True
         if cet is not None :
             if cet.has_identity :
-                result = seen_etypes [cet] <= rc
-            seen_etypes [cet] += 1
+                result = seen_etypes [cet.type_name] <= rc
+            seen_etypes [cet.type_name] += 1
         return result
     # end def _do_recurse
 
+    def _getattr_transitive (self, name) :
+        name, _, op = split_hst (name, op_sep)
+        tr = regexp.type_restriction
+        if tr.search (name) :
+            head, typ, tail = tr.split (name, 1, 2)
+            result = self._getattr_transitive_inner (head) if head else self
+            try :
+                result = result [typ]
+            except LookupError :
+                raise ValueError \
+                    ( _T ("Unknown type %s for attribute %s.%s")
+                    % (typ, self.E_Type.type_name, name)
+                    )
+            if tail :
+                result = getattr (result, tail)
+        else :
+            result = self._getattr_transitive_inner (name)
+        return result
+    # end def _getattr_transitive
+
+    def _getattr_transitive_inner (self, name) :
+        E_Type = self.E_Type
+        id_sep = regexp.id_seps
+        if id_sep.search (name) :
+            head, tail = id_sep.split (name, 1)
+        else :
+            head = name
+            tail = None
+        try :
+            result = self.E_Type.attributes [head].AQ.Wrapped (self)
+            setattr (self, head, result)
+            if tail :
+                result = getattr (Filter.Q, tail) (result)
+        except LookupError :
+            raise AttributeError \
+                (_T ("Unknown attribute %s.%s") % (E_Type.type_name, name))
+        return result
+    # end def _getattr_transitive_inner
+
     def _sig_map_transitive (self, seen_etypes) :
-        seen_etypes [self.E_Type] += 1
+        seen_etypes [self.E_Type.type_name] += 1
         result = self.__super._sig_map_transitive (seen_etypes)
         rc = self._recursion_limit
         for c in self.Attrs :
@@ -264,7 +414,7 @@ class _Container_ (_Base_) :
     # end def _sig_map_transitive
 
     def _unwrapped_atoms (self, seen_etypes) :
-        seen_etypes [self.E_Type] += 1
+        seen_etypes [self.E_Type.type_name] += 1
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
@@ -317,12 +467,22 @@ class _Type_ (TFL.Meta.BaM (_Base_, metaclass = _M_Type_)) :
         ( AC                 = Filter.Auto_Complete
         )
 
-    def __init__ (self, attr, outer = None) :
+    def __init__ (self, attr, outer = None, _attr_selector = None) :
         self._attr          = attr
         self._outer         = outer
         self._nesting_level = (outer._nesting_level + 1) if outer else 0
-        self._attr_selector = outer and outer._attr_selector
+        self._attr_selector = (outer and outer._attr_selector) \
+            if _attr_selector is None else _attr_selector
     # end def __init__
+
+    def Select (self, _attr_selector) :
+        return self.__class__ (self._attr, self._outer, _attr_selector)
+    # end def Select
+
+    def Wrapped (self, outer) :
+        assert not self._outer
+        return self.__class__ (self._attr, outer)
+    # end def Wrapped
 
     @TFL.Meta.Once_Property
     @getattr_safe
@@ -421,7 +581,9 @@ class _Type_ (TFL.Meta.BaM (_Base_, metaclass = _M_Type_)) :
         default = self._attr_selector_default
         if value is None :
             value = default
-        elif not (  value is MOM.Attr.Selector.ui_attr
+        elif not (  value is MOM.Attr.Selector.editable
+                 or value is MOM.Attr.Selector.mandatory
+                 or value is MOM.Attr.Selector.ui_attr
                  or value is MOM.Attr.Selector.ui_attr_transitive
                  or isinstance (value, MOM.Attr.Selector.Kind)
                  ) :
@@ -482,11 +644,6 @@ class _Type_ (TFL.Meta.BaM (_Base_, metaclass = _M_Type_)) :
             )
     # end def _ui_name_short_T
 
-    def Wrapped (self, outer) :
-        assert not self._outer
-        return self.__class__ (self._attr, outer)
-    # end def Wrapped
-
     def _atoms (self, seen_etypes) :
         yield self
     # end def _atoms
@@ -546,17 +703,14 @@ class _Composite_ (_Container_, _Type_) :
     # end def _attrs_transitive
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
         try :
             result = self.__super.__getattr__ (name)
         except AttributeError :
-            head, _, tail = split_hst (name, ".")
-            try :
-                result = self.E_Type.attributes [head].AQ.Wrapped (self)
-                setattr (self, head, result)
-                if tail :
-                    result = getattr (Filter.Q, tail) (result)
-            except LookupError :
-                raise AttributeError (name)
+            result = self._getattr_transitive (name)
         return result
     # end def __getattr__
 
@@ -630,24 +784,52 @@ class Id_Entity (_Composite_) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def E_Types_AQ (self) :
+        result      = {}
         E_Types_CNP = self.E_Types_CNP
         if E_Types_CNP :
-            return dict \
-                (   (k, _Id_Entity_NP_ (ET, self._attr))
-                for (k, ET) in pyk.iteritems (E_Types_CNP)
-                )
+            def _gen (self, E_Types_CNP) :
+                E_Type       = self.E_Type
+                derived_attr = self._attr.derived_for_e_type
+                outer        = self._outer
+                for (k, ET) in pyk.iteritems (E_Types_CNP) :
+                    ### if `E_Type` is in `E_Types_CNP`, it is non-partial
+                    ### --> include all editable attributes
+                    ats = MOM.Attr.Selector.editable if ET == E_Type else None
+                    T   = _Id_Entity_NP_ (ET, derived_attr (ET), outer, ats)
+                    yield k, T
+            result = dict (_gen (self, E_Types_CNP))
+        return result
     # end def E_Types_AQ
 
     @TFL.Meta.Once_Property
     @getattr_safe
     def E_Types_CNP (self) :
-        ET = self.E_Type
-        if ET and ET.polymorphic_epk :
-            apt = ET.app_type
-            cnp = self._attr.selectable_e_types
-            if cnp :
-                return dict ((str (c), apt.entity_type (c)) for c in cnp)
+        result  = {}
+        if self._polymorphic :
+            ET     = self.E_Type
+            apt    = ET.app_type
+            cnp    = self._attr.selectable_e_types
+            result = dict ((str (c), apt.entity_type (c)) for c in cnp)
+        return result
     # end def E_Types_CNP
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def refuse_e_types (self) :
+        ET = self.E_Type
+        if ET :
+            apt   = ET.app_type
+            a_ret = getattr (self._attr, "refuse_e_types_transitive", ())
+            return set (apt.etypes.get (ret) for ret in a_ret)
+        return set ()
+    # end def refuse_e_types
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def seen_refuse_e_types (self) :
+        rc = 1 << 31
+        return dict ((ret.type_name, rc) for ret in self.refuse_e_types)
+    # end def seen_refuse_e_types
 
     @TFL.Meta.Once_Property
     @getattr_safe
@@ -669,25 +851,34 @@ class Id_Entity (_Composite_) :
     # end def _as_template_elem_inv
 
     def _as_json_cargo (self, seen_etypes) :
-        result = self.__super._as_json_cargo (seen_etypes)
+        seen_etypes = ETC (dict (seen_etypes, ** self.seen_refuse_e_types))
+        result      = {}
         E_Types_CNP = self.E_Types_CNP
         if E_Types_CNP :
-            result ["children_np"] = list \
+            ### Process `E_Types_CNP` first to allow inclusion of own `E_Type`
+            ### in `children_np` before `__super` increments `seen_etypes`
+            result ["children_np"] = list  \
                 (   self [etn]._as_json_cargo (seen_etypes)
                 for etn in sorted (E_Types_CNP)
                 )
+        result.update (self.__super._as_json_cargo (seen_etypes))
         return result
     # end def _as_json_cargo
 
     def _as_template_elem (self, seen_etypes) :
-        result = self.__super._as_template_elem (seen_etypes)
-        result ["ui_type_name"] = _T (self.E_Type.ui_name)
+        seen_etypes = ETC (dict (seen_etypes, ** self.seen_refuse_e_types))
         E_Types_CNP = self.E_Types_CNP
         if E_Types_CNP :
-            result ["children_np"] = list \
+            ### Process `E_Types_CNP` first to allow inclusion of own `E_Type`
+            ### in `children_np` before `__super` increments `seen_etypes`
+            children_np = list \
                 (   self [etn]._as_template_elem (seen_etypes)
                 for etn in sorted (E_Types_CNP)
                 )
+        result = self.__super._as_template_elem (seen_etypes)
+        result ["ui_type_name"]    = self.E_Type.ui_name_T
+        if E_Types_CNP :
+            result ["children_np"] = children_np
         return result
     # end def _as_template_elem
 
@@ -702,8 +893,9 @@ class Id_Entity (_Composite_) :
     # end def _attrs
 
     def _sig_map_transitive (self, seen_etypes) :
-        result     = self.__super._sig_map_transitive (seen_etypes)
-        E_Types_AQ = self.E_Types_AQ
+        seen_etypes = ETC (dict (seen_etypes, ** self.seen_refuse_e_types))
+        result      = self.__super._sig_map_transitive (seen_etypes)
+        E_Types_AQ  = self.E_Types_AQ
         if E_Types_AQ :
             for aq in pyk.itervalues (E_Types_AQ) :
                 result.update (aq._sig_map_transitive (seen_etypes))
@@ -713,22 +905,53 @@ class Id_Entity (_Composite_) :
     def __getitem__ (self, key) :
         E_Types_AQ = self.E_Types_AQ
         if E_Types_AQ :
-            return E_Types_AQ [key]
+            try :
+                return E_Types_AQ [key]
+            except KeyError :
+                pass
+        if key == self.E_Type.type_name :
+            return self
+        raise KeyError (key)
     # end def __getitem__
 
 # end class Id_Entity
 
 class _Id_Entity_NP_ (Id_Entity) :
 
-    def __init__ (self, ET, attr, outer = None) :
+    _polymorphic = False
+
+    def __init__ (self, ET, attr, outer = None, _attr_selector = None) :
         self._E_Type = ET
-        self.__super.__init__ (attr, outer = outer)
+        self.__super.__init__ \
+            ( attr
+            , outer          = outer
+            , _attr_selector = self._attr_selector_default
+                if _attr_selector is None else _attr_selector
+                ### Use `_attr_selector_default`, not `outer._attr_selector`,
+                ### as default `_attr_selector` for `_Id_Entity_NP_`
+            )
     # end def __init__
+
+    def Select (self, _attr_selector) :
+        return self.__class__ \
+            (self._E_Type, self._attr, self._outer, _attr_selector)
+    # end def Select
+
+    def Wrapped (self, outer) :
+        assert not self._outer
+        return self.__class__ (self._E_Type, self._attr, outer)
+    # end def Wrapped
 
     @property
     def E_Type (self) :
         return self._E_Type
     # end def E_Type
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def E_Types_CNP (self) :
+        pass
+    # end def E_Types_CNP
 
     @TFL.Meta.Once_Property
     @getattr_safe
@@ -747,27 +970,40 @@ class _Id_Entity_NP_ (Id_Entity) :
         return result
     # end def _as_json_cargo_inv
 
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _full_name (self) :
+        return "%s[%s]" % (self.__super._full_name, self.E_Type.type_name)
+    # end def _full_name
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _id (self) :
+        return "%s[%s]" % (self.__super._id, self.E_Type.type_name)
+    # end def _id
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _q_name (self) :
+        return "%s[%s]" % (self.__super._q_name, self.E_Type.type_name)
+    # end def _q_name
+
     @property    ### depends on currently selected language (I18N/L10N)
     @getattr_safe###
     def _ui_name_T (self) :
-        return "%s[%s]" % ((self.__super._ui_name_T), _T (self.E_Type.ui_name))
+        return "%s[%s]" % (self.__super._ui_name_T, self.E_Type.ui_name_T)
     # end def _ui_name_T
 
     @property    ### depends on currently selected language (I18N/L10N)
     @getattr_safe###
     def _ui_name_short_T (self) :
         return "%s[%s]" % \
-            ((self.__super._ui_name_short_T), _T (self.E_Type.ui_name))
+            (self.__super._ui_name_short_T, self.E_Type.ui_name_T)
     # end def _ui_name_short_T
-
-    def Wrapped (self, outer) :
-        assert not self._outer
-        return self.__class__ (self._E_Type, self._attr, outer)
-    # end def Wrapped
 
     def _as_json_cargo (self, seen_etypes) :
         result = self.__super._as_json_cargo (seen_etypes)
-        result ["ui_type_name"] = _T (self.E_Type.ui_name)
+        result ["ui_type_name"] = self.E_Type.ui_name_T
         return result
     # end def _as_json_cargo
 
@@ -775,9 +1011,13 @@ class _Id_Entity_NP_ (Id_Entity) :
 
 class Rev_Ref (Id_Entity) :
 
-    def __init__ (self, attr, outer = None) :
-        self.__super.__init__ (attr, outer = outer)
-        self._attr_selector = self._attr_selector_default
+    def __init__ (self, attr, outer = None, _attr_selector = None) :
+        self.__super.__init__ \
+            ( attr
+            , outer          = outer
+            , _attr_selector = self._attr_selector_default
+                if _attr_selector is None else _attr_selector
+            )
         self._ref_name      = attr.ref_name
     # end def __init__
 
@@ -793,7 +1033,7 @@ class Rev_Ref (Id_Entity) :
         return MOM.Attr.Selector.ui_attr_transitive
     # end def _attr_selector
 
-# end class Rev
+# end class Rev_Ref
 
 class String (_Type_) :
 
@@ -909,6 +1149,32 @@ class E_Type (_Container_) :
     # end def Op_Map
 
     @TFL.Meta.Once_Property
+    @getattr_safe
+    def QC (self, ) :
+        return Filter.Q.SELF
+    # end def QC
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def QR (self, ) :
+        return Filter.Q.ui_display
+    # end def QR
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _polymorphic (self) :
+        ET     = self.E_Type
+        cnp    = ET.children_np
+        result = \
+            (   ET is not None
+            and ET.has_identity
+            and ET.polymorphic_epk
+            and ET.is_partial
+            )
+        return result
+    # end def _polymorphic
+
+    @TFL.Meta.Once_Property
     def Sig_Map (self) :
         result      = {}
         seen_etypes = ETC ()
@@ -921,19 +1187,24 @@ class E_Type (_Container_) :
     @getattr_safe
     def _attr_selector_default (self) :
         return MOM.Attr.Selector.ui_attr
-    # end def _attr_selector
+    # end def _attr_selector_default
 
     def __getattr__ (self, name) :
-        head, _, tail = split_hst (name, ".")
-        try :
-            result = self.E_Type.attributes [head].AQ.Wrapped (self)
-            setattr (self, head, result)
-            if tail :
-                result = getattr (Filter.Q, tail) (result)
-        except LookupError :
-            raise AttributeError (name)
-        return result
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
+        return self._getattr_transitive (name)
     # end def __getattr__
+
+    def __getitem__ (self, key) :
+        E_Type = self.E_Type
+        if key == self.E_Type.type_name :
+            return self
+        elif E_Type.children_np :
+            return E_Type.children_np [key].AQ
+        raise KeyError (key)
+    # end def __getitem__
 
     def __repr__ (self) :
         return "<Attr.Type.Querier.%s for %s>" % \

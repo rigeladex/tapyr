@@ -28,6 +28,7 @@
 ##    23-Feb-2012 (CT) Change `option` to always compare `value` to `selected`
 ##     3-Apr-2015 (CT) Factor `vc` in `option`
 ##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
+##    18-May-2016 (CT) Change `select` to allow empty `name` argument
 ##    ««revision-date»»···
 ##--
 #}
@@ -41,28 +42,29 @@
 
 {%- macro select (name, choices = (), selected = None) -%}
   {%- set caller = kwargs.pop ("caller", None) -%}
-  <select name="{{ name }}"{{ GTW.xmlattr (kwargs) }}>
-    {%- if not selected %}
+  {%- set kw = GTW.dict (kwargs, name = name ) %}
+  <select{{ GTW.xmlattr (kw) }}>
+    {% if not selected %}
       {{ option ("---", "", "") }}
     {% endif -%}
-    {%- if choices -%}
-      {%- for c in choices %}
+    {% if choices %}    {# -#}
+      {% for c in choices %}
         {{ option (c, None, selected) }}
-      {%- endfor -%}
-    {%- elif caller -%}
+      {% endfor -%}
+    {%- elif caller %}
       {{ caller () }}
     {%- endif %}
-    {%- if selected %}
+    {% if selected %}    {# -#}
       {{ option ("---", "", "") }}
     {% endif -%}
   </select>
 {%- endmacro -%} {#- select -#}
 
 {%- macro select_v (name, choices, selected = None) -%}
-  {% call select (name, selected = selected, ** kwargs) -%}
-    {%- for v, c in choices %}
+  {% call select (name, selected = selected, ** kwargs) %}
+    {% for v, c in choices %}    {# -#}
       {{ option (c or v, v, selected) }}
-    {%- endfor -%}
+    {% endfor -%}
   {% endcall %} {# select #}
 {%- endmacro -%} {#- select_v -#}
 

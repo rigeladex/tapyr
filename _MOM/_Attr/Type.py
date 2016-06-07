@@ -392,9 +392,11 @@
 #    28-Apr-2016 (CT) Change `A_Date_Time.as_string` to elide `:00`
 #                     + ditto for `A_Time.as_string`
 #     2-May-2016 (CT) Add `_A_Typed_Collection_.allow_primary = False`
+#     4-May-2016 (CT) Add `_A_Id_Entity_.derived_for_e_type`
 #     5-May-2016 (CT) Add `_A_Date_.not_in_past` and corresponding checker
 #     5-May-2016 (CT) Use `Object_Init`, not `Object`, for `not_in_past` checker
 #     6-May-2016 (CT) Add guard `not playback_p` to `not_in_past` predicate
+#    19-May-2016 (CT) Add `role_name` to `derived_for_e_type`
 #    ««revision-date»»···
 #--
 
@@ -1956,6 +1958,24 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
     def sorted_by (self) :
         return self.P_Type.sorted_by_epk
     # end def sorted_by
+
+    def derived_for_e_type (self, E_Type) :
+        """Return a instance of a derived class for `E_Type`"""
+        cls        = self.__class__
+        dct        = dict \
+            ( E_Type          = E_Type
+            , allow_e_types   = self.allow_e_types
+            , only_e_types    = self.only_e_types
+            , refuse_e_types  = self.refuse_e_types
+            , __module__      = cls.__module__
+            )
+        role_name  = getattr (self, "role_name", None)
+        if role_name is not None :
+            dct ["role_name"] = role_name
+        result_cls = cls.__class__ (self.name, (cls, ), dct)
+        result = result_cls (self.kind, self.e_type)
+        return result
+    # end def derived_for_e_type
 
     @TFL.Meta.Class_and_Instance_Method
     def from_string (self, s, obj = None) :

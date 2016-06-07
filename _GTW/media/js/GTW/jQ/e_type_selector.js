@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -86,6 +86,12 @@
 //    12-May-2015 (CT) Change `clear_cb` to use `user_inputs$`,
 //                     not home-grown code; put focus on `input1$`
 //    15-Dec-2015 (CT) Remove obsolete AFS related functions
+//    25-May-2016 (CT) Add `select_e_type_cb`, `af_polymorphic`
+//    25-May-2016 (CT) Factor `selector.user_inputs`, `field_values`
+//     6-Jun-2016 (CT) Add `trigger`, `trigger_n` to `select_cb`
+//     7-Jun-2016 (CT) Remove `esf_polymorphic`
+//    10-Jun-2016 (CT) Change `completed_cb` to use `response.values`,
+//                     not `response.html`, i.e., update, not replace, ESF form
 //    ««revision-date»»···
 //--
 
@@ -105,11 +111,15 @@
             { closing_flag        : "gtw_esf_closing"
             , completer_position  : default_position
             , dialog_position     : default_position
-            , esf_polymorphic_cls : "ESF-Polymorphic"
             , icon_map            : {}
             , selectors           :
                 { aid             : "[name=__esf_for_attr__]"
+                , af_polymorphic  : ".attr-filter.polymorphic"
+                , fieldset_e_type : "fieldset.E_Type"
+                , select_e_type   : "select.E_Type"
                 , tid             : "[name=__esf_for_type__]"
+                , user_inputs     :
+                    ":input:not([type=hidden]):not(button):not(.hidden)"
                 }
             , treshold            : 0
             }
@@ -120,8 +130,9 @@
                   , opts && opts ["icon_map"] || {}
                   );
               var completer_position, dialog_position;
+              var S;
               this.icons     = new $GTW.FA_Icon_Map (icon_map);
-              this.selectors = $.extend
+              S = $.extend
                   ( {}
                   , this.defaults.selectors
                   , this.icons.selectors
@@ -144,11 +155,16 @@
                   , { icon_map           : this.icons
                     , completer_position : completer_position
                     , dialog_position    : dialog_position
-                    , selectors          : this.selectors
                     }
                   );
-              this.selectors.esf_polymorphic =
-                  "." + this.options.esf_polymorphic_cls;
+              this.selectors = $.extend
+                  ( {}
+                  , S
+                  , { user_inputs     :
+                        S.user_inputs + ":not(" + S.select_e_type + ")"
+                    }
+                  );
+              this.options.selectors = this.selectors;
               this.ajax_response = undefined;
               this.hd_input$     = undefined;
               this.widget        = undefined;
@@ -182,7 +198,7 @@
               } else if (! self.widget) {
                   self.widget = self.setup_widget (self.ajax_response);
               };
-              input1$ = self.user_inputs$.eq (0);
+              input1$ = self.user_inputs$.filter (":visible").eq (0);
               input1$.focus ();
               if (self.options.treshold === 0) {
                   val1 = input1$.val ();
@@ -224,14 +240,9 @@
               var self    = (ev && "data" in ev) ? ev.data || this : this;
               var S       = self.options.selectors;
               var ab$     = self.a_form$.find (S.apply_button);
-              var input1$ = self.user_inputs$.eq (0);
+              var input1$ = self.user_inputs$.filter (":visible").eq (0);
               // clear all input fields
-              self.user_inputs$
-                  .each
-                  ( function () {
-                      $(this).val ("");
-                    }
-                  );
+              self.user_inputs$.val ("");
               // enable `apply` but reset `gtw_ets_completed_response`, if any
               // if the user clicks to `apply` button, the associated input
               // will be cleared
@@ -257,14 +268,42 @@
           }
         , completed_cb          : function completed_cb (inp$, response) {
               var S = this.options.selectors;
-              this.close ();
-              this.widget = this.setup_widget (response);
+              this.user_inputs$
+                  .each
+                      ( function () {
+                          var k = this.id;
+                          var v = response.values [k];
+                          if (k && v !== undefined) {
+                              $V5a.form_field.put (this, v);
+                          };
+                        }
+                      );
               this.widget
                   .data ("gtw_ets_completed_response", response);
               this.a_form$
                   .find (S.apply_button)
                       .gtw_button_pure ("option", "disabled", false)
                       .focus ();
+          }
+        , field_values          : function field_values () {
+              var self   = this;
+              var values = {}, n = 0;
+              self.a_form$
+                  // don't use `self.user_inputs$` because we need
+                  // inputs with `[type=hidden]`, too, here
+                  .find (":input").not ("button, .hidden, [disabled]")
+                  .each
+                      ( function () {
+                          var i$ = $(this);
+                          var k  = i$.prop ("id");
+                          var v  = i$.val  ();
+                          if (k && v) {
+                              values [k] = v;
+                              n += 1;
+                          };
+                        }
+                      );
+              return { map : values, n : n };
           }
         , get_ccb               : function get_ccb (inp$, term, cb, response) {
               var S = this.options.selectors;
@@ -311,29 +350,16 @@
               var options  = self.options;
               var S        = options.selectors;
               var trigger  = inp$.prop ("id");
-              var values   = {}, n = 0;
+              var values   = self.field_values ();
               self.completion_data = self.get_completion_data ();
-              // don't use `self.user_inputs$` because we need
-              // inputs with `[type=hidden]`, too, here
-              self.a_form$.find (":input").not ("button, .hidden").each
-                  ( function () {
-                      var i$ = $(this);
-                      var k  = i$.prop ("id");
-                      var v  = i$.val  ();
-                      if (k && v) {
-                          values [k] = v;
-                          n += 1;
-                      };
-                    }
-                  );
-              if (n > 0 || options.treshold == 0) {
+              if (values.n > 0 || options.treshold == 0) {
                   $.gtw_ajax_2json
                       ( { async         : true
                         , data          : $.extend
                             ( { entity_p  : true
                               , trigger   : trigger
                               , trigger_n : trigger
-                              , values    : values
+                              , values    : values.map
                               }
                             , self.completion_data
                             )
@@ -357,6 +383,8 @@
               var self     = this;
               var S        = self.options.selectors;
               var response = inp$.data ("gtw_ets_completer_response");
+              var trigger  = inp$.prop ("id");
+              var values   = self.field_values ();
               if (! item.disabled) {
                   if (response.partial) {
                       inp$.val (item.value);
@@ -369,13 +397,19 @@
                               , 1
                               );
                       } else {
-                          self.user_inputs$.eq (item.index + 1).focus ();
+                          self.user_inputs$
+                              .filter (":visible")
+                              .eq     (item.index + 1)
+                              .focus ();
                       };
                   } else {
                       $.gtw_ajax_2json
                           ( { async         : true
                             , data          : $.extend
-                                ( { pid     : item.value
+                                ( { pid       : item.value
+                                  , trigger   : trigger
+                                  , trigger_n : trigger
+                                  , values    : values.map
                                   }
                                 , self.completion_data
                                 )
@@ -389,18 +423,38 @@
                   };
               };
           }
+        , select_e_type_cb      : function select_e_type_cb (ev) {
+              var self    = (ev && "data" in ev) ? ev.data || this : this;
+              var S       = self.options.selectors;
+              var f$      = $(ev.delegateTarget);
+              var c$      = f$.closest (S.af_polymorphic);
+              var fsets$  = $(S.fieldset_e_type, c$);
+              var e_type  = f$.val ();
+              var fset$;
+              fsets$.each
+                  ( function () {
+                      var disabled  = !
+                          (e_type && this.classList.contains (e_type));
+                      this.disabled = disabled;
+                      if (! disabled) {
+                          fset$ = $(this);
+                      };
+                    }
+                  );
+              self.clear_cb (ev);
+          }
         , setup_form            : function setup_form (form$) {
               var self         = this;
               var options      = self.options;
               var S            = options.selectors;
-              var user_inputs$ = form$.find
-                  (":input:not([type=hidden]):not(button):not(.hidden)");
+              var user_inputs$ = form$.find (S.user_inputs);
+              var select_et$   = form$.find (S.select_e_type);
               var height       = $(window).height ();
               var width        = $(window).width  ();
               var css_spec     =
                   { "max-height" : height * 0.6
                   , "max-width"  : width  * 0.8
-                  , "min-width"  : width  * (width < 680 ? 0.8 : 0.5)
+                  , "min-width"  : width  * (width  < 680 ? 0.8 : 0.5)
                   };
               if (this.a_form$ !== form$) {
                   this.a_form$      = form$;
@@ -427,6 +481,7 @@
                               ).autocomplete ("widget").css (css_spec);
                         }
                       );
+                  select_et$.change (self, self.select_e_type_cb);
               };
           }
         , setup_widget          : function setup_widget (response) {
@@ -445,8 +500,6 @@
                         , dialogClass : "no-close"
                         }
                       );
-              var esfp$   = result.hasClass (options.esf_polymorphic_cls) ?
-                                result : result.find  (S.esf_polymorphic);
               var form$;
               result.find  (S.button).gtw_button_pure ({icon_map : this.icons});
               result.find  (S.apply_button)
@@ -468,23 +521,8 @@
                               , { of : self.target$ }
                               )
                           );
-              if (esfp$.length) {
-                  esfp$.accordion
-                      ( { active      : active
-                        , activate    : function (event, ui) {
-                            self.activate_form (ui.newPanel);
-                          }
-                        , create      : function (event, ui) {
-                            self.activate_form (ui.panel);
-                          }
-                        , collapsible : true
-                        , heightStyle : "content"
-                        }
-                      );
-              } else {
-                  form$ = result.is ("form") ? result : result.find ("form");
-                  this.setup_form (form$);
-              };
+              form$ = result.is ("form") ? result : result.find ("form");
+              this.setup_form (form$);
               return result;
           }
         }
@@ -495,8 +533,7 @@
               var mf3    = opts.mf3;
               var tid$   = this.a_form$.find (opts.selectors.tid);
               var result =
-                  { etns     : tid$.val ()
-                  , fid      : mf3.E_id
+                  { fid      : mf3.E_id
                   , form_pid : mf3.pid
                   , sid      : mf3.sid
                   , sigs     : mf3.sigs
@@ -535,7 +572,6 @@
               var tid$   = this.a_form$.find (opts.selectors.tid);
               var result =
                   { key  : aid$.val ()
-                  , etns : tid$.val ()
                   };
               return result;
           }

@@ -22,18 +22,21 @@
 #    27-Jan-2014 (CT) Factor `formatted` to `MOM.DBW.SAW.Q_Result`
 #    12-Mar-2015 (CT) Add `fixed_booleans` for sqlalchemy 0.9.8
 #     5-Feb-2016 (CT) Factor `show_table`
+#     3-Jun-2016 (CT) Add `show_esf_query`
 #    ««revision-date»»···
 #--
 
-from   __future__            import division, print_function
-from   __future__            import absolute_import, unicode_literals
+from   __future__                   import division, print_function
+from   __future__                   import absolute_import, unicode_literals
 
-from   _MOM.import_MOM       import MOM, Q
+from   _GTW.__test__.Test_Command   import esf_completer
 
-from   _TFL                  import TFL
-from   _TFL.portable_repr    import portable_repr
-from   _TFL.predicate        import split_hst, rsplit_hst
-from   _TFL.pyk              import pyk
+from   _MOM.import_MOM              import MOM, Q
+
+from   _TFL                         import TFL
+from   _TFL.portable_repr           import portable_repr
+from   _TFL.predicate               import split_hst, rsplit_hst
+from   _TFL.pyk                     import pyk
 
 import _TFL.Regexp
 
@@ -209,6 +212,11 @@ def show_attr_wrappers (apt, pred = pred) :
             continue
         show (ETW)
 # end def show_attr_wrappers
+
+def show_esf_query (scope, AQ, trigger, value, qdct = {}) :
+    completer = esf_completer (scope, AQ, trigger, value, qdct)
+    show_query (completer.query ())
+# end def show_esf_query
 
 def show_key_o_p (apt) :
     def _show (k) :

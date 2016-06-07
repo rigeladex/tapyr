@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -1385,19 +1385,19 @@ _test_code = """
                     , attrs =
                       [ Record
                           ( attr = Email `name`
-                          , full_name = 'c_user.name'
-                          , id = 'c_user__name'
+                          , full_name = 'creation.c_user[Auth.Account].name'
+                          , id = 'creation__c_user[Auth.Account]__name'
                           , name = 'name'
                           , sig_key = 3
-                          , ui_name = 'C user[Account]/Name'
+                          , ui_name = 'Creation/C user[Account]/Name'
                           )
                       ]
-                    , full_name = 'c_user'
-                    , id = 'c_user'
+                    , full_name = 'creation.c_user[Auth.Account]'
+                    , id = 'creation__c_user[Auth.Account]'
                     , name = 'c_user'
                     , sig_key = 2
                     , type_name = 'Auth.Account'
-                    , ui_name = 'C user[Account]'
+                    , ui_name = 'Creation/C user[Account]'
                     , ui_type_name = 'Account'
                     )
                 , Record
@@ -1406,43 +1406,43 @@ _test_code = """
                     , attrs =
                       [ Record
                           ( attr = String `last_name`
-                          , full_name = 'c_user.last_name'
-                          , id = 'c_user__last_name'
+                          , full_name = 'creation.c_user[PAP.Person].last_name'
+                          , id = 'creation__c_user[PAP.Person]__last_name'
                           , name = 'last_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Last name'
+                          , ui_name = 'Creation/C user[Person]/Last name'
                           )
                       , Record
                           ( attr = String `first_name`
-                          , full_name = 'c_user.first_name'
-                          , id = 'c_user__first_name'
+                          , full_name = 'creation.c_user[PAP.Person].first_name'
+                          , id = 'creation__c_user[PAP.Person]__first_name'
                           , name = 'first_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/First name'
+                          , ui_name = 'Creation/C user[Person]/First name'
                           )
                       , Record
                           ( attr = String `middle_name`
-                          , full_name = 'c_user.middle_name'
-                          , id = 'c_user__middle_name'
+                          , full_name = 'creation.c_user[PAP.Person].middle_name'
+                          , id = 'creation__c_user[PAP.Person]__middle_name'
                           , name = 'middle_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Middle name'
+                          , ui_name = 'Creation/C user[Person]/Middle name'
                           )
                       , Record
                           ( attr = String `title`
-                          , full_name = 'c_user.title'
-                          , id = 'c_user__title'
+                          , full_name = 'creation.c_user[PAP.Person].title'
+                          , id = 'creation__c_user[PAP.Person]__title'
                           , name = 'title'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Academic title'
+                          , ui_name = 'Creation/C user[Person]/Academic title'
                           )
                       ]
-                    , full_name = 'c_user'
-                    , id = 'c_user'
+                    , full_name = 'creation.c_user[PAP.Person]'
+                    , id = 'creation__c_user[PAP.Person]'
                     , name = 'c_user'
                     , sig_key = 2
                     , type_name = 'PAP.Person'
-                    , ui_name = 'C user[Person]'
+                    , ui_name = 'Creation/C user[Person]'
                     , ui_type_name = 'Person'
                     )
                 ]
@@ -1480,19 +1480,19 @@ _test_code = """
                     , attrs =
                       [ Record
                           ( attr = Email `name`
-                          , full_name = 'user.name'
-                          , id = 'user__name'
+                          , full_name = 'creation.user[Auth.Account].name'
+                          , id = 'creation__user[Auth.Account]__name'
                           , name = 'name'
                           , sig_key = 3
-                          , ui_name = 'User[Account]/Name'
+                          , ui_name = 'Creation/User[Account]/Name'
                           )
                       ]
-                    , full_name = 'user'
-                    , id = 'user'
+                    , full_name = 'creation.user[Auth.Account]'
+                    , id = 'creation__user[Auth.Account]'
                     , name = 'user'
                     , sig_key = 2
                     , type_name = 'Auth.Account'
-                    , ui_name = 'User[Account]'
+                    , ui_name = 'Creation/User[Account]'
                     , ui_type_name = 'Account'
                     )
                 , Record
@@ -1501,43 +1501,43 @@ _test_code = """
                     , attrs =
                       [ Record
                           ( attr = String `last_name`
-                          , full_name = 'user.last_name'
-                          , id = 'user__last_name'
+                          , full_name = 'creation.user[PAP.Person].last_name'
+                          , id = 'creation__user[PAP.Person]__last_name'
                           , name = 'last_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Last name'
+                          , ui_name = 'Creation/User[Person]/Last name'
                           )
                       , Record
                           ( attr = String `first_name`
-                          , full_name = 'user.first_name'
-                          , id = 'user__first_name'
+                          , full_name = 'creation.user[PAP.Person].first_name'
+                          , id = 'creation__user[PAP.Person]__first_name'
                           , name = 'first_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/First name'
+                          , ui_name = 'Creation/User[Person]/First name'
                           )
                       , Record
                           ( attr = String `middle_name`
-                          , full_name = 'user.middle_name'
-                          , id = 'user__middle_name'
+                          , full_name = 'creation.user[PAP.Person].middle_name'
+                          , id = 'creation__user[PAP.Person]__middle_name'
                           , name = 'middle_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Middle name'
+                          , ui_name = 'Creation/User[Person]/Middle name'
                           )
                       , Record
                           ( attr = String `title`
-                          , full_name = 'user.title'
-                          , id = 'user__title'
+                          , full_name = 'creation.user[PAP.Person].title'
+                          , id = 'creation__user[PAP.Person]__title'
                           , name = 'title'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Academic title'
+                          , ui_name = 'Creation/User[Person]/Academic title'
                           )
                       ]
-                    , full_name = 'user'
-                    , id = 'user'
+                    , full_name = 'creation.user[PAP.Person]'
+                    , id = 'creation__user[PAP.Person]'
                     , name = 'user'
                     , sig_key = 2
                     , type_name = 'PAP.Person'
-                    , ui_name = 'User[Person]'
+                    , ui_name = 'Creation/User[Person]'
                     , ui_type_name = 'Person'
                     )
                 ]
@@ -1580,19 +1580,19 @@ _test_code = """
                     , attrs =
                       [ Record
                           ( attr = Email `name`
-                          , full_name = 'c_user.name'
-                          , id = 'c_user__name'
+                          , full_name = 'last_change.c_user[Auth.Account].name'
+                          , id = 'last_change__c_user[Auth.Account]__name'
                           , name = 'name'
                           , sig_key = 3
-                          , ui_name = 'C user[Account]/Name'
+                          , ui_name = 'Last change/C user[Account]/Name'
                           )
                       ]
-                    , full_name = 'c_user'
-                    , id = 'c_user'
+                    , full_name = 'last_change.c_user[Auth.Account]'
+                    , id = 'last_change__c_user[Auth.Account]'
                     , name = 'c_user'
                     , sig_key = 2
                     , type_name = 'Auth.Account'
-                    , ui_name = 'C user[Account]'
+                    , ui_name = 'Last change/C user[Account]'
                     , ui_type_name = 'Account'
                     )
                 , Record
@@ -1601,43 +1601,43 @@ _test_code = """
                     , attrs =
                       [ Record
                           ( attr = String `last_name`
-                          , full_name = 'c_user.last_name'
-                          , id = 'c_user__last_name'
+                          , full_name = 'last_change.c_user[PAP.Person].last_name'
+                          , id = 'last_change__c_user[PAP.Person]__last_name'
                           , name = 'last_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Last name'
+                          , ui_name = 'Last change/C user[Person]/Last name'
                           )
                       , Record
                           ( attr = String `first_name`
-                          , full_name = 'c_user.first_name'
-                          , id = 'c_user__first_name'
+                          , full_name = 'last_change.c_user[PAP.Person].first_name'
+                          , id = 'last_change__c_user[PAP.Person]__first_name'
                           , name = 'first_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/First name'
+                          , ui_name = 'Last change/C user[Person]/First name'
                           )
                       , Record
                           ( attr = String `middle_name`
-                          , full_name = 'c_user.middle_name'
-                          , id = 'c_user__middle_name'
+                          , full_name = 'last_change.c_user[PAP.Person].middle_name'
+                          , id = 'last_change__c_user[PAP.Person]__middle_name'
                           , name = 'middle_name'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Middle name'
+                          , ui_name = 'Last change/C user[Person]/Middle name'
                           )
                       , Record
                           ( attr = String `title`
-                          , full_name = 'c_user.title'
-                          , id = 'c_user__title'
+                          , full_name = 'last_change.c_user[PAP.Person].title'
+                          , id = 'last_change__c_user[PAP.Person]__title'
                           , name = 'title'
                           , sig_key = 3
-                          , ui_name = 'C user[Person]/Academic title'
+                          , ui_name = 'Last change/C user[Person]/Academic title'
                           )
                       ]
-                    , full_name = 'c_user'
-                    , id = 'c_user'
+                    , full_name = 'last_change.c_user[PAP.Person]'
+                    , id = 'last_change__c_user[PAP.Person]'
                     , name = 'c_user'
                     , sig_key = 2
                     , type_name = 'PAP.Person'
-                    , ui_name = 'C user[Person]'
+                    , ui_name = 'Last change/C user[Person]'
                     , ui_type_name = 'Person'
                     )
                 ]
@@ -1675,19 +1675,19 @@ _test_code = """
                     , attrs =
                       [ Record
                           ( attr = Email `name`
-                          , full_name = 'user.name'
-                          , id = 'user__name'
+                          , full_name = 'last_change.user[Auth.Account].name'
+                          , id = 'last_change__user[Auth.Account]__name'
                           , name = 'name'
                           , sig_key = 3
-                          , ui_name = 'User[Account]/Name'
+                          , ui_name = 'Last change/User[Account]/Name'
                           )
                       ]
-                    , full_name = 'user'
-                    , id = 'user'
+                    , full_name = 'last_change.user[Auth.Account]'
+                    , id = 'last_change__user[Auth.Account]'
                     , name = 'user'
                     , sig_key = 2
                     , type_name = 'Auth.Account'
-                    , ui_name = 'User[Account]'
+                    , ui_name = 'Last change/User[Account]'
                     , ui_type_name = 'Account'
                     )
                 , Record
@@ -1696,43 +1696,43 @@ _test_code = """
                     , attrs =
                       [ Record
                           ( attr = String `last_name`
-                          , full_name = 'user.last_name'
-                          , id = 'user__last_name'
+                          , full_name = 'last_change.user[PAP.Person].last_name'
+                          , id = 'last_change__user[PAP.Person]__last_name'
                           , name = 'last_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Last name'
+                          , ui_name = 'Last change/User[Person]/Last name'
                           )
                       , Record
                           ( attr = String `first_name`
-                          , full_name = 'user.first_name'
-                          , id = 'user__first_name'
+                          , full_name = 'last_change.user[PAP.Person].first_name'
+                          , id = 'last_change__user[PAP.Person]__first_name'
                           , name = 'first_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/First name'
+                          , ui_name = 'Last change/User[Person]/First name'
                           )
                       , Record
                           ( attr = String `middle_name`
-                          , full_name = 'user.middle_name'
-                          , id = 'user__middle_name'
+                          , full_name = 'last_change.user[PAP.Person].middle_name'
+                          , id = 'last_change__user[PAP.Person]__middle_name'
                           , name = 'middle_name'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Middle name'
+                          , ui_name = 'Last change/User[Person]/Middle name'
                           )
                       , Record
                           ( attr = String `title`
-                          , full_name = 'user.title'
-                          , id = 'user__title'
+                          , full_name = 'last_change.user[PAP.Person].title'
+                          , id = 'last_change__user[PAP.Person]__title'
                           , name = 'title'
                           , sig_key = 3
-                          , ui_name = 'User[Person]/Academic title'
+                          , ui_name = 'Last change/User[Person]/Academic title'
                           )
                       ]
-                    , full_name = 'user'
-                    , id = 'user'
+                    , full_name = 'last_change.user[PAP.Person]'
+                    , id = 'last_change__user[PAP.Person]'
                     , name = 'user'
                     , sig_key = 2
                     , type_name = 'PAP.Person'
-                    , ui_name = 'User[Person]'
+                    , ui_name = 'Last change/User[Person]'
                     , ui_type_name = 'Person'
                     )
                 ]
@@ -2156,6 +2156,418 @@ _test_code = """
       , value = None
       )
     )
+
+    >>> print (formatted (PAP.Company_has_Phone.AQ.As_Json_Cargo ["filters"]))
+    [ { 'Class' : 'Entity'
+      , 'children_np' :
+          [ { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'name' : 'registered_in'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Registered in'
+                  }
+                , { 'attrs' :
+                      [ { 'name' : 'start'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Start'
+                        }
+                      , { 'name' : 'finish'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Finish'
+                        }
+                      ]
+                  , 'name' : 'lifetime'
+                  , 'ui_name' : 'Lifetime'
+                  }
+                , { 'name' : 'short_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Short name'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Company'
+            , 'ui_name' : 'Company'
+            , 'ui_type_name' : 'Company'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'Class' : 'Entity'
+                        , 'attrs' :
+                            [ { 'name' : 'last_name'
+                              , 'sig_key' : 3
+                              , 'ui_name' : 'Last name'
+                              }
+                            , { 'name' : 'first_name'
+                              , 'sig_key' : 3
+                              , 'ui_name' : 'First name'
+                              }
+                            , { 'name' : 'middle_name'
+                              , 'sig_key' : 3
+                              , 'ui_name' : 'Middle name'
+                              }
+                            , { 'name' : 'title'
+                              , 'sig_key' : 3
+                              , 'ui_name' : 'Academic title'
+                              }
+                            ]
+                        , 'name' : 'left'
+                        , 'sig_key' : 2
+                        , 'ui_name' : 'Man'
+                        }
+                      ]
+                  , 'name' : 'owner'
+                  , 'sig_key' : 2
+                  , 'ui_name' : 'Owner'
+                  }
+                , { 'name' : 'registered_in'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Registered in'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Company_P'
+            , 'ui_name' : 'Company'
+            , 'ui_type_name' : 'Company_P'
+            }
+          ]
+      , 'name' : 'left'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Company'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'sn'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Subscriber number'
+            }
+          , { 'name' : 'ndc'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Network destination code'
+            }
+          , { 'name' : 'cc'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Country code'
+            }
+          , { 'name' : 'desc'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Description'
+            }
+          ]
+      , 'name' : 'right'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Phone'
+      }
+    , { 'name' : 'extension'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Extension'
+      }
+    , { 'name' : 'desc'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Description'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'creation'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Creation'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'last_change'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Last change'
+      }
+    , { 'name' : 'last_cid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Last cid'
+      }
+    , { 'name' : 'pid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Pid'
+      }
+    , { 'name' : 'type_name'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Type name'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                , { 'name' : 'alive'
+                  , 'sig_key' : 1
+                  , 'ui_name' : 'Alive'
+                  }
+                ]
+            , 'name' : 'date'
+            , 'ui_name' : 'Date'
+            }
+          , { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                ]
+            , 'name' : 'time'
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'name' : 'desc'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Description'
+                  }
+                ]
+            , 'name' : 'calendar'
+            , 'sig_key' : 2
+            , 'ui_name' : 'Calendar'
+            }
+          , { 'name' : 'detail'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Detail'
+            }
+          , { 'name' : 'short_title'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Short title'
+            }
+          ]
+      , 'name' : 'events'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Events'
+      }
+    ]
 
 """
 

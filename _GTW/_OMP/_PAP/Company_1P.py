@@ -20,7 +20,10 @@
 #     9-Feb-2016 (CT) Redefine `ui_display` to DRY result
 #    22-Feb-2016 (CT) Remove `unique_p` from `person`
 #    26-Apr-2016 (CT) Add `buddies` to `_Name_Polisher_`
+#     4-May-2016 (CT) Add `PAP.Subject_has_VAT_IDN` to `refuse_links`
 #    10-May-2016 (CT) Add missing `P_Type` to attribute `person`
+#     1-Jun-2016 (CT) Remove `refuse_links`
+#                     * Better done by `Subject_has_VAT_IDN.left.refuse_e_types`
 #    ««revision-date»»···
 #--
 
@@ -69,11 +72,6 @@ _Ancestor_Essence = PAP.Company
 
 class Company_1P (_Ancestor_Essence) :
     """A one-person company"""
-
-    ### For Company_1P, the `person` holds the VAT_IDN, not the company
-    ### - one person can have more than one `Company_1P`, but all share the
-    ###   person's single `VAT_IDN`
-    refuse_links          = set (["PAP.Company_has_VAT_IDN"])
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

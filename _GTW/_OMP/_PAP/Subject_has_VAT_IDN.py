@@ -18,6 +18,8 @@
 # Revision Dates
 #    24-Feb-2016 (CT) Creation
 #    24-Feb-2016 (CT) Add `left.link_ref_attr_name`
+#     1-Jun-2016 (CT) Set `left.refuse_e_types` to "Adhoc_Group", "Company_1P"
+#     1-Jun-2016 (CT) Remove `is_partial` from `left`
 #    ««revision-date»»···
 #--
 
@@ -56,9 +58,9 @@ class Subject_has_VAT_IDN (_Ancestor_Essence) :
             """Subject that has a VAT identification number"""
 
             role_type          = PAP.Subject
-            is_partial         = True
             max_links          = 1
             link_ref_attr_name = "vat_idn_link"
+            refuse_e_types     = ("PAP.Adhoc_Group", "PAP.Company_1P")
 
         # end class left
 

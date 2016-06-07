@@ -73,7 +73,8 @@
 #    20-Jan-2016 (CT) Add `V5a_history_push`
 #    21-Jan-2016 (CT) Remove GTW_Gallery
 #    22-Jan-2016 (CT) Remove jQuery_Gritter, GTW_UI_Icon_Map, GTW_jsonify
-#     5-May-2016 (CT) Add `V5a_new_window`
+#     5-May-2016 (CT) Add `V5a_new_window` to `requires` of `pns_doc_graph`
+#    10-Jun-2016 (CT) Add `V5a_form_field` to `requires` of `e_type_selector`
 #    ««revision-date»»···
 #--
 
@@ -189,6 +190,7 @@ GTW.Script \
         , GTW.Script._.GTW_button_pure
         , GTW.Script._.GTW_jq_util
         , GTW.Script._.GTW_util
+        , GTW.Script._.V5a_form_field
         )
     )
 

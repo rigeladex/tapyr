@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -34,6 +34,8 @@
 #    13-Mar-2014 (CT) Add `offset_next`, `offset_prev`; factor `_offset_f`
 #    14-Mar-2014 (CT) Add `request_args`, `request_args_abs`
 #     6-May-2014 (CT) Add optional `filter` to `Filter_Atoms`
+#    11-May-2016 (CT) Factor `MOM.Attr.Querier.regexp`
+#    12-May-2016 (CT) Change `_pepk_filter` to use `getattr` of `E_Type.AQ`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +47,8 @@ from   _TFL                     import TFL
 
 import _GTW._RST._MOM
 
+from   _MOM.import_MOM          import Q
+
 import _TFL._Meta.Object
 import _TFL._Meta.Property
 from   _TFL._Meta.Once_Property import Once_Property
@@ -53,11 +57,12 @@ import _TFL.multimap
 import _TFL.Record
 
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.predicate           import first, uniq
+from   _TFL.predicate           import first, split_hst, uniq
 from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import Regexp, re
 
 from   itertools                import chain as ichain
+import logging
 
 @pyk.adapt__bool__
 class RST_Query_Restriction (TFL.Meta.Object) :
@@ -77,47 +82,12 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     relative_args = set (("FIRST", "LAST", "NEXT", "PREV"))
     request_args  = None
 
+    _a_pat        = MOM.Attr.Querier.regexp.attr
+    _a_pat_opt    = MOM.Attr.Querier.regexp.attr_opt
     _id_sep       = MOM.Attr.Querier.id_sep
     _op_sep       = MOM.Attr.Querier.op_sep
+    _t_pat        = MOM.Attr.Querier.regexp.type_restriction
     _ui_sep       = MOM.Attr.Querier.ui_sep
-
-    _name_1_p     = r"[a-zA-Z0-9]+ (?: _[a-zA-Z0-9]+)*"
-    _type_p       = r"[A-Za-z0-9_.]+"
-    _name_1q_p    = " ".join \
-        ( ( _name_1_p                             ### leading name
-          ,   r"(?: "
-          ,     r"\[", _type_p, r"\]"             ### type_name
-          ,     _id_sep                           ### name separator
-          ,     _name_1_p                         ### trailing name
-          ,   r")?"
-          )
-        )
-    _name_p       = " ".join \
-        ( ( r"(?P<name>"
-          ,   _name_1q_p                          ### leading name
-          ,   r"(?: "
-          ,     _id_sep                           ### name separator
-          ,     _name_1q_p                        ### trailing name
-          ,   r")*"
-          , r")"
-          )
-        )
-    _op_p         = r"(?P<op> [A-Z]+)"
-
-    _a_pat        = Regexp \
-        ( "".join ((_name_p, _op_sep, _op_p, r"$"))
-        , re.VERBOSE
-        )
-
-    _a_pat_opt    = Regexp \
-        ( "".join ((_name_p, r"(?:", _op_sep, _op_p, r")?", r"$"))
-        , re.VERBOSE
-        )
-    _t_pat        = Regexp \
-        ( "".join
-            ((r"\[", r"(?P<type>", _type_p, r")", r"\](?: \.|", _id_sep, r")?"))
-        , re.VERBOSE
-        )
 
     @classmethod
     def Filter (cls, E_Type, key, value = None, default_op = "AC") :
@@ -329,7 +299,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     @TFL.Meta.Class_and_Instance_Method
     def attr_filters \
             ( soc, E_Type, request, data, scope
-            , a_pat = None
+            , a_pat      = None
             , default_op = "EQ"
             ) :
         filters   = []
@@ -374,36 +344,17 @@ class RST_Query_Restriction (TFL.Meta.Object) :
 
     @classmethod
     def _pepk_filter (cls, E_Type, key, name, typ, tail, value, default_op) :
-        q = getattr (E_Type.AQ, name)
-        if not q :
-            raise ValueError \
-                (_T ("Unknown attribute %s.%s") % (E_Type.type_name, name))
         try :
-            qd = q [typ]
-        except KeyError :
-            raise ValueError \
-                ( _T ("Unknown type %s for attribute %s.%s")
-                % (typ, E_Type.type_name, name)
-                )
-        op     = None
-        if tail :
-            t_name = tail
-            if cls._a_pat_opt.match (tail) :
-                t_name = cls._a_pat_opt.name
-                op     = cls._a_pat_opt.op
-            else :
-                try :
-                    t_name, op, v = tail.split (",", 3)
-                except (ValueError, TypeError) :
-                    pass
-            qa = getattr (qd, t_name)
-            if not qa :
-                raise ValueError \
-                    ( _T ( "Unknown attribute %s.%s[%s].%s")
-                    % ((E_Type.type_name, name, typ, tail))
-                    )
+            k, op, v = key.split (",", 3)
+        except (ValueError, TypeError) :
+            k, _, op = split_hst (key, cls._op_sep)
         else :
-            qa = qd
+            if value and v != value :
+                logging.error \
+                    ( "Got two different values for %s: %r vs. %r"
+                    % (key, v, value)
+                    )
+        qa    = getattr (E_Type.AQ, k)
         f, fq = cls._setup_attr (E_Type, key, name, op or default_op, value, qa)
         return f
     # end def _pepk_filter

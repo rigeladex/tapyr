@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -155,46 +155,26 @@ on how the environment was set up::
     <BLANKLINE>
       <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
     <BLANKLINE>
-      <select name="Choice" class="side">
+    <BLANKLINE>
+      <select class="side" name="Choice">
+    <BLANKLINE>
           <option value="">---</option>
     <BLANKLINE>
             <option>red</option>
-            <option>green</option></select>
-      <select name="CV" class="side">
-          <option value="0">red</option>
-          <option value="1" selected="selected">green</option>
-          <option value="">---</option>
+    <BLANKLINE>
+            <option>green</option>
+    <BLANKLINE>
+        </select>
+    <BLANKLINE>
+      <select class="side" name="CV">
+    <BLANKLINE>
+    <BLANKLINE>
+            <option value="0">red</option>
+            <option value="1" selected="selected">green</option>
+    <BLANKLINE>
+            <option value="">---</option>
         </select>
     </html>
-    <BLANKLINE>
-
-    >>> print (t5.render (d = "qux").replace ('<section id="foo" class="bar">', '<section class="bar" id="foo">'))
-    <!DOCTYPE html>
-    <html lang="de" class="no-js">
-      <section class="bar" id="foo">
-      A sample section for testing the differences between
-        html5 and xhtml.
-    </section>
-      42
-      42
-      cccc
-      qux
-      default first of
-    <BLANKLINE>
-      <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
-    <BLANKLINE>
-      <select name="Choice" class="side">
-          <option value="">---</option>
-    <BLANKLINE>
-            <option>red</option>
-            <option>green</option></select>
-      <select name="CV" class="side">
-          <option value="0">red</option>
-          <option value="1" selected="selected">green</option>
-          <option value="">---</option>
-        </select>
-    </html>
-    <BLANKLINE>
 
     >>> et = env5.get_template ("email/email.jnj")
     >>> print (et.render (email_from = "tanzer@swing.co.at", email_to = "martin@mangari.com", email_body = "Nih!", NAV = None))

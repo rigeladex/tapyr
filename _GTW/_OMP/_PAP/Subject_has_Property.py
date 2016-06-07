@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -27,6 +27,7 @@
 #    12-Sep-2012 (CT) Add `auto_cache_np`, `auto_derive_np` to `left`, `right`
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    15-May-2013 (CT) Rename `auto_cache_np` to `auto_rev_ref_np`
+#     1-Jun-2016 (CT) Add "PAP.Adhoc_Group" to `left.refuse_e_types`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,7 @@ class Subject_has_Property (_Ancestor_Essence) :
             role_type           = PAP.Subject
             auto_rev_ref_np     = True
             auto_derive_np      = True
+            refuse_e_types      = ("PAP.Adhoc_Group", )
 
         # end class left
 

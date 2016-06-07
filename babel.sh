@@ -26,6 +26,7 @@
 #    31-Jul-2015 (CT) Add `_GTW/_OMP/_PAP/_E164`
 #     2-Feb-2016 (CT) Add `_CAL`
 #     2-Feb-2016 (CT) Change `charset` from `iso-8859-15` to `utf-8`
+#    19-May-2016 (CT) Add command `compile-all`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,24 @@ case "$cmd" in
                -use_fuzzy \
                -languages "${lang}" -combine -import_file "${model}" \
                -output_file "./locale/${lang}/LC_MESSAGES/messages.mo"
+        done
+        ;;
+    "compile-all" )
+        langs=${1:-${default_langs}}; shift
+        pypa=${1}
+        if [ -n "$pypa" ]
+        then
+            export PYTHONPATH=$pypa
+            echo $PYTHONPATH
+        fi
+        for lang in $(IFS=, ; echo ${langs})
+        do
+            mkdir -p "./locale/${lang}/LC_MESSAGES"
+            python -m _TFL.Babel compile \
+               -use_fuzzy \
+               -languages "${lang}" -combine \
+               -output_file "./locale/${lang}/LC_MESSAGES/messages.mo" \
+               ${default_dirs}
         done
         ;;
     * )

@@ -64,6 +64,8 @@ msgid ""
 "AQ argument must contain the values `attribute_name`, `operator`, `value`"
 " separated by commas; got `%s` instead"
 msgstr ""
+"AQ Argument muss die Werte `attribute_name`, `operator`, `wert`"
+" enthalten, getrennt durch Kommas; bekam `%s` stattdessen"
 
 #: _GTW/_RST/_TOP/Auth.py:761
 msgid "Account could not be found"
@@ -120,7 +122,7 @@ msgstr "Abgebrochen"
 msgid "Cannot undo a change if %s later changes exist for the same object"
 msgstr ""
 "Eine Änderung kann nicht rückgängig gemacht werden, "
-"wenn spätere Änderungen für das gleiche Objekt existieren."
+"wenn %s spätere Änderungen für das gleiche Objekt existieren."
 
 #: _GTW/_RST/_TOP/Auth.py:424
 msgid "Change"
@@ -381,7 +383,7 @@ msgstr "Bitte Seite neu laden"
 #: _GTW/_RST/_MOM/Query_Restriction.py:433
 #, python-format
 msgid "Query for cached role attribute `%s` of %s not yet supported"
-msgstr ""
+msgstr "Abfrage für cached Rollenattribut `%s` von %s wird noch nicht unterstützt"
 
 #: _GTW/_RST/_MOM/Mixin.py:621
 #, python-format
@@ -409,7 +411,7 @@ msgstr "Regattaveranstaltungen %(year)s"
 #: _GTW/_RST/_TOP/_MOM/SRM.py:450
 #, python-format
 msgid "Register %s for %s"
-msgstr "Melde f%s zu %s an"
+msgstr "Melde %s zu %s an"
 
 #: _GTW/_RST/_TOP/_MOM/SRM.py:904
 #, python-format

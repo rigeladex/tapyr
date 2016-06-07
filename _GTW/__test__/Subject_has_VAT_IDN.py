@@ -19,6 +19,7 @@
 #    24-Feb-2016 (CT) Creation
 #    25-Feb-2016 (CT) Add tests for `Wrong_Type`
 #    14-Apr-2016 (CT) Use `expect_except` to support Python 3.x
+#    18-May-2016 (CT) Add `test_qr`
 #    ««revision-date»»···
 #--
 
@@ -104,6 +105,823 @@ _test_code = """
       Already existing:
         PAP.Person_has_VAT_IDN (('Doe', 'Jane', '', 'Dr.', 'PAP.Person'), 'GB999999973')
 
+
+    Tests for Attr.Queriers
+
+    >>> print (formatted (PAP.Subject_has_VAT_IDN.E_Type.left.eligible_e_types))
+    { 'PAP.Company'
+    , 'PAP.Person'
+    }
+    >>> print (formatted (PAP.Subject_has_VAT_IDN.E_Type.left.selectable_e_types))
+    { 'PAP.Company'
+    , 'PAP.Person'
+    }
+    >>> print (formatted (PAP.Subject_has_VAT_IDN.E_Type.left.allow_e_types_transitive))
+    set()
+    >>> print (formatted (PAP.Subject_has_VAT_IDN.E_Type.left.only_e_types))
+    set()
+    >>> print (formatted (PAP.Subject_has_VAT_IDN.E_Type.left.refuse_e_types))
+    { 'PAP.Adhoc_Group'
+    , 'PAP.Company_1P'
+    }
+    >>> print (formatted (PAP.Subject_has_VAT_IDN.E_Type.left.refuse_e_types_transitive))
+    {'PAP.Company_1P'}
+
+    >>> print (formatted (PAP.Company_has_VAT_IDN.E_Type.left.selectable_e_types))
+    {'PAP.Company'}
+    >>> print (formatted (PAP.Company_has_VAT_IDN.AQ.left.E_Types_AQ))
+    {}
+    >>> print (formatted (PAP.Company_has_VAT_IDN.AQ.left.E_Types_CNP))
+    {}
+
+    >>> print (formatted (PAP.Company_has_VAT_IDN.AQ.As_Json_Cargo ["filters"]))
+    [ { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'name'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Name'
+            }
+          , { 'name' : 'registered_in'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Registered in'
+            }
+          , { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                , { 'name' : 'alive'
+                  , 'sig_key' : 1
+                  , 'ui_name' : 'Alive'
+                  }
+                ]
+            , 'name' : 'lifetime'
+            , 'ui_name' : 'Lifetime'
+            }
+          , { 'name' : 'short_name'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Short name'
+            }
+          , { 'name' : 'vat_idn'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Vat idn'
+            }
+          ]
+      , 'name' : 'left'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Company'
+      }
+    , { 'name' : 'vin'
+      , 'sig_key' : 0
+      , 'ui_name' : 'VAT id-no'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'creation'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Creation'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'last_change'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Last change'
+      }
+    , { 'name' : 'last_cid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Last cid'
+      }
+    , { 'name' : 'pid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Pid'
+      }
+    , { 'name' : 'type_name'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Type name'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                , { 'name' : 'alive'
+                  , 'sig_key' : 1
+                  , 'ui_name' : 'Alive'
+                  }
+                ]
+            , 'name' : 'date'
+            , 'ui_name' : 'Date'
+            }
+          , { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                ]
+            , 'name' : 'time'
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'name' : 'desc'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Description'
+                  }
+                ]
+            , 'name' : 'calendar'
+            , 'sig_key' : 2
+            , 'ui_name' : 'Calendar'
+            }
+          , { 'name' : 'detail'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Detail'
+            }
+          , { 'name' : 'short_title'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Short title'
+            }
+          ]
+      , 'name' : 'events'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Events'
+      }
+    ]
+
+    >>> print (formatted (PAP.Subject_has_VAT_IDN.AQ.As_Json_Cargo ["filters"]))
+    [ { 'Class' : 'Entity'
+      , 'children_np' :
+          [ { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'name' : 'registered_in'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Registered in'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Company'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Company'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'last_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Last name'
+                  }
+                , { 'name' : 'first_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'First name'
+                  }
+                , { 'name' : 'middle_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Middle name'
+                  }
+                , { 'name' : 'title'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Academic title'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Person'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Person'
+            }
+          ]
+      , 'default_child' : 'PAP.Person'
+      , 'name' : 'left'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Subject'
+      }
+    , { 'name' : 'vin'
+      , 'sig_key' : 0
+      , 'ui_name' : 'VAT id-no'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'creation'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Creation'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'last_change'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Last change'
+      }
+    , { 'name' : 'last_cid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Last cid'
+      }
+    , { 'name' : 'pid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Pid'
+      }
+    , { 'name' : 'type_name'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Type name'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                , { 'name' : 'alive'
+                  , 'sig_key' : 1
+                  , 'ui_name' : 'Alive'
+                  }
+                ]
+            , 'name' : 'date'
+            , 'ui_name' : 'Date'
+            }
+          , { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                ]
+            , 'name' : 'time'
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'name' : 'desc'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Description'
+                  }
+                ]
+            , 'name' : 'calendar'
+            , 'sig_key' : 2
+            , 'ui_name' : 'Calendar'
+            }
+          , { 'name' : 'detail'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Detail'
+            }
+          , { 'name' : 'short_title'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Short title'
+            }
+          ]
+      , 'name' : 'events'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Events'
+      }
+    ]
+
+"""
+
+_test_qr = r"""
+    >>> nav_root = create_app () # doctest:+ELLIPSIS
+    Cache ...
+
+    >>> scope = nav_root.scope
+    >>> cad   = nav_root.ET_Map ["PAP.Company_has_VAT_IDN"].admin
+    >>> ETT   = cad.Templateer.get_template ("e_type")
+    >>> QR    = cad.QR
+    >>> afl   = QR.Filter (cad.E_Type, "left")
+
+    >>> print ((formatted (afl)))
+    Record
+      ( AQ = <left.AQ [Attr.Type.Querier Id_Entity]>
+      , Class = 'Entity'
+      , attr = Company `left`
+      , attrs =
+        [ Record
+            ( attr = String `name`
+            , full_name = 'left.name'
+            , id = 'left__name'
+            , name = 'name'
+            , sig_key = 3
+            , ui_name = 'Company/Name'
+            )
+        , Record
+            ( attr = String `registered_in`
+            , full_name = 'left.registered_in'
+            , id = 'left__registered_in'
+            , name = 'registered_in'
+            , sig_key = 3
+            , ui_name = 'Company/Registered in'
+            )
+        , Record
+            ( attr = Date_Interval `lifetime`
+            , attrs =
+              [ Record
+                  ( attr = Date `start`
+                  , full_name = 'left.lifetime.start'
+                  , id = 'left__lifetime__start'
+                  , name = 'start'
+                  , sig_key = 0
+                  , ui_name = 'Company/Lifetime/Start'
+                  )
+              , Record
+                  ( attr = Date `finish`
+                  , full_name = 'left.lifetime.finish'
+                  , id = 'left__lifetime__finish'
+                  , name = 'finish'
+                  , sig_key = 0
+                  , ui_name = 'Company/Lifetime/Finish'
+                  )
+              , Record
+                  ( attr = Boolean `alive`
+                  , choices =
+                    [ 'no'
+                    , 'yes'
+                    ]
+                  , full_name = 'left.lifetime.alive'
+                  , id = 'left__lifetime__alive'
+                  , name = 'alive'
+                  , sig_key = 1
+                  , ui_name = 'Company/Lifetime/Alive'
+                  )
+              ]
+            , full_name = 'left.lifetime'
+            , id = 'left__lifetime'
+            , name = 'lifetime'
+            , ui_name = 'Company/Lifetime'
+            )
+        , Record
+            ( attr = String `short_name`
+            , full_name = 'left.short_name'
+            , id = 'left__short_name'
+            , name = 'short_name'
+            , sig_key = 3
+            , ui_name = 'Company/Short name'
+            )
+        , Record
+            ( attr = VAT-IDN `vat_idn`
+            , full_name = 'left.vat_idn'
+            , id = 'left__vat_idn'
+            , name = 'vat_idn'
+            , sig_key = 0
+            , ui_name = 'Company/Vat idn'
+            )
+        ]
+      , edit = None
+      , full_name = 'left'
+      , id = 'left___AC'
+      , name = 'left___AC'
+      , op =
+        Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 2
+      , type_name = 'PAP.Company'
+      , ui_name = 'Company'
+      , ui_type_name = 'Company'
+      , value = None
+      )
+
 """
 
 _test_saw = """
@@ -111,17 +929,16 @@ _test_saw = """
 
     >>> show_table (apt, apt._SAW.et_map ["PAP.Subject_has_VAT_IDN"])
     PAP.Subject_has_VAT_IDN (MOM.Id_Entity) <Table pap_subject_has_vat_idn>
+        Column left                      : Integer              Link_Role__Init_Only Subject left Id_Entity()
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column vin                       : Text                 Primary VAT-IDN vin
 
     >>> show_table (apt, apt._SAW.et_map ["PAP.Company_has_VAT_IDN"])
     PAP.Company_has_VAT_IDN (PAP.Subject_has_VAT_IDN) PAP.Subject_has_VAT_IDN <Table pap_company_has_vat_idn>
-        Column left                      : Integer              Link_Role__Init_Only Company left Id_Entity()
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_vat_idn.pid')
 
     >>> show_table (apt, apt._SAW.et_map ["PAP.Person_has_VAT_IDN"])
     PAP.Person_has_VAT_IDN (PAP.Subject_has_VAT_IDN) PAP.Subject_has_VAT_IDN <Table pap_person_has_vat_idn>
-        Column left                      : Integer              Link_Role__Init_Only Person left Id_Entity()
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_vat_idn.pid')
 
     >>> for tn in ("PAP.Subject_has_VAT_IDN", "PAP.Company_has_VAT_IDN", "PAP.Person_has_VAT_IDN") :
@@ -133,9 +950,9 @@ _test_saw = """
     ...         tail = "" if ui == uo else \\
     ...             (((" + " if ui else "") + ", ".join (uo)) if uo else " =")
     ...         print (("%%-30s %%s%%s" %% (ETW.type_name, ", ".join (ui), tail)).strip ())
-    PAP.Subject_has_VAT_IDN        vin
-    PAP.Company_has_VAT_IDN        vin + left
-    PAP.Person_has_VAT_IDN         vin + left
+    PAP.Subject_has_VAT_IDN        left, vin
+    PAP.Company_has_VAT_IDN        left, vin =
+    PAP.Person_has_VAT_IDN         left, vin =
 
     >>> qr_ShV = apt.DBW.PNS.Q_Result.E_Type (apt ["PAP.Subject_has_VAT_IDN"], _strict = False)
     >>> qr_ChV = apt.DBW.PNS.Q_Result.E_Type (apt ["PAP.Company_has_VAT_IDN"], _strict = False)
@@ -148,18 +965,12 @@ _test_saw = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_company_has_vat_idn."left" AS pap_company_has_vat_idn_left,
-           pap_company_has_vat_idn.pid AS pap_company_has_vat_idn_pid,
-           pap_person_has_vat_idn."left" AS pap_person_has_vat_idn_left,
-           pap_person_has_vat_idn.pid AS pap_person_has_vat_idn_pid,
+           pap_subject_has_vat_idn."left" AS pap_subject_has_vat_idn_left,
            pap_subject_has_vat_idn.pid AS pap_subject_has_vat_idn_pid,
            pap_subject_has_vat_idn.vin AS pap_subject_has_vat_idn_vin
          FROM mom_id_entity
            JOIN pap_subject_has_vat_idn ON mom_id_entity.pid = pap_subject_has_vat_idn.pid
-           LEFT OUTER JOIN pap_company_has_vat_idn ON pap_subject_has_vat_idn.pid = pap_company_has_vat_idn.pid
-           LEFT OUTER JOIN pap_person_has_vat_idn ON pap_subject_has_vat_idn.pid = pap_person_has_vat_idn.pid
-         WHERE pap_company_has_vat_idn."left" = :left_1
-            OR pap_person_has_vat_idn."left" = :left_2
+         WHERE pap_subject_has_vat_idn."left" = :left_1
 
     >>> print (qr_ChV.filter (left = 1))
     SQL: SELECT
@@ -168,14 +979,14 @@ _test_saw = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_company_has_vat_idn."left" AS pap_company_has_vat_idn_left,
            pap_company_has_vat_idn.pid AS pap_company_has_vat_idn_pid,
+           pap_subject_has_vat_idn."left" AS pap_subject_has_vat_idn_left,
            pap_subject_has_vat_idn.pid AS pap_subject_has_vat_idn_pid,
            pap_subject_has_vat_idn.vin AS pap_subject_has_vat_idn_vin
          FROM mom_id_entity
            JOIN pap_subject_has_vat_idn ON mom_id_entity.pid = pap_subject_has_vat_idn.pid
            JOIN pap_company_has_vat_idn ON pap_subject_has_vat_idn.pid = pap_company_has_vat_idn.pid
-         WHERE pap_company_has_vat_idn."left" = :left_1
+         WHERE pap_subject_has_vat_idn."left" = :left_1
 
     >>> print (qr_PhV.filter (left = 1))
     SQL: SELECT
@@ -184,15 +995,14 @@ _test_saw = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_person_has_vat_idn."left" AS pap_person_has_vat_idn_left,
            pap_person_has_vat_idn.pid AS pap_person_has_vat_idn_pid,
+           pap_subject_has_vat_idn."left" AS pap_subject_has_vat_idn_left,
            pap_subject_has_vat_idn.pid AS pap_subject_has_vat_idn_pid,
            pap_subject_has_vat_idn.vin AS pap_subject_has_vat_idn_vin
          FROM mom_id_entity
            JOIN pap_subject_has_vat_idn ON mom_id_entity.pid = pap_subject_has_vat_idn.pid
            JOIN pap_person_has_vat_idn ON pap_subject_has_vat_idn.pid = pap_person_has_vat_idn.pid
-         WHERE pap_person_has_vat_idn."left" = :left_1
-
+         WHERE pap_subject_has_vat_idn."left" = :left_1
 
     >>> show_query (qr_PhV.filter (Q.vin.STARTSWITH ("AT"), left = 1))
     SQL: SELECT
@@ -201,15 +1011,15 @@ _test_saw = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_person_has_vat_idn."left" AS pap_person_has_vat_idn_left,
            pap_person_has_vat_idn.pid AS pap_person_has_vat_idn_pid,
+           pap_subject_has_vat_idn."left" AS pap_subject_has_vat_idn_left,
            pap_subject_has_vat_idn.pid AS pap_subject_has_vat_idn_pid,
            pap_subject_has_vat_idn.vin AS pap_subject_has_vat_idn_vin
          FROM mom_id_entity
            JOIN pap_subject_has_vat_idn ON mom_id_entity.pid = pap_subject_has_vat_idn.pid
            JOIN pap_person_has_vat_idn ON pap_subject_has_vat_idn.pid = pap_person_has_vat_idn.pid
          WHERE (pap_subject_has_vat_idn.vin LIKE :vin_1 || '%%%%')
-            AND pap_person_has_vat_idn."left" = :left_1
+            AND pap_subject_has_vat_idn."left" = :left_1
     Parameters:
          left_1               : 1
          vin_1                : 'AT'
@@ -229,6 +1039,7 @@ import _GTW._OMP._PAP.Person_has_VAT_IDN
 __test__ = Scaffold.create_test_dict \
     ( dict
         ( test_main        = _test_code
+        , test_qr          = _test_qr
         )
     )
 

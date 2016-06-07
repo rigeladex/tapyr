@@ -84,6 +84,12 @@
 //    28-Apr-2015 (CT) Add guards for undefined `af_map [label]`
 //                     to `attr_select` and`order_by`
 //    20-Jan-2016 (CT) Use `$V5a.history_push`, not `$GTW.push_history`
+//     3-May-2016 (CT) Add guard for `afs` to `setup_op_button`
+//     3-May-2016 (CT) Save `form$` in scope of `gtw_query_restriction`
+//                     + Bind `submit` of `form$` to `submit_cb`
+//     4-May-2016 (CT) Change `attr_filters` to allow both `attrs` and
+//                     `children_np` for the same filter
+//    19-May-2016 (CT) Add guard for `typ.attrs` to `new_menu__add_sub_cnp`
 //    ««revision-date»»···
 //--
 ( function ($, undefined) {
@@ -105,6 +111,7 @@
             );
         var fa_icons = new $GTW.FA_Icon_Map
             (opts && opts ["fa_icon_map"] || {});
+        var form$ = $(this);
         var menu_position  = $.extend
             ( { my         : "right top"
               , at         : "left bottom"
@@ -190,7 +197,8 @@
                         result.push (f);
                         if ("attrs" in f && f.attrs) {
                             add (f.attrs, f.key, f.label);
-                        } else if ("children_np" in f) {
+                        };
+                        if ("children_np" in f) {
                             for ( var j = 0, lj = f.children_np.length, c
                                 ; j < lj
                                 ; j++
@@ -679,11 +687,14 @@
             menu.append (sub_menu);
             for (var i = 0, li = children_np.length; i < li; i++) {
                 typ  = children_np [i];
-                etn  = "[" + typ.ui_type_name + "]";
-                offs = off + etn.length;
-                typ_menu = $(L ("li", { html : etn }));
-                sub_menu.append (typ_menu);
-                new_menu__add_sub (typ.attrs, typ_menu, cb, offs, pred, true);
+                if (typ.attrs) {
+                    etn  = "[" + typ.ui_type_name + "]";
+                    offs = off + etn.length;
+                    typ_menu = $(L ("li", { html : etn }));
+                    sub_menu.append (typ_menu);
+                    new_menu__add_sub
+                        (typ.attrs, typ_menu, cb, offs, pred, true);
+                };
             };
         };
         var new_menu__create = function new_menu__create (options) {
@@ -1024,21 +1035,23 @@
             var afs    = af_map [afc$.prop ("title")];
             var label  = but$.html ();
             var op     = op_map_by_sym [label];
-            if (! ("ops_menu$" in afs)) {
-                afs.ops_menu$ = new_menu
-                    ( sig_map [afs.sig_key]
-                    , op_select_cb
-                    , { opts :
-                          { open     : function (ev, menu) {
-                                adjust_op_menu (afs);
-                            }
-                          , position : { my : "left top" }
+            if (afs) {
+                if (! ("ops_menu$" in afs)) {
+                    afs.ops_menu$ = new_menu
+                        ( sig_map [afs.sig_key]
+                        , op_select_cb
+                        , { opts :
+                              { open     : function (ev, menu) {
+                                    adjust_op_menu (afs);
+                                }
+                              , position : { my : "left top" }
+                              }
                           }
-                      }
-                    );
+                        );
+                };
+                attach_menu (but$, afs.ops_menu$);
+                afs.ops_selected [op.sym] = true;
             };
-            attach_menu (but$, afs.ops_menu$);
-            afs.ops_selected [op.sym] = true;
         };
         var submit_ajax_cb = function submit_ajax_cb (response) {
             var S    = options.selectors;
@@ -1083,10 +1096,7 @@
                 (qr$.prop ("action") + "?" + serialized_form (qr$));
         };
         var submit_cb = function submit_cb (ev) {
-            var S = options.selectors;
-            var target$ = $(ev.target);
-            var form$   = target$.closest ($("form"));
-            var args    = serialized_form (form$, this);
+            var args = serialized_form (form$, this);
             $.getJSON (form$.prop ("action"), args, submit_ajax_cb);
             return false;
         };
@@ -1154,6 +1164,7 @@
         $(selectors.attr_select_display).each (attr_select.setup);
         $(selectors.config_button).each       (setup_config);
         qr$.delegate (selectors.submit, "click", submit_cb);
+        form$.submit (submit_cb);
         return this;
     }
   } (jQuery)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -73,6 +73,7 @@
 #    27-Feb-2015 (CT) Add `Q.DATE`, `Q.DATE_TIME`, `Q.TIME`, and `_Date_.NOW`
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    24-May-2016 (CT) Add `_display_filter_q_`
 #    ««revision-date»»···
 #--
 
@@ -1169,6 +1170,14 @@ def _display_call_ (q) :
         , ", ".join (display (a) for a in args)
         )
 # end def _display_call_
+
+@display.add_type (TFL._Filter_Q_)
+def _display_filter_q_ (q) :
+    return "Q.%s (%s)" % \
+        ( q.op_name.upper ()
+        , ", ".join (display (a) for a in q.predicates)
+        )
+# end def _display_filter_q_
 
 ### «text» ### start of documentation
 __doc__ = r"""

@@ -234,6 +234,7 @@
 #    13-Nov-2015 (CT) Add `M_E_Type.__lt__` to allow sorting of E_Types
 #    16-Dec-2015 (CT) Add `UI_Spec` to `_m_create_base_e_types`
 #    24-Feb-2016 (CT) Change `_m_add_prop` to allow early calls
+#     1-Jun-2016 (CT) Use `Once_Property_NI`, not `Once_Property`
 #    ««revision-date»»···
 #--
 
@@ -1106,13 +1107,13 @@ class M_E_Type (M_E_Mixin) :
 
     _Class_Kind = "Essence"
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Once_Property_NI
     def ancestors (cls) :
         M_Root = cls.M_Root
         return tuple (b for b in cls.__mro__ if isinstance (b, M_Root))
     # end def ancestors
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Once_Property_NI
     def db_sig (cls) :
         return dict \
             ( i_rank        = cls.i_rank
@@ -1122,7 +1123,7 @@ class M_E_Type (M_E_Mixin) :
             )
     # end def db_sig
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Once_Property_NI
     def m_recordable_attrs (cls) :
         """Set of attributes that need recording by change management and DBW"""
         return set \

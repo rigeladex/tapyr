@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -24,20 +24,12 @@
 #    27-Mar-2013 (CT) Add `test_request_get` and real query to `test_pepk`
 #     2-Mar-2014 (CT) Add test for `qrs.As_Json_Cargo` of `PAP.Person`
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    20-May-2016 (CT) Move backend-specific test to `test_filters_q`
+#     1-Jun-2016 (CT) Factor `fake_request` to `Test_Command`
 #    ««revision-date»»···
 #--
 
 from   __future__  import print_function, unicode_literals
-
-import _GTW.Request_Data
-
-from   _TFL.Record      import Record
-
-def f_req (** kw) :
-    return Record \
-        ( req_data      = GTW.Request_Data      (kw)
-        , req_data_list = GTW.Request_Data_List (kw)
-        )
 
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -1383,7 +1375,7 @@ _test_pepk = """
     ...   , "title___EQ" : "Dr."
     ...   , "foo" : "bar"
     ...   }
-    >>> rdx = Record (req_data = GTW.Request_Data (rdd), req_data_list = GTW.Request_Data_List (rdd))
+    >>> rdx = f_req (** rdd)
 
     >>> for afa in QR.af_args_fif (rdx.req_data) :
     ...    prepr (afa)
@@ -1514,6 +1506,896 @@ _test_pepk = """
     >>> list (int (p) for p in PAP.Person_M.query (* qr.filters_q, sort_key = TFL.Sorted_By ("pid")).attr ("pid"))
     [2]
 
+    >>> qr (PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid"))).all ()
+    [PAP.Person_M ('bar', 'baz', '', 'dr.')]
+
+    >>> print (formatted (PAP.Subject_has_Property.AQ.As_Json_Cargo ["filters"]))
+    [ { 'Class' : 'Entity'
+      , 'children_np' :
+          [ { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Association'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Association'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'name' : 'registered_in'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Registered in'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Company'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Company'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'last_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Last name'
+                  }
+                , { 'name' : 'first_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'First name'
+                  }
+                , { 'name' : 'middle_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Middle name'
+                  }
+                , { 'name' : 'title'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Academic title'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Person'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Person'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'last_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Last name'
+                  }
+                , { 'name' : 'first_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'First name'
+                  }
+                , { 'name' : 'middle_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Middle name'
+                  }
+                , { 'name' : 'title'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Academic title'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Person_M'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Person_M'
+            }
+          ]
+      , 'default_child' : 'PAP.Person'
+      , 'name' : 'left'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Subject'
+      }
+    , { 'Class' : 'Entity'
+      , 'children_np' :
+          [ { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'street'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Street'
+                  }
+                , { 'name' : 'zip'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Zip code'
+                  }
+                , { 'name' : 'city'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'City'
+                  }
+                , { 'name' : 'country'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Country'
+                  }
+                ]
+            , 'name' : 'right'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Address'
+            , 'ui_name' : 'Property'
+            , 'ui_type_name' : 'Address'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'address'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Email address'
+                  }
+                ]
+            , 'name' : 'right'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Email'
+            , 'ui_name' : 'Property'
+            , 'ui_type_name' : 'Email'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'sn'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Subscriber number'
+                  }
+                , { 'name' : 'ndc'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Network destination code'
+                  }
+                , { 'name' : 'cc'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Country code'
+                  }
+                ]
+            , 'name' : 'right'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Phone'
+            , 'ui_name' : 'Property'
+            , 'ui_type_name' : 'Phone'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'value'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Value'
+                  }
+                ]
+            , 'name' : 'right'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Url'
+            , 'ui_name' : 'Property'
+            , 'ui_type_name' : 'Url'
+            }
+          ]
+      , 'name' : 'right'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Property'
+      }
+    , { 'name' : 'desc'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Description'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'creation'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Creation'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'last_change'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Last change'
+      }
+    , { 'name' : 'last_cid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Last cid'
+      }
+    , { 'name' : 'pid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Pid'
+      }
+    , { 'name' : 'type_name'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Type name'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                , { 'name' : 'alive'
+                  , 'sig_key' : 1
+                  , 'ui_name' : 'Alive'
+                  }
+                ]
+            , 'name' : 'date'
+            , 'ui_name' : 'Date'
+            }
+          , { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                ]
+            , 'name' : 'time'
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'name' : 'desc'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Description'
+                  }
+                ]
+            , 'name' : 'calendar'
+            , 'sig_key' : 2
+            , 'ui_name' : 'Calendar'
+            }
+          , { 'name' : 'detail'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Detail'
+            }
+          , { 'name' : 'short_title'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Short title'
+            }
+          ]
+      , 'name' : 'events'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Events'
+      }
+    ]
+
+    >>> print (formatted (PAP.Subject_has_Phone.AQ.As_Json_Cargo ["filters"]))
+    [ { 'Class' : 'Entity'
+      , 'children_np' :
+          [ { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Association'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Association'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'name' : 'registered_in'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Registered in'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Company'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Company'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'last_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Last name'
+                  }
+                , { 'name' : 'first_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'First name'
+                  }
+                , { 'name' : 'middle_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Middle name'
+                  }
+                , { 'name' : 'title'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Academic title'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Person'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Person'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'last_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Last name'
+                  }
+                , { 'name' : 'first_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'First name'
+                  }
+                , { 'name' : 'middle_name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Middle name'
+                  }
+                , { 'name' : 'title'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Academic title'
+                  }
+                ]
+            , 'name' : 'left'
+            , 'sig_key' : 2
+            , 'type_name' : 'PAP.Person_M'
+            , 'ui_name' : 'Subject'
+            , 'ui_type_name' : 'Person_M'
+            }
+          ]
+      , 'default_child' : 'PAP.Person'
+      , 'name' : 'left'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Subject'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'sn'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Subscriber number'
+            }
+          , { 'name' : 'ndc'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Network destination code'
+            }
+          , { 'name' : 'cc'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Country code'
+            }
+          , { 'name' : 'desc'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Description'
+            }
+          ]
+      , 'name' : 'right'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Phone'
+      }
+    , { 'name' : 'extension'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Extension'
+      }
+    , { 'name' : 'desc'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Description'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'creation'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Creation'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'name' : 'c_time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'C time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'c_user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'C user'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'c_user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'C user'
+            }
+          , { 'name' : 'kind'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Kind'
+            }
+          , { 'name' : 'time'
+            , 'sig_key' : 0
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'children_np' :
+                [ { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Name'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'Auth.Account'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Account'
+                  }
+                , { 'Class' : 'Entity'
+                  , 'attrs' :
+                      [ { 'name' : 'last_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Last name'
+                        }
+                      , { 'name' : 'first_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'First name'
+                        }
+                      , { 'name' : 'middle_name'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Middle name'
+                        }
+                      , { 'name' : 'title'
+                        , 'sig_key' : 3
+                        , 'ui_name' : 'Academic title'
+                        }
+                      ]
+                  , 'name' : 'user'
+                  , 'sig_key' : 2
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'User'
+                  , 'ui_type_name' : 'Person'
+                  }
+                ]
+            , 'name' : 'user'
+            , 'sig_key' : 2
+            , 'ui_name' : 'User'
+            }
+          ]
+      , 'name' : 'last_change'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Last change'
+      }
+    , { 'name' : 'last_cid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Last cid'
+      }
+    , { 'name' : 'pid'
+      , 'sig_key' : 0
+      , 'ui_name' : 'Pid'
+      }
+    , { 'name' : 'type_name'
+      , 'sig_key' : 3
+      , 'ui_name' : 'Type name'
+      }
+    , { 'Class' : 'Entity'
+      , 'attrs' :
+          [ { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                , { 'name' : 'alive'
+                  , 'sig_key' : 1
+                  , 'ui_name' : 'Alive'
+                  }
+                ]
+            , 'name' : 'date'
+            , 'ui_name' : 'Date'
+            }
+          , { 'attrs' :
+                [ { 'name' : 'start'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Start'
+                  }
+                , { 'name' : 'finish'
+                  , 'sig_key' : 0
+                  , 'ui_name' : 'Finish'
+                  }
+                ]
+            , 'name' : 'time'
+            , 'ui_name' : 'Time'
+            }
+          , { 'Class' : 'Entity'
+            , 'attrs' :
+                [ { 'name' : 'name'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'name' : 'desc'
+                  , 'sig_key' : 3
+                  , 'ui_name' : 'Description'
+                  }
+                ]
+            , 'name' : 'calendar'
+            , 'sig_key' : 2
+            , 'ui_name' : 'Calendar'
+            }
+          , { 'name' : 'detail'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Detail'
+            }
+          , { 'name' : 'short_title'
+            , 'sig_key' : 3
+            , 'ui_name' : 'Short title'
+            }
+          ]
+      , 'name' : 'events'
+      , 'sig_key' : 2
+      , 'ui_name' : 'Events'
+      }
+    ]
+
+
+"""
+
+_test_filters_q = r"""
+    >>> root  = Scaffold (["wsgi", "-db_url", %(p1)s, "-db_name", %(n1)s or ("test." + %(bn1)s)]) # doctest:+ELLIPSIS
+    >>> scope = root.scope
+    >>> PAP   = scope.PAP
+
+    >>> url = "/Admin/Person?spouse[PAP.Person]__last_name___GE=Qux&spouse[PAP.Person]__lifetime__start___EQ=2008&title___EQ=Dr."
+    >>> req = Scaffold.test_request_get (url)
+    >>> qr  = QR.from_request (scope, PAP.Person_M.E_Type, req)
     >>> qr.filters_q # doctest:+ELLIPSIS
     (Q.title == 'dr.', Q.spouse.in_ (SQL: SELECT DISTINCT mom_id_entity.pid AS mom_id_entity_pid
          FROM mom_id_entity
@@ -1524,9 +2406,6 @@ _test_pepk = """
             AND pap_person.lifetime__start >= :lifetime__start_1
             AND pap_person.lifetime__start <= :lifetime__start_2,))
 
-    >>> qr (PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid"))).all ()
-    [PAP.Person_M ('bar', 'baz', '', 'dr.')]
-
 """
 
 from   _GTW.__test__.model                   import *
@@ -1535,6 +2414,8 @@ from   _GTW._RST._TOP._MOM.Query_Restriction import \
      , Query_Restriction_Spec as QRS
      )
 import _GTW._OMP._PAP.Association
+
+f_req = fake_request
 
 _Ancestor_Essence = GTW.OMP.PAP.Person
 
@@ -1565,5 +2446,15 @@ __test__ = Scaffold.create_test_dict \
       , test_pepk  = _test_pepk
       )
     )
+
+__test__.update \
+    ( Scaffold.create_test_dict
+        ( dict
+            ( test_filters_q = _test_filters_q
+            )
+        , ignore = ("HPS", )
+        )
+    )
+
 
 ### __END__ GTW.__test__.Query_Restriction

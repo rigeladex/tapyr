@@ -128,6 +128,9 @@
 #    15-Jun-2015 (CT) Add guard for `None` to `_cooked_role`
 #    30-Jul-2015 (CT) Pass idempotent `on_error` to `_kw_polished`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#     8-Jun-2016 (CT) Change `get_etype_attribute` to use `etype.AQ`
+#                     * DRY
+#                     * Home-grown code didn't support type restriction
 #    ««revision-date»»···
 #--
 
@@ -216,12 +219,8 @@ class Entity (TFL.Meta.Object) :
     # end def ac_ui_display
 
     def get_etype_attribute (self, name) :
-        etype = self._etype
-        for n in name.split (".") :
-            if etype is None :
-                raise AttributeError (name)
-            result = etype.attributes [n]
-            etype  = getattr (result, "P_Type", None)
+        etype  = self._etype
+        result = getattr (etype.AQ, name)._attr.kind
         return result
     # end def get_etype_attribute
 

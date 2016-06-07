@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -34,6 +34,7 @@
 #     7-Aug-2015 (CT) Add documentation
 #    10-Aug-2015 (CT) Continue adding documentation
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    24-May-2016 (CT) Override `Base.__getattr__` to handle type restrictions
 #    ««revision-date»»···
 #--
 
@@ -137,6 +138,34 @@ class _MOM_Base_ (TFL.Q_Exp.Base) :
         """
 
     _real_name       = "Base"
+
+    @TFL.Meta.Once_Property
+    def _re_type_restriction (self) :
+        ### Once_Property to avoid circular imports
+        import _MOM._Attr.Querier
+        return MOM.Attr.Querier.regexp.type_restriction
+    # end def _re_type_restriction
+
+    def _getattr_transitive (self, name) :
+        tr_pat = self._re_type_restriction
+        if tr_pat.search (name) :
+            h, typ, t  = tr_pat.split (name, 1, 2)
+            result     = self.__super.__getattr__ (h) if h else self
+            result     = result [typ]
+            if t :
+                result = getattr (result, t)
+        else :
+            result     = self.__super.__getattr__ (name)
+        return result
+    # end def _getattr_transitive
+
+    def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            return getattr (self.__super, name)
+        return self._getattr_transitive (name)
+    # end def __getattr__
 
 Base = _MOM_Base_ # end class
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -54,6 +54,7 @@
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    13-Nov-2015 (CT) Add `__code__`, `__func__` to placate `inspect.getargspec`
 #    13-Nov-2015 (CT) Add metaclass to `Bound_Method` to fix `__getattr__`
+#     1-Jun-2016 (CT) Add `Lazy_Property_NI`
 #    ««revision-date»»···
 #--
 
@@ -542,6 +543,25 @@ class Lazy_Property (object) :
     # end def _class_get
 
 # end class Lazy_Property
+
+class Lazy_Property_NI (Lazy_Property) :
+    """Property caching a computed value; cached values are not inherited."""
+
+    undef = object ()
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            return self
+        name   = "__%s_%s" % (self.name, id (obj))
+        undef  = self.undef
+        result = getattr (obj, name, undef)
+        if result is undef :
+            result = self.computer (obj)
+            setattr (obj, name, result)
+        return result
+    # end def __get__
+
+# end class Lazy_Property_NI
 
 class Class_and_Instance_Lazy_Property (Lazy_Property) :
     """Property applicable to both class and instance, caching in the

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -85,6 +85,7 @@
 #                     remove obsolete templates
 #    12-Jun-2015 (CT) Add `account_change_email_info`,
 #                     `account_change_password_info`
+#     2-Jun-2016 (CT) Add `e_type_selector`
 #    ««revision-date»»···
 #--
 
@@ -581,6 +582,7 @@ Template ("e_type_display",               "html/e_type_display.jnj")
 Template ("e_type_doc",                   "html/e_type_doc.jnj")
 Template ("e_type_doc_bare",              "html/e_type_doc_bare.jnj")
 Template ("e_type_mf3",                   "html/e_type_mf3.jnj")
+Template ("e_type_selector",              "html/e_type_selector.m.jnj")
 Template ("gallery",                      "html/gallery.jnj")
 Template ("login",                        "html/login.jnj")
 Template ("photo",                        "html/photo.jnj")

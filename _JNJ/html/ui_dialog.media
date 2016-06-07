@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -25,6 +25,8 @@
 #     1-Apr-2015 (CT) Add rules for `.pure-button-primary`, `name=CANCEL`,
 #                     and `.ui-dialog-titlebar-close`; remove `min_height`
 #     2-Apr-2015 (CT) Increase contrast of `.ui-dialog-title`
+#    18-May-2016 (CT) Add rule for `fieldset[disabled]`
+#    25-May-2016 (CT) Add rule for `.attr-filter.polymorphic`
 #    ««revision-date»»···
 #--
 
@@ -51,6 +53,27 @@ style_sheet = Style_Sheet \
         , min_width                = Percent (50)
         , children                 =
             [ Rule
+                ( "fieldset"
+                , padding          = 0
+                , children         =
+                    [ Rule_Attr
+                        ( "[disabled]"
+                        , P.Rule.hidden
+                        )
+                    , Rule_Class
+                        ( "E_Type"
+                        , border_top       = "1px solid #CCCCCC"
+                        , margin           = TRBL (Em (1.5), Em (1/2), 0)
+                        )
+                    ]
+                )
+            , Rule
+                ( ".attr-filter.polymorphic"
+                , border           = "1px solid #CCCCCC"
+                , border_radius    = Em (1/2)
+                , padding          = TRBL (Em (1/2), Em (1/2), Em (1/4))
+                )
+            , Rule
                 ( ".pure-button"
                 , children                 =
                     [ Rule
@@ -77,8 +100,13 @@ style_sheet = Style_Sheet \
                     ]
                 )
             , Rule
-                ( ".pure-form-stacked input"
-                , width                    = Percent (100)
+                ( ".pure-form-stacked"
+                , children                 =
+                    [ Rule
+                        ( "input", "select"
+                        , width                    = Percent (100)
+                        )
+                    ]
                 )
             , Rule
                 ( ".ui-dialog-titlebar"

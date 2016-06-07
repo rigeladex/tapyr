@@ -39,6 +39,7 @@
 ##    11-Jun-2015 (CT) Add optional keyword argument `primary` to `button_pure`
 ##    13-Jun-2015 (CT) Add `keygen`
 ##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
+##    18-May-2016 (CT) Add `labeled_pure`
 ##    ««revision-date»»···
 ##--
 #}
@@ -159,6 +160,14 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
     <keygen {{ GTW.xmlattr (kw) }}{% if opts %} {{ opts }}{% endif -%}>
   {% endcall %} {# with_opts_kw #}
 {%- endmacro -%} {#- keygen -#}
+
+{%- macro labeled_pure (label_text) -%}
+  {%- set caller = kwargs.pop ("caller", None) -%}
+  <div class="{{ f_class }} pure-control-group">
+    <label{{ GTW.xmlattr (kwargs) }}>{{ label_text }}</label>
+    {{ caller () }}
+  </div>
+{%- endmacro -%} {#- labeled_pure -#}
 
 {%- macro month () -%}
   {{ _input_c ("month", kwargs) }}

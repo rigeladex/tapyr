@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -35,6 +35,8 @@
 #    27-Aug-2014 (CT) Remove import of `_GTW._AFS._MOM.Spec`
 #     7-Oct-2015 (CT) Encapsulate `pyquery` in `_PQ_`, placate its insane 2/3 difference
 #    21-Oct-2015 (CT) Use `pyk.as_str`, not home-grown code
+#     1-Jun-2016 (CT) Add `fake_request`
+#     3-Jun-2016 (CT) Add `esf_completer`, `show_esf_form`
 #    ««revision-date»»···
 #--
 
@@ -56,13 +58,15 @@ from   _TFL.formatted_repr      import formatted_repr as formatted
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.portable_repr       import portable_repr
 from   _TFL.pyk                 import pyk
+from   _TFL.Record              import Record
 from   _TFL.Sorted_By           import Sorted_By
 from   _TFL                     import sos
 
+import _GTW.Request_Data
 import _GTW._Werkzeug.Command
-
 import _GTW._RST._TOP.import_TOP
 import _GTW._RST._TOP._MOM.import_MOM
+
 import _JNJ.Templateer
 
 import _TFL.Filename
@@ -71,8 +75,30 @@ import _TFL.Generators
 from    werkzeug.test     import Client, EnvironBuilder
 from    werkzeug.wrappers import BaseResponse
 
+def esf_completer (scope, AQ, trigger, value, qdct = {}) :
+    ESW    = AQ.ESW
+    values = dict (qdct)
+    values.update ({ trigger : value })
+    return ESW.completer (scope, trigger, values)
+# end def esf_completer
+
+def fake_request (** kw) :
+    return Record \
+        ( req_data      = GTW.Request_Data      (kw)
+        , req_data_list = GTW.Request_Data_List (kw)
+        )
+# end def fake_request
+
 def prepr (* args) :
     print (* (portable_repr (a) for a in args))
+# end def prepr
+
+def show_esf_form (nav_root, etn, attr_name) :
+    adm = nav_root.ET_Map [etn].admin
+    aq  = getattr (adm.E_Type.AQ, attr_name)
+    ETT = adm.Templateer.get_template ("e_type_selector")
+    print (ETT.call_macro ("form", adm, aq, aq.ESW))
+# end def show_esf_form
 
 model_src        = sos.path.dirname (__file__)
 

@@ -22,6 +22,7 @@
 #    23-Jan-2016 (CT) Add `V5a_wrapped`...
 #    26-Jan-2016 (CT) Add `V5a_ajax`...
 #     5-May-2016 (CT) Add `V5a_new_window`
+#    10-Jun-2016 (CT) Add `V5a_form_field`
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,12 @@ GTW.Script \
 GTW.Script \
     ( src       = "/media/GTW/js/V5a/extend.js"
     , name      = "V5a_extend"
+    , requires  = (GTW.Script._.V5a, )
+    )
+
+GTW.Script \
+    ( src       = "/media/GTW/js/V5a/form_field.js"
+    , name      = "V5a_form_field"
     , requires  = (GTW.Script._.V5a, )
     )
 

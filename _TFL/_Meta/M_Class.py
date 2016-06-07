@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -507,5 +507,5 @@ class M_Class (M_Autorename, M_Class_SW) :
 import _TFL.predicate
 
 if __name__ != "__main__" :
-    TFL.Meta._Export ("*", "M_Base")
+    TFL.Meta._Export ("*")
 ### __END__ TFL.Meta.M_Class

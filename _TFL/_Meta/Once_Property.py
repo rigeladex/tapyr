@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -22,6 +22,7 @@
 #                     `Lazy_Property`
 #    26-Jun-2013 (CT) Add `Class_and_Instance_Once_Property`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#     1-Jun-2016 (CT) Add `Once_Property_NI`
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,11 @@ def Once_Property (f) :
     """Decorator returning a `Lazy_Property`."""
     return TFL.Meta.Lazy_Property (f.__name__, f, f.__doc__)
 # end def Once_Property
+
+def Once_Property_NI (f) :
+    """Decorator returning a `Lazy_Property_NI`."""
+    return TFL.Meta.Lazy_Property_NI (f.__name__, f, f.__doc__)
+# end def Once_Property_NI
 
 def Class_and_Instance_Once_Property (f) :
     """Decorator returning a `Class_and_Instance_Lazy_Property`."""

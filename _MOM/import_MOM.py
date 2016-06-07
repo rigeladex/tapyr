@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -30,6 +30,7 @@
 #     9-Sep-2014 (CT) Rename `MOM.Q_Exp_Raw` to `MOM.Q_Exp`
 #    14-Sep-2015 (CT) Add `import_full_model`
 #    13-Oct-2015 (CT) Add `import` for `_TFL.fix_datetime_pickle_2_vs_3`
+#    29-May-2016 (CT) Add `MOM.Selector`
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,7 @@ import _MOM.Error
 import _MOM.Link
 import _MOM.Object
 import _MOM.Q_Exp
+import _MOM.Selector
 import _MOM.Scope
 
 import _MOM._Attr.Selector

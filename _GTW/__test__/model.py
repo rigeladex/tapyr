@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -36,6 +36,7 @@
 #    18-Sep-2012 (CT) Factor _GTW/__test__/Test_Command.py
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    24-Jun-2013 (CT) Change `__main__` to consider `GTW_test_backends`
+#    18-May-2016 (CT) Factor `create_app` in here (from _GTW.__test__.NAV)
 #    ««revision-date»»···
 #--
 
@@ -101,6 +102,17 @@ class _GTW_Test_Command_ (GTW_Test_Command) :
 _Command_  = _GTW_Test_Command_ # end class
 
 Scaffold   = _Command_ ()
+
+def create_app () :
+    return Scaffold \
+        ( [ "wsgi"
+          , "-db_url",      "hps://"
+          , "-db_name",     "test"
+          , "-load_I18N",   "no"
+          , "-Setup_Cache", "yes"
+          ]
+        )
+# end def create_app
 
 if __name__ == "__main__" :
     db_url = sos.environ.get ("GTW_test_backends", "sqlite:///auth.sqlite")

@@ -100,6 +100,7 @@
 #    26-Apr-2016 (CT) Add `buddies` to `as_json_cargo`,
 #                     factor `cargo_as_json_cargo`
 #    22-May-2016 (CT) Add guard `self.required` to `_create_instance`
+#    14-Jun-2016 (CT) Change `allow_new` to consider `E_Type.polymorphic_epk`
 #    ««revision-date»»···
 #--
 
@@ -907,7 +908,6 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
             , "ui_name"
             )
           )
-        , allow_new         = "ui_allow_new"
         , choices           = "Choices"
         , label             = "ui_name"
         , input_widget      = "input_widget"
@@ -915,6 +915,7 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
         , settable          = "is_settable"
         , template_macro    = "mf3_template_macro"
         , template_module   = "mf3_template_module"
+        , ui_allow_new      = "ui_allow_new"
         , _ui_rank          = "ui_rank"
         )
 
@@ -1123,6 +1124,11 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_) :
 
     action_buttons      = ("close", "clear", "reset")
     _reset_properties   = ("field_as_json_cargo", )
+
+    @TFL.Meta.Once_Property
+    def allow_new (self) :
+        return self.ui_allow_new and not self.E_Type.polymorphic_epk
+    # end def allow_new
 
     @TFL.Meta.Once_Property
     def choices (self) :

@@ -29,6 +29,7 @@
 #     9-Sep-2014 (CT) Add tests for query expressions with type restriction
 #    13-Apr-2015 (CT) Add `_test_json`
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    24-May-2016 (CT) Add test for `ET.AQ.left ['PAP.Person'].middle_name`
 #    ««revision-date»»···
 #--
 
@@ -410,7 +411,79 @@ _test_saw = """
          name_1               : 'ISAF'
          name_2               : 'ISAF'
 
+    >>> ETM    = PAP.Subject_has_Property
+    >>> ET     = ETM.E_Type
+    >>> aq     = getattr (ET.AQ, "left[PAP.Person]middle_name")
+    >>> aq1    = ET.AQ.left ['PAP.Person'].middle_name
+    >>> aqacat = aq.AC  ('ta')
+    >>> aqaca1 = aq1.AC ('ta')
+    >>> manual = Q.left ["PAP.Person"].middle_name.STARTSWITH ('ta')
+
+    >>> print (ETM.query (manual).formatted ())
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_person ON pap_person.pid = pap_subject_has_property."left"
+         WHERE (pap_person.middle_name LIKE :middle_name_1 || '%%%%')
+    Parameters:
+         middle_name_1          : 'ta'
+
+    >>> print (ETM.query (aqacat).formatted ())
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_person ON pap_person.pid = pap_subject_has_property."left"
+         WHERE (pap_person.middle_name LIKE :middle_name_1 || '%%%%')
+    Parameters:
+         middle_name_1          : 'ta'
+
+    >>> print (ETM.query (aqaca1).formatted ())
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_person ON pap_person.pid = pap_subject_has_property."left"
+         WHERE (pap_person.middle_name LIKE :middle_name_1 || '%%%%')
+    Parameters:
+         middle_name_1          : 'ta'
+
 """
+
 ### XXX auto cached roles are currently not supported
 ### XXX * either remove _test_acr or re-add auto-cached roles and fix _test_acr
 _test_acr = """
