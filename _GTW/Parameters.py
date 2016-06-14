@@ -31,6 +31,7 @@
 #     9-Apr-2014 (CT) Pass `static_handler` to `GTW.CSS.Style_File`
 #    15-Apr-2014 (CT) Fix `Script_File`, `script_files`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#    14-Jun-2016 (CT) Add `/media/GTW/js/V5a/form_field.js`
 #    ««revision-date»»···
 #--
 
@@ -403,7 +404,7 @@ __doc__ = r"""
     /* a test javascript file directly included */
 
     >>> list (scope.scripts)
-    [/media/GTW/js/jquery.js: text/javascript, /media/GTW/js/jquery-ui.js: text/javascript, /media/GTW/js/V5a/V5a.js: text/javascript, /media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/jQ/button_pure.js: text/javascript, /media/GTW/js/V5a/history_test.js: text/javascript, /media/GTW/js/V5a/history_push.js: text/javascript, /media/GTW/js/GTW/util.js: text/javascript, /media/GTW/js/GTW/jQ/util.js: text/javascript, /media/GTW/js/GTW/jQ/autocomplete.js: text/javascript, /media/GTW/js/GTW/jQ/e_type_selector.js: text/javascript, /media/GTW/js/GTW/L.js: text/javascript, /media/GTW/js/GTW/jQ/mf3.js: text/javascript]
+    [/media/GTW/js/jquery.js: text/javascript, /media/GTW/js/jquery-ui.js: text/javascript, /media/GTW/js/V5a/V5a.js: text/javascript, /media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/jQ/button_pure.js: text/javascript, /media/GTW/js/V5a/history_test.js: text/javascript, /media/GTW/js/V5a/history_push.js: text/javascript, /media/GTW/js/GTW/util.js: text/javascript, /media/GTW/js/GTW/jQ/util.js: text/javascript, /media/GTW/js/GTW/jQ/autocomplete.js: text/javascript, /media/GTW/js/V5a/form_field.js: text/javascript, /media/GTW/js/GTW/jQ/e_type_selector.js: text/javascript, /media/GTW/js/GTW/L.js: text/javascript, /media/GTW/js/GTW/jQ/mf3.js: text/javascript]
 
     >>> list (scope.css_links)
     [all: /media/GTW/css/jquery.gritter.css]
