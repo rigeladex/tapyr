@@ -21,6 +21,7 @@
 #    15-Feb-2016 (CT) Add `yearday`, `nlyearday`, `leapdays`
 #    15-Feb-2016 (CT) Add test for `localized`
 #    15-Feb-2016 (CT) Use `G8R_Multi`, not `Multi_Re_Replacer`
+#    15-Jun-2016 (CT) Add `Recurrence_Units`
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,16 @@ language to the primary language (which often is english).
     ...    print (CAL.G8R.Week_Days.replacer.regexp._pattern.pattern)
     \b(donnerstag|dienstag|mittwoch|freitag|samstag|sonntag|montag|di|do|fr|mi|mo|sa|so)\b
 
+    >>> _show (CAL.G8R.Recurrence_Units, "weekly")
+    de : weekly --> weekly
+
+    >>> _show (CAL.G8R.Recurrence_Units, "Wöchentlich")
+    de : Wöchentlich --> weekly
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...     print (portable_repr (sorted (CAL.G8R.Recurrence_Units.map.items ())))
+    [('j\xe4hrlich', 'yearly'), ('monatlich', 'monthly'), ('t\xe4glich', 'daily'), ('w\xf6chentlich', 'weekly')]
+
 """
 
 from   __future__  import absolute_import
@@ -146,10 +157,15 @@ Months = TFL.G8R \
     , lowercase = True
     )
 
+Recurrence_Units = TFL.G8R \
+    ( [ _("Daily"), _("Weekly"), _("Monthly"), _("Yearly")]
+    , lowercase = True
+    )
+
 Units = TFL.G8R \
-    ( [ _("d"),  _("day"),    _("days")]
-    , [ _("h"),  _("hour"),   _("hours")]
-    , [ _("m"),  _("min"), _  ("minute"), _("minutes")]
+    ( [ _("d"),  _("day"),   _("days")]
+    , [ _("h"),  _("hour"),  _("hours")]
+    , [ _("m"),  _("min"),   _("minute"), _("minutes")]
     , [ _("s"),  _("sec"),   _("second"), _("seconds")]
     , [ _("wk"), _("week"),  _("weeks")]
     , [          _("month"), _("months")]

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -30,7 +30,8 @@ from   __future__            import unicode_literals
 
 from   _MOM.import_MOM            import *
 from   _MOM.import_MOM            import _A_Named_Value_
-from   _MOM._Attr.Recurrence_Rule import A_Weekday_RR, A_Weekday_RR_List
+from   _MOM._Attr.Recurrence_Rule import \
+    A_Unit_RR, A_Weekday_RR, A_Weekday_RR_List
 
 from   _GTW                       import GTW
 
@@ -375,22 +376,13 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
         # end class start
 
-        class unit (_A_Named_Value_) :
+        class unit (A_Unit_RR) :
             """Unit of recurrence. `period` is interpreted in units of
                `unit`.
             """
 
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Sticky_Mixin, )
-            P_Type             = int
-            C_Type             = A_Int
-            Table              = dict \
-                (  (k, getattr (dateutil.rrule, k.upper ()))
-                for k in (_("Daily"), _("Weekly"), _("Monthly"), _("Yearly"))
-                )
-            typ                = "Unit"
-            default            = Table ["Daily"]
-            max_value          = len (Table)
             rank               = -99
 
             rrule_name         = "freq"

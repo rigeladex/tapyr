@@ -46,6 +46,7 @@
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    28-Apr-2016 (CT) Convert `_from_string` to `Class_and_Instance_Method`
 #    28-Apr-2016 (CT) Add `value_range`
+#    15-Jun-2016 (CT) Add `A_Unit_RR`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ from   _CAL                  import CAL
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import \
      ( _A_Binary_String_
+     , _A_Named_Value_
      , _A_Typed_List_
      )
 
@@ -65,6 +67,29 @@ from   _TFL.pyk              import pyk
 import _TFL.r_eval
 
 import dateutil.rrule
+
+class A_Unit_RR (_A_Named_Value_) :
+    """Unit of recurrence. """
+
+    P_Type             = int
+    C_Type             = A_Int
+    Table              = dict \
+        (  (k, getattr (dateutil.rrule, k.upper ()))
+        for k in (_("Daily"), _("Weekly"), _("Monthly"), _("Yearly"))
+        )
+    typ                = "Unit"
+    default            = Table ["Daily"]
+    max_value          = len (Table)
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj = None) :
+        v = CAL.G8R.Recurrence_Units.globalized (s).capitalize ()
+        ### when called for the class, `soc.__super` doesn't
+        ### work while `super (A_Unit_RR, soc)` does
+        return super (A_Unit_RR, soc)._from_string (v)
+    # end def _from_string
+
+# end class A_Unit_RR
 
 class A_Weekday_RR (A_Attr_Type) :
     """Weekday specification in recurrence rule."""
