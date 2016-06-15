@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -50,10 +50,15 @@
 #     5-Aug-2015 (CT) Add `__doc__`
 #     5-Aug-2015 (CT) Continue adding `__doc__`
 #     6-Aug-2015 (CT) Add `Option.explanation`
+#    15-Jun-2016 (CT) Add `_wrapped_handler` to LET `_cao`
+#                     + Rename handler argument `cmd` to `cao`
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                   import TFL
 
@@ -311,6 +316,7 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
 
     _args                   = ()
     _buns                   = ()
+    _cao                    = None ### `LET` during execution of `handler`
     _defaults               = {}
     _description            = ""
     _name                   = None
@@ -332,7 +338,7 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
             , defaults      = self.defaults
             , description   = self.description
             , do_keywords   = self.do_keywords
-            , handler       = self.handler
+            , handler       = self._wrapped_handler
             , helper        = self.helper
             , name          = self.name
             , max_args      = self.max_args
@@ -444,6 +450,22 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
         return {}
     # end def dynamic_defaults
 
+    def _wrapped_handler (self, cao, * args, ** kw) :
+        with self._wrapped_handler_context (cao, * args, ** kw) :
+            return self.handler (cao, * args, ** kw)
+    # end def _wrapped_handler
+
+    @TFL.Contextmanager
+    def _wrapped_handler_context (self, cao, * args, ** kw) :
+        with self.LET (_cao = cao) :
+            root = self._root
+            if root is not None and root is not self :
+                with root.LET (_cao = cao) :
+                    yield
+            else :
+                yield
+    # end def _wrapped_handler_context
+
     def __getitem__ (self, key) :
         if " " in key :
             result = self.sc_map
@@ -461,8 +483,8 @@ class TFL_Sub_Command (Command) :
 
     _real_name              = "Sub_Command"
 
-    def handler (self, cmd) :
-        return self._handler (cmd)
+    def handler (self, cao) :
+        return self._handler (cao)
     # end def handler
 
     @TFL.Meta.Once_Property
@@ -497,18 +519,18 @@ class TFL_Sub_Command_Combiner (Command) :
         return tuple (_gen (self))
     # end def sub_command_seq
 
-    def handler (self, cmd) :
-        opts   = self._std_opts (cmd)
+    def handler (self, cao) :
+        opts   = self._std_opts (cao)
         parent = self._parent
         for sc in self.sub_command_seq :
             parent (sc + opts)
     # end def handler
 
-    def _std_opts (self, cmd) :
+    def _std_opts (self, cao) :
         result = []
-        raws   = cmd._raw
-        opts   = cmd._opt_dict
-        for k, v in pyk.iteritems (cmd._map) :
+        raws   = cao._raw
+        opts   = cao._opt_dict
+        for k, v in pyk.iteritems (cao._map) :
             opt = opts.get (k)
             if opt :
                 mk = "-" + k

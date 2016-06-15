@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -26,6 +26,7 @@
 #    31-May-2012 (CT) Use `cwd` in `_handle_migrate` (again!)
 #     1-Jun-2012 (CT) Factor `_app_call` from `_handle_migrate`
 #     1-Sep-2014 (CT) Use `pjoin`, not `plumbum.path` operator `/`
+#    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #    ««revision-date»»···
 #--
 
@@ -77,18 +78,18 @@ class GTW_OMP_Command (GTW.deploy.Command) :
 
     _Migrate_ = _GTW_OMP_Migrate_ # end class
 
-    def _handle_migrate (self, cmd) :
-        P      = self._P (cmd)
-        db_url = "hps:///" + cmd.db_name
+    def _handle_migrate (self, cao) :
+        P      = self._P (cao)
+        db_url = "hps:///" + cao.db_name
         def _do (version, args) :
-            app  = self._app_cmd (cmd, P, version)
+            app  = self._app_cmd (cao, P, version)
             args = ("migrate", "-overwrite") + args
             with self.pbl.env (PYTHONPATH = self._python_path (P, version)) :
                 self._app_call \
-                    (cmd, P, app, args, pjoin (P.prefix, version, cmd.app_dir))
-        if cmd.Active :
+                    (cao, P, app, args, pjoin (P.prefix, version, cao.app_dir))
+        if cao.Active :
             _do (P.active,  ("-target_db_url", db_url, "-readonly"))
-        if cmd.Passive :
+        if cao.Passive :
             _do (P.passive, ("-db_url",        db_url))
     # end def _handle_migrate
 

@@ -20,7 +20,7 @@
 # Revision Dates
 #    27-Jan-2012 (CT) Recreation (re-factored from SC-AMS specific code)
 #    27-Jan-2012 (CT) Factor `_wsgi_app`
-#    30-Jan-2012 (CT) Change `_wsgi_app` to `cmd.GET ("cookie_salt")`
+#    30-Jan-2012 (CT) Change `_wsgi_app` to `cao.GET ("cookie_salt")`
 #     1-Feb-2012 (CT) Use newly factored `GTW.AFS.MOM.Form_Cache`
 #    30-Apr-2012 (MG) Allow none existing `Auth`
 #     3-May-2012 (CT) Pass `languages` to `HTTP.Application`
@@ -34,7 +34,7 @@
 #     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
 #     4-Jun-2012 (CT) Add `-log_level`, pass to `HTTP.Application`
 #     4-Jun-2012 (MG) `_handle_run_server` support for `host` added
-#    20-Jun-2012 (CT) Use `cmd.UTP` instead of hard-coded `GTW.NAV`
+#    20-Jun-2012 (CT) Use `cao.UTP` instead of hard-coded `GTW.NAV`
 #    21-Jun-2012 (CT) Factor `_load_I18N`, `_static_handler`
 #    22-Jun-2012 (CT) Remove dependency on `HTTP.Application`,
 #                     use `Static_File_App`, not `Static_File_Handler`
@@ -54,13 +54,13 @@
 #    10-Aug-2012 (CT) Pass `verbose` to `root.Cacher` and `App_Cache`
 #    14-Aug-2012 (MG) Add option `media_domain`
 #    19-Aug-2012 (MG) Commit scope after cache init
-#    25-Aug-2012 (CT) Import `_MOM.inspect` if `cmd.debug`
+#    25-Aug-2012 (CT) Import `_MOM.inspect` if `cao.debug`
 #     6-Sep-2012 (CT) Pass `verbose` to `GTW.AFS.MOM.Form_Cache`
 #     6-Sep-2012 (CT) Add and use `_create_cache_p`
 #    13-Sep-2012 (CT) Redefine `app_type` to call
 #                     `GTW.AFS.MOM.Spec.setup_defaults`, if the module is loaded
 #    25-Sep-2012 (CT) Add `_get_smtp` to honor `<Tester>` and `<Logger>`
-#    25-Sep-2012 (CT) Pass `cmd.log_level` to `I18N.load`
+#    25-Sep-2012 (CT) Pass `cao.log_level` to `I18N.load`
 #     8-Jan-2013 (CT) Add `-cert_auth_path`
 #    15-Jan-2013 (CT) Add `-cc_domain`
 #     3-Dec-2013 (CT) Change `_load_I18N` to log warnings about exceptions
@@ -85,6 +85,7 @@
 #     1-Dec-2015 (CT) Add guard for `scope` to `init_app_cache`
 #     1-Dec-2015 (CT) Add `.lstrip ("/")` to `_handle_generate_static_pages`
 #    12-May-2016 (CT) Guard `asp is not None` in `_handle_generate_static_pages`
+#    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #    ««revision-date»»···
 #--
 
@@ -123,12 +124,12 @@ class RST_App (TFL.Meta.Object) :
         pass
     # end def after_app_type
 
-    def cachers (self, command, cmd) :
+    def cachers (self, command, cao) :
         return []
     # end def cachers
 
-    def create (self, command, cmd, * args, ** kw) :
-        return command.create_rst (cmd, * args, ** kw)
+    def create (self, command, cao, * args, ** kw) :
+        return command.create_rst (cao, * args, ** kw)
     # end def create
 
     def do_import (self) :
@@ -151,12 +152,12 @@ class TOP_App (TFL.Meta.Object) :
         pass
     # end def after_app_type
 
-    def cachers (self, command, cmd) :
+    def cachers (self, command, cao) :
         return []
     # end def cachers
 
-    def create (self, command, cmd, * args, ** kw) :
-        return command.create_top (cmd, * args, ** kw)
+    def create (self, command, cao, * args, ** kw) :
+        return command.create_top (cao, * args, ** kw)
     # end def create
 
     def do_import (self) :
@@ -354,8 +355,8 @@ class GT2W_Command (GTW.OMP.Command) :
     # end def _create_scope
 
     def _create_templateer \
-            (self, cmd, trim_blocks = True, version = "html/5.jnj", ** kw) :
-        if cmd.UTP.use_templateer :
+            (self, cao, trim_blocks = True, version = "html/5.jnj", ** kw) :
+        if cao.UTP.use_templateer :
             from   _JNJ import JNJ
             import _JNJ.Templateer
             from   _JNJ.Media_Defaults import Media_Defaults
@@ -364,9 +365,9 @@ class GT2W_Command (GTW.OMP.Command) :
             if media is None :
                 kw ["Media_Parameters"] = Media_Defaults ()
             result = JNJ.Templateer \
-                ( encoding    = cmd.input_encoding
-                , globals     = dict (site_base = cmd.template_file, ** globs)
-                , i18n        = cmd.load_I18N
+                ( encoding    = cao.input_encoding
+                , globals     = dict (site_base = cao.template_file, ** globs)
+                , i18n        = cao.load_I18N
                 , prefixes    = self._template_prefixes
                 , trim_blocks = trim_blocks
                 , version     = version
@@ -375,52 +376,52 @@ class GT2W_Command (GTW.OMP.Command) :
             return result
     # end def _create_templateer
 
-    def _get_root (self, cmd, apt, url, ** kw) :
+    def _get_root (self, cao, apt, url, ** kw) :
         result = self.root
         if result is None :
-            cookie_salt = cmd.GET ("cookie_salt", self.SALT)
+            cookie_salt = cao.GET ("cookie_salt", self.SALT)
             if cookie_salt == Command.SALT :
                 warnings.warn \
                     ( "Cookie salt should be specified for every application! "
                       "Using default `cookie_salt`!"
                     , UserWarning
                     )
-            UTP = cmd.UTP
+            UTP = cao.UTP
             UTP.do_import ()
-            cachers       = UTP.cachers (self, cmd)
-            journal_dir   = cmd.keep_journal and cmd.journal_dir
+            cachers       = UTP.cachers (self, cao)
+            journal_dir   = cao.keep_journal and cao.journal_dir
             result        = self.root = UTP.create \
-                ( self, cmd
-                , ACAO                = cmd.ACAO
+                ( self, cao
+                , ACAO                = cao.ACAO
                 , App_Command         = self
                 , App_Type            = apt
                 , Create_Scope        = lambda apt, url :
                     self._load_scope (apt, url, journal_dir)
                 , DB_Url              = url
-                , DEBUG               = cmd.debug
-                , HTTP                = cmd.HTTP
+                , DEBUG               = cao.debug
+                , HTTP                = cao.HTTP
                 , Session_Class       = GTW.File_Session
-                , Templateer          = self._create_templateer (cmd)
-                , TEST                = cmd.TEST
-                , cc_domain           = cmd.cc_domain
-                , cert_auth_path      = cmd.cert_auth_path
+                , Templateer          = self._create_templateer (cao)
+                , TEST                = cao.TEST
+                , cc_domain           = cao.cc_domain
+                , cert_auth_path      = cao.cert_auth_path
                 , cookie_salt         = cookie_salt
-                , copyright_start     = cmd.copyright_start
-                , csrf_check_p        = cmd.CSRF_check
-                , default_locale_code = cmd.locale_code
-                , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
-                , email_from          = cmd.email_from or None
-                , encoding            = cmd.output_encoding
-                , i18n                = cmd.load_I18N
-                , input_encoding      = cmd.input_encoding
-                , languages           = set (cmd.languages)
-                , log_level           = cmd.log_level
-                , page_template_name  = cmd.template_file
-                , s_domain            = cmd.s_domain
+                , copyright_start     = cao.copyright_start
+                , csrf_check_p        = cao.CSRF_check
+                , default_locale_code = cao.locale_code
+                , edit_session_ttl    = cao.edit_session_ttl.date_time_delta
+                , email_from          = cao.email_from or None
+                , encoding            = cao.output_encoding
+                , i18n                = cao.load_I18N
+                , input_encoding      = cao.input_encoding
+                , languages           = set (cao.languages)
+                , log_level           = cao.log_level
+                , page_template_name  = cao.template_file
+                , s_domain            = cao.s_domain
                 , session_id          = b"SESSION_ID"
-                , smtp                = self._get_smtp (cmd)
-                , use_www_debugger    = cmd.debug
-                , user_session_ttl    = cmd.user_session_ttl.date_time_delta
+                , smtp                = self._get_smtp (cao)
+                , use_www_debugger    = cao.debug
+                , user_session_ttl    = cao.user_session_ttl.date_time_delta
                 , ** kw
                 )
             if result.Cacher :
@@ -429,8 +430,8 @@ class GT2W_Command (GTW.OMP.Command) :
                 cachers.append \
                     ( result.Cacher
                         ( mc_dir, mc_fix
-                        , cache_filenames = cmd.watch_media_files
-                        , verbose         = cmd.verbose
+                        , cache_filenames = cao.watch_media_files
+                        , verbose         = cao.verbose
                         )
                     )
                 self._tmc_filenames = cachers [-1].tmc.filenames
@@ -439,13 +440,13 @@ class GT2W_Command (GTW.OMP.Command) :
                 , * cachers
                 , root    = result
                 , DEBUG   = result.DEBUG
-                , verbose = cmd.verbose
+                , verbose = cao.verbose
                 )
         return result
     # end def _get_root
 
-    def _get_smtp (self, cmd) :
-        name   = cmd.smtp_server
+    def _get_smtp (self, cao) :
+        name   = cao.smtp_server
         result = None
         if name == "<Tester>" :
             result = TFL.SMTP_Tester ()
@@ -456,11 +457,11 @@ class GT2W_Command (GTW.OMP.Command) :
         return result
     # end def _get_smtp
 
-    def _handle_generate_static_pages (self, cmd) :
+    def _handle_generate_static_pages (self, cao) :
         app  = self._wsgi_app \
-            (cmd, dynamic_p = False, dynamic_nav_p = cmd.dynamic_nav)
-        root = cmd.static_root
-        urls = cmd.argv
+            (cao, dynamic_p = False, dynamic_nav_p = cao.dynamic_nav)
+        root = cao.static_root
+        urls = cao.argv
         if not urls :
             urls = ["/"]
             if sos.path.isdir (root) :
@@ -468,77 +469,77 @@ class GT2W_Command (GTW.OMP.Command) :
         robots = app.resource_from_href ("robots")
         if robots is not None :
             robots.hidden = robots.static_p
-        def _generate (cmd, p, root, tail = None) :
+        def _generate (cao, p, root, tail = None) :
             name = pjoin (root, tail or p.href_static.lstrip ("/"))
             dir  = sos.path.dirname (name)
             if not sos.path.exists (dir) :
                 sos.mkdir_p  (dir)
-            if cmd.verbose :
+            if cao.verbose :
                 print (name, "...", end = " ")
             asp = p.as_static_page ()
             if asp is not None :
                 with open (name, "wb") as f :
                     f.write (pyk.encoded (asp))
-            if cmd.verbose :
+            if cao.verbose :
                 print ("done")
         for url in urls :
             resource = app.resource_from_href (url)
             if resource.static_p and not resource.auth_required :
-                _generate (cmd, resource, root)
+                _generate (cao, resource, root)
             for p in resource.static_pages :
-                _generate (cmd, p, root)
-        if not cmd.argv :
+                _generate (cao, p, root)
+        if not cao.argv :
             for r, url in sorted (pyk.iteritems (app.redirects)) :
                 p = app.resource_from_href (url)
                 if p.static_p and not p.auth_required :
-                    _generate (cmd, p, root, r + p.static_page_suffix)
+                    _generate (cao, p, root, r + p.static_page_suffix)
     # end def _handle_generate_static_pages
 
-    def _handle_run_server (self, cmd) :
+    def _handle_run_server (self, cao) :
         import werkzeug.serving
-        app = self._wsgi_app (cmd)
+        app = self._wsgi_app (cao)
         kw  = dict \
             ( application  = app
-            , hostname     = cmd.host
-            , port         = cmd.port
-            , use_debugger = cmd.debug
-            , use_reloader = cmd.auto_reload
+            , hostname     = cao.host
+            , port         = cao.port
+            , use_debugger = cao.debug
+            , use_reloader = cao.auto_reload
             )
         kw ["extra_files"] = self._tmc_filenames
         werkzeug.serving.run_simple (** kw)
     # end def _handle_run_server
 
-    def _handle_setup_cache (self, cmd) :
+    def _handle_setup_cache (self, cao) :
         self._create_cache_p = True
-        self._wsgi_app    (cmd)
+        self._wsgi_app    (cao)
     # end def _handle_setup_cache
 
-    def _handle_wsgi (self, cmd) :
-        return self._wsgi_app (cmd)
+    def _handle_wsgi (self, cao) :
+        return self._wsgi_app (cao)
     # end def _handle_wsgi
 
-    def _load_I18N (self, cmd) :
+    def _load_I18N (self, cao) :
         result = None
-        if cmd.load_I18N :
+        if cao.load_I18N :
             try :
                 result = TFL.I18N.load \
-                    ( * cmd.languages
+                    ( * cao.languages
                     , domains    = ("messages", )
-                    , use        = cmd.locale_code or "en"
+                    , use        = cao.locale_code or "en"
                     , locale_dir = pjoin (self.app_dir, "locale")
-                    , log_level  = cmd.log_level
+                    , log_level  = cao.log_level
                     )
             except Exception as exc :
                 logging.exception ("Exception during I18N.load: %r" % (exc, ))
         return result
     # end def _load_I18N
 
-    def _static_file_app (self, cmd) :
+    def _static_file_app (self, cao) :
         prefix  = "media"
         dir_map = []
-        if cmd.external_media_path :
+        if cao.external_media_path :
             dir_map.append \
-                ( ("X",   sos.path.abspath (cmd.external_media_path)))
+                ( ("X",   sos.path.abspath (cao.external_media_path)))
         dir_map.extend \
             ( (   ("GTW", pjoin (self.lib_dir,      "_GTW", prefix))
               ,   ("",    pjoin (self.web_src_root,         prefix))
@@ -547,23 +548,23 @@ class GT2W_Command (GTW.OMP.Command) :
         return GTW.Werkzeug.Static_File_App (dir_map, prefix = prefix)
     # end def _static_file_app
 
-    def _wsgi_app (self, cmd, ** kw) :
-        if cmd.media_domain :
-            GTW.Media_Base.Domain = cmd.media_domain
-        self._create_cache_p = self._create_cache_p or cmd.Setup_Cache
-        self._after_app_type = cmd.UTP.after_app_type
-        apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
-        self._load_I18N (cmd)
-        sf_app = self._static_file_app (cmd)
+    def _wsgi_app (self, cao, ** kw) :
+        if cao.media_domain :
+            GTW.Media_Base.Domain = cao.media_domain
+        self._create_cache_p = self._create_cache_p or cao.Setup_Cache
+        self._after_app_type = cao.UTP.after_app_type
+        apt, url = self.app_type_and_url (cao.db_url, cao.db_name)
+        self._load_I18N (cao)
+        sf_app = self._static_file_app (cao)
         result = root = self._get_root \
-            (cmd, apt, url, static_handler = sf_app, ** kw)
-        if cmd.force_HSTS :
+            (cao, apt, url, static_handler = sf_app, ** kw)
+        if cao.force_HSTS :
             GTW.RST.Response._auto_headers.update \
                 ( { "Strict-Transport-Security"
-                  : "max-age=%d; includeSubDomains;preload;" % cmd.max_age_HSTS
+                  : "max-age=%d; includeSubDomains;preload;" % cao.max_age_HSTS
                   }
                 )
-        if cmd.serve_static_files :
+        if cao.serve_static_files :
             sf_app.wrap = root
             result      = sf_app
         if root.Templateer is not None :
@@ -572,9 +573,9 @@ class GT2W_Command (GTW.OMP.Command) :
         scope = root.__dict__.get ("scope")
         if scope is not None :
             scope.close_connections ()
-        if cmd.debug :
+        if cao.debug :
             import _MOM.inspect
-        if cmd.Break :
+        if cao.Break :
             TFL.Environment.py_shell (vars ())
         return result
     # end def _wsgi_app

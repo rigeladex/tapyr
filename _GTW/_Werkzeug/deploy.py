@@ -49,6 +49,7 @@
 #                     put `config_options` into `globals` of `templateer `
 #    19-Mar-2015 (CT) Add option `-cert_extension` to `create_config`
 #    26-Feb-2016 (CT) Add option `-ssl_chain` to `create_config`
+#    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #    ««revision-date»»···
 #--
 
@@ -214,17 +215,17 @@ application = command (%(args)s)
 
     _WSGI_Script_ = _GT2W_WSGI_Script_ # end class
 
-    def _create_fcgi_script (self, cmd, argv = (), script_path = None) :
-        P      = self._P (cmd)
-        a_conf = cmd.app_config
+    def _create_fcgi_script (self, cao, argv = (), script_path = None) :
+        P      = self._P (cao)
+        a_conf = cao.app_config
         try :
-            h_conf = cmd._spec ["HTTP_Config"].pathes
+            h_conf = cao._spec ["HTTP_Config"].pathes
         except KeyError :
             h_conf = []
         config = self.App_Config.auto_split.join (a_conf + h_conf)
         args   = ("fcgi", "-config", config) + tuple (argv)
-        app    = self._app_cmd (cmd, P, args = args)
-        s_path = script_path or cmd.script_path
+        app    = self._app_cmd (cao, P, args = args)
+        s_path = script_path or cao.script_path
         def write (f, app, py_path) :
             f.write ("#!/bin/sh\n")
             f.write ("export PYTHONPATH=%s\n" % (py_path, ))
@@ -233,24 +234,24 @@ application = command (%(args)s)
             with open (s_path, "w") as f :
                 write (f, app, P.py_path)
             self.pbl ["chmod"] ("+x", s_path)
-            if not cmd.quiet :
+            if not cao.quiet :
                 print ("Created fcgi script", s_path)
         else :
             write (sys.stdout, app, P.py_path)
     # end def _create_fcgi_script
 
-    def _create_wsgi_script (self, cmd, argv = (), script_path = None) :
-        P      = self._P (cmd)
-        a_conf = cmd.app_config
+    def _create_wsgi_script (self, cao, argv = (), script_path = None) :
+        P      = self._P (cao)
+        a_conf = cao.app_config
         try :
-            h_conf = cmd._spec ["HTTP_Config"].pathes
+            h_conf = cao._spec ["HTTP_Config"].pathes
         except KeyError :
             h_conf = []
         config   = self.App_Config.auto_split.join (a_conf + h_conf)
-        app_dir  = sos.path.dirname  (self._app_path (cmd, P))
-        app_mod  = sos.path.splitext (sos.path.basename (cmd.app_module)) [0]
+        app_dir  = sos.path.dirname  (self._app_path (cao, P))
+        app_mod  = sos.path.splitext (sos.path.basename (cao.app_module)) [0]
         args     = ("wsgi", "-config", config) + tuple (argv)
-        s_path   = script_path or cmd.script_path
+        s_path   = script_path or cao.script_path
         def write (f, app_dir, app_mod, args) :
             script = self._wsgi_script_format % dict \
                 ( app_dir = app_dir
@@ -262,83 +263,83 @@ application = command (%(args)s)
         if s_path and not s_path.endswith (("-", "stdout")) :
             with open (s_path, "w") as f :
                 write (f, app_dir, app_mod, args)
-            if not cmd.quiet :
+            if not cao.quiet :
                 print ("Created wsgi script", s_path)
         else :
             write (sys.stdout, app_dir, app_mod, args)
     # end def _create_wsgi_script
 
-    def _handle_create_config (self, cmd) :
-        if cmd.use_wsgi :
+    def _handle_create_config (self, cao) :
+        if cao.use_wsgi :
             _create_script  = self._create_wsgi_script
             xxgi_macro_name = "use_wsgi"
         else :
             _create_script  = self._create_fcgi_script
             xxgi_macro_name = "use_fcgi"
-        _create_script (cmd, cmd.argv, cmd.script_path)
+        _create_script (cao, cao.argv, cao.script_path)
         from   _JNJ import JNJ
         import _JNJ.Templateer
         config_options       = dict \
-            ( address        = cmd.address
-            , admin          = cmd.server_admin
-            , aliases        = cmd.server_aliases
-            , apache2_4      = cmd.apache2_4
-            , app_root       = cmd.root_dir
-            , ca_key_name    = cmd.ca_key_name
-            , ca_path        = cmd.ca_path
-            , cert_extension = cmd.cert_extension
-            , cmd            = cmd
-            , doc_root       = cmd.document_root
-            , group          = cmd.group
-            , lib_dirs       = cmd.lib_dir
-            , macro_name     = cmd.host_macro
-            , port           = cmd.port
-            , script         = cmd.script_path
-            , server_name    = cmd.server_name
-            , ssl_key_name   = cmd.ssl_key_name
-            , ssl_chain      = cmd.ssl_chain
-            , templ_name     = cmd.macro_module
-            , user           = cmd.user
+            ( address        = cao.address
+            , admin          = cao.server_admin
+            , aliases        = cao.server_aliases
+            , apache2_4      = cao.apache2_4
+            , app_root       = cao.root_dir
+            , ca_key_name    = cao.ca_key_name
+            , ca_path        = cao.ca_path
+            , cert_extension = cao.cert_extension
+            , cmd            = cao
+            , doc_root       = cao.document_root
+            , group          = cao.group
+            , lib_dirs       = cao.lib_dir
+            , macro_name     = cao.host_macro
+            , port           = cao.port
+            , script         = cao.script_path
+            , server_name    = cao.server_name
+            , ssl_key_name   = cao.ssl_key_name
+            , ssl_chain      = cao.ssl_chain
+            , templ_name     = cao.macro_module
+            , user           = cao.user
             )
         templateer           = JNJ.Templateer \
-            ( encoding       = cmd.input_encoding
+            ( encoding       = cao.input_encoding
             , globals        = dict (config_options = config_options)
-            , load_path      = cmd.template_dirs
+            , load_path      = cao.template_dirs
             , trim_blocks    = True
             )
         xxgi_macro           = templateer.GTW.get_macro \
-            (xxgi_macro_name, templ_name = cmd.macro_module)
+            (xxgi_macro_name, templ_name = cao.macro_module)
         config_options.update (xxgi_macro = xxgi_macro)
         config   = templateer.call_macro (** config_options)
         config_s = strip_empty_lines (config).strip ()
-        c_path   = cmd.config_path
+        c_path   = cao.config_path
         def write (f, config) :
             f.write (config)
             f.write ("\n")
         if c_path and c_path not in ("-", "stdout") :
             with open (c_path, "w") as f :
                 write (f, config_s)
-            if not cmd.quiet :
-                ### Can't use `cmd.verbose` here because that would be
+            if not cao.quiet :
+                ### Can't use `cao.verbose` here because that would be
                 ### included in the fcgi script
                 print ("Created config file", c_path)
         else :
             write (sys.stdout, config_s)
     # end def _handle_create_config
 
-    def _handle_fcgi_script (self, cmd) :
-        self._create_fcgi_script (cmd, cmd.argv, cmd.script_path)
+    def _handle_fcgi_script (self, cao) :
+        self._create_fcgi_script (cao, cao.argv, cao.script_path)
     # end def _handle_fcgi_script
 
-    def _handle_setup_cache (self, cmd) :
-        P    = self._P (cmd)
-        app  = self._app_cmd (cmd, P)
-        args = ("setup_cache", ) + tuple (cmd.argv)
-        self._app_call (cmd, P, app, args)
+    def _handle_setup_cache (self, cao) :
+        P    = self._P (cao)
+        app  = self._app_cmd (cao, P)
+        args = ("setup_cache", ) + tuple (cao.argv)
+        self._app_call (cao, P, app, args)
     # end def _handle_setup_cache
 
-    def _handle_wsgi_script (self, cmd) :
-        self._create_wsgi_script (cmd, cmd.argv, cmd.script_path)
+    def _handle_wsgi_script (self, cao) :
+        self._create_wsgi_script (cao, cao.argv, cao.script_path)
     # end def _handle_wsgi_script
 
 Command = GT2W_Command # end class

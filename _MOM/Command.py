@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -71,6 +71,8 @@
 #     7-May-2015 (CT) Add options `-journal_dir`, `-keep_journal`
 #     6-Aug-2015 (CT) Add `__doc__`
 #    28-Oct-2015 (CT) Use `pyk.pickle_protocol`
+#    15-Jun-2016 (CT) Add option `-debug` to sub-command `_Create_`
+#    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #    ««revision-date»»···
 #--
 
@@ -205,6 +207,11 @@ class MOM_Command (TFL.Command.Root_Command) :
 
     class _MOM_Create_ (_Sub_Command_) :
         """Create the database specified by `-db_url`."""
+
+        _opts                   = \
+            ( "-debug:B=no"
+            ,
+            )
 
     _Create_ = _MOM_Create_ # end class
 
@@ -379,28 +386,28 @@ class MOM_Command (TFL.Command.Root_Command) :
             db_man.change_readonly (old_state)
     # end def _cro_context
 
-    def _do_migration (self, cmd, apt_s, url_s, apt_t, url_t, db_man_s) :
-        if cmd.overwrite :
+    def _do_migration (self, cao, apt_s, url_s, apt_t, url_t, db_man_s) :
+        if cao.overwrite :
             apt_t.delete_database (url_t)
         db_man_t = self.DB_Man.create \
-            (apt_t, url_t, db_man_s, cmd.chunk_size, cmd.legacy_lifter)
-        if cmd.verbose :
+            (apt_t, url_t, db_man_s, cao.chunk_size, cao.legacy_lifter)
+        if cao.verbose :
             self._print_info  (apt_s, url_s, db_man_s.db_meta_data, "    ")
             self._print_info  (apt_t, url_t, db_man_t.db_meta_data, "    ")
         db_man_t.ems.compact ()
         db_man_t.destroy ()
     # end def _do_migration
 
-    def _handle_auth_mig (self, cmd) :
+    def _handle_auth_mig (self, cao) :
         try :
-            scope = self._handle_load (cmd, journal_dir = None)
+            scope = self._handle_load (cao, journal_dir = None)
             mig   = pyk.pickle.dumps \
                 (scope.Auth.Account.migration (), pyk.pickle_protocol)
-            with open (cmd.mig_auth_file, "wb") as f :
+            with open (cao.mig_auth_file, "wb") as f :
                 sos.fchmod (f.fileno (), stat.S_IRUSR | stat.S_IWUSR)
                 f.write (mig)
-            if cmd.verbose :
-                print ("Wrote authorization objects to", cmd.mig_auth_file)
+            if cao.verbose :
+                print ("Wrote authorization objects to", cao.mig_auth_file)
             scope.commit      ()
             scope.ems.compact ()
             scope.destroy     ()
@@ -408,50 +415,50 @@ class MOM_Command (TFL.Command.Root_Command) :
             print ("Saving auth-migration failed with exception\n   ", exc)
     # end def _handle_auth_mig
 
-    def _handle_create (self, cmd) :
+    def _handle_create (self, cao) :
         scope = self.scope \
-            ( cmd.db_url, cmd.db_name
+            ( cao.db_url, cao.db_name
             , create      = True
-            , verbose     = cmd.verbose
-            , engine_echo = cmd.Engine_Echo
-            , journal_dir = cmd.keep_journal and cmd.journal_dir
+            , verbose     = cao.verbose
+            , engine_echo = cao.Engine_Echo
+            , journal_dir = cao.keep_journal and cao.journal_dir
             )
-        if cmd.Auth_Migrate :
-            self._read_auth_mig (cmd, scope)
+        if cao.Auth_Migrate :
+            self._read_auth_mig (cao, scope)
         scope.commit      ()
         scope.ems.compact ()
         scope.destroy     ()
     # end def _handle_create
 
-    def _handle_delete (self, cmd) :
-        apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
-        if cmd.verbose :
+    def _handle_delete (self, cao) :
+        apt, url = self.app_type_and_url (cao.db_url, cao.db_name)
+        if cao.verbose :
             print ("Deleting scope", apt, url.path)
         apt.delete_database (url)
     # end def _handle_delete
 
-    def _handle_info (self, cmd) :
-        apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
+    def _handle_info (self, cao) :
+        apt, url = self.app_type_and_url (cao.db_url, cao.db_name)
         db_man   = self.DB_Man.connect   (apt, url)
         self._print_info (apt, url, db_man.db_meta_data)
         db_man.destroy   ()
     # end def _handle_info
 
-    def _handle_load (self, cmd, url = None, journal_dir = undef) :
+    def _handle_load (self, cao, url = None, journal_dir = undef) :
         if TFL.is_undefined (journal_dir) :
-            journal_dir = cmd.keep_journal and cmd.journal_dir
+            journal_dir = cao.keep_journal and cao.journal_dir
         return self.scope \
-            ( url or cmd.db_url, cmd.db_name
+            ( url or cao.db_url, cao.db_name
             , create      = False
-            , engine_echo = cmd.Engine_Echo
+            , engine_echo = cao.Engine_Echo
             , journal_dir = journal_dir
             )
     # end def _handle_load
 
-    def _handle_load_auth_mig (self, cmd, url = None, mig_auth_file = None) :
+    def _handle_load_auth_mig (self, cao, url = None, mig_auth_file = None) :
         try :
-            scope = self._handle_load (cmd, url)
-            self._read_auth_mig       (cmd, scope, mig_auth_file)
+            scope = self._handle_load (cao, url)
+            self._read_auth_mig       (cao, scope, mig_auth_file)
             scope.commit              ()
             scope.ems.compact         ()
             scope.destroy             ()
@@ -459,43 +466,43 @@ class MOM_Command (TFL.Command.Root_Command) :
             print ("Loading auth-migration failed with exception\n   ", exc)
     # end def _handle_load_auth_mig
 
-    def _handle_migrate (self, cmd) :
-        if cmd.Auth_Migrate :
-            self._handle_auth_mig (cmd)
-        if cmd.verbose :
+    def _handle_migrate (self, cao) :
+        if cao.Auth_Migrate :
+            self._handle_auth_mig (cao)
+        if cao.verbose :
             print \
-                ( "Migrating scope", _cleaned_url (cmd.db_url), cmd.db_name
-                , "-->", _cleaned_url (cmd.target_db_url)
+                ( "Migrating scope", _cleaned_url (cao.db_url), cao.db_name
+                , "-->", _cleaned_url (cao.target_db_url)
                 )
-        apt_s, url_s = self.app_type_and_url (cmd.db_url,        cmd.db_name)
-        apt_t, url_t = self.app_type_and_url (cmd.target_db_url, cmd.db_name)
-        if cmd.verbose :
+        apt_s, url_s = self.app_type_and_url (cao.db_url,        cao.db_name)
+        apt_t, url_t = self.app_type_and_url (cao.target_db_url, cao.db_name)
+        if cao.verbose :
             print \
                 ( "   ", apt_s, apt_s.Url (url_s).path
                 , "to",  apt_t, apt_t.Url (url_t).path
                 )
         db_man_s = self.DB_Man.connect (apt_s, url_s)
-        cmgr = self._cro_context if cmd.readonly else TFL.Context.relaxed
+        cmgr = self._cro_context if cao.readonly else TFL.Context.relaxed
         with cmgr (db_man_s, True) :
-            self._do_migration (cmd, apt_s, url_s, apt_t, url_t, db_man_s)
+            self._do_migration (cao, apt_s, url_s, apt_t, url_t, db_man_s)
         db_man_s.destroy ()
-        if cmd.Auth_Migrate :
-            self._handle_load_auth_mig (cmd, cmd.target_db_url)
+        if cao.Auth_Migrate :
+            self._handle_load_auth_mig (cao, cao.target_db_url)
     # end def _handle_migrate
 
-    def _handle_readonly (self, cmd) :
-        apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
+    def _handle_readonly (self, cao) :
+        apt, url = self.app_type_and_url (cao.db_url, cao.db_name)
         db_man   = self.DB_Man.connect   (apt, url)
-        db_man.change_readonly (cmd.state)
-        if cmd.verbose :
+        db_man.change_readonly (cao.state)
+        if cao.verbose :
             self._print_info (apt, url, db_man.db_meta_data)
         db_man.destroy ()
     # end def _handle_readonly
 
-    def _handle_script (self, cmd) :
-        scope = self._handle_load (cmd) if cmd.load else None
-        globs = self._handle_script_globals (cmd = cmd, scope = scope)
-        for script_path in cmd.argv :
+    def _handle_script (self, cao) :
+        scope = self._handle_load (cao) if cao.load else None
+        globs = self._handle_script_globals (cao = cao, scope = scope)
+        for script_path in cao.argv :
             local  = {}
             try :
                 with open (script_path, "rb") as f :
@@ -506,16 +513,17 @@ class MOM_Command (TFL.Command.Root_Command) :
                 pyk.fprint (head)
                 pyk.fprint ("   ", tail)
                 raise SystemExit (1)
-        if cmd.commit :
+        if cao.commit :
             scope.commit      ()
             scope.ems.compact ()
             scope.destroy     ()
     # end def _handle_script
 
-    def _handle_script_globals (self, cmd, scope, ** kw) :
+    def _handle_script_globals (self, cao, scope, ** kw) :
         return dict \
             ( kw
-            , cmd               = cmd
+            , cao               = cao
+            , cmd               = cao ### backwards compatibility
             , formatted         = formatted_repr
             , formatted_compact = formatted_repr_compact
             , MOM               = MOM
@@ -526,25 +534,25 @@ class MOM_Command (TFL.Command.Root_Command) :
             )
     # end def _handle_script_globals
 
-    def _handle_shell (self, cmd) :
-        scope = self._handle_load (cmd)
-        globs = self._handle_script_globals (cmd = cmd, scope = scope)
+    def _handle_shell (self, cao) :
+        scope = self._handle_load (cao)
+        globs = self._handle_script_globals (cao = cao, scope = scope)
         TFL.Environment.py_shell (globs)
     # end def _handle_shell
 
-    def _handle_version_hash (self, cmd) :
-        both     = cmd.database and cmd.code
-        verbose  = cmd.verbose or both
-        apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
+    def _handle_version_hash (self, cao) :
+        both     = cao.database and cao.code
+        verbose  = cao.verbose or both
+        apt, url = self.app_type_and_url (cao.db_url, cao.db_name)
         dbv      = apt.db_version_hash
         fmt      = "%(dbv)s"
         if verbose :
             dbv  = portable_repr (dbv)
             fmt  = "%(kind)s = %(dbv)s"
-        if cmd.code or not cmd.database :
+        if cao.code or not cao.database :
             kind = "code_version_hash" if both else "dbv_hash"
             print (fmt % dict (kind = kind, dbv = dbv))
-        if cmd.database :
+        if cao.database :
             try :
                 db_man = self.DB_Man.connect (apt, url)
             except MOM.Error.Incompatible_DB_Version as exc :
@@ -575,9 +583,9 @@ class MOM_Command (TFL.Command.Root_Command) :
         print ()
     # end def _print_info
 
-    def _read_auth_mig (self, cmd, scope, mig_auth_file = None) :
+    def _read_auth_mig (self, cao, scope, mig_auth_file = None) :
         if mig_auth_file is None :
-            mig_auth_file = cmd.mig_auth_file
+            mig_auth_file = cao.mig_auth_file
         try :
             f = open (sos.expanded_path (mig_auth_file), "rb")
         except IOError as exc :
@@ -590,7 +598,7 @@ class MOM_Command (TFL.Command.Root_Command) :
                 cargo = f.read ()
             mig = pyk.pickle.loads (cargo)
             scope.Auth.Account.apply_migration (mig)
-            if cmd.verbose :
+            if cao.verbose :
                 print ("Loaded authorization objects from", mig_auth_file)
     # end def _read_auth_mig
 
@@ -655,10 +663,10 @@ __doc__ = r"""
 
     The scripts are run in a context providing the variables:
 
-    .. data:: cmd
+    .. data:: cao
 
       The :class:`~_TFL.CAO.CAO` instance of the command. One can access
-      argument and option values via ``cmd``, e.g., ``cmd.target_db_url``.
+      argument and option values via ``cao``, e.g., ``cao.target_db_url``.
 
     .. data:: Q
 

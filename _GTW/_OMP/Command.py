@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.
@@ -51,6 +51,7 @@
 #    22-Sep-2014 (CT) Redefine `_Script_`, `_handle_script_globals`
 #    17-Oct-2014 (CT) Pass globals to `py_shell`
 #     7-May-2015 (CT) Remove obsolete redefinition of `_handle_shell`
+#    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #    ««revision-date»»···
 #--
 
@@ -224,42 +225,42 @@ class GTW_Command (MOM.Command) :
         return datetime.datetime.now ().replace (microsecond = 0)
     # end def now
 
-    def _handle_fcgi (self, cmd) :
+    def _handle_fcgi (self, cao) :
         from flup.server.fcgi import WSGIServer
         start = self.now
         exe   = "%s fcgi" % sos.path.abspath (self.app_path)
-        if cmd.log_level :
+        if cao.log_level :
             logging.info ("[%s] Starting %s" % (start, exe))
         try :
-            return WSGIServer (self._handle_wsgi (cmd)).run ()
+            return WSGIServer (self._handle_wsgi (cao)).run ()
         finally :
-            if cmd.log_level :
+            if cao.log_level :
                 logging.info \
                     ("[%s <-- %s] Finished %s" % (self.now, start, exe))
     # end def _handle_fcgi
 
-    def _handle_run_server (self, cmd) :
+    def _handle_run_server (self, cao) :
         raise NotImplementedError
     # end def _handle_run_server
 
-    def _handle_setup_cache (self, cmd) :
+    def _handle_setup_cache (self, cao) :
         raise NotImplementedError
     # end def _handle_setup_cache
 
-    def _handle_script_globals (self, cmd, scope, ** kw) :
-        if cmd.wsgi :
-            wsgi = self._handle_wsgi (cmd)
+    def _handle_script_globals (self, cao, scope, ** kw) :
+        if cao.wsgi :
+            wsgi = self._handle_wsgi (cao)
             root = top = self.root
             kw.update (root = root, top = top, wsgi = wsgi)
         return self.__super._handle_script_globals \
-            ( cmd, scope
+            ( cao, scope
             , CAL      = CAL
             , GTW      = GTW
             , ** kw
             )
     # end def _handle_script_globals
 
-    def _handle_wsgi (self, cmd) :
+    def _handle_wsgi (self, cao) :
         raise NotImplementedError
     # end def _handle_wsgi
 

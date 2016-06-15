@@ -54,6 +54,7 @@
 #     5-Aug-2015 (CT) Remove `_handler_prefix` (obsoleted by `handler_name`)
 #    10-Feb-2016 (CT) Adapt `_handle_babel_compile` to changed `TFL.Babel`
 #    10-Feb-2016 (CT) Change `_P` to apply `normpath` to `app_dir`
+#    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #    ««revision-date»»···
 #--
 
@@ -245,104 +246,104 @@ class GTWD_Command (TFL.Command.Root_Command) :
         return local
     # end def pbl
 
-    def _app_call (self, cmd, P, app, args = (), app_dir = None) :
+    def _app_call (self, cao, P, app, args = (), app_dir = None) :
         pbl = self.pbl
         cwd = pbl.cwd
         if not args :
-            args = tuple (cmd.argv)
+            args = tuple (cao.argv)
         if app_dir is None :
             app_dir = P.app_dir
         with cwd (app_dir) :
-            if cmd.verbose or cmd.dry_run :
+            if cao.verbose or cao.dry_run :
                 print ("cd", pbl.path ())
                 print (app, " ".join (args))
-            if not cmd.dry_run :
+            if not cao.dry_run :
                 print (app (* args))
     # end def _app_call
 
-    def _app_cmd (self, cmd, P, version = None, args = ()) :
-        result = P.python [self._app_path (cmd, P, version)]
-        if cmd.verbose :
+    def _app_cmd (self, cao, P, version = None, args = ()) :
+        result = P.python [self._app_path (cao, P, version)]
+        if cao.verbose :
             result = result ["-verbose"]
         if args :
             result = result [args]
         return result
     # end def _app_cmd
 
-    def _app_path (self, cmd, P, version = None) :
+    def _app_path (self, cao, P, version = None) :
         if version is None :
-            version = cmd.apply_to_version
-        result = pjoin (str (P.root), version, cmd.app_dir, cmd.app_module)
+            version = cao.apply_to_version
+        result = pjoin (str (P.root), version, cao.app_dir, cao.app_module)
         return sos.path.normpath (result)
     # end def _app_path
 
-    def _handle_app (self, cmd, * args) :
-        P   = self._P (cmd)
-        app = self._app_cmd (cmd, P)
-        self._app_call (cmd, P, app, args)
+    def _handle_app (self, cao, * args) :
+        P   = self._P (cao)
+        app = self._app_cmd (cao, P)
+        self._app_call (cao, P, app, args)
     # end def _handle_app
 
-    def _handle_babel_compile (self, cmd) :
-        P       = self._P (cmd)
+    def _handle_babel_compile (self, cao) :
+        P       = self._P (cao)
         cwd     = self.pbl.cwd
         args    = \
              ( "-m", "_TFL.Babel", "compile"
              , "-combine"
-             , "-import_file", cmd.app_module
+             , "-import_file", cao.app_module
              , "-use_fuzzy"
              )
-        app_module_dir = sos.path.dirname (cmd.app_module)
+        app_module_dir = sos.path.dirname (cao.app_module)
         with cwd (P.app_dir) :
-            if cmd.verbose or cmd.dry_run :
+            if cao.verbose or cao.dry_run :
                 print ("cd", self.pbl.path ())
-            for l in cmd.languages :
+            for l in cao.languages :
                 l_dir  = pjoin (app_module_dir, "locale", l, "LC_MESSAGES")
                 l_args = args + \
                     ( "-languages",   l
                     , "-output_file", pjoin (l_dir, "messages.mo")
                     )
-                if cmd.verbose or cmd.dry_run :
+                if cao.verbose or cao.dry_run :
                     print ("mkdir -p", l_dir)
                     print ("python", " ".join (l_args))
-                if not cmd.dry_run :
+                if not cao.dry_run :
                     if not sos.path.isdir (l_dir) :
                         sos.makedirs (l_dir)
                     print (P.python (* l_args))
     # end def _handle_babel_compile
 
-    def _handle_babel_extract (self, cmd) :
-        P       = self._P (cmd)
+    def _handle_babel_extract (self, cao) :
+        P       = self._P (cao)
         head_args = ("-m", "_TFL.Babel")
-        tail_args = ("-sort", ) + tuple (cmd.package_dirs)
+        tail_args = ("-sort", ) + tuple (cao.package_dirs)
         extr_args = \
             ( head_args
             + ( "extract"
-              , "-bugs_address",     cmd.bugs_address
-              , "-charset",          cmd.output_encoding
-              , "-copyright_holder", cmd.copyright_holder
-              , "-global_config",    cmd.babel_config
-              , "-project",          cmd.project_name
+              , "-bugs_address",     cao.bugs_address
+              , "-charset",          cao.output_encoding
+              , "-copyright_holder", cao.copyright_holder
+              , "-global_config",    cao.babel_config
+              , "-project",          cao.project_name
               )
             + tail_args
             )
         lang_args = \
             ( head_args
-            + ( "language", ",".join (cmd.languages))
+            + ( "language", ",".join (cao.languages))
             + tail_args
             )
-        if cmd.verbose or cmd.dry_run :
+        if cao.verbose or cao.dry_run :
             print ("python", " ".join (extr_args))
             print ("python", " ".join (lang_args))
-        if not cmd.dry_run :
+        if not cao.dry_run :
             print (P.python (* extr_args))
             print (P.python (* lang_args))
     # end def _handle_babel_extract
 
-    def _handle_info (self, cmd) :
-        P       = self._P (cmd)
+    def _handle_info (self, cao) :
+        P       = self._P (cao)
         fmt     = "%-15s : %s"
-        print (fmt % (cmd.active_name,  P.active))
-        print (fmt % (cmd.passive_name, P.passive))
+        print (fmt % (cao.active_name,  P.active))
+        print (fmt % (cao.passive_name, P.passive))
         print (fmt % ("selected",       P.selected))
         print (fmt % ("prefix",         P.prefix))
         print (fmt % ("app-dir",        P.app_dir))
@@ -359,105 +360,106 @@ class GTWD_Command (TFL.Command.Root_Command) :
             )
     # end def _handle_info
 
-    def _handle_pycompile (self, cmd) :
-        P    = self._P (cmd)
+    def _handle_pycompile (self, cao) :
+        P    = self._P (cao)
         cwd  = self.pbl.cwd
-        root = pjoin (cmd.root_path, cmd.apply_to_version)
-        dirs = [cmd.app_dir] + cmd.lib_dir
+        root = pjoin (cao.root_path, cao.apply_to_version)
+        dirs = [cao.app_dir] + cao.lib_dir
         args = tuple \
             ( ichain
                 ( ["-m", "compileall"]
-                , cmd.compile_options
-                , ((["-x"] + cmd.skip_modules) if cmd.skip_modules else [])
+                , cao.compile_options
+                , ((["-x"] + cao.skip_modules) if cao.skip_modules else [])
                 , dirs
                 )
             )
         clean = self.pbl ["find"] \
             [tuple (dirs + ["-name", "*.py[co]", "-delete"])]
         with cwd (root) :
-            if cmd.verbose or cmd.dry_run :
+            if cao.verbose or cao.dry_run :
                 print ("cd", self.pbl.path ())
                 print (clean)
                 print (P.python, " ".join (args))
-            if not cmd.dry_run :
+            if not cao.dry_run :
                 clean ()
                 P.python (* args)
     # end def _handle_pycompile
 
-    def _handle_shell (self, cmd) :
+    def _handle_shell (self, cao) :
         import _TFL.Environment
-        P       = self._P (cmd)
+        P       = self._P (cao)
         command = self._root
         TFL.Environment.py_shell ()
     # end def _handle_shell
 
-    def _handle_switch (self, cmd) :
-        P    = self._P (cmd)
+    def _handle_switch (self, cao) :
+        P    = self._P (cao)
         ln_s = self.pbl ["ln"] ["-f", "-s", "-T" ]
-        cmda = ln_s [P.active,  cmd.passive_name]
-        cmdp = ln_s [P.passive, cmd.active_name]
+        cmda = ln_s [P.active,  cao.passive_name]
+        cmdp = ln_s [P.passive, cao.active_name]
         cwd  = self.pbl.cwd
         with cwd (P.root) :
-            if cmd.verbose or cmd.dry_run :
+            if cao.verbose or cao.dry_run :
                 print (cmda, ";", cmdp)
-            if not cmd.dry_run :
+            if not cao.dry_run :
                 cmda ()
                 cmdp ()
     # end def _handle_switch
 
-    def _handle_update (self, cmd) :
-        return self._handle_vc (cmd, self._vcs_update_map [cmd.vcs])
+    def _handle_update (self, cao) :
+        return self._handle_vc (cao, self._vcs_update_map [cao.vcs])
     # end def _handle_update
 
-    def _handle_vc (self, cmd, * args) :
-        P    = self._P (cmd)
+    def _handle_vc (self, cao, * args) :
+        P    = self._P (cao)
         cwd  = self.pbl.cwd
-        vcs  = self.pbl [cmd.vcs] [args]
-        argv = tuple (cmd.argv)
+        vcs  = self.pbl [cao.vcs] [args]
+        argv = tuple (cao.argv)
         for d in P.dirs :
             with cwd (d) :
                 p = self.pbl.path ()
-                if cmd.verbose or cmd.dry_run :
+                if cao.verbose or cao.dry_run :
                     print ("cd", p)
                     print (vcs, " ".join (argv))
-                if not cmd.dry_run :
-                    if not cmd.verbose :
+                if not cao.dry_run :
+                    if not cao.verbose :
                         print ("*" * 3, p, "*" * 20)
                     print (vcs (* argv))
     # end def _handle_vc
 
-    def _P (self, cmd) :
+    def _P (self, cao) :
         pbl     = self.pbl
-        active  = sos.path.realpath     (cmd.active_name)
-        passive = sos.path.realpath     (cmd.passive_name)
-        root    = sos.path.realpath     (cmd.root_path)
+        active  = sos.path.realpath     (cao.active_name)
+        passive = sos.path.realpath     (cao.passive_name)
+        root    = sos.path.realpath     (cao.root_path)
         prefix  = sos.path.commonprefix ([active, passive, root])
-        atv     = cmd.apply_to_version
+        atv     = cao.apply_to_version
         if prefix :
             active     = active  [len (prefix):].lstrip ("/")
             passive    = passive [len (prefix):].lstrip ("/")
         result = TFL.Record \
             ( active   = active
-            , cmd      = cmd
+            , cao      = cao
+            , cmd      = cao ### backwards compatibility
             , passive  = passive
             , prefix   = prefix
             , root     = pbl.path (root)
             )
         result.selected = getattr (result, atv, atv)
         result.app_dir  = sos.path.normpath \
-            (pjoin (result.prefix, result.selected, cmd.app_dir))
+            (pjoin (result.prefix, result.selected, cao.app_dir))
         result.py_path  = pbl.env ["PYTHONPATH"] = self._python_path (result)
         result.lib_dirs = result.py_path.split (":")
-        result.python   = pbl [cmd.py_path] \
-            [tuple (o for o in cmd.py_options if o)]
+        result.python   = pbl [cao.py_path] \
+            [tuple (o for o in cao.py_options if o)]
         result.dirs     = [result.app_dir] + result.lib_dirs
         return result
     # end def _P
 
     def _python_path (self, P, version = None) :
         if version is None :
-            version = P.cmd.apply_to_version
-        return ":".join (pjoin (P.prefix, version, p) for p in P.cmd.lib_dir)
+            version = P.cao.apply_to_version
+        return ":".join (pjoin (P.prefix, version, p) for p in P.cao.lib_dir)
     # end def _python_path
 
 Command = GTWD_Command # end class
