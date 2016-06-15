@@ -2044,6 +2044,51 @@ _test_element = """
     F      lifetime.start   (<Field X-26:lifetime.start>,)
     F      lifetime.finish  (<Field X-26:lifetime.finish>,)
 
+    >>> EVT = scope.EVT
+    >>> RR  = EVT.Recurrence_Rule
+    >>> RS  = EVT.Recurrence_Spec
+
+    >>> ev  = EVT.Event (p, p.lifetime, ("00:00", "23:59"), raw = True)
+    >>> rs  = RS (ev)
+    >>> rr  = RR (rs, desc = "Birthday", unit = "Yearly", raw = True)
+
+    >>> F_E = MF3_E.Entity.Auto (EVT.Event, id_prefix = "E", attr_spec = dict (recurrence = dict (include_rev_refs = ("rules", ))), include_rev_refs = ("recurrence", ))
+    >>> f_e = F_E (scope, ev)
+
+    >>> show_elements (f_e, "ui_display")
+    <Entity E-64> Tanzer Christian, 1959-09-26, 00:00 - 23:59
+    <Field_Entity E-64:left> Tanzer Christian
+    <Field_Composite E-64:date> 1959-09-26
+    <Field E-64:date.start> 1959-09-26
+    <Field E-64:date.finish>
+    <Field_Composite E-64:time> 00:00 - 23:59
+    <Field E-64:time.start> 00:00
+    <Field E-64:time.finish> 23:59
+    <Field_Entity E-64:calendar>
+    <Field E-64:detail>
+    <Field E-64:short_title>
+    <Field_Rev_Ref E-64:recurrence> Birthday, 1959-09-26, 1, Yearly
+    <Entity_Rev_Ref E-64:recurrence@6> Birthday, 1959-09-26, 1, Yearly
+    <Field E-64:recurrence::dates@6>
+    <Field E-64:recurrence::date_exceptions@6>
+    <Field_Rev_Ref E-64:recurrence::rules@6> Birthday, 1959-09-26, 1, Yearly
+    <Entity_Rev_Ref E-64:recurrence::rules@6@7> Birthday, 1959-09-26, 1, Yearly
+    <Field E-64:recurrence::rules::is_exception@6@7>
+    <Field E-64:recurrence::rules::desc@6@7> Birthday
+    <Field E-64:recurrence::rules::start@6@7> 1959-09-26
+    <Field E-64:recurrence::rules::finish@6@7>
+    <Field E-64:recurrence::rules::period@6@7> 1
+    <Field E-64:recurrence::rules::unit@6@7> Yearly
+    <Field E-64:recurrence::rules::week_day@6@7>
+    <Field E-64:recurrence::rules::count@6@7>
+    <Field E-64:recurrence::rules::restrict_pos@6@7>
+    <Field E-64:recurrence::rules::month_day@6@7>
+    <Field E-64:recurrence::rules::month@6@7>
+    <Field E-64:recurrence::rules::week@6@7>
+    <Field E-64:recurrence::rules::year_day@6@7>
+    <Field E-64:recurrence::rules::easter_offset@6@7>
+    <Field_Ref_Hidden E-64:recurrence::rules::left@6@7>
+    <Field_Ref_Hidden E-64:recurrence::left@6>
 
 """
 

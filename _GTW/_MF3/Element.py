@@ -101,6 +101,7 @@
 #                     factor `cargo_as_json_cargo`
 #    22-May-2016 (CT) Add guard `self.required` to `_create_instance`
 #    14-Jun-2016 (CT) Change `allow_new` to consider `E_Type.polymorphic_epk`
+#    15-Jun-2016 (CT) Fix `ui_display`
 #    ««revision-date»»···
 #--
 
@@ -127,7 +128,7 @@ from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import Regexp, re
 
 import _TFL._Meta.Object
-from   _TFL.Decorator           import eval_function_body
+from   _TFL.Decorator           import eval_function_body, getattr_safe
 import _TFL._Meta.M_Auto_Combine_Lists
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
@@ -319,6 +320,7 @@ class _Base_ (TFL.Meta.Object) :
     restrict_completion = False
     skip                = False
     template_module     = "mf3"
+    ui_display          = ""
     undef               = TFL.Undef ("value")
 
     _attrs_uniq_to_update_combine = \
@@ -857,9 +859,9 @@ class _Entity_ (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
     # end def label
 
     @property
+    @getattr_safe (default = "")
     def ui_display (self) :
-        if self.essence :
-            return self.essence.ui_display
+        return self.essence.ui_display if self.essence else ""
     # end def ui_display
 
     @TFL.Meta.Property
@@ -1226,8 +1228,9 @@ class _Field_Composite_Mixin_ (_Element_) :
     # end def submitted_value
 
     @property
+    @getattr_safe (default = "")
     def ui_display (self) :
-        result = self.essence.ui_display if self.id_essence else None
+        result = self.essence.ui_display if self.id_essence else ""
         return result
     # end def ui_display
 
@@ -1400,6 +1403,7 @@ class Entity_Rev_Ref (BaM (_Field_Entity_Mixin_, _Entity_, metaclass = M_Entity_
     # end def edit
 
     @property
+    @getattr_safe (default = "")
     def ui_display (self) :
         return filtered_join \
             (", ", (e.ui_display for e in self.template_elements))
@@ -1541,9 +1545,9 @@ class Field (_Field_) :
     # end def polisher
 
     @property
+    @getattr_safe (default = "")
     def ui_display (self) :
-        if self.id_essence :
-            return getattr (self.essence.FO, self.name)
+        return getattr (self.essence.FO, self.name) if self.id_essence else ""
     # end def ui_display
 
 # end class Field
@@ -1730,7 +1734,7 @@ class Field_Ref_Hidden (Field_Entity) :
 
     @property
     def ui_display (self) :
-        return None
+        return ""
     # end def ui_display
 
 # end class Field_Ref_Hidden
@@ -1825,6 +1829,13 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
             result = 0
         return result
     # end def min_rev_ref
+
+    @property
+    @getattr_safe (default = "")
+    def ui_display (self) :
+        return filtered_join \
+            (", ", (e.ui_display for e in self.template_elements))
+    # end def ui_display
 
     def add (self, how_many = 1, ** kw) :
         """Add `how_many` new `Entity_Rev_Ref` instances to `self.elements`"""
