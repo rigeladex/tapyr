@@ -397,6 +397,12 @@
 #     5-May-2016 (CT) Use `Object_Init`, not `Object`, for `not_in_past` checker
 #     6-May-2016 (CT) Add guard `not playback_p` to `not_in_past` predicate
 #    19-May-2016 (CT) Add `role_name` to `derived_for_e_type`
+#    16-Jun-2016 (CT) Improve `A_Euro_Amount`
+#                     + Use `_A_Decimal_`, not `_A_String_`, as `Pickler.Type`
+#                     + Allow int/float/string values in `Pickler.as_cargo`
+#                       (query expressions!)
+#                     + Change `typ` to `Euro`
+#                     + Add `D_Context`, `D_Quant`, `max_digits`
 #    ««revision-date»»···
 #--
 
@@ -3200,8 +3206,11 @@ class A_Enum \
 class A_Euro_Amount (_A_Decimal_) :
     """Amount in Euro."""
 
-    typ              = _ ("Decimal")
+    typ              = _ ("Euro")
     P_Type           = TFL.Currency
+    D_Context        = P_Type.C
+    D_Quant          = P_Type.Q
+    max_digits       = TFL.Meta.Alias_Property ("D_Context.prec")
 
     _string_cleaner  = Re_Replacer \
         ( r"\s*(%s|%s)\s*" % (TFL.Currency._symbol, TFL.Currency.name)
@@ -3210,12 +3219,16 @@ class A_Euro_Amount (_A_Decimal_) :
 
     class Pickler (TFL.Meta.Object) :
 
-        Type = _A_String_
+        Type = _A_Decimal_
 
         @classmethod
         def as_cargo (cls, attr_kind, attr_type, value) :
             if value is not None :
-                return value.amount
+                try :
+                    result = value.amount
+                except AttributeError :
+                    result = decimal.Decimal (value)
+                return result
         # end def as_cargo
 
         @classmethod

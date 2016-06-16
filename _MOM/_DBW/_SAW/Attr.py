@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -101,6 +101,7 @@
 #    11-Jul-2014 (CT) Fix `_saw_column_type` for `if pts._Pickler_Type`
 #    12-Sep-2014 (CT) Add `A_Join.key` including `t_col`
 #    27-Apr-2015 (CT) Add `unique_p`, `use_index` to `_saw_one_typed_column`
+#    16-Jun-2016 (CT) Add `_saw_column_type` to `_A_Decimal_`, not `A_Decimal`
 #    ««revision-date»»···
 #--
 
@@ -793,7 +794,7 @@ def _saw_column_type_binary_string_pickled (self, DBW, wrapper, pts) :
     return wrapper.ATW.SA_Type.PickleType ()
 # end def _saw_column_type_binary_string_pickled
 
-@TFL.Add_To_Class ("_saw_column_type", MOM.Attr.A_Decimal)
+@TFL.Add_To_Class ("_saw_column_type", MOM.Attr._A_Decimal_)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_column_type_decimal (self, DBW, wrapper, pts) :
     return wrapper.ATW.SA_Type.Numeric (pts.max_digits, pts.decimal_places)
