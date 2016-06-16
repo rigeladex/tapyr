@@ -102,6 +102,7 @@
 #    12-Sep-2014 (CT) Add `A_Join.key` including `t_col`
 #    27-Apr-2015 (CT) Add `unique_p`, `use_index` to `_saw_one_typed_column`
 #    16-Jun-2016 (CT) Add `_saw_column_type` to `_A_Decimal_`, not `A_Decimal`
+#    16-Jun-2016 (CT) Use `.SA_Type.Decimal`, not `..Numeric`, for `_A_Decimal_`
 #    ««revision-date»»···
 #--
 
@@ -797,7 +798,7 @@ def _saw_column_type_binary_string_pickled (self, DBW, wrapper, pts) :
 @TFL.Add_To_Class ("_saw_column_type", MOM.Attr._A_Decimal_)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_column_type_decimal (self, DBW, wrapper, pts) :
-    return wrapper.ATW.SA_Type.Numeric (pts.max_digits, pts.decimal_places)
+    return wrapper.ATW.SA_Type.Decimal (pts.max_digits, pts.decimal_places)
 # end def _saw_column_type_decimal
 
 @TFL.Add_To_Class ("_saw_column_type", MOM.Attr._A_Int_)

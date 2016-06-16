@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -22,11 +22,14 @@
 #                     needed by MD_Change instances not bound to Entities
 #     4-Aug-2013 (CT) Fix `_Type_Name_Integer_.process_bind_param`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    16-Jun-2016 (CT) Add `SA_Type.Decimal` as alias for `SA.types.Numeric`
 #    ««revision-date»»···
 #--
 
-from   __future__            import division, print_function
-from   __future__            import absolute_import, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -116,6 +119,8 @@ class SA_Type (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_SA_Type)) :
     """Encapsulate SQLalchemy types"""
 
     _Type_Name_ = _Type_Name_Integer_
+
+    Decimal     = SA.types.Numeric
 
     def __init__ (self, ATW) :
         self._ATW = ATW
