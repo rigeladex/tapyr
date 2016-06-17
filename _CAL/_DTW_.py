@@ -39,6 +39,7 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #     2-Feb-2016 (CT) Add `new_dtw`, `_Type_Table`, `_DTW_Meta_`
 #    12-Feb-2016 (CT) Change `new_dtw` to use `T._kind`, not `cls._kind`
+#    17-Jun-2016 (CT) Change `_delta` to wrap `.Delta._Type` instances
 #    ««revision-date»»···
 #--
 
@@ -138,6 +139,8 @@ class _DTW_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _DTW_Meta_)) :
         result = delta
         if isinstance (delta, pyk.int_types + (float, )) :
             result = self.Delta (delta)
+        elif isinstance (delta, self.Delta._Type) :
+            result = _DTW_.new_dtw (delta)
         return result
     # end def _delta
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 #     4-Aug-2008 (MG) `from_string` added
 #    29-Mar-2012 (CT) Add support for `tzinfo`, factor `_from_string_match_kw`
 #    28-Feb-2014 (CT) Use future `print_function`
+#    17-Jun-2016 (CT) Change `__sub__` to allow delta values, too
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,8 @@ class Time (CAL._DTW_) :
        >>> d  = t2 - t1
        >>> print (d)
        2:00:00
+       >>> print (t1 - d)
+       12:30:00
        >>> print (t2 + d)
        18:30:00
        >>> from _CAL.Delta import Time_Delta as Delta
@@ -214,7 +217,12 @@ class Time (CAL._DTW_) :
     # end def __add__
 
     def __sub__ (self, rhs) :
-        return self.as_delta () - rhs.as_delta ()
+        if isinstance (rhs, Time) :
+            return self.as_delta () - rhs.as_delta ()
+        else :
+            result = self.as_delta () - self._delta (rhs)
+            return self.__class__ \
+                (result.h, result.m, result.s, result.microseconds)
     # end def __sub__
 
 # end class Time
