@@ -403,6 +403,7 @@
 #                       (query expressions!)
 #                     + Change `typ` to `Euro`
 #                     + Add `D_Context`, `D_Quant`, `max_digits`
+#    17-Jun-2016 (CT) Add `range_inclusive_p` to `_A_Date_`
 #    ««revision-date»»···
 #--
 
@@ -1386,6 +1387,7 @@ class _A_Date_ (A_Attr_Type) :
     needs_raw_value    = False
     not_in_future      = False
     not_in_past        = False
+    range_inclusive_p  = True
     _tuple_off         = 0
 
     class _Doc_Map_ (A_Attr_Type._Doc_Map_) :
@@ -1426,6 +1428,8 @@ class _A_Date_ (A_Attr_Type) :
         d = soc.value_range_delta (obj)
         n = _DTW_.new_dtw (head)
         t = _DTW_.new_dtw (tail)
+        if not soc.range_inclusive_p :
+            t -= d
         while n <= t :
             yield n._body
             try :
