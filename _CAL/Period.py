@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    19-Apr-2016 (CT) Creation
+#    17-Jun-2016 (CT) Fix `__iter__`, add tests
 #    ««revision-date»»···
 #--
 
@@ -128,11 +129,12 @@ class _Period_ (_Ordinal_) :
     # end def __add__
 
     def __iter__ (self) :
-        d = self.start
+        d = CAL.Date_Delta (1)
         f = self.finis
-        while d <= f :
-            yield d
-            d += 1
+        s = self.start
+        while s <= f :
+            yield s
+            s += d
     # end def __iter__
 
     def __len__ (self) :
@@ -167,6 +169,10 @@ class Day (_Period_) :
     >>> print (jsonified ([p]))
     ["2016-02-27"]
 
+    >>> for d in p :
+    ...     print (d)
+    2016-02-27
+
     >>> for i in range (5) :
     ...     r = p + i
     ...     print (r, r.days, r.start, r.finis)
@@ -194,7 +200,7 @@ class Day (_Period_) :
     kind             = "day"
     number           = Alias_Property (kind)
 
-    _delta           = CAL.Delta (1)
+    _delta           = CAL.Date_Delta (1)
     _pattern         = None
 
     def __init__ (self, year, month, day) :
@@ -240,6 +246,13 @@ class Interval (_Period_) :
 
     >>> print (jsonified ([p]))
     ["2016-04-11..2016-04-14"]
+
+    >>> for d in p :
+    ...     print (d)
+    2016-04-11
+    2016-04-12
+    2016-04-13
+    2016-04-14
 
     >>> for i in range (5) :
     ...     r = p + i
@@ -356,6 +369,10 @@ class Month (_Period_) :
     >>> print (jsonified ([p]))
     ["2016-01"]
 
+    >>> p_days = list (p)
+    >>> print (p_days [0], "..", p_days [-1], ":", len (p_days))
+    2016-01-01 .. 2016-01-31 : 31
+
     >>> for i in range (8) :
     ...     r = p + i
     ...     print (r, r.days, r.start, r.finis)
@@ -424,6 +441,10 @@ class Quarter (_Period_) :
 
     >>> print (jsonified ([p]))
     ["2000/Q1"]
+
+    >>> p_days = list (p)
+    >>> print (p_days [0], "..", p_days [-1], ":", len (p_days))
+    2000-01-01 .. 2000-03-31 : 91
 
     >>> for i in range (8) :
     ...     r = p + i
@@ -499,6 +520,10 @@ class Week (_Period_) :
 
     >>> print (jsonified ([p]))
     ["2016/W16"]
+
+    >>> p_days = list (p)
+    >>> print (p_days [0], "..", p_days [-1], ":", len (p_days))
+    2016-04-18 .. 2016-04-24 : 7
 
     >>> print (", ".join (str (d) for d in p))
     2016-04-18, 2016-04-19, 2016-04-20, 2016-04-21, 2016-04-22, 2016-04-23, 2016-04-24
@@ -609,6 +634,10 @@ class Year (_Period_) :
 
     >>> print (jsonified ([p]))
     ["2012"]
+
+    >>> p_days = list (p)
+    >>> print (p_days [0], "..", p_days [-1], ":", len (p_days))
+    2012-01-01 .. 2012-12-31 : 366
 
     >>> for i in range (5) :
     ...     r = p + i
