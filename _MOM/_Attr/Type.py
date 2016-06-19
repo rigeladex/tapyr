@@ -404,6 +404,7 @@
 #                     + Change `typ` to `Euro`
 #                     + Add `D_Context`, `D_Quant`, `max_digits`
 #    17-Jun-2016 (CT) Add `range_inclusive_p` to `_A_Date_`
+#    19-Jun-2016 (CT) Add "%Y %m %d" to `A_Date.input_formats`
 #    ««revision-date»»···
 #--
 
@@ -2882,7 +2883,9 @@ class A_Date (_A_Date_) :
     syntax         = _ ("yyyy-mm-dd")
     ui_length      = 12
     input_formats  = \
-        ( "%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%d/%m/%Y", "%d.%m.%Y", "%d-%m-%Y")
+        ( "%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y %m %d"
+        , "%d/%m/%Y", "%d.%m.%Y", "%d-%m-%Y"
+        )
     _tuple_len     = 3
 
     class _Doc_Map_ (_A_Date_._Doc_Map_) :
