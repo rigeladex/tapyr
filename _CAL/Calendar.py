@@ -24,6 +24,7 @@
 #    29-Jan-2016 (CT) Remove `populate` from call to `CAL.Year`
 #     1-Feb-2016 (CT) Add `country`
 #    19-Apr-2016 (CT) Use `CAL.Year.Day`, not `CAL.Day`
+#    20-Jun-2016 (CT) Add cache for `Calendar` instances
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,8 @@ class Calendar (TFL.Meta.Object) :
        >>> from _CAL.Date  import *
        >>> d = Date (2004, 11, 15)
        >>> C = Calendar ()
+       >>> len (C.week)
+       0
        >>> y = C.year [2004]
        >>> y
        Year (2004)
@@ -83,9 +86,6 @@ class Calendar (TFL.Meta.Object) :
        True
        >>> C.week [d.wk_ordinal] is y.weeks [d.week - 1]
        True
-       >>> C = Calendar ()
-       >>> len (C.week)
-       0
        >>> C.week [d.wk_ordinal]
        week 47 <2004/11/15 to 2004/11/21>
        >>> len (C.week)
@@ -96,15 +96,31 @@ class Calendar (TFL.Meta.Object) :
     week            = property (TFL.Getter._weeks)
     year            = property (TFL.Getter._years)
 
+    default_country = "AT"
+
+    _Table          = {}
     _undefined      = object ()
 
-    def __init__ (self, name = None, country = _undefined) :
+    def __new__ (cls, name = None, country = _undefined) :
+        if country is cls._undefined :
+            country = cls.default_country
+        key   = (name, country)
+        Table = cls._Table
+        try :
+            self    = Table [key]
+        except KeyError :
+            self    = Table [key] = cls.__c_super.__new__ (cls, name, country)
+            self._init_ (name, country)
+        return self
+    # end def __new__
+
+    def _init_ (self, name, country) :
         self.name    = name
-        self.country = country if country is not self._undefined else "AT"
+        self.country = country
         self._days   = _Cal_Dict_ (self, self._new_day)
         self._weeks  = _Cal_Dict_ (self, self._new_week)
         self._years  = _Cal_Dict_ (self, self._new_year)
-    # end def __init__
+    # end def _init_
 
     def _new_day (self, date) :
         return CAL.Year.Day (date, self)
