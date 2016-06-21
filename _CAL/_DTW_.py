@@ -40,6 +40,7 @@
 #     2-Feb-2016 (CT) Add `new_dtw`, `_Type_Table`, `_DTW_Meta_`
 #    12-Feb-2016 (CT) Change `new_dtw` to use `T._kind`, not `cls._kind`
 #    17-Jun-2016 (CT) Change `_delta` to wrap `.Delta._Type` instances
+#    21-Jun-2016 (CT) Allow single argument of `self._Type` in `__init__`
 #    ««revision-date»»···
 #--
 
@@ -101,6 +102,10 @@ class _DTW_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _DTW_Meta_)) :
                 body = body._body
                 self._init_kw = body._init_kw
             self._body = body
+        elif len (args) == 1 and isinstance (args [0], self._Type) :
+            assert len (kw)   == 0
+            self._init_kw = {}
+            self._body    = args [0]
         else :
             if len (args) + len (kw) == 0 :
                 defaults = time.localtime ()
