@@ -55,6 +55,8 @@
 #                     convert them with `pyk.text_type` to string
 #    15-Aug-2015 (CT) Add stub for `_Condition_.predicates`
 #    25-Feb-2016 (CT) Improve automatic `__doc__` of `New_Pred`
+#    21-Jun-2016 (CT) Add missing import for `flattened`
+#    21-Jun-2016 (CT) Allow `callable` bindings
 #    ««revision-date»»···
 #--
 
@@ -70,6 +72,7 @@ import _MOM._Pred
 import _MOM._Prop.Type
 
 from   _TFL.portable_repr    import portable_repr
+from   _TFL.predicate        import callable, flattened
 from   _TFL.pyk              import pyk
 
 import _TFL._Meta.Object
@@ -158,12 +161,17 @@ class _Condition_ \
                 return True
             val_disp [p] = val if val is None else portable_repr (val)
         for b, expr in pyk.iteritems (self.bindings) :
-            exc, val = self._eval_expr \
-                (expr, obj, glob_dict, val_dict, "binding")
-            if exc is not None :
-                return True
+            if callable (expr) :
+                val  = expr
+                disp = "%s" % (portable_repr (val), )
+            else :
+                exc, val = self._eval_expr \
+                    (expr, obj, glob_dict, val_dict, "binding")
+                if exc is not None :
+                    return True
+                disp = "%s << %s" % (portable_repr (val), expr)
             val_dict [b] = val
-            val_disp [b] = "%s << %s" % (portable_repr (val), expr)
+            val_disp [b] = disp
         return self._satisfied (obj, glob_dict, val_dict)
     # end def satisfied
 
