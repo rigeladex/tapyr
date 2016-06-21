@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -97,6 +97,7 @@
 #                     * Don't include `inv` in `args` of `Invariant`
 #                     * Add `_T` for `description`, `explanation`
 #    13-Apr-2015 (CT) Add `json_encode_exception`, `json_encode_error`
+#    21-Jun-2016 (CT) Fix typos in `Quant._violator_values`
 #    ««revision-date»»···
 #--
 
@@ -977,11 +978,12 @@ class Quant (Invariant) :
     # end def bindings
 
     def _violator_values (self) :
+        inv   = self.inv
         bvars = inv.bvar [1:-1].split (",")
         for v, d in paired (self.violators, self.violators_attr) :
             if len (bvars) > 1 and isinstance (v, (list, tuple)) :
                 for k, v in paired (bvars, v) :
-                    yield (pyk.decoded (k, "utf-8"), portable_repr (r))
+                    yield (pyk.decoded (k.strip (), "utf-8"), portable_repr (v))
             elif isinstance (v, (list, tuple)) :
                 yield \
                     ( pyk.decoded (inv.bvar, "utf-8")
