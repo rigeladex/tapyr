@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Martin Glueck All rights reserved
+# Copyright (C) 2011-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This program is licensed under the terms of the BSD 3-Clause License
@@ -18,6 +18,7 @@
 #    28-Mar-2013 (CT) Add `-summary` to be more compatible with `run_doctest`
 #     7-Aug-2013 (CT) Add `cases` (adapt to change of `run_doctest`)
 #    21-Oct-2015 (CT) Add `py_version`, adapt to Python 3
+#    21-Jun-2016 (CT) Add `expect_except` to `module` before testing
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,7 @@ def _main (cmd) :
         flags             = doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
     try :
         module            = __import__ (m)
+        module.expect_except = TFL.CAO.expect_except
         tests             = set (cmd.argv [1:])
         for tn in list (getattr (module, "__test__", {})) :
             if tn not in tests :
