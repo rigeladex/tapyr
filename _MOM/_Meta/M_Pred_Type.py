@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -25,6 +25,13 @@
 #    12-Jun-2013 (CT) Add `is_partial_p`
 #    31-Jul-2013 (CT) Change `Unique.__init__` to set `error` to `None`
 #    10-Oct-2014 (CT) Use `portable_repr`
+#    21-Jun-2016 (CT) Replace map/lambda by list comprehension
+#                     + Make `Quantifier` code Python-3 compatible:
+#                       * Python-3 doesn't support argument unpacking for `def`
+#                         and `lambda`
+#                       * But it still supports item unpacking for loops and
+#                         comprehensions
+#                     + Factor `_set_code`
 #    ««revision-date»»···
 #--
 
@@ -128,38 +135,39 @@ class Quantifier (_Condition_) :
          Compiled from `bvar` and `bvar_attr`, if any.
     """
 
-    ### `this=this' is needed to make the object containing the quantifier
-    ### visible inside the `lambda' evaluating the quantifier's `assertion'
-    quantifier_fmt = "map (lambda %s, this=this : %s, seq)"
+    attr_code_fmt   = \
+    assert_code_fmt = "list (%(code)s for %(bvar)s in seq)"
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if cls.bvar and cls.assertion :
-            quantifier = cls.quantifier_fmt % (cls.bvar, cls.assertion)
-            setattr \
-                ( cls, "assert_code"
-                , compile (quantifier, quantifier, "eval")
-                )
+            assert_code = cls.assert_code_fmt % dict \
+                (bvar = cls.bvar, code = cls.assertion)
+            cls._set_code ("assert_code", assert_code)
         guard = cls.guard
         if guard :
             if not getattr (cls, "guard_attr", None) :
                 setattr (cls, "guard_attr", (guard, ))
-            setattr (cls, "guard_code", compile (guard, guard, "eval"))
+            cls._set_code ("guard_code", guard)
         if isinstance (cls.seq, pyk.string_types) :
-            setattr (cls, "seq_code", compile (cls.seq, cls.seq, "eval"))
+            cls._set_code ("seq_code", cls.seq)
         if cls.bvar and cls.bvar_attr :
             one_element_code = \
-                ( "'''%s''' %% (%s)"
+                ( "('''%s''' %% (%s))"
                 % ( "\n".join (("  %-10s : %%4s" % bv) for bv in cls.bvar_attr)
                   , ", ".join (cls.bvar_attr)
                   )
                 )
             attr_code = \
-                ( "map (lambda %s, this = this : (%s), seq)"
-                % (cls.bvar, one_element_code)
+                ( cls.attr_code_fmt
+                % dict (bvar = cls.bvar, code = one_element_code)
                 )
-            setattr (cls, "attr_code", compile (attr_code, attr_code, "eval"))
+            cls._set_code ("attr_code", attr_code)
     # end def __init__
+
+    def _set_code (cls, name, code) :
+        setattr (cls, name, compile (code, code, "eval"))
+    # end def _set_code
 
     def __str__  (cls) :
         return "%s" % (cls.name, )
@@ -191,9 +199,7 @@ class N_Quantifier (Quantifier) :
 class U_Quantifier (Quantifier) :
     """Meta class for :class:`~_MOM._Pred.Type.U_Quant`"""
 
-    ### `this=this' is needed to make the object containing the quantifier
-    ### visible inside the `lambda' evaluating the quantifier's `assertion'
-    quantifier_fmt = "map (lambda %s, this=this : not (%s), seq)"
+    assert_code_fmt = "list (not (%(code)s) for %(bvar)s in seq)"
 
 # end class U_Quantifier
 
