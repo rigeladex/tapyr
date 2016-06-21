@@ -227,6 +227,8 @@
 #                     of `_Typed_Collection_Mixin_._check_sanity`
 #     2-May-2016 (CT) Allow `allow_primary`
 #                     in `_Typed_Collection_Mixin_._check_sanity`
+#    21-Jun-2016 (CT) Fix `Sync_Cached.sync`
+#                     + pass `changed = True` to `_set_cooked`
 #    ««revision-date»»···
 #--
 
@@ -712,7 +714,7 @@ class _Auto_Update_Mixin_ (Kind) :
     """
 
     def update (self, obj) :
-        self._set_cooked (obj, self._get_computed (obj), True)
+        self._set_cooked (obj, self._get_computed (obj), changed = True)
     # end def update
 
     def _check_sanity (self, attr_type, e_type) :
@@ -1275,7 +1277,7 @@ class Sync_Cached (_Cached_) :
     """
 
     def sync (self, obj) :
-        self._set_cooked (obj, self._get_computed (obj))
+        self._set_cooked (obj, self._get_computed (obj), changed = True)
         obj._attr_man.needs_sync [self.name] = False
     # end def sync
 
@@ -1316,7 +1318,7 @@ class Auto_Cached (_Cached_) :
                 val = self._get_computed (obj)
                 if val is None :
                     return
-                self._set_cooked (obj, val, True)
+                self._set_cooked (obj, val, changed = True)
                 man.update_at_changes [self.name] = man.total_changes
         return self.__super.get_value (obj)
     # end def get_value
@@ -1481,7 +1483,7 @@ class Computed_Set_Mixin (Computed_Mixin) :
         attr   = self.attr
         result = self.__super.get_value (obj)
         if obj is not None and result != getattr (obj, attr.ckd_name, None) :
-            self._set_cooked (obj, result, True)
+            self._set_cooked (obj, result, changed = True)
         return result
     # end def get_value
 
