@@ -235,6 +235,7 @@
 #    16-Dec-2015 (CT) Add `UI_Spec` to `_m_create_base_e_types`
 #    24-Feb-2016 (CT) Change `_m_add_prop` to allow early calls
 #     1-Jun-2016 (CT) Use `Once_Property_NI`, not `Once_Property`
+#    22-Jun-2016 (CT) Add `ui_display.add_type` for `MOM.Entity.Essence`
 #    ««revision-date»»···
 #--
 
@@ -250,6 +251,7 @@ import _TFL._Meta.Property
 import _TFL.Caller
 import _TFL.Decorator
 import _TFL.Sorted_By
+import _TFL.ui_display
 import _TFL.Undef
 
 from   _TFL.I18N             import _, _T, _Tn
@@ -451,6 +453,8 @@ class M_E_Mixin \
             for s in cls._S_Extension [1:3] :
                 TFL.json_dump.default.add_type \
                     (s.Essence, func = s._json_encode)
+            TFL.ui_display.add_type \
+                (cls._S_Extension [0].Essence, func = s._ui_display)
         cls._m_create_e_types (app_type, cls._S_Extension)
         for t in reversed (app_type._T_Extension) :
             t._m_setup_relevant_roots ()

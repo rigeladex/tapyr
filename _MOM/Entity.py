@@ -306,6 +306,7 @@
 #     5-Feb-2016 (CT) Add `polish_empty`
 #     5-May-2016 (CT) Add support for predicates of kind `object_init`
 #     6-May-2016 (CT) Add computed attribute `playback_p`
+#    22-Jun-2016 (CT) Add staticmethod `_ui_display`
 #    ««revision-date»»···
 #--
 
@@ -996,6 +997,11 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         if self._home_scope :
             self.home_scope._attr_errors.append (exc)
     # end def _store_attr_error
+
+    @staticmethod
+    def _ui_display (o) :
+        return o.ui_display
+    # end def _ui_display
 
     def __getattr__ (self, name) :
         ### just to ease up-chaining in descendents
