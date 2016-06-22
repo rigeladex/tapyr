@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -169,6 +169,10 @@
 #     8-Jul-2014 (CT)  Change `split_hst`, `rsplit_hst` to allow multiple `seps`
 #     9-Sep-2014 (CT)  Add guard for `seps` to `split_hst`, `rsplit_hst`
 #    26-Sep-2014 (CT) Add `is_mixed_case`, `is_not_mixed_case`
+#    22-Jun-2016 (CT) Change `extender` to use `extend` for (list, tuple), only
+#                     + Use `append` for all other `tail` values
+#                     + Otherwise, strings are split into characters,
+#                       datetime.time triggers an exception, ...
 #    ««revision-date»»···
 #--
 
@@ -450,7 +454,8 @@ def extender (l, tail) :
        >>> extender ([], [1])
        [1]
     """
-    l.extend (tail)
+    xtend = l.extend if isinstance (tail, (list, tuple)) else l.append
+    xtend (tail)
     return l
 # end def extender
 
