@@ -236,6 +236,8 @@
 #    24-Feb-2016 (CT) Change `_m_add_prop` to allow early calls
 #     1-Jun-2016 (CT) Use `Once_Property_NI`, not `Once_Property`
 #    22-Jun-2016 (CT) Add `ui_display.add_type` for `MOM.Entity.Essence`
+#    22-Jun-2016 (CT) Add `MOM.Attr.Kind.is_void.add_type`
+#                     for `MOM.An_Entity.Essence`
 #    ««revision-date»»···
 #--
 
@@ -450,11 +452,14 @@ class M_E_Mixin \
             ### created properties are included in subclasses, too
             for s in cls._S_Extension :
                 s._m_setup_prop_names (app_type)
+            for s in cls._S_Extension [:1] :
+                TFL.ui_display.add_type (s.Essence, func = s._ui_display)
+            for s in cls._S_Extension [1:2] :
+                MOM.Attr.Kind.is_void.add_type \
+                    (s.Essence, func = MOM.Attr.Kind._is_void_an_entity)
             for s in cls._S_Extension [1:3] :
                 TFL.json_dump.default.add_type \
                     (s.Essence, func = s._json_encode)
-            TFL.ui_display.add_type \
-                (cls._S_Extension [0].Essence, func = s._ui_display)
         cls._m_create_e_types (app_type, cls._S_Extension)
         for t in reversed (app_type._T_Extension) :
             t._m_setup_relevant_roots ()

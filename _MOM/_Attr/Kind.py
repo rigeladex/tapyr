@@ -229,6 +229,8 @@
 #                     in `_Typed_Collection_Mixin_._check_sanity`
 #    21-Jun-2016 (CT) Fix `Sync_Cached.sync`
 #                     + pass `changed = True` to `_set_cooked`
+#    22-Jun-2016 (CT) Fix `_Computed_Mixin_.get_value`: add and use `is_void`
+#                     + Before, `get_value` failed for composite attributes
 #    ««revision-date»»···
 #--
 
@@ -240,6 +242,7 @@ from   _TFL                  import TFL
 
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
+import _TFL._Meta.Single_Dispatch
 import _TFL.Functor
 import _TFL.Undef
 
@@ -418,6 +421,18 @@ class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
         ### to know all classes redefining `_inc_changes`) !!!
         return self._inc_changes (man, obj, value)
     # end def inc_changes
+
+    @TFL.Meta.Single_Dispatch_Method
+    def is_void (self, v) :
+        return v is None or v in self.void_values
+    # end def is_void
+
+    ### `is_void.add_type (MOM.An_Entity)` is done by meta machinery
+    ### + needs to be put into `Bare Essence`
+    @staticmethod
+    def _is_void_an_entity (self, o) :
+        return not o.has_substance ()
+    # end def _is_void
 
     @property
     def raw_default (self) :
@@ -899,7 +914,7 @@ class _Computed_Mixin_ (Kind) :
 
     def get_value (self, obj) :
         result = self.__super.get_value (obj)
-        if obj is not None and (result is None or result in self.void_values) :
+        if obj is not None and self.is_void (result) :
             result = self._get_computed (obj)
         return result
     # end def get_value
