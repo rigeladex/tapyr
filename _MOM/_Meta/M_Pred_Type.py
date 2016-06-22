@@ -32,6 +32,7 @@
 #                       * But it still supports item unpacking for loops and
 #                         comprehensions
 #                     + Factor `_set_code`
+#    22-Jun-2016 (CT) Change `one_element_code` to return a `dict`
 #    ««revision-date»»···
 #--
 
@@ -153,9 +154,8 @@ class Quantifier (_Condition_) :
             cls._set_code ("seq_code", cls.seq)
         if cls.bvar and cls.bvar_attr :
             one_element_code = \
-                ( "('''%s''' %% (%s))"
-                % ( "\n".join (("  %-10s : %%4s" % bv) for bv in cls.bvar_attr)
-                  , ", ".join (cls.bvar_attr)
+                ( "{%s}"
+                % ( ", ".join (("%r : %s" % (bv, bv)) for bv in cls.bvar_attr)
                   )
                 )
             attr_code = \

@@ -98,6 +98,11 @@
 #                     * Add `_T` for `description`, `explanation`
 #    13-Apr-2015 (CT) Add `json_encode_exception`, `json_encode_error`
 #    21-Jun-2016 (CT) Fix typos in `Quant._violator_values`
+#    22-Jun-2016 (CT) Fix `bvar` handling in `Quant._violator_values`
+#                     + Allow nested names in `bvar`, e.g.,
+#                       `((a1, b1), (a2, b2))`
+#    22-Jun-2016 (CT) Use `TFL.ui_display`, not `portable_repr`, for
+#                     `Quant._violator_values`
 #    ««revision-date»»···
 #--
 
@@ -105,6 +110,8 @@ from   __future__               import unicode_literals
 
 from   _TFL                     import TFL
 from   _MOM                     import MOM
+
+import _CAL.ui_display
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
@@ -114,6 +121,7 @@ from   _TFL.portable_repr       import portable_repr
 from   _TFL.pyk                 import pyk
 from   _TFL.Record              import Record
 from   _TFL.Regexp              import Regexp
+from   _TFL.ui_display          import ui_display
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -365,7 +373,7 @@ class Ambiguous_Epk (_Invariant_) :
         assert 1 < count <= len (matches), \
             "count = %s, matches = %s" % (count, matches)
         self.e_type     = e_type
-        self.epk        = portable_repr (epk)
+        self.epk        = ui_display (epk)
         self.kw         = kw
         self.count      = count
         self.matches    = tuple (m.ui_display for m in matches)
@@ -972,36 +980,39 @@ class Quant (Invariant) :
 
     @Once_Property
     def bindings (self) :
-        result = sorted \
+        result = list \
             (itertools.chain (self.__super.bindings, self._violator_values ()))
         return result
     # end def bindings
 
     def _violator_values (self) :
         inv   = self.inv
-        bvars = inv.bvar [1:-1].split (",")
+        bvars = list \
+            (   x.strip ()
+            for x in inv.bvar.replace ("(", "").replace (")", "").split (",")
+            )
         for v, d in paired (self.violators, self.violators_attr) :
             if len (bvars) > 1 and isinstance (v, (list, tuple)) :
-                for k, v in paired (bvars, v) :
-                    yield (pyk.decoded (k.strip (), "utf-8"), portable_repr (v))
+                for k, w in paired (flattened (bvars), flattened (v)) :
+                    yield (pyk.decoded (k.strip (), "utf-8"), ui_display (w))
             elif isinstance (v, (list, tuple)) :
                 yield \
                     ( pyk.decoded (inv.bvar, "utf-8")
                     , "[%s]" % (", ".join (map (pyk.text_type, v)), )
                     )
             else :
-                yield (pyk.decoded (inv.bvar, "utf-8"), portable_repr (v))
+                yield (pyk.decoded (inv.bvar, "utf-8"), ui_display (v))
             if d :
                 try :
                     items = pyk.iteritems (d)
                 except AttributeError :
-                    val = portable_repr (d)
+                    val = ui_display (d)
                 else :
                     val = sorted \
-                        (   (pyk.decoded (a, "utf-8"), portable_repr (x))
+                        (   (pyk.decoded (a, "utf-8"), ui_display (x))
                         for (a, x) in items
                         )
-                yield portable_repr (v), val
+                yield ui_display (v), val
     # end def _violator_values
 
 # end class Quant

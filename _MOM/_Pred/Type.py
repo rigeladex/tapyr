@@ -57,6 +57,8 @@
 #    25-Feb-2016 (CT) Improve automatic `__doc__` of `New_Pred`
 #    21-Jun-2016 (CT) Add missing import for `flattened`
 #    21-Jun-2016 (CT) Allow `callable` bindings
+#    22-Jun-2016 (CT) Change `satisfied` to use `ui_display`,
+#                     not `portable_repr`
 #    ««revision-date»»···
 #--
 
@@ -74,6 +76,7 @@ import _MOM._Prop.Type
 from   _TFL.portable_repr    import portable_repr
 from   _TFL.predicate        import callable, flattened
 from   _TFL.pyk              import pyk
+from   _TFL.ui_display       import ui_display
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -159,17 +162,17 @@ class _Condition_ \
                 (p, obj, glob_dict, val_dict, "parameter")
             if val is None or exc is not None :
                 return True
-            val_disp [p] = val if val is None else portable_repr (val)
+            val_disp [p] = val if val is None else ui_display (val)
         for b, expr in pyk.iteritems (self.bindings) :
             if callable (expr) :
                 val  = expr
-                disp = "%s" % (portable_repr (val), )
+                disp = "%s" % (ui_display (val), )
             else :
                 exc, val = self._eval_expr \
                     (expr, obj, glob_dict, val_dict, "binding")
                 if exc is not None :
                     return True
-                disp = "%s << %s" % (portable_repr (val), expr)
+                disp = "%s << %s" % (ui_display (val), expr)
             val_dict [b] = val
             val_disp [b] = disp
         return self._satisfied (obj, glob_dict, val_dict)
