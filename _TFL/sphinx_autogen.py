@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -20,6 +20,7 @@
 #    17-Aug-2015 (CT) Creation
 #    15-Sep-2015 (CT) Add support for `graphs`
 #    10-Dec-2015 (CT) Add support for `__sphinx__members`
+#     1-Jul-2016 (CT) Add `:special-members` to `_stub_mod_template`
 #    ««revision-date»»···
 #--
 
@@ -58,7 +59,7 @@ class TFL_SAG_Command (TFL.Command.Root_Command) :
         , "_TFL.Date_Time", "_TFL.Filesystem"
         , "_TFL.Latex_Stream", "_TFL.NO_List", "_TFL.object_globals"
         , "_TFL.Plugin", "_TFL.Plugin_Packager"
-        , "_TFL.PL_Dict", "_TFL.Sync_File"
+        , "_TFL.PL_Dict", "_TFL.PL_List", "_TFL.Sync_File"
         }
 
     mod_skip_pat            = Regexp \
@@ -147,6 +148,7 @@ Module `%(b_name)s`
 
 .. automodule:: %(m.__name__)s
   :members: %(x_members)s
+  :special-members:
 """
 
     _stub_pns_template      = """\

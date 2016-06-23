@@ -4,4 +4,5 @@ Module `Range`
 -------------------------------------------------------------------------------
 
 .. automodule:: _TFL.Range
-  :members: 
+  :members: _Range_, _Range_Continuous_, _Range_Discrete_, Float_Range, Int_Range, _Bounds_, _Exclusive_Bounds_, _Inclusive_Bounds_, _Lower_Bounds_, _Upper_Bounds_, Exclusive_Lower_Bound, Exclusive_Upper_Bound, Inclusive_Lower_Bound, Inclusive_Upper_Bound
+  :special-members:

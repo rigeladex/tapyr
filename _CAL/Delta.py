@@ -48,6 +48,7 @@
 #    11-Feb-2016 (CT) Use `CAL.G8R.Units` to allow localized delta units
 #    11-Feb-2016 (CT) Factor `_Delta_Mixin_`
 #    19-Apr-2016 (CT) Add `Month_Delta.__mul__`
+#    26-Jun-2016 (CT) Add `Time_Delta.__float__`
 #    ««revision-date»»···
 #--
 
@@ -321,6 +322,10 @@ class Time_Delta (_DT_Delta_) :
             hh += 1
         return (hh, mm)
     # end def hh_mm
+
+    def __float__ (self) :
+        return self.seconds + self.microseconds / 1e6
+    # end def __float__
 
 # end class Time_Delta
 

@@ -74,6 +74,7 @@
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    24-May-2016 (CT) Add `_display_filter_q_`
+#    20-Jul-2016 (CT) Add `_Exp_.OVERLAPS`
 #    ««revision-date»»···
 #--
 
@@ -805,6 +806,13 @@ class _Exp_ (_Exp_Base_) :
         return startswith
     # end def STARTSWITH
 
+    @_method
+    def OVERLAPS () :
+        def overlaps (l, r) :
+            return l.overlaps (r)
+        return overlaps
+    # end def OVERLAPS
+
 # end class _Exp_
 
 @pyk.adapt__div__
@@ -1203,7 +1211,7 @@ You can use the following unary operators in Q-expressions:
 You can use the following query functions in Q-expressions:
 
     >>> print (", ".join (sorted (set (Q._Call_.op_map.values()))))
-    BETWEEN, CONTAINS, ENDSWITH, IN, STARTSWITH
+    BETWEEN, CONTAINS, ENDSWITH, IN, OVERLAPS, STARTSWITH
 
 You can use the following logical operators in Q-expressions:
 

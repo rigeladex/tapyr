@@ -29,6 +29,7 @@
 #    29-Mar-2012 (CT) Add support for `tzinfo`, factor `_from_string_match_kw`
 #    28-Feb-2014 (CT) Use future `print_function`
 #    17-Jun-2016 (CT) Change `__sub__` to allow delta values, too
+#    20-Jul-2016 (CT) Change `Time.pattern` to bare `hour` without any `minute`
 #    26-Sep-2016 (CT) Correct `microsecond` in `from_decimal_hours`, `seconds`
 #    ««revision-date»»···
 #--
@@ -114,10 +115,12 @@ class Time (CAL._DTW_) :
     tzinfo           = property (TFL.Getter._body.tzinfo)
 
     pattern          = Regexp \
-        ( r"  (?P<hour>\d{1,2})"
-          r": (?P<minute>\d{1,2})"
-          r"(: (?P<second>\d{1,2})"
-          r"(. (?P<microsecond>\d+))?)?"
+        ( r" (?P<hour>\d{1,2})"
+          r"(: (?P<minute>\d{1,2})"
+            r"(: (?P<second>\d{1,2})"
+              r"(. (?P<microsecond>\d+))?"
+            r")?"
+          r")?"
           r"(?: \s"
             r"(?P<tzinfo> [-+]\d{4,4})"
           r")?"

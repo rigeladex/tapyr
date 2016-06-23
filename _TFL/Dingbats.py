@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -21,6 +21,7 @@
 #    20-Feb-2014 (CT) Add `trigram_for_heaven`
 #    13-Mar-2014 (CT) Add some symbols for triangles and blocks
 #    23-Jan-2015 (CT) Add some symbols for various space characters
+#    29-Jun-2016 (CT) Add `infinity`
 #    ««revision-date»»···
 #--
 
@@ -241,6 +242,9 @@ black_upper_right_triangle                                          = "\u25E5"
 left_one_eighth_block                                               = "\u258F"
 left_one_quarter_block                                              = "\u258E"
 right_one_eighth_block                                              = "\u2595"
+
+### http://www.alanwood.net/unicode/mathematical_operators.html
+infinity                                                            = "\u221E"
 
 ### http://www.alanwood.net/unicode/miscellaneous_symbols.html
 trigram_for_heaven                                                  = "\u2630"
