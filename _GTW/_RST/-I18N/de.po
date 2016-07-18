@@ -370,7 +370,7 @@ msgstr "Kennwortänderung für Benutzerkonto %s"
 #: _GTW/_RST/_TOP/Auth.py:779
 #, python-format
 msgid "Password reset for user %s on website %s"
-msgstr "Kennwortänderung für Benutzerkonto %s"
+msgstr "Kennwortänderung für Benutzerkonto %s von Webseite %s"
 
 #: _GTW/_RST/Auth_Mixin.py:143
 msgid "Please enter a username"
