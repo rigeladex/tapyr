@@ -103,6 +103,7 @@
 #                       `((a1, b1), (a2, b2))`
 #    22-Jun-2016 (CT) Use `TFL.ui_display`, not `portable_repr`, for
 #                     `Quant._violator_values`
+#    18-Jul-2016 (CT) Add exception handler to `Invariants.embed`
 #    ««revision-date»»···
 #--
 
@@ -732,7 +733,15 @@ class Invariants (Error) :
 
     def embed (self, obj, c_name, c_attr) :
         for e in self.errors :
-            e.embed (obj, c_name, c_attr)
+            try :
+                embed = e.embed
+            except AttributeError :
+                logging.warning \
+                    ( "Error class %s doesn't define `embed`\n    %s"
+                    % (e.__class__, e)
+                    )
+            else :
+                embed (obj, c_name, c_attr)
     # end def embed
 
     def _flattened (self, errors) :
