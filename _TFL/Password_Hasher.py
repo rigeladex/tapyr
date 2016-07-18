@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -27,6 +27,8 @@
 #    28-May-2013 (CT) Use `@subclass_responsibility` instead of home-grown code
 #    25-Jun-2013 (CT) Make doctest Python-2.6 compatible
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    18-Jul-2016 (CT) Change back to use `bcrypt` directly,
+#                     not `passlib.hash.bcrypt`
 #    ««revision-date»»···
 #--
 
@@ -190,21 +192,20 @@ class sha224 (_Password_Hasher_SHA_) :
 # end class sha224
 
 try :
-    from passlib.hash import bcrypt
-    bcrypt.encrypt ("123", rounds = 4)
-except Exception :
+    import bcrypt
+except Exception as exc :
     pass
 else :
     class Bcrypt (Password_Hasher) :
         """Password Hasher using bcrypt
 
-        ### `salt` set to some random value extracted from a b-crypted password
-        >>> salt = bcrypt.normhash ("WCXrf6O517rQFabeyr7xtO")
+        ### `salt` set to return value of a call to `bcrypt.gensalt (12)`
+        >>> salt = "$2a$12$DHOfB4ntNEistZ4F7xeZAO"
 
         >>> pr = "Ao9ug9wahWae"
         >>> ph = Password_Hasher.Bcrypt.hashed (pr, salt)
         >>> print (ph)
-        $2a$12$WCXrf6O517rQFabeyr7xtOb3t0GkVQzCYFjPZvAQ237y2C3TL.XcO
+        $2a$12$DHOfB4ntNEistZ4F7xeZAOQiYlc5yijuThyoWEIO7dBnXqQ/wKvN6
 
         >>> Password_Hasher.Bcrypt.verify (pr, ph)
         True
@@ -221,15 +222,21 @@ else :
         @classmethod
         def hashed (cls, clear_password, salt = None) :
             """Hashed value of `clear_password` using `salt`"""
-            return bcrypt.encrypt \
-                (clear_password, rounds = cls.default_rounds, salt = salt)
+            if salt is None :
+                salt = bcrypt.gensalt (cls.default_rounds)
+            else :
+                salt = pyk.encoded (salt)
+            result = bcrypt.hashpw (pyk.encoded (clear_password, "ascii"), salt)
+            return pyk.decoded (result, "ascii")
         # end def hashed
 
         @classmethod
         def verify (cls, clear_password, hashed_password) :
             """True if `clear_password` and `hashed_password` match"""
             try :
-                return bcrypt.verify (clear_password, hashed_password)
+                cp = pyk.encoded (clear_password,  "ascii")
+                hp = pyk.encoded (hashed_password, "ascii")
+                return bcrypt.checkpw (cp, hp)
             except Exception :
                 return False
         # end def verify
