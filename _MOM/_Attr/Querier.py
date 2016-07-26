@@ -100,6 +100,11 @@
 #     6-Jun-2016 (CT) Change `_attr_selector.setter` to allow `.mandatory`
 #     6-Jun-2016 (CT) Add `__` guard to `__getattr__`
 #    10-Jun-2016 (CT) Add `E_Type.QC`, `.QR`
+#     6-Jul-2016 (CT) Add `Range`
+#    19-Jul-2016 (CT) Add `_Structured_`, factor `_Co_Mixin_`
+#    19-Jul-2016 (CT) Add `Time`; derive `Date` from `_Structured_`
+#     7-Oct-2016 (CT) Add `Time.Table` with `Filter.Time_*`  entries
+#     7-Oct-2016 (CT) Change `_Structured_._atoms` to look at `E_Type.edit_attr`
 #    ««revision-date»»···
 #--
 
@@ -694,7 +699,7 @@ class _Type_ (TFL.Meta.BaM (_Base_, metaclass = _M_Type_)) :
 
 # end class _Type_
 
-class _Composite_ (_Container_, _Type_) :
+class _Co_Mixin_ (_Container_, _Type_) :
 
     def _attrs_transitive (self, seen_etypes) :
         yield self
@@ -714,7 +719,25 @@ class _Composite_ (_Container_, _Type_) :
         return result
     # end def __getattr__
 
+# end class _Co_Mixin_
+
+class _Composite_ (_Co_Mixin_) :
+
+    pass
+
 # end class _Composite_
+
+class _Structured_ (_Co_Mixin_) :
+
+    def _atoms (self, seen_etypes) :
+        if self.E_Type.edit_attr :
+            for x in self.__super._atoms (seen_etypes) :
+                yield x
+        else :
+            yield self
+    # end def _atoms
+
+# end class _Structured_
 
 class Boolean (_Type_) :
 
@@ -746,7 +769,7 @@ class Composite (_Composite_) :
 
 # end class Composite
 
-class Date (_Type_) :
+class Date (_Structured_) :
 
     Table  = dict \
         ( EQ                 = Filter.Date_Equal
@@ -1094,6 +1117,38 @@ class Raw (String) :
     # end def _string_cooker
 
 # end class Raw
+
+### Define this after the other classes above to not change `Signatures`
+
+class Range (_Structured_) :
+    ### XXX Access to `lower`, `upper` or `start`, `finish`
+
+    Table  = dict \
+        ( _Type_.Table
+        , CONTAINS           = Filter.Range_Contains
+        , IN                 = Filter.Range_In
+        , IS_ADJACENT        = Filter.Range_Is_Adjacent
+        , OVERLAPS           = Filter.Range_Overlaps
+        )
+
+# end class Range
+
+class Time (_Structured_) :
+
+    Table  = dict \
+        ( EQ                 = Filter.Time_Equal
+        , GE                 = Filter.Time_Greater_Equal
+        , GT                 = Filter.Time_Greater_Than
+        , IN                 = Filter.Time_In
+        , LE                 = Filter.Time_Less_Equal
+        , LT                 = Filter.Time_Less_Than
+        , NE                 = Filter.Time_Not_Equal
+        )
+    _Table = dict \
+        ( AC                 = Filter.Time_Auto_Complete
+        )
+
+# end class Time
 
 class E_Type (_Container_) :
     """Query object for `E_Type` returning an essential attribute's `AQ`"""

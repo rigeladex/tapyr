@@ -294,7 +294,6 @@ _test_ancestors = """
     PAP.Company_has_Address              mom_id_entity
     PAP.Person_has_Address               mom_id_entity
 
-
 """
 
 _test_attr_wrappers = """
@@ -311,16 +310,29 @@ _test_attr_wrappers = """
       Kind_Wrapper : Int `last_cid`
           Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : Surrogate `pid`
-          Just_Once_Mixin, Internal, _DB_System_, _DB_Attr_, _System_
+          Just_Once_Mixin, _Just_Once_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : String `type_name`
           _Type_Name_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
     MOM.MD_Change
       Kind_Date_Time_Wrapper : Date-Time `c_time`
-          _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
+          _Sync_Change_, _Structured_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
+        <SAW : Date-Time `c_time` [mom_md_change
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_S : Entity `c_user`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : Surrogate `cid`
-          Just_Once_Mixin, _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
+          _Sync_Change_, Just_Once_Mixin, _Just_Once_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : String `kind`
           _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper_Q : Int `parent`
@@ -330,7 +342,20 @@ _test_attr_wrappers = """
       Kind_Wrapper : Int `pid`
           _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Date_Time_Wrapper : Date-Time `time`
-          _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
+          _Sync_Change_, _Structured_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
+        <SAW : Date-Time `time` [mom_md_change.t
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `type_name`
           _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper_S : Entity `user`
@@ -340,7 +365,7 @@ _test_attr_wrappers = """
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     MOM.Link1
       Kind_Wrapper_P : Left `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     MOM._Link_n_
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
@@ -391,43 +416,160 @@ _test_attr_wrappers = """
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
       Kind_Date_Time_Wrapper : Date-Time `finish`
-          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date-Time `finish` [finish]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Date_Time_Wrapper : Date-Time `start`
-          _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date-Time `start` [start]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
     MOM.Date_Time_Interval_C
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
       Kind_Date_Time_Wrapper : Date-Time `finish`
-          _Nested_Mixin_, Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, Computed_Set_Mixin, Computed_Mixin, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date-Time `finish` [finish]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Date_Time_Wrapper : Date-Time `start`
-          _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date-Time `start` [start]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
     MOM.Date_Time_Interval_N
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
       Kind_Date_Time_Wrapper : Date-Time `finish`
-          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date-Time `finish` [finish]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Date_Time_Wrapper : Date-Time `start`
-          _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date-Time `start` [start]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
     Auth.Certificate
       Kind_Wrapper_Q : Boolean `alive`
           Computed, Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Surrogate `cert_id`
-          Just_Once_Mixin, Internal, _DB_System_, _DB_Attr_, _System_
+          Just_Once_Mixin, _Just_Once_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : String `desc`
           Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Email `email`
           Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Date_Time_Wrapper : Date-Time `revocation_date`
-          Optional, _User_, _DB_Attr_
+          _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date-Time `revocation_date` [auth
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_C : Date_Time_Interval `validity`
           _Composite_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
         MOM.Date_Time_Interval
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Date_Time_Wrapper : Date-Time `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date-Time `validity.finish` [auth
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `hour`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `minute`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `second`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Date_Time_Wrapper : Date-Time `start`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date-Time `validity.start` [auth_
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `hour`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `minute`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `second`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
     Auth.Group
       Kind_Wrapper_R : Role_Ref_Set `accounts`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -458,38 +600,64 @@ _test_attr_wrappers = """
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth._Account_Action_
       Kind_Wrapper_P : Account `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth.Account_Activation
       Kind_Wrapper_S : Account `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth.Account_Password_Change_Required
       Kind_Wrapper_S : Account `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth._Account_Token_Action_
       Kind_Wrapper_P : Date-Time `expires`
-          Necessary, _User_, _DB_Attr_
+          _Structured_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper_P : Account `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_P : String `token`
-          Init_Only_Mixin, Just_Once_Mixin, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth.Account_EMail_Verification
       Kind_Date_Time_Wrapper : Date-Time `expires`
-          Necessary, _User_, _DB_Attr_
+          _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date-Time `expires` [auth_account
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_S : Account `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Email `new_email`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : String `token`
-          Init_Only_Mixin, Just_Once_Mixin, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth.Account_Password_Reset
       Kind_Date_Time_Wrapper : Date-Time `expires`
-          Necessary, _User_, _DB_Attr_
+          _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date-Time `expires` [auth_account
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_S : Account `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `password`
           Necessary, _User_, _DB_Attr_
       Kind_Wrapper : String `token`
-          Init_Only_Mixin, Just_Once_Mixin, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     EVT.Calendar
       Kind_Wrapper : String `desc`
           Optional, _User_, _DB_Attr_
@@ -499,28 +667,84 @@ _test_attr_wrappers = """
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `finish`
-          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date `finish` [finish]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `start`
-          _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date `start` [start]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
     MOM.Date_Interval_C
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `finish`
-          _Nested_Mixin_, Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, Computed_Set_Mixin, Computed_Mixin, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date `finish` [finish]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `start`
-          _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date `start` [start]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
     MOM.Date_Interval_N
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `finish`
-          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date `finish` [finish]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `start`
-          _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date `start` [start]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
     MOM.Time_Interval
       Kind_Wrapper_Time : Time `finish`
-          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Time `finish` [finish]>
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Time : Time `start`
-          _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Time `start` [start]>
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
     EVT.Link
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
@@ -536,13 +760,27 @@ _test_attr_wrappers = """
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date `date.finish` [evt_event.dat
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date `date.start` [evt_event.date
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `detail`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper_S : Id_Entity `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `occurs`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_R : Link_Ref `recurrence`
@@ -553,27 +791,62 @@ _test_attr_wrappers = """
           _Composite_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
         MOM.Time_Interval
           Kind_Wrapper_Time : Time `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Time `time.finish` [evt_event.tim
+             Kind_Wrapper_Q : Int `hour`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `minute`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `second`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Time : Time `start`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Time `time.start` [evt_event.time
+             Kind_Wrapper_Q : Int `hour`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `minute`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `second`
+                 Query, _Cached_, _Volatile_, _System_
     EVT.Event_occurs
       Kind_Wrapper_Date : Date `date`
-          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          _Structured_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+        <SAW : Date `date` [evt_event_occurs.dat
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Q : String `detail`
           Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Q : None `essence`
           Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_S : Event `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_Q : String `short_title`
           Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_C : Time_Interval `time`
           _Composite_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
         MOM.Time_Interval
           Kind_Wrapper_Time : Time `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Time `time.finish` [evt_event_occ
+             Kind_Wrapper_Q : Int `hour`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `minute`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `second`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Time : Time `start`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Time `time.start` [evt_event_occu
+             Kind_Wrapper_Q : Int `hour`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `minute`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `second`
+                 Query, _Cached_, _Volatile_, _System_
     EVT._Recurrence_Mixin_
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
@@ -583,7 +856,7 @@ _test_attr_wrappers = """
       Kind_Wrapper : Date_List `dates`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper_S : Event `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `rules`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
     EVT.Recurrence_Rule
@@ -594,11 +867,18 @@ _test_attr_wrappers = """
       Kind_Wrapper : Int_List `easter_offset`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper_Date : Date `finish`
-          Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
+          Computed_Set_Mixin, Computed_Mixin, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date `finish` [evt_recurrence_rul
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Boolean `is_exception`
           Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_S : Recurrence_Spec `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int_List `month`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Int_List `month_day`
@@ -608,7 +888,14 @@ _test_attr_wrappers = """
       Kind_Wrapper : Int_List `restrict_pos`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper_Date : Date `start`
-          Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
+          Computed_Set_Mixin, Computed_Mixin, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date `start` [evt_recurrence_rule
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Unit `unit`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Int_List `week`
@@ -650,9 +937,23 @@ _test_attr_wrappers = """
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `finish`
-          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date `finish` [finish]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `start`
-          _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date `start` [start]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
     PAP.Subject
       Kind_Wrapper_R : Role_Ref_Set `addresses`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -705,9 +1006,23 @@ _test_attr_wrappers = """
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date `lifetime.finish` [pap_compa
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date `lifetime.start` [pap_compan
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `name`
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `phones`
@@ -757,9 +1072,23 @@ _test_attr_wrappers = """
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date `lifetime.finish` [pap_perso
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date `lifetime.start` [pap_person
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `middle_name`
           _Raw_Value_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `phones`
@@ -789,7 +1118,7 @@ _test_attr_wrappers = """
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Address_Position
       Kind_Wrapper_S : Address `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_C : Position `position`
           _Composite_Mixin_, Required, _Required_Mixin_, _User_, _DB_Attr_
         MOM.Position
@@ -823,7 +1152,20 @@ _test_attr_wrappers = """
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     SRM.Regatta_Result
       Kind_Date_Time_Wrapper : Date-Time `date`
-          _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date-Time `date` [date]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `hour`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `minute`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `second`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `software`
           _Nested_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper : String `status`
@@ -851,7 +1193,7 @@ _test_attr_wrappers = """
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     SRM.Boat
       Kind_Wrapper_S : Boat_Class `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `name`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Nation `nation`
@@ -874,9 +1216,23 @@ _test_attr_wrappers = """
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, Computed_Set_Mixin, Computed_Mixin, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date `date.finish` [srm_regatta_e
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date `date.start` [srm_regatta_ev
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `desc`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Boolean `is_cancelled`
@@ -893,9 +1249,23 @@ _test_attr_wrappers = """
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `finish`
-          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+        <SAW : Date `finish` [finish]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `start`
-          _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+        <SAW : Date `start` [start]>
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
     SWP.Object_PN
       Kind_Wrapper_R : Link_Ref_List `clips`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -931,9 +1301,23 @@ _test_attr_wrappers = """
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date `date.finish` [swp_page.date
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date `date.start` [swp_page.date_
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Format `format`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper : String `head_line`
@@ -970,20 +1354,48 @@ _test_attr_wrappers = """
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date `date.finish` [swp_clip_o.da
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date `date.start` [swp_clip_o.dat
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_C : Date_Interval `date_x`
           _Composite_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
         MOM.Date_Interval
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date `date_x.finish` [swp_clip_o.
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date `date_x.start` [swp_clip_o.d
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_S : Object_PN `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int `prio`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
     SWP.Clip_X
@@ -998,9 +1410,23 @@ _test_attr_wrappers = """
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date `date.finish` [swp_gallery.d
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date `date.start` [swp_gallery.da
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Directory `directory`
           Necessary, _User_, _DB_Attr_
       Kind_Wrapper : Boolean `hidden`
@@ -1027,21 +1453,21 @@ _test_attr_wrappers = """
           _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     MOM._Pic_
       Kind_Wrapper : String `extension`
-          _Nested_Mixin_, Init_Only_Mixin, Just_Once_Mixin, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, Init_Only_Mixin, _Just_Once_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Y `height`
           _Nested_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper : X `width`
           _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     MOM._Thumb_
       Kind_Wrapper : String `extension`
-          _Nested_Mixin_, Init_Only_Mixin, Just_Once_Mixin, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, Init_Only_Mixin, _Just_Once_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Y `height`
           _Nested_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper : X `width`
           _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     SWP.Picture
       Kind_Wrapper_S : Gallery `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `name`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Int `number`
@@ -1050,7 +1476,7 @@ _test_attr_wrappers = """
           _Composite_Mixin_, Necessary, _User_, _DB_Attr_
         MOM._Pic_
           Kind_Wrapper : String `extension`
-              _Nested_Mixin_, Init_Only_Mixin, Just_Once_Mixin, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, Init_Only_Mixin, _Just_Once_Mixin_, Optional, _User_, _DB_Attr_
           Kind_Wrapper : Y `height`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
           Kind_Wrapper : X `width`
@@ -1059,7 +1485,7 @@ _test_attr_wrappers = """
           _Composite_Mixin_, Necessary, _User_, _DB_Attr_
         MOM._Thumb_
           Kind_Wrapper : String `extension`
-              _Nested_Mixin_, Init_Only_Mixin, Just_Once_Mixin, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, Init_Only_Mixin, _Just_Once_Mixin_, Optional, _User_, _DB_Attr_
           Kind_Wrapper : Y `height`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
           Kind_Wrapper : X `width`
@@ -1073,9 +1499,23 @@ _test_attr_wrappers = """
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+              _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
+          <SAW : Date `date.finish` [swp_referral.
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
+              _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date `date.start` [swp_referral.d
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `download_name`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Boolean `hidden`
@@ -1107,7 +1547,7 @@ _test_attr_wrappers = """
       Kind_Wrapper : String `kind`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper_S : Regatta_Event `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `perma_name`
           Computed_Set_Mixin, Computed_Mixin, _Auto_Update_Lazy_Mixin_, _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : Int `races`
@@ -1118,8 +1558,21 @@ _test_attr_wrappers = """
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
         SRM.Regatta_Result
           Kind_Date_Time_Wrapper : Date-Time `date`
-              _Nested_Mixin_, Necessary, _User_, _DB_Attr_
-          Kind_Wrapper : String `software`
+              _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
+          <SAW : Date-Time `result.date` [srm_rega
+             Kind_Wrapper_Q : Int `day`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `hour`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `minute`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `month`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `second`
+                 Query, _Cached_, _Volatile_, _System_
+             Kind_Wrapper_Q : Int `year`
+                 Query, _Cached_, _Volatile_, _System_
+           Kind_Wrapper : String `software`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
           Kind_Wrapper : String `status`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
@@ -1139,7 +1592,7 @@ _test_attr_wrappers = """
       Kind_Wrapper_S : Entity `club`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_S : Person `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int `mna_number`
           _Raw_Value_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Nation `nation`
@@ -1168,7 +1621,14 @@ _test_attr_wrappers = """
       Kind_Wrapper : Int `rank`
           Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper_Date : Date `registration_date`
-          Init_Only_Mixin, Just_Once_Mixin, Internal, _DB_System_, _DB_Attr_, _System_
+          Init_Only_Mixin, _Just_Once_Mixin_, _Structured_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
+        <SAW : Date `registration_date` [srm_boa
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_S : Regatta `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_S : Entity `skipper`
@@ -1181,7 +1641,7 @@ _test_attr_wrappers = """
       Kind_Wrapper : Boolean `discarded`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper_S : Boat_in_Regatta `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int `points`
           Necessary, _User_, _DB_Attr_
       Kind_Wrapper : Int `race`
@@ -1198,13 +1658,20 @@ _test_attr_wrappers = """
       Kind_Wrapper_S : Entity `leader`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper_S : Regatta_C `left`
-          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+          Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `name`
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int `place`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper_Date : Date `registration_date`
-          Internal, _DB_System_, _DB_Attr_, _System_
+          _Structured_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
+        <SAW : Date `registration_date` [srm_tea
+          Kind_Wrapper_Q : Int `day`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `month`
+              Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Q : Int `year`
+              Query, _Cached_, _Volatile_, _System_
     SRM.Crew_Member
       Kind_Wrapper : Int `key`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
@@ -1267,7 +1734,7 @@ _test_attr_wrappers = """
       person               -> PAP.Person
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       pid
-        Just_Once_Mixin, Internal, _DB_System_, _DB_Attr_, _System_
+        Just_Once_Mixin, _Just_Once_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       superuser
         Optional, _User_, _DB_Attr_
       suspended
@@ -1301,15 +1768,15 @@ _test_attr_wrappers = """
         alive
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
         finish
-          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Optional, _User_, _DB_Attr_
         start
-          _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+          _Nested_Mixin_, _Structured_Mixin_, Necessary, _User_, _DB_Attr_
       middle_name
         _Raw_Value_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       phones               -> PAP.Phone
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       pid
-        Just_Once_Mixin, Internal, _DB_System_, _DB_Attr_, _System_
+        Just_Once_Mixin, _Just_Once_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       sailors              -> SRM.Sailor
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       sex
@@ -1338,7 +1805,7 @@ _test_attr_wrappers = """
       left                 -> PAP.Person
         Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       pid
-        Just_Once_Mixin, Internal, _DB_System_, _DB_Attr_, _System_
+        Just_Once_Mixin, _Just_Once_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       right                -> PAP.Phone
         Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       type_name
@@ -1355,8 +1822,8 @@ _test_fk_cols = """
     ...         for fkc in sorted (ETW.fk_cols, key = lambda x: x.name) :
     ...             print ("   ", formatted_column (fkc))
     MOM.MD_Change
-        Column c_user                    : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity c_user Id_Entity()
-        Column user                      : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity user Id_Entity()
+        Column c_user                    : Integer              Internal__Id_Entity_Reference__Computed__Sync_Change Entity c_user Id_Entity()
+        Column user                      : Integer              Internal__Id_Entity_Reference__Computed__Sync_Change Entity user Id_Entity()
     Auth.Account_in_Group
         Column left                      : Integer              Link_Role Account left Id_Entity()
         Column right                     : Integer              Link_Role Group right Id_Entity()
@@ -1640,6 +2107,12 @@ _test_q_able = """
       <SAW : String `type_name` [mom_id_entity.type_name]>
     <SAW : MOM.MD_Change [mom_md_change]>
       <SAW : Date-Time `c_time` [mom_md_change.c_time]>
+      <SAW : Int `c_time.day`>
+      <SAW : Int `c_time.hour`>
+      <SAW : Int `c_time.minute`>
+      <SAW : Int `c_time.month`>
+      <SAW : Int `c_time.second`>
+      <SAW : Int `c_time.year`>
       <SAW : Entity `c_user` [mom_md_change.c_user]>
       <SAW : Surrogate `cid` [mom_md_change.cid]>
       <SAW : String `kind` [mom_md_change.kind]>
@@ -1647,6 +2120,12 @@ _test_q_able = """
       <SAW : Int `parent_cid` [mom_md_change.parent_cid]>
       <SAW : Int `pid` [mom_md_change.pid]>
       <SAW : Date-Time `time` [mom_md_change.time]>
+      <SAW : Int `time.day`>
+      <SAW : Int `time.hour`>
+      <SAW : Int `time.minute`>
+      <SAW : Int `time.month`>
+      <SAW : Int `time.second`>
+      <SAW : Int `time.year`>
       <SAW : String `type_name` [mom_md_change.type_name]>
       <SAW : Entity `user` [mom_md_change.user]>
     <SAW : MOM.Link [mom_id_entity]>
@@ -1759,15 +2238,51 @@ _test_q_able = """
     <SAW : MOM.Date_Time_Interval []>
       <SAW : Boolean `alive`>
       <SAW : Date-Time `finish` [finish]>
+      <SAW : Int `finish.day`>
+      <SAW : Int `finish.hour`>
+      <SAW : Int `finish.minute`>
+      <SAW : Int `finish.month`>
+      <SAW : Int `finish.second`>
+      <SAW : Int `finish.year`>
       <SAW : Date-Time `start` [start]>
+      <SAW : Int `start.day`>
+      <SAW : Int `start.hour`>
+      <SAW : Int `start.minute`>
+      <SAW : Int `start.month`>
+      <SAW : Int `start.second`>
+      <SAW : Int `start.year`>
     <SAW : MOM.Date_Time_Interval_C []>
       <SAW : Boolean `alive`>
       <SAW : Date-Time `finish` [finish]>
+      <SAW : Int `finish.day`>
+      <SAW : Int `finish.hour`>
+      <SAW : Int `finish.minute`>
+      <SAW : Int `finish.month`>
+      <SAW : Int `finish.second`>
+      <SAW : Int `finish.year`>
       <SAW : Date-Time `start` [start]>
+      <SAW : Int `start.day`>
+      <SAW : Int `start.hour`>
+      <SAW : Int `start.minute`>
+      <SAW : Int `start.month`>
+      <SAW : Int `start.second`>
+      <SAW : Int `start.year`>
     <SAW : MOM.Date_Time_Interval_N []>
       <SAW : Boolean `alive`>
       <SAW : Date-Time `finish` [finish]>
+      <SAW : Int `finish.day`>
+      <SAW : Int `finish.hour`>
+      <SAW : Int `finish.minute`>
+      <SAW : Int `finish.month`>
+      <SAW : Int `finish.second`>
+      <SAW : Int `finish.year`>
       <SAW : Date-Time `start` [start]>
+      <SAW : Int `start.day`>
+      <SAW : Int `start.hour`>
+      <SAW : Int `start.minute`>
+      <SAW : Int `start.month`>
+      <SAW : Int `start.second`>
+      <SAW : Int `start.year`>
     <SAW : Auth.Certificate [auth_certificate : mom_id_entity]>
       <SAW : Boolean `alive`>
       <SAW : Surrogate `cert_id` [auth_certificate.cert_id]>
@@ -1779,6 +2294,12 @@ _test_q_able = """
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Date-Time `revocation_date` [auth_certificate.revocation_date]>
+      <SAW : Int `revocation_date.day`>
+      <SAW : Int `revocation_date.hour`>
+      <SAW : Int `revocation_date.minute`>
+      <SAW : Int `revocation_date.month`>
+      <SAW : Int `revocation_date.second`>
+      <SAW : Int `revocation_date.year`>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Date_Time_Interval `validity` [auth_certificate.validity__finish, auth_certificate.validity__start]>
       <SAW : Boolean `validity.alive`>
@@ -1873,6 +2394,12 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Link_Ref_List `events`>
       <SAW : Date-Time `expires` [auth_account_email_verification.expires]>
+      <SAW : Int `expires.day`>
+      <SAW : Int `expires.hour`>
+      <SAW : Int `expires.minute`>
+      <SAW : Int `expires.month`>
+      <SAW : Int `expires.second`>
+      <SAW : Int `expires.year`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Account `left` [auth_account_email_verification.left]>
@@ -1884,6 +2411,12 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Link_Ref_List `events`>
       <SAW : Date-Time `expires` [auth_account_password_reset.expires]>
+      <SAW : Int `expires.day`>
+      <SAW : Int `expires.hour`>
+      <SAW : Int `expires.minute`>
+      <SAW : Int `expires.month`>
+      <SAW : Int `expires.second`>
+      <SAW : Int `expires.year`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Account `left` [auth_account_password_reset.left]>
@@ -1917,18 +2450,42 @@ _test_q_able = """
     <SAW : MOM.Date_Interval []>
       <SAW : Boolean `alive`>
       <SAW : Date `finish` [finish]>
+      <SAW : Int `finish.day`>
+      <SAW : Int `finish.month`>
+      <SAW : Int `finish.year`>
       <SAW : Date `start` [start]>
+      <SAW : Int `start.day`>
+      <SAW : Int `start.month`>
+      <SAW : Int `start.year`>
     <SAW : MOM.Date_Interval_C []>
       <SAW : Boolean `alive`>
       <SAW : Date `finish` [finish]>
+      <SAW : Int `finish.day`>
+      <SAW : Int `finish.month`>
+      <SAW : Int `finish.year`>
       <SAW : Date `start` [start]>
+      <SAW : Int `start.day`>
+      <SAW : Int `start.month`>
+      <SAW : Int `start.year`>
     <SAW : MOM.Date_Interval_N []>
       <SAW : Boolean `alive`>
       <SAW : Date `finish` [finish]>
+      <SAW : Int `finish.day`>
+      <SAW : Int `finish.month`>
+      <SAW : Int `finish.year`>
       <SAW : Date `start` [start]>
+      <SAW : Int `start.day`>
+      <SAW : Int `start.month`>
+      <SAW : Int `start.year`>
     <SAW : MOM.Time_Interval []>
       <SAW : Time `finish` [finish]>
+      <SAW : Int `finish.hour`>
+      <SAW : Int `finish.minute`>
+      <SAW : Int `finish.second`>
       <SAW : Time `start` [start]>
+      <SAW : Int `start.hour`>
+      <SAW : Int `start.minute`>
+      <SAW : Int `start.second`>
     <SAW : EVT.Link [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Link_Ref_List `events`>
@@ -1964,6 +2521,9 @@ _test_q_able = """
     <SAW : EVT.Event_occurs [evt_event_occurs : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Date `date` [evt_event_occurs.date]>
+      <SAW : Int `date.day`>
+      <SAW : Int `date.month`>
+      <SAW : Int `date.year`>
       <SAW : String `detail`>
       <SAW : None `essence`>
       <SAW : Link_Ref_List `events`>
@@ -2000,6 +2560,9 @@ _test_q_able = """
       <SAW : Int_List `easter_offset` [evt_recurrence_rule.easter_offset]>
       <SAW : Link_Ref_List `events`>
       <SAW : Date `finish` [evt_recurrence_rule.finish]>
+      <SAW : Int `finish.day`>
+      <SAW : Int `finish.month`>
+      <SAW : Int `finish.year`>
       <SAW : Boolean `is_exception` [evt_recurrence_rule.is_exception]>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -2010,6 +2573,9 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Int_List `restrict_pos` [evt_recurrence_rule.restrict_pos]>
       <SAW : Date `start` [evt_recurrence_rule.start]>
+      <SAW : Int `start.day`>
+      <SAW : Int `start.month`>
+      <SAW : Int `start.year`>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Unit `unit` [evt_recurrence_rule.unit]>
       <SAW : Int_List `week` [evt_recurrence_rule.week]>
@@ -2060,7 +2626,13 @@ _test_q_able = """
     <SAW : MOM.Date_Interval_lifetime []>
       <SAW : Boolean `alive`>
       <SAW : Date `finish` [finish]>
+      <SAW : Int `finish.day`>
+      <SAW : Int `finish.month`>
+      <SAW : Int `finish.year`>
       <SAW : Date `start` [start]>
+      <SAW : Int `start.day`>
+      <SAW : Int `start.month`>
+      <SAW : Int `start.year`>
     <SAW : PAP.Subject [mom_id_entity]>
       <SAW : Role_Ref_Set `addresses`>
       <SAW : Rev_Ref `creation`>
@@ -2236,6 +2808,12 @@ _test_q_able = """
       <SAW : String `type_name` [mom_id_entity.type_name]>
     <SAW : SRM.Regatta_Result []>
       <SAW : Date-Time `date` [date]>
+      <SAW : Int `date.day`>
+      <SAW : Int `date.hour`>
+      <SAW : Int `date.minute`>
+      <SAW : Int `date.month`>
+      <SAW : Int `date.second`>
+      <SAW : Int `date.year`>
       <SAW : String `software` [software]>
       <SAW : String `status` [status]>
     <SAW : SRM.Id_Entity [mom_id_entity]>
@@ -2351,7 +2929,13 @@ _test_q_able = """
     <SAW : MOM.Date_Interval_N_date []>
       <SAW : Boolean `alive`>
       <SAW : Date `finish` [finish]>
+      <SAW : Int `finish.day`>
+      <SAW : Int `finish.month`>
+      <SAW : Int `finish.year`>
       <SAW : Date `start` [start]>
+      <SAW : Int `start.day`>
+      <SAW : Int `start.month`>
+      <SAW : Int `start.year`>
     <SAW : SWP.Object_PN [mom_id_entity]>
       <SAW : Link_Ref_List `clips`>
       <SAW : Rev_Ref `creation`>
@@ -2640,6 +3224,9 @@ _test_q_able = """
       <SAW : Link_Ref_List `race_results`>
       <SAW : Int `rank` [srm_boat_in_regatta.rank]>
       <SAW : Date `registration_date` [srm_boat_in_regatta.registration_date]>
+      <SAW : Int `registration_date.day`>
+      <SAW : Int `registration_date.month`>
+      <SAW : Int `registration_date.year`>
       <SAW : Regatta `right` [srm_boat_in_regatta.right]>
       <SAW : Entity `skipper` [srm_boat_in_regatta.skipper]>
       <SAW : Role_Ref_Set `teams`>
@@ -2671,6 +3258,9 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Int `place` [srm_team.place]>
       <SAW : Date `registration_date` [srm_team.registration_date]>
+      <SAW : Int `registration_date.day`>
+      <SAW : Int `registration_date.month`>
+      <SAW : Int `registration_date.year`>
       <SAW : String `type_name` [mom_id_entity.type_name]>
     <SAW : SRM.Crew_Member [srm_crew_member : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
@@ -2826,6 +3416,12 @@ _test_q_able = """
       type_name                     : type_name
     <SAW : MOM.MD_Change [mom_md_change]>
       c_time                        : c_time
+          day                           : c_time.day
+          hour                          : c_time.hour
+          minute                        : c_time.minute
+          month                         : c_time.month
+          second                        : c_time.second
+          year                          : c_time.year
       c_user                        : c_user
       cid                           : cid
       kind                          : kind
@@ -2833,6 +3429,12 @@ _test_q_able = """
       parent_cid                    : parent_cid
       pid                           : pid
       time                          : time
+          day                           : time.day
+          hour                          : time.hour
+          minute                        : time.minute
+          month                         : time.month
+          second                        : time.second
+          year                          : time.year
       type_name                     : type_name
       user                          : user
     <SAW : MOM.Link [mom_id_entity]>
@@ -2945,15 +3547,51 @@ _test_q_able = """
     <SAW : MOM.Date_Time_Interval []>
       alive                         : alive
       finish                        : finish
+          day                           : finish.day
+          hour                          : finish.hour
+          minute                        : finish.minute
+          month                         : finish.month
+          second                        : finish.second
+          year                          : finish.year
       start                         : start
+          day                           : start.day
+          hour                          : start.hour
+          minute                        : start.minute
+          month                         : start.month
+          second                        : start.second
+          year                          : start.year
     <SAW : MOM.Date_Time_Interval_C []>
       alive                         : alive
       finish                        : finish
+          day                           : finish.day
+          hour                          : finish.hour
+          minute                        : finish.minute
+          month                         : finish.month
+          second                        : finish.second
+          year                          : finish.year
       start                         : start
+          day                           : start.day
+          hour                          : start.hour
+          minute                        : start.minute
+          month                         : start.month
+          second                        : start.second
+          year                          : start.year
     <SAW : MOM.Date_Time_Interval_N []>
       alive                         : alive
       finish                        : finish
+          day                           : finish.day
+          hour                          : finish.hour
+          minute                        : finish.minute
+          month                         : finish.month
+          second                        : finish.second
+          year                          : finish.year
       start                         : start
+          day                           : start.day
+          hour                          : start.hour
+          minute                        : start.minute
+          month                         : start.month
+          second                        : start.second
+          year                          : start.year
     <SAW : Auth.Certificate [auth_certificate : mom_id_entity]>
       alive                         : alive
       cert_id                       : cert_id
@@ -2965,11 +3603,29 @@ _test_q_able = """
       last_cid                      : last_cid
       pid                           : pid
       revocation_date               : revocation_date
+          day                           : revocation_date.day
+          hour                          : revocation_date.hour
+          minute                        : revocation_date.minute
+          month                         : revocation_date.month
+          second                        : revocation_date.second
+          year                          : revocation_date.year
       type_name                     : type_name
       validity                      : validity
           alive                         : validity.alive
           finish                        : validity.finish
+              day                           : validity__finish.day
+              hour                          : validity__finish.hour
+              minute                        : validity__finish.minute
+              month                         : validity__finish.month
+              second                        : validity__finish.second
+              year                          : validity__finish.year
           start                         : validity.start
+              day                           : validity__start.day
+              hour                          : validity__start.hour
+              minute                        : validity__start.minute
+              month                         : validity__start.month
+              second                        : validity__start.second
+              year                          : validity__start.year
     <SAW : Auth.Group [auth_group : mom_id_entity]>
       accounts                      : accounts
       creation                      : creation
@@ -3061,6 +3717,12 @@ _test_q_able = """
       creation                      : creation
       events                        : events
       expires                       : expires
+          day                           : expires.day
+          hour                          : expires.hour
+          minute                        : expires.minute
+          month                         : expires.month
+          second                        : expires.second
+          year                          : expires.year
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : account, left
@@ -3072,6 +3734,12 @@ _test_q_able = """
       creation                      : creation
       events                        : events
       expires                       : expires
+          day                           : expires.day
+          hour                          : expires.hour
+          minute                        : expires.minute
+          month                         : expires.month
+          second                        : expires.second
+          year                          : expires.year
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : account, left
@@ -3105,18 +3773,42 @@ _test_q_able = """
     <SAW : MOM.Date_Interval []>
       alive                         : alive
       finish                        : finish
+          day                           : finish.day
+          month                         : finish.month
+          year                          : finish.year
       start                         : start
+          day                           : start.day
+          month                         : start.month
+          year                          : start.year
     <SAW : MOM.Date_Interval_C []>
       alive                         : alive
       finish                        : finish
+          day                           : finish.day
+          month                         : finish.month
+          year                          : finish.year
       start                         : start
+          day                           : start.day
+          month                         : start.month
+          year                          : start.year
     <SAW : MOM.Date_Interval_N []>
       alive                         : alive
       finish                        : finish
+          day                           : finish.day
+          month                         : finish.month
+          year                          : finish.year
       start                         : start
+          day                           : start.day
+          month                         : start.month
+          year                          : start.year
     <SAW : MOM.Time_Interval []>
       finish                        : finish
+          hour                          : finish.hour
+          minute                        : finish.minute
+          second                        : finish.second
       start                         : start
+          hour                          : start.hour
+          minute                        : start.minute
+          second                        : start.second
     <SAW : EVT.Link [mom_id_entity]>
       creation                      : creation
       events                        : events
@@ -3139,7 +3831,13 @@ _test_q_able = """
       date                          : date
           alive                         : date.alive
           finish                        : date.finish
+              day                           : date__finish.day
+              month                         : date__finish.month
+              year                          : date__finish.year
           start                         : date.start
+              day                           : date__start.day
+              month                         : date__start.month
+              year                          : date__start.year
       detail                        : detail
       events                        : events
       last_change                   : last_change
@@ -3151,11 +3849,20 @@ _test_q_able = """
       short_title                   : short_title
       time                          : time
           finish                        : time.finish
+              hour                          : time__finish.hour
+              minute                        : time__finish.minute
+              second                        : time__finish.second
           start                         : time.start
+              hour                          : time__start.hour
+              minute                        : time__start.minute
+              second                        : time__start.second
       type_name                     : type_name
     <SAW : EVT.Event_occurs [evt_event_occurs : mom_id_entity]>
       creation                      : creation
       date                          : date
+          day                           : date.day
+          month                         : date.month
+          year                          : date.year
       detail                        : detail
       essence                       : essence
       events                        : events
@@ -3166,7 +3873,13 @@ _test_q_able = """
       short_title                   : short_title
       time                          : time
           finish                        : time.finish
+              hour                          : time__finish.hour
+              minute                        : time__finish.minute
+              second                        : time__finish.second
           start                         : time.start
+              hour                          : time__start.hour
+              minute                        : time__start.minute
+              second                        : time__start.second
       type_name                     : type_name
     <SAW : EVT._Recurrence_Mixin_ [mom_id_entity]>
       creation                      : creation
@@ -3194,6 +3907,9 @@ _test_q_able = """
       easter_offset                 : easter_offset
       events                        : events
       finish                        : finish
+          day                           : finish.day
+          month                         : finish.month
+          year                          : finish.year
       is_exception                  : is_exception
       last_change                   : last_change
       last_cid                      : last_cid
@@ -3204,6 +3920,9 @@ _test_q_able = """
       pid                           : pid
       restrict_pos                  : restrict_pos
       start                         : start
+          day                           : start.day
+          month                         : start.month
+          year                          : start.year
       type_name                     : type_name
       unit                          : unit
       week                          : week
@@ -3254,7 +3973,13 @@ _test_q_able = """
     <SAW : MOM.Date_Interval_lifetime []>
       alive                         : alive
       finish                        : finish
+          day                           : finish.day
+          month                         : finish.month
+          year                          : finish.year
       start                         : start
+          day                           : start.day
+          month                         : start.month
+          year                          : start.year
     <SAW : PAP.Subject [mom_id_entity]>
       addresses                     : addresses
       creation                      : creation
@@ -3305,7 +4030,13 @@ _test_q_able = """
       lifetime                      : lifetime
           alive                         : lifetime.alive
           finish                        : lifetime.finish
+              day                           : lifetime__finish.day
+              month                         : lifetime__finish.month
+              year                          : lifetime__finish.year
           start                         : lifetime.start
+              day                           : lifetime__start.day
+              month                         : lifetime__start.month
+              year                          : lifetime__start.year
       name                          : name
       phones                        : phones
       pid                           : pid
@@ -3350,7 +4081,13 @@ _test_q_able = """
       lifetime                      : lifetime
           alive                         : lifetime.alive
           finish                        : lifetime.finish
+              day                           : lifetime__finish.day
+              month                         : lifetime__finish.month
+              year                          : lifetime__finish.year
           start                         : lifetime.start
+              day                           : lifetime__start.day
+              month                         : lifetime__start.month
+              year                          : lifetime__start.year
       middle_name                   : middle_name
       phones                        : phones
       pid                           : pid
@@ -3437,6 +4174,12 @@ _test_q_able = """
       type_name                     : type_name
     <SAW : SRM.Regatta_Result []>
       date                          : date
+          day                           : date.day
+          hour                          : date.hour
+          minute                        : date.minute
+          month                         : date.month
+          second                        : date.second
+          year                          : date.year
       software                      : software
       status                        : status
     <SAW : SRM.Id_Entity [mom_id_entity]>
@@ -3525,7 +4268,13 @@ _test_q_able = """
       date                          : date
           alive                         : date.alive
           finish                        : date.finish
+              day                           : date__finish.day
+              month                         : date__finish.month
+              year                          : date__finish.year
           start                         : date.start
+              day                           : date__start.day
+              month                         : date__start.month
+              year                          : date__start.year
       desc                          : desc
       events                        : events
       is_cancelled                  : is_cancelled
@@ -3554,7 +4303,13 @@ _test_q_able = """
     <SAW : MOM.Date_Interval_N_date []>
       alive                         : alive
       finish                        : finish
+          day                           : finish.day
+          month                         : finish.month
+          year                          : finish.year
       start                         : start
+          day                           : start.day
+          month                         : start.month
+          year                          : start.year
     <SAW : SWP.Object_PN [mom_id_entity]>
       clips                         : clips
       creation                      : creation
@@ -3581,7 +4336,13 @@ _test_q_able = """
       date                          : date
           alive                         : date.alive
           finish                        : date.finish
+              day                           : date__finish.day
+              month                         : date__finish.month
+              year                          : date__finish.year
           start                         : date.start
+              day                           : date__start.day
+              month                         : date__start.month
+              year                          : date__start.year
       events                        : events
       format                        : format
       head_line                     : head_line
@@ -3602,7 +4363,13 @@ _test_q_able = """
       date                          : date
           alive                         : date.alive
           finish                        : date.finish
+              day                           : date__finish.day
+              month                         : date__finish.month
+              year                          : date__finish.year
           start                         : date.start
+              day                           : date__start.day
+              month                         : date__start.month
+              year                          : date__start.year
       events                        : events
       format                        : format
       head_line                     : head_line
@@ -3640,11 +4407,23 @@ _test_q_able = """
       date                          : date
           alive                         : date.alive
           finish                        : date.finish
+              day                           : date__finish.day
+              month                         : date__finish.month
+              year                          : date__finish.year
           start                         : date.start
+              day                           : date__start.day
+              month                         : date__start.month
+              year                          : date__start.year
       date_x                        : date_x
           alive                         : date_x.alive
           finish                        : date_x.finish
+              day                           : date_x__finish.day
+              month                         : date_x__finish.month
+              year                          : date_x__finish.year
           start                         : date_x.start
+              day                           : date_x__start.day
+              month                         : date_x__start.month
+              year                          : date_x__start.year
       events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
@@ -3659,7 +4438,13 @@ _test_q_able = """
       date                          : date
           alive                         : date.alive
           finish                        : date.finish
+              day                           : date__finish.day
+              month                         : date__finish.month
+              year                          : date__finish.year
           start                         : date.start
+              day                           : date__start.day
+              month                         : date__start.month
+              year                          : date__start.year
       events                        : events
       format                        : format
       head_line                     : head_line
@@ -3680,7 +4465,13 @@ _test_q_able = """
       date                          : date
           alive                         : date.alive
           finish                        : date.finish
+              day                           : date__finish.day
+              month                         : date__finish.month
+              year                          : date__finish.year
           start                         : date.start
+              day                           : date__start.day
+              month                         : date__start.month
+              year                          : date__start.year
       directory                     : directory
       events                        : events
       hidden                        : hidden
@@ -3731,7 +4522,13 @@ _test_q_able = """
       date                          : date
           alive                         : date.alive
           finish                        : date.finish
+              day                           : date__finish.day
+              month                         : date__finish.month
+              year                          : date__finish.year
           start                         : date.start
+              day                           : date__start.day
+              month                         : date__start.month
+              year                          : date__start.year
       download_name                 : download_name
       events                        : events
       hidden                        : hidden
@@ -3752,7 +4549,13 @@ _test_q_able = """
       date                          : date
           alive                         : date.alive
           finish                        : date.finish
+              day                           : date__finish.day
+              month                         : date__finish.month
+              year                          : date__finish.year
           start                         : date.start
+              day                           : date__start.day
+              month                         : date__start.month
+              year                          : date__start.year
       desc                          : desc
       event                         : event
       events                        : events
@@ -3782,6 +4585,12 @@ _test_q_able = """
       races_counted                 : races_counted
       result                        : result
           date                          : result.date
+              day                           : result__date.day
+              hour                          : result__date.hour
+              minute                        : result__date.minute
+              month                         : result__date.month
+              second                        : result__date.second
+              year                          : result__date.year
           software                      : result.software
           status                        : result.status
       starters_rl                   : starters_rl
@@ -3805,6 +4614,12 @@ _test_q_able = """
       races_counted                 : races_counted
       result                        : result
           date                          : result.date
+              day                           : result__date.day
+              hour                          : result__date.hour
+              minute                        : result__date.minute
+              month                         : result__date.month
+              second                        : result__date.second
+              year                          : result__date.year
           software                      : result.software
           status                        : result.status
       starters_rl                   : starters_rl
@@ -3827,6 +4642,12 @@ _test_q_able = """
       races_counted                 : races_counted
       result                        : result
           date                          : result.date
+              day                           : result__date.day
+              hour                          : result__date.hour
+              minute                        : result__date.minute
+              month                         : result__date.month
+              second                        : result__date.second
+              year                          : result__date.year
           software                      : result.software
           status                        : result.status
       starters_rl                   : starters_rl
@@ -3874,6 +4695,9 @@ _test_q_able = """
       race_results                  : race_results
       rank                          : rank
       registration_date             : registration_date
+          day                           : registration_date.day
+          month                         : registration_date.month
+          year                          : registration_date.year
       right                         : regatta, right
       skipper                       : skipper
       teams                         : teams
@@ -3905,6 +4729,9 @@ _test_q_able = """
       pid                           : pid
       place                         : place
       registration_date             : registration_date
+          day                           : registration_date.day
+          month                         : registration_date.month
+          year                          : registration_date.year
       type_name                     : type_name
     <SAW : SRM.Crew_Member [srm_crew_member : mom_id_entity]>
       creation                      : creation
@@ -4049,6 +4876,7 @@ _test_q_able = """
       pid                           : pid
       right                         : address, property, right
       type_name                     : type_name
+
 
 """
 
@@ -6664,7 +7492,19 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : MOM.MD_Change [mom_md_change]>
-        c_time                    : mom_md_change.c_time
+        c_time                    : <Col-Mapper for <SAW : Date-Time `c_time` [mom_md_change>
+            day                   : <SAW : Int `c_time.day`>
+            hour                  : <SAW : Int `c_time.hour`>
+            minute                : <SAW : Int `c_time.minute`>
+            month                 : <SAW : Int `c_time.month`>
+            second                : <SAW : Int `c_time.second`>
+            year                  : <SAW : Int `c_time.year`>
+        c_time.day                : <SAW : Int `c_time.day`>
+        c_time.hour               : <SAW : Int `c_time.hour`>
+        c_time.minute             : <SAW : Int `c_time.minute`>
+        c_time.month              : <SAW : Int `c_time.month`>
+        c_time.second             : <SAW : Int `c_time.second`>
+        c_time.year               : <SAW : Int `c_time.year`>
         c_user                    : mom_md_change.c_user
         cid                       : mom_md_change.cid
         kind                      : mom_md_change.kind
@@ -6672,7 +7512,19 @@ _test_qc_map = """
         parent_cid                : mom_md_change.parent_cid
         pid                       : mom_md_change.pid
         scm_change                : mom_md_change.scm_change
-        time                      : mom_md_change.time
+        time                      : <Col-Mapper for <SAW : Date-Time `time` [mom_md_change.t>
+            day                   : <SAW : Int `time.day`>
+            hour                  : <SAW : Int `time.hour`>
+            minute                : <SAW : Int `time.minute`>
+            month                 : <SAW : Int `time.month`>
+            second                : <SAW : Int `time.second`>
+            year                  : <SAW : Int `time.year`>
+        time.day                  : <SAW : Int `time.day`>
+        time.hour                 : <SAW : Int `time.hour`>
+        time.minute               : <SAW : Int `time.minute`>
+        time.month                : <SAW : Int `time.month`>
+        time.second               : <SAW : Int `time.second`>
+        time.year                 : <SAW : Int `time.year`>
         type_name                 : mom_md_change.type_name
         user                      : mom_md_change.user
     <SAW : MOM.Link [mom_id_entity]>
@@ -6825,12 +7677,48 @@ _test_qc_map = """
         last_cid                  : mom_id_entity.last_cid
         pem                       : auth_certificate.pem
         pid                       : mom_id_entity.pid
-        revocation_date           : auth_certificate.revocation_date
+        revocation_date           : <Col-Mapper for <SAW : Date-Time `revocation_date` [auth>
+            day                   : <SAW : Int `revocation_date.day`>
+            hour                  : <SAW : Int `revocation_date.hour`>
+            minute                : <SAW : Int `revocation_date.minute`>
+            month                 : <SAW : Int `revocation_date.month`>
+            second                : <SAW : Int `revocation_date.second`>
+            year                  : <SAW : Int `revocation_date.year`>
+        revocation_date.day       : <SAW : Int `revocation_date.day`>
+        revocation_date.hour      : <SAW : Int `revocation_date.hour`>
+        revocation_date.minute    : <SAW : Int `revocation_date.minute`>
+        revocation_date.month     : <SAW : Int `revocation_date.month`>
+        revocation_date.second    : <SAW : Int `revocation_date.second`>
+        revocation_date.year      : <SAW : Int `revocation_date.year`>
         type_name                 : mom_id_entity.type_name
         validity                  : <Col-Mapper for MOM.Date_Time_Interval>
             alive                 : <SAW : Boolean `validity.alive`>
-            finish                : auth_certificate.validity__finish
-            start                 : auth_certificate.validity__start
+            validity.finish       : <Col-Mapper for <SAW : Date-Time `validity.finish` [auth>
+                day               : <SAW : Int `validity__finish.day`>
+                hour              : <SAW : Int `validity__finish.hour`>
+                minute            : <SAW : Int `validity__finish.minute`>
+                month             : <SAW : Int `validity__finish.month`>
+                second            : <SAW : Int `validity__finish.second`>
+                year              : <SAW : Int `validity__finish.year`>
+            validity.start        : <Col-Mapper for <SAW : Date-Time `validity.start` [auth_>
+                day               : <SAW : Int `validity__start.day`>
+                hour              : <SAW : Int `validity__start.hour`>
+                minute            : <SAW : Int `validity__start.minute`>
+                month             : <SAW : Int `validity__start.month`>
+                second            : <SAW : Int `validity__start.second`>
+                year              : <SAW : Int `validity__start.year`>
+            validity__finish.day  : <SAW : Int `validity__finish.day`>
+            validity__finish.hour : <SAW : Int `validity__finish.hour`>
+            validity__finish.minute: <SAW : Int `validity__finish.minute`>
+            validity__finish.month: <SAW : Int `validity__finish.month`>
+            validity__finish.second: <SAW : Int `validity__finish.second`>
+            validity__finish.year : <SAW : Int `validity__finish.year`>
+            validity__start.day   : <SAW : Int `validity__start.day`>
+            validity__start.hour  : <SAW : Int `validity__start.hour`>
+            validity__start.minute: <SAW : Int `validity__start.minute`>
+            validity__start.month : <SAW : Int `validity__start.month`>
+            validity__start.second: <SAW : Int `validity__start.second`>
+            validity__start.year  : <SAW : Int `validity__start.year`>
         validity.alive            : <SAW : Boolean `validity.alive`>
         validity.finish           : auth_certificate.validity__finish
         validity.start            : auth_certificate.validity__start
@@ -6954,7 +7842,19 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
         events                    : <SAW : Link_Ref_List `events`>
-        expires                   : auth_account_email_verification.expires
+        expires                   : <Col-Mapper for <SAW : Date-Time `expires` [auth_account>
+            day                   : <SAW : Int `expires.day`>
+            hour                  : <SAW : Int `expires.hour`>
+            minute                : <SAW : Int `expires.minute`>
+            month                 : <SAW : Int `expires.month`>
+            second                : <SAW : Int `expires.second`>
+            year                  : <SAW : Int `expires.year`>
+        expires.day               : <SAW : Int `expires.day`>
+        expires.hour              : <SAW : Int `expires.hour`>
+        expires.minute            : <SAW : Int `expires.minute`>
+        expires.month             : <SAW : Int `expires.month`>
+        expires.second            : <SAW : Int `expires.second`>
+        expires.year              : <SAW : Int `expires.year`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : auth_account_email_verification.left
@@ -6968,7 +7868,19 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
         events                    : <SAW : Link_Ref_List `events`>
-        expires                   : auth_account_password_reset.expires
+        expires                   : <Col-Mapper for <SAW : Date-Time `expires` [auth_account>
+            day                   : <SAW : Int `expires.day`>
+            hour                  : <SAW : Int `expires.hour`>
+            minute                : <SAW : Int `expires.minute`>
+            month                 : <SAW : Int `expires.month`>
+            second                : <SAW : Int `expires.second`>
+            year                  : <SAW : Int `expires.year`>
+        expires.day               : <SAW : Int `expires.day`>
+        expires.hour              : <SAW : Int `expires.hour`>
+        expires.minute            : <SAW : Int `expires.minute`>
+        expires.month             : <SAW : Int `expires.month`>
+        expires.second            : <SAW : Int `expires.second`>
+        expires.year              : <SAW : Int `expires.year`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : auth_account_password_reset.left
@@ -7031,8 +7943,20 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval>
             alive                 : <SAW : Boolean `date.alive`>
-            finish                : evt_event.date__finish
-            start                 : evt_event.date__start
+            date.finish           : <Col-Mapper for <SAW : Date `date.finish` [evt_event.dat>
+                day               : <SAW : Int `date__finish.day`>
+                month             : <SAW : Int `date__finish.month`>
+                year              : <SAW : Int `date__finish.year`>
+            date.start            : <Col-Mapper for <SAW : Date `date.start` [evt_event.date>
+                day               : <SAW : Int `date__start.day`>
+                month             : <SAW : Int `date__start.month`>
+                year              : <SAW : Int `date__start.year`>
+            date__finish.day      : <SAW : Int `date__finish.day`>
+            date__finish.month    : <SAW : Int `date__finish.month`>
+            date__finish.year     : <SAW : Int `date__finish.year`>
+            date__start.day       : <SAW : Int `date__start.day`>
+            date__start.month     : <SAW : Int `date__start.month`>
+            date__start.year      : <SAW : Int `date__start.year`>
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : evt_event.date__finish
         date.start                : evt_event.date__start
@@ -7048,15 +7972,33 @@ _test_qc_map = """
         recurrence                : <SAW : Link_Ref `recurrence`>
         short_title               : evt_event.short_title
         time                      : <Col-Mapper for MOM.Time_Interval>
-            finish                : evt_event.time__finish
-            start                 : evt_event.time__start
+            time.finish           : <Col-Mapper for <SAW : Time `time.finish` [evt_event.tim>
+                hour              : <SAW : Int `time__finish.hour`>
+                minute            : <SAW : Int `time__finish.minute`>
+                second            : <SAW : Int `time__finish.second`>
+            time.start            : <Col-Mapper for <SAW : Time `time.start` [evt_event.time>
+                hour              : <SAW : Int `time__start.hour`>
+                minute            : <SAW : Int `time__start.minute`>
+                second            : <SAW : Int `time__start.second`>
+            time__finish.hour     : <SAW : Int `time__finish.hour`>
+            time__finish.minute   : <SAW : Int `time__finish.minute`>
+            time__finish.second   : <SAW : Int `time__finish.second`>
+            time__start.hour      : <SAW : Int `time__start.hour`>
+            time__start.minute    : <SAW : Int `time__start.minute`>
+            time__start.second    : <SAW : Int `time__start.second`>
         time.finish               : evt_event.time__finish
         time.start                : evt_event.time__start
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : EVT.Event_occurs [evt_event_occurs : mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
-        date                      : evt_event_occurs.date
+        date                      : <Col-Mapper for <SAW : Date `date` [evt_event_occurs.dat>
+            day                   : <SAW : Int `date.day`>
+            month                 : <SAW : Int `date.month`>
+            year                  : <SAW : Int `date.year`>
+        date.day                  : <SAW : Int `date.day`>
+        date.month                : <SAW : Int `date.month`>
+        date.year                 : <SAW : Int `date.year`>
         detail                    : <SAW : String `detail`>
         electric                  : mom_id_entity.electric
         essence                   : <SAW : None `essence`>
@@ -7068,8 +8010,20 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         short_title               : <SAW : String `short_title`>
         time                      : <Col-Mapper for MOM.Time_Interval>
-            finish                : evt_event_occurs.time__finish
-            start                 : evt_event_occurs.time__start
+            time.finish           : <Col-Mapper for <SAW : Time `time.finish` [evt_event_occ>
+                hour              : <SAW : Int `time__finish.hour`>
+                minute            : <SAW : Int `time__finish.minute`>
+                second            : <SAW : Int `time__finish.second`>
+            time.start            : <Col-Mapper for <SAW : Time `time.start` [evt_event_occu>
+                hour              : <SAW : Int `time__start.hour`>
+                minute            : <SAW : Int `time__start.minute`>
+                second            : <SAW : Int `time__start.second`>
+            time__finish.hour     : <SAW : Int `time__finish.hour`>
+            time__finish.minute   : <SAW : Int `time__finish.minute`>
+            time__finish.second   : <SAW : Int `time__finish.second`>
+            time__start.hour      : <SAW : Int `time__start.hour`>
+            time__start.minute    : <SAW : Int `time__start.minute`>
+            time__start.second    : <SAW : Int `time__start.second`>
         time.finish               : evt_event_occurs.time__finish
         time.start                : evt_event_occurs.time__start
         type_name                 : mom_id_entity.type_name
@@ -7105,7 +8059,13 @@ _test_qc_map = """
         easter_offset             : evt_recurrence_rule.easter_offset
         electric                  : mom_id_entity.electric
         events                    : <SAW : Link_Ref_List `events`>
-        finish                    : evt_recurrence_rule.finish
+        finish                    : <Col-Mapper for <SAW : Date `finish` [evt_recurrence_rul>
+            day                   : <SAW : Int `finish.day`>
+            month                 : <SAW : Int `finish.month`>
+            year                  : <SAW : Int `finish.year`>
+        finish.day                : <SAW : Int `finish.day`>
+        finish.month              : <SAW : Int `finish.month`>
+        finish.year               : <SAW : Int `finish.year`>
         is_exception              : evt_recurrence_rule.is_exception
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -7116,7 +8076,13 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         recurrence_spec           : evt_recurrence_rule.left
         restrict_pos              : evt_recurrence_rule.restrict_pos
-        start                     : evt_recurrence_rule.start
+        start                     : <Col-Mapper for <SAW : Date `start` [evt_recurrence_rule>
+            day                   : <SAW : Int `start.day`>
+            month                 : <SAW : Int `start.month`>
+            year                  : <SAW : Int `start.year`>
+        start.day                 : <SAW : Int `start.day`>
+        start.month               : <SAW : Int `start.month`>
+        start.year                : <SAW : Int `start.year`>
         type_name                 : mom_id_entity.type_name
         unit                      : evt_recurrence_rule.unit
         week                      : evt_recurrence_rule.week
@@ -7254,8 +8220,20 @@ _test_qc_map = """
         last_cid                  : mom_id_entity.last_cid
         lifetime                  : <Col-Mapper for MOM.Date_Interval_lifetime>
             alive                 : <SAW : Boolean `lifetime.alive`>
-            finish                : pap_company.lifetime__finish
-            start                 : pap_company.lifetime__start
+            lifetime.finish       : <Col-Mapper for <SAW : Date `lifetime.finish` [pap_compa>
+                day               : <SAW : Int `lifetime__finish.day`>
+                month             : <SAW : Int `lifetime__finish.month`>
+                year              : <SAW : Int `lifetime__finish.year`>
+            lifetime.start        : <Col-Mapper for <SAW : Date `lifetime.start` [pap_compan>
+                day               : <SAW : Int `lifetime__start.day`>
+                month             : <SAW : Int `lifetime__start.month`>
+                year              : <SAW : Int `lifetime__start.year`>
+            lifetime__finish.day  : <SAW : Int `lifetime__finish.day`>
+            lifetime__finish.month: <SAW : Int `lifetime__finish.month`>
+            lifetime__finish.year : <SAW : Int `lifetime__finish.year`>
+            lifetime__start.day   : <SAW : Int `lifetime__start.day`>
+            lifetime__start.month : <SAW : Int `lifetime__start.month`>
+            lifetime__start.year  : <SAW : Int `lifetime__start.year`>
         lifetime.alive            : <SAW : Boolean `lifetime.alive`>
         lifetime.finish           : pap_company.lifetime__finish
         lifetime.start            : pap_company.lifetime__start
@@ -7325,8 +8303,20 @@ _test_qc_map = """
         last_name                 : pap_person.last_name
         lifetime                  : <Col-Mapper for MOM.Date_Interval_lifetime>
             alive                 : <SAW : Boolean `lifetime.alive`>
-            finish                : pap_person.lifetime__finish
-            start                 : pap_person.lifetime__start
+            lifetime.finish       : <Col-Mapper for <SAW : Date `lifetime.finish` [pap_perso>
+                day               : <SAW : Int `lifetime__finish.day`>
+                month             : <SAW : Int `lifetime__finish.month`>
+                year              : <SAW : Int `lifetime__finish.year`>
+            lifetime.start        : <Col-Mapper for <SAW : Date `lifetime.start` [pap_person>
+                day               : <SAW : Int `lifetime__start.day`>
+                month             : <SAW : Int `lifetime__start.month`>
+                year              : <SAW : Int `lifetime__start.year`>
+            lifetime__finish.day  : <SAW : Int `lifetime__finish.day`>
+            lifetime__finish.month: <SAW : Int `lifetime__finish.month`>
+            lifetime__finish.year : <SAW : Int `lifetime__finish.year`>
+            lifetime__start.day   : <SAW : Int `lifetime__start.day`>
+            lifetime__start.month : <SAW : Int `lifetime__start.month`>
+            lifetime__start.year  : <SAW : Int `lifetime__start.year`>
         lifetime.alive            : <SAW : Boolean `lifetime.alive`>
         lifetime.finish           : pap_person.lifetime__finish
         lifetime.start            : pap_person.lifetime__start
@@ -7561,8 +8551,20 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_C>
             alive                 : <SAW : Boolean `date.alive`>
-            finish                : srm_regatta_event.date__finish
-            start                 : srm_regatta_event.date__start
+            date.finish           : <Col-Mapper for <SAW : Date `date.finish` [srm_regatta_e>
+                day               : <SAW : Int `date__finish.day`>
+                month             : <SAW : Int `date__finish.month`>
+                year              : <SAW : Int `date__finish.year`>
+            date.start            : <Col-Mapper for <SAW : Date `date.start` [srm_regatta_ev>
+                day               : <SAW : Int `date__start.day`>
+                month             : <SAW : Int `date__start.month`>
+                year              : <SAW : Int `date__start.year`>
+            date__finish.day      : <SAW : Int `date__finish.day`>
+            date__finish.month    : <SAW : Int `date__finish.month`>
+            date__finish.year     : <SAW : Int `date__finish.year`>
+            date__start.day       : <SAW : Int `date__start.day`>
+            date__start.month     : <SAW : Int `date__start.month`>
+            date__start.year      : <SAW : Int `date__start.year`>
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : srm_regatta_event.date__finish
         date.start                : srm_regatta_event.date__start
@@ -7619,8 +8621,20 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
-            finish                : swp_page.date__finish
-            start                 : swp_page.date__start
+            date.finish           : <Col-Mapper for <SAW : Date `date.finish` [swp_page.date>
+                day               : <SAW : Int `date__finish.day`>
+                month             : <SAW : Int `date__finish.month`>
+                year              : <SAW : Int `date__finish.year`>
+            date.start            : <Col-Mapper for <SAW : Date `date.start` [swp_page.date_>
+                day               : <SAW : Int `date__start.day`>
+                month             : <SAW : Int `date__start.month`>
+                year              : <SAW : Int `date__start.year`>
+            date__finish.day      : <SAW : Int `date__finish.day`>
+            date__finish.month    : <SAW : Int `date__finish.month`>
+            date__finish.year     : <SAW : Int `date__finish.year`>
+            date__start.day       : <SAW : Int `date__start.day`>
+            date__start.month     : <SAW : Int `date__start.month`>
+            date__start.year      : <SAW : Int `date__start.year`>
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : swp_page.date__finish
         date.start                : swp_page.date__start
@@ -7645,8 +8659,20 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
-            finish                : swp_page.date__finish
-            start                 : swp_page.date__start
+            date.finish           : <Col-Mapper for <SAW : Date `date.finish` [swp_page.date>
+                day               : <SAW : Int `date__finish.day`>
+                month             : <SAW : Int `date__finish.month`>
+                year              : <SAW : Int `date__finish.year`>
+            date.start            : <Col-Mapper for <SAW : Date `date.start` [swp_page.date_>
+                day               : <SAW : Int `date__start.day`>
+                month             : <SAW : Int `date__start.month`>
+                year              : <SAW : Int `date__start.year`>
+            date__finish.day      : <SAW : Int `date__finish.day`>
+            date__finish.month    : <SAW : Int `date__finish.month`>
+            date__finish.year     : <SAW : Int `date__finish.year`>
+            date__start.day       : <SAW : Int `date__start.day`>
+            date__start.month     : <SAW : Int `date__start.month`>
+            date__start.year      : <SAW : Int `date__start.year`>
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : swp_page.date__finish
         date.start                : swp_page.date__start
@@ -7692,15 +8718,39 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval>
             alive                 : <SAW : Boolean `date.alive`>
-            finish                : swp_clip_o.date__finish
-            start                 : swp_clip_o.date__start
+            date.finish           : <Col-Mapper for <SAW : Date `date.finish` [swp_clip_o.da>
+                day               : <SAW : Int `date__finish.day`>
+                month             : <SAW : Int `date__finish.month`>
+                year              : <SAW : Int `date__finish.year`>
+            date.start            : <Col-Mapper for <SAW : Date `date.start` [swp_clip_o.dat>
+                day               : <SAW : Int `date__start.day`>
+                month             : <SAW : Int `date__start.month`>
+                year              : <SAW : Int `date__start.year`>
+            date__finish.day      : <SAW : Int `date__finish.day`>
+            date__finish.month    : <SAW : Int `date__finish.month`>
+            date__finish.year     : <SAW : Int `date__finish.year`>
+            date__start.day       : <SAW : Int `date__start.day`>
+            date__start.month     : <SAW : Int `date__start.month`>
+            date__start.year      : <SAW : Int `date__start.year`>
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : swp_clip_o.date__finish
         date.start                : swp_clip_o.date__start
         date_x                    : <Col-Mapper for MOM.Date_Interval>
             alive                 : <SAW : Boolean `date_x.alive`>
-            finish                : swp_clip_o.date_x__finish
-            start                 : swp_clip_o.date_x__start
+            date_x.finish         : <Col-Mapper for <SAW : Date `date_x.finish` [swp_clip_o.>
+                day               : <SAW : Int `date_x__finish.day`>
+                month             : <SAW : Int `date_x__finish.month`>
+                year              : <SAW : Int `date_x__finish.year`>
+            date_x.start          : <Col-Mapper for <SAW : Date `date_x.start` [swp_clip_o.d>
+                day               : <SAW : Int `date_x__start.day`>
+                month             : <SAW : Int `date_x__start.month`>
+                year              : <SAW : Int `date_x__start.year`>
+            date_x__finish.day    : <SAW : Int `date_x__finish.day`>
+            date_x__finish.month  : <SAW : Int `date_x__finish.month`>
+            date_x__finish.year   : <SAW : Int `date_x__finish.year`>
+            date_x__start.day     : <SAW : Int `date_x__start.day`>
+            date_x__start.month   : <SAW : Int `date_x__start.month`>
+            date_x__start.year    : <SAW : Int `date_x__start.year`>
         date_x.alive              : <SAW : Boolean `date_x.alive`>
         date_x.finish             : swp_clip_o.date_x__finish
         date_x.start              : swp_clip_o.date_x__start
@@ -7720,8 +8770,20 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
-            finish                : swp_page.date__finish
-            start                 : swp_page.date__start
+            date.finish           : <Col-Mapper for <SAW : Date `date.finish` [swp_page.date>
+                day               : <SAW : Int `date__finish.day`>
+                month             : <SAW : Int `date__finish.month`>
+                year              : <SAW : Int `date__finish.year`>
+            date.start            : <Col-Mapper for <SAW : Date `date.start` [swp_page.date_>
+                day               : <SAW : Int `date__start.day`>
+                month             : <SAW : Int `date__start.month`>
+                year              : <SAW : Int `date__start.year`>
+            date__finish.day      : <SAW : Int `date__finish.day`>
+            date__finish.month    : <SAW : Int `date__finish.month`>
+            date__finish.year     : <SAW : Int `date__finish.year`>
+            date__start.day       : <SAW : Int `date__start.day`>
+            date__start.month     : <SAW : Int `date__start.month`>
+            date__start.year      : <SAW : Int `date__start.year`>
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : swp_page.date__finish
         date.start                : swp_page.date__start
@@ -7746,8 +8808,20 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
-            finish                : swp_gallery.date__finish
-            start                 : swp_gallery.date__start
+            date.finish           : <Col-Mapper for <SAW : Date `date.finish` [swp_gallery.d>
+                day               : <SAW : Int `date__finish.day`>
+                month             : <SAW : Int `date__finish.month`>
+                year              : <SAW : Int `date__finish.year`>
+            date.start            : <Col-Mapper for <SAW : Date `date.start` [swp_gallery.da>
+                day               : <SAW : Int `date__start.day`>
+                month             : <SAW : Int `date__start.month`>
+                year              : <SAW : Int `date__start.year`>
+            date__finish.day      : <SAW : Int `date__finish.day`>
+            date__finish.month    : <SAW : Int `date__finish.month`>
+            date__finish.year     : <SAW : Int `date__finish.year`>
+            date__start.day       : <SAW : Int `date__start.day`>
+            date__start.month     : <SAW : Int `date__start.month`>
+            date__start.year      : <SAW : Int `date__start.year`>
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : swp_gallery.date__finish
         date.start                : swp_gallery.date__start
@@ -7801,8 +8875,20 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
-            finish                : swp_referral.date__finish
-            start                 : swp_referral.date__start
+            date.finish           : <Col-Mapper for <SAW : Date `date.finish` [swp_referral.>
+                day               : <SAW : Int `date__finish.day`>
+                month             : <SAW : Int `date__finish.month`>
+                year              : <SAW : Int `date__finish.year`>
+            date.start            : <Col-Mapper for <SAW : Date `date.start` [swp_referral.d>
+                day               : <SAW : Int `date__start.day`>
+                month             : <SAW : Int `date__start.month`>
+                year              : <SAW : Int `date__start.year`>
+            date__finish.day      : <SAW : Int `date__finish.day`>
+            date__finish.month    : <SAW : Int `date__finish.month`>
+            date__finish.year     : <SAW : Int `date__finish.year`>
+            date__start.day       : <SAW : Int `date__start.day`>
+            date__start.month     : <SAW : Int `date__start.month`>
+            date__start.year      : <SAW : Int `date__start.year`>
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : swp_referral.date__finish
         date.start                : swp_referral.date__start
@@ -7827,8 +8913,20 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N_date>
             alive                 : <SAW : Boolean `date.alive`>
-            finish                : swp_page.date__finish
-            start                 : swp_page.date__start
+            date.finish           : <Col-Mapper for <SAW : Date `date.finish` [swp_page.date>
+                day               : <SAW : Int `date__finish.day`>
+                month             : <SAW : Int `date__finish.month`>
+                year              : <SAW : Int `date__finish.year`>
+            date.start            : <Col-Mapper for <SAW : Date `date.start` [swp_page.date_>
+                day               : <SAW : Int `date__start.day`>
+                month             : <SAW : Int `date__start.month`>
+                year              : <SAW : Int `date__start.year`>
+            date__finish.day      : <SAW : Int `date__finish.day`>
+            date__finish.month    : <SAW : Int `date__finish.month`>
+            date__finish.year     : <SAW : Int `date__finish.year`>
+            date__start.day       : <SAW : Int `date__start.day`>
+            date__start.month     : <SAW : Int `date__start.month`>
+            date__start.year      : <SAW : Int `date__start.year`>
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : swp_page.date__finish
         date.start                : swp_page.date__start
@@ -7867,7 +8965,19 @@ _test_qc_map = """
         races                     : srm_regatta.races
         races_counted             : <SAW : Int `races_counted`>
         result                    : <Col-Mapper for SRM.Regatta_Result>
-            date                  : srm_regatta.result__date
+            result.date           : <Col-Mapper for <SAW : Date-Time `result.date` [srm_rega>
+                day               : <SAW : Int `result__date.day`>
+                hour              : <SAW : Int `result__date.hour`>
+                minute            : <SAW : Int `result__date.minute`>
+                month             : <SAW : Int `result__date.month`>
+                second            : <SAW : Int `result__date.second`>
+                year              : <SAW : Int `result__date.year`>
+            result__date.day      : <SAW : Int `result__date.day`>
+            result__date.hour     : <SAW : Int `result__date.hour`>
+            result__date.minute   : <SAW : Int `result__date.minute`>
+            result__date.month    : <SAW : Int `result__date.month`>
+            result__date.second   : <SAW : Int `result__date.second`>
+            result__date.year     : <SAW : Int `result__date.year`>
             software              : srm_regatta.result__software
             status                : srm_regatta.result__status
         result.date               : srm_regatta.result__date
@@ -7897,7 +9007,19 @@ _test_qc_map = """
         races                     : srm_regatta.races
         races_counted             : <SAW : Int `races_counted`>
         result                    : <Col-Mapper for SRM.Regatta_Result>
-            date                  : srm_regatta.result__date
+            result.date           : <Col-Mapper for <SAW : Date-Time `result.date` [srm_rega>
+                day               : <SAW : Int `result__date.day`>
+                hour              : <SAW : Int `result__date.hour`>
+                minute            : <SAW : Int `result__date.minute`>
+                month             : <SAW : Int `result__date.month`>
+                second            : <SAW : Int `result__date.second`>
+                year              : <SAW : Int `result__date.year`>
+            result__date.day      : <SAW : Int `result__date.day`>
+            result__date.hour     : <SAW : Int `result__date.hour`>
+            result__date.minute   : <SAW : Int `result__date.minute`>
+            result__date.month    : <SAW : Int `result__date.month`>
+            result__date.second   : <SAW : Int `result__date.second`>
+            result__date.year     : <SAW : Int `result__date.year`>
             software              : srm_regatta.result__software
             status                : srm_regatta.result__status
         result.date               : srm_regatta.result__date
@@ -7927,7 +9049,19 @@ _test_qc_map = """
         races                     : srm_regatta.races
         races_counted             : <SAW : Int `races_counted`>
         result                    : <Col-Mapper for SRM.Regatta_Result>
-            date                  : srm_regatta.result__date
+            result.date           : <Col-Mapper for <SAW : Date-Time `result.date` [srm_rega>
+                day               : <SAW : Int `result__date.day`>
+                hour              : <SAW : Int `result__date.hour`>
+                minute            : <SAW : Int `result__date.minute`>
+                month             : <SAW : Int `result__date.month`>
+                second            : <SAW : Int `result__date.second`>
+                year              : <SAW : Int `result__date.year`>
+            result__date.day      : <SAW : Int `result__date.day`>
+            result__date.hour     : <SAW : Int `result__date.hour`>
+            result__date.minute   : <SAW : Int `result__date.minute`>
+            result__date.month    : <SAW : Int `result__date.month`>
+            result__date.second   : <SAW : Int `result__date.second`>
+            result__date.year     : <SAW : Int `result__date.year`>
             software              : srm_regatta.result__software
             status                : srm_regatta.result__status
         result.date               : srm_regatta.result__date
@@ -7990,7 +9124,13 @@ _test_qc_map = """
         race_results              : <SAW : Link_Ref_List `race_results`>
         rank                      : srm_boat_in_regatta.rank
         regatta                   : srm_boat_in_regatta.right
-        registration_date         : srm_boat_in_regatta.registration_date
+        registration_date         : <Col-Mapper for <SAW : Date `registration_date` [srm_boa>
+            day                   : <SAW : Int `registration_date.day`>
+            month                 : <SAW : Int `registration_date.month`>
+            year                  : <SAW : Int `registration_date.year`>
+        registration_date.day     : <SAW : Int `registration_date.day`>
+        registration_date.month   : <SAW : Int `registration_date.month`>
+        registration_date.year    : <SAW : Int `registration_date.year`>
         right                     : srm_boat_in_regatta.right
         sailor_links              : <SAW : Link_Ref_List `sailor_links`>
         skipper                   : srm_boat_in_regatta.skipper
@@ -8031,7 +9171,13 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         place                     : srm_team.place
         regatta                   : srm_team.left
-        registration_date         : srm_team.registration_date
+        registration_date         : <Col-Mapper for <SAW : Date `registration_date` [srm_tea>
+            day                   : <SAW : Int `registration_date.day`>
+            month                 : <SAW : Int `registration_date.month`>
+            year                  : <SAW : Int `registration_date.year`>
+        registration_date.day     : <SAW : Int `registration_date.day`>
+        registration_date.month   : <SAW : Int `registration_date.month`>
+        registration_date.year    : <SAW : Int `registration_date.year`>
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : SRM.Crew_Member [srm_crew_member : mom_id_entity]>
@@ -12834,6 +13980,7 @@ _test_tables = """
     PAP.Person_has_Address
 
     >>> for k, w in sorted (pyk.iteritems (apt._SAW.et_map)) :
+    ...   if w.e_type.PNS is not None :
     ...     print ("%%-40s : %%s" %% (k, w.sa_table))
     Auth.Account                             : auth_account
     Auth.Account_Activation                  : auth_account_activation
@@ -12961,16 +14108,16 @@ _test_tables = """
         Column type_name                 : Smallint             Internal__Type_Name String type_name
         Column x_locked                  : Boolean              Internal Boolean x_locked
     MOM.MD_Change <Table mom_md_change>
-        Column c_time                    : Datetime             Internal__Computed__Sync_Change Date-Time c_time
-        Column c_user                    : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity c_user Id_Entity()
+        Column c_time                    : Datetime             Internal__Computed__Sync_Change__Structured Date-Time c_time
+        Column c_user                    : Integer              Internal__Id_Entity_Reference__Computed__Sync_Change Entity c_user Id_Entity()
         Column cid                       : Integer              Internal__Computed__Sync_Change__Just_Once Surrogate cid primary
         Column kind                      : Varchar(10)          Internal__Computed__Sync_Change String kind
         Column parent_cid                : Integer              Internal__Computed__Sync_Change Int parent_cid
         Column pid                       : Integer              Internal__Computed__Sync_Change Int pid
         Column scm_change                : Blob                 Internal Blob scm_change
-        Column time                      : Datetime             Internal__Computed__Sync_Change Date-Time time
+        Column time                      : Datetime             Internal__Computed__Sync_Change__Structured Date-Time time
         Column type_name                 : Smallint             Internal__Computed__Sync_Change String type_name
-        Column user                      : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity user Id_Entity()
+        Column user                      : Integer              Internal__Id_Entity_Reference__Computed__Sync_Change Entity user Id_Entity()
     Auth._Account_ (MOM.Id_Entity) <Table auth__account_>
         Column enabled                   : Boolean              Optional Boolean enabled
         Column name                      : Varchar(80)          Primary Email name
@@ -12989,9 +14136,9 @@ _test_tables = """
         Column email                     : Varchar(80)          Primary Email email
         Column pem                       : Blob                 Internal None pem
         Column pid                       : Integer              Internal__Just_Once Surrogate pid ForeignKey('mom_id_entity.pid')
-        Column revocation_date           : Datetime             Optional Date-Time revocation_date
-        Column validity__finish          : Datetime             Optional__Nested Date-Time finish
-        Column validity__start           : Datetime             Necessary__Nested Date-Time start
+        Column revocation_date           : Datetime             Optional__Structured Date-Time revocation_date
+        Column validity__finish          : Datetime             Optional__Nested__Structured Date-Time finish
+        Column validity__start           : Datetime             Necessary__Nested__Structured Date-Time start
     Auth.Group (MOM.Id_Entity) <Table auth_group>
         Column desc                      : Varchar(20)          Optional String desc
         Column name                      : Varchar(32)          Primary String name
@@ -13007,13 +14154,13 @@ _test_tables = """
         Column left                      : Integer              Link_Role__Init_Only Account left Id_Entity()
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     Auth.Account_EMail_Verification (MOM.Id_Entity) <Table auth_account_email_verification>
-        Column expires                   : Datetime             Necessary Date-Time expires
+        Column expires                   : Datetime             Necessary__Structured Date-Time expires
         Column left                      : Integer              Link_Role__Init_Only Account left Id_Entity()
         Column new_email                 : Varchar(80)          Optional Email new_email
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column token                     : Varchar(64)          Primary__Init_Only String token
     Auth.Account_Password_Reset (MOM.Id_Entity) <Table auth_account_password_reset>
-        Column expires                   : Datetime             Necessary Date-Time expires
+        Column expires                   : Datetime             Necessary__Structured Date-Time expires
         Column left                      : Integer              Link_Role__Init_Only Account left Id_Entity()
         Column password                  : Varchar(64)          Necessary String password
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
@@ -13024,20 +14171,20 @@ _test_tables = """
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     EVT.Event (MOM.Id_Entity) <Table evt_event>
         Column calendar                  : Integer              Primary_Optional__Id_Entity_Reference Entity calendar Id_Entity()
-        Column date__finish              : Date                 Optional__Nested Date finish
-        Column date__start               : Date                 Necessary__Nested Date start
+        Column date__finish              : Date                 Optional__Nested__Structured Date finish
+        Column date__start               : Date                 Necessary__Nested__Structured Date start
         Column detail                    : Varchar(160)         Optional String detail
         Column left                      : Integer              Link_Role__Init_Only Id_Entity left Id_Entity()
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column short_title               : Varchar(30)          Optional String short_title
-        Column time__finish              : Time                 Optional__Nested Time finish
-        Column time__start               : Time                 Necessary__Nested Time start
+        Column time__finish              : Time                 Optional__Nested__Structured Time finish
+        Column time__start               : Time                 Necessary__Nested__Structured Time start
     EVT.Event_occurs (MOM.Id_Entity) <Table evt_event_occurs>
-        Column date                      : Date                 Primary Date date
+        Column date                      : Date                 Primary__Structured Date date
         Column left                      : Integer              Link_Role__Init_Only Event left Id_Entity()
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
-        Column time__finish              : Time                 Optional__Nested Time finish
-        Column time__start               : Time                 Necessary__Nested Time start
+        Column time__finish              : Time                 Optional__Nested__Structured Time finish
+        Column time__start               : Time                 Necessary__Nested__Structured Time start
     EVT.Recurrence_Spec (MOM.Id_Entity) <Table evt_recurrence_spec>
         Column date_exceptions           : Blob                 Optional__Typed_Collection Date_List date_exceptions
         Column dates                     : Blob                 Optional__Typed_Collection Date_List dates
@@ -13047,7 +14194,7 @@ _test_tables = """
         Column count                     : Integer              Optional Int count
         Column desc                      : Varchar(20)          Primary_Optional String desc
         Column easter_offset             : Blob                 Optional__Typed_Collection Int_List easter_offset
-        Column finish                    : Date                 Optional__Computed_Set Date finish
+        Column finish                    : Date                 Optional__Computed_Set__Structured Date finish
         Column is_exception              : Boolean              Primary_Optional Boolean is_exception
         Column left                      : Integer              Link_Role__Init_Only Recurrence_Spec left Id_Entity()
         Column month                     : Blob                 Optional__Typed_Collection Int_List month
@@ -13055,7 +14202,7 @@ _test_tables = """
         Column period                    : Integer              Optional Int period
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column restrict_pos              : Blob                 Optional__Typed_Collection Int_List restrict_pos
-        Column start                     : Date                 Optional__Computed_Set Date start
+        Column start                     : Date                 Optional__Computed_Set__Structured Date start
         Column unit                      : Integer              Optional__Sticky Unit unit
         Column week                      : Blob                 Optional__Typed_Collection Int_List week
         Column week_day                  : Blob                 Optional__Typed_Collection Weekday_RR_List week_day
@@ -13077,8 +14224,8 @@ _test_tables = """
         Column __raw_name                : Varchar(64)          Primary__Raw_Value String name
         Column __raw_registered_in       : Varchar(64)          Primary_Optional__Raw_Value String registered_in
         Column __raw_short_name          : Varchar(12)          Optional__Raw_Value String short_name
-        Column lifetime__finish          : Date                 Optional__Nested Date finish
-        Column lifetime__start           : Date                 Necessary__Nested Date start
+        Column lifetime__finish          : Date                 Optional__Nested__Structured Date finish
+        Column lifetime__start           : Date                 Necessary__Nested__Structured Date start
         Column name                      : Varchar(64)          Primary__Raw_Value String name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column registered_in             : Varchar(64)          Primary_Optional__Raw_Value String registered_in
@@ -13101,8 +14248,8 @@ _test_tables = """
         Column __raw_title               : Varchar(20)          Primary_Optional__Raw_Value String title
         Column first_name                : Varchar(32)          Primary__Raw_Value String first_name
         Column last_name                 : Varchar(48)          Primary__Raw_Value String last_name
-        Column lifetime__finish          : Date                 Optional__Nested Date finish
-        Column lifetime__start           : Date                 Necessary__Nested Date start
+        Column lifetime__finish          : Date                 Optional__Nested__Structured Date finish
+        Column lifetime__start           : Date                 Necessary__Nested__Structured Date start
         Column middle_name               : Varchar(32)          Primary_Optional__Raw_Value String middle_name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column sex                       : Varchar(1)           Necessary Sex sex
@@ -13114,11 +14261,11 @@ _test_tables = """
     PAP.Address_Position (MOM.Id_Entity) <Table pap_address_position>
         Column left                      : Integer              Link_Role__Init_Only Address left Id_Entity()
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
-        Column position____raw_lat       : Varchar(22)          Necessary__Raw_Value__Nested Angle lat
-        Column position____raw_lon       : Varchar(22)          Necessary__Raw_Value__Nested Angle lon
+        Column position____raw_lat       : Varchar(22)          Necessary__Nested__Raw_Value Angle lat
+        Column position____raw_lon       : Varchar(22)          Necessary__Nested__Raw_Value Angle lon
         Column position__height          : Float                Optional__Nested Float height
-        Column position__lat             : Float                Necessary__Raw_Value__Nested Angle lat
-        Column position__lon             : Float                Necessary__Raw_Value__Nested Angle lon
+        Column position__lat             : Float                Necessary__Nested__Raw_Value Angle lat
+        Column position__lon             : Float                Necessary__Nested__Raw_Value Angle lon
     PAP.Subject_has_Property (MOM.Id_Entity) <Table pap_subject_has_property>
         Column desc                      : Varchar(20)          Optional__Computed_Set String desc
         Column left                      : Integer              Link_Role Subject left Id_Entity()
@@ -13157,17 +14304,17 @@ _test_tables = """
     SRM.Regatta_Event (MOM.Id_Entity) <Table srm_regatta_event>
         Column __raw_name                : Varchar(64)          Primary__Raw_Value String name
         Column club                      : Integer              Optional__Id_Entity_Reference Entity club Id_Entity()
-        Column date__finish              : Date                 Optional__Computed_Set__Nested Date finish
-        Column date__start               : Date                 Necessary__Nested Date start
+        Column date__finish              : Date                 Optional__Nested__Computed_Set__Structured Date finish
+        Column date__start               : Date                 Necessary__Nested__Structured Date start
         Column desc                      : Varchar(160)         Optional String desc
         Column is_cancelled              : Boolean              Optional Boolean is_cancelled
         Column name                      : Varchar(64)          Primary__Raw_Value String name
-        Column perma_name                : Varchar(64)          Internal__Auto_Update_Lazy__Computed_Set String perma_name
+        Column perma_name                : Varchar(64)          Internal__Computed_Set__Auto_Update_Lazy String perma_name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     SWP.Page (MOM.Id_Entity) <Table swp_page>
         Column contents                  : Text                 Internal__Auto_Update Text contents
-        Column date__finish              : Date                 Optional__Nested Date finish
-        Column date__start               : Date                 Necessary__Sticky__Nested Date start
+        Column date__finish              : Date                 Optional__Nested__Structured Date finish
+        Column date__start               : Date                 Necessary__Nested__Sticky__Structured Date start
         Column format                    : Varchar(8)           Optional__Sticky Format format
         Column head_line                 : Varchar(256)         Optional String head_line
         Column hidden                    : Boolean              Optional Boolean hidden
@@ -13183,10 +14330,10 @@ _test_tables = """
     SWP.Clip_O (MOM.Id_Entity) <Table swp_clip_o>
         Column abstract                  : Text                 Required Text abstract
         Column contents                  : Text                 Internal__Auto_Update Text contents
-        Column date__finish              : Date                 Optional__Nested Date finish
-        Column date__start               : Date                 Necessary__Nested Date start
-        Column date_x__finish            : Date                 Optional__Nested Date finish
-        Column date_x__start             : Date                 Necessary__Nested Date start
+        Column date__finish              : Date                 Optional__Nested__Structured Date finish
+        Column date__start               : Date                 Necessary__Nested__Structured Date start
+        Column date_x__finish            : Date                 Optional__Nested__Structured Date finish
+        Column date_x__start             : Date                 Necessary__Nested__Structured Date start
         Column left                      : Integer              Link_Role__Init_Only Object_PN left Id_Entity()
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column prio                      : Integer              Optional__Sticky Int prio
@@ -13194,8 +14341,8 @@ _test_tables = """
         Column link_to                   : Varchar(160)         Optional Url link_to
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('swp_page.pid')
     SWP.Gallery (MOM.Id_Entity) <Table swp_gallery>
-        Column date__finish              : Date                 Optional__Nested Date finish
-        Column date__start               : Date                 Necessary__Sticky__Nested Date start
+        Column date__finish              : Date                 Optional__Nested__Structured Date finish
+        Column date__start               : Date                 Necessary__Nested__Sticky__Structured Date start
         Column directory                 : Text                 Necessary Directory directory
         Column hidden                    : Boolean              Optional Boolean hidden
         Column perma_name                : Varchar(80)          Primary Date-Slug perma_name
@@ -13207,16 +14354,16 @@ _test_tables = """
         Column left                      : Integer              Link_Role__Init_Only Gallery left Id_Entity()
         Column name                      : Varchar(100)         Optional__Computed_Set String name
         Column number                    : Integer              Primary Int number
-        Column photo__extension          : Varchar(10)          Optional__Init_Only__Nested String extension
+        Column photo__extension          : Varchar(10)          Optional__Nested__Init_Only String extension
         Column photo__height             : Smallint             Necessary__Nested Y height
         Column photo__width              : Smallint             Necessary__Nested X width
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
-        Column thumb__extension          : Varchar(10)          Optional__Init_Only__Nested String extension
+        Column thumb__extension          : Varchar(10)          Optional__Nested__Init_Only String extension
         Column thumb__height             : Smallint             Necessary__Nested Y height
         Column thumb__width              : Smallint             Necessary__Nested X width
     SWP.Referral (MOM.Id_Entity) <Table swp_referral>
-        Column date__finish              : Date                 Optional__Nested Date finish
-        Column date__start               : Date                 Necessary__Sticky__Nested Date start
+        Column date__finish              : Date                 Optional__Nested__Structured Date finish
+        Column date__start               : Date                 Necessary__Nested__Sticky__Structured Date start
         Column download_name             : Varchar(64)          Optional String download_name
         Column hidden                    : Boolean              Optional Boolean hidden
         Column parent_url                : Varchar(160)         Primary Url parent_url
@@ -13236,10 +14383,10 @@ _test_tables = """
         Column is_cancelled              : Boolean              Optional__Computed_Set Boolean is_cancelled
         Column kind                      : Varchar(32)          Optional String kind
         Column left                      : Integer              Link_Role__Init_Only Regatta_Event left Id_Entity()
-        Column perma_name                : Varchar(64)          Internal__Auto_Update_Lazy__Computed_Set String perma_name
+        Column perma_name                : Varchar(64)          Internal__Computed_Set__Auto_Update_Lazy String perma_name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column races                     : Integer              Optional Int races
-        Column result__date              : Datetime             Necessary__Nested Date-Time date
+        Column result__date              : Datetime             Necessary__Nested__Structured Date-Time date
         Column result__software          : Varchar(64)          Optional__Nested String software
         Column result__status            : Varchar(64)          Optional__Nested String status
         Column starters_rl               : Integer              Optional Int starters_rl
@@ -13261,7 +14408,7 @@ _test_tables = """
         Column place                     : Integer              Optional Int place
         Column points                    : Integer              Optional Int points
         Column rank                      : Integer              Internal Int rank
-        Column registration_date         : Date                 Internal__Init_Only Date registration_date
+        Column registration_date         : Date                 Internal__Init_Only__Structured Date registration_date
         Column right                     : Integer              Link_Role Regatta right Id_Entity()
         Column skipper                   : Integer              Required__Id_Entity_Reference Entity skipper Id_Entity()
         Column yardstick                 : Integer              Optional Int yardstick
@@ -13281,7 +14428,7 @@ _test_tables = """
         Column name                      : Varchar(64)          Primary__Raw_Value String name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column place                     : Integer              Optional Int place
-        Column registration_date         : Date                 Internal Date registration_date
+        Column registration_date         : Date                 Internal__Structured Date registration_date
     SRM.Crew_Member (MOM.Id_Entity) <Table srm_crew_member>
         Column key                       : Integer              Optional__Sticky Int key
         Column left                      : Integer              Link_Role Boat_in_Regatta left Id_Entity()
@@ -13318,16 +14465,16 @@ _test_tables = """
         Column type_name                 : Smallint             Internal__Type_Name String type_name
         Column x_locked                  : Boolean              Internal Boolean x_locked
     <Table for Surrogate `cid`>
-        Column c_time                    : Datetime             Internal__Computed__Sync_Change Date-Time c_time
-        Column c_user                    : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity c_user Id_Entity()
+        Column c_time                    : Datetime             Internal__Computed__Sync_Change__Structured Date-Time c_time
+        Column c_user                    : Integer              Internal__Id_Entity_Reference__Computed__Sync_Change Entity c_user Id_Entity()
         Column cid                       : Integer              Internal__Computed__Sync_Change__Just_Once Surrogate cid primary
         Column kind                      : Varchar(10)          Internal__Computed__Sync_Change String kind
         Column parent_cid                : Integer              Internal__Computed__Sync_Change Int parent_cid
         Column pid                       : Integer              Internal__Computed__Sync_Change Int pid
         Column scm_change                : Blob                 Internal Blob scm_change
-        Column time                      : Datetime             Internal__Computed__Sync_Change Date-Time time
+        Column time                      : Datetime             Internal__Computed__Sync_Change__Structured Date-Time time
         Column type_name                 : Smallint             Internal__Computed__Sync_Change String type_name
-        Column user                      : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity user Id_Entity()
+        Column user                      : Integer              Internal__Id_Entity_Reference__Computed__Sync_Change Entity user Id_Entity()
     <Table for Surrogate `cert_id`>
         Column cert_id                   : Integer              ---------- primary
 

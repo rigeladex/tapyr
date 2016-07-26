@@ -57,6 +57,7 @@
 #     5-Jun-2014 (CT)  Remove `M_Autoproperty` and `M_Class_SWRP`
 #    16-Jul-2015 (CT)  Use auto-numbered footnotes in docstring
 #    10-Dec-2015 (CT) Change `_m_combine_nested_class` to set `__outer__`
+#     8-Sep-2016 (CT) Change `M_Autorename.__new__` to fix `__qualname__`
 #    ««revision-date»»···
 #--
 
@@ -340,14 +341,19 @@ class M_Autorename (M_Base) :
        eat it, too.
     """
 
-    def __new__ (meta, name, bases, dict) :
+    def __new__ (meta, name, bases, dct) :
         real_name = name = str (name)
-        if "_real_name" in dict :
-            name = str (dict ["_real_name"])
-            del dict ["_real_name"]
-        dict ["__real_name"] = real_name
+        if "_real_name" in dct :
+            name = str (dct ["_real_name"])
+            del dct ["_real_name"]
+            if "__qualname__" in dct :
+                ### Fix `__qualname__` to refer to `name`
+                qn = dct ["__qualname__"]
+                dct ["__qualname__"] = ".".join \
+                    ((qn.rsplit (".", 1) [0], name)) if "." in qn else name
+        dct ["__real_name"] = real_name
         try :
-            return meta.__mc_super.__new__ (meta, name, bases, dict)
+            return meta.__mc_super.__new__ (meta, name, bases, dct)
         except TypeError as exc :
             print ("*" * 3, meta, name)
             for b in bases :
@@ -359,9 +365,9 @@ class M_Autorename (M_Base) :
             raise
     # end def __new__
 
-    def __init__ (cls, name, bases, dict) :
+    def __init__ (cls, name, bases, dct) :
         ### Need to pass `cls.__name__` as it might differ from `name`
-        cls.__m_super.__init__ (cls.__name__, bases, dict)
+        cls.__m_super.__init__ (cls.__name__, bases, dct)
     # end def __init__
 
     def _m_mangled_attr_name (cls, name) :

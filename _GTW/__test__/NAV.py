@@ -72,6 +72,7 @@ _test_nav = """
     e_type_display
     e_type_mf3
     e_type_mf3|mf3
+    e_type_mf3|mf3|mf3_h_cols
     gallery
     html/static.jnj
     login
@@ -106,6 +107,7 @@ _test_nav = """
     e_type_display
     e_type_mf3
     e_type_mf3|mf3
+    e_type_mf3|mf3|mf3_h_cols
     gallery
     html/static.jnj
     login
@@ -199,7 +201,9 @@ _test_nav = """
       , 'e_type_admin|ETR_table'
       ]
     , ['e_type_display']
-    , ['e_type_mf3|mf3']
+    , [ 'e_type_mf3|mf3'
+      , 'e_type_mf3|mf3|mf3_h_cols'
+      ]
     , ['gallery']
     , ['photo']
     , ['site_admin']
@@ -289,6 +293,32 @@ _test_qr = """
             , attrs =
               [ Record
                   ( attr = Date `start`
+                  , attrs =
+                    [ Record
+                        ( attr = Int `day`
+                        , full_name = 'affiliate.lifetime.start.day'
+                        , id = 'affiliate__lifetime__start__day'
+                        , name = 'day'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Start/Day'
+                        )
+                    , Record
+                        ( attr = Int `month`
+                        , full_name = 'affiliate.lifetime.start.month'
+                        , id = 'affiliate__lifetime__start__month'
+                        , name = 'month'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Start/Month'
+                        )
+                    , Record
+                        ( attr = Int `year`
+                        , full_name = 'affiliate.lifetime.start.year'
+                        , id = 'affiliate__lifetime__start__year'
+                        , name = 'year'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Start/Year'
+                        )
+                    ]
                   , full_name = 'affiliate.lifetime.start'
                   , id = 'affiliate__lifetime__start'
                   , name = 'start'
@@ -297,6 +327,32 @@ _test_qr = """
                   )
               , Record
                   ( attr = Date `finish`
+                  , attrs =
+                    [ Record
+                        ( attr = Int `day`
+                        , full_name = 'affiliate.lifetime.finish.day'
+                        , id = 'affiliate__lifetime__finish__day'
+                        , name = 'day'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Finish/Day'
+                        )
+                    , Record
+                        ( attr = Int `month`
+                        , full_name = 'affiliate.lifetime.finish.month'
+                        , id = 'affiliate__lifetime__finish__month'
+                        , name = 'month'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Finish/Month'
+                        )
+                    , Record
+                        ( attr = Int `year`
+                        , full_name = 'affiliate.lifetime.finish.year'
+                        , id = 'affiliate__lifetime__finish__year'
+                        , name = 'year'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Finish/Year'
+                        )
+                    ]
                   , full_name = 'affiliate.lifetime.finish'
                   , id = 'affiliate__lifetime__finish'
                   , name = 'finish'
@@ -481,6 +537,32 @@ _test_qr = """
       , attrs =
         [ Record
             ( attr = Date `start`
+            , attrs =
+              [ Record
+                  ( attr = Int `day`
+                  , full_name = 'affiliate.lifetime.start.day'
+                  , id = 'affiliate__lifetime__start__day'
+                  , name = 'day'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Start/Day'
+                  )
+              , Record
+                  ( attr = Int `month`
+                  , full_name = 'affiliate.lifetime.start.month'
+                  , id = 'affiliate__lifetime__start__month'
+                  , name = 'month'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Start/Month'
+                  )
+              , Record
+                  ( attr = Int `year`
+                  , full_name = 'affiliate.lifetime.start.year'
+                  , id = 'affiliate__lifetime__start__year'
+                  , name = 'year'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Start/Year'
+                  )
+              ]
             , full_name = 'affiliate.lifetime.start'
             , id = 'affiliate__lifetime__start'
             , name = 'start'
@@ -489,6 +571,32 @@ _test_qr = """
             )
         , Record
             ( attr = Date `finish`
+            , attrs =
+              [ Record
+                  ( attr = Int `day`
+                  , full_name = 'affiliate.lifetime.finish.day'
+                  , id = 'affiliate__lifetime__finish__day'
+                  , name = 'day'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Finish/Day'
+                  )
+              , Record
+                  ( attr = Int `month`
+                  , full_name = 'affiliate.lifetime.finish.month'
+                  , id = 'affiliate__lifetime__finish__month'
+                  , name = 'month'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Finish/Month'
+                  )
+              , Record
+                  ( attr = Int `year`
+                  , full_name = 'affiliate.lifetime.finish.year'
+                  , id = 'affiliate__lifetime__finish__year'
+                  , name = 'year'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Finish/Year'
+                  )
+              ]
             , full_name = 'affiliate.lifetime.finish'
             , id = 'affiliate__lifetime__finish'
             , name = 'finish'
@@ -528,6 +636,32 @@ _test_qr = """
       , attrs =
         [ Record
             ( attr = Date `start`
+            , attrs =
+              [ Record
+                  ( attr = Int `day`
+                  , full_name = 'affiliate.lifetime.start.day'
+                  , id = 'affiliate__lifetime__start__day'
+                  , name = 'day'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Start/Day'
+                  )
+              , Record
+                  ( attr = Int `month`
+                  , full_name = 'affiliate.lifetime.start.month'
+                  , id = 'affiliate__lifetime__start__month'
+                  , name = 'month'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Start/Month'
+                  )
+              , Record
+                  ( attr = Int `year`
+                  , full_name = 'affiliate.lifetime.start.year'
+                  , id = 'affiliate__lifetime__start__year'
+                  , name = 'year'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Start/Year'
+                  )
+              ]
             , full_name = 'affiliate.lifetime.start'
             , id = 'affiliate__lifetime__start'
             , name = 'start'
@@ -536,6 +670,32 @@ _test_qr = """
             )
         , Record
             ( attr = Date `finish`
+            , attrs =
+              [ Record
+                  ( attr = Int `day`
+                  , full_name = 'affiliate.lifetime.finish.day'
+                  , id = 'affiliate__lifetime__finish__day'
+                  , name = 'day'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Finish/Day'
+                  )
+              , Record
+                  ( attr = Int `month`
+                  , full_name = 'affiliate.lifetime.finish.month'
+                  , id = 'affiliate__lifetime__finish__month'
+                  , name = 'month'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Finish/Month'
+                  )
+              , Record
+                  ( attr = Int `year`
+                  , full_name = 'affiliate.lifetime.finish.year'
+                  , id = 'affiliate__lifetime__finish__year'
+                  , name = 'year'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Finish/Year'
+                  )
+              ]
             , full_name = 'affiliate.lifetime.finish'
             , id = 'affiliate__lifetime__finish'
             , name = 'finish'
@@ -572,6 +732,32 @@ _test_qr = """
     Record
       ( AQ = <affiliate.lifetime.start.AQ [Attr.Type.Querier Date]>
       , attr = Date `start`
+      , attrs =
+        [ Record
+            ( attr = Int `day`
+            , full_name = 'affiliate.lifetime.start.day'
+            , id = 'affiliate__lifetime__start__day'
+            , name = 'day'
+            , sig_key = 0
+            , ui_name = 'Affiliate/Lifetime/Start/Day'
+            )
+        , Record
+            ( attr = Int `month`
+            , full_name = 'affiliate.lifetime.start.month'
+            , id = 'affiliate__lifetime__start__month'
+            , name = 'month'
+            , sig_key = 0
+            , ui_name = 'Affiliate/Lifetime/Start/Month'
+            )
+        , Record
+            ( attr = Int `year`
+            , full_name = 'affiliate.lifetime.start.year'
+            , id = 'affiliate__lifetime__start__year'
+            , name = 'year'
+            , sig_key = 0
+            , ui_name = 'Affiliate/Lifetime/Start/Year'
+            )
+        ]
       , edit = None
       , full_name = 'affiliate.lifetime.start'
       , id = 'affiliate__lifetime__start___AC'
@@ -612,6 +798,32 @@ _test_qr = """
         , attrs =
           [ Record
               ( attr = Date `start`
+              , attrs =
+                [ Record
+                    ( attr = Int `day`
+                    , full_name = 'lifetime.start.day'
+                    , id = 'lifetime__start__day'
+                    , name = 'day'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Start/Day'
+                    )
+                , Record
+                    ( attr = Int `month`
+                    , full_name = 'lifetime.start.month'
+                    , id = 'lifetime__start__month'
+                    , name = 'month'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Start/Month'
+                    )
+                , Record
+                    ( attr = Int `year`
+                    , full_name = 'lifetime.start.year'
+                    , id = 'lifetime__start__year'
+                    , name = 'year'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Start/Year'
+                    )
+                ]
               , full_name = 'lifetime.start'
               , id = 'lifetime__start'
               , name = 'start'
@@ -620,6 +832,32 @@ _test_qr = """
               )
           , Record
               ( attr = Date `finish`
+              , attrs =
+                [ Record
+                    ( attr = Int `day`
+                    , full_name = 'lifetime.finish.day'
+                    , id = 'lifetime__finish__day'
+                    , name = 'day'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Finish/Day'
+                    )
+                , Record
+                    ( attr = Int `month`
+                    , full_name = 'lifetime.finish.month'
+                    , id = 'lifetime__finish__month'
+                    , name = 'month'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Finish/Month'
+                    )
+                , Record
+                    ( attr = Int `year`
+                    , full_name = 'lifetime.finish.year'
+                    , id = 'lifetime__finish__year'
+                    , name = 'year'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Finish/Year'
+                    )
+                ]
               , full_name = 'lifetime.finish'
               , id = 'lifetime__finish'
               , name = 'finish'
@@ -677,6 +915,32 @@ _test_qr = """
               , attrs =
                 [ Record
                     ( attr = Date `start`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `day`
+                          , full_name = 'affiliate.lifetime.start.day'
+                          , id = 'affiliate__lifetime__start__day'
+                          , name = 'day'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Start/Day'
+                          )
+                      , Record
+                          ( attr = Int `month`
+                          , full_name = 'affiliate.lifetime.start.month'
+                          , id = 'affiliate__lifetime__start__month'
+                          , name = 'month'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Start/Month'
+                          )
+                      , Record
+                          ( attr = Int `year`
+                          , full_name = 'affiliate.lifetime.start.year'
+                          , id = 'affiliate__lifetime__start__year'
+                          , name = 'year'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Start/Year'
+                          )
+                      ]
                     , full_name = 'affiliate.lifetime.start'
                     , id = 'affiliate__lifetime__start'
                     , name = 'start'
@@ -685,6 +949,32 @@ _test_qr = """
                     )
                 , Record
                     ( attr = Date `finish`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `day`
+                          , full_name = 'affiliate.lifetime.finish.day'
+                          , id = 'affiliate__lifetime__finish__day'
+                          , name = 'day'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Finish/Day'
+                          )
+                      , Record
+                          ( attr = Int `month`
+                          , full_name = 'affiliate.lifetime.finish.month'
+                          , id = 'affiliate__lifetime__finish__month'
+                          , name = 'month'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Finish/Month'
+                          )
+                      , Record
+                          ( attr = Int `year`
+                          , full_name = 'affiliate.lifetime.finish.year'
+                          , id = 'affiliate__lifetime__finish__year'
+                          , name = 'year'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Finish/Year'
+                          )
+                      ]
                     , full_name = 'affiliate.lifetime.finish'
                     , id = 'affiliate__lifetime__finish'
                     , name = 'finish'
@@ -1376,6 +1666,32 @@ _test_qr = """
               , attrs =
                 [ Record
                     ( attr = Date `start`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `day`
+                          , full_name = 'events.date.start.day'
+                          , id = 'events__date__start__day'
+                          , name = 'day'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Start/Day'
+                          )
+                      , Record
+                          ( attr = Int `month`
+                          , full_name = 'events.date.start.month'
+                          , id = 'events__date__start__month'
+                          , name = 'month'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Start/Month'
+                          )
+                      , Record
+                          ( attr = Int `year`
+                          , full_name = 'events.date.start.year'
+                          , id = 'events__date__start__year'
+                          , name = 'year'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Start/Year'
+                          )
+                      ]
                     , full_name = 'events.date.start'
                     , id = 'events__date__start'
                     , name = 'start'
@@ -1384,6 +1700,32 @@ _test_qr = """
                     )
                 , Record
                     ( attr = Date `finish`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `day`
+                          , full_name = 'events.date.finish.day'
+                          , id = 'events__date__finish__day'
+                          , name = 'day'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Finish/Day'
+                          )
+                      , Record
+                          ( attr = Int `month`
+                          , full_name = 'events.date.finish.month'
+                          , id = 'events__date__finish__month'
+                          , name = 'month'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Finish/Month'
+                          )
+                      , Record
+                          ( attr = Int `year`
+                          , full_name = 'events.date.finish.year'
+                          , id = 'events__date__finish__year'
+                          , name = 'year'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Finish/Year'
+                          )
+                      ]
                     , full_name = 'events.date.finish'
                     , id = 'events__date__finish'
                     , name = 'finish'
@@ -1413,6 +1755,32 @@ _test_qr = """
               , attrs =
                 [ Record
                     ( attr = Time `start`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `hour`
+                          , full_name = 'events.time.start.hour'
+                          , id = 'events__time__start__hour'
+                          , name = 'hour'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Start/Hour'
+                          )
+                      , Record
+                          ( attr = Int `minute`
+                          , full_name = 'events.time.start.minute'
+                          , id = 'events__time__start__minute'
+                          , name = 'minute'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Start/Minute'
+                          )
+                      , Record
+                          ( attr = Int `second`
+                          , full_name = 'events.time.start.second'
+                          , id = 'events__time__start__second'
+                          , name = 'second'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Start/Second'
+                          )
+                      ]
                     , full_name = 'events.time.start'
                     , id = 'events__time__start'
                     , name = 'start'
@@ -1421,6 +1789,32 @@ _test_qr = """
                     )
                 , Record
                     ( attr = Time `finish`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `hour`
+                          , full_name = 'events.time.finish.hour'
+                          , id = 'events__time__finish__hour'
+                          , name = 'hour'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Finish/Hour'
+                          )
+                      , Record
+                          ( attr = Int `minute`
+                          , full_name = 'events.time.finish.minute'
+                          , id = 'events__time__finish__minute'
+                          , name = 'minute'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Finish/Minute'
+                          )
+                      , Record
+                          ( attr = Int `second`
+                          , full_name = 'events.time.finish.second'
+                          , id = 'events__time__finish__second'
+                          , name = 'second'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Finish/Second'
+                          )
+                      ]
                     , full_name = 'events.time.finish'
                     , id = 'events__time__finish'
                     , name = 'finish'
@@ -1696,6 +2090,32 @@ _test_esf = """
             , attrs =
               [ Record
                   ( attr = Date `start`
+                  , attrs =
+                    [ Record
+                        ( attr = Int `day`
+                        , full_name = 'affiliate.lifetime.start.day'
+                        , id = 'affiliate__lifetime__start__day'
+                        , name = 'day'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Start/Day'
+                        )
+                    , Record
+                        ( attr = Int `month`
+                        , full_name = 'affiliate.lifetime.start.month'
+                        , id = 'affiliate__lifetime__start__month'
+                        , name = 'month'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Start/Month'
+                        )
+                    , Record
+                        ( attr = Int `year`
+                        , full_name = 'affiliate.lifetime.start.year'
+                        , id = 'affiliate__lifetime__start__year'
+                        , name = 'year'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Start/Year'
+                        )
+                    ]
                   , full_name = 'affiliate.lifetime.start'
                   , id = 'affiliate__lifetime__start'
                   , name = 'start'
@@ -1704,6 +2124,32 @@ _test_esf = """
                   )
               , Record
                   ( attr = Date `finish`
+                  , attrs =
+                    [ Record
+                        ( attr = Int `day`
+                        , full_name = 'affiliate.lifetime.finish.day'
+                        , id = 'affiliate__lifetime__finish__day'
+                        , name = 'day'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Finish/Day'
+                        )
+                    , Record
+                        ( attr = Int `month`
+                        , full_name = 'affiliate.lifetime.finish.month'
+                        , id = 'affiliate__lifetime__finish__month'
+                        , name = 'month'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Finish/Month'
+                        )
+                    , Record
+                        ( attr = Int `year`
+                        , full_name = 'affiliate.lifetime.finish.year'
+                        , id = 'affiliate__lifetime__finish__year'
+                        , name = 'year'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Lifetime/Finish/Year'
+                        )
+                    ]
                   , full_name = 'affiliate.lifetime.finish'
                   , id = 'affiliate__lifetime__finish'
                   , name = 'finish'

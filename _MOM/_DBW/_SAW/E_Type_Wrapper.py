@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -721,7 +721,8 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
     # end def _delete
 
     def _exec_insert (self, session, values) :
-        return session.connection.execute (self.ins_stmt.values (values))
+        stmt = self.ins_stmt.values (values)
+        return session.connection.execute (stmt)
     # end def _exec_insert
 
     def _exec_update (self, session, entity, values, ** xkw) :

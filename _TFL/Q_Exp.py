@@ -764,7 +764,7 @@ class _Exp_ (_Exp_Base_) :
     @_method
     def BETWEEN () :
         def between (val, lhs, rhs) :
-            """between(val, lhs, rhs) -- Returns result of `lhs <= val <= rhs`"""
+            """between(lhs, rhs) -- Returns result of `lhs <= val <= rhs`"""
             return val is not None and lhs <= val <= rhs
         return between
     # end def BETWEEN
@@ -787,6 +787,7 @@ class _Exp_ (_Exp_Base_) :
     @_method
     def ENDSWITH () :
         def endswith (l, r) :
+            """endswith(r) -- Returns True if `val` ends with the suffix `r`"""
             return l.endswith (r)
         return endswith
     # end def ENDSWITH
@@ -794,7 +795,7 @@ class _Exp_ (_Exp_Base_) :
     @_method
     def IN () :
         def in_ (val,  rhs) :
-            """in_(val, lhs) -- Returns result of `val in rhs`"""
+            """in_(lhs) -- Returns result of `val in rhs`"""
             return val in rhs
         return in_
     # end def IN
@@ -802,6 +803,7 @@ class _Exp_ (_Exp_Base_) :
     @_method
     def STARTSWITH () :
         def startswith (l, r) :
+            """startswith(r) -- Returns True if `val` starts with the prefix `r`"""
             return l.startswith (r)
         return startswith
     # end def STARTSWITH
@@ -809,6 +811,7 @@ class _Exp_ (_Exp_Base_) :
     @_method
     def OVERLAPS () :
         def overlaps (l, r) :
+            """overlaps(r) -- Returns True if `val` overlaps `r`"""
             return l.overlaps (r)
         return overlaps
     # end def OVERLAPS
@@ -1273,6 +1276,9 @@ cannot be used with any operators except `==` and `!=`::
     >>> with expect_except (TypeError) :
     ...     (Q.a < Q.b) < Q.c
     TypeError: Operator `<` not applicable to boolean result of `Q.a < Q.b`, rhs: `Q.c`
+
+.. autoclass:: _Exp_
+  :members:
 
 """
 

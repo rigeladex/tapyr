@@ -95,8 +95,8 @@ test_code = r"""
     <Create SWP.Page ('title_2', 'SWP.Page'), new-values = {'contents' : '<p>text 2</p>\n', 'date' : (('start', <date instance>),), 'last_cid' : '3', 'text' : 'text 2'}>
     <Create SWP.Page ('title_3', 'SWP.Page'), new-values = {'contents' : '<p>text 3</p>\n', 'date' : (('start', <date instance>),), 'last_cid' : '4', 'text' : 'text 3'}>
 
-    >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("type_name", "pid").all ()
-    [('PAP.Person', 1), ('SWP.Page', 2), ('SWP.Page', 3), ('SWP.Page', 4), ('MOM.Document', 5), ('MOM.Document', 6), ('MOM.Document', 7)]
+    >>> sorted (scope.MOM.Id_Entity.query ().attrs ("type_name", ))
+    [('MOM.Document',), ('PAP.Person',), ('SWP.Page',)]
 
     >>> show_ref_maps (scope, "Ref_Req_Map")
     MOM.Id_Entity

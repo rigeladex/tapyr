@@ -103,6 +103,15 @@
 #    27-Apr-2015 (CT) Add `unique_p`, `use_index` to `_saw_one_typed_column`
 #    16-Jun-2016 (CT) Add `_saw_column_type` to `_A_Decimal_`, not `A_Decimal`
 #    16-Jun-2016 (CT) Use `.SA_Type.Decimal`, not `..Numeric`, for `_A_Decimal_`
+#    21-Jul-2016 (CT) Add `** kw` to `_saw_columns*`
+#    22-Jul-2016 (CT) Factor `_Kind_Wrapper_C_`
+#     3-Aug-2016 (CT) Add `Kind_Wrapper_Structured_Field_Extractor`
+#                     + factor `_Kind_Wrapper_Structured_`
+#     3-Aug-2016 (CT) Add `_Kind_Wrapper_CX_`, `_M_Kind_Wrapper_`
+#     9-Aug-2016 (CT) Add optional arg `attr` to `_Kind_Wrapper_.__init__`
+#    21-Sep-2016 (CT) Add `_saw_column_type` for `A_Time_X`
+#    22-Sep-2016 (CT) Add `_saw_cooked`
+#    23-Sep-2016 (CT) Remove unused `fix_bool`
 #    ««revision-date»»···
 #--
 
@@ -120,10 +129,12 @@ import _MOM._Attr.Type
 import _MOM._DBW._SAW.Manager
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch_Method
+from   _TFL.Decorator             import getattr_safe
 from   _TFL.predicate             import \
     bool_split, filtered_join, rsplit_hst, uniq
 
 import _TFL._Meta.Object
+import _TFL.Accessor
 import _TFL.Decorator
 
 import datetime
@@ -162,7 +173,43 @@ class A_Join (TFL.Meta.Object) :
 
 # end class A_Join
 
-class _Kind_Wrapper_ (TFL.Meta.Object) :
+class _Kind_Wrapper_CX_ (TFL.Meta.Object) :
+
+    is_required      = False
+
+    def __init__ (self, cx, * args, ** kw) :
+        self._cx = cx
+        self.__super.__init__ (* args, ** kw)
+        cx.MOM_Is_Raw  = False
+        cx.MOM_Wrapper = self
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def columns (self) :
+        return [self._cx]
+    # end def columns
+
+# end class _Kind_Wrapper_CX_
+
+class _M_Kind_Wrapper_ (TFL.Meta.Object.__class__) :
+
+    @TFL.Meta.Once_Property_NI
+    def CXT (cls) :
+        if not cls.__name__.startswith ("_") :
+            result = cls.__class__ \
+                ( cls.__name__ + "__CX"
+                , (_Kind_Wrapper_CX_, cls)
+                , dict
+                    ( __module__ = cls.__module__
+                    )
+                )
+            return result
+    # end def CXT
+
+# end class _M_Kind_Wrapper_
+
+class _Kind_Wrapper_ \
+          (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Kind_Wrapper_)) :
 
     columns         = ()
     db_attrs_o      = db_attrs     = {}
@@ -171,14 +218,14 @@ class _Kind_Wrapper_ (TFL.Meta.Object) :
 
     _ETW            = TFL.Meta.Alias_Property ("ETW")
 
-    def __init__ (self, ETW, kind, outer = None, parent = None) :
+    def __init__ (self, ETW, kind, outer = None, parent = None, attr = None) :
         self.ATW    = ETW.ATW
         self.ETW    = ETW
         self.PNS    = ETW.PNS
         self.DBW    = ETW.PNS.Manager
         self.e_type = ETW.e_type
         self.kind   = kind
-        self.attr   = kind.attr
+        self.attr   = kind.attr if attr is None else attr
         self.outer  = outer
         self.eff    = parent if parent is not None else self
     # end def __init__
@@ -435,18 +482,49 @@ class Kind_Wrapper_R (_Kind_Wrapper_PQ_) :
 
 # end class Kind_Wrapper_R
 
-@TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr._Composite_Mixin_)
-class Kind_Wrapper_C (_Kind_Wrapper_) :
-    """SAW specific information about an composite-attribute kind descriptor in
-       the context of a specific E_Type_Wrapper
+class _Kind_Wrapper_Structured_ (_Kind_Wrapper_) :
+    """Common base class for attribute kinds with structure."""
+
+    def update_col_map (self, mapper, col_map, prefix = None) :
+        self.__super.update_col_map (mapper, col_map)
+        self._setup_QC (mapper.__class__ (self, self.ckd_name), col_map)
+    # end def update_col_map
+
+    def _setup_QC (self, QC, col_map) :
+        self.QC        = QC
+        QC.MOM_Wrapper = self
+        col_map.update ((qn, QC) for qn in self.q_able_names)
+        for k, akw in pyk.iteritems (self.q_able_attrs) :
+            if k not in self.db_attrs :
+                col_map [akw.name] = akw
+    # end def _setup_QC
+
+    def __getattr__ (self, name) :
+        if name == "QC" :
+            try :
+                self.ETW.QC.Map ### trigger setup of `QC`
+            except Exception as exc :
+                raise AttributeError \
+                    ("Access to `QC` of %s triggered %s" % (self, exc))
+            else :
+                return self.QC
+        raise AttributeError (name)
+    # end def __getattr__
+
+# end class _Kind_Wrapper_Structured_
+
+class _Kind_Wrapper_C_ (_Kind_Wrapper_Structured_) :
+    """Common base class for composite- and structured-attribute kind
+       descriptors in the context of a specific E_Type_Wrapper
     """
 
     is_surrogate   = False
     q_able_attrs_i = {}
 
-    def __init__ (self, ETW, kind, outer = None, parent = None) :
-        self.__super.__init__ (ETW, kind, outer = outer, parent = parent)
-        self.e_type = kind.attr.P_Type
+    def __init__ (self, ETW, kind, outer = None, parent = None, attr = None) :
+        self.__super.__init__ \
+            (ETW, kind, outer = outer, parent = parent, attr = attr)
+        self.e_type = self.attr.E_Type
         self._setup_attrs (ETW, parent)
     # end def __init__
 
@@ -493,15 +571,6 @@ class Kind_Wrapper_C (_Kind_Wrapper_) :
                     yield k, v
     # end def col_values
 
-    def row_as_pickle_cargo (self, row) :
-        return (self.ETW.row_as_pickle_cargo (row, self.db_attrs), )
-    # end def row_as_pickle_cargo
-
-    def update_col_map (self, mapper, col_map, prefix = None) :
-        self.__super.update_col_map (mapper, col_map)
-        self._setup_QC (mapper.__class__ (self, self.ckd_name), col_map)
-    # end def update_col_map
-
     def _setup_alias_attrs (self, ETW_alias, result) :
         parent = result.eff
         parent_attrs = parent.db_attrs if parent is not result else {}
@@ -527,75 +596,122 @@ class Kind_Wrapper_C (_Kind_Wrapper_) :
     # end def _setup_alias_columns
 
     def _setup_attrs (self, ETW, parent) :
-        e_type = self.attr.P_Type
-        PTW    = ETW.ATW [e_type]
-        parent_attrs = parent.db_attrs if parent else {}
+        e_type          = self.attr.E_Type
+        PTW             = self._attr_e_type_wrapper (ETW, e_type)
+        parent_attrs    = parent.db_attrs if parent else {}
+        def _gen (self, attrs, e_type, PTW, parent_attrs, kind_wrapper) :
+            for a in attrs :
+                akw = kind_wrapper \
+                    ( a, PTW.DBW, PTW
+                    , outer  = self
+                    , parent = parent_attrs.get (a.name)
+                    )
+                yield a.name, akw
         self.db_attrs_o = self.db_attrs = dict \
-            ( ( a.name
-              , a._saw_kind_wrapper
-                  ( PTW.DBW, PTW
-                  , outer = self, parent = parent_attrs.get (a.name)
-                  )
-              )
-            for a in e_type.db_attr
+            ( _gen
+                ( self
+                , e_type.db_attr
+                , e_type, PTW, parent_attrs, TFL.Method._saw_kind_wrapper
+                )
             )
         self.q_able_attrs_o = self.q_able_attrs = dict (self.db_attrs)
         self.q_able_attrs.update \
-            ( ( a.name
-              , a._saw_kind_wrapper_pq
-                  ( PTW.DBW, PTW
-                  , outer = self, parent = parent_attrs.get (a.name)
-                  )
-              )
-            for a in e_type.q_able
-            if  a.name not in self.db_attrs
+            ( _gen
+                ( self
+                , (a for a in e_type.q_able if a.name not in self.db_attrs)
+                , e_type, PTW, parent_attrs, TFL.Method._saw_kind_wrapper_pq
+                )
             )
     # end def _setup_attrs
 
-    def _setup_QC (self, QC, col_map) :
-        self.QC        = QC
-        QC.MOM_Wrapper = self
-        col_map.update ((qn, QC) for qn in self.q_able_names)
-        for k, akw in pyk.iteritems (self.q_able_attrs) :
-            if k not in self.db_attrs :
-                col_map [akw.name] = akw
-    # end def _setup_QC
+# end class _Kind_Wrapper_C_
 
-    def __getattr__ (self, name) :
-        if name == "QC" :
-            try :
-                self.ETW.QC.Map ### trigger setup of `QC`
-            except Exception as exc :
-                raise AttributeError \
-                    ("Access to `QC` of %s triggered %s" % (self, exc))
-            else :
-                return self.QC
-        raise AttributeError (name)
-    # end def __getattr__
+@TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr._Composite_Mixin_)
+class Kind_Wrapper_C (_Kind_Wrapper_C_) :
+    """SAW specific information about an composite-attribute kind descriptor in
+       the context of a specific E_Type_Wrapper
+    """
+
+    def row_as_pickle_cargo (self, row) :
+        return (self.ETW.row_as_pickle_cargo (row, self.db_attrs), )
+    # end def row_as_pickle_cargo
+
+    def _attr_e_type_wrapper (self, ETW, e_type) :
+        return ETW.ATW [e_type]
+    # end def _attr_e_type_wrapper
 
 # end class Kind_Wrapper_C
 
 class _Kind_Wrapper_Field_Extractor_ (_Kind_Wrapper_) :
     """Kind wrapper that can extract fields from the column"""
-
 # end class _Kind_Wrapper_Field_Extractor_
 
+class Kind_Wrapper_Structured_Field_Extractor \
+          ( _Kind_Wrapper_Field_Extractor_
+          , _Kind_Wrapper_Structured_
+          , Kind_Wrapper
+          ) :
+    """Kind wrapper for structured-attribute kind that can extract fields from
+       the column
+    """
+
+    is_surrogate   = False
+    q_able_attrs_i = {}
+
+    def __init__ (self, ETW, kind, outer = None, parent = None, attr = None) :
+        self.__super.__init__ \
+            (ETW, kind, outer = outer, parent = parent, attr = attr)
+        if self.fields :
+            self._setup_attrs (ETW, parent)
+    # end def __init__
+
+    @property
+    def type_name (self) :
+        return "%-40.40s" % (self, )
+    # end def type_name
+
+    def _attr_e_type_wrapper (self, ETW, e_type) :
+        try :
+            result = ETW.ATW [e_type]
+        except KeyError :
+            ETW.DBW.etype_decorator (e_type)
+            result = ETW.ATW [e_type]
+        return result
+    # end def _attr_e_type_wrapper
+
+    def _setup_attrs (self, ETW, parent) :
+        e_type          = self.attr.E_Type
+        PTW             = self._attr_e_type_wrapper (ETW, e_type)
+        self.db_attrs_o = self.db_attrs = {}
+        self.q_able_attrs_o = self.q_able_attrs = dict (self.db_attrs)
+        def _gen (self, e_type, PTW) :
+            for f in self.fields :
+                a = e_type.attributes [f]
+                f = a._saw_kind_wrapper \
+                    if hasattr (a, "_SAW_Wrapper") else a._saw_kind_wrapper_pq
+                w = f (PTW.DBW, PTW, outer = self, parent = None)
+                yield a.name, w
+        self.q_able_attrs.update (_gen (self, e_type, PTW))
+    # end def _setup_attrs
+
+# end class Kind_Wrapper_Structured_Field_Extractor
+
 @TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr.A_Date)
-class Kind_Wrapper_Date (_Kind_Wrapper_Field_Extractor_, Kind_Wrapper) :
+class Kind_Wrapper_Date (Kind_Wrapper_Structured_Field_Extractor) :
 
     fields = set (("year", "month", "day"))
 
 # end class Kind_Wrapper_Date
 
-@TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr.A_Time)
-class Kind_Wrapper_Time (_Kind_Wrapper_Field_Extractor_, Kind_Wrapper) :
+@TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr._A_Time_)
+class Kind_Wrapper_Time (Kind_Wrapper_Structured_Field_Extractor) :
 
     fields = set (("hour", "minute", "second"))
 
 # end class Kind_Wrapper_Time
 
 @TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr.A_Date_Time)
-class Kind_Date_Time_Wrapper (_Kind_Wrapper_Field_Extractor_, Kind_Wrapper) :
+class Kind_Date_Time_Wrapper (Kind_Wrapper_Structured_Field_Extractor) :
 
     fields = Kind_Wrapper_Date.fields | Kind_Wrapper_Time.fields
 
@@ -628,10 +744,10 @@ def _saw_kind_wrapper_pq (self, DBW, ETW, ** kw) :
 ### Attr-Kind specific functions returning column keyword arguments ############
 @TFL.Add_To_Class ("_saw_column_kw", MOM.Attr.Kind)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
-def _saw_column_kw (self, DBW) :
+def _saw_column_kw (self, DBW, ** kw) :
     default = self.attr.default
     is_None = default is None
-    result  = dict (nullable = is_None)
+    result  = dict (kw, nullable = is_None)
     if not is_None :
         result.update (default = default)
     return result
@@ -639,8 +755,9 @@ def _saw_column_kw (self, DBW) :
 
 @TFL.Add_To_Class ("_saw_column_kw", MOM.Attr.Primary)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
-def _saw_column_kw_primary (self, DBW) :
-    result              = super (MOM.Attr.Primary, self)._saw_column_kw (DBW)
+def _saw_column_kw_primary (self, DBW, ** kw) :
+    result              = super \
+        (MOM.Attr.Primary, self)._saw_column_kw (DBW, ** kw)
     result ["nullable"] = False
     return result
 # end def _saw_column_kw_primary
@@ -648,14 +765,14 @@ def _saw_column_kw_primary (self, DBW) :
 ### Attr-Kind specific functions returning columns #############################
 @TFL.Add_To_Class ("_saw_columns", MOM.Attr.Kind)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
-def _saw_columns_kind (self, DBW, wrapper) :
+def _saw_columns_kind (self, DBW, wrapper, ** kw) :
     attr = self.attr
-    return attr._saw_columns (DBW, wrapper, ** self._saw_column_kw (DBW))
+    return attr._saw_columns (DBW, wrapper, ** self._saw_column_kw (DBW, ** kw))
 # end def _saw_columns_kind
 
 @TFL.Add_To_Class ("_saw_columns", MOM.Attr._Raw_Value_Mixin_)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
-def _saw_columns_raw_kind (self, DBW, wrapper) :
+def _saw_columns_raw_kind (self, DBW, wrapper, ** kw) :
     attr     = self.attr
     raw_name = wrapper.raw_name
     raw_type = DBW.PNS.Attr._saw_column_type_string \
@@ -666,7 +783,7 @@ def _saw_columns_raw_kind (self, DBW, wrapper) :
     raw_col.MOM_Kind    = wrapper.kind
     raw_col.MOM_Wrapper = wrapper
     return super (MOM.Attr._Raw_Value_Mixin_, self)._saw_columns \
-        (DBW, wrapper) + (raw_col, )
+        (DBW, wrapper, ** kw) + (raw_col, )
 # end def _saw_columns_raw_kind
 
 ### Attr-Type specific functions returning column names ########################
@@ -685,7 +802,8 @@ def _saw_one_typed_column (self, DBW, wrapper, col_type, * args, ** kw) :
         kw.setdefault ("unique", True)
     if attr.use_index :
         kw.setdefault ("index",  True)
-    col = self.SAW_Column_Type (wrapper.ckd_name, col_type, * args, ** kw)
+    ckd_name = kw.pop ("ckd_name", wrapper.ckd_name)
+    col = self.SAW_Column_Type (ckd_name, col_type, * args, ** kw)
     col.MOM_Is_Raw  = False
     col.MOM_Kind    = wrapper.kind
     col.MOM_Wrapper = wrapper
@@ -807,6 +925,12 @@ def _saw_column_type_int (self, DBW, wrapper, pts) :
     return wrapper.ATW.SA_Type.sized_int_type (pts)
 # end def _saw_column_type_int
 
+@TFL.Add_To_Class ("_saw_column_type", MOM.Attr.A_Time_X)
+@Single_Dispatch_Method (T = SAW.Manager.__class__)
+def _saw_column_type_time_x (self, DBW, wrapper, pts) :
+    return wrapper.ATW.SA_Type._Time_X_ ()
+# end def _saw_column_type_time_x
+
 @TFL.Add_To_Class ("_saw_column_type", MOM.Attr._A_String_Base_)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_column_type_string (self, DBW, wrapper, pts) :
@@ -829,6 +953,19 @@ def _saw_column_type_string (self, DBW, wrapper, pts) :
 def _saw_column_type_type_name (self, DBW, wrapper, pts) :
     return wrapper.ATW.SA_Type.Type_Name
 # end def _saw_column_type_type_name
+
+### Functions to cook a value used in a query expression #######################
+@TFL.Add_To_Class ("_saw_cooked", MOM.Attr.A_Attr_Type)
+@Single_Dispatch_Method (T = SAW.Manager.__class__)
+def _saw_cooked (self, DBW, value) :
+    return value
+# end def _saw_cooked
+
+@TFL.Add_To_Class ("_saw_cooked", MOM.Attr.A_Time_X)
+@Single_Dispatch_Method (T = SAW.Manager.__class__)
+def _saw_cooked_time_x (self, DBW, value) :
+    return SAW.SA_Type._Time_X_.process_bind_param (value, None)
+# end def _saw_cooked
 
 ### Functions to check column for truth ########################################
 
@@ -856,8 +993,6 @@ def _saw_bool_raw (self, DBW, col) :
     return result
 # end def _saw_bool_raw
 
-MOM.Attr.A_Attr_Type._saw_bool = None
-
 @TFL.Add_To_Class ("_saw_bool", MOM.Attr.A_Attr_Type)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_bool_type (self, DBW, col) :
@@ -883,25 +1018,8 @@ def _saw_bool_string (self, DBW, col) :
         return col != ""
 # end def _saw_bool_string
 
-def fix_bool (QR, ETW, wxs) :
-    def _gen (DBW, wxs) :
-        for wx in wxs :
-            if isinstance (wx, SA.schema.Column) :
-                try :
-                    ak = wx.MOM_Kind
-                except AttributeError :
-                    pass
-                else :
-                    wx = ak._saw_bool (DBW, wx)
-            yield wx
-    result = tuple (_gen (ETW.DBW, wxs))
-    if all (isinstance (wx, SA.schema.Column)  for wx in wxs) :
-        result = (SA.expression.or_ (* result), )
-    return result
-# end def fix_bool
-
 ### Functions to extract fields from date column ##############################
-@TFL.Add_To_Class ("_saw_extract_field", MOM.Attr._A_Date_)
+@TFL.Add_To_Class ("_saw_extract_field", MOM.Attr._A_DT_)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_extract_date_field (self, DBW, col, field) :
     return SA.sql.extract (field, col)

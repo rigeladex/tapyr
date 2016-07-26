@@ -23,6 +23,7 @@
 #     4-Aug-2013 (CT) Fix `_Type_Name_Integer_.process_bind_param`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    16-Jun-2016 (CT) Add `SA_Type.Decimal` as alias for `SA.types.Numeric`
+#    21-Sep-2016 (CT) Add `_Time_X_`
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,27 @@ class _Id_Entity_ (SA.types.TypeDecorator) :
     # end def process_bind_param
 
 # end class _Id_Entity_
+
+class _Time_X_ (SA.types.TypeDecorator) :
+    """Augmented time type that stores time values as datetime values"""
+
+    impl       = SA.types.DateTime
+    _fake_date = datetime.date (1, 1, 1)
+
+    @TFL.Meta.Class_and_Instance_Method
+    def process_bind_param (soc, value, dialect) :
+        if isinstance (value, datetime.time) :
+            value = datetime.datetime.combine (soc._fake_date, value)
+        return value
+    # end def process_bind_param
+
+    def process_result_value (self, value, dialect) :
+        if isinstance (value, datetime.datetime) :
+            value = value.time ()
+        return value
+    # end def process_result_value
+
+# end class _Time_X_
 
 class _Type_Name_Integer_ (SA.types.TypeDecorator) :
     """Augmented integer type that converts MOM type_names to/from integers"""
@@ -118,6 +140,7 @@ class M_SA_Type (TFL.Meta.Object.__class__) :
 class SA_Type (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_SA_Type)) :
     """Encapsulate SQLalchemy types"""
 
+    _Time_X_    = _Time_X_
     _Type_Name_ = _Type_Name_Integer_
 
     Decimal     = SA.types.Numeric

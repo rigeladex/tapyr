@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -454,7 +454,7 @@ class _Attr_Base_ (_Base_) :
     # end def __init__
 
     def _col_value_from_row (self, col, row, scope) :
-        if isinstance (col, MOM.DBW.SAW.Attr.Kind_Wrapper_C) :
+        if isinstance (col, MOM.DBW.SAW.Attr._Kind_Wrapper_C_) :
             pc     = col.row_as_pickle_cargo    (row)
             result = col.kind.from_pickle_cargo (scope, pc)
         else :
@@ -470,7 +470,7 @@ class _Attr_Base_ (_Base_) :
     def _setup_query (self, cols, join, allow_duplicates) :
         def _gen (cols) :
             for c in cols :
-                if isinstance (c, MOM.DBW.SAW.Attr.Kind_Wrapper_C) :
+                if isinstance (c, MOM.DBW.SAW.Attr._Kind_Wrapper_C_) :
                     for cc in c.columns :
                         yield cc
                 else :

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -35,6 +35,7 @@
 #    28-Mar-2014 (CT) Add link-ref-attribute to `cross_references`
 #     1-Apr-2014 (CT) Add `max_value` and `min_value` to
 #                     `E_Type.GET._response_attr`
+#    19-Jul-2016 (CT) Change guard for `attr.E_Type` in `_response_attr`
 #    ««revision-date»»···
 #--
 
@@ -155,7 +156,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
             self._add_attr_props (attr, ("explanation", "syntax"), result, _T)
             if attr.ui_name_T != attr.name :
                 result ["ui_name"] = attr.ui_name_T
-            if attr.E_Type :
+            if isinstance (attr.E_Type, MOM.Meta.M_E_Type) :
                 result ["type_name"] = tn = attr.E_Type.type_name
                 if isinstance (attr.attr, MOM.Attr._A_Composite_) :
                     result ["attributes"] = list \

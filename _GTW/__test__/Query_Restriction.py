@@ -72,6 +72,32 @@ _test_code = """
     , Record
         ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
         , attr = Date `start`
+        , attrs =
+          [ Record
+              ( attr = Int `day`
+              , full_name = 'lifetime.start.day'
+              , id = 'lifetime__start__day'
+              , name = 'day'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Day'
+              )
+          , Record
+              ( attr = Int `month`
+              , full_name = 'lifetime.start.month'
+              , id = 'lifetime__start__month'
+              , name = 'month'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Month'
+              )
+          , Record
+              ( attr = Int `year`
+              , full_name = 'lifetime.start.year'
+              , id = 'lifetime__start__year'
+              , name = 'year'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Year'
+              )
+          ]
         , edit = '2008'
         , full_name = 'lifetime.start'
         , id = 'lifetime__start___EQ'
@@ -143,6 +169,32 @@ _test_code = """
     , Record
         ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
         , attr = Date `start`
+        , attrs =
+          [ Record
+              ( attr = Int `day`
+              , full_name = 'lifetime.start.day'
+              , id = 'lifetime__start__day'
+              , name = 'day'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Day'
+              )
+          , Record
+              ( attr = Int `month`
+              , full_name = 'lifetime.start.month'
+              , id = 'lifetime__start__month'
+              , name = 'month'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Month'
+              )
+          , Record
+              ( attr = Int `year`
+              , full_name = 'lifetime.start.year'
+              , id = 'lifetime__start__year'
+              , name = 'year'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Year'
+              )
+          ]
         , edit = '2008'
         , full_name = 'lifetime.start'
         , id = 'lifetime__start___EQ'
@@ -168,6 +220,32 @@ _test_code = """
         , attrs =
           [ Record
               ( attr = Date `start`
+              , attrs =
+                [ Record
+                    ( attr = Int `day`
+                    , full_name = 'lifetime.start.day'
+                    , id = 'lifetime__start__day'
+                    , name = 'day'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Start/Day'
+                    )
+                , Record
+                    ( attr = Int `month`
+                    , full_name = 'lifetime.start.month'
+                    , id = 'lifetime__start__month'
+                    , name = 'month'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Start/Month'
+                    )
+                , Record
+                    ( attr = Int `year`
+                    , full_name = 'lifetime.start.year'
+                    , id = 'lifetime__start__year'
+                    , name = 'year'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Start/Year'
+                    )
+                ]
               , full_name = 'lifetime.start'
               , id = 'lifetime__start'
               , name = 'start'
@@ -176,6 +254,32 @@ _test_code = """
               )
           , Record
               ( attr = Date `finish`
+              , attrs =
+                [ Record
+                    ( attr = Int `day`
+                    , full_name = 'lifetime.finish.day'
+                    , id = 'lifetime__finish__day'
+                    , name = 'day'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Finish/Day'
+                    )
+                , Record
+                    ( attr = Int `month`
+                    , full_name = 'lifetime.finish.month'
+                    , id = 'lifetime__finish__month'
+                    , name = 'month'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Finish/Month'
+                    )
+                , Record
+                    ( attr = Int `year`
+                    , full_name = 'lifetime.finish.year'
+                    , id = 'lifetime__finish__year'
+                    , name = 'year'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Finish/Year'
+                    )
+                ]
               , full_name = 'lifetime.finish'
               , id = 'lifetime__finish'
               , name = 'finish'
@@ -1031,11 +1135,39 @@ _test_code = """
         , { 'Class' : 'Entity'
           , 'attrs' :
               [ { 'attrs' :
-                    [ { 'name' : 'start'
+                    [ { 'attrs' :
+                          [ { 'name' : 'day'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Day'
+                            }
+                          , { 'name' : 'month'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Month'
+                            }
+                          , { 'name' : 'year'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Year'
+                            }
+                          ]
+                      , 'name' : 'start'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Start'
                       }
-                    , { 'name' : 'finish'
+                    , { 'attrs' :
+                          [ { 'name' : 'day'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Day'
+                            }
+                          , { 'name' : 'month'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Month'
+                            }
+                          , { 'name' : 'year'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Year'
+                            }
+                          ]
+                      , 'name' : 'finish'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Finish'
                       }
@@ -1048,11 +1180,39 @@ _test_code = """
                 , 'ui_name' : 'Date'
                 }
               , { 'attrs' :
-                    [ { 'name' : 'start'
+                    [ { 'attrs' :
+                          [ { 'name' : 'hour'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Hour'
+                            }
+                          , { 'name' : 'minute'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Minute'
+                            }
+                          , { 'name' : 'second'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Second'
+                            }
+                          ]
+                      , 'name' : 'start'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Start'
                       }
-                    , { 'name' : 'finish'
+                    , { 'attrs' :
+                          [ { 'name' : 'hour'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Hour'
+                            }
+                          , { 'name' : 'minute'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Minute'
+                            }
+                          , { 'name' : 'second'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Second'
+                            }
+                          ]
+                      , 'name' : 'finish'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Finish'
                       }
@@ -1386,50 +1546,79 @@ _test_pepk = """
     >>> qrx = QR.from_request (scope, PAP.Person_M.E_Type, rdx)
     >>> print (formatted (qrx.filters))
     ( Record
-      ( AQ = <title.AQ [Attr.Type.Querier String]>
-      , attr = String `title`
-      , edit = 'Dr.'
-      , full_name = 'title'
-      , id = 'title___EQ'
-      , name = 'title___EQ'
-      , op = Record
-          ( desc = 'Select entities where the attribute is equal to the specified value'
-          , label = '&equiv;'
-          )
-      , sig_key = 3
-      , ui_name = 'Academic title'
-      , value = 'Dr.'
-      )
+        ( AQ = <title.AQ [Attr.Type.Querier String]>
+        , attr = String `title`
+        , edit = 'Dr.'
+        , full_name = 'title'
+        , id = 'title___EQ'
+        , name = 'title___EQ'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is equal to the specified value'
+            , label = '&equiv;'
+            )
+        , sig_key = 3
+        , ui_name = 'Academic title'
+        , value = 'Dr.'
+        )
     , Record
-      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
-      , attr = String `last_name`
-      , edit = 'Qux'
-      , full_name = 'spouse[PAP.Person].last_name'
-      , id = 'spouse[PAP.Person]__last_name___GE'
-      , name = 'spouse[PAP.Person]__last_name___GE'
-      , op = Record
-          ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
-          , label = '&ge;'
-          )
-      , sig_key = 3
-      , ui_name = 'Spouse/Last name'
-      , value = 'Qux'
-      )
+        ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+        , attr = String `last_name`
+        , edit = 'Qux'
+        , full_name = 'spouse[PAP.Person].last_name'
+        , id = 'spouse[PAP.Person]__last_name___GE'
+        , name = 'spouse[PAP.Person]__last_name___GE'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+            , label = '&ge;'
+            )
+        , sig_key = 3
+        , ui_name = 'Spouse/Last name'
+        , value = 'Qux'
+        )
     , Record
-      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
-      , attr = Date `start`
-      , edit = '2008'
-      , full_name = 'spouse[PAP.Person].lifetime.start'
-      , id = 'spouse[PAP.Person]__lifetime__start___EQ'
-      , name = 'spouse[PAP.Person]__lifetime__start___EQ'
-      , op = Record
-          ( desc = 'Select entities where the attribute is equal to the specified value'
-          , label = '&equiv;'
-          )
-      , sig_key = 0
-      , ui_name = 'Spouse/Lifetime/Start'
-      , value = '2008'
-      )
+        ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
+        , attr = Date `start`
+        , attrs =
+          [ Record
+              ( attr = Int `day`
+              , full_name = 'lifetime.start.day'
+              , id = 'lifetime__start__day'
+              , name = 'day'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Day'
+              )
+          , Record
+              ( attr = Int `month`
+              , full_name = 'lifetime.start.month'
+              , id = 'lifetime__start__month'
+              , name = 'month'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Month'
+              )
+          , Record
+              ( attr = Int `year`
+              , full_name = 'lifetime.start.year'
+              , id = 'lifetime__start__year'
+              , name = 'year'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Year'
+              )
+          ]
+        , edit = '2008'
+        , full_name = 'spouse[PAP.Person].lifetime.start'
+        , id = 'spouse[PAP.Person]__lifetime__start___EQ'
+        , name = 'spouse[PAP.Person]__lifetime__start___EQ'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is equal to the specified value'
+            , label = '&equiv;'
+            )
+        , sig_key = 0
+        , ui_name = 'Spouse/Lifetime/Start'
+        , value = '2008'
+        )
     )
 
     >>> p1  = PAP.Person_M ("Qux", "Foo", lifetime = ("20080327",), raw = True)
@@ -1454,51 +1643,81 @@ _test_pepk = """
     >>> qr  = QR.from_request (scope, PAP.Person_M.E_Type, req)
     >>> print (formatted (qr.filters))
     ( Record
-      ( AQ = <title.AQ [Attr.Type.Querier String]>
-      , attr = String `title`
-      , edit = 'Dr.'
-      , full_name = 'title'
-      , id = 'title___EQ'
-      , name = 'title___EQ'
-      , op = Record
-          ( desc = 'Select entities where the attribute is equal to the specified value'
-          , label = '&equiv;'
-          )
-      , sig_key = 3
-      , ui_name = 'Academic title'
-      , value = 'Dr.'
-      )
+        ( AQ = <title.AQ [Attr.Type.Querier String]>
+        , attr = String `title`
+        , edit = 'Dr.'
+        , full_name = 'title'
+        , id = 'title___EQ'
+        , name = 'title___EQ'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is equal to the specified value'
+            , label = '&equiv;'
+            )
+        , sig_key = 3
+        , ui_name = 'Academic title'
+        , value = 'Dr.'
+        )
     , Record
-      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
-      , attr = String `last_name`
-      , edit = 'Qux'
-      , full_name = 'spouse[PAP.Person].last_name'
-      , id = 'spouse[PAP.Person]__last_name___GE'
-      , name = 'spouse[PAP.Person]__last_name___GE'
-      , op = Record
-          ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
-          , label = '&ge;'
-          )
-      , sig_key = 3
-      , ui_name = 'Spouse/Last name'
-      , value = 'Qux'
-      )
+        ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+        , attr = String `last_name`
+        , edit = 'Qux'
+        , full_name = 'spouse[PAP.Person].last_name'
+        , id = 'spouse[PAP.Person]__last_name___GE'
+        , name = 'spouse[PAP.Person]__last_name___GE'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+            , label = '&ge;'
+            )
+        , sig_key = 3
+        , ui_name = 'Spouse/Last name'
+        , value = 'Qux'
+        )
     , Record
-      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
-      , attr = Date `start`
-      , edit = '2008'
-      , full_name = 'spouse[PAP.Person].lifetime.start'
-      , id = 'spouse[PAP.Person]__lifetime__start___EQ'
-      , name = 'spouse[PAP.Person]__lifetime__start___EQ'
-      , op = Record
-          ( desc = 'Select entities where the attribute is equal to the specified value'
-          , label = '&equiv;'
-          )
-      , sig_key = 0
-      , ui_name = 'Spouse/Lifetime/Start'
-      , value = '2008'
-      )
+        ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
+        , attr = Date `start`
+        , attrs =
+          [ Record
+              ( attr = Int `day`
+              , full_name = 'lifetime.start.day'
+              , id = 'lifetime__start__day'
+              , name = 'day'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Day'
+              )
+          , Record
+              ( attr = Int `month`
+              , full_name = 'lifetime.start.month'
+              , id = 'lifetime__start__month'
+              , name = 'month'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Month'
+              )
+          , Record
+              ( attr = Int `year`
+              , full_name = 'lifetime.start.year'
+              , id = 'lifetime__start__year'
+              , name = 'year'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start/Year'
+              )
+          ]
+        , edit = '2008'
+        , full_name = 'spouse[PAP.Person].lifetime.start'
+        , id = 'spouse[PAP.Person]__lifetime__start___EQ'
+        , name = 'spouse[PAP.Person]__lifetime__start___EQ'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is equal to the specified value'
+            , label = '&equiv;'
+            )
+        , sig_key = 0
+        , ui_name = 'Spouse/Lifetime/Start'
+        , value = '2008'
+        )
     )
+
 
     >>> list (int (p) for p in PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid")).attr ("pid"))
     [1, 2]
@@ -1914,11 +2133,39 @@ _test_pepk = """
     , { 'Class' : 'Entity'
       , 'attrs' :
           [ { 'attrs' :
-                [ { 'name' : 'start'
+                [ { 'attrs' :
+                      [ { 'name' : 'day'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Day'
+                        }
+                      , { 'name' : 'month'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Month'
+                        }
+                      , { 'name' : 'year'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Year'
+                        }
+                      ]
+                  , 'name' : 'start'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Start'
                   }
-                , { 'name' : 'finish'
+                , { 'attrs' :
+                      [ { 'name' : 'day'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Day'
+                        }
+                      , { 'name' : 'month'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Month'
+                        }
+                      , { 'name' : 'year'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Year'
+                        }
+                      ]
+                  , 'name' : 'finish'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Finish'
                   }
@@ -1931,11 +2178,39 @@ _test_pepk = """
             , 'ui_name' : 'Date'
             }
           , { 'attrs' :
-                [ { 'name' : 'start'
+                [ { 'attrs' :
+                      [ { 'name' : 'hour'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Hour'
+                        }
+                      , { 'name' : 'minute'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Minute'
+                        }
+                      , { 'name' : 'second'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Second'
+                        }
+                      ]
+                  , 'name' : 'start'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Start'
                   }
-                , { 'name' : 'finish'
+                , { 'attrs' :
+                      [ { 'name' : 'hour'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Hour'
+                        }
+                      , { 'name' : 'minute'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Minute'
+                        }
+                      , { 'name' : 'second'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Second'
+                        }
+                      ]
+                  , 'name' : 'finish'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Finish'
                   }
@@ -2326,11 +2601,39 @@ _test_pepk = """
     , { 'Class' : 'Entity'
       , 'attrs' :
           [ { 'attrs' :
-                [ { 'name' : 'start'
+                [ { 'attrs' :
+                      [ { 'name' : 'day'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Day'
+                        }
+                      , { 'name' : 'month'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Month'
+                        }
+                      , { 'name' : 'year'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Year'
+                        }
+                      ]
+                  , 'name' : 'start'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Start'
                   }
-                , { 'name' : 'finish'
+                , { 'attrs' :
+                      [ { 'name' : 'day'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Day'
+                        }
+                      , { 'name' : 'month'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Month'
+                        }
+                      , { 'name' : 'year'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Year'
+                        }
+                      ]
+                  , 'name' : 'finish'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Finish'
                   }
@@ -2343,11 +2646,39 @@ _test_pepk = """
             , 'ui_name' : 'Date'
             }
           , { 'attrs' :
-                [ { 'name' : 'start'
+                [ { 'attrs' :
+                      [ { 'name' : 'hour'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Hour'
+                        }
+                      , { 'name' : 'minute'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Minute'
+                        }
+                      , { 'name' : 'second'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Second'
+                        }
+                      ]
+                  , 'name' : 'start'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Start'
                   }
-                , { 'name' : 'finish'
+                , { 'attrs' :
+                      [ { 'name' : 'hour'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Hour'
+                        }
+                      , { 'name' : 'minute'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Minute'
+                        }
+                      , { 'name' : 'second'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Second'
+                        }
+                      ]
+                  , 'name' : 'finish'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Finish'
                   }

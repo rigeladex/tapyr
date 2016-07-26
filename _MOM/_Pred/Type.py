@@ -59,6 +59,8 @@
 #    21-Jun-2016 (CT) Allow `callable` bindings
 #    22-Jun-2016 (CT) Change `satisfied` to use `ui_display`,
 #                     not `portable_repr`
+#    10-Aug-2016 (CT) Add `Exclude`, factor `_Unique_`
+#                     + factor `_auto_doc`, `_query_filters_xs`
 #    ««revision-date»»···
 #--
 
@@ -72,7 +74,9 @@ from   _MOM._Attr.Filter     import Q
 import _MOM._Meta.M_Pred_Type
 import _MOM._Pred
 import _MOM._Prop.Type
+import _MOM.Error
 
+from   _TFL.I18N             import _, _T
 from   _TFL.portable_repr    import portable_repr
 from   _TFL.predicate        import callable, flattened
 from   _TFL.pyk              import pyk
@@ -505,44 +509,58 @@ class U_Quant \
 
 # end class U_Quant
 
-class Unique \
-          ( TFL.Meta.BaM
-              ( _Condition_
-              , metaclass = MOM.Meta.M_Pred_Type.Unique
-              )
-          ) :
-    """A predicate defining a uniqueness constraint over a set of attributes.
+class _Unique_ (_Condition_) :
+    """Common base class for `Unique` and `Exclude`"""
 
-       For Unique predicates, the predicate is evaluated even if some
-       attributes have a value equal to `None`, i.e., all attributes must be
-       listed listed in `attr_none`.
-
-       DBW backend sets `ems_check` to `False` if database performs the check
-    """
-
-    ems_check = True
+    ems_check   = True
 
     @classmethod
     def New_Pred (cls, * attrs, ** kw) :
-        """Return a new Unique predicate class for the attributes specified."""
+        """Return a new predicate class for the attributes specified by `attrs`.
+
+        The keyword arguments can specify any properties of
+        :class:`_Condition_` (except `attributes` and `attr_none`), plus:
+
+        .. attribute:: name_suffix
+
+          :attr:`name` will be derived from `cls.Kind_Cls.typ`, i.e., either
+          "unique" or `exclude`, and the value of `name_suffix`.
+
+        .. attribute:: __doc__
+
+          A docstring describing the predicate. By default, the docstring is
+          computed by the class's :meth:`_auto_doc`.
+
+        .. attribute:: __module__
+
+          The name of the module defining the class. By default, the module
+          name of the caller is used.
+
+        """
         name = kw.get ("name")
         if not name:
             suffix = kw.pop ("name_suffix", None) or \
                 "__" + "___".join (a.replace (".", "__") for a in attrs)
-            name = "unique_%s" % (suffix, )
+            name = "%s_%s" % (cls.Kind_Cls.typ, suffix, )
         if not kw.get ("__doc__") :
-            kw ["__doc__"] = \
-                ( "The attribute values for %s must be unique for each object"
-                % ( portable_repr (attrs) if len (attrs) > 1
-                      else repr (attrs [0])
-                  ,
-                  )
-                )
+            kw ["__doc__"] = cls._auto_doc (attrs, kw)
         if not kw.get ("__module__") :
             kw ["__module__"] = TFL.Caller.globals () ["__name__"]
         kw.update (attr_none = attrs)
         return cls.__class__ (name, (cls, ), kw)
     # end def New_Pred
+
+    @classmethod
+    def _auto_doc (cls, attrs, kw) :
+        """Auto-compute docstring for predicate over `attrs`."""
+        return  \
+            ( _ ("The attribute values for %s must be %s for each object")
+            % ( portable_repr (attrs) if len (attrs) > 1
+                  else portable_repr (attrs [0])
+              , cls.Kind_Cls.typ
+              )
+            )
+    # end def _auto_doc
 
     def satisfied (self, obj, attr_dict = {}) :
         self.val_disp = {}
@@ -555,7 +573,7 @@ class Unique \
         if not result :
             self._extra_links_d = self.clashes = \
                 sorted (q.all (), key = obj.E_Type.sort_key)
-            self.error = MOM.Error.Not_Unique (obj, self)
+            self.error = self.Error_Type (obj, self)
         return result
     # end def satisfied
 
@@ -564,11 +582,105 @@ class Unique \
         if obj.pid :
             result.append (Q.pid != obj.pid)
         attr_values = tuple (val_dict [a] for a in self.attr_none)
-        result.extend (aq == v for aq, v in zip (self.aqs, attr_values))
+        result.extend (self._query_filters_xs (attr_values))
         return result
     # end def _query_filters
 
+# end class _Unique_
+
+class Unique \
+        (TFL.Meta.BaM (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Unique)) :
+    """A predicate defining a uniqueness constraint over a set of attributes.
+
+    For Unique predicates, the predicate is evaluated even if some
+    attributes have a value equal to `None`, i.e., all attributes must be
+    listed in `attr_none`.
+
+    DBW backend sets `ems_check` to `False` if database performs the check.
+
+    .. automethod:: New_Pred
+
+    .. automethod:: _auto_doc
+
+       >>> print (Unique._auto_doc (('foo', ), {}))
+       The attribute values for 'foo' must be unique for each object
+
+       >>> print (Unique._auto_doc (('foo', 'bar'), {}))
+       The attribute values for ('foo', 'bar') must be unique for each object
+
+    """
+
+    Error_Type  = MOM.Error.Not_Unique
+
+    def _query_filters_xs (self, attr_values) :
+        for aq, v in zip (self.aqs, attr_values) :
+            yield aq == v
+    # end def _query_filters_xs
+
 # end class Unique
+
+class Exclude \
+        (TFL.Meta.BaM (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Exclude)) :
+    """A predicate defining an exclusion constraint over a set of attributes.
+
+    For Exclude predicates, the predicate is evaluated even if some
+    attributes have a value equal to `None`, i.e., all attributes must be
+    listed in `attr_none`.
+
+    DBW backend sets `ems_check` to `False` if the database performs the check.
+
+    Exclude predicates are characterized by the additional property:
+
+    .. automethod:: New_Pred
+
+    .. automethod:: _auto_doc
+
+       >>> print (Exclude._auto_doc (('foo', ), {}))
+       The attribute values for 'foo' must be exclusive for each object
+
+       >>> print (Exclude._auto_doc (('foo', 'bar'), {}))
+       The attribute values for ('foo', 'bar') must be exclusive for each object
+
+    .. attribute:: exclude_op_map
+
+      A dictionary mapping attribute names to operation names.
+
+      The operation names specified are applied to the :obj:`Q<_MOM.Q_Exp.Q>`
+      instance corresponding to the attribute, i.e., one can specify all query
+      functions supported by :mod:`Q-expressions<_TFL.Q_Exp>` here.
+
+      Attributes not mapped by `exclude_op_map` are compared for equality.
+
+    """
+
+    Error_Type     = MOM.Error.Not_Exclude
+    auto_index     = False
+    exclude_op_map = {}
+
+    _op_aliases    = dict \
+        ( EQ       = "__eq__"
+        , GE       = "__ge__"
+        , GT       = "__gt__"
+        , LE       = "__le__"
+        , LT       = "__lt__"
+        , NE       = "__ne__"
+        )
+
+    def _query_filters_xs (self, attr_values) :
+        al_map = self._op_aliases
+        op_map = self.exclude_op_map
+        for aq, v in zip (self.aqs, attr_values) :
+            name = aq._name
+            try :
+                op_name = op_map [name]
+            except KeyError :
+                yield aq == v
+            else :
+                op = getattr (aq, al_map.get (op_name, op_name))
+                yield op (v)
+    # end def _query_filters_xs
+
+# end class Exclude
 
 def Attribute_Check (name, attr, assertion, attr_none = (), ** kw) :
     attributes = () if attr_none else (attr, )
@@ -605,6 +717,8 @@ different predicate types:
 * :class:`N_Quant`: a `numeric quantifier`_
 
 * :class:`Unique`: a uniqueness constraint
+
+* :class:`Exclude`: an exclusion constraint
 
 Concrete predicates are specified by defining a class derived from the
 appropriate predicate type, e.g., :class:`Condition` or :class:`U_Quant`.

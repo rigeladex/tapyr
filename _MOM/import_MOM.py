@@ -31,6 +31,7 @@
 #    14-Sep-2015 (CT) Add `import_full_model`
 #    13-Oct-2015 (CT) Add `import` for `_TFL.fix_datetime_pickle_2_vs_3`
 #    29-May-2016 (CT) Add `MOM.Selector`
+#    19-Jul-2016 (CT) Add `MOM.Attr.Date_Time`, `MOM.Attr.Structured`
 #    ««revision-date»»···
 #--
 
@@ -48,9 +49,11 @@ import _MOM.Scope
 
 import _MOM._Attr.Selector
 
-from   _MOM._Attr.Type  import *
-from   _MOM._Attr       import Attr
-from   _MOM._Pred       import Pred
+from   _MOM._Attr.Type       import *
+from   _MOM._Attr            import Attr
+from   _MOM._Pred            import Pred
+from   _MOM._Attr.Date_Time  import *
+from   _MOM._Attr.Structured import *
 
 import _MOM.Derived_PNS
 

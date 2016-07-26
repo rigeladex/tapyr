@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.PG.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -20,6 +20,8 @@
 #    17-Jul-2013 (CT) Remove dependency on `MOM.DBW.SAS`
 #    23-Aug-2013 (CT) Remove SAS-compatibility kludge `sa_scheme`
 #     2-Sep-2014 (CT) Quote database name in `CREATE DATABASE` statement
+#     6-Sep-2016 (CT) Use `template1`, not `template0`, as `template` default
+#                     * corresponding to PostgreSQL documentation
 #    ««revision-date»»···
 #--
 
@@ -98,7 +100,7 @@ class PG_DBS (MOM.DBW.SAW._NFB_DBS_) :
     def create_database \
             ( cls, db_url, manager
             , encoding = "utf8"
-            , template = "template0"
+            , template = "template1"
             ) :
         conn = cls.Connection (db_url, cls)
         with contextlib.closing (conn) :

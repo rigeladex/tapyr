@@ -23,6 +23,8 @@
 #    12-Mar-2015 (CT) Add `fixed_booleans` for sqlalchemy 0.9.8
 #     5-Feb-2016 (CT) Factor `show_table`
 #     3-Jun-2016 (CT) Add `show_esf_query`
+#    31-Jul-2016 (CT) Move test functions from `SAW_QX` in here
+#     4-Aug-2016 (CT) Change default `pred` to filter `_SAT_Desc_`
 #    ««revision-date»»···
 #--
 
@@ -32,6 +34,7 @@ from   __future__                   import absolute_import, unicode_literals
 from   _GTW.__test__.Test_Command   import esf_completer
 
 from   _MOM.import_MOM              import MOM, Q
+from   _MOM._DBW._SAW               import QX
 
 from   _TFL                         import TFL
 from   _TFL.portable_repr           import portable_repr
@@ -44,7 +47,7 @@ import itertools
 nl     = chr (10)
 indent = "  " * 2
 sk     = lambda x   : (x.type_name, x.i_rank, )
-pred   = lambda ETW : True
+pred   = lambda ETW : ETW.e_type.PNS is not None
 
 def fixed_booleans (qf) :
     if not isinstance (qf, pyk.string_types) :
@@ -178,7 +181,8 @@ def show_attr_mro (ET) :
             if isinstance (kind, MOM.Attr.Auto_Cached) or not kind.show_in_ui :
                 continue
             amro  = ", ".join (_kind_mro (kind))
-            tail  = ("-> %s" % (kind.E_Type.type_name, )) if kind.E_Type else ""
+            tail  = ("-> %s" % (kind.E_Type.type_name, )) \
+                if isinstance (kind.E_Type, MOM.Meta.M_E_Type) else ""
             lin1  = ("%s%-20s %s" % (in0, name, tail)).rstrip ()
             print ("%s\n%s%s" % (lin1, in1, amro))
             if kind.is_composite :
@@ -213,10 +217,33 @@ def show_attr_wrappers (apt, pred = pred) :
         show (ETW)
 # end def show_attr_wrappers
 
+def show_columns (apt, ET, q) :
+    qr = apt.DBW.PNS.Q_Result.E_Type (apt [ET], _strict = False)
+    qx = QX.Mapper (qr) (q)
+    print ("QX." + qx.__class__.__name__, ET, " : ", q)
+    for c in qx._columns :
+        print (" ", c)
+# end def show_columns
+
 def show_esf_query (scope, AQ, trigger, value, qdct = {}) :
     completer = esf_completer (scope, AQ, trigger, value, qdct)
     show_query (completer.query ())
 # end def show_esf_query
+
+def show_joins (apt, ET, q) :
+    qr = apt.DBW.PNS.Q_Result.E_Type (apt [ET], _strict = False)
+    qx = QX.Mapper (qr) (q)
+    try :
+        qx.XS_FILTER ### might trigger additional joins
+    except Exception :
+        pass
+    print (ET, " : ", q)
+    for j in qx.JOINS :
+        print \
+            ( " ", "%-5.5s" % j.joiner.__name__.upper ()
+            , " = ".join (str (c) for c in j.cols)
+            )
+# end def show_joins
 
 def show_key_o_p (apt) :
     def _show (k) :
@@ -288,6 +315,10 @@ def show_query (qr) :
     print (fixed_booleans (qr.formatted ()))
 # end def show_query
 
+def show_qx (qx, level = 0) :
+    print (QX.display (qx, level = 0))
+# end def show_qx
+
 def show_root_table (apt, pred = pred) :
     sk = lambda x : (x.e_type.i_rank, )
     for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk):
@@ -352,5 +383,12 @@ def show_tables (apt, pred = pred) :
             , formatted_table (seq.sa_table, nl, indent)
             )
 # end def show_tables
+
+def show_xs_filter (apt, ET, q) :
+    qr = apt.DBW.PNS.Q_Result.E_Type (apt [ET], _strict = False)
+    qx = QX.Mapper (qr) (q)
+    print (ET, " : ", q)
+    print ("   ", qx.XS_FILTER)
+# end def show_xs_filter
 
 ### __END__ _GTW.__test__._SAW_test_functions

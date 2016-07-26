@@ -104,6 +104,7 @@
 #    22-Jun-2016 (CT) Use `TFL.ui_display`, not `portable_repr`, for
 #                     `Quant._violator_values`
 #    18-Jul-2016 (CT) Add exception handler to `Invariants.embed`
+#    10-Aug-2016 (CT) Add `Not_Exclude`
 #    ««revision-date»»···
 #--
 
@@ -928,6 +929,10 @@ class Not_Unique (_Invariant_) :
     # end def description
 
 # end class Not_Unique
+
+class Not_Exclude (Not_Unique) :
+    """Set of attributes is not exclusive for each entity."""
+# end class Not_Exclude
 
 class Partial_Type (Error) :
     """Raised when creation of an object of a partial type is tried."""

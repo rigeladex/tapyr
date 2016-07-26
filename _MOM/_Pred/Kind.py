@@ -25,6 +25,7 @@
 #    29-Jan-2013 (CT) Add `Uniqueness`
 #    30-Jan-2013 (CT) Add `Kind.__repr__`
 #     5-May-2016 (CT) Add `Object_Init`, factor `_Object_`
+#    10-Aug-2016 (CT) Add `Exclusion`
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,22 @@ class Kind (MOM.Prop.Kind) :
     # end def __repr__
 
 # end class Kind
+
+class Exclusion (Kind) :
+    """Predicate kind for exclusion invariant.
+
+       Exclusion predicates must be satisfied before an object can be
+       added to the database.
+
+       Exclusion predicates are checked by `scope.add` before attempting to
+       actually add the entity. Some backends might move the checks of
+       some exclusion predicates to the database engine.
+    """
+
+    kind = "exclusion"
+    typ  = "exclusive"
+
+# end class Exclusion
 
 class _Object_ (Kind) :
     """Base class for predicate kinds for object-local invariants."""
@@ -154,7 +171,7 @@ class System (Kind) :
 class Uniqueness (Kind) :
     """Predicate kind for uniqueness invariant.
 
-       Uniqueness predicates specify must be satisfied before an object can be
+       Uniqueness predicates must be satisfied before an object can be
        added to the database.
 
        Uniqueness predicates are checked by `scope.add` before attempting to
@@ -163,6 +180,7 @@ class Uniqueness (Kind) :
     """
 
     kind = "uniqueness"
+    typ  = "unique"
 
 # end class Uniqueness
 

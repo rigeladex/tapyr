@@ -1,6 +1,6 @@
 {#- jinja template: html/h_cols.m.jnj -#}
 {#
-## Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -22,6 +22,7 @@
 ##    28-Aug-2014 (CT) Change class of `Field_Composite` to
 ##                     `Field-Composite horizontal`
 ##    21-Dec-2015 (CT) Change `Field-Composite` to use `do_label`
+##    20-Sep-2016 (CT) Add `Field_Structured`, factor `_Field_Composite_`
 ##    ««revision-date»»···
 ##--
 #}
@@ -38,9 +39,9 @@
   </div>
 {%- endmacro -%} {#- do_field -#}
 
-{%- macro Field_Composite (page, form, elem, t_module) -%}
+{%- macro _Field_Composite_ (page, form, elem, t_module, cls) -%}
   {%- if GTW.len (elem.field_elements) > 1 %}
-    <div class="Field-Composite horizontal pure-control-group">
+    <div class="{{ cls }} horizontal pure-control-group">
       {{ GTW.call_macro
           ("do_label", page, form, elem, t_module, templ_name = t_module)
       }}
@@ -54,8 +55,9 @@
       }}
     </div>
   {%- elif elem.field_elements %}
-    {%- set e = elem.field_elements [0] %}
-    {%- set t_module = e.template_module or elem.parent.t_module %}
+    {%- set e        = elem.field_elements [0] %}
+    {%- set t_module = e.template_module or elem.parent.template_module %}
+    {%- set tm       = kwargs.get ("templ_name", t_module) %}
     {{ GTW.call_macro
         ( e.template_macro, page, form, e, tm
         , templ_name = tm
@@ -63,6 +65,14 @@
         )
     }}
   {%- endif %}
+{%- endmacro -%} {#- _Field_Composite_ -#}
+
+{%- macro Field_Composite (page, form, elem, t_module) -%}
+  {{- _Field_Composite_ (page, form, elem, t_module, "Field-Composite") -}}
 {%- endmacro -%} {#- Field_Composite -#}
+
+{%- macro Field_Structured (page, form, elem, t_module) -%}
+  {{- _Field_Composite_ (page, form, elem, t_module, "Field-Composite") -}}
+{%- endmacro -%} {#- Field_Structured -#}
 
 {#- __END__ jinja template: html/h_cols.m.jnj -#}

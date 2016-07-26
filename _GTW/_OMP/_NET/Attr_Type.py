@@ -39,6 +39,8 @@
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
 #    16-Dec-2015 (CT) Use `_Add_Import_Callback` as decorator
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
+#    14-Sep-2016 (CT) Attach import callback to "_MOM._DBW._SAW.Attr"
+#                     - not "_MOM._DBW._SAW.Manager"
 #    ««revision-date»»···
 #--
 
@@ -200,19 +202,19 @@ class A_MAC_Address (Syntax_Re_Mixin, A_String) :
 
 # end class A_MAC_Address
 
-@GTW._Add_Import_Callback ("_MOM._DBW._SAW.Manager")
-def _import_saw (module) :
-    import _GTW._OMP._NET.SAW
-# end def _import_saw
-
-@GTW._Add_Import_Callback ("_MOM._DBW._SAW._PG.Manager")
-def _import_saw_pg (module) :
-    import _GTW._OMP._NET.SAW_PG
-# end def _import_saw_pg
-
 __attr_types      = Attr.attr_types_of_module ()
 __sphinx__members = __attr_types
 
 if __name__ != "__main__" :
     GTW.OMP.NET._Export (* __attr_types)
+
+    @GTW._Add_Import_Callback ("_MOM._DBW._SAW.Attr")
+    def _import_saw (module) :
+        import _GTW._OMP._NET.SAW
+    # end def _import_saw
+
+    @GTW._Add_Import_Callback ("_MOM._DBW._SAW._PG.Attr")
+    def _import_saw_pg (module) :
+        import _GTW._OMP._NET.SAW_PG
+    # end def _import_saw_pg
 ### __END__ GTW.OMP.NET.Attr_Type

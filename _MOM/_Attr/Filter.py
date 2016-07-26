@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -59,6 +59,9 @@
 #     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
 #     9-Sep-2014 (CT) Use `MOM.Q_Exp`, not `TFL.Q_Exp`;
 #                     import `Q` from `MOM.Q_Exp`
+#     6-Jul-2016 (CT) Add `_Range_` plus range functions
+#     6-Jul-2016 (CT) Don't add `specialized` classes to `Base_Op_Table`
+#     7-Oct-2016 (CT) Add `_Time_` plus time query filters
 #    ««revision-date»»···
 #--
 
@@ -85,7 +88,8 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if not name.startswith ("_") :
-            if not getattr (cls, "specialized", False) :
+            specialized = getattr (cls, "specialized", False)
+            if not specialized :
                 cls.op_nam = name.lower ().replace ("_", "-")
             if cls.op_sym is None :
                 cls.op_sym = cls.op_nam
@@ -96,7 +100,7 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
                 if op_key.startswith ("__") :
                     op_key = op_key.replace ("_", "").upper ()
                 cls.op_key = op_key
-            if op_key not in cls.Base_Op_Table :
+            if op_key not in cls.Base_Op_Table and not specialized :
                 cls.Base_Op_Table [op_key] = cls
             if cls.base_op_key is None :
                 cls.base_op_key = op_key
@@ -247,6 +251,13 @@ class _Id_Entity_ (_Composite_) :
 
 # end class _Id_Entity_
 
+class _Range_ (_Filter_) :
+    """Base class for range-attribute filters."""
+
+    specialized = True
+
+# end class _Range_
+
 class _String_ (_Filter_) :
     """Base class for string-attribute filters."""
 
@@ -272,6 +283,39 @@ class _String_ (_Filter_) :
     # end def query
 
 # end class _String_
+
+class _Time_ (_Filter_) :
+    """Base class for time-attribute filters."""
+
+    specialized = True
+
+    pat = Regexp \
+        ( r"^"
+            r"(?P<hour> [0-9]{0,2})"
+            r"(?: :"
+                r"(?P<minute> [0-9]{0,2})"
+            r")?"
+          r"$"
+        , re.VERBOSE
+        )
+
+    def __call__ (self, value) :
+        pat = self.pat
+        if value and pat.match (value) :
+            qxs    = []
+            aq     = self.a_query
+            if pat.hour :
+                qh     = getattr (aq, "hour")
+                qxs.append (qh == int (pat.hour, 10))
+            if pat.minute :
+                qm = getattr (aq, "minute")
+                qxs.append (qm == int (pat.minute, 10))
+            if len (qxs) == 1 : ### if both are given, use `__super` version
+                return qxs [0]
+        return self.__super.__call__ (value)
+    # end def __call__
+
+# end class _Time_
 
 class Contains (_String_) :
     """Attribute query filter for contains."""
@@ -553,6 +597,82 @@ class Id_Entity_Not_Equal (Not_Equal, _Id_Entity_) :
     """Id_Entity-Attribute query filter for in-equality."""
 
 # end class Id_Entity_Not_Equal
+
+class Range_Contains (_Range_) :
+    """Range-Attribute query filter for contains."""
+
+    desc          = _ \
+        ("Select entities where the attribute contains the specified value")
+    op_fct        = _ ("CONTAINS")
+    op_nam        = "contains"
+
+# end class Range_Contains
+
+class Range_In (_Range_) :
+    """Range-Attribute query filter for membership."""
+
+    op_fct        = _ ("IN")
+    op_nam        = "in"
+
+# end class Range_In
+
+class Range_Is_Adjacent (_Range_) :
+    """Range-Attribute query filter for is_adjacent."""
+
+    op_fct        = _ ("IS_ADJACENT")
+    op_nam        = "is-adjacent"
+
+# end class Range_Is_Adjacent
+
+class Range_Overlaps (_Range_) :
+    """Range-Attribute query filter for overlaps."""
+
+    desc          = _ \
+        ("Select entities where the attribute overlaps the specified range ")
+    op_fct        = _ ("OVERLAPS")
+    op_nam        = "overlaps"
+
+# end class Range_Overlaps
+
+class Time_Auto_Complete (Auto_Complete, _Time_) :
+    """Time-Attribute query filter for auto-completion."""
+
+# end class Time_Auto_Complete
+
+class Time_Equal (Equal, _Time_) :
+    """Time-Attribute query filter for equality."""
+
+# end class Time_Equal
+
+class Time_Greater_Equal (Greater_Equal, _Time_) :
+    """Time-Attribute query filter for greater-equal."""
+
+# end class Time_Greater_Equal
+
+class Time_Greater_Than (Greater_Than, _Time_) :
+    """Time-Attribute query filter for greater-than."""
+
+# end class Time_Greater_Than
+
+class Time_In (In, _Time_) :
+    """Time-Attribute query filter for membership."""
+
+# end class Time_In
+
+class Time_Less_Equal (Less_Equal, _Time_) :
+    """Time-Attribute query filter for less-than."""
+
+# end class Time_Less_Equal
+
+class Time_Less_Than (Less_Than, _Time_) :
+    """Time-Attribute query filter for less-equal."""
+
+# end class Time_Less_Than
+
+class Time_Not_Equal (Not_Equal, _Time_) :
+    """Time-Attribute query filter for in-equality."""
+
+# end class Time_Not_Equal
 
 if __name__ != "__main__" :
     MOM.Attr._Export_Module ()

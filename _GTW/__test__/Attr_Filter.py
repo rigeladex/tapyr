@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -90,7 +90,13 @@ _test_code = """
     <title.AQ [Attr.Type.Querier String]>
     <lifetime.AQ [Attr.Type.Querier Composite]>
     <lifetime.start.AQ [Attr.Type.Querier Date]>
+    <lifetime.start.day.AQ [Attr.Type.Querier Ckd]>
+    <lifetime.start.month.AQ [Attr.Type.Querier Ckd]>
+    <lifetime.start.year.AQ [Attr.Type.Querier Ckd]>
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <lifetime.finish.day.AQ [Attr.Type.Querier Ckd]>
+    <lifetime.finish.month.AQ [Attr.Type.Querier Ckd]>
+    <lifetime.finish.year.AQ [Attr.Type.Querier Ckd]>
     <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <sex.AQ [Attr.Type.Querier Ckd]>
     <creation.AQ [Attr.Type.Querier Rev_Ref]>
@@ -111,11 +117,23 @@ _test_code = """
     <events.AQ [Attr.Type.Querier Rev_Ref]>
     <events.date.AQ [Attr.Type.Querier Composite]>
     <events.date.start.AQ [Attr.Type.Querier Date]>
+    <events.date.start.day.AQ [Attr.Type.Querier Ckd]>
+    <events.date.start.month.AQ [Attr.Type.Querier Ckd]>
+    <events.date.start.year.AQ [Attr.Type.Querier Ckd]>
     <events.date.finish.AQ [Attr.Type.Querier Date]>
+    <events.date.finish.day.AQ [Attr.Type.Querier Ckd]>
+    <events.date.finish.month.AQ [Attr.Type.Querier Ckd]>
+    <events.date.finish.year.AQ [Attr.Type.Querier Ckd]>
     <events.date.alive.AQ [Attr.Type.Querier Boolean]>
     <events.time.AQ [Attr.Type.Querier Composite]>
-    <events.time.start.AQ [Attr.Type.Querier Ckd]>
-    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.time.start.AQ [Attr.Type.Querier Time]>
+    <events.time.start.hour.AQ [Attr.Type.Querier Ckd]>
+    <events.time.start.minute.AQ [Attr.Type.Querier Ckd]>
+    <events.time.start.second.AQ [Attr.Type.Querier Ckd]>
+    <events.time.finish.AQ [Attr.Type.Querier Time]>
+    <events.time.finish.hour.AQ [Attr.Type.Querier Ckd]>
+    <events.time.finish.minute.AQ [Attr.Type.Querier Ckd]>
+    <events.time.finish.second.AQ [Attr.Type.Querier Ckd]>
     <events.calendar.AQ [Attr.Type.Querier Id_Entity]>
     <events.calendar.name.AQ [Attr.Type.Querier String]>
     <events.calendar.desc.AQ [Attr.Type.Querier String]>
@@ -174,8 +192,8 @@ _test_code = """
     <events.date.start.AQ [Attr.Type.Querier Date]>
     <events.date.finish.AQ [Attr.Type.Querier Date]>
     <events.date.alive.AQ [Attr.Type.Querier Boolean]>
-    <events.time.start.AQ [Attr.Type.Querier Ckd]>
-    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.time.start.AQ [Attr.Type.Querier Time]>
+    <events.time.finish.AQ [Attr.Type.Querier Time]>
     <events.calendar.name.AQ [Attr.Type.Querier String]>
     <events.calendar.desc.AQ [Attr.Type.Querier String]>
     <events.detail.AQ [Attr.Type.Querier String]>
@@ -232,8 +250,8 @@ _test_code = """
     <events.date.start.AQ [Attr.Type.Querier Date]>
     <events.date.finish.AQ [Attr.Type.Querier Date]>
     <events.date.alive.AQ [Attr.Type.Querier Boolean]>
-    <events.time.start.AQ [Attr.Type.Querier Ckd]>
-    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.time.start.AQ [Attr.Type.Querier Time]>
+    <events.time.finish.AQ [Attr.Type.Querier Time]>
     <events.calendar.name.AQ [Attr.Type.Querier String]>
     <events.calendar.desc.AQ [Attr.Type.Querier String]>
     <events.detail.AQ [Attr.Type.Querier String]>
@@ -443,7 +461,13 @@ _test_code = """
       title               3
       lifetime            None
         start               0
+          day                 0
+          month               0
+          year                0
         finish              0
+          day                 0
+          month               0
+          year                0
         alive               1
       sex                 0
     right               2
@@ -471,7 +495,13 @@ _test_code = """
         name                3
         date                None
           start               0
+            day                 0
+            month               0
+            year                0
           finish              0
+            day                 0
+            month               0
+            year                0
           alive               1
         club                2
           name                3
@@ -502,7 +532,13 @@ _test_code = """
         title               3
         lifetime            None
           start               0
+            day                 0
+            month               0
+            year                0
           finish              0
+            day                 0
+            month               0
+            year                0
           alive               1
         sex                 0
       mna_number          4
@@ -530,14 +566,29 @@ _test_code = """
     type_name           3
     rank                0
     registration_date   0
+      day                 0
+      month               0
+      year                0
     events              2
       date                None
         start               0
+          day                 0
+          month               0
+          year                0
         finish              0
+          day                 0
+          month               0
+          year                0
         alive               1
       time                None
         start               0
+          hour                0
+          minute              0
+          second              0
         finish              0
+          hour                0
+          minute              0
+          second              0
       calendar            2
         name                3
         desc                3
@@ -560,7 +611,13 @@ _test_code = """
           name                3
           date                None
             start               0
+              day                 0
+              month               0
+              year                0
             finish              0
+              day                 0
+              month               0
+              year                0
             alive               1
           club                2
             name                3
@@ -601,11 +658,20 @@ _test_code = """
         title               3
         lifetime            None
           start               0
+            day                 0
+            month               0
+            year                0
           finish              0
+            day                 0
+            month               0
+            year                0
           alive               1
         sex                 0
       place               0
       registration_date   0
+        day                 0
+        month               0
+        year                0
 
     >>> def show_QA (a) :
     ...     print (repr (a._attr))
@@ -741,7 +807,9 @@ _test_code = """
     Date `registration_date`
         Date `registration_date` registration_date
     Date `registration_date` unwrapped
-        Date `registration_date` registration_date
+        Int `day` day
+        Int `month` month
+        Int `year` year
     Link_Ref_List `events`
         Date `start` events.date.start
         Date `finish` events.date.finish
@@ -890,7 +958,7 @@ _test_code = """
     Team <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Text <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Thumbnail <Attr.Type.Querier Composite ()> None
-    Time <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Time <Attr.Type.Querier Time ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Time_Interval <Attr.Type.Querier Composite ()> None
     Unit <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Url <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
@@ -906,6 +974,7 @@ _test_code = """
     2 ('EQ', 'IN', 'NE')
     3 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')
     4 ('CONTAINS', 'ENDSWITH', 'EQ', 'EQS', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'NES', 'STARTSWITH')
+    5 ('CONTAINS', 'EQ', 'GE', 'GT', 'IN', 'IS_ADJACENT', 'LE', 'LT', 'NE', 'OVERLAPS')
 
     >>> for k, v in sorted (pyk.iteritems (at.AQ.Base_Op_Table)) :
     ...     print ("%%-12s %%s" %% (k, v))

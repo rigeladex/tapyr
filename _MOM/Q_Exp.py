@@ -332,10 +332,12 @@ __doc__ = r"""
 This module implements a query expression language based on
 :mod:`TFL.Q_Exp<_TFL.Q_Exp>`.
 
-It exports the query generator instance :obj:`Q` which is used to define
-symbolic query expressions that can be used for queries of the MOM object
-model. Unlike :obj:`TFL.Q<_TFL.Q_Exp.Q>`, :obj:`MOM.Q<_MOM.Q_Exp.Q>` ignores
-`AttributeError` exceptions.
+.. data:: Q
+
+    It exports the query generator instance :obj:`Q` which is used to define
+    symbolic query expressions that can be used for queries of the MOM object
+    model. Unlike :obj:`TFL.Q<_TFL.Q_Exp.Q>`, :obj:`MOM.Q<_MOM.Q_Exp.Q>`
+    ignores `AttributeError` exceptions.
 
 One queries the object model by calling the
 :meth:`~_MOM.E_Type_Manager.Entity.query` method of the appropriate etype

@@ -136,7 +136,7 @@ _test_code = """
     >>> AQ = PAP.Company_P.E_Type.AQ
 
     >>> for aq in AQ.Attrs_Transitive :
-    ...     print (aq, aq.E_Type.type_name if aq.E_Type else "-"*5)
+    ...     print (aq, aq.E_Type.type_name if aq.E_Type and aq.E_Type.PNS else "-"*5)
     <name.AQ [Attr.Type.Querier String]> -----
     <owner.AQ [Attr.Type.Querier Id_Entity]> PAP.Biz_Man
     <owner.left.AQ [Attr.Type.Querier Id_Entity]> PAP.Person
@@ -146,13 +146,25 @@ _test_code = """
     <owner.left.title.AQ [Attr.Type.Querier String]> -----
     <owner.left.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval_lifetime
     <owner.left.lifetime.start.AQ [Attr.Type.Querier Date]> -----
+    <owner.left.lifetime.start.day.AQ [Attr.Type.Querier Ckd]> -----
+    <owner.left.lifetime.start.month.AQ [Attr.Type.Querier Ckd]> -----
+    <owner.left.lifetime.start.year.AQ [Attr.Type.Querier Ckd]> -----
     <owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
+    <owner.left.lifetime.finish.day.AQ [Attr.Type.Querier Ckd]> -----
+    <owner.left.lifetime.finish.month.AQ [Attr.Type.Querier Ckd]> -----
+    <owner.left.lifetime.finish.year.AQ [Attr.Type.Querier Ckd]> -----
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
     <registered_in.AQ [Attr.Type.Querier String]> -----
     <lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval_lifetime
     <lifetime.start.AQ [Attr.Type.Querier Date]> -----
+    <lifetime.start.day.AQ [Attr.Type.Querier Ckd]> -----
+    <lifetime.start.month.AQ [Attr.Type.Querier Ckd]> -----
+    <lifetime.start.year.AQ [Attr.Type.Querier Ckd]> -----
     <lifetime.finish.AQ [Attr.Type.Querier Date]> -----
+    <lifetime.finish.day.AQ [Attr.Type.Querier Ckd]> -----
+    <lifetime.finish.month.AQ [Attr.Type.Querier Ckd]> -----
+    <lifetime.finish.year.AQ [Attr.Type.Querier Ckd]> -----
     <lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <short_name.AQ [Attr.Type.Querier String]> -----
     <affiliate.AQ [Attr.Type.Querier Id_Entity]> PAP.Company_P
@@ -165,13 +177,25 @@ _test_code = """
     <affiliate.owner.left.title.AQ [Attr.Type.Querier String]> -----
     <affiliate.owner.left.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval_lifetime
     <affiliate.owner.left.lifetime.start.AQ [Attr.Type.Querier Date]> -----
+    <affiliate.owner.left.lifetime.start.day.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.owner.left.lifetime.start.month.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.owner.left.lifetime.start.year.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
+    <affiliate.owner.left.lifetime.finish.day.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.owner.left.lifetime.finish.month.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.owner.left.lifetime.finish.year.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.registered_in.AQ [Attr.Type.Querier String]> -----
     <affiliate.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval_lifetime
     <affiliate.lifetime.start.AQ [Attr.Type.Querier Date]> -----
+    <affiliate.lifetime.start.day.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.lifetime.start.month.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.lifetime.start.year.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
+    <affiliate.lifetime.finish.day.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.lifetime.finish.month.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.lifetime.finish.year.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.short_name.AQ [Attr.Type.Querier String]> -----
     <affiliate.affiliate.AQ [Attr.Type.Querier Id_Entity]> PAP.Company_P
@@ -193,11 +217,23 @@ _test_code = """
     <events.AQ [Attr.Type.Querier Rev_Ref]> EVT.Event
     <events.date.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
     <events.date.start.AQ [Attr.Type.Querier Date]> -----
+    <events.date.start.day.AQ [Attr.Type.Querier Ckd]> -----
+    <events.date.start.month.AQ [Attr.Type.Querier Ckd]> -----
+    <events.date.start.year.AQ [Attr.Type.Querier Ckd]> -----
     <events.date.finish.AQ [Attr.Type.Querier Date]> -----
+    <events.date.finish.day.AQ [Attr.Type.Querier Ckd]> -----
+    <events.date.finish.month.AQ [Attr.Type.Querier Ckd]> -----
+    <events.date.finish.year.AQ [Attr.Type.Querier Ckd]> -----
     <events.date.alive.AQ [Attr.Type.Querier Boolean]> -----
     <events.time.AQ [Attr.Type.Querier Composite]> MOM.Time_Interval
-    <events.time.start.AQ [Attr.Type.Querier Ckd]> -----
-    <events.time.finish.AQ [Attr.Type.Querier Ckd]> -----
+    <events.time.start.AQ [Attr.Type.Querier Time]> -----
+    <events.time.start.hour.AQ [Attr.Type.Querier Ckd]> -----
+    <events.time.start.minute.AQ [Attr.Type.Querier Ckd]> -----
+    <events.time.start.second.AQ [Attr.Type.Querier Ckd]> -----
+    <events.time.finish.AQ [Attr.Type.Querier Time]> -----
+    <events.time.finish.hour.AQ [Attr.Type.Querier Ckd]> -----
+    <events.time.finish.minute.AQ [Attr.Type.Querier Ckd]> -----
+    <events.time.finish.second.AQ [Attr.Type.Querier Ckd]> -----
     <events.calendar.AQ [Attr.Type.Querier Id_Entity]> EVT.Calendar
     <events.calendar.name.AQ [Attr.Type.Querier String]> -----
     <events.calendar.desc.AQ [Attr.Type.Querier String]> -----
@@ -267,8 +303,8 @@ _test_code = """
     <events.date.start.AQ [Attr.Type.Querier Date]>
     <events.date.finish.AQ [Attr.Type.Querier Date]>
     <events.date.alive.AQ [Attr.Type.Querier Boolean]>
-    <events.time.start.AQ [Attr.Type.Querier Ckd]>
-    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.time.start.AQ [Attr.Type.Querier Time]>
+    <events.time.finish.AQ [Attr.Type.Querier Time]>
     <events.calendar.name.AQ [Attr.Type.Querier String]>
     <events.calendar.desc.AQ [Attr.Type.Querier String]>
     <events.detail.AQ [Attr.Type.Querier String]>
@@ -325,8 +361,8 @@ _test_code = """
     <events.date.start.AQ [Attr.Type.Querier Date]>
     <events.date.finish.AQ [Attr.Type.Querier Date]>
     <events.date.alive.AQ [Attr.Type.Querier Boolean]>
-    <events.time.start.AQ [Attr.Type.Querier Ckd]>
-    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.time.start.AQ [Attr.Type.Querier Time]>
+    <events.time.finish.AQ [Attr.Type.Querier Time]>
     <events.calendar.name.AQ [Attr.Type.Querier String]>
     <events.calendar.desc.AQ [Attr.Type.Querier String]>
     <events.detail.AQ [Attr.Type.Querier String]>
@@ -388,11 +424,39 @@ _test_code = """
                       , 'ui_name' : 'Academic title'
                       }
                     , { 'attrs' :
-                          [ { 'name' : 'start'
+                          [ { 'attrs' :
+                                [ { 'name' : 'day'
+                                  , 'sig_key' : 0
+                                  , 'ui_name' : 'Day'
+                                  }
+                                , { 'name' : 'month'
+                                  , 'sig_key' : 0
+                                  , 'ui_name' : 'Month'
+                                  }
+                                , { 'name' : 'year'
+                                  , 'sig_key' : 0
+                                  , 'ui_name' : 'Year'
+                                  }
+                                ]
+                            , 'name' : 'start'
                             , 'sig_key' : 0
                             , 'ui_name' : 'Start'
                             }
-                          , { 'name' : 'finish'
+                          , { 'attrs' :
+                                [ { 'name' : 'day'
+                                  , 'sig_key' : 0
+                                  , 'ui_name' : 'Day'
+                                  }
+                                , { 'name' : 'month'
+                                  , 'sig_key' : 0
+                                  , 'ui_name' : 'Month'
+                                  }
+                                , { 'name' : 'year'
+                                  , 'sig_key' : 0
+                                  , 'ui_name' : 'Year'
+                                  }
+                                ]
+                            , 'name' : 'finish'
                             , 'sig_key' : 0
                             , 'ui_name' : 'Finish'
                             }
@@ -423,11 +487,39 @@ _test_code = """
           , 'ui_name' : 'Registered in'
           }
         , { 'attrs' :
-              [ { 'name' : 'start'
+              [ { 'attrs' :
+                    [ { 'name' : 'day'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Day'
+                      }
+                    , { 'name' : 'month'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Month'
+                      }
+                    , { 'name' : 'year'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Year'
+                      }
+                    ]
+                , 'name' : 'start'
                 , 'sig_key' : 0
                 , 'ui_name' : 'Start'
                 }
-              , { 'name' : 'finish'
+              , { 'attrs' :
+                    [ { 'name' : 'day'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Day'
+                      }
+                    , { 'name' : 'month'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Month'
+                      }
+                    , { 'name' : 'year'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Year'
+                      }
+                    ]
+                , 'name' : 'finish'
                 , 'sig_key' : 0
                 , 'ui_name' : 'Finish'
                 }
@@ -470,11 +562,39 @@ _test_code = """
                             , 'ui_name' : 'Academic title'
                             }
                           , { 'attrs' :
-                                [ { 'name' : 'start'
+                                [ { 'attrs' :
+                                      [ { 'name' : 'day'
+                                        , 'sig_key' : 0
+                                        , 'ui_name' : 'Day'
+                                        }
+                                      , { 'name' : 'month'
+                                        , 'sig_key' : 0
+                                        , 'ui_name' : 'Month'
+                                        }
+                                      , { 'name' : 'year'
+                                        , 'sig_key' : 0
+                                        , 'ui_name' : 'Year'
+                                        }
+                                      ]
+                                  , 'name' : 'start'
                                   , 'sig_key' : 0
                                   , 'ui_name' : 'Start'
                                   }
-                                , { 'name' : 'finish'
+                                , { 'attrs' :
+                                      [ { 'name' : 'day'
+                                        , 'sig_key' : 0
+                                        , 'ui_name' : 'Day'
+                                        }
+                                      , { 'name' : 'month'
+                                        , 'sig_key' : 0
+                                        , 'ui_name' : 'Month'
+                                        }
+                                      , { 'name' : 'year'
+                                        , 'sig_key' : 0
+                                        , 'ui_name' : 'Year'
+                                        }
+                                      ]
+                                  , 'name' : 'finish'
                                   , 'sig_key' : 0
                                   , 'ui_name' : 'Finish'
                                   }
@@ -505,11 +625,39 @@ _test_code = """
                 , 'ui_name' : 'Registered in'
                 }
               , { 'attrs' :
-                    [ { 'name' : 'start'
+                    [ { 'attrs' :
+                          [ { 'name' : 'day'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Day'
+                            }
+                          , { 'name' : 'month'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Month'
+                            }
+                          , { 'name' : 'year'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Year'
+                            }
+                          ]
+                      , 'name' : 'start'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Start'
                       }
-                    , { 'name' : 'finish'
+                    , { 'attrs' :
+                          [ { 'name' : 'day'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Day'
+                            }
+                          , { 'name' : 'month'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Month'
+                            }
+                          , { 'name' : 'year'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Year'
+                            }
+                          ]
+                      , 'name' : 'finish'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Finish'
                       }
@@ -768,11 +916,39 @@ _test_code = """
         , { 'Class' : 'Entity'
           , 'attrs' :
               [ { 'attrs' :
-                    [ { 'name' : 'start'
+                    [ { 'attrs' :
+                          [ { 'name' : 'day'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Day'
+                            }
+                          , { 'name' : 'month'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Month'
+                            }
+                          , { 'name' : 'year'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Year'
+                            }
+                          ]
+                      , 'name' : 'start'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Start'
                       }
-                    , { 'name' : 'finish'
+                    , { 'attrs' :
+                          [ { 'name' : 'day'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Day'
+                            }
+                          , { 'name' : 'month'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Month'
+                            }
+                          , { 'name' : 'year'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Year'
+                            }
+                          ]
+                      , 'name' : 'finish'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Finish'
                       }
@@ -785,11 +961,39 @@ _test_code = """
                 , 'ui_name' : 'Date'
                 }
               , { 'attrs' :
-                    [ { 'name' : 'start'
+                    [ { 'attrs' :
+                          [ { 'name' : 'hour'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Hour'
+                            }
+                          , { 'name' : 'minute'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Minute'
+                            }
+                          , { 'name' : 'second'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Second'
+                            }
+                          ]
+                      , 'name' : 'start'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Start'
                       }
-                    , { 'name' : 'finish'
+                    , { 'attrs' :
+                          [ { 'name' : 'hour'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Hour'
+                            }
+                          , { 'name' : 'minute'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Minute'
+                            }
+                          , { 'name' : 'second'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Second'
+                            }
+                          ]
+                      , 'name' : 'finish'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Finish'
                       }
@@ -1048,6 +1252,32 @@ _test_code = """
                     , attrs =
                       [ Record
                           ( attr = Date `start`
+                          , attrs =
+                            [ Record
+                                ( attr = Int `day`
+                                , full_name = 'owner.left.lifetime.start.day'
+                                , id = 'owner__left__lifetime__start__day'
+                                , name = 'day'
+                                , sig_key = 0
+                                , ui_name = 'Owner/Man/Lifetime/Start/Day'
+                                )
+                            , Record
+                                ( attr = Int `month`
+                                , full_name = 'owner.left.lifetime.start.month'
+                                , id = 'owner__left__lifetime__start__month'
+                                , name = 'month'
+                                , sig_key = 0
+                                , ui_name = 'Owner/Man/Lifetime/Start/Month'
+                                )
+                            , Record
+                                ( attr = Int `year`
+                                , full_name = 'owner.left.lifetime.start.year'
+                                , id = 'owner__left__lifetime__start__year'
+                                , name = 'year'
+                                , sig_key = 0
+                                , ui_name = 'Owner/Man/Lifetime/Start/Year'
+                                )
+                            ]
                           , full_name = 'owner.left.lifetime.start'
                           , id = 'owner__left__lifetime__start'
                           , name = 'start'
@@ -1056,6 +1286,32 @@ _test_code = """
                           )
                       , Record
                           ( attr = Date `finish`
+                          , attrs =
+                            [ Record
+                                ( attr = Int `day`
+                                , full_name = 'owner.left.lifetime.finish.day'
+                                , id = 'owner__left__lifetime__finish__day'
+                                , name = 'day'
+                                , sig_key = 0
+                                , ui_name = 'Owner/Man/Lifetime/Finish/Day'
+                                )
+                            , Record
+                                ( attr = Int `month`
+                                , full_name = 'owner.left.lifetime.finish.month'
+                                , id = 'owner__left__lifetime__finish__month'
+                                , name = 'month'
+                                , sig_key = 0
+                                , ui_name = 'Owner/Man/Lifetime/Finish/Month'
+                                )
+                            , Record
+                                ( attr = Int `year`
+                                , full_name = 'owner.left.lifetime.finish.year'
+                                , id = 'owner__left__lifetime__finish__year'
+                                , name = 'year'
+                                , sig_key = 0
+                                , ui_name = 'Owner/Man/Lifetime/Finish/Year'
+                                )
+                            ]
                           , full_name = 'owner.left.lifetime.finish'
                           , id = 'owner__left__lifetime__finish'
                           , name = 'finish'
@@ -1127,6 +1383,32 @@ _test_code = """
         , attrs =
           [ Record
               ( attr = Date `start`
+              , attrs =
+                [ Record
+                    ( attr = Int `day`
+                    , full_name = 'lifetime.start.day'
+                    , id = 'lifetime__start__day'
+                    , name = 'day'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Start/Day'
+                    )
+                , Record
+                    ( attr = Int `month`
+                    , full_name = 'lifetime.start.month'
+                    , id = 'lifetime__start__month'
+                    , name = 'month'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Start/Month'
+                    )
+                , Record
+                    ( attr = Int `year`
+                    , full_name = 'lifetime.start.year'
+                    , id = 'lifetime__start__year'
+                    , name = 'year'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Start/Year'
+                    )
+                ]
               , full_name = 'lifetime.start'
               , id = 'lifetime__start'
               , name = 'start'
@@ -1135,6 +1417,32 @@ _test_code = """
               )
           , Record
               ( attr = Date `finish`
+              , attrs =
+                [ Record
+                    ( attr = Int `day`
+                    , full_name = 'lifetime.finish.day'
+                    , id = 'lifetime__finish__day'
+                    , name = 'day'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Finish/Day'
+                    )
+                , Record
+                    ( attr = Int `month`
+                    , full_name = 'lifetime.finish.month'
+                    , id = 'lifetime__finish__month'
+                    , name = 'month'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Finish/Month'
+                    )
+                , Record
+                    ( attr = Int `year`
+                    , full_name = 'lifetime.finish.year'
+                    , id = 'lifetime__finish__year'
+                    , name = 'year'
+                    , sig_key = 0
+                    , ui_name = 'Lifetime/Finish/Year'
+                    )
+                ]
               , full_name = 'lifetime.finish'
               , id = 'lifetime__finish'
               , name = 'finish'
@@ -1224,6 +1532,32 @@ _test_code = """
                           , attrs =
                             [ Record
                                 ( attr = Date `start`
+                                , attrs =
+                                  [ Record
+                                      ( attr = Int `day`
+                                      , full_name = 'affiliate.owner.left.lifetime.start.day'
+                                      , id = 'affiliate__owner__left__lifetime__start__day'
+                                      , name = 'day'
+                                      , sig_key = 0
+                                      , ui_name = 'Affiliate/Owner/Man/Lifetime/Start/Day'
+                                      )
+                                  , Record
+                                      ( attr = Int `month`
+                                      , full_name = 'affiliate.owner.left.lifetime.start.month'
+                                      , id = 'affiliate__owner__left__lifetime__start__month'
+                                      , name = 'month'
+                                      , sig_key = 0
+                                      , ui_name = 'Affiliate/Owner/Man/Lifetime/Start/Month'
+                                      )
+                                  , Record
+                                      ( attr = Int `year`
+                                      , full_name = 'affiliate.owner.left.lifetime.start.year'
+                                      , id = 'affiliate__owner__left__lifetime__start__year'
+                                      , name = 'year'
+                                      , sig_key = 0
+                                      , ui_name = 'Affiliate/Owner/Man/Lifetime/Start/Year'
+                                      )
+                                  ]
                                 , full_name = 'affiliate.owner.left.lifetime.start'
                                 , id = 'affiliate__owner__left__lifetime__start'
                                 , name = 'start'
@@ -1232,6 +1566,32 @@ _test_code = """
                                 )
                             , Record
                                 ( attr = Date `finish`
+                                , attrs =
+                                  [ Record
+                                      ( attr = Int `day`
+                                      , full_name = 'affiliate.owner.left.lifetime.finish.day'
+                                      , id = 'affiliate__owner__left__lifetime__finish__day'
+                                      , name = 'day'
+                                      , sig_key = 0
+                                      , ui_name = 'Affiliate/Owner/Man/Lifetime/Finish/Day'
+                                      )
+                                  , Record
+                                      ( attr = Int `month`
+                                      , full_name = 'affiliate.owner.left.lifetime.finish.month'
+                                      , id = 'affiliate__owner__left__lifetime__finish__month'
+                                      , name = 'month'
+                                      , sig_key = 0
+                                      , ui_name = 'Affiliate/Owner/Man/Lifetime/Finish/Month'
+                                      )
+                                  , Record
+                                      ( attr = Int `year`
+                                      , full_name = 'affiliate.owner.left.lifetime.finish.year'
+                                      , id = 'affiliate__owner__left__lifetime__finish__year'
+                                      , name = 'year'
+                                      , sig_key = 0
+                                      , ui_name = 'Affiliate/Owner/Man/Lifetime/Finish/Year'
+                                      )
+                                  ]
                                 , full_name = 'affiliate.owner.left.lifetime.finish'
                                 , id = 'affiliate__owner__left__lifetime__finish'
                                 , name = 'finish'
@@ -1303,6 +1663,32 @@ _test_code = """
               , attrs =
                 [ Record
                     ( attr = Date `start`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `day`
+                          , full_name = 'affiliate.lifetime.start.day'
+                          , id = 'affiliate__lifetime__start__day'
+                          , name = 'day'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Start/Day'
+                          )
+                      , Record
+                          ( attr = Int `month`
+                          , full_name = 'affiliate.lifetime.start.month'
+                          , id = 'affiliate__lifetime__start__month'
+                          , name = 'month'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Start/Month'
+                          )
+                      , Record
+                          ( attr = Int `year`
+                          , full_name = 'affiliate.lifetime.start.year'
+                          , id = 'affiliate__lifetime__start__year'
+                          , name = 'year'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Start/Year'
+                          )
+                      ]
                     , full_name = 'affiliate.lifetime.start'
                     , id = 'affiliate__lifetime__start'
                     , name = 'start'
@@ -1311,6 +1697,32 @@ _test_code = """
                     )
                 , Record
                     ( attr = Date `finish`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `day`
+                          , full_name = 'affiliate.lifetime.finish.day'
+                          , id = 'affiliate__lifetime__finish__day'
+                          , name = 'day'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Finish/Day'
+                          )
+                      , Record
+                          ( attr = Int `month`
+                          , full_name = 'affiliate.lifetime.finish.month'
+                          , id = 'affiliate__lifetime__finish__month'
+                          , name = 'month'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Finish/Month'
+                          )
+                      , Record
+                          ( attr = Int `year`
+                          , full_name = 'affiliate.lifetime.finish.year'
+                          , id = 'affiliate__lifetime__finish__year'
+                          , name = 'year'
+                          , sig_key = 0
+                          , ui_name = 'Affiliate/Lifetime/Finish/Year'
+                          )
+                      ]
                     , full_name = 'affiliate.lifetime.finish'
                     , id = 'affiliate__lifetime__finish'
                     , name = 'finish'
@@ -1786,6 +2198,32 @@ _test_code = """
               , attrs =
                 [ Record
                     ( attr = Date `start`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `day`
+                          , full_name = 'events.date.start.day'
+                          , id = 'events__date__start__day'
+                          , name = 'day'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Start/Day'
+                          )
+                      , Record
+                          ( attr = Int `month`
+                          , full_name = 'events.date.start.month'
+                          , id = 'events__date__start__month'
+                          , name = 'month'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Start/Month'
+                          )
+                      , Record
+                          ( attr = Int `year`
+                          , full_name = 'events.date.start.year'
+                          , id = 'events__date__start__year'
+                          , name = 'year'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Start/Year'
+                          )
+                      ]
                     , full_name = 'events.date.start'
                     , id = 'events__date__start'
                     , name = 'start'
@@ -1794,6 +2232,32 @@ _test_code = """
                     )
                 , Record
                     ( attr = Date `finish`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `day`
+                          , full_name = 'events.date.finish.day'
+                          , id = 'events__date__finish__day'
+                          , name = 'day'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Finish/Day'
+                          )
+                      , Record
+                          ( attr = Int `month`
+                          , full_name = 'events.date.finish.month'
+                          , id = 'events__date__finish__month'
+                          , name = 'month'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Finish/Month'
+                          )
+                      , Record
+                          ( attr = Int `year`
+                          , full_name = 'events.date.finish.year'
+                          , id = 'events__date__finish__year'
+                          , name = 'year'
+                          , sig_key = 0
+                          , ui_name = 'Events/Date/Finish/Year'
+                          )
+                      ]
                     , full_name = 'events.date.finish'
                     , id = 'events__date__finish'
                     , name = 'finish'
@@ -1823,6 +2287,32 @@ _test_code = """
               , attrs =
                 [ Record
                     ( attr = Time `start`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `hour`
+                          , full_name = 'events.time.start.hour'
+                          , id = 'events__time__start__hour'
+                          , name = 'hour'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Start/Hour'
+                          )
+                      , Record
+                          ( attr = Int `minute`
+                          , full_name = 'events.time.start.minute'
+                          , id = 'events__time__start__minute'
+                          , name = 'minute'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Start/Minute'
+                          )
+                      , Record
+                          ( attr = Int `second`
+                          , full_name = 'events.time.start.second'
+                          , id = 'events__time__start__second'
+                          , name = 'second'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Start/Second'
+                          )
+                      ]
                     , full_name = 'events.time.start'
                     , id = 'events__time__start'
                     , name = 'start'
@@ -1831,6 +2321,32 @@ _test_code = """
                     )
                 , Record
                     ( attr = Time `finish`
+                    , attrs =
+                      [ Record
+                          ( attr = Int `hour`
+                          , full_name = 'events.time.finish.hour'
+                          , id = 'events__time__finish__hour'
+                          , name = 'hour'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Finish/Hour'
+                          )
+                      , Record
+                          ( attr = Int `minute`
+                          , full_name = 'events.time.finish.minute'
+                          , id = 'events__time__finish__minute'
+                          , name = 'minute'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Finish/Minute'
+                          )
+                      , Record
+                          ( attr = Int `second`
+                          , full_name = 'events.time.finish.second'
+                          , id = 'events__time__finish__second'
+                          , name = 'second'
+                          , sig_key = 0
+                          , ui_name = 'Events/Time/Finish/Second'
+                          )
+                      ]
                     , full_name = 'events.time.finish'
                     , id = 'events__time__finish'
                     , name = 'finish'
@@ -2510,11 +3026,39 @@ _test_code = """
     , { 'Class' : 'Entity'
       , 'attrs' :
           [ { 'attrs' :
-                [ { 'name' : 'start'
+                [ { 'attrs' :
+                      [ { 'name' : 'day'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Day'
+                        }
+                      , { 'name' : 'month'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Month'
+                        }
+                      , { 'name' : 'year'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Year'
+                        }
+                      ]
+                  , 'name' : 'start'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Start'
                   }
-                , { 'name' : 'finish'
+                , { 'attrs' :
+                      [ { 'name' : 'day'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Day'
+                        }
+                      , { 'name' : 'month'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Month'
+                        }
+                      , { 'name' : 'year'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Year'
+                        }
+                      ]
+                  , 'name' : 'finish'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Finish'
                   }
@@ -2527,11 +3071,39 @@ _test_code = """
             , 'ui_name' : 'Date'
             }
           , { 'attrs' :
-                [ { 'name' : 'start'
+                [ { 'attrs' :
+                      [ { 'name' : 'hour'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Hour'
+                        }
+                      , { 'name' : 'minute'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Minute'
+                        }
+                      , { 'name' : 'second'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Second'
+                        }
+                      ]
+                  , 'name' : 'start'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Start'
                   }
-                , { 'name' : 'finish'
+                , { 'attrs' :
+                      [ { 'name' : 'hour'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Hour'
+                        }
+                      , { 'name' : 'minute'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Minute'
+                        }
+                      , { 'name' : 'second'
+                        , 'sig_key' : 0
+                        , 'ui_name' : 'Second'
+                        }
+                      ]
+                  , 'name' : 'finish'
                   , 'sig_key' : 0
                   , 'ui_name' : 'Finish'
                   }

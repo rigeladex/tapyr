@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -43,6 +43,8 @@
 #     4-Jul-2014 (CT) Add table-name to name of `UniqueConstraint`
 #     2-Sep-2014 (CT) Add `no_identifier_pat`
 #    23-Apr-2015 (CT) Change `_add_user_defined_indices` to support DESC indices
+#    22-Jul-2016 (CT) Change `finalize` to filter for `has_identity`;
+#                     add `App_Type_Wrapper.db_sig` to signal that change
 #    ««revision-date»»···
 #--
 
@@ -84,6 +86,9 @@ class _Reload_Mixin_ (object) :
 class App_Type_Wrapper (TFL.Meta.Object) :
     """SAW specific information about a derived App_Type"""
 
+    db_sig              = (1, )
+    """Change `db_sig` when a code change in SAW makes db incompatible"""
+
     no_identifier_pat   = Regexp(r"\W")
 
     def __init__ (self, app_type) :
@@ -121,7 +126,13 @@ class App_Type_Wrapper (TFL.Meta.Object) :
 
     def finalize (self) :
         tn_map = self.tn_map
-        names  = ichain ([""], sorted (self.et_map))
+        names  = ichain \
+            ( [""]
+            , sorted
+                ( k for k, etw in pyk.iteritems (self.et_map)
+                    if  etw.e_type.has_identity
+                )
+            )
         for tid, tn in enumerate (names) :
             tn_map.update (((tid, tn), (tn, tid)))
     # end def finalize
@@ -151,7 +162,7 @@ class _M_SAW_Manager_ (MOM.DBW._Manager_.__class__) :
                     )
                 )
             for (k, columns) in sorted (pyk.iteritems (cls.meta_table_columns))
-            )
+            ) + App_Type_Wrapper.db_sig
     # end def db_sig
 
     @TFL.Meta.Once_Property
@@ -269,8 +280,7 @@ class _M_SAW_Manager_ (MOM.DBW._Manager_.__class__) :
                 tables  = set ((sa_table, ))
                 for qs in pred.aqs :
                     qx  = QX.Mapper (QR) (qs)
-                    x   = qx.XS_ATTR
-                    columns.extend (x)
+                    columns.extend (qx.XS_ATTR)
                     for join in qx.JOINS :
                         tables.update (j.table for j in join)
                 if len (tables) == 1 :

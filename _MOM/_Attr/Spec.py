@@ -71,6 +71,9 @@
 #     5-Feb-2016 (CT) Sort `polish_attr` by `ui_rank`, not `(rank, name)`
 #    24-Feb-2016 (CT) Add `not prop.prop.is_partial` to `_db_attr` guard
 #    26-Apr-2016 (CT) Add `polisher.Instance` to `_setup_attrs`
+#    19-Jul-2016 (CT) Use `isinstance`, not `issubclass`, to check `e_type`
+#    22-Jul-2016 (CT) Add `ckd_name_eq_name`, `_fix_ckd_names`
+#     6-Oct-2016 (CT) Add `Kind_Mixins_X` to `_effective_prop_kind_mixins`
 #    ««revision-date»»···
 #--
 
@@ -108,14 +111,18 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec)) :
        is added to the `E_Type`.
     """
 
-    _Prop_Pkg       = MOM.Attr
-    _Prop_Spec_Name = "_Attributes"
-    _prop_dict_cls  = TFL.Alias_Dict
-    _prop_dict      = TFL.Meta.Alias_Property ("_attr_dict")
-    _prop_kind      = TFL.Meta.Alias_Property ("_attr_kind")
-    _prop_map_name  = "attributes"
+    ckd_name_eq_name            = False
+
+    _Prop_Pkg                   = MOM.Attr
+    _Prop_Spec_Name             = "_Attributes"
+    _prop_dict_cls              = TFL.Alias_Dict
+    _prop_dict                  = TFL.Meta.Alias_Property ("_attr_dict")
+    _prop_kind                  = TFL.Meta.Alias_Property ("_attr_kind")
+    _prop_map_name              = "attributes"
 
     def __init__ (self, e_type) :
+        if self.ckd_name_eq_name :
+            self._fix_ckd_names ()
         sk                      = TFL.Sorted_By ("rank", "name")
         self._syncable          = []
         self._db_attr           = e_type.db_attr    = []
@@ -231,12 +238,18 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec)) :
                 else MOM.Attr._Auto_Update_Mixin_
                 )
             result += (MI, )
-        if issubclass (e_type, MOM.An_Entity) :
+        if isinstance (e_type, MOM.Meta.M_E_Type_An) :
             result = (MOM.Attr._Nested_Mixin_, ) + result
         if MOM.Attr.Computed_Mixin in result :
             result = tuple (r for r in result if r != MOM.Attr.Sticky_Mixin)
+        result = prop_type.Kind_Mixins_X + result
         return tuple (uniq (result))
     # end def _effective_prop_kind_mixins
+
+    def _fix_ckd_names (self) :
+        for a in pyk.itervalues (self._names) :
+            a.ckd_name = a.name
+    # end def _fix_ckd_names
 
     def _setup_alias (self, e_type, alias_name, real_name) :
         setattr (e_type, alias_name, TFL.Meta.Alias_Property (real_name))

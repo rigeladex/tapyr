@@ -49,6 +49,7 @@
 #    18-Dec-2015 (CT) Add guard for exceptions to `aq_filters` and `choices`
 #    26-Apr-2016 (CT) Add `buddies` to, and remove `fields` from,
 #                     `as_json_cargo` and `sig`; factor `elem._mapped_id`
+#     9-Sep-2016 (CT) Add `MOM.Attr.S_Completer`
 #    ««revision-date»»···
 #--
 
@@ -406,7 +407,7 @@ class _Nested_Completer_ (Completer) :
 
 # end class _Nested_Completer_
 
-@TFL.Add_To_Class ("MF3", MOM.Attr.C_Completer)
+@TFL.Add_To_Class ("MF3", MOM.Attr.C_Completer, MOM.Attr.S_Completer)
 class _MF3_C_Completer_ (_Nested_Completer_) :
 
     _real_name = "C_Completer"

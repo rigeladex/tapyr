@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -38,6 +38,7 @@
 #     6-Jun-2013 (CT) Use `prop.assign`, not `setattr`, to assign to `e_type`
 #    28-Mar-2014 (CT) Change `_create_properties` to use `_own_names`, not
 #                     `_prop_dict`, to check for redefinition
+#    20-Sep-2016 (CT) Use reversed `Kind_Mixins` as `bases`
 #    ««revision-date»»···
 #--
 
@@ -118,13 +119,16 @@ class _Prop_Spec_ \
         kind_mixins   = self._effective_prop_kind_mixins \
             (name, kind, prop_type, e_type)
         if kind is not None and kind_mixins :
-            kinds = tuple (kind_mixins) + (kind, )
+            kinds = kind_mixins + (kind, )
             try :
                 result = self._mixed_kinds [kinds]
             except KeyError :
+                k_name = "__".join \
+                    (   k.kind_name
+                    for k in itertools.chain ((kind, ), kind_mixins)
+                    )
                 result = self._mixed_kinds [kinds] = kind.__class__ \
-                    ( "__".join (k.kind_name for k in reversed (kinds))
-                    , kinds
+                    ( k_name, kinds
                     , dict
                         ( __module__ = kind.__module__
                         , kind       = kind.kind
@@ -134,7 +138,9 @@ class _Prop_Spec_ \
     # end def _effective_prop_kind
 
     def _effective_prop_kind_mixins (self, name, kind, prop_type, e_type) :
-        return tuple (getattr (prop_type, "Kind_Mixins", ())) + self.Kind_Mixins
+        ### Use `reversed` to put descendent's mixins in front of parent's
+        pt_mixins = tuple (reversed (getattr (prop_type, "Kind_Mixins", ())))
+        return pt_mixins + tuple (self.Kind_Mixins)
     # end def _effective_prop_kind_mixins
 
     def _kind_list_name (self, kind) :

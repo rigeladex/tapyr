@@ -1513,7 +1513,7 @@ class M_E_Type_Id (M_E_Type) :
                 return tuple ("%s.%s" % (name, s) for s in et.sorted_by)
             for pka in sorted (cls.primary, key = TFL.Getter.sort_rank) :
                 if not pka.sort_skip :
-                    if pka.E_Type :
+                    if pka.E_Type and pka.E_Type.sorted_by is not None :
                         pka_sb = _pka_sorted_by (pka.name, pka.E_Type)
                         if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
                             if pka_sb and pka.E_Type.is_relevant :

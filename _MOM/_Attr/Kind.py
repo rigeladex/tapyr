@@ -231,6 +231,13 @@
 #                     + pass `changed = True` to `_set_cooked`
 #    22-Jun-2016 (CT) Fix `_Computed_Mixin_.get_value`: add and use `is_void`
 #                     + Before, `get_value` failed for composite attributes
+#     6-Jul-2016 (CT) Add `set_cooked`, `_Range_Mixin_`
+#    19-Jul-2016 (CT) Add `_Structured_Mixin_`
+#     5-Oct-2016 (CT) Factor `_Just_Once_Mixin_`
+#                     + avoid MRO conflicts between `Just_Once_Mixin` and
+#                       `Init_Only_Mixin`
+#     6-Oct-2016 (CT) Add guard for `changed == 42` to
+#                     `Id_Entity_Reference_Mixin._set_cooked_value`
 #    ««revision-date»»···
 #--
 
@@ -453,20 +460,15 @@ class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
             (obj, attr.raw_default, default, changed = True)
     # end def reset
 
+    def set_cooked (self, obj, value) :
+        return self._set_cooked (obj, value)
+    # end def set_cooked
+
     def set_pickle_cargo (self, obj, cargo) :
         value = self.from_pickle_cargo (obj.home_scope, cargo)
         if value is not None :
             self._set_cooked_value (obj, value, changed = True)
     # end def set_pickle_cargo
-
-    def sync_cooked (self, obj, raw_value) :
-        if __debug__ :
-            print \
-                ( _T ("Trying to sync pending attribute %s of %s to `%s`")
-                % (self.name, obj.name, raw_value)
-                )
-        self.set_raw (obj, raw_value)
-    # end def sync_cooked
 
     def to_save (self, obj) :
         return False
@@ -937,6 +939,37 @@ class _Computed_Mixin_ (Kind) :
 
 # end class _Computed_Mixin_
 
+class _Just_Once_Mixin_ (Kind) :
+    """Mixin allowing attribute to be set to a non-default valuer just once."""
+
+    is_changeable         = False
+    _x_format             = _ \
+        ( "Attribute `%s.%s` cannot be "
+          "changed from `%s` to `%s`; it can be set only once!"
+        )
+
+    def change_forbidden (self, obj) :
+        return self._change_forbidden (obj, self.get_value (obj))
+    # end def change_forbidden
+
+    def _change_forbidden (self, obj, old_value) :
+        return old_value != self.default
+    # end def _change_forbidden
+
+    def _set_cooked_value_inner (self, obj, value, old_value = None) :
+        if obj.init_finished :
+            if old_value is None :
+                old_value = self.get_value (obj)
+            if value != old_value and self._change_forbidden (obj, old_value) :
+                raise AttributeError \
+                    ( _T (self._x_format)
+                    % (_T (obj.ui_name), self.name, old_value, value)
+                    )
+        self.__super._set_cooked_value_inner (obj, value, old_value)
+    # end def _set_cooked_value_inner
+
+# end class _Just_Once_Mixin_
+
 class _Nested_Mixin_ (Kind) :
     """Mixin for attributes nested inside composite attributes."""
 
@@ -953,6 +986,55 @@ class _Nested_Mixin_ (Kind) :
     # end def _record_change
 
 # end class _Nested_Mixin_
+
+class _Range_Mixin_ (Kind) :
+    """Mixin for attributes derived from MOM.Attr._A_Range_."""
+
+    def __set__ (self, obj, value) :
+        return self.__super.__set__ (obj, self._defaulted (obj, value))
+    # end def __set__
+
+    @TFL.Meta.Once_Property
+    def range_aks (self) :
+        return self.attr.E_Type.db_attr
+    # end def range_aks
+
+    def from_pickle_cargo (self, scope, cargo) :
+        if cargo and cargo [0] :
+            P_Type  = self.attr.P_Type
+            r_cargo = cargo [0]
+            if isinstance (r_cargo, P_Type) :
+                result = r_cargo
+            else :
+                r_args = tuple \
+                    (   ak.from_pickle_cargo
+                            (scope, v if isinstance (v, tuple) else (v, ))
+                    for ak, v in zip (self.range_aks, r_cargo)
+                    )
+                result = P_Type (* r_args)
+            return result
+    # end def from_pickle_cargo
+
+    def get_pickle_cargo (self, obj) :
+        result = value = self.get_value (obj)
+        if value is not None :
+            result = tuple \
+                (ak.get_pickle_cargo (value) for ak in self.range_aks)
+        return (result, )
+    # end def get_pickle_cargo
+
+    def set_cooked (self, obj, value) :
+        return self.__super.set_cooked (obj, self._defaulted (obj, value))
+    # end def set_cooked
+
+    def _defaulted (self, obj, value) :
+        if value is not None :
+            value = self.attr.set_defaults \
+                (value.lower, value.upper, value.btype, value)
+        return value
+    # end def _defaulted
+
+# end class _Range_Mixin_
 
 class _Raw_Value_Mixin_ (Kind) :
     """Mixin for keeping raw values of user-specified attributes."""
@@ -1040,6 +1122,16 @@ class _Sticky_Mixin_ (Kind) :
     # end def _set_raw
 
 # end class _Sticky_Mixin_
+
+class _Structured_Mixin_ (Kind) :
+    """Mixin for structured attributes."""
+
+    @TFL.Meta.Once_Property
+    def is_composite (self) :
+        return bool (self.attr.E_Type.db_attr)
+    # end def is_composite
+
+# end class _Structured_Mixin_
 
 class _Type_Name_Mixin_ (Kind) :
 
@@ -1504,38 +1596,12 @@ class Computed_Set_Mixin (Computed_Mixin) :
 
 # end class Computed_Set_Mixin
 
-class Just_Once_Mixin (Kind) :
+class Just_Once_Mixin (_Just_Once_Mixin_) :
     """Mixin allowing attribute to be set to a non-default valuer just once."""
-
-    is_changeable         = False
-    _x_format             = _ \
-        ( "Attribute `%s.%s` cannot be "
-          "changed from `%s` to `%s`; it can be set only once!"
-        )
-
-    def change_forbidden (self, obj) :
-        return self._change_forbidden (obj, self.get_value (obj))
-    # end def change_forbidden
-
-    def _change_forbidden (self, obj, old_value) :
-        return old_value != self.default
-    # end def _change_forbidden
-
-    def _set_cooked_value_inner (self, obj, value, old_value = None) :
-        if obj.init_finished :
-            if old_value is None :
-                old_value = self.get_value (obj)
-            if value != old_value and self._change_forbidden (obj, old_value) :
-                raise AttributeError \
-                    ( _T (self._x_format)
-                    % (_T (obj.ui_name), self.name, old_value, value)
-                    )
-        self.__super._set_cooked_value_inner (obj, value, old_value)
-    # end def _set_cooked_value_inner
 
 # end class Just_Once_Mixin
 
-class Init_Only_Mixin (Just_Once_Mixin) :
+class Init_Only_Mixin (_Just_Once_Mixin_) :
     """Mixin restricting attribute changes to the object initialization."""
 
     _x_format             = _ \
@@ -1599,14 +1665,17 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
     def _set_cooked_value (self, obj, value, changed = 42, old_value = None) :
         attr          = self.attr
         init_finished = obj.init_finished
+        ### Need to recompute `changed` here to avoid `_unregister`,
+        ### `_register` dance if caller tried to pretend a change happened
+        ### although it didn't
         try :
             ### Don't use `self.get_value`: don't want  `computed` to be called
             if old_value is None :
                 old_value = getattr (obj, attr.ckd_name, None)
         except (ValueError, TypeError) :
             old_value = None
-        changed       = old_value is not value
-        scope_p       = obj._home_scope is not None
+        changed = old_value is not value
+        scope_p = obj._home_scope is not None
         if changed :
             if old_value and scope_p :
                 self._unregister (obj, old_value)

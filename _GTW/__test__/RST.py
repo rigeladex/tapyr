@@ -1074,7 +1074,7 @@ _test_doc = r"""
                         , 'kind' : 'necessary'
                         , 'name' : 'date'
                         , 'p_type' : 'datetime'
-                        , 'syntax' : 'yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional'
+                        , 'syntax' : 'yyyy-mm-dd hh:mm:ss, the time `hh:mm:ss` is optional'
                         , 'type' : 'Date-Time'
                         , 'ui_name' : 'Date'
                         }
@@ -1357,7 +1357,7 @@ _test_doc = r"""
                         , 'kind' : 'necessary'
                         , 'name' : 'date'
                         , 'p_type' : 'datetime'
-                        , 'syntax' : 'yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional'
+                        , 'syntax' : 'yyyy-mm-dd hh:mm:ss, the time `hh:mm:ss` is optional'
                         , 'type' : 'Date-Time'
                         , 'ui_name' : 'Date'
                         }
@@ -1680,7 +1680,7 @@ _test_doc = r"""
                         , 'kind' : 'necessary'
                         , 'name' : 'date'
                         , 'p_type' : 'datetime'
-                        , 'syntax' : 'yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional'
+                        , 'syntax' : 'yyyy-mm-dd hh:mm:ss, the time `hh:mm:ss` is optional'
                         , 'type' : 'Date-Time'
                         , 'ui_name' : 'Date'
                         }

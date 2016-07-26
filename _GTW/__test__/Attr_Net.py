@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2012-2016 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A--3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -728,7 +728,7 @@ _test_query = r"""
 """
 
 _test_qx_pg = """
-    >>> from _GTW.__test__.SAW_QX import QX, show
+    >>> from _GTW.__test__.SAW_QX import QX, show_qx as show
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
 
     >>> ET = apt ["GTW.OMP.NET.Test_IP4_Address"]
@@ -806,7 +806,7 @@ _test_qx_pg = """
 """
 
 _test_qx_sq = """
-    >>> from _GTW.__test__.SAW_QX import QX, show
+    >>> from _GTW.__test__.SAW_QX import QX, show_qx as show
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
 
     >>> ET = apt ["GTW.OMP.NET.Test_IP4_Address"]

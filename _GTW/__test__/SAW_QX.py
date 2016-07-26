@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -21,6 +21,7 @@
 #     2-Apr-2014 (CT) Add/fix tests for `Q.NOT` and `~`
 #     9-Sep-2014 (CT) Add tests for query with type restriction
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    31-Jul-2016 (CT) Factor `show_*` to `_SAW_test_functions`
 #    ««revision-date»»···
 #--
 
@@ -28,43 +29,7 @@ from   __future__ import division, print_function
 from   __future__ import absolute_import, unicode_literals
 
 from   _GTW.__test__.model               import *
-from   _MOM.import_MOM                   import Q
-
-from   _MOM._DBW._SAW                    import QX
-
-from   _TFL.Regexp                       import Re_Replacer, re
-
-_formatted_qx = Re_Replacer (r" <", "\n    <")
-
-def show_columns (apt, ET, q) :
-    qr = apt.DBW.PNS.Q_Result.E_Type (apt [ET], _strict = False)
-    qx = QX.Mapper (qr) (q)
-    print ("QX." + qx.__class__.__name__, ET, " : ", q)
-    for c in qx._columns :
-        print (" ", c)
-
-def show_joins (apt, ET, q) :
-    qr = apt.DBW.PNS.Q_Result.E_Type (apt [ET], _strict = False)
-    qx = QX.Mapper (qr) (q)
-    try :
-        qx.XS_FILTER ### might trigger additional joins
-    except Exception :
-        pass
-    print (ET, " : ", q)
-    for j in qx.JOINS :
-        print \
-            ( " ", "%-5.5s" % j.joiner.__name__.upper ()
-            , " = ".join (str (c) for c in j.cols)
-            )
-
-def show_xs_filter (apt, ET, q) :
-    qr = apt.DBW.PNS.Q_Result.E_Type (apt [ET], _strict = False)
-    qx = QX.Mapper (qr) (q)
-    print (ET, " : ", q)
-    print ("   ", qx.XS_FILTER)
-
-def show (qx, level = 0) :
-    print (QX.display (qx, level = 0))
+from   _GTW.__test__._SAW_test_functions import *
 
 _test_columns = """
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
@@ -105,7 +70,7 @@ _test_columns = """
     QX.Kind_Composite PAP.Person_has_Phone  :  Q.subject.lifetime
 
     >>> show_columns (apt, "PAP.Person_has_Phone", Q.subject.lifetime.start)
-    QX.Kind PAP.Person_has_Phone  :  Q.subject.lifetime.start
+    QX.Kind_Structured_Field_Extractor PAP.Person_has_Phone  :  Q.subject.lifetime.start
       pap_person__2.lifetime__start
 
     >>> show_columns (apt, "PAP.Subject", Q.phone_links)
@@ -136,7 +101,7 @@ _test_columns = """
     QX.Kind_Composite PAP.Phone  :  Q.persons.lifetime
 
     >>> show_columns (apt, "PAP.Phone", Q.persons.lifetime.start)
-    QX.Kind PAP.Phone  :  Q.persons.lifetime.start
+    QX.Kind_Structured_Field_Extractor PAP.Phone  :  Q.persons.lifetime.start
       pap_person__3.lifetime__start
 
     >>> show_columns (apt, "PAP.Subject", Q.creation.user == 42)
@@ -152,53 +117,53 @@ _test_getters = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxp = QX.Mapper (qrt)
 
-    >>> show (qxp (Q.lifetime))
+    >>> show_qx (qxp (Q.lifetime))
     <MOM.Date_Interval_lifetime | QX.Kind_Composite for
         <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
-    >>> show (qxp (Q.lifetime.start))
-    <MOM.Date_Interval_lifetime | QX.Kind for
+    >>> show_qx (qxp (Q.lifetime.start))
+    <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
         <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
         <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
-    >>> show (qxp (Q.RAW.lifetime))
+    >>> show_qx (qxp (Q.RAW.lifetime))
     <MOM.Date_Interval_lifetime | QX.Kind_Composite for
         RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
-    >>> show (qxp (Q.lifetime.RAW))
+    >>> show_qx (qxp (Q.lifetime.RAW))
     <MOM.Date_Interval_lifetime | QX.Kind_Composite for
         RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
-    >>> show (qxp (Q.RAW.lifetime.start))
-    <MOM.Date_Interval_lifetime | QX.Kind for
+    >>> show_qx (qxp (Q.RAW.lifetime.start))
+    <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
         RAW <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
         <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
-    >>> show (qxp (Q.lifetime.RAW.start))
-    <MOM.Date_Interval_lifetime | QX.Kind for
+    >>> show_qx (qxp (Q.lifetime.RAW.start))
+    <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
         RAW <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
         <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
-    >>> show (qxp (Q.lifetime.start.RAW))
-    <MOM.Date_Interval_lifetime | QX.Kind for
+    >>> show_qx (qxp (Q.lifetime.start.RAW))
+    <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
         RAW <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
         <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
-    >>> show (qxp (Q.lifetime.start.year))
-    <MOM.Date_Interval_lifetime | QX.Kind for
+    >>> show_qx (qxp (Q.lifetime.start.year))
+    <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
         <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
         <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
-    >>> show (qxp (Q.accounts))
+    >>> show_qx (qxp (Q.accounts))
     <PAP.Person | QX.Kind_Rev_Query for
         <SAW : Role_Ref_Set `accounts`>>
 
-    >>> show (qxp (Q.accounts.name))
+    >>> show_qx (qxp (Q.accounts.name))
     <Auth._Account_ | QX.Kind for
          <SAW : Email `name` [auth__account___1.name]>>
         <PAP.Person | QX.Kind_Rev_Query for
@@ -208,27 +173,27 @@ _test_getters = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxh = QX.Mapper (qrt)
 
-    >>> show (qxh (Q.person))
+    >>> show_qx (qxh (Q.person))
     <PAP.Person_has_Phone | QX.Kind_EPK for
         <SAW : Person `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxh (Q.person.pid))
+    >>> show_qx (qxh (Q.person.pid))
     <PAP.Person_has_Phone | QX.Kind_EPK for
         <SAW : Person `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxh (Q.person.last_name))
+    >>> show_qx (qxh (Q.person.last_name))
     <PAP.Person | QX.Kind for
          <SAW : String `last_name` [pap_person__1.last_name, pap_person__1.__raw_last_name]>>
         <PAP.Person_has_Phone | QX.Kind_EPK for
              <SAW : Person `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxh (Q.subject.lifetime))
+    >>> show_qx (qxh (Q.subject.lifetime))
     <MOM.Date_Interval_lifetime | QX.Kind_Composite for
          <SAW : Date_Interval `lifetime` [pap_person__1.lifetime__finish, pap_person__1.lifetime__start]>>
         <PAP.Person_has_Phone | QX.Kind_EPK for
              <SAW : Person `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxh (Q.subject.lifetime.alive))
+    >>> show_qx (qxh (Q.subject.lifetime.alive))
     <MOM.Date_Interval_lifetime | QX.Kind_Query for
          <SAW : Boolean `lifetime.alive`>>
         <MOM.Date_Interval_lifetime | QX.Kind_Composite for
@@ -238,20 +203,20 @@ _test_getters = """
         :AND:
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.start` [pap_person__1.lifetime__start]>>
               None
             Bin:__le__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.start` [pap_person__1.lifetime__start]>>
               <<today>>
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.finish` [pap_person__1.lifetime__finish]>>
               None
             Bin:__ge__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.finish` [pap_person__1.lifetime__finish]>>
               <<today>>
 
@@ -259,37 +224,37 @@ _test_getters = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxa = QX.Mapper (qrt)
 
-    >>> show (qxa (Q.person))
+    >>> show_qx (qxa (Q.person))
     <Auth.Account | QX.Kind_Rev_Query for
         <SAW : Role_Ref `person`>>
 
-    >>> show (qxa (Q.person.last_name))
+    >>> show_qx (qxa (Q.person.last_name))
     <PAP.Person | QX.Kind for
          <SAW : String `last_name` [pap_person__2.last_name, pap_person__2.__raw_last_name]>>
         <Auth.Account | QX.Kind_Rev_Query for
              <SAW : Role_Ref `person`>>
 
-    >>> show (qxa (Q.RAW.person.last_name))
+    >>> show_qx (qxa (Q.RAW.person.last_name))
     <PAP.Person | QX.Kind for
         RAW <SAW : String `last_name` [pap_person__2.last_name, pap_person__2.__raw_last_name]>>
         <Auth.Account | QX.Kind_Rev_Query for
             RAW <SAW : Role_Ref `person`>>
 
-    >>> show (qxa (Q.person.lifetime))
+    >>> show_qx (qxa (Q.person.lifetime))
     <MOM.Date_Interval_lifetime | QX.Kind_Composite for
          <SAW : Date_Interval `lifetime` [pap_person__2.lifetime__finish, pap_person__2.lifetime__start]>>
         <Auth.Account | QX.Kind_Rev_Query for
              <SAW : Role_Ref `person`>>
 
-    >>> show (qxa (Q.person.lifetime.start))
-    <MOM.Date_Interval_lifetime | QX.Kind for
+    >>> show_qx (qxa (Q.person.lifetime.start))
+    <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
          <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
         <MOM.Date_Interval_lifetime | QX.Kind_Composite for
              <SAW : Date_Interval `lifetime` [pap_person__2.lifetime__finish, pap_person__2.lifetime__start]>>
             <Auth.Account | QX.Kind_Rev_Query for
                  <SAW : Role_Ref `person`>>
 
-    >>> show (qxa (Q.person.account_links.account.name))
+    >>> show_qx (qxa (Q.person.account_links.account.name))
     <Auth._Account_ | QX.Kind for
          <SAW : Email `name` [auth__account___2.name]>>
         <PAP.Person_has_Account | QX.Kind_EPK for
@@ -299,7 +264,7 @@ _test_getters = """
                 <Auth.Account | QX.Kind_Rev_Query for
                      <SAW : Role_Ref `person`>>
 
-    >>> show (qxa (Q.person_links.person.last_name))
+    >>> show_qx (qxa (Q.person_links.person.last_name))
     <PAP.Person | QX.Kind for
          <SAW : String `last_name` [pap_person__3.last_name, pap_person__3.__raw_last_name]>>
         <PAP.Person_has_Account | QX.Kind_EPK for
@@ -307,7 +272,7 @@ _test_getters = """
             <Auth.Account | QX.Kind_Rev_Query for
                  <SAW : Link_Ref_List `person_links`>>
 
-    >>> show (qxa (Q.person_links.person.account_links.account.name))
+    >>> show_qx (qxa (Q.person_links.person.account_links.account.name))
     <Auth._Account_ | QX.Kind for
          <SAW : Email `name` [auth__account___3.name]>>
         <PAP.Person_has_Account | QX.Kind_EPK for
@@ -324,11 +289,11 @@ _test_getters = """
     >>> qxs = QX.Mapper (qrt)
 
     >>> x = qxs (Q.subject)
-    >>> show (x)
+    >>> show_qx (x)
     <PAP.Subject_has_Phone | QX.Kind_EPK for
         <SAW : Subject `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxs (Q.creation.user == 42))
+    >>> show_qx (qxs (Q.creation.user == 42))
     Bin:__eq__:
       <MOM.MD_Change | QX.Kind_EPK for
            <SAW : Entity `user` [mom_md_change__1.user]>>
@@ -337,7 +302,7 @@ _test_getters = """
       42
 
     >>> x = qxs (Q.subject.lifetime)
-    >>> show (x)
+    >>> show_qx (x)
     <PAP.Subject | QX.Kind_Partial for
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
@@ -352,18 +317,18 @@ _test_getters = """
                <SAW : Subject `left` [pap_subject_has_property.left]>>
 
     >>> x_start = qxs (Q.subject.lifetime.start)
-    >>> show (x_start)
+    >>> show_qx (x_start)
     <PAP.Subject | QX.Kind_Partial for
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval_lifetime | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
            <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval_lifetime | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
            <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -371,18 +336,18 @@ _test_getters = """
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
 
     >>> x_raw_start = qxs (Q.RAW.subject.lifetime.start)
-    >>> show (x_raw_start)
+    >>> show_qx (x_raw_start)
     <PAP.Subject | QX.Kind_Partial for
         RAW <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval_lifetime | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
           RAW <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval_lifetime | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
           RAW <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -390,18 +355,18 @@ _test_getters = """
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
 
     >>> x_start_raw = qxs (Q.subject.RAW.lifetime.start)
-    >>> show (x_start_raw)
+    >>> show_qx (x_start_raw)
     <PAP.Subject | QX.Kind_Partial for
         RAW <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval_lifetime | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
           RAW <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval_lifetime | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
           RAW <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -409,18 +374,18 @@ _test_getters = """
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
 
     >>> x_start__raw = qxs (Q.subject.lifetime.start.RAW)
-    >>> show (x_start__raw)
+    >>> show_qx (x_start__raw)
     <PAP.Subject | QX.Kind_Partial for
         RAW <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval_lifetime | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
           RAW <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval_lifetime | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
           RAW <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -428,7 +393,7 @@ _test_getters = """
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
 
     >>> x_alive = qxs (Q.subject.lifetime.alive)
-    >>> show (x_alive)
+    >>> show_qx (x_alive)
     <PAP.Subject | QX.Kind_Partial for
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
@@ -442,20 +407,20 @@ _test_getters = """
           :AND:
             :OR:
               Bin:__eq__:
-                <MOM.Date_Interval_lifetime | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                      <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
                 None
               Bin:__le__:
-                <MOM.Date_Interval_lifetime | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                      <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
                 <<today>>
             :OR:
               Bin:__eq__:
-                <MOM.Date_Interval_lifetime | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                      <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
                 None
               Bin:__ge__:
-                <MOM.Date_Interval_lifetime | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                      <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
                 <<today>>
       <MOM.Date_Interval_lifetime | QX.Kind_Query for
@@ -467,25 +432,25 @@ _test_getters = """
           :AND:
             :OR:
               Bin:__eq__:
-                <MOM.Date_Interval_lifetime | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                      <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
                 None
               Bin:__le__:
-                <MOM.Date_Interval_lifetime | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                      <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
                 <<today>>
             :OR:
               Bin:__eq__:
-                <MOM.Date_Interval_lifetime | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                      <SAW : Date `lifetime.finish` [pap_person__4.lifetime__finish]>>
                 None
               Bin:__ge__:
-                <MOM.Date_Interval_lifetime | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                      <SAW : Date `lifetime.finish` [pap_person__4.lifetime__finish]>>
                 <<today>>
 
     >>> x_creation = qxs (Q.subject.creation)
-    >>> show (x_creation)
+    >>> show_qx (x_creation)
     <MOM.Id_Entity | QX.Kind_Rev_Query for
         <SAW : Rev_Ref `creation`>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
@@ -495,7 +460,7 @@ _test_getters = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxc = QX.Mapper (qrt)
 
-    >>> show (qxc (Q.parent))
+    >>> show_qx (qxc (Q.parent))
     <MOM.MD_Change | QX.Kind_Query for
          <SAW : Int `parent`>>
         <MOM.MD_Change | QX.Kind for
@@ -503,12 +468,12 @@ _test_getters = """
             <MOM.MD_Change | QX.Kind_Query for
                  <SAW : Int `parent`>>
 
-    >>> show (qxc (Q.type_name.CONTAINS ("Opti")))
+    >>> show_qx (qxc (Q.type_name.CONTAINS ("Opti")))
     Call:contains:
       <MOM.MD_Change | QX.Kind for
            <SAW : String `type_name` [mom_md_change.type_name]>>
 
-    >>> show (qxc (Q.type_name.IN (('SRM.Regatta', 'SRM.Regatta_H', 'SRM.Regatta_C'))))
+    >>> show_qx (qxc (Q.type_name.IN (('SRM.Regatta', 'SRM.Regatta_H', 'SRM.Regatta_C'))))
     Call:in_:
       <MOM.MD_Change | QX.Kind for
            <SAW : String `type_name` [mom_md_change.type_name]>>
@@ -517,7 +482,7 @@ _test_getters = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxb = QX.Mapper (qrt)
 
-    >>> show (qxb (Q.regatta.boat_class.name))
+    >>> show_qx (qxb (Q.regatta.boat_class.name))
     <SRM._Boat_Class_ | QX.Kind for
          <SAW : String `name` [srm__boat_class___1.name, srm__boat_class___1.__raw_name]>>
         <SRM.Regatta | QX.Kind_EPK for
@@ -525,7 +490,7 @@ _test_getters = """
             <SRM.Boat_in_Regatta | QX.Kind_EPK for
                  <SAW : Regatta `right` [srm_boat_in_regatta.right]>>
 
-    >>> show (qxb (Q.left == Q.BVAR.this))
+    >>> show_qx (qxb (Q.left == Q.BVAR.this))
     Bin:__eq__:
       <SRM.Boat_in_Regatta | QX.Kind_EPK for
            <SAW : Boat `left` [srm_boat_in_regatta.left]>>
@@ -538,9 +503,9 @@ _test_getters = """
     >>> ET.AQ.event.date.start.EQ ("2008")
     Q.left.date.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31))
 
-    >>> show (qxr (ET.AQ.event.date.start.EQ ("2008")))
+    >>> show_qx (qxr (ET.AQ.event.date.start.EQ ("2008")))
     Call:between:
-      <MOM.Date_Interval_C | QX.Kind for
+      <MOM.Date_Interval_C | QX.Kind_Structured_Field_Extractor for
            <SAW : Date `date.start` [srm_regatta_event__1.date__start]>>
           <MOM.Date_Interval_C | QX.Kind_Composite for
                <SAW : Date_Interval `date` [srm_regatta_event__1.date__finish, srm_regatta_event__1.date__start]>>
@@ -556,17 +521,17 @@ _test_expr = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxs = QX.Mapper (qrt)
 
-    >>> show (qxs (Q.phone_links))
+    >>> show_qx (qxs (Q.phone_links))
     <PAP.Subject | QX.Kind_Rev_Query for
          <SAW : Link_Ref_List `phone_links`>>
 
-    >>> show (qxs (Q.phone_links.phone))
+    >>> show_qx (qxs (Q.phone_links.phone))
     <PAP.Subject_has_Phone | QX.Kind_EPK for
          <SAW : Phone `right` [pap_subject_has_property__1.right]>>
         <PAP.Subject | QX.Kind_Rev_Query for
              <SAW : Link_Ref_List `phone_links`>>
 
-    >>> show (qxs (Q.phone_links.phone.sn == 42))
+    >>> show_qx (qxs (Q.phone_links.phone.sn == 42))
     Bin:__eq__:
       <PAP.Phone | QX.Kind for
            <SAW : Numeric_String `sn` [pap_phone__1.sn]>>
@@ -580,7 +545,7 @@ _test_expr = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxp = QX.Mapper (qrt)
 
-    >>> show (qxp (Q.phone_links.phone.sn == 42))
+    >>> show_qx (qxp (Q.phone_links.phone.sn == 42))
     Bin:__eq__:
       <PAP.Phone | QX.Kind for
            <SAW : Numeric_String `sn` [pap_phone__2.sn]>>
@@ -590,71 +555,71 @@ _test_expr = """
                    <SAW : Link_Ref_List `phone_links`>>
       42
 
-    >>> show (qxp (Q.lifetime.start.century))
+    >>> show_qx (qxp (Q.lifetime.start.century))
     Traceback (most recent call last):
       ...
     AttributeError: century
 
-    >>> show (qxp (Q.lifetime.start.century + 3))
+    >>> show_qx (qxp (Q.lifetime.start.century + 3))
     Traceback (most recent call last):
       ...
     AttributeError: century
 
-    >>> show (qxp (Q.lifetime.start.year + 3))
+    >>> show_qx (qxp (Q.lifetime.start.year + 3))
     Bin:__add__:
-      <MOM.Date_Interval_lifetime | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
            <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
-           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
       3
 
-    >>> show (qxp (- (Q.lifetime.start.year + 3)))
+    >>> show_qx (qxp (- (Q.lifetime.start.year + 3)))
     Una:__neg__:
       Bin:__add__:
-        <MOM.Date_Interval_lifetime | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
              <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
         3
 
-    >>> show (qxp (~ (Q.lifetime.alive)))
+    >>> show_qx (qxp (~ (Q.lifetime.alive)))
     Una:__not__:
       :AND:
         :OR:
           Bin:__eq__:
-            <MOM.Date_Interval_lifetime | QX.Kind for
+            <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                  <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
             None
           Bin:__le__:
-            <MOM.Date_Interval_lifetime | QX.Kind for
+            <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                  <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
             <<today>>
         :OR:
           Bin:__eq__:
-            <MOM.Date_Interval_lifetime | QX.Kind for
+            <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                  <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
             None
           Bin:__ge__:
-            <MOM.Date_Interval_lifetime | QX.Kind for
+            <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                  <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
             <<today>>
 
-    >>> show (qxp (Q.lifetime.start.year + 25 > Q.lifetime.finish.year - 2))
+    >>> show_qx (qxp (Q.lifetime.start.year + 25 > Q.lifetime.finish.year - 2))
     Bin:__gt__:
       Bin:__add__:
-        <MOM.Date_Interval_lifetime | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
              <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
         25
       Bin:__sub__:
-        <MOM.Date_Interval_lifetime | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
              <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
         2
 
-    >>> show (qxp (Q.SUM (1)))
+    >>> show_qx (qxp (Q.SUM (1)))
     _Aggr_:SUM:
       1
 
@@ -662,22 +627,22 @@ _test_expr = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxh = QX.Mapper (qrt)
 
-    >>> show (qxh (Q.persons))
+    >>> show_qx (qxh (Q.persons))
     <PAP.Phone | QX.Kind_Rev_Query for
          <SAW : Role_Ref_Set `persons`>>
 
-    >>> show (qxh (Q.persons.pid))
+    >>> show_qx (qxh (Q.persons.pid))
     <PAP.Phone | QX.Kind_Rev_Query for
          <SAW : Role_Ref_Set `persons`>>
 
-    >>> show (qxh (Q.persons.lifetime))
+    >>> show_qx (qxh (Q.persons.lifetime))
     <MOM.Date_Interval_lifetime | QX.Kind_Composite for
          <SAW : Date_Interval `lifetime` [pap_person__1.lifetime__finish, pap_person__1.lifetime__start]>>
         <PAP.Phone | QX.Kind_Rev_Query for
              <SAW : Role_Ref_Set `persons`>>
 
-    >>> show (qxh (Q.persons.lifetime.start))
-    <MOM.Date_Interval_lifetime | QX.Kind for
+    >>> show_qx (qxh (Q.persons.lifetime.start))
+    <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
          <SAW : Date `lifetime.start` [pap_person__1.lifetime__start]>>
         <MOM.Date_Interval_lifetime | QX.Kind_Composite for
              <SAW : Date_Interval `lifetime` [pap_person__1.lifetime__finish, pap_person__1.lifetime__start]>>
@@ -688,7 +653,7 @@ _test_expr = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxs = QX.Mapper (qrt)
 
-    >>> show (qxs (~ (Q.subject.lifetime.alive)))
+    >>> show_qx (qxs (~ (Q.subject.lifetime.alive)))
     <PAP.Subject | QX.Kind_Partial for
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
@@ -697,51 +662,51 @@ _test_expr = """
         :AND:
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
               None
             Bin:__le__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
               <<today>>
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
               None
             Bin:__ge__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
               <<today>>
       Una:__not__:
         :AND:
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
               None
             Bin:__le__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
               <<today>>
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.finish` [pap_person__2.lifetime__finish]>>
               None
             Bin:__ge__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.finish` [pap_person__2.lifetime__finish]>>
               <<today>>
 
-    >>> show (qxs (- (Q.subject.lifetime.start * 2)))
+    >>> show_qx (qxs (- (Q.subject.lifetime.start * 2)))
     <PAP.Subject | QX.Kind_Partial for
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
       Una:__neg__:
         Bin:__mul__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
@@ -750,7 +715,7 @@ _test_expr = """
           2
       Una:__neg__:
         Bin:__mul__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -758,13 +723,13 @@ _test_expr = """
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
 
-    >>> show (qxs ((Q.subject.phones.sn * 2) - (Q.subject.lifetime.start )))
+    >>> show_qx (qxs ((Q.subject.phones.sn * 2) - (Q.subject.lifetime.start )))
     <PAP.Subject | QX.Kind_Partial for
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
       Bin:__sub__/r:
-        <MOM.Date_Interval_lifetime | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
              <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
             <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
@@ -779,7 +744,7 @@ _test_expr = """
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
       Bin:__sub__/r:
-        <MOM.Date_Interval_lifetime | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
              <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
             <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -794,14 +759,14 @@ _test_expr = """
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
 
-    >>> show (qxs ((Q.subject.lifetime.finish * 2) - (Q.subject.lifetime.start + 5)))
+    >>> show_qx (qxs ((Q.subject.lifetime.finish * 2) - (Q.subject.lifetime.start + 5)))
     <PAP.Subject | QX.Kind_Partial for
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
       Bin:__sub__:
         Bin:__mul__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
@@ -809,7 +774,7 @@ _test_expr = """
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
         Bin:__add__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
@@ -818,7 +783,7 @@ _test_expr = """
           5
       Bin:__sub__:
         Bin:__mul__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
@@ -826,7 +791,7 @@ _test_expr = """
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
         Bin:__add__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -835,7 +800,7 @@ _test_expr = """
           5
       Bin:__sub__:
         Bin:__mul__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.finish` [pap_person__2.lifetime__finish]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -843,7 +808,7 @@ _test_expr = """
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
         Bin:__add__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
@@ -852,7 +817,7 @@ _test_expr = """
           5
       Bin:__sub__:
         Bin:__mul__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.finish` [pap_person__2.lifetime__finish]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -860,7 +825,7 @@ _test_expr = """
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
         Bin:__add__:
-          <MOM.Date_Interval_lifetime | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
               <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
@@ -872,7 +837,7 @@ _test_expr = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxb = QX.Mapper (qrt)
 
-    >>> show (qxb (Q.regatta.boat_class.name.STARTSWITH ("O")))
+    >>> show_qx (qxb (Q.regatta.boat_class.name.STARTSWITH ("O")))
     Call:startswith:
       <SRM._Boat_Class_ | QX.Kind for
            <SAW : String `name` [srm__boat_class___1.name, srm__boat_class___1.__raw_name]>>
@@ -881,7 +846,7 @@ _test_expr = """
               <SRM.Boat_in_Regatta | QX.Kind_EPK for
                    <SAW : Regatta `right` [srm_boat_in_regatta.right]>>
 
-    >>> show (qxb (Q.AND (Q.points > Q.place * Q.right.races, Q.RAW.boat.nation == "AUT")))
+    >>> show_qx (qxb (Q.AND (Q.points > Q.place * Q.right.races, Q.RAW.boat.nation == "AUT")))
     :AND:
       Bin:__gt__:
         <SRM.Boat_in_Regatta | QX.Kind for
@@ -900,7 +865,7 @@ _test_expr = """
                 RAW <SAW : Boat `left` [srm_boat_in_regatta.left]>>
         AUT
 
-    >>> show (qxb (~ Q.AND (Q.points > Q.place * Q.right.races, Q.RAW.boat.nation == "AUT")))
+    >>> show_qx (qxb (~ Q.AND (Q.points > Q.place * Q.right.races, Q.RAW.boat.nation == "AUT")))
     :OR:
       :NOT:
         Bin:__gt__:
@@ -921,7 +886,7 @@ _test_expr = """
                   RAW <SAW : Boat `left` [srm_boat_in_regatta.left]>>
           AUT
 
-    >>> show (qxb (Q.points / Q.left.left.max_crew))
+    >>> show_qx (qxb (Q.points / Q.left.left.max_crew))
     Bin:__truediv__:
       <SRM.Boat_in_Regatta | QX.Kind for
            <SAW : Int `points` [srm_boat_in_regatta.points]>>
@@ -932,7 +897,7 @@ _test_expr = """
               <SRM.Boat_in_Regatta | QX.Kind_EPK for
                    <SAW : Boat `left` [srm_boat_in_regatta.left]>>
 
-    >>> show (qxb (Q.points // Q.left.left.max_crew))
+    >>> show_qx (qxb (Q.points // Q.left.left.max_crew))
     Bin:__floordiv__:
       <SRM.Boat_in_Regatta | QX.Kind for
            <SAW : Int `points` [srm_boat_in_regatta.points]>>
@@ -947,9 +912,9 @@ _test_expr = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxc = QX.Mapper (qrt)
 
-    >>> show (qxc (Q.left.date.start.year == 2013))
+    >>> show_qx (qxc (Q.left.date.start.year == 2013))
     Bin:__eq__:
-      <MOM.Date_Interval_C | QX.Kind for
+      <MOM.Date_Interval_C | QX.Kind_Structured_Field_Extractor for
            <SAW : Date `date.start` [srm_regatta_event__1.date__start]>>
           <MOM.Date_Interval_C | QX.Kind_Composite for
                <SAW : Date_Interval `date` [srm_regatta_event__1.date__finish, srm_regatta_event__1.date__start]>>
@@ -961,17 +926,17 @@ _test_expr = """
     >>> qrs = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
     >>> qxs = QX.Mapper (qrs)
 
-    >>> show (qxs (Q.left)) ### PAP.Subject_has_Property
+    >>> show_qx (qxs (Q.left)) ### PAP.Subject_has_Property
     <PAP.Subject_has_Property | QX.Kind_EPK for
          <SAW : Subject `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxs (Q.left["PAP.Person"])) ### PAP.Subject_has_Property
+    >>> show_qx (qxs (Q.left["PAP.Person"])) ### PAP.Subject_has_Property
     <PAP.Person | QX._Kind_EPK_Restricted_ for
          <SAW : Subject `left` [pap_subject_has_property.left]>>
         <PAP.Subject_has_Property | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxs (Q.left["PAP.Person"].last_name)) ### PAP.Subject_has_Property
+    >>> show_qx (qxs (Q.left["PAP.Person"].last_name)) ### PAP.Subject_has_Property
     <PAP.Person | QX.Kind for
          <SAW : String `last_name` [pap_person.last_name, pap_person.__raw_last_name]>>
         <PAP.Person | QX._Kind_EPK_Restricted_ for
@@ -979,7 +944,7 @@ _test_expr = """
             <PAP.Subject_has_Property | QX.Kind_EPK for
                  <SAW : Subject `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxs (Q.subject["PAP.Person"].lifetime)) ### PAP.Subject_has_Property
+    >>> show_qx (qxs (Q.subject["PAP.Person"].lifetime)) ### PAP.Subject_has_Property
     <MOM.Date_Interval_lifetime | QX.Kind_Composite for
          <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
         <PAP.Person | QX._Kind_EPK_Restricted_ for
@@ -987,7 +952,7 @@ _test_expr = """
             <PAP.Subject_has_Property | QX.Kind_EPK for
                  <SAW : Subject `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxs (Q.subject["PAP.Person"].lifetime.alive)) ### PAP.Subject_has_Property
+    >>> show_qx (qxs (Q.subject["PAP.Person"].lifetime.alive)) ### PAP.Subject_has_Property
     <MOM.Date_Interval_lifetime | QX.Kind_Query for
          <SAW : Boolean `lifetime.alive`>>
         <MOM.Date_Interval_lifetime | QX.Kind_Composite for
@@ -999,24 +964,24 @@ _test_expr = """
         :AND:
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
               None
             Bin:__le__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
               <<today>>
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
               None
             Bin:__ge__:
-              <MOM.Date_Interval_lifetime | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind_Structured_Field_Extractor for
                    <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
               <<today>>
 
-    >>> show (qxs (Q.left["PAP.Legal_Entity"])) ### PAP.Subject_has_Property
+    >>> show_qx (qxs (Q.left["PAP.Legal_Entity"])) ### PAP.Subject_has_Property
     <PAP.Subject_has_Property | QX._Kind_Partial_Restricted_ for
          <SAW : Subject `left` [pap_subject_has_property.left]>>
         <PAP.Subject_has_Property | QX.Kind_EPK for
@@ -1026,7 +991,7 @@ _test_expr = """
           <PAP.Subject_has_Property | QX.Kind_EPK for
                <SAW : Subject `left` [pap_subject_has_property.left]>>
 
-    >>> show (qxs (Q.left["PAP.Legal_Entity"].name)) ### PAP.Subject_has_Property
+    >>> show_qx (qxs (Q.left["PAP.Legal_Entity"].name)) ### PAP.Subject_has_Property
     <PAP.Subject_has_Property | QX._Kind_Partial_Restricted_ for
          <SAW : Subject `left` [pap_subject_has_property.left]>>
         <PAP.Subject_has_Property | QX.Kind_EPK for
@@ -1233,7 +1198,7 @@ _test_debug = """
     >>> print (qf)
     Q.__raw_sail_number.startswith ('11',)
 
-    >>> show (qxp (qf))
+    >>> show_qx (qxp (qf))
 
 """
 

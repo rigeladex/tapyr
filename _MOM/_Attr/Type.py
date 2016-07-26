@@ -405,6 +405,8 @@
 #                     + Add `D_Context`, `D_Quant`, `max_digits`
 #    17-Jun-2016 (CT) Add `range_inclusive_p` to `_A_Date_`
 #    19-Jun-2016 (CT) Add "%Y %m %d" to `A_Date.input_formats`
+#    19-Jul-2016 (CT) Move `A_Date`, `A_Date_Time`, `A_Time` to separate module
+#     6-Oct-2016 (CT) Add `Kind_Mixins_X`
 #    ««revision-date»»···
 #--
 
@@ -447,7 +449,6 @@ import decimal
 import itertools
 import logging
 import math
-import time
 
 plain_number_pat = r"\d+ (?: \.\d*)? (?: [eE]\d+)? \s*"
 
@@ -544,7 +545,7 @@ class A_Attr_Type \
     """Root class for attribute types for the MOM meta object model."""
 
     _attrs_to_update_combine      = ("check", )
-    _attrs_uniq_to_update_combine = ("Kind_Mixins", )
+    _attrs_uniq_to_update_combine = ("Kind_Mixins", "Kind_Mixins_X")
     _doc_properties               = ("syntax", )
 
     auto_up_depends     = ()
@@ -566,6 +567,7 @@ class A_Attr_Type \
     hidden_nested       = 10
     kind                = None
     Kind_Mixins         = ()
+    Kind_Mixins_X       = ()
     needs_raw_value     = False
     Pickler             = None
     polisher            = None
@@ -687,6 +689,17 @@ class A_Attr_Type \
             :class:`~_MOM._Attr.Kind.Computed_Mixin`,
             :class:`~_MOM._Attr.Kind.Sticky_Mixin`, and
             :class:`~_MOM._Attr.Kind.Init_Only_Mixin`.
+
+            This is optional and defaults to `()`.
+        """
+
+        Kind_Mixins_X = """
+            Additional high-priority mixins for the `kind` to be used for this
+            attribute. Mixins listed by `Kind_Mixins_X` will precede those
+            specified by `Kind_Mixins` in the `mro`.
+
+            One of the possible mixins is
+            :class:`~_MOM._Attr.Kind._Id_Entity_Reference_Mixin_`.
 
             This is optional and defaults to `()`.
         """
@@ -925,7 +938,10 @@ class A_Attr_Type \
         self.e_type       = e_type
         self.kind         = kind
         self.is_required  = kind.is_required
-        if kind.save_to_db and not issubclass (e_type, MOM.An_Entity) :
+        if (   kind.save_to_db
+           and e_type.PNS is not None ### Structured._SAT_Desc_
+           and not issubclass (e_type, MOM.An_Entity)
+           ) :
             et_map        = e_type.app_type.etypes
             DT            = self.DET
             DB            = self.DET_Base
@@ -1061,7 +1077,10 @@ class A_Attr_Type \
     # end def _cls_attr
 
     def _fix_det (self, kind, e_type) :
-        if kind.save_to_db and not issubclass (e_type, MOM.An_Entity) :
+        if (   kind.save_to_db
+           and e_type.PNS is not None ### Structured._SAT_Desc_
+           and not issubclass (e_type, MOM.An_Entity)
+           ) :
             base  = self.det_base or self.det_root
             bdk   = base.attr_prop (self.name)
             b_det = getattr (bdk, "det", None)
@@ -1381,128 +1400,6 @@ class _A_Composite_ \
     # end def _checkers
 
 # end class _A_Composite_
-
-class _A_Date_ (A_Attr_Type) :
-    """Common base class for date-valued attributes of an object."""
-
-    needs_raw_value    = False
-    not_in_future      = False
-    not_in_past        = False
-    range_inclusive_p  = True
-    _tuple_off         = 0
-
-    class _Doc_Map_ (A_Attr_Type._Doc_Map_) :
-
-        not_in_future = """
-            A true value of `not_in_future` means that the date/time value of
-            the attribute must not lie in the future at the moment it is set.
-        """
-
-        not_in_past = """
-            A true value of `not_in_past` means that the date/time value of
-            the attribute must not lie in the past at the moment it is set.
-        """
-
-    # end class _Doc_Map_
-
-    @property
-    def output_format (self) :
-        return self._output_format ()
-    # end def output_format
-
-    def as_code (self, value) :
-        return self.__super.as_code (self.as_string (value))
-    # end def as_code
-
-    @TFL.Meta.Class_and_Instance_Method
-    def as_string (soc, value) :
-        if value is not None :
-            return pyk.text_type (value.strftime (soc._output_format ()))
-        return ""
-    # end def as_string
-
-    @TFL.Meta.Class_and_Instance_Method
-    def value_range (soc, head, tail, obj) :
-        ### `value_range` is inclusive
-        from _CAL._DTW_ import _DTW_
-        import _CAL.Date_Time
-        d = soc.value_range_delta (obj)
-        n = _DTW_.new_dtw (head)
-        t = _DTW_.new_dtw (tail)
-        if not soc.range_inclusive_p :
-            t -= d
-        while n <= t :
-            yield n._body
-            try :
-                n += d
-            except OverflowError :
-                break
-    # end def value_range
-
-    def _checkers (self, e_type, kind) :
-        for c in self.__super._checkers (e_type, kind) :
-            yield c
-        if self.not_in_future :
-            name   = self.name
-            p_name = "%s__not_in_future" % name
-            check  = MOM.Pred.Condition.__class__ \
-                ( p_name, (MOM.Pred.Condition, )
-                , dict
-                    ( assertion  = "%s <= now" % (name, )
-                    , attributes = (name, )
-                    , bindings   = dict
-                        ( now    = "Q.%s.NOW" % (self.Q_Name, )
-                        )
-                    , kind       = MOM.Pred.Object
-                    , name       = p_name
-                    , __doc__    = _ ("Value must not be in the future")
-                    )
-                )
-            yield check
-        if self.not_in_past :
-            name   = self.name
-            p_name = "%s__not_in_past" % name
-            check  = MOM.Pred.Condition.__class__ \
-                ( p_name, (MOM.Pred.Condition, )
-                , dict
-                    ( assertion  = "%s >= now" % (name, )
-                    , attributes = (name, )
-                    , bindings   = dict
-                        ( now    = "Q.%s.NOW" % (self.Q_Name, )
-                        )
-                    , guard      = "not playback_p"
-                    , guard_attr = ("playback_p", )
-                    , kind       = MOM.Pred.Object_Init
-                    , name       = p_name
-                    , __doc__    =
-                        _ ("Value must be in the future, not the past")
-                    )
-                )
-            yield check
-    # end def _checkers
-
-    @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None) :
-        s = s.strip ()
-        if s :
-            for f in soc.input_formats :
-                try :
-                    result = time.strptime (s, f)
-                except ValueError :
-                    pass
-                else :
-                    break
-            else :
-                raise MOM.Error.Attribute_Syntax (obj, soc, s)
-            return soc.P_Type (* result [soc._tuple_off:soc._tuple_len])
-    # end def _from_string
-
-    @TFL.Meta.Class_and_Instance_Method
-    def _output_format (soc) :
-        return soc.input_formats [0]
-    # end def _output_format
-
-# end class _A_Date_
 
 class _A_Named_Value_ \
           ( TFL.Meta.BaM
@@ -2871,74 +2768,6 @@ class A_Confirmation (_A_Boolean_) :
 
 # end class A_Confirmation
 
-class A_Date (_A_Date_) :
-    """Date value."""
-
-    example        = "2010-10-10"
-    completer      = MOM.Attr.Completer_Spec  (4)
-    typ            = _ ("Date")
-    P_Type         = datetime.date
-    Q_Ckd_Type     = MOM.Attr.Querier.Date
-    Q_Name         = "DATE"
-    syntax         = _ ("yyyy-mm-dd")
-    ui_length      = 12
-    input_formats  = \
-        ( "%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y %m %d"
-        , "%d/%m/%Y", "%d.%m.%Y", "%d-%m-%Y"
-        )
-    _tuple_len     = 3
-
-    class _Doc_Map_ (_A_Date_._Doc_Map_) :
-
-        input_formats = """
-            The possible strftime-formats used to convert raw values to cooked
-            values.
-        """
-
-    # end class _Doc_Map_
-
-    def as_rest_cargo_ckd (self, obj, * args, ** kw) :
-        value = self.kind.get_value (obj)
-        if value is not None :
-            return pyk.text_type (value.strftime ("%Y-%m-%d"))
-    # end def as_rest_cargo_ckd
-
-    @TFL.Meta.Class_and_Instance_Method
-    def cooked (soc, value) :
-        if isinstance (value, datetime.datetime) :
-            value = value.date ()
-        elif isinstance (value, pyk.string_types) :
-            try :
-                value = soc._from_string (value)
-            except ValueError :
-                msg = "Date expected, got %r" % (value, )
-                raise MOM.Error.Attribute_Syntax (None, soc, value, msg)
-        elif not isinstance (value, datetime.date) :
-            raise TypeError ("Date expected, got %r" % (value, ))
-        return value
-    # end def cooked
-
-    @classmethod
-    def now (cls) :
-        return datetime.datetime.now ().date ()
-    # end def now
-
-    @TFL.Meta.Class_and_Instance_Method
-    def value_range_delta (self, obj) :
-        from _CAL.Delta import Date_Delta
-        return Date_Delta (1)
-    # end def value_range_delta
-
-# end class A_Date
-
-class A_Date_List (_A_Typed_List_) :
-    """List of dates."""
-
-    typ            = _ ("Date_List")
-    C_Type         = A_Date
-
-# end class A_Date_List
-
 class A_Date_Slug (_A_String_) :
     """Unique value based on the date/time of entity creation.
     """
@@ -2960,107 +2789,6 @@ class A_Date_Slug (_A_String_) :
     # end def computed_default
 
 # end class A_Date_Slug
-
-class A_Date_Time (_A_Date_) :
-    """Date-time value."""
-
-    example        = "2010-10-10 06:42"
-    typ            = _ ("Date-Time")
-    P_Type         = datetime.datetime
-    Q_Name         = "DATE_TIME"
-    syntax         = _ ("yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional")
-    ui_length      = 22
-    rfc3339_format = "%Y-%m-%dT%H:%M:%S"
-    input_formats  = tuple \
-        ( itertools.chain
-            ( * (  (f + " %H:%M:%S", f + " %H:%M", f)
-                for f in A_Date.input_formats
-                )
-            )
-        ) + (rfc3339_format, )
-    utcoffset_fmt  = "%+03d:%02d"
-    utcoffset_pat  = Regexp (r" *[-+](?P<oh>\d{2}):(?P<om>\d{2}) *$")
-    _tuple_len     = 6
-
-    def as_rest_cargo_ckd (self, obj, * args, ** kw) :
-        ### formatted according to ISO 8601, RFC 3339
-        value = self.kind.get_value (obj)
-        if value is not None :
-            offset = TFL.user_config.time_zone.utcoffset (value)
-            v      = value + offset
-            oh, os = divmod (offset.total_seconds (), 3600)
-            om     = os // 60
-            fmt    = self.rfc3339_format + (self.utcoffset_fmt % (oh, om))
-            return v.strftime (fmt)
-    # end def as_rest_cargo_ckd
-
-    @TFL.Meta.Class_and_Instance_Method
-    def as_string (soc, value) :
-        if value is not None :
-            ### In Python 3.5, `bool (t)` is never False -> compare to `t.min`
-            v   = value + TFL.user_config.time_zone.utcoffset (value)
-            t   = v.time ()
-            fmt = A_Date.input_formats [0] if t == t.min \
-                else soc._output_format ()
-            result = v.strftime (fmt)
-            if result.endswith (":00") :
-                result = result [:-3]
-            return result
-        return ""
-    # end def as_string
-
-    @TFL.Meta.Class_and_Instance_Method
-    def cooked (soc, value) :
-        if not isinstance (value, datetime.datetime) :
-            if isinstance (value, datetime.date) :
-                value = datetime.datetime (value.year, value.month, value.day)
-            elif isinstance (value, pyk.string_types) :
-                try :
-                    value = soc._from_string (value)
-                except ValueError :
-                    raise TypeError \
-                        (_T ("Date/time expected, got %r") % (value, ))
-            else :
-                raise TypeError (_T ("Date/time expected, got %r") % (value, ))
-        return value
-    # end def cooked
-
-    @classmethod
-    def now (cls) :
-        return datetime.datetime.utcnow ()
-    # end def now
-
-    @TFL.Meta.Class_and_Instance_Method
-    def value_range_delta (self, obj) :
-        from _CAL.Delta import Date_Time_Delta
-        return Date_Time_Delta (1)
-    # end def value_range_delta
-
-    @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj = None) :
-        utcoffset     = None
-        utcoffset_pat = soc.utcoffset_pat
-        if utcoffset_pat.search (s) :
-            oh        = int (utcoffset_pat.oh)
-            om        = int (utcoffset_pat.om)
-            s         = s [: utcoffset_pat.start ()]
-            utcoffset = datetime.timedelta (0, (oh * 60 + om) * 60)
-        result  = super (A_Date_Time, soc)._from_string (s, obj)
-        if utcoffset is None :
-            utcoffset = TFL.user_config.time_zone.utcoffset (result)
-        result -= utcoffset
-        return result
-    # end def _from_string
-
-# end class A_Date_Time
-
-class A_Date_Time_List (_A_Typed_List_) :
-    """List of date/time elements."""
-
-    typ            = _ ("Date_Time_List")
-    C_Type         = A_Date_Time
-
-# end class A_Date_Time_List
 
 class A_Decimal \
           ( TFL.Meta.BaM
@@ -3540,7 +3268,7 @@ class A_Id_Entity (_A_Id_Entity_) :
     """An entity."""
 
     typ                = _ ("Entity")
-    Kind_Mixins        = (MOM.Attr.Id_Entity_Reference_Mixin, )
+    Kind_Mixins_X      = (MOM.Attr.Id_Entity_Reference_Mixin, )
 
 # end class A_Id_Entity
 
@@ -3640,71 +3368,6 @@ class A_Text (_A_String_) :
     max_length     = 0
 
 # end class A_Text
-
-class A_Time (_A_Date_) :
-    """Time value."""
-
-    example        = "06:42"
-    typ            = _ ("Time")
-    P_Type         = datetime.time
-    Q_Name         = "TIME"
-    syntax         = _ ("hh:mm:ss, the seconds `ss` are optional")
-    ui_length      = 8
-    input_formats  = ("%H:%M:%S", "%H:%M")
-    _tuple_len     = 6
-    _tuple_off     = 3
-
-    def as_rest_cargo_ckd (self, obj, * args, ** kw) :
-        value = self.kind.get_value (obj)
-        if value is not None :
-            return pyk.text_type (value.strftime ("%H:%M:%S"))
-    # end def as_rest_cargo_ckd
-
-    @TFL.Meta.Class_and_Instance_Method
-    def as_string (soc, value) :
-        ### when called for the class, `soc.__super` doesn't
-        ### work while `super (A_Time, soc)` does
-        result = super (A_Time, soc).as_string (value)
-        if result.endswith (":00") :
-            result = result [:-3]
-        return result
-    # end def as_string
-
-    @TFL.Meta.Class_and_Instance_Method
-    def cooked (soc, value) :
-        if isinstance (value, datetime.datetime) :
-            value = value.time ()
-        elif isinstance (value, pyk.string_types) :
-            try :
-                value = soc._from_string (value)
-            except ValueError :
-                raise TypeError (_T ("Time expected, got %r") % (value, ))
-        elif not isinstance (value, datetime.time) :
-            raise TypeError (_T ("Time expected, got %r") % (value, ))
-        return value
-    # end def cooked
-
-    @classmethod
-    def now (cls) :
-        return datetime.datetime.now ().time ()
-    # end def now
-
-    @TFL.Meta.Class_and_Instance_Method
-    def value_range_delta (soc, obj) :
-        from _CAL.Delta import Time_Delta
-        return Time_Delta (1)
-    # end def value_range_delta
-
-# end class A_Time
-
-class A_Time_List (_A_Typed_List_) :
-    """List of times."""
-
-    typ            = _ ("Time_List")
-    C_range_sep    = Regexp (r"(?: ?(?:-|–|\.\.) ?)")
-    C_Type         = A_Time
-
-# end class A_Time_List
 
 class A_Url (_A_String_) :
     """URL (including local file name)."""

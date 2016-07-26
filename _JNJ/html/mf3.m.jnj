@@ -48,6 +48,7 @@
 ##    20-Dec-2015 (CT) Use `elem.aside` and `.aside_x`, not home-grown code
 ##    20-Dec-2015 (CT) Add `class="?"` to label if `elem.aside`
 ##    26-Apr-2016 (CT) Use `elem.polisher.id`, not 1, for `data-polisher`
+##    20-Sep-2016 (CT) Add `Field_Structured`, factor `_Field_Composite_`
 ##    ««revision-date»»···
 ##--
 #}
@@ -255,7 +256,7 @@
       {{ form_caller () }}
     {% endif -%}
   {% endcall %} {# do_form #}
-{%- endmacro -%} {#- Entity_ -#}
+{%- endmacro -%} {#- Entity_Form -#}
 
 {%- macro Field (page, form, elem, t_module) -%}
   {%- set kw = GTW.dict (kwargs) %}
@@ -283,10 +284,10 @@
   -}}
 {%- endmacro -%} {#- Field__Confirmation -#}
 
-{%- macro Field_Composite (page, form, elem, t_module) -%}
+{%- macro _Field_Composite_ (page, form, elem, t_module, cls) -%}
   {%- onion GTW.len (elem.field_elements) > 1 %}
     {%- head %}
-      <div class="Field-Composite">
+      <div class="{{ cls }}">
         <h1>
           {{- GTW._T (elem.label) -}}
         </h1>
@@ -300,6 +301,10 @@
     {%- tail %}
       </div>
     {%- endonion %}
+{%- endmacro -%} {#- _Field_Composite_ -#}
+
+{%- macro Field_Composite (page, form, elem, t_module) -%}
+  {{- _Field_Composite_ (page, form, elem, t_module, "Field-Composite") -}}
 {%- endmacro -%} {#- Field_Composite -#}
 
 {%- macro Field_Entity (page, form, elem, t_module) -%}
@@ -354,6 +359,10 @@
     </div>
   {% endif -%}
 {%- endmacro -%} {#- Field_Rev_Ref -#}
+
+{%- macro Field_Structured (page, form, elem, t_module) -%}
+  {{- _Field_Composite_ (page, form, elem, t_module, "Field-Composite") -}}
+{%- endmacro -%} {#- Field_Structured -#}
 
 {%- macro main (page, form) -%}
   {{ GTW.call_macro

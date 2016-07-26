@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -66,6 +66,15 @@
 #    10-Oct-2014 (CT) Use `TFL.Q_Exp._Una_.name_map` to get operator names
 #     7-Oct-2015 (CT) Fix `operator.__div__` handling for Python 3, too
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    21-Jul-2016 (CT) Add `_xs_filter_rhs_q_exp_`
+#     2-Aug-2016 (CT) Factor `_Attr_CS_` from `Kind_Composite`
+#     3-Aug-2016 (CT) Add `Kind_Structured_Field_Extractor`, factor `_Attr_S_`
+#                     + add `_Attr_S_Field_Extractor_`
+#    22-Sep-2016 (CT) Add call to `_saw_cooked` to `_Base_._xs_filter_rhs`
+#    23-Sep-2016 (CT) Change `_Base_._xs_fixed_bool` to consider `Function` too
+#    23-Sep-2016 (CT) Factor `_extract_field`, add `MOM_Kind` to its `result`
+#     6-Oct-2016 (CT) Add `getattr_safe` to `Once_Property`
+#     6-Oct-2016 (CT) Change `_Self_._attr` to return attr-type, not -kind
 #    ««revision-date»»···
 #--
 
@@ -443,8 +452,11 @@ class _Base_ (TFL.Meta.Object) :
 
     """
 
+    exclude_constraint_op   = "="
+
     undef                   = TFL.Undef ("arg")
 
+    _field                  = None
     _is_raw                 = False
     _qx_attr                = None
     _XS_FILTER              = TFL.Meta.Alias_Property ("XS_FILTER")
@@ -503,9 +515,10 @@ class _Base_ (TFL.Meta.Object) :
 
     @Single_Dispatch_Method
     def _xs_filter_rhs (self, rhs) :
+        DBW    = self.QR.ETW.DBW
         result = rhs
         qxa    = self._qx_attr
-        if qxa is not None :
+        if qxa is not None and self._field is None :
             attr    = qxa._attr
             pickler = attr.Pickler
             if qxa._is_raw :
@@ -518,6 +531,7 @@ class _Base_ (TFL.Meta.Object) :
                 result = result.spk
             elif pickler and not qxa._field :
                 result = pickler.as_cargo (attr.kind, attr, result)
+            result = attr._saw_cooked (DBW, result)
         return result
     # end def _xs_filter_rhs
 
@@ -525,6 +539,11 @@ class _Base_ (TFL.Meta.Object) :
     def _xs_filter_rhs_spk_ (self, rhs) :
         return rhs.spk
     # end def _xs_filter_rhs_spk_
+
+    @_xs_filter_rhs.add_type (TFL.Q_Exp.Q_Root)
+    def _xs_filter_rhs_q_exp_ (self, rhs) :
+        return self.X (rhs)
+    # end def _xs_filter_rhs_q_exp_
 
     @_xs_filter_rhs.add_type (SAW.Q_Result._Base_)
     def _xs_filter_rhs_q_result_ (self, rhs) :
@@ -542,7 +561,7 @@ class _Base_ (TFL.Meta.Object) :
     def _xs_fixed_bool (self, xs) :
         DBW = self.QR.ETW.DBW
         for x in xs :
-            if isinstance (x, SA.schema.Column) :
+            if isinstance (x, (SA.schema.Column, SA.sql.functions.Function)) :
                 try :
                     ak = x.MOM_Kind
                 except AttributeError :
@@ -611,6 +630,7 @@ class _Bool_ (_Q_Exp_Proxy_, _Base_) :
     # end def __init__
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def X (self) :
         return self.predicates [0].X
     # end def X
@@ -624,12 +644,14 @@ class _Bool_ (_Q_Exp_Proxy_, _Base_) :
     # end def XS_ATTR
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_FILTER (self) :
         ps = tuple (p.XS_FILTER for p in self.predicates)
         return self._xs_filter_expression (self.op (* ps))
     # end def XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def XS_GROUP_BY (self) :
         return [self.XS_FILTER]
     # end def XS_GROUP_BY
@@ -643,12 +665,14 @@ class _Bool_ (_Q_Exp_Proxy_, _Base_) :
     # end def XS_ORDER_BY
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns (self) :
         ps = self.predicates
         return tuple (itertools.chain (* tuple (p._columns for p in ps)))
     # end def _columns
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns_ob (self) :
         ps = self.predicates
         return tuple (itertools.chain (* tuple (p._columns_ob for p in ps)))
@@ -749,49 +773,61 @@ class _Op_ (_Base_) :
     # end def apply
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def X (self) :
         return self.lhs.X
     # end def X
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def XS_ATTR (self) :
         return [self.XS_FILTER]
     # end def XS_ATTR
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_FILTER (self) :
         lhs = self.lhs._xs_filter_una (self.lhs, self)
         return self._xs_filter_expression (lhs)
     # end def XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def XS_GROUP_BY (self) :
         return [self.XS_FILTER]
     # end def XS_GROUP_BY
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def XS_ORDER_BY (self) :
         return [self.XS_FILTER]
     # end def XS_ORDER_BY
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns (self) :
         return self.lhs._columns
     # end def _columns
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns_ob (self) :
         return self.lhs._columns_ob
     # end def _columns_ob
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _qx_attr (self) :
         return self.lhs._qx_attr
     # end def _qx_attr
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _xtra_qxs (self) :
-        return self.lhs._xtra_qxs
+        try :
+            return self.lhs._xtra_qxs
+        except AttributeError :
+            return ()
     # end def _xtra_qxs
 
     def __repr__ (self) :
@@ -829,6 +865,7 @@ class _Aggr_ (_Op_) :
     # end def X
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_FILTER (self) :
         lhs = self._xs_filter_una (self.lhs, self)
         return self._xs_filter_expression (lhs)
@@ -894,31 +931,36 @@ class Bin (_Op_) :
     # end def apply
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_FILTER (self) :
         return self._xs_filter_expression \
             (self.lhs._xs_filter_bin (self.rhs, self))
     # end def XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def qxs (self) :
         rhs = self.rhs
         if isinstance (rhs, _Attr_) :
             return self.lhs, rhs
         else :
             return self.lhs,
-    # end def qx
+    # end def qxs
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns (self) :
         return list (itertools.chain (* (qx._columns for qx in self.qxs)))
     # end def _columns
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns_ob (self) :
         return list (itertools.chain (* (qx._columns_ob for qx in self.qxs)))
     # end def _columns_ob
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _xtra_qxs (self) :
         return list (itertools.chain (* (qx._xtra_qxs for qx in self.qxs)))
     # end def _xtra_qxs
@@ -978,6 +1020,7 @@ class Una (_Op_) :
     """Map an unary expression to the corresponding SQLAlchemy expression."""
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def XS_ORDER_BY (self) :
         if self.op == operator.__neg__ :
             def _gen (cs) :
@@ -995,6 +1038,7 @@ class Una (_Op_) :
     # end def XS_ORDER_BY
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _xs_filter_una_delegate (self) :
         return "XS_FILTER" if self.op == operator.__invert__ else "_XS_FILTER"
     # end def _xs_filter_una_delegate
@@ -1008,8 +1052,6 @@ class _Attr_ (_RAW_, _Base_) :
     XS_ATTR          = \
     XS_GROUP_BY      = TFL.Meta.Alias_Property ("_columns")
     XS_ORDER_BY      = TFL.Meta.Alias_Property ("_columns_ob")
-
-    _field           = None
 
     def __init__ (self, X, _akw, ETW = None, _is_raw = False, _outer = None, _polymorphic = None) :
         self.X              = X
@@ -1027,13 +1069,14 @@ class _Attr_ (_RAW_, _Base_) :
     # end def E_Type
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_FILTER (self) :
-        DBW = self.ETW.DBW
         return self._xs_filter_expression \
             (* tuple (self._xs_fixed_bool (self._qxs)))
     # end def XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _XS_FILTER (self) :
         qxs = self._qxs
         if len (qxs) != 1 :
@@ -1061,6 +1104,7 @@ class _Attr_ (_RAW_, _Base_) :
     # end def _qxs
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _xtra_qxs (self) :
         result = []
         if self._outer :
@@ -1135,6 +1179,12 @@ class _Attr_ (_RAW_, _Base_) :
             (ETW, ETW.table_name, self.ETW.table_name, col_name)
     # end def _etw_alias
 
+    def _extract_field (self, col, name) :
+        result = self._akw.attr._saw_extract_field (self.ETW.DBW, col, name)
+        result.MOM_Kind = getattr (col.MOM_Kind.E_Type, name, None)
+        return result
+    # end def _extract_field
+
     def _get_attr (self, name) :
         raise AttributeError (name)
     # end def _get_attr
@@ -1200,84 +1250,13 @@ class _Attr_ (_RAW_, _Base_) :
 
 # end class _Attr_
 
-@TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper)
-class Kind (_Attr_) :
-    """Map a reference to a simple attribute to a single SQLAlchemy column."""
-
-    XS_ATTR          = \
-    XS_GROUP_BY      = TFL.Meta.Alias_Property ("_qxs")
-
-    @TFL.Meta.Once_Property
-    def XS_ORDER_BY (self) :
-        field  = self._field
-        if field is not None :
-            return self._qxs
-        else :
-            return self._columns_ob
-    # end def XS_ORDER_BY
-
-    @TFL.Meta.Once_Property
-    def _columns (self) :
-        columns = self._akw.columns
-        return [columns [-1 if self._is_raw else 0]]
-    # end def _columns
-
-    @TFL.Meta.Once_Property
-    def _qxs (self) :
-        result = list (self._columns)
-        field  = self._field
-        if field is not None :
-            result [0] = self._akw.attr._saw_extract_field \
-                (self.ETW.DBW, result [0], field)
-        return result
-    # end def _qxs
-
-# end class Kind
-
-@TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper_C)
-class Kind_Composite (_Attr_) :
-    """Map a reference to a composite attribute to one or more
-       SQLAlchemy columns.
-    """
-
-    XS_ORDER_BY      = TFL.Meta.Alias_Property ("_columns_ob")
+class _Attr_S_ (_Attr_) :
+    """Common base class for attribute kinds with structure"""
 
     def __init__ (self, * args, ** kw) :
         self._attr_map = {}
         self.__super.__init__ (* args, ** kw)
     # end def __init__
-
-    @TFL.Meta.Once_Property
-    def XS_ATTR (self) :
-        return [self._akw]
-    # end def XS_ATTR
-
-    @TFL.Meta.Once_Property
-    def XS_FILTER (self) :
-        raise TypeError \
-            ( "Cannot filter by composite attribute %s.%s"
-            % (self.E_Type.type_name, self._akw.name)
-            )
-    # end def XS_FILTER
-
-    @TFL.Meta.Once_Property
-    def XS_GROUP_BY (self) :
-        raise TypeError \
-            ( "Cannot group by composite attribute %s.%s"
-            % (self.E_Type.type_name, self._akw.name)
-            )
-    # end def XS_GROUP_BY
-
-    @TFL.Meta.Once_Property
-    def _columns_ob (self) :
-        def _gen (self) :
-            ET = self._akw.attr.E_Type
-            for k in ET.usr_sig :
-                qx = getattr (self, k)
-                for c in qx._columns_ob :
-                    yield c
-        return list (_gen (self))
-    # end def _columns_ob
 
     def _get_attr (self, name) :
         amap   = self._attr_map
@@ -1296,11 +1275,113 @@ class Kind_Composite (_Attr_) :
                 self._add_join_parent (pj, polymorphic = True)
                 self._add_joins_inner (result, outer._head_col, polymorphic = 1)
             else :
-                akw    = self._akw.q_able_attrs [name]
+                try :
+                    akw    = self._akw.q_able_attrs [name]
+                except KeyError :
+                    raise AttributeError (name)
                 result = self._inner (akw)
             amap [name] = result
         return result
     # end def _get_attr
+
+# end class _Attr_S_
+
+class _Attr_CS_ (_Attr_S_) :
+    """Common base class for composite- and structured-attribute kinds"""
+
+    @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
+    def XS_ATTR (self) :
+        return [self._akw]
+    # end def XS_ATTR
+
+# end class _Attr_CS_
+
+class _Attr_S_Field_Extractor_ (_Attr_S_) :
+    """Common base class for attribute kinds with structure & fields"""
+
+    def _inner (self, _akw, ** kw) :
+        KWT    = getattr (_akw.attr, "_SAW_Wrapper", SAW.Attr.Kind_Wrapper)
+        CXT    = KWT.CXT
+        name   = _akw.eff.attr.name
+        cx     = self._extract_field (self._akw.columns [0], name)
+        cxt    = CXT \
+            (cx, _akw.ETW, self._akw.kind, _akw.outer, attr = _akw.attr)
+        result = self.__super._inner (cxt, ** kw)
+        return result
+    # end def _inner
+
+# end class _Attr_S_Field_Extractor_
+
+@TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper)
+class Kind (_Attr_) :
+    """Map a reference to a simple attribute to a single SQLAlchemy column."""
+
+    XS_ATTR          = \
+    XS_GROUP_BY      = TFL.Meta.Alias_Property ("_qxs")
+
+    @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
+    def XS_ORDER_BY (self) :
+        field  = self._field
+        if field is not None :
+            return self._qxs
+        else :
+            return self._columns_ob
+    # end def XS_ORDER_BY
+
+    @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
+    def _columns (self) :
+        columns = self._akw.columns
+        return [columns [-1 if self._is_raw else 0]]
+    # end def _columns
+
+    @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
+    def _qxs (self) :
+        result = list (self._columns)
+        field  = self._field
+        if field is not None :
+            result [0] = self._extract_field (result [0], field)
+        return result
+    # end def _qxs
+
+# end class Kind
+
+@TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper_C)
+class Kind_Composite (_Attr_CS_) :
+    """Map a reference to a composite attribute to one or more
+       SQLAlchemy columns.
+    """
+
+    @TFL.Meta.Once_Property
+    def XS_FILTER (self) :
+        raise TypeError \
+            ( "Cannot filter by composite attribute %s.%s"
+            % (self.E_Type.type_name, self._akw.name)
+            )
+    # end def XS_FILTER
+
+    @TFL.Meta.Once_Property
+    def XS_GROUP_BY (self) :
+        raise TypeError \
+            ( "Cannot group by composite attribute %s.%s"
+            % (self.E_Type.type_name, self._akw.name)
+            )
+    # end def XS_GROUP_BY
+
+    @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
+    def _columns_ob (self) :
+        def _gen (self) :
+            ET = self._akw.attr.E_Type
+            for k in ET.usr_sig :
+                qx = getattr (self, k)
+                for c in qx._columns_ob :
+                    yield c
+        return list (_gen (self))
+    # end def _columns_ob
 
     def _xs_filter_bin (self, rhs, op, reversed = False) :
         ET  = self._akw.attr.E_Type
@@ -1356,17 +1437,20 @@ class Kind_EPK (_Attr_) :
     """
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns (self) :
         columns = self._akw.columns
         return [columns [0]] if columns else ()
     # end def _columns
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns_ob (self) :
         return list (self._columns_ob_epk_iter (self._akw.attr.E_Type))
     # end def _columns_ob
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _head_col (self) :
         columns = self._columns
         if columns :
@@ -1436,26 +1520,31 @@ class _Kind_EPK_Restricted_ (_Attr_) :
     # end def E_Type
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_FILTER (self) :
         return self._head_col != None
     # end def XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _XS_FILTER (self) :
         return self._head_col
     # end def _XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns (self) :
         return [self.ETW.spk_col]
     # end def _columns
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns_ob (self) :
         return list (self._columns_ob_epk_iter (self.E_Type))
     # end def _columns_ob
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _head_col (self) :
         return self.ETW.spk_col
     # end def _head_col
@@ -1487,36 +1576,42 @@ class Kind_Partial (_Attr_) :
     __is_raw         = False
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_ATTR (self) :
         xs = tuple (c.XS_ATTR for c in self._children)
         return SA.func.coalesce (* xs)
     # end def XS_ATTR
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_FILTER (self) :
         xs = tuple (c.XS_FILTER for c in self._children)
         return SA.expression.or_ (* xs)
     # end def XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def XS_GROUP_BY (self) :
         xs = tuple (c.XS_GROUP_BY for c in self._children)
         return SA.func.coalesce (* xs)
     # end def XS_GROUP_BY
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def XS_ORDER_BY (self) :
         xs = tuple (c.XS_ORDER_BY for c in self._children)
         return SA.func.coalesce (* xs)
     # end def XS_ORDER_BY
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _XS_FILTER (self) :
         xs = tuple (c._XS_FILTER for c in self._children)
         return SA.expression.or_ (* xs)
     # end def _XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _children (self) :
         ### `Once_Property` because `_is_raw` might be set after `__init__`
         with self.X.LET (_polymorphic = True) :
@@ -1536,6 +1631,7 @@ class Kind_Partial (_Attr_) :
     # end def _children
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns (self) :
         def _gen (self) :
             for c in self._children :
@@ -1546,6 +1642,7 @@ class Kind_Partial (_Attr_) :
     # end def _columns
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns_ob (self) :
         def _gen (self) :
             for c in self._children :
@@ -1618,6 +1715,7 @@ class Kind_Partial (_Attr_) :
 class _Kind_Partial_Restricted_ (Kind_Partial) :
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _children (self) :
         ### `Once_Property` because `_is_raw` might be set after `__init__`
         with self.X.LET (_polymorphic = True) :
@@ -1659,11 +1757,13 @@ class Kind_Query (_Attr_) :
     """
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_ATTR (self) :
         return self._inner_qx.XS_ATTR
     # end def XS_ATTR
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def XS_FILTER (self) :
         iqx = self._inner_qx
         ixf = iqx.XS_FILTER
@@ -1671,27 +1771,32 @@ class Kind_Query (_Attr_) :
     # end def XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def XS_GROUP_BY (self) :
         return self._inner_qx.XS_GROUP_BY
     # end def XS_GROUP_BY
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def XS_ORDER_BY (self) :
         return self._inner_qx.XS_ORDER_BY
     # end def XS_ORDER_BY
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _XS_FILTER (self) :
         return self._xs_filter_expression (self._inner_qx._XS_FILTER)
     # end def _XS_FILTER
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns (self) :
         qx = self._inner_qx
         return qx._columns
     # end def _columns
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns_ob (self) :
         return self._inner_qx._columns_ob
     # end def _columns_ob
@@ -1720,6 +1825,7 @@ class Kind_Query (_Attr_) :
     # end def _op_una
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _xtra_qxs (self) :
         akw     = self._akw
         attr    = akw.attr
@@ -1749,11 +1855,13 @@ class Kind_Rev_Query (_Attr_) :
     """
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns (self) :
         return [self._ref_col]
     # end def _columns
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns_ob (self) :
         ET = self._akw.attr.E_Type
         if ET.epk_sig :
@@ -1763,24 +1871,28 @@ class Kind_Rev_Query (_Attr_) :
     # end def _columns_ob
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _head_col (self) :
         ref_etw, ref_col, head_col = self._ref_etw_col
         return head_col
     # end def _head_col
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _ref_col (self) :
         ref_etw, ref_col, head_col = self._ref_etw_col
         return ref_col
     # end def _ref_col
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _ref_etw (self) :
         ref_etw, ref_col, head_col = self._ref_etw_col
         return ref_etw
     # end def _ref_etw
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _ref_etw_col (self) :
         ### Pass `polymorphic = True` to `_add_joins_col` to allow
         ### queries like `~ Q.rev_ref` (i.e., select all entities who
@@ -1807,11 +1919,13 @@ class Kind_Rev_Query (_Attr_) :
     # end def _ref_etw_col
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _rev_sq (self) :
         return self._akw.attr.sqx (self.ETW.spk_col)
     # end def _rev_sq
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _xtra_qx (self) :
         akw     = self._akw
         attr    = akw.attr
@@ -1824,6 +1938,7 @@ class Kind_Rev_Query (_Attr_) :
     # end def _xtra_qx
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _xtra_qxs (self) :
         xtra_qx = self._xtra_qx
         result  = [xtra_qx] if xtra_qx is not None else []
@@ -1854,8 +1969,13 @@ class Kind_Rev_Query (_Attr_) :
 
 # end class Kind_Rev_Query
 
+@TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper_Structured_Field_Extractor)
+class Kind_Structured_Field_Extractor (_Attr_S_Field_Extractor_, Kind) :
+    """Map a reference to a structured-attribute kind & fields"""
+# end class Kind_Structured_Field_Extractor
+
 class _Self_ (_Attr_) :
-    """Map a Q.self query attribute to  column(s) expressions of SQLAlchemy"""
+    """Map a Q.SELF query attribute to column(s) expressions of SQLAlchemy"""
 
     def __init__ (self, X, ETW = None, _is_raw = False, _outer = None, _polymorphic = None) :
         self.X            = X
@@ -1878,7 +1998,7 @@ class _Self_ (_Attr_) :
 
     @TFL.Meta.Once_Property
     def _attr (self) :
-        return self.E_Type.spk
+        return self.E_Type.spk.attr
     # end def _attr
 
     @TFL.Meta.Once_Property
@@ -1887,11 +2007,13 @@ class _Self_ (_Attr_) :
     # end def _columns
 
     @TFL.Meta.Once_Property
+    @getattr_safe (default = ())
     def _columns_ob (self) :
         return list (self._columns_ob_epk_iter (self.E_Type))
     # end def _columns_ob
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _head_col (self) :
         return self.ETW.spk_col
     # end def _head_col

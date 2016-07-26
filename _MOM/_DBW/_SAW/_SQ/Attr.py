@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.SQ.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -46,7 +46,7 @@ _strftime_map = dict \
     )
 
 ### Functions to extract fields from date column ##############################
-@MOM.Attr._A_Date_._saw_extract_field.add_type (SAW.SQ.Manager.__class__)
+@MOM.Attr._A_DT_._saw_extract_field.add_type (SAW.SQ.Manager.__class__)
 def _saw_extract_date_field_sq (self, DBW, col, field) :
     fmt_c  = _strftime_map    [field]
     clause = SA.func.strftime ("%%%s" % (fmt_c, ), col)

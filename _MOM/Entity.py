@@ -307,6 +307,8 @@
 #     5-May-2016 (CT) Add support for predicates of kind `object_init`
 #     6-May-2016 (CT) Add computed attribute `playback_p`
 #    22-Jun-2016 (CT) Add staticmethod `_ui_display`
+#     6-Jul-2016 (CT) Call `attr.set_cooked`, not `attr._set_cooked`
+#    22-Jul-2016 (CT) Move `has_identity` from `An_Entity` to `Entity`
 #    ««revision-date»»···
 #--
 
@@ -330,9 +332,10 @@ import _MOM._Pred.Type
 
 import _MOM._SCM.Change
 
-from   _MOM._Attr.Type import *
-from   _MOM._Attr      import Attr
-from   _MOM._Pred      import Pred
+from   _MOM._Attr.Type        import *
+from   _MOM._Attr.Date_Time   import *
+from   _MOM._Attr             import Attr
+from   _MOM._Pred             import Pred
 
 import _TFL._Meta.Once_Property
 import _TFL.Decorator
@@ -360,6 +363,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
     auto_derived_root     = None  ### Set by meta machinery
     deprecated_attr_names = {}
     electric              = False
+    has_identity          = False
     init_finished         = False
     is_partial            = True
     is_relevant           = False
@@ -948,7 +952,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
                 (_kinds = _pred_kinds, on_error = on_error, ** kw)
             if is_correct :
                 for name, val, attr in self.set_attr_iter (kw, on_error) :
-                    attr._set_cooked (self, val)
+                    attr.set_cooked (self, val)
         if man.updates_pending :
             try :
                 man.do_updates_pending (self)
@@ -1026,7 +1030,6 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
     """Root class for anonymous entities without identity."""
 
-    has_identity          = False
     is_partial            = True
     is_primary            = False
     owner                 = None

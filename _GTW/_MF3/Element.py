@@ -102,6 +102,7 @@
 #    22-May-2016 (CT) Add guard `self.required` to `_create_instance`
 #    14-Jun-2016 (CT) Change `allow_new` to consider `E_Type.polymorphic_epk`
 #    15-Jun-2016 (CT) Fix `ui_display`
+#     8-Sep-2016 (CT) Add `Field_Structured`, factor `_Field_Composite_`
 #    ««revision-date»»···
 #--
 
@@ -141,6 +142,7 @@ import json
 import logging
 
 MAT                                     = MOM.Attr
+
 MAT.A_Attr_Type.input_widget            = "mf3_input, string"
 MAT.A_Boolean.input_widget              = "mf3_input, boolean"
 MAT.A_Confirmation.input_widget         = "mf3_input, boolean"
@@ -156,8 +158,10 @@ MAT._A_Id_Entity_.input_widget          = "mf3_input, id_entity"
 MAT._A_Named_Object_.input_widget       = "mf3_input, named_object"
 MAT._A_Named_Value_.input_widget        = "mf3_input, named_value"
 MAT._A_Number_.input_widget             = "mf3_input, number"
+
 MAT.A_Attr_Type.mf3_template_macro      = None
 MAT.A_Confirmation.mf3_template_macro   = "Field__Confirmation"
+
 MAT.A_Attr_Type.mf3_template_module     = None
 
 MAT.Kind.css_class                      = ""
@@ -169,12 +173,17 @@ MAT.A_Date.css_align                    = "right"
 MAT.A_Numeric_String.css_align          = "right"
 MAT.A_Time.css_align                    = "right"
 
-@eval_function_body
-def _set_interval_templates () :
-    for _n in ("A_Date_Interval", "A_Time_Interval") :
-        _AT = getattr (MAT, _n, None)
-        if _AT is not None :
-            _AT.mf3_template_module = "mf3_h_cols"
+@MOM._Add_Import_Callback ("_MOM._Attr.Date_Interval")
+def _set_date_interval_templates (module) :
+    MOM.Attr.A_Date_Interval.mf3_template_module = "mf3_h_cols"
+
+@MOM._Add_Import_Callback ("_MOM._Attr.Time_Interval")
+def _set_time_interval_templates (module) :
+    MOM.Attr.A_Time_Interval.mf3_template_module = "mf3_h_cols"
+
+@MOM._Add_Import_Callback ("_MOM._Attr.Range")
+def _set_range_template (module) :
+    MOM.Attr._A_Range_.mf3_template_module = "mf3_h_cols"
 
 class Delay_Call (BaseException) :
     """Delay call until rev-ref is defined."""
@@ -552,7 +561,7 @@ class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
     def field_elements (self) :
         def _gen (self) :
             for e in self.elements :
-                if isinstance (e, Field_Composite) and not e.skip :
+                if isinstance (e, _Field_Composite_) and not e.skip :
                     for f in e.field_elements :
                         yield f
                 elif isinstance (e, _Field_) :
@@ -1012,7 +1021,7 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
     @TFL.Meta.Once_Property
     def Entity (self) :
         result = self.parent
-        while isinstance (result, Field_Composite) :
+        while isinstance (result, _Field_Composite_) :
             result = result.parent
         return result
     # end def Entity
@@ -1204,6 +1213,12 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_) :
 class _Field_ (_Field_Base_) :
     """Base class for MF3 field classes."""
 
+    @property
+    def FO (self) :
+        if self.id_essence :
+            return self.essence.FO
+    # end def FO
+
 # end class _Field_
 
 class _Field_Composite_Mixin_ (_Element_) :
@@ -1243,6 +1258,44 @@ class _Field_Composite_Mixin_ (_Element_) :
     # end def __getitem__
 
 # end class _Field_Composite_Mixin_
+
+class _Field_Composite_ (_Field_Composite_Mixin_, _Field_) :
+    """Base class for fields comprising a composite or structured attribute."""
+
+    attr_selector       = MOM.Attr.Selector.editable
+
+    def __call__ (self, scope, cargo) :
+        for e in self.elements :
+            e (scope, cargo)
+    # end def __call__
+
+    @TFL.Meta.Once_Property
+    def completer_elems (self) :
+        return self.elements
+    # end def completer_elems
+
+    @property
+    def cooked (self) :
+        return self.essence if self.id_essence is not None else ()
+    # end def edit
+
+    @property
+    def edit (self) :
+        return ""
+    # end def edit
+
+    @property
+    def id_essence (self) :
+        """Return essence of parent/ancestor element that is an Id_Entity."""
+        return self.Entity.essence
+    # end def id_essence
+
+    @property
+    def init (self) :
+        return ""
+    # end def init
+
+# end class _Field_Composite_
 
 class Entity (_Entity_) :
     """Form comprising a single essential entity."""
@@ -1547,47 +1600,15 @@ class Field (_Field_) :
     @property
     @getattr_safe (default = "")
     def ui_display (self) :
-        return getattr (self.essence.FO, self.name) if self.id_essence else ""
+        FO = self.FO
+        return getattr (FO, self.name) if FO is not None else ""
     # end def ui_display
 
 # end class Field
 
 @TFL.Add_To_Class ("MF3_Element", MAT._A_Composite_)
-class Field_Composite (_Field_Composite_Mixin_, _Field_) :
+class Field_Composite (_Field_Composite_) :
     """Field comprising a composite attribute."""
-
-    attr_selector       = MOM.Attr.Selector.editable
-
-    def __call__ (self, scope, cargo) :
-        for e in self.elements :
-            e (scope, cargo)
-    # end def __call__
-
-    @TFL.Meta.Once_Property
-    def completer_elems (self) :
-        return self.elements
-    # end def completer_elems
-
-    @property
-    def cooked (self) :
-        return self.essence if self.id_essence is not None else ()
-    # end def edit
-
-    @property
-    def edit (self) :
-        return ""
-    # end def edit
-
-    @property
-    def id_essence (self) :
-        """Return essence of parent/ancestor element that is an Id_Entity."""
-        return self.Entity.essence
-    # end def id_essence
-
-    @property
-    def init (self) :
-        return ""
-    # end def init
 
 # end class Field_Composite
 
@@ -1882,6 +1903,31 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
     # end def __getitem__
 
 # end class Field_Rev_Ref
+
+class Field_Structured (_Field_Composite_) :
+    """Field comprising an attribute with internal structure."""
+
+    attr_selector       = MOM.Attr.Selector.editable
+
+    @property
+    def FO (self) :
+        if self.id_essence :
+            return self.parent.essence.FO
+    # end def FO
+
+    @property
+    @getattr_safe (default = "")
+    def ui_display (self) :
+        FO = self.FO
+        return getattr (FO, self.name) if FO is not None else ""
+    # end def ui_display
+
+# end class Field_Structured
+
+@TFL.Add_To_Class ("MF3_Element", MAT._A_Structured_, decorator = property)
+def _field_structured_element_class (self) :
+    return Field_Structured if self.E_Type.edit_attr else Field
+# end def _field_structured_element_class
 
 if __name__ != "__main__" :
     GTW.MF3._Export_Module ()

@@ -53,8 +53,8 @@ _test_saw = """
         Column __raw_name                : Varchar(64)          Primary__Raw_Value String name
         Column __raw_registered_in       : Varchar(64)          Primary_Optional__Raw_Value String registered_in
         Column __raw_short_name          : Varchar(12)          Optional__Raw_Value String short_name
-        Column lifetime__finish          : Date                 Optional__Nested Date finish
-        Column lifetime__start           : Date                 Necessary__Nested Date start
+        Column lifetime__finish          : Date                 Optional__Nested__Structured Date finish
+        Column lifetime__start           : Date                 Necessary__Nested__Structured Date start
         Column name                      : Varchar(64)          Primary__Raw_Value String name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column registered_in             : Varchar(64)          Primary_Optional__Raw_Value String registered_in

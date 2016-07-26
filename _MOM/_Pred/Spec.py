@@ -32,6 +32,7 @@
 #                     for `electric` attributes
 #    25-Feb-2016 (CT) Change `_create_properties` to create `Unique` predicates
 #                     for attributes with `unique_p` set
+#    10-Aug-2016 (CT) Add `e_type.P_exclusion`
 #    ««revision-date»»···
 #--
 
@@ -71,20 +72,20 @@ class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Pred_Spec)) :
 
     @TFL.Meta.Once_Property
     def uniqueness_dbw (self) :
-        """Uniqueness predicates checked by `DBW`"""
+        """Uniqueness (and exclusion) predicates checked by `DBW`"""
         return list (u for u in self.uniqueness if not u.ems_check)
     # end def uniqueness_dbw
 
     @TFL.Meta.Once_Property
     def uniqueness_ems (self) :
-        """Uniqueness predicates checked by `EMS`"""
+        """Uniqueness (and exclusion) predicates checked by `EMS`"""
         return list (u for u in self.uniqueness if u.ems_check)
     # end def uniqueness_ems
 
     def __init__ (self, e_type) :
         self.__super.__init__ (e_type)
         self._attr_map    = TFL.defaultdict (list)
-        self.uniqueness   = e_type.P_uniqueness
+        self.uniqueness   = e_type.P_uniqueness + e_type.P_exclusion
     # end def __init__
 
     def _create_properties (self, e_type) :

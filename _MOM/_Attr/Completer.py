@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -35,6 +35,7 @@
 #    30-Mar-2015 (CT) Allow `buddies` as single argument for `Completer_Spec`
 #                     + add `treshold` to `_Nested_Completer_Spec_.__init__`
 #                     + factor `default_selector` to `Completer_Spec`
+#     9-Sep-2016 (CT) Add `S_Completer`.`S_Completer_Spec`
 #    ««revision-date»»···
 #--
 
@@ -149,6 +150,13 @@ class E_Completer (_Nested_Completer_) :
 
 # end class E_Completer
 
+class S_Completer (_Nested_Completer_) :
+    """_A_Structured_ completer instance for a specific E_Type."""
+
+    kind       = "Structured"
+
+# end class S_Completer
+
 class Completer_Spec (TFL.Meta.Object) :
     """Attribute completer specification for a MOM attribute."""
 
@@ -200,6 +208,14 @@ class E_Completer_Spec (_Nested_Completer_Spec_) :
     default_selector = MOM.Attr.Selector.primary
 
 # end class E_Completer_Spec
+
+class S_Completer_Spec (_Nested_Completer_Spec_) :
+    """Attribute completer specification for _A_Structured_."""
+
+    Type             = S_Completer
+    default_selector = MOM.Attr.Selector.editable
+
+# end class S_Completer_Spec
 
 if __name__ != "__main__" :
     MOM.Attr._Export ("*", "_Nested_Completer_")

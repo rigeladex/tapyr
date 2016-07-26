@@ -33,6 +33,8 @@
 #                         comprehensions
 #                     + Factor `_set_code`
 #    22-Jun-2016 (CT) Change `one_element_code` to return a `dict`
+#    10-Aug-2016 (CT) Factor `Unique.Kind_Cls`
+#    10-Aug-2016 (CT) Add `Exclude`
 #    ««revision-date»»···
 #--
 
@@ -209,24 +211,30 @@ class Unique (_Condition_) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        import _MOM._Pred.Kind
+        KC = cls.Kind_Cls
         if cls.kind is None :
-            cls.kind = MOM.Pred.Uniqueness
-        elif cls.kind is not MOM.Pred.Uniqueness :
+            cls.kind = KC
+        elif cls.kind is not KC :
             raise TypeError \
-                ( "Unique predicate %s *must* have kind Uniqueness, not %s"
-                % (cls, cls.kind)
+                ( "%s predicate %s *must* have kind %s, not %s"
+                % (KC.typ.title (), cls, KC.__name__, cls.kind)
                 )
         if cls.attributes :
             raise TypeError \
-                ( "Unique predicate %s cannot define attributes, got %s"
-                % (cls, cls.attributes)
+                ( "%s predicate %s cannot define attributes, got %s"
+                % (KC.typ.title (), cls, cls.attributes)
                 )
         if cls.attr_none :
             from _MOM._Attr.Filter import Q
             setattr (cls, "aqs", tuple (getattr (Q, a) for a in cls.attr_none))
         cls.error = None
     # end def __init__
+
+    @property
+    def Kind_Cls (cls) :
+        import _MOM._Pred.Kind
+        return MOM.Pred.Uniqueness
+    # end def Kind_Cls
 
     def __str__  (cls) :
         return "%s %s" % (cls.name, portable_repr (cls.attr_none))
@@ -237,6 +245,17 @@ class Unique (_Condition_) :
     # end def __repr__
 
 # end class Unique
+
+class Exclude (Unique) :
+    """Meta class for :class:`~_MOM._Pred.Type.Exclude`"""
+
+    @property
+    def Kind_Cls (cls) :
+        import _MOM._Pred.Kind
+        return MOM.Pred.Exclusion
+    # end def Kind_Cls
+
+# end class Exclude
 
 ### «text» ### start of documentation
 __doc__ = """
