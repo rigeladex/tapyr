@@ -23,6 +23,7 @@
 #    26-Jun-2013 (CT) Add `Class_and_Instance_Once_Property`
 #    16-Oct-2015 (CT) Add `__future__` imports
 #     1-Jun-2016 (CT) Add `Once_Property_NI`
+#    25-Jul-2016 (CT) Add `Class_and_Instance_Once_Property_NI`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,12 @@ def Class_and_Instance_Once_Property (f) :
     """Decorator returning a `Class_and_Instance_Lazy_Property`."""
     return TFL.Meta.Class_and_Instance_Lazy_Property (f.__name__, f, f.__doc__)
 # end def Class_and_Instance_Once_Property
+
+def Class_and_Instance_Once_Property_NI (f) :
+    """Decorator returning a `Class_and_Instance_Lazy_Property`."""
+    return TFL.Meta.Class_and_Instance_Lazy_Property_NI \
+        (f.__name__, f, f.__doc__)
+# end def Class_and_Instance_Once_Property_NI
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*")

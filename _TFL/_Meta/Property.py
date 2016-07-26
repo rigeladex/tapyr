@@ -55,6 +55,7 @@
 #    13-Nov-2015 (CT) Add `__code__`, `__func__` to placate `inspect.getargspec`
 #    13-Nov-2015 (CT) Add metaclass to `Bound_Method` to fix `__getattr__`
 #     1-Jun-2016 (CT) Add `Lazy_Property_NI`
+#    25-Jul-2016 (CT) Add `Class_and_Instance_Lazy_Property_NI`
 #    ««revision-date»»···
 #--
 
@@ -552,6 +553,10 @@ class Lazy_Property_NI (Lazy_Property) :
     def __get__ (self, obj, cls = None) :
         if obj is None :
             return self
+        return self._get_cached_or_computed (obj)
+    # end def __get__
+
+    def _get_cached_or_computed (self, obj) :
         name   = "__%s_%s" % (self.name, id (obj))
         undef  = self.undef
         result = getattr (obj, name, undef)
@@ -559,7 +564,7 @@ class Lazy_Property_NI (Lazy_Property) :
             result = self.computer (obj)
             setattr (obj, name, result)
         return result
-    # end def __get__
+    # end def _get_cached_or_computed
 
 # end class Lazy_Property_NI
 
@@ -573,6 +578,19 @@ class Class_and_Instance_Lazy_Property (Lazy_Property) :
     # end def _class_get
 
 # end class Class_and_Instance_Lazy_Property
+
+class Class_and_Instance_Lazy_Property_NI (Lazy_Property_NI) :
+    """Cached property applicable to both class and instance,
+       cached values are not inherited.
+    """
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            return self._get_cached_or_computed (cls)
+        return self._get_cached_or_computed (obj)
+    # end def __get__
+
+# end class Class_and_Instance_Lazy_Property_NI
 
 class Property (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
     """A property that can be applied to the instance and possibly to the
