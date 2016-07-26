@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,6 +34,7 @@
 #     4-Dec-2009 (CT) `Sorted_By.__call__` and `Desc_Getter.__call__` changed
 #                     to allow comparison of unequal types in Python 3.x
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
+#    25-Jul-2016 (CT) Change `type_name` to allow binary `byte-string` values
 #    ««revision-date»»···
 #--
 
@@ -279,7 +280,7 @@ class Sorted_By (TFL.Meta.Object) :
         r = cls.type_name_map.get (n, n)
         if r == "byte-string" and v.isalnum :
             r = "text-string"
-            v = pyk.text_type (v, "ascii")
+            v = pyk.text_type (v, "latin1")
         return r, v
     # end def type_name
 
