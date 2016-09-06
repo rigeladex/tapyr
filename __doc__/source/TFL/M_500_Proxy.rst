@@ -5,3 +5,4 @@ Module `Proxy`
 
 .. automodule:: _TFL.Proxy
   :members: 
+  :special-members:

@@ -4,4 +4,5 @@ Module `Recurrence_Rule`
 -------------------------------------------------------------------------------
 
 .. automodule:: _MOM._Attr.Recurrence_Rule
-  :members: A_Weekday_RR, A_Weekday_RR_List
+  :members: A_Unit_RR, A_Weekday_RR, A_Weekday_RR_List
+  :special-members:

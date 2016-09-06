@@ -5,3 +5,4 @@ Module `Py_Interpreter`
 
 .. automodule:: _TFL.Py_Interpreter
   :members: 
+  :special-members:

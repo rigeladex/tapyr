@@ -5,3 +5,4 @@ Module `PMPP`
 
 .. automodule:: _TFL.PMPP
   :members: 
+  :special-members:

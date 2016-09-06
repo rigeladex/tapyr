@@ -5,3 +5,4 @@ Module `Caller`
 
 .. automodule:: _TFL.Caller
   :members: 
+  :special-members:

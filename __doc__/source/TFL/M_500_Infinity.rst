@@ -4,5 +4,5 @@ Module `Infinity`
 -------------------------------------------------------------------------------
 
 .. automodule:: _TFL.Infinity
-  :members: _Infinity_, is_infinite
+  :members: Infinity, is_infinite
   :special-members:

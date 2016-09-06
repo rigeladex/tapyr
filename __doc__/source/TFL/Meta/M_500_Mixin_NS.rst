@@ -5,3 +5,4 @@ Module `Mixin_NS`
 
 .. automodule:: _TFL._Meta.Mixin_NS
   :members: 
+  :special-members:

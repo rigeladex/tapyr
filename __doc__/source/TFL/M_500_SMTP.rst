@@ -5,3 +5,4 @@ Module `SMTP`
 
 .. automodule:: _TFL.SMTP
   :members: 
+  :special-members:

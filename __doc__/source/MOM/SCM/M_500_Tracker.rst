@@ -5,3 +5,4 @@ Module `Tracker`
 
 .. automodule:: _MOM._SCM.Tracker
   :members: 
+  :special-members:

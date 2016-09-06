@@ -5,3 +5,4 @@ Module `Manager`
 
 .. automodule:: _MOM._Pred.Manager
   :members: 
+  :special-members:

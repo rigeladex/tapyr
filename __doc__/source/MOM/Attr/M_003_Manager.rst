@@ -5,3 +5,4 @@ Module `Manager`
 
 .. automodule:: _MOM._Attr.Manager
   :members: 
+  :special-members:

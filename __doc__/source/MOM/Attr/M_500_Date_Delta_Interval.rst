@@ -5,3 +5,4 @@ Module `Date_Delta_Interval`
 
 .. automodule:: _MOM._Attr.Date_Delta_Interval
   :members: 
+  :special-members:

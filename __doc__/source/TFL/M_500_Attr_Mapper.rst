@@ -5,3 +5,4 @@ Module `Attr_Mapper`
 
 .. automodule:: _TFL.Attr_Mapper
   :members: 
+  :special-members:

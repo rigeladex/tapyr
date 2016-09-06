@@ -5,3 +5,4 @@ Module `Ratio`
 
 .. automodule:: _TFL.Ratio
   :members: 
+  :special-members:

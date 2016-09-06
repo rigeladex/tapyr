@@ -5,3 +5,4 @@ Module `Package_Namespace`
 
 .. automodule:: _TFL.Package_Namespace
   :members: 
+  :special-members:

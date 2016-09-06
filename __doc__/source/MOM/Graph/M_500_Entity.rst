@@ -5,3 +5,4 @@ Module `Entity`
 
 .. automodule:: _MOM._Graph.Entity
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `binary_string`
 
 .. automodule:: _TFL.binary_string
   :members: 
+  :special-members:

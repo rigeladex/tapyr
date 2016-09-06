@@ -5,3 +5,4 @@ Module `Recorder`
 
 .. automodule:: _MOM._SCM.Recorder
   :members: 
+  :special-members:

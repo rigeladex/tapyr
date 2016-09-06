@@ -5,3 +5,4 @@ Module `Color`
 
 .. automodule:: _TFL.Color
   :members: 
+  :special-members:

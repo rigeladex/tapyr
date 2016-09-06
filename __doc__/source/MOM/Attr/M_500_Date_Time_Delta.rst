@@ -5,3 +5,4 @@ Module `Date_Time_Delta`
 
 .. automodule:: _MOM._Attr.Date_Time_Delta
   :members: A_Date_Time_Delta
+  :special-members:

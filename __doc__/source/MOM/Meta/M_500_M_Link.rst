@@ -5,3 +5,4 @@ Module `M_Link`
 
 .. automodule:: _MOM._Meta.M_Link
   :members: 
+  :special-members:

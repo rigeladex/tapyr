@@ -5,3 +5,4 @@ Module `Functor`
 
 .. automodule:: _TFL.Functor
   :members: 
+  :special-members:

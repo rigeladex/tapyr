@@ -5,3 +5,4 @@ Module `sphinx_autodoc`
 
 .. automodule:: _TFL.sphinx_autodoc
   :members: 
+  :special-members:

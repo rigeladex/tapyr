@@ -5,3 +5,4 @@ Module `normalized_indent`
 
 .. automodule:: _TFL.normalized_indent
   :members: 
+  :special-members:

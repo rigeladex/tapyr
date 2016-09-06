@@ -5,3 +5,4 @@ Module `DL_List`
 
 .. automodule:: _TFL.DL_List
   :members: 
+  :special-members:

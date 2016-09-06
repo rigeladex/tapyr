@@ -5,3 +5,4 @@ Module `Currency`
 
 .. automodule:: _TFL.Currency
   :members: 
+  :special-members:

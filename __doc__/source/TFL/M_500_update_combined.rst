@@ -5,3 +5,4 @@ Module `update_combined`
 
 .. automodule:: _TFL.update_combined
   :members: 
+  :special-members:

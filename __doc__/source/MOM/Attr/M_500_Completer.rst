@@ -5,3 +5,4 @@ Module `Completer`
 
 .. automodule:: _MOM._Attr.Completer
   :members: 
+  :special-members:

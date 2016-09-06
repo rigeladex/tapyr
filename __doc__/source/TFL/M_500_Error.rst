@@ -5,3 +5,4 @@ Module `Error`
 
 .. automodule:: _TFL.Error
   :members: 
+  :special-members:

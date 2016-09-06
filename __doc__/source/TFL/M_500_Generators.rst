@@ -5,3 +5,4 @@ Module `Generators`
 
 .. automodule:: _TFL.Generators
   :members: 
+  :special-members:

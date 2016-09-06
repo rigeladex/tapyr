@@ -5,3 +5,4 @@ Module `M_Prop_Spec`
 
 .. automodule:: _MOM._Meta.M_Prop_Spec
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Coll`
 
 .. automodule:: _MOM._Attr.Coll
   :members: 
+  :special-members:

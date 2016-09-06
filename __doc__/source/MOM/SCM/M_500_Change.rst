@@ -5,3 +5,4 @@ Module `Change`
 
 .. automodule:: _MOM._SCM.Change
   :members: 
+  :special-members:

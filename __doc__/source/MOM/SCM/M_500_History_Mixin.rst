@@ -5,3 +5,4 @@ Module `History_Mixin`
 
 .. automodule:: _MOM._SCM.History_Mixin
   :members: 
+  :special-members:

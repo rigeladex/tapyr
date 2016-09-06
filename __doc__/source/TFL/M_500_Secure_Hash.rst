@@ -5,3 +5,4 @@ Module `Secure_Hash`
 
 .. automodule:: _TFL.Secure_Hash
   :members: 
+  :special-members:

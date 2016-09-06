@@ -5,3 +5,4 @@ Module `Command`
 
 .. automodule:: _MOM._Graph.Command
   :members: 
+  :special-members:

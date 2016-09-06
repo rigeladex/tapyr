@@ -5,3 +5,4 @@ Module `formatted`
 
 .. automodule:: _MOM.formatted
   :members: 
+  :special-members:

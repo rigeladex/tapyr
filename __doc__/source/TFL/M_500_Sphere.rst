@@ -5,3 +5,4 @@ Module `Sphere`
 
 .. automodule:: _TFL.Sphere
   :members: 
+  :special-members:

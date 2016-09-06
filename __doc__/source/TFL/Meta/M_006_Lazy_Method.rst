@@ -5,3 +5,4 @@ Module `Lazy_Method`
 
 .. automodule:: _TFL._Meta.Lazy_Method
   :members: 
+  :special-members:

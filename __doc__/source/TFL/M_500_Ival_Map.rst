@@ -5,3 +5,4 @@ Module `Ival_Map`
 
 .. automodule:: _TFL.Ival_Map
   :members: 
+  :special-members:

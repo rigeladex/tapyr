@@ -5,3 +5,4 @@ Module `json_dump`
 
 .. automodule:: _TFL.json_dump
   :members: 
+  :special-members:

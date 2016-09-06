@@ -5,3 +5,4 @@ Module `Once_Property`
 
 .. automodule:: _TFL._Meta.Once_Property
   :members: 
+  :special-members:

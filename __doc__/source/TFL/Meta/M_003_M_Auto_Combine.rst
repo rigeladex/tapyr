@@ -5,3 +5,4 @@ Module `M_Auto_Combine`
 
 .. automodule:: _TFL._Meta.M_Auto_Combine
   :members: 
+  :special-members:

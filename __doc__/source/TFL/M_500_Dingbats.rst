@@ -5,3 +5,4 @@ Module `Dingbats`
 
 .. automodule:: _TFL.Dingbats
   :members: 
+  :special-members:

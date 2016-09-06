@@ -5,3 +5,4 @@ Module `Querier`
 
 .. automodule:: _MOM._Attr.Querier
   :members: 
+  :special-members:

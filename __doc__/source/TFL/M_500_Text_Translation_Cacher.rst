@@ -5,3 +5,4 @@ Module `Text_Translation_Cacher`
 
 .. automodule:: _TFL.Text_Translation_Cacher
   :members: 
+  :special-members:

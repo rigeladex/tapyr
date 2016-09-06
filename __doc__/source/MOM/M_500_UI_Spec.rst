@@ -5,3 +5,4 @@ Module `UI_Spec`
 
 .. automodule:: _MOM.UI_Spec
   :members: 
+  :special-members:

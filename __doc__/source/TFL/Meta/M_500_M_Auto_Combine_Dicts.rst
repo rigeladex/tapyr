@@ -5,3 +5,4 @@ Module `M_Auto_Combine_Dicts`
 
 .. automodule:: _TFL._Meta.M_Auto_Combine_Dicts
   :members: 
+  :special-members:

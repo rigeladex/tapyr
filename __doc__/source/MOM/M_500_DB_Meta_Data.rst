@@ -5,3 +5,4 @@ Module `DB_Meta_Data`
 
 .. automodule:: _MOM.DB_Meta_Data
   :members: 
+  :special-members:

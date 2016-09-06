@@ -5,3 +5,4 @@ Module `Scope`
 
 .. automodule:: _MOM.Scope
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Ascii`
 
 .. automodule:: _MOM._Graph.Ascii
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `sos`
 
 .. automodule:: _TFL.sos
   :members: 
+  :special-members:

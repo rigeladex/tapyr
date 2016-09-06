@@ -5,3 +5,4 @@ Module `formatted_repr`
 
 .. automodule:: _TFL.formatted_repr
   :members: 
+  :special-members:

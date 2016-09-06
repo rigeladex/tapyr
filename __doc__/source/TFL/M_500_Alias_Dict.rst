@@ -5,3 +5,4 @@ Module `Alias_Dict`
 
 .. automodule:: _TFL.Alias_Dict
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Relation`
 
 .. automodule:: _MOM._Graph.Relation
   :members: 
+  :special-members:

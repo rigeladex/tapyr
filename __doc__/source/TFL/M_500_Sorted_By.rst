@@ -5,3 +5,4 @@ Module `Sorted_By`
 
 .. automodule:: _TFL.Sorted_By
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `multimap`
 
 .. automodule:: _TFL.multimap
   :members: 
+  :special-members:

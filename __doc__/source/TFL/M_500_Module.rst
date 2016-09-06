@@ -5,3 +5,4 @@ Module `Module`
 
 .. automodule:: _TFL.Module
   :members: 
+  :special-members:

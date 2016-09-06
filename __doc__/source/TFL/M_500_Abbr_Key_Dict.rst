@@ -5,3 +5,4 @@ Module `Abbr_Key_Dict`
 
 .. automodule:: _TFL.Abbr_Key_Dict
   :members: 
+  :special-members:

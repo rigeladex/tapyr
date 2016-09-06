@@ -5,3 +5,4 @@ Module `Polisher`
 
 .. automodule:: _MOM._Attr.Polisher
   :members: 
+  :special-members:

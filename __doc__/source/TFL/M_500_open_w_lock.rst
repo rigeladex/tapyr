@@ -5,3 +5,4 @@ Module `open_w_lock`
 
 .. automodule:: _TFL.open_w_lock
   :members: 
+  :special-members:

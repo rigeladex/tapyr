@@ -5,3 +5,4 @@ Module `Traceback_Printer`
 
 .. automodule:: _TFL.Traceback_Printer
   :members: 
+  :special-members:

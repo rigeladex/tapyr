@@ -5,3 +5,4 @@ Module `Q_Exp`
 
 .. automodule:: _TFL.Q_Exp
   :members: 
+  :special-members:

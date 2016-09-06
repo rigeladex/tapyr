@@ -5,3 +5,4 @@ Module `Filter`
 
 .. automodule:: _MOM._Attr.Filter
   :members: 
+  :special-members:

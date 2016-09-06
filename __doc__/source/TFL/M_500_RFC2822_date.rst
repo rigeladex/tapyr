@@ -5,3 +5,4 @@ Module `RFC2822_date`
 
 .. automodule:: _TFL.RFC2822_date
   :members: 
+  :special-members:

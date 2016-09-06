@@ -5,3 +5,4 @@ Module `Q_Exp`
 
 .. automodule:: _MOM.Q_Exp
   :members: 
+  :special-members:

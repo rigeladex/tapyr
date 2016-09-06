@@ -5,3 +5,4 @@ Module `Record`
 
 .. automodule:: _TFL.Record
   :members: 
+  :special-members:

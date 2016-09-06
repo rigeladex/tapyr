@@ -5,3 +5,4 @@ Module `ui_display`
 
 .. automodule:: _TFL.ui_display
   :members: 
+  :special-members:

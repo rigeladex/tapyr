@@ -5,3 +5,4 @@ Module `Filter`
 
 .. automodule:: _TFL.Filter
   :members: 
+  :special-members:

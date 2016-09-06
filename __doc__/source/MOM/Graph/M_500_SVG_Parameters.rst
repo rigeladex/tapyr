@@ -5,3 +5,4 @@ Module `SVG_Parameters`
 
 .. automodule:: _MOM._Graph.SVG_Parameters
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Position`
 
 .. automodule:: _MOM._Attr.Position
   :members: Position, A_Position
+  :special-members:

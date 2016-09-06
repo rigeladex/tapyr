@@ -5,3 +5,4 @@ Module `Selector`
 
 .. automodule:: _MOM._Attr.Selector
   :members: 
+  :special-members:

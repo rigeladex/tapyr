@@ -5,3 +5,4 @@ Module `I18N`
 
 .. automodule:: _TFL.I18N
   :members: 
+  :special-members:

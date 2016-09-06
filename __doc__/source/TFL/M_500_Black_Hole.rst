@@ -5,3 +5,4 @@ Module `Black_Hole`
 
 .. automodule:: _TFL.Black_Hole
   :members: 
+  :special-members:

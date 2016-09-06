@@ -5,3 +5,4 @@ Module `M_Auto_Combine_Nested_Classes`
 
 .. automodule:: _TFL._Meta.M_Auto_Combine_Nested_Classes
   :members: 
+  :special-members:

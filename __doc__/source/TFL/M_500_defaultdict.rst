@@ -5,3 +5,4 @@ Module `defaultdict`
 
 .. automodule:: _TFL.defaultdict
   :members: 
+  :special-members:

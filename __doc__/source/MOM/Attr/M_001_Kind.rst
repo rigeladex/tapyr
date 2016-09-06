@@ -5,3 +5,4 @@ Module `Kind`
 
 .. automodule:: _MOM._Attr.Kind
   :members: 
+  :special-members:

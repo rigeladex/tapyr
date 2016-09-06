@@ -5,3 +5,4 @@ Module `App_Type`
 
 .. automodule:: _MOM.App_Type
   :members: 
+  :special-members:

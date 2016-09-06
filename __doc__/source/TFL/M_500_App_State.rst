@@ -5,3 +5,4 @@ Module `App_State`
 
 .. automodule:: _TFL.App_State
   :members: 
+  :special-members:

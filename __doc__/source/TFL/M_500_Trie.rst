@@ -5,3 +5,4 @@ Module `Trie`
 
 .. automodule:: _TFL.Trie
   :members: 
+  :special-members:

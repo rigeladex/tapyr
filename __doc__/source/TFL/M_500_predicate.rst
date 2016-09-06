@@ -5,3 +5,4 @@ Module `predicate`
 
 .. automodule:: _TFL.predicate
   :members: 
+  :special-members:

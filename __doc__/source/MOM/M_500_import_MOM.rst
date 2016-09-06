@@ -5,3 +5,4 @@ Module `import_MOM`
 
 .. automodule:: _MOM.import_MOM
   :members: 
+  :special-members:

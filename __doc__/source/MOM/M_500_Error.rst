@@ -5,3 +5,4 @@ Module `Error`
 
 .. automodule:: _MOM.Error
   :members: 
+  :special-members:

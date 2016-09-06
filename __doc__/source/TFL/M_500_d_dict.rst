@@ -5,3 +5,4 @@ Module `d_dict`
 
 .. automodule:: _TFL.d_dict
   :members: 
+  :special-members:

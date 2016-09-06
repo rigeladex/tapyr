@@ -5,3 +5,4 @@ Module `Date_Time_Interval`
 
 .. automodule:: _MOM._Attr.Date_Time_Interval
   :members: Date_Time_Interval, A_Date_Time_Interval, A_Date_Time_Interval_C, A_Date_Time_Interval_N
+  :special-members:

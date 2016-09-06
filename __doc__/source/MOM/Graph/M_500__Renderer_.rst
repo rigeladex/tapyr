@@ -5,3 +5,4 @@ Module `_Renderer_`
 
 .. automodule:: _MOM._Graph._Renderer_
   :members: 
+  :special-members:

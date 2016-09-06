@@ -5,3 +5,4 @@ Module `Apply_All`
 
 .. automodule:: _TFL.Apply_All
   :members: 
+  :special-members:

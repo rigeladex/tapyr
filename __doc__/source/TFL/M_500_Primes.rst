@@ -5,3 +5,4 @@ Module `Primes`
 
 .. automodule:: _TFL.Primes
   :members: 
+  :special-members:

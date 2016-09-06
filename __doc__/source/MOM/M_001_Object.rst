@@ -5,3 +5,4 @@ Module `Object`
 
 .. automodule:: _MOM.Object
   :members: 
+  :special-members:

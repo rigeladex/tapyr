@@ -5,3 +5,4 @@ Module `Regexp`
 
 .. automodule:: _TFL.Regexp
   :members: 
+  :special-members:

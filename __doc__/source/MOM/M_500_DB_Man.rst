@@ -5,3 +5,4 @@ Module `DB_Man`
 
 .. automodule:: _MOM.DB_Man
   :members: 
+  :special-members:

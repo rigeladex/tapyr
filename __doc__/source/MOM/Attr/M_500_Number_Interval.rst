@@ -5,3 +5,4 @@ Module `Number_Interval`
 
 .. automodule:: _MOM._Attr.Number_Interval
   :members: A_Float_Interval, A_Frequency_Interval, A_Int_Interval, A_Int_Interval_C, _Interval_, Float_Interval, Frequency_Interval, Int_Interval, make
+  :special-members:

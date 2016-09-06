@@ -5,3 +5,4 @@ Module `portable_repr`
 
 .. automodule:: _TFL.portable_repr
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Journal`
 
 .. automodule:: _MOM._SCM.Journal
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Command`
 
 .. automodule:: _TFL.Command
   :members: 
+  :special-members:

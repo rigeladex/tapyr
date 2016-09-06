@@ -5,3 +5,4 @@ Module `Logger`
 
 .. automodule:: _TFL.Logger
   :members: 
+  :special-members:

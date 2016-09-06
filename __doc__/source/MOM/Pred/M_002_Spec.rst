@@ -5,3 +5,4 @@ Module `Spec`
 
 .. automodule:: _MOM._Pred.Spec
   :members: 
+  :special-members:

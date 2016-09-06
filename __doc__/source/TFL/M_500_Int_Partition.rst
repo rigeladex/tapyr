@@ -5,3 +5,4 @@ Module `Int_Partition`
 
 .. automodule:: _TFL.Int_Partition
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Command`
 
 .. automodule:: _MOM.Command
   :members: 
+  :special-members:

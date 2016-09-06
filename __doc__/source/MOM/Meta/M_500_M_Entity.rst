@@ -5,3 +5,4 @@ Module `M_Entity`
 
 .. automodule:: _MOM._Meta.M_Entity
   :members: 
+  :special-members:

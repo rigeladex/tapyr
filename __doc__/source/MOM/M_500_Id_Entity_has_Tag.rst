@@ -5,3 +5,4 @@ Module `Id_Entity_has_Tag`
 
 .. automodule:: _MOM.Id_Entity_has_Tag
   :members: 
+  :special-members:

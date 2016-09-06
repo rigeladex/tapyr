@@ -5,3 +5,4 @@ Module `M_Class`
 
 .. automodule:: _TFL._Meta.M_Class
   :members: 
+  :special-members:

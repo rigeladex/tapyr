@@ -5,3 +5,4 @@ Module `E_Type_Manager`
 
 .. automodule:: _MOM.E_Type_Manager
   :members: 
+  :special-members:

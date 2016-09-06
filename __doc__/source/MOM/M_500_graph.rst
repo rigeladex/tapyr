@@ -5,3 +5,4 @@ Module `graph`
 
 .. automodule:: _MOM.graph
   :members: 
+  :special-members:

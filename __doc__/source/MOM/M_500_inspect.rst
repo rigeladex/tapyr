@@ -5,3 +5,4 @@ Module `inspect`
 
 .. automodule:: _MOM.inspect
   :members: 
+  :special-members:

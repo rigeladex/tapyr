@@ -5,3 +5,4 @@ Module `Divisor_Dag`
 
 .. automodule:: _TFL.Divisor_Dag
   :members: 
+  :special-members:

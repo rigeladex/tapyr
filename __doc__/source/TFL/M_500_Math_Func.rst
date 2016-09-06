@@ -5,3 +5,4 @@ Module `Math_Func`
 
 .. automodule:: _TFL.Math_Func
   :members: 
+  :special-members:

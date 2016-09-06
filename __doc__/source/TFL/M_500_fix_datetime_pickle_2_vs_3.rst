@@ -5,3 +5,4 @@ Module `fix_datetime_pickle_2_vs_3`
 
 .. automodule:: _TFL.fix_datetime_pickle_2_vs_3
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Filename`
 
 .. automodule:: _TFL.Filename
   :members: 
+  :special-members:

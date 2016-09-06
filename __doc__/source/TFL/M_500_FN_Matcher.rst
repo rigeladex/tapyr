@@ -5,3 +5,4 @@ Module `FN_Matcher`
 
 .. automodule:: _TFL.FN_Matcher
   :members: 
+  :special-members:

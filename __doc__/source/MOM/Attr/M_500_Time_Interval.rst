@@ -5,3 +5,4 @@ Module `Time_Interval`
 
 .. automodule:: _MOM._Attr.Time_Interval
   :members: Time_Interval, A_Time_Interval
+  :special-members:

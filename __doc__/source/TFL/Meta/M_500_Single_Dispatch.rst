@@ -5,3 +5,4 @@ Module `Single_Dispatch`
 
 .. automodule:: _TFL._Meta.Single_Dispatch
   :members: 
+  :special-members:

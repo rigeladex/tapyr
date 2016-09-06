@@ -5,3 +5,4 @@ Module `Gauge_Logger`
 
 .. automodule:: _TFL.Gauge_Logger
   :members: 
+  :special-members:

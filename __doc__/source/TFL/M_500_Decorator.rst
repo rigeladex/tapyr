@@ -5,3 +5,4 @@ Module `Decorator`
 
 .. automodule:: _TFL.Decorator
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Type`
 
 .. automodule:: _MOM._Pred.Type
   :members: 
+  :special-members:

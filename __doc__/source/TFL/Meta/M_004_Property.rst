@@ -5,3 +5,4 @@ Module `Property`
 
 .. automodule:: _TFL._Meta.Property
   :members: 
+  :special-members:

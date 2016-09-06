@@ -5,3 +5,4 @@ Module `Legacy_Lifter`
 
 .. automodule:: _MOM.Legacy_Lifter
   :members: 
+  :special-members:

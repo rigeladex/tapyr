@@ -5,3 +5,4 @@ Module `M_Attr_Type`
 
 .. automodule:: _MOM._Meta.M_Attr_Type
   :members: 
+  :special-members:

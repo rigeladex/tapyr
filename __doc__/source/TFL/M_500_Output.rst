@@ -5,3 +5,4 @@ Module `Output`
 
 .. automodule:: _TFL.Output
   :members: 
+  :special-members:

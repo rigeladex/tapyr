@@ -5,3 +5,4 @@ Module `Entity`
 
 .. automodule:: _MOM.Entity
   :members: 
+  :special-members:

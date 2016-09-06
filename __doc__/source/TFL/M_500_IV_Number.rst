@@ -5,3 +5,4 @@ Module `IV_Number`
 
 .. automodule:: _TFL.IV_Number
   :members: 
+  :special-members:

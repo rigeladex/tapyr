@@ -5,3 +5,4 @@ Module `Spec`
 
 .. automodule:: _MOM._Graph.Spec
   :members: 
+  :special-members:

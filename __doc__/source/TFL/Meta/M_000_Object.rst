@@ -5,3 +5,4 @@ Module `Object`
 
 .. automodule:: _TFL._Meta.Object
   :members: 
+  :special-members:

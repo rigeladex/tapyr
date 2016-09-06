@@ -5,3 +5,4 @@ Module `tex_quoted`
 
 .. automodule:: _TFL.tex_quoted
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Script`
 
 .. automodule:: _TFL.Script
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Password_Hasher`
 
 .. automodule:: _TFL.Password_Hasher
   :members: 
+  :special-members:

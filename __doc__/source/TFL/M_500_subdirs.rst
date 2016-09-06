@@ -5,3 +5,4 @@ Module `subdirs`
 
 .. automodule:: _TFL.subdirs
   :members: 
+  :special-members:

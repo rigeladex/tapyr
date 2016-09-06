@@ -5,3 +5,4 @@ Module `Document`
 
 .. automodule:: _MOM.Document
   :members: 
+  :special-members:

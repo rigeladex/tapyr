@@ -5,3 +5,4 @@ Module `User_Config`
 
 .. automodule:: _TFL.User_Config
   :members: 
+  :special-members:

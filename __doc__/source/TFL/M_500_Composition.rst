@@ -5,3 +5,4 @@ Module `Composition`
 
 .. automodule:: _TFL.Composition
   :members: 
+  :special-members:

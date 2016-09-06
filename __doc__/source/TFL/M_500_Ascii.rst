@@ -5,3 +5,4 @@ Module `Ascii`
 
 .. automodule:: _TFL.Ascii
   :members: 
+  :special-members:

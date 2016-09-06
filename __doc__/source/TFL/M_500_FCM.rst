@@ -5,3 +5,4 @@ Module `FCM`
 
 .. automodule:: _TFL.FCM
   :members: 
+  :special-members:

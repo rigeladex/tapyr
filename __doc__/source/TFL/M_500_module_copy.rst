@@ -5,3 +5,4 @@ Module `module_copy`
 
 .. automodule:: _TFL.module_copy
   :members: 
+  :special-members:

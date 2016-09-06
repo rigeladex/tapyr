@@ -5,3 +5,4 @@ Module `Url`
 
 .. automodule:: _TFL.Url
   :members: 
+  :special-members:

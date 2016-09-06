@@ -5,3 +5,4 @@ Module `Numeric_Interval`
 
 .. automodule:: _TFL.Numeric_Interval
   :members: 
+  :special-members:

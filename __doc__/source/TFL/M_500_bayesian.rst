@@ -5,3 +5,4 @@ Module `bayesian`
 
 .. automodule:: _TFL.bayesian
   :members: 
+  :special-members:

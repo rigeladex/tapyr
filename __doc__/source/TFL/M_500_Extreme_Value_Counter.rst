@@ -5,3 +5,4 @@ Module `Extreme_Value_Counter`
 
 .. automodule:: _TFL.Extreme_Value_Counter
   :members: 
+  :special-members:

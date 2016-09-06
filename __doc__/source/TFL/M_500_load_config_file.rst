@@ -5,3 +5,4 @@ Module `load_config_file`
 
 .. automodule:: _TFL.load_config_file
   :members: 
+  :special-members:

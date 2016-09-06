@@ -5,3 +5,4 @@ Module `Derived_PNS`
 
 .. automodule:: _MOM.Derived_PNS
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `import_module`
 
 .. automodule:: _TFL.import_module
   :members: 
+  :special-members:

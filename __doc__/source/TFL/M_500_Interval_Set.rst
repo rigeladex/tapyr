@@ -5,3 +5,4 @@ Module `Interval_Set`
 
 .. automodule:: _TFL.Interval_Set
   :members: 
+  :special-members:

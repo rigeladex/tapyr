@@ -5,3 +5,4 @@ Module `Ordered_Set`
 
 .. automodule:: _TFL.Ordered_Set
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Product_Version`
 
 .. automodule:: _TFL.Product_Version
   :members: 
+  :special-members:

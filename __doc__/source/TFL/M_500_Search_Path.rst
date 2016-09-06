@@ -5,3 +5,4 @@ Module `Search_Path`
 
 .. automodule:: _TFL.Search_Path
   :members: 
+  :special-members:

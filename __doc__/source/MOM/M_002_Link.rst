@@ -5,3 +5,4 @@ Module `Link`
 
 .. automodule:: _MOM.Link
   :members: 
+  :special-members:

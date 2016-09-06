@@ -5,3 +5,4 @@ Module `Timeline`
 
 .. automodule:: _TFL.Timeline
   :members: 
+  :special-members:

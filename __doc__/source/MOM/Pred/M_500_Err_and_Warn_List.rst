@@ -5,3 +5,4 @@ Module `Err_and_Warn_List`
 
 .. automodule:: _MOM._Pred.Err_and_Warn_List
   :members: 
+  :special-members:

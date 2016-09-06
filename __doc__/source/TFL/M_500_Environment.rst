@@ -5,3 +5,4 @@ Module `Environment`
 
 .. automodule:: _TFL.Environment
   :members: 
+  :special-members:

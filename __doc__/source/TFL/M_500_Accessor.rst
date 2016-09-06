@@ -5,3 +5,4 @@ Module `Accessor`
 
 .. automodule:: _TFL.Accessor
   :members: 
+  :special-members:

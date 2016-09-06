@@ -5,3 +5,4 @@ Module `M_Unique_If_Named`
 
 .. automodule:: _TFL._Meta.M_Unique_If_Named
   :members: 
+  :special-members:
