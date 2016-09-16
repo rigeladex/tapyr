@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: google_maps_v3.jnj -#}
 {#
-## Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -22,6 +22,7 @@
 ##     3-Jun-2012 (CT) Creation (based on html/google_maps.jnj)
 ##     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
 ##     3-Dec-2015 (CT) Add `max-height`, `max-width`
+##    16-Sep-2016 (CT) Remove obsolete `sensor` arg to `maps.googleapis.com`
 ##    ««revision-date»»···
 ##--
 #}
@@ -48,7 +49,7 @@
           }
     </style>
     <script type="text/javascript"
-      src="//maps.googleapis.com/maps/api/js?key={{ page.map.google_key }}&sensor={{ page.map.use_sensor|default("false") }}">
+      src="//maps.googleapis.com/maps/api/js?key={{ page.map.google_key }}">
     </script>
     <script type="text/javascript">
       function initialize () {
