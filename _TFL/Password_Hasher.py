@@ -29,6 +29,7 @@
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    18-Jul-2016 (CT) Change back to use `bcrypt` directly,
 #                     not `passlib.hash.bcrypt`
+#    23-Sep-2016 (CT) Add `filterwarnings` for cffi warnings triggered by bcrypt
 #    ««revision-date»»···
 #--
 
@@ -196,6 +197,12 @@ try :
 except Exception as exc :
     pass
 else :
+    if bcrypt.__version__ == "3.1.0" :
+        import warnings
+        warnings.filterwarnings \
+            ( "ignore"
+            , "implicit cast to 'char \*' from a different pointer type"
+            )
     class Bcrypt (Password_Hasher) :
         """Password Hasher using bcrypt
 
