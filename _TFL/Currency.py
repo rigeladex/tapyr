@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #     6-Feb-2015 (CT) Add `ui_display.add_type`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    23-Sep-2016 (CT) Add `json_dump.default.add_type`
 #    ««revision-date»»···
 #--
 
@@ -359,6 +360,13 @@ class Currency (_Currency_) :
     # end def _massage_rhs_float
 
 # end class Currency
+
+@TFL._Add_Import_Callback ("_TFL.json_dump")
+def _import_cb_json_dump (module) :
+    @module.default.add_type (_Currency_)
+    def json_encode_range (o) :
+        return pyk.text_type (o)
+# end def _import_cb_json_dump
 
 @TFL.ui_display.add_type (_Currency_)
 def _ui_display_date (obj) :
