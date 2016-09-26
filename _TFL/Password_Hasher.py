@@ -30,6 +30,7 @@
 #    18-Jul-2016 (CT) Change back to use `bcrypt` directly,
 #                     not `passlib.hash.bcrypt`
 #    23-Sep-2016 (CT) Add `filterwarnings` for cffi warnings triggered by bcrypt
+#    26-Sep-2016 (CT) Guard against old bcrypt version without `__version__`
 #    ««revision-date»»···
 #--
 
@@ -197,7 +198,7 @@ try :
 except Exception as exc :
     pass
 else :
-    if bcrypt.__version__ == "3.1.0" :
+    if getattr (bcrypt, "__version__", None) == "3.1.0" :
         import warnings
         warnings.filterwarnings \
             ( "ignore"
