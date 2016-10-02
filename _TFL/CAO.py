@@ -121,6 +121,7 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    18-Dec-2015 (CT) Add optional `save_error` to `expect_except`
 #    10-Feb-2016 (CT) Factor `Cmd.cao` from `__call__`
+#    29-Sep-2016 (CT) Add `Percent`
 #    ««revision-date»»···
 #--
 
@@ -1409,6 +1410,27 @@ class Rel_Path (Path) :
     # end def _resolve_range_1
 
 # end class Rel_Path
+
+class Percent (Float) :
+    """Argument or option with a percentage value,
+       specified as integer between 0 and 100.
+
+       Cooked value is float between 0.0 and 1.0.
+    """
+
+    type_abbr     = "%"
+
+    def _cook (self, value) :
+        if isinstance (value, pyk.string_types) :
+            value = int (value, 0)
+        if isinstance (value, int) :
+            value = value / 100.
+        if not (0.0 <= value <= 1.0) :
+            raise (ValueError ("Invalid percentage value %s" % value))
+        return value
+    # end def _cook
+
+# end class Percent
 
 class Config (_Config_, Rel_Path) :
     """Option specifying a config-file"""
