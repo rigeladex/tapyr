@@ -22,6 +22,11 @@
 #    13-Oct-2014 (CT) Use `portable_repr`
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    13-May-2016 (CT) Add `__abs__`, `__gt__`
+#    27-Sep-2016 (CT) Add `__mod__`
+#    27-Sep-2016 (CT) Change `tuple` to use `abs`
+#    27-Sep-2016 (CT) Change `__str__` to handle `sign`, show fractional seconds
+#    28-Sep-2016 (CT) Change `Angle_D.normalized` to accept `_Angle_` instances
+#                     + Add `Angle_R.normalized`
 #    ««revision-date»»···
 #--
 
@@ -107,7 +112,7 @@ class _Angle_ (TFL.Meta.Object) :
     @Once_Property
     def tuple (self) :
         d = self.degrees
-        return (int (d), self.minutes, self.seconds)
+        return (abs (int (d)), abs (self.minutes), abs (self.seconds))
     # end def tuple
 
     def __add__ (self, rhs) :
@@ -149,7 +154,11 @@ class _Angle_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __str__ (self) :
-        return u"%3.3d°%2.2d'%2.2d''" % self.tuple
+        deg, min, sec = self.tuple
+        sign   = "-" if self.degrees < 0 else ""
+        fmt    = u"%s%3.3d°%2.2d'%2.2d''" if sec - int (sec) < 0.0001 \
+            else u"%s%3.3d°%2.2d'%05.2f''"
+        return fmt % (sign, deg, min, sec)
     # end def __str__
 
     def __sub__ (self, rhs) :
@@ -200,6 +209,8 @@ class Angle_D (_Angle_) :
 
     @classmethod
     def normalized (cls, degrees) :
+        if isinstance (degrees, _Angle_) :
+            degrees = degrees.degrees
         return cls (degrees % 360.0)
     # end def normalized
 
@@ -220,6 +231,10 @@ class Angle_D (_Angle_) :
     def __int__ (self) :
         return int (self.degrees)
     # end def __int__
+
+    def __mod__ (self, rhs) :
+        return self.degrees % rhs
+    # end def __mod__
 
 # end class Angle_D
 
@@ -247,6 +262,13 @@ class Angle_R (_Angle_) :
         self.radians = radians
     # end def __init__
 
+    @classmethod
+    def normalized (cls, radians) :
+        if isinstance (radians, _Angle_) :
+            radians = radians.radians
+        return cls (radians % cls.two_pi)
+    # end def normalized
+
     @Once_Property
     def degrees (self) :
         return math.degrees (self.radians)
@@ -264,6 +286,10 @@ class Angle_R (_Angle_) :
     def __int__ (self) :
         return int (self.radians)
     # end def __int__
+
+    def __mod__ (self, rhs) :
+        return self.radians % rhs
+    # end def __mod__
 
 # end class Angle_R
 
