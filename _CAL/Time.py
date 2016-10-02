@@ -29,6 +29,7 @@
 #    29-Mar-2012 (CT) Add support for `tzinfo`, factor `_from_string_match_kw`
 #    28-Feb-2014 (CT) Use future `print_function`
 #    17-Jun-2016 (CT) Change `__sub__` to allow delta values, too
+#    26-Sep-2016 (CT) Correct `microsecond` in `from_decimal_hours`, `seconds`
 #    ««revision-date»»···
 #--
 
@@ -142,7 +143,7 @@ class Time (CAL._DTW_) :
     def from_decimal_hours (cls, h) :
         m = (h - int (h)) * 60
         s = (m - int (m)) * 60
-        u = (s - int (s)) * 1000
+        u = (s - int (s)) * 1000000
         return (cls (int (h), int (m), int (s), int (u + 0.5)))
     # end def from_decimal_hours
 
@@ -190,7 +191,7 @@ class Time (CAL._DTW_) :
         """Seconds since midnight."""
         result = self.hour * 3600 + self.minute * 60 + self.second
         if self.microsecond :
-            result += (self.microsecond / 1000.)
+            result += (self.microsecond / 1000000.)
         return result
     # end def seconds
 

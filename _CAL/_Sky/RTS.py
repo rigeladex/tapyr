@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,13 @@
 #    31-Mar-2008 (CT) `_to_local_time` changed to consider `dst`
 #    31-Mar-2008 (CT) `azimuth` added to newly factored `_Rise_` and `_Set_`
 #    17-Jul-2009 (CT) Don't display floating point values in doctest
+#    25-Sep-2016 (CT) Add comment with reference o altitude formula
+#    26-Sep-2016 (CT) Adapt to factored `CAL.Sky.Earth.Time`
+#    26-Sep-2016 (CT) Adapt doc-tests to correction of `CAL.Time.microsecond`
+#    27-Sep-2016 (CT) Factor `altitude` and `hour_angle` to `CAL.Sky.Earth`
+#    27-Sep-2016 (CT) Factor `local_hour_angle` and add guard
+#    30-Sep-2016 (CT) Use `decl` and `ra`, not `delta` and `alpha`,
+#                     nor `declination` and `right_ascension`
 #    ««revision-date»»···
 #--
 
@@ -36,51 +43,45 @@ from   _TGL                     import TGL
 
 from   _TFL._Meta.Once_Property import Once_Property
 
+from   _CAL._Sky.Earth          import altitude, azimuth, hour_angle
+
 import _CAL._Sky
 import _CAL.Date_Time
 import _CAL.Delta
 import _CAL.Time
+
+from   _TFL.predicate           import rounded_to
+from   _TFL.Angle               import Angle_D, Angle_R
+
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TGL._DRA.Interpolator
-
-from   _TFL.predicate import rounded_to
-from   _TFL.Angle     import Angle_D, Angle_R
 
 class RTS (TFL.Meta.Object) :
     """Model behavior of celestial body for a single day at a specific
        geographical position.
 
-       >>> from _CAL._Sky.Sun import Sun
-       >>> import _CAL.Date
-       >>> s = Sun (CAL.Date (2007, 6, 13))
-       >>> rts = RTS ((s - 1, s, s + 1),
-       ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
-       >>> [x.time for x in (rts.rise, rts.transit, rts.set)]
-       [Time (4, 53, 41, 641), Time (12, 54, 26, 712), Time (20, 55, 49, 352)]
-       >>> s = Sun (CAL.Date (2007, 11, 13))
-       >>> rts = RTS ((s - 1, s, s + 1),
-       ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
-       >>> [str (x.time) for x in (rts.rise, rts.transit, rts.set)]
-       ['06:57:54.000773', '11:38:47.000148', '16:19:21.000831']
-
        ### Example 15.a of J. Meeus, pp.103-104, Venus at Boston
+       >>> import _CAL.Date
        >>> from _TFL.Record import Record
        >>> d  = CAL.Date (1988, 3, 20)
        >>> rts = RTS ( ( Record
-       ...           ( day = d - 1
-       ...           , right_ascension = Angle_D (40.68021)
-       ...           , declination     = Angle_D (18.04761)
+       ...           ( day  = d - 1
+       ...           , time = CAL.Sky.Earth.Time (d - 1)
+       ...           , ra   = Angle_D (40.68021)
+       ...           , decl = Angle_D (18.04761)
        ...           )
        ...       , Record
-       ...           ( day = d
-       ...           , right_ascension = Angle_D (41.73129)
-       ...           , declination     = Angle_D (18.44092)
+       ...           ( day  = d
+       ...           , time = CAL.Sky.Earth.Time (d)
+       ...           , ra   = Angle_D (41.73129)
+       ...           , decl = Angle_D (18.44092)
        ...           )
        ...       , Record
-       ...           ( day = d + 1
-       ...           , right_ascension = Angle_D (42.78204)
-       ...           , declination     = Angle_D (18.82742)
+       ...           ( day  = d + 1
+       ...           , time = CAL.Sky.Earth.Time (d + 1)
+       ...           , ra   = Angle_D (42.78204)
+       ...           , decl = Angle_D (18.82742)
        ...           )
        ...       )
        ...       , lat = Angle_D (42.3333)
@@ -88,7 +89,7 @@ class RTS (TFL.Meta.Object) :
        ...       , h0  = Angle_D (-0.5667)
        ...     )
        >>> rts.day, rts.sid
-       (Date (1988, 3, 20), Angle_D (177.741535578))
+       (Date (1988, 3, 20), Angle_D (177.741566081))
        >>> ["%5.2f" % x.n for x in (rts.rise,rts.transit, rts.set)]
        [' 0.52', ' 0.82', ' 0.12']
        >>> ["%5.2f" % x.alpha.degrees for x in (rts.rise,rts.transit, rts.set)]
@@ -104,7 +105,8 @@ class RTS (TFL.Meta.Object) :
        >>> ["%5.2f" % x.corrected_m for x in (rts.rise, rts.transit, rts.set)]
        [' 0.52', ' 0.82', ' 0.12']
        >>> [x.time_ut for x in (rts.rise, rts.transit, rts.set)]
-       [Time (12, 25, 25, 641), Time (19, 40, 4, 557), Time (2, 54, 40, 56)]
+       [Time (12, 25, 25, 634034), Time (19, 40, 4, 549694), Time (2, 54, 40, 48807)]
+
     """
 
     ### see J. Meeus, pp. 101-104
@@ -115,6 +117,7 @@ class RTS (TFL.Meta.Object) :
             this.m = m
             this.__dict__.update (vars)
             this.calc            (m)
+            #this.azimuth = azimuth (this.delta, this.ha, this.lat)
         # end def __init__
 
         def calc (self, m) :
@@ -126,35 +129,32 @@ class RTS (TFL.Meta.Object) :
         # end def calc
 
         def _at_time (self, m) :
+            ### J. Meeus, p. 103
             lat           = self.lat
+            lon           = self.lon
+            rts           = self.rts
+            ### sid: sidereal time at Greenwich, in degrees,
+            ###      at time `m` (expressed as fraction of a day)
             self.sid      = sid      = Angle_D.normalized \
-                (self.sid.degrees + 360.985647 * m)
+                (rts.sid.degrees + 360.985647 * m)
+            ### n: `m` corrected by difference in
+            ###    Terrestrial Dynamical Time and UT
             self.n        = n        = m + self.day.delta_T / 86400.0
-            self.alpha    = alpha    = Angle_R (self.self.interpolator_a (n))
-            self.delta    = delta    = Angle_R (self.self.interpolator_d (n))
-            self.ha       = ha       = self._hour_angle (sid, self.lon, alpha)
-            self.altitude = altitude = Angle_R.asin \
-                (lat.sin * delta.sin + lat.cos * delta.cos * ha.cos)
-            return ha, delta, altitude
+            self.alpha    = alpha    = Angle_R (rts.interpolator_a (n))
+            self.delta    = delta    = Angle_R (rts.interpolator_d (n))
+            self.ha       = ha       = hour_angle (sid,   lon, alpha)
+            self.altitude = alt      = altitude   (delta, ha,  lat)
+            return ha, delta, alt
         # end def _at_time
 
         def _delta_m (self, ha, dec, alt) :
-            return \
+            ### J. Meeus, p. 103
+            result = \
                 ( (alt - self.h0).degrees
                 / (360.0 * dec.cos * self.lat.cos * ha.sin)
                 )
+            return result
         # end def _delta_m
-
-        def _hour_angle (self, sid, lon, alpha) :
-            ha = (sid - lon - alpha).degrees
-            if abs (ha) >= 360.0 :
-                ha = ha % 360.0
-            if ha > 180.0 :
-                ha -= 360.0
-            if ha < -180.0 :
-                ha += 360.
-            return Angle_D (ha)
-        # end def _hour_angle
 
         def _to_local_time (self, hours_ut) :
             from dateutil.tz import tzlocal
@@ -205,45 +205,82 @@ class RTS (TFL.Meta.Object) :
     class _Transit_ (_Event_) :
 
         def _delta_m (self, ha, dec, alt) :
+            ### J. Meeus, p. 103
             return ha.degrees / 360.0
         # end def _delta_m
 
     # end class _Transit_
 
+    rise = None
+    set  = None
+
     def __init__ (self, ephs, lat, lon, h0 = Angle_D (-0.5667)) :
-        self.ephs  = ephs
-        self.lat   = lat   = Angle_D (getattr (lat, "degrees", lat))
-        self.lon   = lon   = Angle_D (getattr (lon, "degrees", lon))
-        self.h0    = h0    = Angle_D (getattr (h0,  "degrees", h0))
-        self.day   = day   = ephs [1].day
-        self.alpha = alpha = ephs [1].right_ascension
-        self.delta = delta = ephs [1].declination
-        self.sid   = sid   = Angle_D.normalized (day.sidereal_time_deg)
-        self.H0    = H0    = Angle_D.acos \
-            ((h0.sin - lat.sin * delta.sin) / (lat.cos * delta.cos))
-        self.m0    = m0    = ((alpha + lon - sid).degrees / 360.) % 1.0
-        self.m1    = m1    = (m0 - H0.degrees             / 360.) % 1.0
-        self.m2    = m2    = (m0 + H0.degrees             / 360.) % 1.0
-        self.vars  = vars  = locals ()
-        self.transit       = self._Transit_ (m0, ** vars)
-        self.rise          = self._Rise_    (m1, ** vars)
-        self.set           = self._Set_     (m2, ** vars)
+        """Arguments:
+
+           * ephs : triple of positions for UT=0:0 for (day-1, day, day+1)
+
+           * lat  : latitude in degrees
+
+                    + positive in northern hemisphere
+                    + negative in southern hemisphere
+
+           * lon  : longitude in degrees
+
+                    + positive W of Greenwich
+                    + negative E of Greenwich
+
+           * h0   : "standard" altitude, i.e., the geometric altitude of the
+                    center of the body at the time of apparent rising or
+                    setting
+
+                    + 0.5667 degrees for stars and planets
+                    + 0.8333 degrees for the sun
+
+        """
+        rts         = self
+        self.ephs   = ephs
+        self.lat    = lat   = Angle_D (getattr (lat, "degrees", lat))
+        self.lon    = lon   = Angle_D (getattr (lon, "degrees", lon))
+        self.h0     = h0    = Angle_D (getattr (h0,  "degrees", h0))
+        self.day    = day   = ephs [1].day
+        self.alpha  = alpha = ephs [1].ra
+        self.delta  = delta = ephs [1].decl
+        self.time   = time  = ephs [1].time
+        self.sid    = sid   = Angle_D.normalized (time.sidereal_deg)
+        ### H0: local hour angle corresponding to the time of rise or set of a
+        ###     celestial body. J. Meeus, eq. (15.1), p. 102
+        self.H0     = H0    = self.local_hour_angle (h0, lat, delta)
+        self.vars   = vars  = locals ()
+        ### m0, m1, m2
+        ### transit, rise, set times, on `day`, expressed as fractions of a day
+        ### J. Meeus, eq. (15.2), p. 102
+        self.m0     = m0    = ((alpha + lon - sid).degrees / 360.) % 1.0
+        if H0 is not None :
+            self.m1 = m1    = (m0 - H0.degrees             / 360.) % 1.0
+            self.m2 = m2    = (m0 + H0.degrees             / 360.) % 1.0
+            self.rise       = self._Rise_    (m1, ** vars)
+            self.set        = self._Set_     (m2, ** vars)
+        self.transit        = self._Transit_ (m0, ** vars)
     # end def __init__
 
     @Once_Property
     def day_length (self) :
-        return self.set.time_ut - self.rise.time_ut
+        return self.set.time - self.rise.time
     # end def day_length
 
     @Once_Property
     def interpolator_a (self) :
-        ephs = self.ephs
-        return TGL.DRA.Interpolator_3 \
-            ( (-1, ephs [0])
-            , ( 0, ephs [1])
-            , (+1, ephs [2])
-            , y_getter = TFL.Getter [1].right_ascension.radians
-            )
+        def gen (self) :
+            ephs = self.ephs
+            last = None
+            for i, eph in enumerate (ephs, -1) :
+                ra = eph.ra.radians
+                if last is not None and ra < last :
+                    ra += Angle_R.two_pi
+                last = ra
+                yield i, ra
+        ps = tuple (gen (self))
+        return TGL.DRA.Interpolator_3 (* ps)
     # end def interpolator_a
 
     @Once_Property
@@ -253,9 +290,19 @@ class RTS (TFL.Meta.Object) :
             ( (-1, ephs [0])
             , ( 0, ephs [1])
             , (+1, ephs [2])
-            , y_getter = TFL.Getter [1].declination.radians
+            , y_getter = TFL.Getter [1].decl.radians
             )
     # end def interpolator_d
+
+    def local_hour_angle (self, h0, lat, delta) :
+        """Local hour angle corresponding to the time of rise or set of a
+           celestial body.
+        """
+        ### J. Meeus, eq. (15.1), p. 102
+        cos_H0 = (h0.sin - lat.sin * delta.sin) / (lat.cos * delta.cos)
+        if abs (cos_H0) <= 1 :
+            return Angle_D.acos (cos_H0)
+    # end def local_hour_angle
 
 # end class RTS
 

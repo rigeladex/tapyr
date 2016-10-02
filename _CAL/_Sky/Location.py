@@ -17,6 +17,7 @@
 # Revision Dates
 #    14-Nov-2007 (CT) Creation
 #    13-May-2016 (CT) Add `__str__`
+#    29-Sep-2016 (CT) Improve support for `height`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ class Location (TFL.Meta.Object) :
         self.latitude  = self._normalized (latitude)
         self.longitude = self._normalized (longitude)
         self.name      = name
-        self.height    = height
+        self.height    = 0 if height is None else height
         if name is not None :
             Table      = self.Table
             assert name not in Table
@@ -72,6 +73,8 @@ class Location (TFL.Meta.Object) :
             ( abs (lon), "E" if lon.degrees < 0.0 else "W"
             , abs (lat), "S" if lat.degrees < 0.0 else "N"
             )
+        if self.height :
+            result = "%s, %2.0fm above sea level" % (result, self.height)
         if self.name :
             result = "%s [%s]" % (self.name, result)
         return result
@@ -79,8 +82,8 @@ class Location (TFL.Meta.Object) :
 
 # end class Location
 
-Location (Angle_D (48, 14),     Angle_D (-16, -22), "Vienna")
-Location (Angle_D (37, 50, 20), Angle_D (  8,  47), "Porto Covo")
+Location (Angle_D (48, 14),     Angle_D (-16, -22),     "Vienna",     180)
+Location (Angle_D (37, 51,  7), Angle_D (  8,  47, 31), "Porto Covo",  25)
 
 if __name__ != "__main__" :
     CAL.Sky._Export ("*")

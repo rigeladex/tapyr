@@ -36,6 +36,8 @@
 #    29-Mar-2016 (CT) Derive `_Date_Time_Arg_` from `CAO.Opt.Date`, not `.Str`
 #    21-Apr-2016 (CT) Add check for tail to `_from_string_match_kw`
 #    21-Apr-2016 (CT) Redefine `from_string` to pass `check_tail=False`
+#    26-Sep-2016 (CT) Add `as_date`, `as_time`
+#    26-Sep-2016 (CT) Move `sidereal_time` to `CAL.Sky.Earth`
 #    ««revision-date»»···
 #--
 
@@ -98,10 +100,6 @@ class Date_Time (CAL.Date, CAL.Time) :
        Date_Time (2006, 12, 10, 12, 26, 30, 0)
        >>> Date_Time.from_julian (1216470390, kind = "TJS")
        Date_Time (2006, 12, 10, 12, 26, 30, 0)
-
-       >>> d = Date_Time (1987, 4, 10, 19, 21, 0)
-       >>> d.sidereal_time
-       Time (8, 34, 57, 90)
 
        >>> Date_Time (1988,6,19,12).JD
        2447332.0
@@ -174,8 +172,6 @@ class Date_Time (CAL.Date, CAL.Time) :
     _kind            = "datetime"
     _timetuple_slice = lambda s, tt : tt [:6] + (0, )
 
-    mean_solar_day_over_mean_sidereal_day = 1.00273790935
-
     time_pattern     = Regexp \
         ( r"(?P<hour> \d{2,2})"
           r":"
@@ -194,6 +190,11 @@ class Date_Time (CAL.Date, CAL.Time) :
 
     from _CAL.Delta import Date_Time_Delta as Delta
 
+    def as_date (self) :
+        """Return `self` converted to pure `Date`."""
+        return CAL.Date (date = self._body.date ())
+    # end def as_date
+
     def as_local (self) :
         """Return `self` converted to local time."""
         from dateutil.tz import tzlocal
@@ -203,6 +204,11 @@ class Date_Time (CAL.Date, CAL.Time) :
         return self.__class__ \
             (** {self._kind : local._body.astimezone (tzlocal ())})
     # end def as_local
+
+    def as_time (self) :
+        """Return `self` converted to pure `Time`."""
+        return CAL.Time (time = self._body.time ())
+    # end def as_time
 
     def as_utc (self) :
         """Return `self` converted to `UTC`."""
@@ -280,24 +286,6 @@ class Date_Time (CAL.Date, CAL.Time) :
         result = super (Date_Time, cls).from_julian (days, kind = k)
         return result + CAL.Time_Delta (seconds = seconds)
     # end def from_ordinal
-
-    @Once_Property
-    def sidereal_time_deg (self) :
-        """Mean sidereal time at date/time `self` in degrees
-           (applies for UT only).
-        """
-        ### see J. Meeus, ISBN 0-943396-61-1, pp. 87-88
-        ### XXX Fix this to work with arbitrary timezones
-        T  = self.JC_J2000
-        T2 = T  * T
-        T3 = T2 * T
-        return \
-            ( 280.46061837
-            + 360.98564736629 * (self.JD - 2451545.0)
-            + 0.000387933   * T2
-            - T3 / 38710000.0
-            )
-    # end def sidereal_time_deg
 
     @classmethod
     def _from_string_delta (cls, s, ** kw) :

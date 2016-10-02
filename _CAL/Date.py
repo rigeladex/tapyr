@@ -65,6 +65,7 @@
 #    20-Apr-2016 (CT) Factor `month_from_string`
 #    21-Apr-2016 (CT) Add check for tail to `from_string`
 #    14-May-2016 (CT) Strip leading `+` from delta arg for `_Date_Arg_`
+#    26-Sep-2016 (CT) Move `sidereal_time` to `CAL.Sky`
 #    ««revision-date»»···
 #--
 
@@ -469,34 +470,6 @@ class Date (CAL._DTW_) :
         """Relative julian day (based on January 1 of `self.year`)"""
         return self._body.timetuple ().tm_yday
     # end def rjd
-
-    @Once_Property
-    def sidereal_time (self) :
-        """Mean sidereal time at 0h UT of date `self`.
-
-           >>> d = Date (1987, 4, 10)
-           >>> d.sidereal_time
-           Time (13, 10, 46, 367)
-        """
-        import _CAL.Time
-        return CAL.Time.from_degrees (self.sidereal_time_deg)
-    # end def sidereal_time
-
-    @Once_Property
-    def sidereal_time_deg (self) :
-        """Mean sidereal time at 0h UT of date `self` in degrees.
-        """
-        ### see J. Meeus, ISBN 0-943396-61-1, pp. 87-88
-        T  = self.JC_J2000
-        T2 = T  * T
-        T3 = T2 * T
-        return \
-            ( 100.46061837
-            + 36000.770053608 * T
-            + 0.000387933     * T2
-            - T3 / 38710000.0
-            ) % 360.
-    # end def sidereal_time_deg
 
     @Once_Property
     def tuple (self) :

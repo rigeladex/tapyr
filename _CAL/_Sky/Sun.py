@@ -2,7 +2,6 @@
 # Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # ****************************************************************************
@@ -30,6 +29,12 @@
 #                     local times
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    13-May-2016 (CT) Add option `-Location`, allow more than one argument
+#    26-Sep-2016 (CT) Factor `CAL.Sky.Earth.Time`
+#    26-Sep-2016 (CT) Adapt doc-tests to correction of `CAL.Time.microsecond`
+#    27-Sep-2016 (CT) Factor `mean_obliquity_ecliptic` to `CAL.Sky.Earth.Time`
+#    28-Sep-2016 (CT) Add `alt_az`
+#    30-Sep-2016 (CT) Use `decl` and `ra`,
+#                     not `declination` and `right_ascension`
 #    ««revision-date»»···
 #--
 
@@ -42,6 +47,7 @@ from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.Angle                 import Angle_D, Angle_R
 from   _TFL.portable_repr         import portable_repr
 
+import _CAL._Sky.Earth
 import _CAL._Sky.Location
 import _CAL._Sky.RTS
 
@@ -54,40 +60,40 @@ class Sun (TFL.Meta.Object) :
        ### Example 25.a of J. Meeus, p.165
        >>> import _CAL.Date
        >>> s = Sun (CAL.Date (1992, 10, 13))
-       >>> print (portable_repr (s.t))
+       >>> print (portable_repr (s.time.t))
        -0.0721834360027
-       >>> s.geometric_mean_longitude
+       >>> s.time.geometric_mean_longitude_sun
        Angle_D (201.807196507)
-       >>> s.geometric_mean_anomaly
+       >>> s.time.geometric_mean_anomaly_sun
        Angle_D (278.993966432)
-       >>> print (portable_repr (s.eccentriticy_earth_orbit))
+       >>> print (portable_repr (s.time.eccentriticy_earth_orbit))
        0.0167116677149
        >>> s.equation_of_center
        Angle_D (-1.89732384337)
        >>> s.true_longitude
        Angle_D (199.909872663)
        >>> print (s.true_longitude)
-       199°54'35''
+       199°54'35.54''
        >>> print (portable_repr (s.radius_vector))
        0.997661950006
        >>> s.omega
-       Angle_D (264.652582177)
+       Angle_D (264.657131805)
        >>> s.apparent_longitude
-       Angle_D (199.90894186)
+       Angle_D (199.908941896)
        >>> print (s.apparent_longitude)
-       199°54'32''
-       >>> s.mean_obliquity_ecliptic
+       199°54'32.19''
+       >>> s.time.mean_obliquity_ecliptic
        Angle_D (23.4402297955)
-       >>> print (s.mean_obliquity_ecliptic)
-       023°26'24''
-       >>> print (portable_repr (s.mean_obliquity_ecliptic.seconds))
+       >>> print (s.time.mean_obliquity_ecliptic)
+       023°26'24.83''
+       >>> print (portable_repr (s.time.mean_obliquity_ecliptic.seconds))
        24.8272638004
-       >>> s.obliquity_corrected
-       Angle_D (23.4399912173)
-       >>> print (portable_repr (s.right_ascension.degrees))
-       -161.619174788
-       >>> print (portable_repr (s.declination.degrees))
-       -7.78506979602
+       >>> s.time.obliquity_corrected
+       Angle_D (23.4399914197)
+       >>> print (portable_repr (s.ra.degrees))
+       198.380825219
+       >>> print (portable_repr (s.decl.degrees))
+       -7.78506987319
        >>> print (portable_repr (s.equation_of_time))
        13.7110102528
     """
@@ -99,51 +105,29 @@ class Sun (TFL.Meta.Object) :
         Table = cls.Table
         if day in Table :
             return Table [day]
-        self = Table [day] = TFL.Meta.Object.__new__ (cls)
+        self = TFL.Meta.Object.__new__ (cls)
+        if not isinstance (day, CAL.Date_Time) :
+            Table [day] = self
         self._init_ (day)
         return self
     # end def __new__
 
     def _init_ (self, day) :
         self.day   = day
-        self.t     = t = day.JC_J2000
-        self.t2    = t2 = t * t
-        self.t3    = t * t2
-        self.omega = Angle_D (125.04 - 1934.136 * t)
+        self.time  = time = CAL.Sky.Earth.Time (day)
+        self.omega = time.longitude_ascending_node_moon
     # end def _init_
-
-    @Once_Property
-    def geometric_mean_longitude (self) :
-        """Geometric mean longitude of the sun (in degrees)."""
-        ### Eq. (25.2)
-        return Angle_D.normalized \
-            (280.46646 + self.t * 36000.76983 + self.t2 * 0.0003032)
-    # end def geometric_mean_longitude
-
-    @Once_Property
-    def geometric_mean_anomaly (self) :
-        """Geometric mean anomaly of the sun (in degrees)."""
-        ### Eq. (25.3)
-        return Angle_D.normalized \
-            (357.52911 + self.t * 35999.05029 - self.t2 * 0.0001537)
-    # end def geometric_mean_anomaly
-
-    @Once_Property
-    def eccentriticy_earth_orbit (self) :
-        """Eccentricity of earth's orbit (unitless)."""
-        ### Eq. (25.4)
-        return 0.016708634 - self.t * 0.000042037 - self.t2 * 0.0000001267
-    # end def eccentriticy_earth_orbit
 
     @Once_Property
     def equation_of_center (self) :
         """Equation of center for the sun (in degrees)."""
-        m1 = self.geometric_mean_anomaly
-        m2 = m1 * 2
-        m3 = m1 * 3
+        m1   = self.time.geometric_mean_anomaly_sun
+        m2   = m1 * 2
+        m3   = m1 * 3
+        time = self.time
         return Angle_D \
-            ( m1.sin * (1.914602 - 0.004817 * self.t - 0.000014 * self.t2)
-            + m2.sin * (0.019993 - 0.000101 * self.t)
+            ( m1.sin * (1.914602 - 0.004817 * time.t - 0.000014 * time.t2)
+            + m2.sin * (0.019993 - 0.000101 * time.t)
             + m3.sin * (0.000289)
             )
     # end def equation_of_center
@@ -151,13 +135,13 @@ class Sun (TFL.Meta.Object) :
     @Once_Property
     def true_longitude (self) :
         """True longitude of the sun (in degrees)."""
-        return self.geometric_mean_longitude + self.equation_of_center
+        return self.time.geometric_mean_longitude_sun + self.equation_of_center
     # end def true_longitude
 
     @Once_Property
     def true_anomaly (self) :
         """True anamoly of the sun (in degrees)."""
-        return self.geometric_mean_anomaly   + self.equation_of_center
+        return self.time.geometric_mean_anomaly_sun   + self.equation_of_center
     # end def true_anomaly
 
     @Once_Property
@@ -165,7 +149,7 @@ class Sun (TFL.Meta.Object) :
         """Distance of earth to the sun (in AU)."""
         ### Eq. (25.5)
         v = self.true_anomaly
-        e = self.eccentriticy_earth_orbit
+        e = self.time.eccentriticy_earth_orbit
         return (1.000001018 * (1 - e * e)) / (1 + e * v.cos)
     # end def radius_vector
 
@@ -176,41 +160,23 @@ class Sun (TFL.Meta.Object) :
     # end def apparent_longitude
 
     @Once_Property
-    def mean_obliquity_ecliptic (self) :
-        """Mean obliquity of the ecliptic (in degrees)."""
-        ### see J. Meeus, p. 147, Eq. (22.2)
-        return \
-            ( Angle_D (23, 26, 21.448)
-            - Angle_D (seconds = 46.815000) * self.t
-            - Angle_D (seconds =  0.000590) * self.t2
-            + Angle_D (seconds =  0.001813) * self.t3
-            )
-    # end def mean_obliquity_ecliptic
-
-    @Once_Property
-    def obliquity_corrected (self) :
-        """Corrected obliquity of the ecliptic (in degrees)."""
-        ### Eq. (25.8)
-        return self.mean_obliquity_ecliptic + 0.00256 * self.omega.cos
-    # end def obliquity_corrected
-
-    @Once_Property
-    def right_ascension (self) :
+    def ra (self) :
         """Apparent right ascension of the sun (in degrees)."""
         ### Eq. (25.6), for apparent position
-        o = self.obliquity_corrected
-        l = self.apparent_longitude
-        return Angle_D.atan2 (o.cos * l.sin, l.cos)
-    # end def right_ascension
+        o      = self.time.obliquity_corrected
+        l      = self.apparent_longitude
+        result = Angle_R.normalized (Angle_R.atan2 (o.cos * l.sin, l.cos))
+        return result
+    # end def ra
 
     @Once_Property
-    def declination (self) :
+    def decl (self) :
         """Apparent declination of the sun (in degrees)."""
         ### Eq. (25.7), for apparent position
-        o = self.obliquity_corrected
+        o = self.time.obliquity_corrected
         l = self.apparent_longitude
         return Angle_D.asin (o.sin * l.sin)
-    # end def declination
+    # end def decl
 
     @Once_Property
     def equation_of_time (self) :
@@ -218,12 +184,12 @@ class Sun (TFL.Meta.Object) :
            (in minutes).
         """
         ### see J. Meeus, p. 185, Eq. (28.3)
-        e      = self.eccentriticy_earth_orbit
-        l2     = self.geometric_mean_longitude * 2
+        e      = self.time.eccentriticy_earth_orbit
+        l2     = self.time.geometric_mean_longitude_sun * 2
         l4     = l2 * 2
-        m1     = self.geometric_mean_anomaly
+        m1     = self.time.geometric_mean_anomaly_sun
         m2     = m1 * 2
-        o_half = self.mean_obliquity_ecliptic / 2
+        o_half = self.time.mean_obliquity_ecliptic / 2
         y      = o_half.tan ** 2
         return Angle_R \
             (        y     * l2.sin
@@ -233,6 +199,28 @@ class Sun (TFL.Meta.Object) :
             - 1.25 * e * e * m2.sin
             ).degrees * 4.0
     # end def equation_of_time
+
+    def alt_az (self, lat, lon) :
+        """Solar altitude and azimuth angle for location `lat`, `lon`.
+
+           Azimuth is measured eastward from the North.
+        """
+        return self.ha_alt_az (lat, lon) [1:]
+    # end def alt_az
+
+    def ha_alt_az (self, lat, lon) :
+        """Solar hour angle, altitude and azimuth angle for `lat`, `lon`.
+
+           Azimuth is measured eastward from the North.
+        """
+        from _CAL._Sky.Earth import altitude, azimuth, hour_angle
+        ra   = self.ra
+        decl = self.decl
+        ha   = hour_angle (self.time.sidereal_deg, lon, ra)
+        alt  = altitude   (decl, ha, lat)
+        az   = azimuth    (decl, ha, lat)
+        return ha, alt, az
+    # end def ha_alt_az
 
     def __add__ (self, rhs) :
         return self.__class__ (self.day + rhs)
@@ -253,44 +241,51 @@ class RTS_Sun (CAL.Sky.RTS) :
        >>> rts = RTS_Sun ((s - 1, s, s + 1),
        ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
        >>> [x.time for x in (rts.rise, rts.transit, rts.set)]
-       [Time (4, 53, 41, 641), Time (12, 54, 26, 712), Time (20, 55, 49, 352)]
+       [Time (4, 53, 41, 617488), Time (12, 54, 26, 688802), Time (20, 55, 49, 329041)]
+       >>> print (", ".join ("%s" % x.azimuth for x in (rts.rise, rts.set)))
+       053°46'10.29'', 306°17'44.37''
+
        >>> s = Sun (CAL.Date (2007, 11, 13))
        >>> rts = RTS_Sun ((s - 1, s, s + 1),
        ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
        >>> [str (x.time) for x in (rts.rise, rts.transit, rts.set)]
-       ['06:57:54.000773', '11:38:47.000148', '16:19:21.000831']
+       ['06:57:54.736862', '11:38:47.111081', '16:19:21.794159']
        >>> [str (x.time) for x in (rts.civil_twilight_start, rts.civil_twilight_finis)]
-       ['06:23:17.000740', '16:54:00.000491']
+       ['06:23:17.703592', '16:54:00.454387']
        >>> [str (x.time) for x in (rts.nautic_twilight_start, rts.nautic_twilight_finis)]
-       ['05:43:05.000717', '17:34:14.000403']
+       ['05:43:05.680517', '17:34:14.366819']
        >>> [str (x.time) for x in (rts.astro_twilight_start, rts.astro_twilight_finis)]
-       ['05:02:53.000694', '18:14:28.000316']
+       ['05:02:53.657442', '18:14:28.279251']
+       >>> print (", ".join ("%s" % x.azimuth for x in (rts.rise, rts.set)))
+       117°25'39.35'', 242°24'16.60''
+
 
        ### Tests stolen from sunriseset.py
        >>> s = Sun (CAL.Date (2002, 1, 1))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
        >>> rts.rise.time, rts.set.time
-       (Time (7, 47, 23, 812), Time (16, 52, 0, 881))
+       (Time (7, 47, 23, 883358), Time (16, 52, 0, 951961))
        >>> s = Sun (CAL.Date (2002, 3, 30))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
        >>> rts.rise.time, rts.set.time
-       (Time (6, 1, 45, 552), Time (18, 39, 52, 870))
+       (Time (6, 1, 45, 620799), Time (18, 39, 52, 938918))
        >>> s = Sun (CAL.Date (2002, 8, 1))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
        >>> rts.rise.time, rts.set.time
-       (Time (6, 6, 40, 945), Time (20, 38, 24, 361))
+       (Time (6, 6, 41, 19043), Time (20, 38, 24, 434771))
        >>> s = Sun (CAL.Date (2004, 8, 1))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
        >>> rts.rise.time, rts.set.time
-       (Time (6, 7, 14, 51), Time (20, 37, 49, 220))
+       (Time (6, 7, 14, 96321), Time (20, 37, 49, 265441))
        >>> s = Sun (CAL.Date (2000, 6, 21))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0, -0.8333)
        >>> rts.rise.time, rts.set.time
-       (Time (6, 58, 7, 648), Time (19, 5, 30, 185))
+       (Time (6, 58, 7, 710588), Time (19, 5, 30, 247617))
        >>> s = Sun (CAL.Date (2000, 12, 21))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0, -0.8333)
        >>> rts.rise.time, rts.set.time
-       (Time (5, 54, 29, 994), Time (18, 2, 1, 26))
+       (Time (5, 54, 30, 62686), Time (18, 2, 1, 95085))
+
     """
 
     def __init__ (self, ephs, lat, lon, h0 = Angle_D (-0.8333)) :
