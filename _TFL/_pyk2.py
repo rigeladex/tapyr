@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -40,6 +40,7 @@
 #    25-Oct-2015 (CT) Add `pickle_protocol`
 #     3-Nov-2015 (CT) Move argument "replace" to `else` clause of `decoded`
 #     4-Nov-2015 (CT) Add `email_as_bytes`, `email_message_from_bytes`
+#     2-Oct-2016 (CT) Change `adapt__str__` to import `_TFL.I18N`
 #    ««revision-date»»···
 #--
 
@@ -89,9 +90,9 @@ class _Pyk_ (object) :
     def adapt__str__ (cls) :
         dct = cls.__dict__
         if "__str__" in dct and "__unicode__" not in dct :
-            from _TFL import TFL
+            from _TFL.I18N import encode_o
             cls.__unicode__ = cls.__str__
-            cls.__str__     = lambda s : TFL.I18N.encode_o (s.__unicode__ ())
+            cls.__str__     = lambda s : encode_o (s.__unicode__ ())
         return cls
     # end def adapt__str__
 
