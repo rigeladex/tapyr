@@ -122,6 +122,7 @@
 #    18-Dec-2015 (CT) Add optional `save_error` to `expect_except`
 #    10-Feb-2016 (CT) Factor `Cmd.cao` from `__call__`
 #    29-Sep-2016 (CT) Add `Percent`
+#     2-Oct-2016 (CT) Factor `_resolved_range`, add range support to `Float`
 #    ««revision-date»»···
 #--
 
@@ -567,9 +568,13 @@ class _Number_ (_Spec_) :
         head     = cook (r_head, cao)
         tail     = cook (r_tail, cao) + 1
         delta    = cook (r_delta or self.range_delta, cao)
-        for v in range (head, tail, delta) :
+        for v in self._resolved_range (head, tail, delta) :
             yield v
     # end def _resolve_range_1
+
+    def _resolved_range (self, head, tail, delta) :
+        return range (head, tail, delta)
+    # end def _resolved_range
 
 # end class _Number_
 
@@ -736,7 +741,27 @@ class Float (_Number_) :
 
     type_abbr     = "F"
 
+    range_pat     = Regexp \
+        ( r"""^\s*"""
+          r"""(?P<head> (?: 0[xX])? \d+ (?: \. \d* )?)"""
+          r"""\s*"""
+          r"""\.\."""
+          r"""\s*"""
+          r"""(?P<tail> (?: 0[xX])? \d+ (?: \. \d* )?)"""
+          r"""\s*"""
+          r"""(?: : (?P<delta> \d+ (?: \. \d* )?))?"""
+          r"""\s*$"""
+        , re.VERBOSE
+        )
+
     _cook         = float
+
+    def _resolved_range (self, head, tail, delta) :
+        v = head
+        while v < tail :
+            yield v
+            v += delta
+    # end def _resolved_range
 
 # end class Float
 
