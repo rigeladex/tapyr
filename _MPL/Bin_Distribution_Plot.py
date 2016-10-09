@@ -28,16 +28,17 @@
 #    27-Feb-2016 (CT) Add `AutoMinorLocator` for y-axis
 #    27-Feb-2016 (CT) Change `grid` defaults
 #     9-Oct-2016 (CT) Move out from ..._DRA to toplevel package
+#     9-Oct-2016 (CT) Adapt to move of Package_Namespace `DRA`
 #    ««revision-date»»···
 #--
 
 from   _MPL      import MPL
 from   _TFL      import TFL
-from   _TGL._DRA import DRA
+from   _TFL._DRA import DRA
 
 import _MPL.Bin_Locator
+import _TFL._DRA.Binner
 import _TFL._Meta.Object
-import _TGL._DRA.Binner
 
 import pylab
 import numpy.ma              as     ma

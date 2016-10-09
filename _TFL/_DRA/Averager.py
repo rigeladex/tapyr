@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # ****************************************************************************
 #
 #++
 # Name
-#    TGL.DRA.Averager
+#    TFL.DRA.Averager
 #
 # Purpose
 #    Compute average and standard deviation of data series
@@ -17,16 +16,16 @@
 # Revision Dates
 #    22-Nov-2006 (CT) Creation
 #     1-Sep-2008 (CT) `moving_average` added
+#     9-Oct-2016 (CT) Move to Package_Namespace `TFL`
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
-from   _TGL import TGL
 
 from   _TFL.DL_List import DL_Ring
 
 import _TFL._Meta.Object
-import _TGL._DRA
+import _TFL._DRA
 
 import itertools
 import math
@@ -110,5 +109,5 @@ def moving_average (s, n, central = False) :
 # end def moving_average
 
 if __name__ != "__main__" :
-    TGL.DRA._Export ("*")
-### __END__ TGL.DRA.Averager
+    TFL.DRA._Export ("*")
+### __END__ TFL.DRA.Averager

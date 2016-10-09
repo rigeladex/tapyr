@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # ****************************************************************************
 #
 #++
 # Name
-#    TGL.DRA.Binner
+#    TFL.DRA.Binner
 #
 # Purpose
 #    Support for binning of measurement values
@@ -19,14 +18,14 @@
 #    22-Nov-2006 (CT) `delta` added
 #    24-Nov-2006 (CT) Optional argument `center` added to `value`
 #    26-Nov-2006 (CT) `index_f` factored
+#     9-Oct-2016 (CT) Move to Package_Namespace `TFL`
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
-from   _TGL import TGL
 
 import _TFL._Meta.Object
-import _TGL._DRA
+import _TFL._DRA
 
 class Binner (TFL.Meta.Object) :
     """Distribute measurement values into bins.
@@ -74,5 +73,5 @@ class Binner (TFL.Meta.Object) :
 # end class Binner
 
 if __name__ != "__main__" :
-    TGL.DRA._Export ("*")
-### __END__ TGL.DRA.Binner
+    TFL.DRA._Export ("*")
+### __END__ TFL.DRA.Binner

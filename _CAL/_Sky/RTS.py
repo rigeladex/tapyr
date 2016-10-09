@@ -34,12 +34,12 @@
 #    27-Sep-2016 (CT) Factor `local_hour_angle` and add guard
 #    30-Sep-2016 (CT) Use `decl` and `ra`, not `delta` and `alpha`,
 #                     nor `declination` and `right_ascension`
+#     9-Oct-2016 (CT) Adapt to move of Package_Namespace `DRA`
 #    ««revision-date»»···
 #--
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
-from   _TGL                     import TGL
 
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -55,7 +55,7 @@ from   _TFL.Angle               import Angle_D, Angle_R
 
 import _TFL._Meta.Object
 import _TFL.Accessor
-import _TGL._DRA.Interpolator
+import _TFL._DRA.Interpolator
 
 class RTS (TFL.Meta.Object) :
     """Model behavior of celestial body for a single day at a specific
@@ -280,13 +280,13 @@ class RTS (TFL.Meta.Object) :
                 last = ra
                 yield i, ra
         ps = tuple (gen (self))
-        return TGL.DRA.Interpolator_3 (* ps)
+        return TFL.DRA.Interpolator_3 (* ps)
     # end def interpolator_a
 
     @Once_Property
     def interpolator_d (self) :
         ephs = self.ephs
-        return TGL.DRA.Interpolator_3 \
+        return TFL.DRA.Interpolator_3 \
             ( (-1, ephs [0])
             , ( 0, ephs [1])
             , (+1, ephs [2])
