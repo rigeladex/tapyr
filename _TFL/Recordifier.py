@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -9,7 +9,7 @@
 #
 #++
 # Name
-#    TGL.Recordifier
+#    TFL.Recordifier
 #
 # Purpose
 #    Provide classes supporting the conversion of formatted strings to records
@@ -17,11 +17,18 @@
 # Revision Dates
 #    17-Sep-2006 (CT) Creation
 #    23-Dec-2010 (CT) Use `_print` for doctest (`%s` instead of `%r` for `v`)
+#     9-Oct-2016 (CT) Move to Package_Namespace `TFL`
+#     9-Oct-2016 (CT) Fix Python 3 compatibility
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
-from   _TGL import TGL
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
+
+from   _TFL        import TFL
+from   _TFL.pyk    import pyk
 
 from   _TFL.Regexp import re
 
@@ -30,15 +37,14 @@ import _TFL.Record
 import _TFL._Meta.Object
 
 def _print (r) :
-    print "(%s)" % \
-        ( ", ".join \
+    print \
+        ( "(%s)" % ", ".join \
             ( (   "%s = %s" % (k, v)
-              for (k, v) in sorted (r._kw.iteritems ())
+              for (k, v) in sorted (pyk.iteritems (r._kw))
               )
             )
         )
 # end def _print
-
 
 class _Recordifier_ (TFL.Meta.Object) :
 
@@ -90,12 +96,12 @@ class By_Regexp (_Recordifier_) :
     def _field_iter (self, s) :
         match  = self.regexp.search (s)
         if match :
-            for k, v in match.groupdict ().iteritems () :
+            for k, v in pyk.iteritems (match.groupdict ()) :
                 if v is not None :
                     yield k, v
         else :
-            raise ValueError, "`%s` doesn't match `%s`" % \
-                (s, self.regexp._pattern.pattern)
+            raise ValueError \
+                ("`%s` doesn't match `%s`" % (s, self.regexp._pattern.pattern))
     # end def _field_iter
 
 # end class By_Regexp
@@ -128,7 +134,7 @@ class By_Separator (_Recordifier_) :
         self._fields     = []
         add = self._fields.append
         for f in fields :
-            if isinstance (f, str) :
+            if isinstance (f, pyk.string_types) :
                 name    = f
                 c       = kw.get (name, self._default_converter)
             else :
@@ -145,5 +151,5 @@ class By_Separator (_Recordifier_) :
 # end class By_Separator
 
 if __name__ == "__main__" :
-    TGL._Export_Module ()
-### __END__ TGL.Recordifier
+    TFL._Export_Module ()
+### __END__ TFL.Recordifier

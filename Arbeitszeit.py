@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -24,6 +24,7 @@
 #     4-Sep-2012 (CT) Fix bugs, factor functions, add optional fields
 #    29-Mar-2013 (CT) Add meta class `M_Entry` to set `Kind`
 #    30-Jan-2015 (CT) Factor `_Day_Entry_` and `_Sick_`, add `Sick_D`
+#     9-Oct-2016 (CT) Remove dependency on `TGL`
 #    ««revision-date»»···
 #--
 
@@ -273,7 +274,7 @@ def load_periods (file_names, splitter = None, before = None, after = None) :
 # end def load_periods
 
 def _main (cmd) :
-    from _TGL.load_config_file import load_config_file
+    from _TFL.load_config_file import load_config_file
     globs = globals ()
     for cf in cmd.Config :
         load_config_file (cf, globs)

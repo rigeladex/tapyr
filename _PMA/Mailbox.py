@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -71,6 +71,7 @@
 #                     already contained in `self._msg_dict`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #     4-Nov-2015 (CT) Use `parser.parse`, not `parser.parsestr`
+#     9-Oct-2016 (CT) Use `TFL.Observed_Value`, not `TGL.Observed_Value`
 #    ««revision-date»»···
 #--
 
@@ -80,7 +81,6 @@ from   __future__  import print_function
 from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
-from   _TGL                    import TGL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 
@@ -99,7 +99,7 @@ import _TFL.B64 as B64
 import _TFL.Environment
 import _TFL.Record
 import _TFL._Meta.Object
-import _TGL.Observed_Value
+import _TFL.Observed_Value
 
 import errno
 import time
@@ -143,9 +143,9 @@ class _Mailbox_ (TFL.Meta.Object) :
         self.change_list   = []
         self._messages     = None
         self._msg_dict     = {}
-        self._ccount       = TGL.Observed_Value (0, mailbox = self)
+        self._ccount       = TFL.Observed_Value (0, mailbox = self)
         self._chg_list_idx = {}
-        self.unsynced      = TGL.Observed_Value (0, mailbox = self)
+        self.unsynced      = TFL.Observed_Value (0, mailbox = self)
         if qname not in self._Table :
             self._Table [qname] = self
         else :

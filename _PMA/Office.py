@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,11 +32,11 @@
 #     5-Jan-2006 (CT) `_new_delivery_box` factored and changed to load
 #                     mailbox-specific config file, if any
 #    24-Jan-2006 (MG) `virtual_mailbox_path` added
+#     9-Oct-2016 (CT) Remove dependency on `TGL`
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
-from   _TGL                    import TGL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 import _PMA.Mailbox
@@ -44,7 +44,7 @@ import _PMA.Off_Status
 import _TFL.Environment
 import _TFL._Meta.Object
 import _TFL.sos                as     sos
-import _TGL.load_config_file
+import _TFL.load_config_file
 
 from   _TFL.subdirs            import subdirs
 
@@ -121,7 +121,7 @@ class Office (TFL.Meta.Object) :
     # end def _delivery_boxes
 
     def _new_delivery_box (self, d, prefix) :
-        config = TGL.load_config_file \
+        config = TFL.load_config_file \
             ( sos.path.join (d, ".config.py")
             , dict
                 ( Maildir_Type = PMA.Maildir

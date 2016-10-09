@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #    27-Dec-2010 (CT) `minor_version` version increased to 7
 #    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
 #    29-Oct-2015 (CT) Use `utf-8`, not `ascii`, as default `default_encoding`
+#     9-Oct-2016 (CT) Remove dependency on `TGL`
 #    ««revision-date»»···
 #--
 
@@ -47,7 +48,7 @@ def _setup_PMA_properties () :
     import sys
     def load_user_config (* config_fn) :
         from _TFL import sos
-        from _TGL.load_config_file import load_config_file
+        from _TFL.load_config_file import load_config_file
         if not config_fn :
             config_fn = ("~", "PMA", ".config.py")
         load_config_file (sos.path.join (* config_fn), dict (PMA = PMA))

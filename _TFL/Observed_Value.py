@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # ****************************************************************************
 #
 #++
 # Name
-#    TGL.Observed_Value
+#    TFL.Observed_Value
 #
 # Purpose
 #    Encapsulate a value and inform observers about changes of that value
@@ -17,11 +16,16 @@
 # Revision Dates
 #     5-Jan-2006 (CT) Creation
 #    21-Jan-2006 (MG) Support for `kw` added
+#     9-Oct-2016 (CT) Move to Package_Namespace `TFL`
 #    ««revision-date»»···
 #--
 
-from _TFL import TFL
-from _TGL import TGL
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
+
+from   _TFL        import TFL
 
 import _TFL._Meta.Object
 
@@ -30,7 +34,7 @@ class Observed_Value (TFL.Meta.Object) :
 
        >>> x = Observed_Value (0)
        >>> def obs (ov, nv) :
-       ...     print "%s changed to %s" % (ov, nv)
+       ...     print ("%s changed to %s" % (ov, nv))
        ...
        >>> x.register_observer (obs)
        >>> x.value
@@ -104,5 +108,5 @@ class Observed_Value (TFL.Meta.Object) :
 # end class Observed_Value
 
 if __name__ != "__main__" :
-    TGL._Export ("*")
-### __END__ TGL.Observed_Value
+    TFL._Export ("*")
+### __END__ TFL.Observed_Value

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -163,6 +163,7 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    29-Oct-2015 (CT) Fix usage of `vat_privat` (use `get`, not `[]`)
+#     9-Oct-2016 (CT) Remove dependency on `TGL`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,8 @@ from   __future__  import print_function
 from   __future__  import unicode_literals
 
 from   _ATAX             import ATAX
+from   _TFL              import TFL
+
 from   _TFL.Date_Time    import *
 from   _TFL.EU_Currency  import *
 from   _TFL.defaultdict  import defaultdict
@@ -184,8 +187,7 @@ import _TFL.Accessor
 import _TFL.CAO
 import _TFL.r_eval
 
-from   _TGL              import TGL
-import _TGL.load_config_file
+import _TFL.load_config_file
 
 import math
 import sys
@@ -1543,7 +1545,7 @@ class _ATAX_Command_ (TFL.Meta.Object) :
         globs   = globals ()
         cf_dict = dict    (ATAX = ATAX)
         for cf in cmd.Config :
-            TGL.load_config_file (cf, globs, cf_dict)
+            TFL.load_config_file (cf, globs, cf_dict)
     # end def load_config
 
     def _add_files (self, cmd, account, categories, source_currency) :
