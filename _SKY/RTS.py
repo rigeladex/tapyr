@@ -9,7 +9,7 @@
 #
 #++
 # Name
-#    CAL.Sky.RTS
+#    SKY.RTS
 #
 # Purpose
 #    Provide class for calculating of rising, transit and setting of
@@ -35,17 +35,18 @@
 #    30-Sep-2016 (CT) Use `decl` and `ra`, not `delta` and `alpha`,
 #                     nor `declination` and `right_ascension`
 #     9-Oct-2016 (CT) Adapt to move of Package_Namespace `DRA`
+#     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
 #    ««revision-date»»···
 #--
 
 from   _CAL                     import CAL
+from   _SKY                     import SKY
 from   _TFL                     import TFL
 
 from   _TFL._Meta.Once_Property import Once_Property
 
-from   _CAL._Sky.Earth          import altitude, azimuth, hour_angle
+from   _SKY.Earth               import altitude, azimuth, hour_angle
 
-import _CAL._Sky
 import _CAL.Date_Time
 import _CAL.Delta
 import _CAL.Time
@@ -67,19 +68,19 @@ class RTS (TFL.Meta.Object) :
        >>> d  = CAL.Date (1988, 3, 20)
        >>> rts = RTS ( ( Record
        ...           ( day  = d - 1
-       ...           , time = CAL.Sky.Earth.Time (d - 1)
+       ...           , time = SKY.Earth.Time (d - 1)
        ...           , ra   = Angle_D (40.68021)
        ...           , decl = Angle_D (18.04761)
        ...           )
        ...       , Record
        ...           ( day  = d
-       ...           , time = CAL.Sky.Earth.Time (d)
+       ...           , time = SKY.Earth.Time (d)
        ...           , ra   = Angle_D (41.73129)
        ...           , decl = Angle_D (18.44092)
        ...           )
        ...       , Record
        ...           ( day  = d + 1
-       ...           , time = CAL.Sky.Earth.Time (d + 1)
+       ...           , time = SKY.Earth.Time (d + 1)
        ...           , ra   = Angle_D (42.78204)
        ...           , decl = Angle_D (18.82742)
        ...           )
@@ -307,5 +308,5 @@ class RTS (TFL.Meta.Object) :
 # end class RTS
 
 if __name__ != "__main__" :
-    CAL.Sky._Export ("*")
-### __END__ CAL.Sky.RTS
+    SKY._Export ("*")
+### __END__ SKY.RTS

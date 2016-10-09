@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # ****************************************************************************
@@ -23,6 +22,7 @@
 #     1-Jan-2008 (CT) `_balloon_show` changed to show length of day and
 #                     transit height
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#     9-Oct-2016 (CT) Adapt to move of Package_Namespace `SKY`
 #    ««revision-date»»···
 #--
 
@@ -33,6 +33,7 @@ end of the civil, nautic, and astronomical twilight.
 """
 
 from   _TFL                  import TFL
+from   _SKY                  import SKY
 from   _CAL                  import CAL
 
 from   _TFL.predicate        import pairwise
@@ -43,8 +44,8 @@ from   _TGL._TKT._Tk.CTK     import *
 
 import _CAL.Date
 import _CAL.Time
-import _CAL._Sky.Location
-import _CAL._Sky.Sun
+import _SKY.Location
+import _SKY.Sun
 
 import _TFL._Meta.Object
 import _TFL.CAO
@@ -171,7 +172,7 @@ class Display (TFL.Meta.Object) :
     # end def _balloon_hide
 
     def _display_rts (self, date, location, canvas, rect) :
-        self.rts = rts = CAL.Sky.RTS_Sun.On_Day (date, location)
+        self.rts = rts = SKY.RTS_Sun.On_Day (date, location)
         canvas.delete ("sol")
         events = \
             [ rts.astro_twilight_start
@@ -313,10 +314,10 @@ class Toplevel (TFL.Meta.Object) :
 def _main (cmd) :
     date = CAL.Date.from_string (cmd.date)
     if cmd.latitude and cmd.longitude :
-        location = CAL.Sky.Location \
+        location = SKY.Location \
             (cmd.latitude, cmd.longitude, cmd.location or None)
     else :
-        location = CAL.Sky.Location.Table [cmd.location]
+        location = SKY.Location.Table [cmd.location]
     Display.font_grid = (cmd.font, cmd.font_grid_size)
     Display.font_time = (cmd.font, cmd.font_time_size)
     a = Toplevel (date, location, cmd.size, cmd.border)

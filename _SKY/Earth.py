@@ -8,7 +8,7 @@
 #
 #++
 # Name
-#    CAL.Sky.Earth
+#    SKY.Earth
 #
 # Purpose
 #    Provide earth-related astronomical formulas
@@ -19,6 +19,7 @@
 # Revision Dates
 #    26-Sep-2016 (CT) Creation
 #    27-Sep-2016 (CT) Add `altitude`, `azimuth`, and `hour_angle`
+#     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
 #    ««revision-date»»···
 #--
 
@@ -28,9 +29,9 @@ from   __future__  import print_function
 ### from   __future__  import unicode_literals ### breaks doctest
 
 from   _CAL                       import CAL
+from   _SKY                       import SKY
 from   _TFL                       import TFL
 
-import _CAL._Sky
 import _CAL.Date_Time
 
 from   _TFL._Meta.Once_Property   import Once_Property
@@ -450,9 +451,8 @@ Example 22.a of J. Meeus, p.148
     >>> print (time.mean_obliquity_ecliptic + time.nutation_obliquity)
     023°26'36.88''
 
-
 """
 
 if __name__ != "__main__" :
-    CAL.Sky._Export_Module ()
-### __END__ CAL.Sky.Earth
+    SKY._Export_Module ()
+### __END__ SKY.Earth

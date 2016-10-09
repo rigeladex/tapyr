@@ -21,6 +21,7 @@
 #    15-Sep-2015 (CT) Add support for `graphs`
 #    10-Dec-2015 (CT) Add support for `__sphinx__members`
 #     1-Jul-2016 (CT) Add `:special-members` to `_stub_mod_template`
+#     9-Oct-2016 (CT) Adapt to move of Package_Namespaces `DRA`, `SKY`
 #    ««revision-date»»···
 #--
 
@@ -78,8 +79,8 @@ class TFL_SAG_Command (TFL.Command.Root_Command) :
         , "ReST"
         # ### not yet documented (low priority)
         , "GTW.OMP.DNS", "GTW.OMP.NET"
-        , "ATAX", "CAL", "CAL.Sky", "LNX", "PMA", "TFL.Babel"
-        , "TFL.D2", "TFL.FMW", "TFL.SDG", "TFL.Units"
+        , "ATAX", "CAL", "SKY", "LNX", "PMA", "TFL.Babel"
+        , "TFL.D2", "TFL.DRA", "TFL.FMW", "TFL.SDG", "TFL.Units"
         # ### obsolete
         , "TGL"
         }

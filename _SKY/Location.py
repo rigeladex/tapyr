@@ -2,14 +2,13 @@
 # Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # ****************************************************************************
 #
 #++
 # Name
-#    CAL.Sky.Location
+#    SKY.Location
 #
 # Purpose
 #    Model terrestrial location of observer
@@ -18,6 +17,7 @@
 #    14-Nov-2007 (CT) Creation
 #    13-May-2016 (CT) Add `__str__`
 #    29-Sep-2016 (CT) Improve support for `height`
+#     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
 #    ««revision-date»»···
 #--
 
@@ -26,11 +26,10 @@ from   __future__  import division
 from   __future__  import print_function
 from   __future__  import unicode_literals
 
-from   _CAL                     import CAL
+from   _SKY                     import SKY
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
 
-import _CAL._Sky
 import _TFL._Meta.Object
 
 from   _TFL.Angle               import Angle_D, Angle_R
@@ -86,5 +85,5 @@ Location (Angle_D (48, 14),     Angle_D (-16, -22),     "Vienna",     180)
 Location (Angle_D (37, 51,  7), Angle_D (  8,  47, 31), "Porto Covo",  25)
 
 if __name__ != "__main__" :
-    CAL.Sky._Export ("*")
-### __END__ Location
+    SKY._Export ("*")
+### __END__ SKY.Location

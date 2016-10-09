@@ -8,7 +8,7 @@
 #
 #++
 # Name
-#    CAL.Sky.Sun
+#    SKY.Sun
 #
 # Purpose
 #    Provide ephemeris of Sun
@@ -35,21 +35,23 @@
 #    28-Sep-2016 (CT) Add `alt_az`
 #    30-Sep-2016 (CT) Use `decl` and `ra`,
 #                     not `declination` and `right_ascension`
+#     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
 #    ««revision-date»»···
 #--
 
 from   __future__                 import print_function
 
 from   _CAL                       import CAL
+from   _SKY                       import SKY
 from   _TFL                       import TFL
 
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.Angle                 import Angle_D, Angle_R
 from   _TFL.portable_repr         import portable_repr
 
-import _CAL._Sky.Earth
-import _CAL._Sky.Location
-import _CAL._Sky.RTS
+import _SKY.Earth
+import _SKY.Location
+import _SKY.RTS
 
 import _TFL._Meta.Object
 import _TFL.CAO
@@ -114,7 +116,7 @@ class Sun (TFL.Meta.Object) :
 
     def _init_ (self, day) :
         self.day   = day
-        self.time  = time = CAL.Sky.Earth.Time (day)
+        self.time  = time = SKY.Earth.Time (day)
         self.omega = time.longitude_ascending_node_moon
     # end def _init_
 
@@ -213,7 +215,7 @@ class Sun (TFL.Meta.Object) :
 
            Azimuth is measured eastward from the North.
         """
-        from _CAL._Sky.Earth import altitude, azimuth, hour_angle
+        from _SKY.Earth import altitude, azimuth, hour_angle
         ra   = self.ra
         decl = self.decl
         ha   = hour_angle (self.time.sidereal_deg, lon, ra)
@@ -232,7 +234,7 @@ class Sun (TFL.Meta.Object) :
 
 # end class Sun
 
-class RTS_Sun (CAL.Sky.RTS) :
+class RTS_Sun (SKY.RTS) :
     """Model behavior of celestial body for a single day at a specific
        geographical position.
 
@@ -313,10 +315,10 @@ class RTS_Sun (CAL.Sky.RTS) :
 
 def _main (cmd) :
     if cmd.latitude and cmd.longitude :
-        location = CAL.Sky.Location \
+        location = SKY.Location \
             (cmd.latitude, cmd.longitude, cmd.Location or None)
     else :
-        location = CAL.Sky.Location.Table [cmd.Location]
+        location = SKY.Location.Table [cmd.Location]
     print (location, "*" * 20)
     for d in cmd.argv :
         date = CAL.Date.from_string (d)
@@ -368,7 +370,7 @@ _Command = TFL.CAO.Cmd \
     )
 
 if __name__ != "__main__":
-    CAL.Sky._Export ("*")
+    SKY._Export ("*")
 else :
     _Command ()
-### __END__ CAL.Sky.Sun
+### __END__ SKY.Sun
