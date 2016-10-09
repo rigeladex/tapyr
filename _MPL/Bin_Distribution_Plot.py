@@ -2,14 +2,13 @@
 # Copyright (C) 2006-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # ****************************************************************************
 #
 #++
 # Name
-#    TGL.DRA.MPL.Bin_Distribution_Plot
+#    MPL.Bin_Distribution_Plot
 #
 # Purpose
 #    Plot for Bin_Distribution
@@ -17,7 +16,7 @@
 # Revision Dates
 #    24-Nov-2006 (CT) Creation
 #    26-Nov-2006 (CT) `errorbar` and `plot` added
-#    11-Dec-2006 (CT) Moved into package TGL.DRA.MPL and renamed from `MPL`
+#    11-Dec-2006 (CT) Moved into package MPL and renamed from `MPL`
 #                     to `Bin_Distribution_Plot`
 #    11-Dec-2006 (CT) `Bin_Locator` factored into separate module
 #    13-Dec-2006 (CT) `x_pad` and `y_pad` added
@@ -28,15 +27,17 @@
 #    13-Jul-2014 (CT) Add `vmin` and `vmax`
 #    27-Feb-2016 (CT) Add `AutoMinorLocator` for y-axis
 #    27-Feb-2016 (CT) Change `grid` defaults
+#     9-Oct-2016 (CT) Move out from ..._DRA to toplevel package
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
-from   _TGL import TGL
+from   _MPL      import MPL
+from   _TFL      import TFL
+from   _TGL._DRA import DRA
 
-import _TGL._DRA.Binner
-import _TGL._DRA._MPL.Bin_Locator
+import _MPL.Bin_Locator
 import _TFL._Meta.Object
+import _TGL._DRA.Binner
 
 import pylab
 import numpy.ma              as     ma
@@ -55,14 +56,14 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
     vmin              = 0.0
     vmax              = 100.0
     x_formatter       = None
-    x_locator         = TGL.DRA.MPL.Bin_Locator
+    x_locator         = MPL.Bin_Locator
     x_pad             = 0
     x_tick_delta      = None
     x_tick_offset     = 0
     x_tick_format     = "%s"
     x_width           = 1.0
     y_formatter       = None
-    y_locator         = TGL.DRA.MPL.Bin_Locator
+    y_locator         = MPL.Bin_Locator
     y_pad             = 0
     y_tick_delta      = None
     y_tick_offset     = 0
@@ -74,8 +75,8 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         self.ys = ys
         self.fs = fs
         self.__dict__.update (kw)
-        self.x_binner = xb = TGL.DRA.Binner (int (min (xs)), self.x_width)
-        self.y_binner = yb = TGL.DRA.Binner (int (min (ys)), self.y_width)
+        self.x_binner = xb = DRA.Binner (int (min (xs)), self.x_width)
+        self.y_binner = yb = DRA.Binner (int (min (ys)), self.y_width)
         self.xi       = xi = [xb.index (i) for i in xs]
         self.yi       = yi = [yb.index (i) for i in ys]
         self._setup_frequency_map (xi, yi, fs)
@@ -164,5 +165,5 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
 # end class Bin_Distribution_Plot
 
 if __name__ != "__main__" :
-    TGL.DRA.MPL._Export ("*")
-### __END__ TGL.DRA.MPL.Bin_Distribution_Plot
+    MPL._Export ("*")
+### __END__ MPL.Bin_Distribution_Plot

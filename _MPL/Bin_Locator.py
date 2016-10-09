@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # ****************************************************************************
 #
 #++
 # Name
-#    TGL.DRA.MPL.Bin_Locator
+#    MPL.Bin_Locator
 #
 # Purpose
 #    Locator for binned values
@@ -19,11 +18,11 @@
 #    13-Dec-2006 (CT) `pad` added
 #    30-Jun-2008 (CT) Adapted to (undocumented [Arrrg]) changes in
 #                     matplotlib 0.98
+#     9-Oct-2016 (CT) Move out from ..._DRA to toplevel package
 #    ««revision-date»»···
 #--
 
-from   _TGL import TGL
-import _TGL._DRA._MPL
+from   _MPL      import MPL
 
 from   matplotlib.mlab       import frange
 from   matplotlib.ticker     import Locator
@@ -70,5 +69,5 @@ class Bin_Locator (Locator) :
 # end class Bin_Locator
 
 if __name__ != "__main__" :
-    TGL.DRA.MPL._Export ("*")
-### __END__ TGL.DRA.MPL.Bin_Locator
+    MPL._Export ("*")
+### __END__ MPL.Bin_Locator
