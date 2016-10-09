@@ -81,8 +81,6 @@ class TFL_SAG_Command (TFL.Command.Root_Command) :
         , "GTW.OMP.DNS", "GTW.OMP.NET"
         , "ATAX", "CAL", "SKY", "LNX", "PMA", "TFL.Babel"
         , "TFL.D2", "TFL.DRA", "TFL.FMW", "TFL.SDG", "TFL.Units"
-        # ### obsolete
-        , "TGL"
         }
 
     pns_skip_modules        = \

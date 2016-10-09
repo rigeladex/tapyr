@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,14 +20,14 @@
 #    14-Aug-2005 (MG) Use new `TGL._Status_` instead of `PMA._Status_`
 #    24-Sep-2009 (CT) `prop` decorator removed
 #    25-Sep-2009 (CT) Use `property` as decorator (thanks to `.setter`)
+#     9-Oct-2016 (CT) Move `_Status_` back to `PMA`
 #    ««revision-date»»···
 #--
 
 from   _PMA                    import PMA
-from   _TGL                    import TGL
-import _TGL._Status_
+import _PMA._Status_
 
-class Box_Status (TGL._Status_I_) :
+class Box_Status (PMA._Status_I_) :
     """Status of mailbox"""
 
     def __init__ (self, box, * attr) :

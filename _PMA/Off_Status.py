@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,15 +17,15 @@
 # Revision Dates
 #    26-Jul-2005 (CT) Creation
 #    14-Aug-2005 (MG) use new `TGL._Status_` instead of `PMA._Status_`
+#     9-Oct-2016 (CT) Move `_Status_` back to `PMA`
 #    ««revision-date»»···
 #--
 
 from   _PMA                    import PMA
-from   _TGL                    import TGL
 import _PMA.Mailbox
-import _TGL._Status_
+import _PMA._Status_
 
-class Off_Status (TGL._Status_I_) :
+class Off_Status (PMA._Status_I_) :
     """Status of mailbox"""
 
     def __init__ (self, office, * attr) :

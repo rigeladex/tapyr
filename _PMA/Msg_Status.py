@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -21,16 +21,16 @@
 #    26-Jul-2005 (CT) `load` and `save` moved back in here from `_Status_`
 #    26-Jul-2005 (CT) `_Status_C_` factored
 #    14-Aug-2005 (MG) use new `TGL._Status_` instead of `PMA._Status_`
+#     9-Oct-2016 (CT) Move `_Status_` back to `PMA`
 #    ««revision-date»»···
 #--
 
-from   _TGL                    import TGL
 from   _PMA                    import PMA
-import _TGL._Status_
+import _PMA._Status_
 
 import time
 
-class Msg_Status (TGL._Status_C_) :
+class Msg_Status (PMA._Status_C_) :
     """Status of mail message"""
 
     first_read = property (lambda s : s._attr.get ("first_read"))

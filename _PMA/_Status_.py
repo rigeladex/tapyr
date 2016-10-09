@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -9,7 +9,7 @@
 #
 #++
 # Name
-#    TGL._Status_
+#    PMA._Status_
 #
 # Purpose
 #    Root class for various status encapsulators
@@ -25,6 +25,7 @@
 #                     (they are stored in binary mode too)
 #    10-Nov-2009 (CT) Use `pickle` instead of `cPickle` to silence `-3`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#     9-Oct-2016 (CT) Move back to `PMA`
 #    ««revision-date»»···
 #--
 
@@ -34,7 +35,7 @@ from   __future__  import print_function
 from   __future__  import unicode_literals
 
 from   _TFL                     import TFL
-from   _TGL                     import TGL
+from   _PMA                     import PMA
 
 from   _TFL.pyk                 import pyk
 
@@ -150,5 +151,5 @@ class _Status_I_ (_Status_) :
 # end class _Status_I_
 
 if __name__ != "__main__" :
-    TGL._Export ("_Status_", "_Status_C_", "_Status_I_")
-### __END__ TGL._Status_
+    PMA._Export ("_Status_", "_Status_C_", "_Status_I_")
+### __END__ PMA._Status_

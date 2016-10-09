@@ -1,8 +1,0 @@
-- style handling of messages (store as own col)
-- add delete/move/copy/unmark message
-- unseen commands
-- import
-
-done:
-- new subbox
-- add rc-file support
