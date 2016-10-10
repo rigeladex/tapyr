@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -42,8 +42,14 @@
 #    25-Oct-2015 (CT) Add `pickle_protocol`
 #     3-Nov-2015 (CT) Move argument "replace" to `else` clause of `decoded`
 #     4-Nov-2015 (CT) Add `email_as_bytes`, `email_message_from_bytes`
+#    10-Oct-2016 (CT) Make Python-2 compatible
+#                     + Define `fprint` as a function that calls `print`
+#                       - `staticmethod (print)` triggers a syntax error
+#                     + Import `print_function` from `__future__`
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function ### Python2 compatibility
 
 import functools
 
@@ -152,7 +158,19 @@ class _Pyk_ (object) :
         return v
     # end def encoded
 
-    fprint             = staticmethod (print)
+    @staticmethod
+    def fprint (* values, ** kw) :
+        """print(value, ..., sep=' ', end='\\n', file=sys.stdout)
+
+           Prints the values to a stream, or to sys.stdout by default.
+           Optional keyword arguments:
+           file: a file-like object (stream); defaults to the current sys.stdout.
+           sep:  string inserted between values, default a space.
+           end:  string appended after the last value, default a newline.
+        """
+        print (* values, ** kw)
+    # end def fprint
+
     int_types          = (int, )
 
     @staticmethod
