@@ -1,2 +1,1 @@
-exclude .dirin .dirout .gitignore to-do
-include TFL-version
+include LICENSE README.rst

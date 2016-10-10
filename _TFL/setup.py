@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria.
 # Web: http://www.c-tanzer.at/en/ Email: tanzer@swing.co.at
 # All rights reserved
@@ -23,31 +23,36 @@
 #    18-Nov-2013 (CT) Change file encoding to `utf-8`
 #     3-Oct-2014 (CT) Replace `svn` by `git`
 #     3-Oct-2014 (CT) Filter out `__pycache__` directories
+#    10-Oct-2016 (CT) Get `__version__` from `__init__`
+#    10-Oct-2016 (CT) Get `long_description` from `README`
+#    10-Oct-2016 (CT) Use `setuptools`, not `distutils.core`
 #    ««revision-date»»···
 #--
 
 from   __future__               import print_function
 
+from   codecs                   import open
+from   setuptools               import setup, Command
+
+import ast
 import os
+import re
 import sys
-from   distutils.core           import setup
+
+_version_re = re.compile(r'__version__\s+=\s+(.*)')
 
 src_dir = os.path.dirname (__file__)
 if src_dir :
     os.chdir (src_dir)
 
-license = "BSD 3-Clause License"
+license = "BSD License"
 
 name    = "TFL"
 p_name  = "_TFL"
-v_name  = "TFL-version"
 
-try :
-    with open (v_name, "r") as f :
-        version = f.read ().strip ()
-except IOError :
-    print ("No", v_name, "file found")
-    raise SystemExit (1)
+with open ("__init__.py", encoding = "utf-8") as f :
+    version = str \
+        (ast.literal_eval (_version_re.search (f.read ()).group (1)))
 
 packages = []
 for root, dirs, files in os.walk (os.path.join ('..', p_name)) :
@@ -58,29 +63,55 @@ for root, dirs, files in os.walk (os.path.join ('..', p_name)) :
             dirs.remove (d)
     packages.append (root.replace ('/', '.').strip ("."))
 
+class Test_Command (Command) :
+    user_options = []
+
+    def initialize_options (self) :
+        pass
+
+    def finalize_options (self) :
+        pass
+
+    def run (self) :
+        import _TFL.run_doctest
+        _TFL.run_doctest.Command (["-summary", "-transitive", "./"])
+
+# end class Test_Command
+
 setup \
     ( name                 = name
     , version              = version
     , description          =
         "Library with lots of useful stuff (says Ralf Schlatterbeck)"
-    # long_description     =
+    , long_description     =
+        open ("README.rst", encoding = "utf-8").read ().strip ()
     , license              = license
-    , author               = "Christian Tanzer and others"
+    , author               = "Christian Tanzer"
     , author_email         = "tanzer@swing.co.at"
     , url                  = "https://github.com/Tapyr/tapyr"
     , packages             = packages
     , package_dir          = {p_name : ""}
     , platforms            = 'Any'
     , classifiers          = \
-        [ 'Development Status :: 6 - Mature'
+        [ 'Development Status :: 5 - Production/Stable'
         , 'License :: OSI Approved :: ' + license
         , 'Operating System :: OS Independent'
+        , 'Programming Language :: Python'
         , 'Programming Language :: Python :: 2'
+        , 'Programming Language :: Python :: 2.7'
         , 'Programming Language :: Python :: 3'
+        , 'Programming Language :: Python :: 3.5'
         , 'Intended Audience :: Developers'
-        , 'Topic :: Software Development :: Libraries'
-        , 'Topic :: Software Development :: Libraries :: '
-            'Application Frameworks'
         , 'Topic :: Software Development :: Libraries :: Python Modules'
         ]
+    , install_requires     = []
+    , extras_require           = dict
+        ( bcrypt               = ["bcrypt"]
+        , doc                  = ["plumbum", "sphinx"]
+        , human_friendly_hsl   = ["husl"]
+        , I18N                 = ["babel"]
+        , timezone_support     = ["dateutil"]
+        )
+    , cmdclass             = dict (test = Test_Command)
+    , zip_safe             = False ### no eggs, please
     )

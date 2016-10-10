@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -146,6 +146,7 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    13-Nov-2015 (CT) Restrict `__getattr__` change to `__wrapped__`
 #                     [Otherwise, accessing `__PNS__` fails]
+#    10-Oct-2016 (CT) Add `__version__`
 #    ««revision-date»»···
 #--
 
@@ -247,6 +248,7 @@ class Package_Namespace (object) :
                 Table [k]          = self
         c_scope ["__PNS__"]        = self
         c_scope ["__is_PNS__"]     = True
+        self.__version__           = c_scope.get ("__version__", None)
         if qname == "TFL" :
             ### Normally, the `_Export` would happen in the
             ### `if __name__ != "__main__" ` stanza at the bottom

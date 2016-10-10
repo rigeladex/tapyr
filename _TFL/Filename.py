@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -77,6 +77,7 @@
 #    20-May-2010 (CT) `__main__` added
 #    16-May-2012 (CT) Fix `abs_name`, `real_name`, `relative_to` for `Directory`
 #                     (result must NOT contain `base_ext`)
+#    10-Oct-2016 (CT) Fix doctest of `Dirname (__file__)`
 #    ««revision-date»»···
 #--
 
@@ -416,7 +417,7 @@ class Dirname (Filename) :
         >>> g.ext
         ''
         >>> g = Dirname (__file__)
-        >>> g.name.endswith ('/_TFL/')
+        >>> g.name.endswith ('/_TFL/') or g.name == "./"
         True
     """
 
