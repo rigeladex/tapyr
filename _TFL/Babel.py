@@ -27,8 +27,13 @@
 #                     `execfile`
 #    26-Feb-2010 (CT) `process_count` forced to `1`
 #    10-Feb-2016 (CT) Add `root_dir` to `from_sys_modules`; put it in front
+#    10-Oct-2016 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
 
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
@@ -111,12 +116,12 @@ class Language_File_Collection (object) :
                 if os.path.exists (f) :
                     self._update  (lang, f, cmd, templ, pot_file)
                 else :
-                  print "Creating catalog %r based on %r" % (f, pot_file)
+                  print ("Creating catalog %r based on %r" % (f, pot_file))
                   templ.save (f, fuzzy = False)
     # end def init_or_update
 
     def _update (self, lang, po_file_n, cmd, pot_file, pot_file_n) :
-        print "Update catalog `%s` based on `%s`" % (po_file_n, pot_file_n)
+        print ("Update catalog `%s` based on `%s`" % (po_file_n, pot_file_n))
         po_file = TFL.Babel.PO_File.load (po_file_n, locale = lang)
         po_file.update                   (pot_file, cmd.no_fuzzy)
         tmpname = os.path.join\
@@ -164,20 +169,28 @@ class Language_File_Collection (object) :
             for po_file_n in files :
                 po_file    = TFL.Babel.PO_File.load (po_file_n)
                 if po_file.fuzzy and not cmd.use_fuzzy :
-                    print "Catalog %r is marked as fuzzy, skipping" % (po_file_n, )
+                    print \
+                        ( "Catalog %r is marked as fuzzy, skipping"
+                        % (po_file_n, )
+                        )
                     continue
                 for message, errors in po_file.catalog.check ():
                     for error in errors :
-                        print >> sys.stderr, \
-                            "Error: %s:%d: %s", (po_file_n, message.lineno, error)
+                        print \
+                            ( "Error: %s:%d: %s"
+                            % (po_file_n, message.lineno, error)
+                            , file = sys.stderr
+                            )
                 if cmd.javascript :
                     js_file_n  = self._output_file_name (cmd, lang, po_file_n)
-                    print "compiling catalog %r to %r" % (po_file_n, js_file_n)
+                    print \
+                        ("compiling catalog %r to %r" % (po_file_n, js_file_n))
                     po_file.generate_js (lang, js_file_n)
                 else :
                     mo_file_n  = self._output_file_name \
                         (cmd, lang, po_file_n, suffix = cmd.file_suffix)
-                    print "compiling catalog %r to %r" % (po_file_n, mo_file_n)
+                    print \
+                        ("compiling catalog %r to %r" % (po_file_n, mo_file_n))
                     po_file.generate_mo (mo_file_n)
     # end def compile
 
@@ -185,19 +198,24 @@ class Language_File_Collection (object) :
         for lang, files in pyk.iteritems (self.files_per_language) :
             po_file   = TFL.Babel.PO_File.combined (* files)
             if po_file.fuzzy and not cmd.use_fuzzy :
-                print "Catalog %r is marked as fuzzy, skipping" % (files [0], )
+                print \
+                    ( "Catalog %r is marked as fuzzy, skipping"
+                    % (files [0], )
+                    )
                 continue
             for message, errors in po_file.catalog.check ():
                 for error in errors :
-                    print >> sys.stderr, "Error: %s", (error)
+                    print ("Error: %s" % (error), file = sys.stderr)
             if cmd.javascript :
                 js_file_n = self._output_file_name     (cmd, lang)
-                print "compiling combined catalog %r to %r" % (files, js_file_n)
+                print \
+                    ("compiling combined catalog %r to %r" % (files, js_file_n))
                 po_file.generate_js (lang, js_file_n)
             else :
                 mo_file_n = self._output_file_name \
                         (cmd, lang, suffix = cmd.file_suffix)
-                print "compiling combined catalog %r to %r" % (files, mo_file_n)
+                print \
+                    ("compiling combined catalog %r to %r" % (files, mo_file_n))
                 po_file.generate_mo (mo_file_n)
     # end def compile_combined
 

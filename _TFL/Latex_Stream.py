@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2015 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 1999-2016 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -54,10 +54,13 @@
 #    25-May-2004 (RMA) Fixed itemize_txt
 #    15-Feb-2005 (MG)  Use `isinstance` instead of `type`
 #    15-Feb-2005 (MG) `isinstance (<>, str)`
+#    10-Oct-2016 (CT) Make Python-3 compatible
 #    ««revision-date»»
 #--
 
-
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
 
 from    Formatted_Stream import Formatted_Stream
 from    Regexp           import *
@@ -85,7 +88,7 @@ def itemize_txt (description) :
     desc      = []
     while item_head_pat.search (d, start) :
         item_tail_pat.search (d, item_head_pat.end ())
-        print item_head_pat.start ()
+        print (item_head_pat.start ())
         desc.append (d [start : max (0, item_head_pat.start () - 1)])
         desc.append (r"\begin{itemize}")
         start = item_tail_pat.start ()
@@ -347,9 +350,9 @@ class Latex_Stream (Formatted_Stream) :
     # end __init__
 
     def tabular_entry (self, entries, format_fn = None) :
-        if (len (entries) <> self.columns) :
-            print "len (entries): %d" % len (entries)
-            print "self.columns:  %d" % self.columns
+        if (len (entries) != self.columns) :
+            print ("len (entries): %d" % len (entries))
+            print ("self.columns:  %d" % self.columns)
             assert (len (entries) == self.columns)
 
         if format_fn :

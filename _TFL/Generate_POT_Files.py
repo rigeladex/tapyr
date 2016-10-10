@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2016 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -12,17 +12,21 @@
 #    Generate_POT_Files
 #
 # Purpose
-#    «text»···
+#    Generate_POT_Files
 #
 # Revision Dates
 #    28-Oct-2009 (MG) Creation
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
+#    10-Oct-2016 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
 
 """This is the module doc string which, as a test is long enough to span at
    least two lines in the source file.
 """
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
 
 from   _TFL                  import TFL
 
@@ -46,11 +50,11 @@ class Test :
 
     def _test (self) :
         """This is a method doc string"""
-        print _T (ckw.title or "Baz")
-        print _T ("Foo")
+        print (_T (ckw.title or "Baz"))
+        print (_T ("Foo"))
         foo = _("Markup %d")
-        print _T(foo) % 42
-        print _Tn ("Singular", "Plural", 4)
+        print (_T(foo) % 42)
+        print (_Tn ("Singular", "Plural", 4))
     # end def _test
 
 # end class Test
@@ -167,9 +171,11 @@ msgstr ""
             append (self._eval (tokval))
         elif toknum not in self.ignore :
             if toknum != tokenize.NAME or not self._translation_call :
-                print >> sys.stderr, _T \
-                    ("*** %s:%d Unexpekted token %s, %r"
-                    ) % (self._module_name, line_no, toknum, tokval)
+                print \
+                    ( _T ("*** %s:%d Unexpekted token %s, %r")
+                    % (self._module_name, line_no, toknum, tokval)
+                    , file = sys.stderr
+                    )
     # end def _collect_strings
 
     def _check_token (self, toknum, tokval, line_no) :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -17,28 +17,32 @@
 #
 # Revision Dates
 #    15-Apr-2010 (MG) Creation
+#    10-Oct-2016 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
 
 from   _TFL.I18N import _, _T, _Tn, Translations, Config
 import  os
 
 _ ("Just markup")
-print _T  ("Markup and translation")
-print _Tn ("Singular", "Plural", 2)
+print (_T  ("Markup and translation"))
+print (_Tn ("Singular", "Plural", 2))
 
 path  = os.path.join (os.path.dirname (__file__), "-I18N", "de.mo")
 Config.current = Translations (open (path), "messages")
 
-print "_T tests"
-print _T  ("Just markup")
-print _T  ("Markup and translation")
-print _T  ("Singular")
-print _T  ("Plural")
-print "_Tn tests"
-print _Tn ("Singular", "Plural", 0)
-print _Tn ("Singular", "Plural", 1)
-print _Tn ("Singular", "Plural", 2)
+print ("_T tests")
+print (_T  ("Just markup"))
+print (_T  ("Markup and translation"))
+print (_T  ("Singular"))
+print (_T  ("Plural"))
+print ("_Tn tests")
+print (_Tn ("Singular", "Plural", 0))
+print (_Tn ("Singular", "Plural", 1))
+print (_Tn ("Singular", "Plural", 2))
+
 ### __END__ TFL.Babel._Test
-
-
