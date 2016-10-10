@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -24,12 +24,12 @@
 #    21-Jun-2012 (CT) Autoconvert `time_zone` values passed as string
 #    21-Jun-2012 (CT) Fix typo
 #    12-Oct-2014 (CT) Add `sha`
+#    10-Oct-2016 (CT) Remove unnecessary import of `MOM`
 #    ««revision-date»»···
 #--
 
 from   __future__               import unicode_literals, absolute_import
 
-from   _MOM                     import MOM
 from   _TFL                     import TFL
 
 from   _TFL._Meta.Once_Property import Once_Property
