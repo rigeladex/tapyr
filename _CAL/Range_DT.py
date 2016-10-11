@@ -2,7 +2,7 @@
 # Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
-# This module is part of the package TFL.
+# This module is part of the package CAL.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    TFL.Range_DT
+#    CAL.Range_DT
 #
 # Purpose
 #    Represent a range of values of some datetime element type
@@ -18,6 +18,7 @@
 # Revision Dates
 #    26-Jun-2016 (CT) Creation
 #     9-Sep-2016 (CT) Add `FO`
+#    11-Oct-2016 (CT) Move from `TFL` to `CAL`
 #    ««revision-date»»···
 #--
 
@@ -25,6 +26,8 @@ from   __future__  import absolute_import
 from   __future__  import division
 from   __future__  import print_function
 from   __future__  import unicode_literals
+
+from   _CAL                       import CAL
 
 from   _CAL.Date                  import Date
 from   _CAL.Delta                 import Date_Delta, Time_Delta
@@ -1681,5 +1684,5 @@ __test__ = dict \
 __sphinx__members = TFL._.Range._sphinx_members (globals ())
 
 if __name__ != "__main__" :
-    TFL._Export ("*")
-### __END__ TFL.Range_DT
+    CAL._Export ("*")
+### __END__ CAL.Range_DT
