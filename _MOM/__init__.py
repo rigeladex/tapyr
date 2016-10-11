@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This file is part of the package _MOM.
@@ -17,15 +17,13 @@
 #
 # Revision Dates
 #    17-Sep-2009 (CT) Creation (factored from TOM)
+#    11-Oct-2016 (CT) Add ``__version__``
 #    ««revision-date»»···
 #--
 
 from _TFL.Package_Namespace import Package_Namespace
 
-MOM = Package_Namespace ()
-
-del Package_Namespace
-
+__version__ = "1.6.0"
 __doc__ = """
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
@@ -64,5 +62,10 @@ instance of a meta object model is managed by a scope object (modelled by the
 class :class:`MOM.Scope<_MOM.Scope.Scope>`).
 
 """
+
+
+MOM = Package_Namespace ()
+
+del Package_Namespace
 
 ### __END__ MOM.__init__
