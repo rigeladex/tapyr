@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Martin Glueck All rights reserved
+# Copyright (C) 2013-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -19,14 +19,13 @@
 #    29-Jan-2013 (MG) Creation
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    16-Dec-2015 (CT) Change `entity_type_name` to `Query` attribute
+#    11-Oct-2016 (CT) Remove spurious imports of `_GTW`, `_GTW._OMP._PAP.Entity`
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
 from    _MOM.import_MOM        import *
-from    _GTW                   import GTW
-import  _GTW._OMP._PAP.Entity
 
 _Ancestor_Essence = MOM.Object
 
