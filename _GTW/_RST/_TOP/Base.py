@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -52,16 +52,18 @@
 #    28-Apr-2015 (CT) Skip `hidden`  entries in `Index.next`, `.prev`
 #    17-Nov-2015 (CT) Add `as_static_page`
 #    18-Nov-2015 (CT) Remove redundant redefinition of `permalink`
+#    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
+from   _CHJ                     import CHJ
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
 
-import _GTW.Media
+import _CHJ.Media
 import _GTW._RST.Mime_Type
 import _GTW._RST.Resource
 import _GTW._RST._TOP
@@ -146,7 +148,7 @@ class _TOP_Mixin_ (_Ancestor) :
 
     _exclude_robots            = False
     _index                     = None
-    _Media                     = GTW.Media ()
+    _Media                     = CHJ.Media ()
 
     class _TOP_Base_GET_ (HTTP_Method_Mixin, _Ancestor.GET) :
 
@@ -436,7 +438,7 @@ class _TOP_Base_ (_Ancestor) :
         if parent and parent.Media is not _TOP_Base_._Media :
             medias.append (parent.Media)
         if medias :
-            return GTW.Media (children = medias)
+            return CHJ.Media (children = medias)
         return self._Media
     # end def _get_media
 

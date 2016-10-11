@@ -89,9 +89,9 @@ Style_Sheet \
 
   )
 CSS_Link    ("/media/GTW/css/python-console.css")
-CSS_Link    (GTW.CSS_Link.jQuery_UI)
+CSS_Link    (CHJ.CSS_Link.jQuery_UI)
 JS_On_Ready ("$('div.console').open_shell (null, 0);")
-Script      (GTW.Script._.jQuery_UI)
+Script      (CHJ.Script._.jQuery_UI)
 Script      (src = "/media/GTW/js/jquery.debugger.js")
 
 ### __END__ JNJ.html.console.jnj.media

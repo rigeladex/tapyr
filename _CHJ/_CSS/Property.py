@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
-# This module is part of the package GTW.CSS.
+# This module is part of the package CHJ.CSS.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    GTW.CSS.Property
+#    CHJ.CSS.Property
 #
 # Purpose
 #    CSS property specification with necessary vendor prefixes, if any
@@ -20,6 +20,7 @@
 #    13-Apr-2014 (CT) Add `Value`, `Align_Items`, `Align_Self`, `Display`,
 #                     `Justify_Content`, `Order`, `Width`; factor `_Prop_`
 #     9-Jul-2014 (CT) Add `* args` to `Property.__call__`
+#    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    ««revision-date»»···
 #--
 
@@ -71,11 +72,11 @@ vendor prefixes::
 from   __future__ import division, print_function
 from   __future__ import absolute_import, unicode_literals
 
-from   _GTW                       import GTW
+from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
-from   _GTW.Parameters            import P_dict
-import _GTW._CSS
+from   _CHJ.Parameters            import P_dict
+import _CHJ._CSS
 
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.pyk                   import pyk
@@ -196,5 +197,5 @@ Width             = Value    \
     )
 
 if __name__ != "__main__" :
-    GTW.CSS._Export ("*")
-### __END__ GTW.CSS.Property
+    CHJ.CSS._Export ("*")
+### __END__ CHJ.CSS.Property

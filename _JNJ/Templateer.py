@@ -86,6 +86,7 @@
 #    12-Jun-2015 (CT) Add `account_change_email_info`,
 #                     `account_change_password_info`
 #     2-Jun-2016 (CT) Add `e_type_selector`
+#    11-Oct-2016 (CT) Import from `CHJ`, not `GTW`
 #    ««revision-date»»···
 #--
 
@@ -433,7 +434,7 @@ class Template_E (_Template_) :
     # end def call_macro
 
     def get_cached_media (self, css_href, js_href) :
-        from _GTW.Media import Media
+        from _CHJ.Media import Media
         if js_href :
             scripts = self.scripts_x + (js_href, )
         else :
@@ -488,7 +489,7 @@ class Template_E (_Template_) :
 
     @classmethod
     def _eval_fragments (cls, fragments, P, env = None) :
-        from _GTW import Parameters
+        from _CHJ import Parameters
         return Parameters.Scope (P, env).Eval (* fragments)
     # end def _eval_fragments
 

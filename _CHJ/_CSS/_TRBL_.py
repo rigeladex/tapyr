@@ -1,33 +1,34 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
-# This module is part of the package GTW.CSS.
-# 
+# This module is part of the package CHJ.CSS.
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
 #
 #++
 # Name
-#    GTW.CSS._TRBL_
+#    CHJ.CSS._TRBL_
 #
 # Purpose
 #    Base class for top/right/bottom/left spec
 #
 # Revision Dates
 #    18-Jan-2012 (CT) Creation
+#    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division
 from   __future__  import print_function, unicode_literals
 
-from   _GTW                       import GTW
+from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 from   _TFL.pyk                   import pyk
 
-import _GTW._CSS
+import _CHJ._CSS
 import _TFL._Meta.Object
 
 @pyk.adapt__bool__
@@ -90,5 +91,5 @@ class _TRBL_ (_TRBL0_) :
 # end class _TRBL_
 
 if __name__ != "__main__" :
-    GTW.CSS._Export ("_TRBL_", "_TRBL0_")
-### __END__ GTW.CSS._TRBL_
+    CHJ.CSS._Export ("_TRBL_", "_TRBL0_")
+### __END__ CHJ.CSS._TRBL_

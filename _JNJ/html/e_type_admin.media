@@ -24,7 +24,7 @@
 #    ««revision-date»»···
 #--
 
-CSS_Link (GTW.CSS_Link._.jQuery_UI)
+CSS_Link (CHJ.CSS_Link._.jQuery_UI)
 
 style_sheet = Style_Sheet \
     ( Rule

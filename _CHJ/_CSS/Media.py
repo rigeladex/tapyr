@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.CSS.
+# This module is part of the package CHJ.CSS.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    GTW.CSS.Media
+#    CHJ.CSS.Media
 #
 # Purpose
 #    Model CSS media type and queries
@@ -22,15 +22,16 @@
 #    21-Jan-2014 (CT) Support `exprs` of type `dict` in `Query._setup_exprs`
 #    17-Oct-2014 (CT) Put uppercased names into `Type.Table` because `print`
 #    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
+#    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    ««revision-date»»···
 #--
 
 from   __future__                 import print_function, unicode_literals
 
-from   _GTW                       import GTW
+from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
-import _GTW._CSS
+import _CHJ._CSS
 
 from   _TFL.Decorator             import eval_function_body
 from   _TFL._Meta.Once_Property   import Once_Property
@@ -162,7 +163,7 @@ class Query (_Media_) :
 class Rule (_Media_) :
     """Media rule: block of CSS rules specific for a list of media queries.
 
-    >>> from _GTW._CSS.Rule import Rule as R
+    >>> from _CHJ._CSS.Rule import Rule as R
     >>> r1 = R ("tr.row1", "div.row1", color = "grey", clear = "both")
     >>> r2 = R ("tr.row2", "div.row2", color = "blue", clear = "both")
     >>> print (r1)
@@ -303,5 +304,5 @@ sometimes the following test would fail.
 """
 
 if __name__ != "__main__" :
-    GTW.CSS._Export_Module ()
-### __END__ GTW.CSS.Media
+    CHJ.CSS._Export_Module ()
+### __END__ CHJ.CSS.Media

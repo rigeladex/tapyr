@@ -86,6 +86,7 @@
 #     1-Dec-2015 (CT) Add `.lstrip ("/")` to `_handle_generate_static_pages`
 #    12-May-2016 (CT) Guard `asp is not None` in `_handle_generate_static_pages`
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
+#    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
 #    ««revision-date»»···
 #--
 
@@ -101,7 +102,7 @@ import _GTW.File_Session
 import _GTW._OMP.Command
 import _GTW._Werkzeug.App_Cache
 import _GTW._Werkzeug.Static_File_App
-import _GTW.Media
+import _CHJ.Media
 
 import _JNJ.Templateer
 
@@ -550,7 +551,7 @@ class GT2W_Command (GTW.OMP.Command) :
 
     def _wsgi_app (self, cao, ** kw) :
         if cao.media_domain :
-            GTW.Media_Base.Domain = cao.media_domain
+            CHJ.Media_Base.Domain = cao.media_domain
         self._create_cache_p = self._create_cache_p or cao.Setup_Cache
         self._after_app_type = cao.UTP.after_app_type
         apt, url = self.app_type_and_url (cao.db_url, cao.db_name)

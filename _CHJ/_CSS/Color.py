@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
-# This module is part of the package GTW.CSS.
-# 
+# This module is part of the package CHJ.CSS.
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
 #
 #++
 # Name
-#    GTW.CSS.Color
+#    CHJ.CSS.Color
 #
 # Purpose
 #    Model a CSS color value
@@ -18,17 +18,18 @@
 # Revision Dates
 #    17-Jan-2012 (CT) Creation
 #    18-Jan-2012 (CT) Add `C_TRBL0` and `C_TRBL`
+#    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division
 from   __future__  import print_function, unicode_literals
 
-from   _GTW                       import GTW
+from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
-import _GTW._CSS
-import _GTW._CSS._TRBL_
+import _CHJ._CSS
+import _CHJ._CSS._TRBL_
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property   import Once_Property
@@ -183,7 +184,7 @@ class _Color_Converter_ (TFL.Meta.Object) :
 
 Color = _Color_Converter_ ()
 
-class C_TRBL0 (GTW.CSS._TRBL0_) :
+class C_TRBL0 (CHJ.CSS._TRBL0_) :
     """Top/right/bottom/left color spec, undefined values are `transparent`.
 
     >>> print (C_TRBL0 ())
@@ -201,7 +202,7 @@ class C_TRBL0 (GTW.CSS._TRBL0_) :
 
 # end class C_TRBL0
 
-class C_TRBL (GTW.CSS._TRBL_, C_TRBL0) :
+class C_TRBL (CHJ.CSS._TRBL_, C_TRBL0) :
     """Top/right/bottom/left color spec, repeated values.
 
     >>> print (C_TRBL ("red"))
@@ -216,5 +217,5 @@ class C_TRBL (GTW.CSS._TRBL_, C_TRBL0) :
 __all__ = tuple (TFL._.Color.__all__ + ("Color", "C_TRBL", "C_TRBL0"))
 
 if __name__ != "__main__" :
-    GTW.CSS._Export (* __all__)
-### __END__ GTW.CSS.Color
+    CHJ.CSS._Export (* __all__)
+### __END__ CHJ.CSS.Color

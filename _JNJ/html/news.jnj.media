@@ -81,7 +81,7 @@ style_sheet = Style_Sheet \
         )
     )
 
-Script      (GTW.Script._.V5a_pixpander)
-JS_On_Ready (GTW.JS_On_Ready._.V5a_pixpander)
+Script      (CHJ.Script._.V5a_pixpander)
+JS_On_Ready (CHJ.JS_On_Ready._.V5a_pixpander)
 
 ### __END__ html/news.jnj.css

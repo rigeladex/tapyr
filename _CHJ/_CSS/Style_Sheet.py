@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.CSS.
+# This module is part of the package CHJ.CSS.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    GTW.CSS.Style_Sheet
+#    CHJ.CSS.Style_Sheet
 #
 # Purpose
 #    Model a CSS style sheet
@@ -28,16 +28,17 @@
 #     9-Apr-2014 (CT) Add `static_handler` to `Style_File`
 #    10-Oct-2014 (CT) Use `@pyk.adapt__str__` abnd `pyk.decoded`
 #    22-Jan-2016 (CT) Use `pyk.text_type`, not `str`, in `__str__`
+#    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division
 from   __future__  import print_function, unicode_literals
 
-from   _GTW                       import GTW
+from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
-import _GTW._CSS.Media
+import _CHJ._CSS.Media
 
 from   _TFL                       import sos
 from   _TFL.pyk                   import pyk
@@ -59,7 +60,7 @@ class _Style_Sheet_ \
     rank          = 0
 
     def __init__ (self, media = None, ** kw) :
-        self.media = media or GTW.CSS.Media.Type ("all")
+        self.media = media or CHJ.CSS.Media.Type ("all")
         self.__dict__.update (kw)
     # end def __init__
 
@@ -142,5 +143,5 @@ __all__ = tuple \
     )
 
 if __name__ != "__main__" :
-    GTW.CSS._Export (* __all__)
-### __END__ GTW.CSS.Style_Sheet
+    CHJ.CSS._Export (* __all__)
+### __END__ CHJ.CSS.Style_Sheet

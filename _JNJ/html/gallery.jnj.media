@@ -135,7 +135,7 @@ style_sheet = Style_Sheet \
         )
     )
 
-Script      (GTW.Script._.V5a_gallery)
-JS_On_Ready (GTW.JS_On_Ready._.V5a_gallery)
+Script      (CHJ.Script._.V5a_gallery)
+JS_On_Ready (CHJ.JS_On_Ready._.V5a_gallery)
 
 ### __END__ html/gallery.jnj.media

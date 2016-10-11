@@ -45,7 +45,7 @@
 
 from   __future__ import division
 
-CSS_Link (GTW.CSS_Link._.jQuery_UI)
+CSS_Link (CHJ.CSS_Link._.jQuery_UI)
 
 Include ("html/autocomplete.media")
 Include ("html/ui_dialog.media")
@@ -741,14 +741,14 @@ style_sheet = Style_Sheet \
         )
     )
 
-Script  (GTW.Script._.GTW_autocomplete)
-Script  (GTW.Script._.GTW_hd_input)
-Script  (GTW.Script._.GTW_jq_mf3)
+Script  (CHJ.Script._.GTW_autocomplete)
+Script  (CHJ.Script._.GTW_hd_input)
+Script  (CHJ.Script._.GTW_jq_mf3)
 
 ### XXX remove when mf3.js is finished
-Script  (GTW.Script._.GTW_inspect)
+Script  (CHJ.Script._.GTW_inspect)
 
-Script      (GTW.Script._.V5a_externalize)
-JS_On_Ready (GTW.JS_On_Ready._.V5a_Form_externalize)
+Script      (CHJ.Script._.V5a_externalize)
+JS_On_Ready (CHJ.JS_On_Ready._.V5a_Form_externalize)
 
 ### __END__ html/mf3.jnj.media

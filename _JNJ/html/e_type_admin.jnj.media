@@ -22,7 +22,7 @@
 #                     added
 #    24-Oct-2011 (CT) `tablesorter` JS_On_Ready factored into
 #                     `tablesorter.media`
-#     8-Nov-2011 (CT) Add `GTW.Script._.GTW_jq_util`
+#     8-Nov-2011 (CT) Add `CHJ.Script._.GTW_jq_util`
 #    16-Nov-2011 (CT) Add rules for `.restrictions`
 #    17-Nov-2011 (CT) Add rules for `.restrictions` and `JS_On_Ready` for
 #                     `button`
@@ -58,10 +58,10 @@
 
 Include ("html/e_type_admin.media")
 
-Script (GTW.Script._.GTW_L)
-Script (GTW.Script._.GTW_hd_input)
-Script (GTW.Script._.GTW_e_type_admin)
+Script (CHJ.Script._.GTW_L)
+Script (CHJ.Script._.GTW_hd_input)
+Script (CHJ.Script._.GTW_e_type_admin)
 
-JS_On_Ready (GTW.JS_On_Ready._.GTW_e_type_admin)
+JS_On_Ready (CHJ.JS_On_Ready._.GTW_e_type_admin)
 
 ### __END__ html/e_type_admin.jnj.media

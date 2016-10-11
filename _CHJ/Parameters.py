@@ -2,7 +2,7 @@
 # Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.
+# This module is part of the package CHJ.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    GTW.Parameters
+#    CHJ.Parameters
 #
 # Purpose
 #    Support definition of parameters for media, i.e., CSS and JS, fragments
@@ -33,6 +33,7 @@
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    14-Jun-2016 (CT) Add `/media/GTW/js/V5a/form_field.js`
 #    11-Oct-2016 (CT) Factor `TFL.Parameters`
+#    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,7 @@ from   __future__  import division
 from   __future__  import print_function
 from   __future__  import unicode_literals
 
-from   _GTW                       import GTW
+from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
 from   _TFL._Meta.Property        import Lazy_Property
@@ -59,7 +60,7 @@ class Rule (_Parameter_) :
     """Parameterized CSS rule"""
 
     def __call__ (self, P) :
-        from _GTW._CSS import Rule as CSS_Rule
+        from _CHJ._CSS import Rule as CSS_Rule
         RT       = getattr (CSS_Rule, self.__class__.__name__)
         args     = tuple (self._resolved_args (P, self.args))
         children = list  \
@@ -163,8 +164,8 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
     style_sheets         = property (lambda s : s.Style_Sheet._ext)
 
     def __init__ (self, parameters, env = None) :
-        from _GTW._CSS  import import_CSS
-        from _GTW.Media import CSS_Link, JS_On_Ready, Rel_Link, Script
+        from _CHJ._CSS  import import_CSS
+        from _CHJ.Media import CSS_Link, JS_On_Ready, Rel_Link, Script
         self.P                = parameters
         self.CSS_Link         = self._MOB_ (CSS_Link)
         self.JS_On_Ready      = self._MOB_ (JS_On_Ready)
@@ -225,7 +226,7 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
     # end def _eval_file
 
     def _setup_media (self) :
-        from _GTW.Media import Media
+        from _CHJ.Media import Media
         self._Media = Media \
             ( self.CSS_Link._ext
             , self.Script._ext
@@ -297,5 +298,5 @@ __doc__ = r"""
 """
 
 if __name__ != "__main__" :
-    GTW._Export_Module ()
-### __END__ GTW.Parameters
+    CHJ._Export_Module ()
+### __END__ CHJ.Parameters

@@ -2,7 +2,7 @@
 # Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.
+# This module is part of the package CHJ.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    GTW.Media
+#    CHJ.Media
 #
 # Purpose
 #    Encapsulate media specific snippets
@@ -55,13 +55,14 @@
 #     2-Dec-2015 (CT) Add `logging.warning` to `minified_css`, `minified_js`
 #    20-Jan-2016 (CT) Add `_clean_minified_js` to remove superfluous `;`
 #     5-Feb-2016 (CT) Add encoding dance around `_clean_minified_js` call
+#    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    ««revision-date»»···
 #--
 
 from   __future__                         import print_function
 
 from   _TFL                               import TFL
-from   _GTW                               import GTW
+from   _CHJ                               import CHJ
 
 import _TFL.predicate
 import _TFL.Undef
@@ -452,7 +453,7 @@ class Media (TFL.Meta.Object) :
             result = medias [0]
         else :
             result = \
-                GTW.Media (children = medias) if (medias or to_add) else None
+                CHJ.Media (children = medias) if (medias or to_add) else None
         for n, v in pyk.iteritems (to_add) :
             getattr (result, n).add (* v)
         return result
@@ -525,5 +526,5 @@ def minified_js (code) :
 # end def minified_js
 
 if __name__ != "__main__":
-    GTW._Export ("*")
-### __END__ GTW.Media
+    CHJ._Export ("*")
+### __END__ CHJ.Media

@@ -61,11 +61,12 @@
 #     2-Dec-2015 (CT) Fix `Rule.visited`
 #     2-Dec-2015 (CT) Change `nav_col.color_spec_link_current.background_color`
 #    31-Dec-2015 (CT) Change `pg_nav_show` to allow embedded rel-nav buttons
+#    11-Oct-2016 (CT) Import from `CHJ`, not `GTW`
 #    ««revision-date»»···
 #--
 
-from _GTW._CSS.import_CSS import *
-from _GTW.Parameters      import \
+from _CHJ._CSS.import_CSS import *
+from _CHJ.Parameters      import \
     ( Definition, P, P_dict, Rule_Definition
     , Rule, Rule_Attr, Rule_Child, Rule_Class, Rule_Pseudo, Rule_Sibling
     )

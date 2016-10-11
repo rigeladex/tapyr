@@ -287,7 +287,7 @@ style_sheet = Style_Sheet \
         )
     )
 
-Script (GTW.Script._.GTW_e_type_admin)
-JS_On_Ready (GTW.JS_On_Ready._.GTW_e_type_admin)
+Script (CHJ.Script._.GTW_e_type_admin)
+JS_On_Ready (CHJ.JS_On_Ready._.GTW_e_type_admin)
 
 ### __END__ html/regatta_page_r.jnj.media

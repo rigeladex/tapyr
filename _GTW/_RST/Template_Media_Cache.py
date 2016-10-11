@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -29,16 +29,18 @@
 #    15-Apr-2014 (CT) Always create `js` cache to include `Script_File`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    19-Nov-2015 (CT) Change `_create_cache` to delete existing cached files
+#    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
 #    ««revision-date»»···
 #--
 
 from   __future__             import print_function
 
+from   _CHJ                   import CHJ
 from   _GTW                   import GTW
 from   _TFL                   import TFL
 
 import _GTW._RST
-import _GTW.Media
+import _CHJ.Media
 
 from   _TFL.pyk               import pyk
 from   _TFL                   import sos
@@ -60,8 +62,8 @@ class Template_Media_Cache (TFL.Meta.Object) :
             ) :
         if not prefix.startswith ("/") :
             prefix           = "/%s" % (prefix, )
-        if GTW.Media_Base.Domain :
-            prefix           = "".join ((GTW.Media_Base.Domain, prefix))
+        if CHJ.Media_Base.Domain :
+            prefix           = "".join ((CHJ.Media_Base.Domain, prefix))
         self.media_dir       = media_dir
         self.prefix          = prefix
         self.clear_dir       = clear_dir
@@ -86,8 +88,8 @@ class Template_Media_Cache (TFL.Meta.Object) :
             TT.Media_Map [t.name] = t.get_cached_media (css_href, js_href)
             if self.cache_filenames :
                 self._add_filenames (t)
-        self._create_cache ("CSS", css_map, None if TEST else GTW.minified_css)
-        self._create_cache ("js",  js_map,  None if TEST else GTW.minified_js)
+        self._create_cache ("CSS", css_map, None if TEST else CHJ.minified_css)
+        self._create_cache ("js",  js_map,  None if TEST else CHJ.minified_js)
         TT.etag = self._get_etag (root, css_map, js_map, t_set)
         return dict \
             ( css_href_map = TT.css_href_map

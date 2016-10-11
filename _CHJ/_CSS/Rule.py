@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.CSS.
+# This module is part of the package CHJ.CSS.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    GTW.CSS.Rule
+#    CHJ.CSS.Rule
 #
 # Purpose
 #    Model CSS rules
@@ -26,16 +26,17 @@
 #    13-Apr-2014 (CT) Allow list-values in `Rule._formatted_decl`; factor `_gen`
 #     9-Jul-2014 (CT) `Rule.__init__` changed to allow `Rule` arguments
 #                     passed positionally
+#    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division
 from   __future__  import print_function, unicode_literals
 
-from   _GTW                       import GTW
+from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
-import _GTW._CSS
+import _CHJ._CSS
 
 import _TFL._Meta.Object
 
@@ -249,5 +250,5 @@ __all__ = tuple \
     ) + ("Kits", )
 
 if __name__ != "__main__" :
-    GTW.CSS._Export (* __all__)
-### __END__ GTW.CSS.Rule
+    CHJ.CSS._Export (* __all__)
+### __END__ CHJ.CSS.Rule

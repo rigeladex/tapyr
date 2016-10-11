@@ -104,7 +104,7 @@ style_sheet = Style_Sheet \
         )
     )
 
-Script      (GTW.Script._.V5a_page_notifications)
-JS_On_Ready (GTW.JS_On_Ready._.V5a_page_notifications)
+Script      (CHJ.Script._.V5a_page_notifications)
+JS_On_Ready (CHJ.JS_On_Ready._.V5a_page_notifications)
 
 ### __END__ html/page_notifications.m.jnj.media

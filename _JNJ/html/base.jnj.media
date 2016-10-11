@@ -63,7 +63,7 @@
 #    31-Dec-2015 (CT) Add `rel-nav` rules to `pg_nav_show`
 #    15-Jan-2016 (CT) Use `V5a_nav_off_canvas`, not `GTW_nav_off_canvas`
 #    15-Jan-2016 (CT) Remove `base_ie_lt7_hacks.css`
-#    20-Jan-2016 (CT) Use `GTW.Script._.V5a`, not `GTW.Script._.Modernizr`
+#    20-Jan-2016 (CT) Use `CHJ.Script._.V5a`, not `CHJ.Script._.Modernizr`
 #    ««revision-date»»···
 #--
 
@@ -628,8 +628,8 @@ style_sheet = Style_Sheet \
 
 Include     ("html/print.media")
 
-Script      (GTW.Script._.V5a)
-Script      (GTW.Script._.V5a_nav_off_canvas)
-JS_On_Ready (GTW.JS_On_Ready._.V5a_nav_off_canvas)
+Script      (CHJ.Script._.V5a)
+Script      (CHJ.Script._.V5a_nav_off_canvas)
+JS_On_Ready (CHJ.JS_On_Ready._.V5a_nav_off_canvas)
 
 ### __END__ html/base.jnj.media

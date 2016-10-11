@@ -75,14 +75,16 @@
 #    22-Jan-2016 (CT) Remove jQuery_Gritter, GTW_UI_Icon_Map, GTW_jsonify
 #     5-May-2016 (CT) Add `V5a_new_window` to `requires` of `pns_doc_graph`
 #    10-Jun-2016 (CT) Add `V5a_form_field` to `requires` of `e_type_selector`
+#    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
 #    ««revision-date»»···
 #--
 
-from   _GTW import GTW
-import _GTW.Media
+from   _CHJ        import CHJ
+from   _GTW        import GTW
+import _CHJ.Media
 import _GTW.V5a
 
-GTW.Script \
+CHJ.Script \
     ( src       = "/media/GTW/js/modernizr.custom.js"
     , may_cache = False
     , name      = "Modernizr"
@@ -90,158 +92,158 @@ GTW.Script \
     )
 
 if __debug__ :
-    GTW.Script \
+    CHJ.Script \
         ( src       = "/media/GTW/js/jquery.js"
         , rank      = -101  ## should be loaded first
         , name      = "jQuery"
         )
-    GTW.Script \
+    CHJ.Script \
         ( src       = "/media/GTW/js/jquery-ui.js"
         , name      = "jQuery_UI"
         , rank      = -100  ## should be loaded first
-        , requires  = (GTW.Script._.jQuery, )
+        , requires  = (CHJ.Script._.jQuery, )
         )
 else :
-    GTW.Script \
+    CHJ.Script \
         ( src       = "/media/GTW/js/jquery.min.js"
         , rank      = -101  ## should be loaded first
         , name      = "jQuery"
         )
-    GTW.Script \
+    CHJ.Script \
         ( src       = "/media/GTW/js/jquery-ui.min.js"
         , name      = "jQuery_UI"
         , rank      = -100  ## should be loaded first
-        , requires  = (GTW.Script._.jQuery, )
+        , requires  = (CHJ.Script._.jQuery, )
         )
 
-GTW.CSS_Link ("/media/GTW/css/jquery-ui.css", name = "jQuery_UI")
+CHJ.CSS_Link ("/media/GTW/css/jquery-ui.css", name = "jQuery_UI")
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/leaflet.min.js"
     , name     = "leaflet"
     , rank     = -90
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW.js"
     , name     = "GTW"
     , rank     = -50
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/inspect.js"
     , name     = "GTW_inspect"
-    , requires = (GTW.Script._.GTW, )
+    , requires = (CHJ.Script._.GTW, )
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/L.js"
     , name     = "GTW_L"
-    , requires = (GTW.Script._.GTW, )
+    , requires = (CHJ.Script._.GTW, )
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/util.js"
     , name     = "GTW_util"
     , requires =
-        ( GTW.Script._.GTW
-        , GTW.Script._.V5a_history_push
+        ( CHJ.Script._.GTW
+        , CHJ.Script._.V5a_history_push
         )
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/util.js"
     , name     = "GTW_jq_util"
     , requires =
-        ( GTW.Script._.GTW_util
-        , GTW.Script._.jQuery
+        ( CHJ.Script._.GTW_util
+        , CHJ.Script._.jQuery
         )
     )
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/autocomplete.js"
     , name     = "GTW_autocomplete"
-    , requires = (GTW.Script._.jQuery_UI, GTW.Script._.GTW_jq_util)
+    , requires = (CHJ.Script._.jQuery_UI, CHJ.Script._.GTW_jq_util)
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/button_pure.js"
     , name     = "GTW_button_pure"
     , rank     = -10
-    , requires = (GTW.Script._.jQuery_UI, GTW.Script._.GTW)
+    , requires = (CHJ.Script._.jQuery_UI, CHJ.Script._.GTW)
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/hd_input.js"
     , name     = "GTW_hd_input"
-    , requires = (GTW.Script._.jQuery, )
+    , requires = (CHJ.Script._.jQuery, )
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/pns_doc_graph.js"
     , name     = "GTW_pns_doc_graph"
-    , requires = (GTW.Script._.jQuery, GTW.Script._.V5a_new_window)
+    , requires = (CHJ.Script._.jQuery, CHJ.Script._.V5a_new_window)
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/e_type_selector.js"
     , name     = "GTW_e_type_selector"
     , requires =
-        ( GTW.Script._.GTW_autocomplete
-        , GTW.Script._.GTW_button_pure
-        , GTW.Script._.GTW_jq_util
-        , GTW.Script._.GTW_util
-        , GTW.Script._.V5a_form_field
+        ( CHJ.Script._.GTW_autocomplete
+        , CHJ.Script._.GTW_button_pure
+        , CHJ.Script._.GTW_jq_util
+        , CHJ.Script._.GTW_util
+        , CHJ.Script._.V5a_form_field
         )
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/query_restriction.js"
     , name     = "GTW_query_restriction"
     , requires =
-        ( GTW.Script._.GTW_autocomplete
-        , GTW.Script._.GTW_button_pure
-        , GTW.Script._.GTW_e_type_selector
-        , GTW.Script._.GTW_jq_util
-        , GTW.Script._.GTW_util
-        , GTW.Script._.GTW_L
-        , GTW.Script._.V5a_history_push
+        ( CHJ.Script._.GTW_autocomplete
+        , CHJ.Script._.GTW_button_pure
+        , CHJ.Script._.GTW_e_type_selector
+        , CHJ.Script._.GTW_jq_util
+        , CHJ.Script._.GTW_util
+        , CHJ.Script._.GTW_L
+        , CHJ.Script._.V5a_history_push
         )
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/e_type_admin.js"
     , name     = "GTW_e_type_admin"
     , requires =
-        ( GTW.Script._.jQuery_UI
-        , GTW.Script._.GTW_query_restriction
+        ( CHJ.Script._.jQuery_UI
+        , CHJ.Script._.GTW_query_restriction
         )
     )
-GTW.JS_On_Ready \
+CHJ.JS_On_Ready \
     ( """$GTW.ETA$.setup_obj_list (); """
     , name = "GTW_e_type_admin"
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/mf3.js"
     , name     = "GTW_jq_mf3"
     , requires =
-        ( GTW.Script._.GTW_autocomplete
-        , GTW.Script._.GTW_e_type_selector
-        , GTW.Script._.GTW_util
-        , GTW.Script._.GTW_L
+        ( CHJ.Script._.GTW_autocomplete
+        , CHJ.Script._.GTW_e_type_selector
+        , CHJ.Script._.GTW_util
+        , CHJ.Script._.GTW_L
         )
     )
 
-GTW.Script \
+CHJ.Script \
     ( src      = "/media/GTW/js/GTW/jQ/week_roller.js"
     , name = "GTW_week_roller"
     , requires =
-        ( GTW.Script._.jQuery_UI
-        , GTW.Script._.GTW_util
-        , GTW.Script._.V5a_history_push
+        ( CHJ.Script._.jQuery_UI
+        , CHJ.Script._.GTW_util
+        , CHJ.Script._.V5a_history_push
         )
     )
-GTW.JS_On_Ready \
+CHJ.JS_On_Ready \
     ( """$(".week-roller").gtw_week_roller (); """
     , name = "GTW_week_roller"
     )

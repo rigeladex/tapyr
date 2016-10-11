@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.CSS.
+# This module is part of the package CHJ.CSS.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    GTW.CSS.Length
+#    CHJ.CSS.Length
 #
 # Purpose
 #    Model a CSS length value
@@ -27,17 +27,18 @@
 #    18-Jan-2012 (CT) Add support for arithmetic operators to `TRBL`, `TRBL0`
 #    18-Jan-2012 (CT) Factor `_TRBL_`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division
 from   __future__  import print_function, unicode_literals
 
-from   _GTW                       import GTW
+from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
-import _GTW._CSS
-import _GTW._CSS._TRBL_
+import _CHJ._CSS
+import _CHJ._CSS._TRBL_
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property   import Once_Property
@@ -354,7 +355,7 @@ class Vw (_Length_) :
 # end class Vw
 
 @pyk.adapt__div__
-class TRBL0 (GTW.CSS._TRBL0_) :
+class TRBL0 (CHJ.CSS._TRBL0_) :
     """Top/right/bottom/left spec, undefined values are 0.
 
     >>> print (TRBL0 (0))
@@ -445,7 +446,7 @@ class TRBL0 (GTW.CSS._TRBL0_) :
 
 # end class TRBL0
 
-class TRBL (GTW.CSS._TRBL_, TRBL0) :
+class TRBL (CHJ.CSS._TRBL_, TRBL0) :
     """Top/right/bottom/left spec, repeated values.
 
     >>> print (TRBL ())
@@ -517,5 +518,5 @@ __all__ = tuple \
     ) + ("Length", "TRBL0", "TRBL", "HV")
 
 if __name__ != "__main__" :
-    GTW.CSS._Export (* __all__)
-### __END__ GTW.CSS.Length
+    CHJ.CSS._Export (* __all__)
+### __END__ CHJ.CSS.Length
