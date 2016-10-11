@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package ReST.
@@ -18,6 +18,7 @@
 # Revision Dates
 #    21-Feb-2012 (CT) Creation
 #    27-Nov-2015 (CT) Fix `option_spec` for `align`
+#    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
 #    ««revision-date»»···
 #--
 
@@ -68,8 +69,8 @@ class Vimeo (_Video_) :
 
     @property
     def runner (self) :
-        from _GTW.HTML import vimeo_video
-        return GTW.HTML.vimeo_video
+        from _TFL.HTML import vimeo_video
+        return TFL.HTML.vimeo_video
     # end def runner
 
 # end class Vimeo
@@ -86,7 +87,7 @@ class Youtube (_Video_) :
 
     @property
     def runner (self) :
-        from _GTW.HTML import youtube_video
+        from _TFL.HTML import youtube_video
         return youtube_video
     # end def runner
 

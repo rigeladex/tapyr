@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.
+# This module is part of the package TFL.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
@@ -10,10 +10,10 @@
 #
 #++
 # Name
-#    GTW.HTML
+#    TFL.HTML
 #
 # Purpose
-#    Provide HTML related functions for GTW
+#    Provide HTML related functions
 #
 # Revision Dates
 #    17-Feb-2010 (CT) Creation
@@ -32,12 +32,12 @@
 #    20-Aug-2013 (CT) Add `(TM)` to, change `(c)` and `...` in, `Entity_Map`
 #    12-Oct-2014 (CT) Change `Cleaner` to use `BeautifulSoup4`
 #    12-Oct-2014 (CT) Add `Cleaner.parser`
+#    11-Oct-2016 (CT) Move from `GTW` to `TFL`
 #    ««revision-date»»···
 #--
 
 from   __future__               import print_function
 
-from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 from   _TFL.I18N                import _, _T, _Tn
@@ -291,5 +291,5 @@ vimeo_video   = Vimeo   ()
 youtube_video = Youtube ()
 
 if __name__ != "__main__" :
-    GTW._Export_Module ()
-### __END__ GTW.HTML
+    TFL._Export_Module ()
+### __END__ TFL.HTML

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -24,6 +24,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    12-Oct-2014 (CT) Adapt `HTML` to `GTW.HTML.Cleaner` using BeautifulSoup4
 #    13-Nov-2015 (CT) Adapt to changes in `markdown.Markdown` signature
+#    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
 #    ««revision-date»»···
 #--
 
@@ -36,7 +37,7 @@ from   _TFL                   import TFL
 from   _MOM.import_MOM        import *
 
 import _GTW._OMP._SWP
-import _GTW.HTML
+import _TFL.HTML
 import _ReST.To_Html
 
 from   _TFL.I18N              import _, _T, _Tn
@@ -84,7 +85,7 @@ class HTML (_Format_) :
 
     @classmethod
     def convert (cls, text) :
-        cleaner  = GTW.HTML.Cleaner (text, "html.parser")
+        cleaner  = TFL.HTML.Cleaner (text, "html.parser")
         comments = cleaner.remove_comments ()
         if comments :
             raise ValueError \

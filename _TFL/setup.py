@@ -108,9 +108,10 @@ setup \
     , extras_require           = dict
         ( bcrypt               = ["bcrypt"]
         , doc                  = ["plumbum", "sphinx"]
+        , html_cleaner         = ["bs4"]
         , human_friendly_hsl   = ["husl"]
         , I18N                 = ["babel"]
-        , timezone_support     = ["dateutil"]
+        , timezone_support     = ["python-dateutil"]
         )
     , cmdclass             = dict (test = Test_Command)
     , zip_safe             = False ### no eggs, please

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -17,12 +17,13 @@
 #
 # Revision Dates
 #    30-Jul-2012 (CT) Creation (factored from GTW.NAV.E_Type.Query_Restriction)
+#    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
-from   _GTW.HTML                        import Styler_Safe
+from   _TFL.HTML                        import Styler_Safe
 
 from   _GTW._RST._MOM.Query_Restriction import *
 import _GTW._RST._TOP._MOM

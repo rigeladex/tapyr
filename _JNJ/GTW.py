@@ -62,6 +62,7 @@
 #    13-Nov-2015 (CT) Define `dir`, `setattr` as functions to avoid sphinx errors
 #    16-May-2016 (CT) Add `xmlattr`
 #    16-May-2016 (CT) Add guard for `Undefined` to `filtered_dict`
+#    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
 #    ««revision-date»»···
 #--
 
@@ -69,8 +70,6 @@ from   __future__               import print_function
 
 from   _JNJ                     import JNJ
 from   _TFL                     import TFL
-
-from   _GTW                     import HTML
 
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import filtered_join
@@ -82,6 +81,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Caller
+import _TFL.HTML
 import _TFL.Sorted_By
 
 import itertools
@@ -297,7 +297,7 @@ class GTW (TFL.Meta.Object) :
 
     sorted     = staticmethod (sorted)
     Sorted_By  = TFL.Sorted_By
-    styler     = staticmethod (HTML.Styler)
+    styler     = staticmethod (TFL.HTML.Styler)
 
     def tel_uri (self, phone_number, text = None, ** kw) :
         """Returns a telephone URI for `phone_number`.
@@ -320,7 +320,7 @@ class GTW (TFL.Meta.Object) :
            `kw`.
 
            If `kw` contains a true value for `obfuscate`,
-           :func:`~_GTW.HTML.obfuscator` will be applied to the result.
+           :func:`~_TFL.HTML.obfuscator` will be applied to the result.
 
            All other values in `kw` will be converted to attributes of the <a>
            element.
@@ -334,7 +334,7 @@ class GTW (TFL.Meta.Object) :
         attrs = " ".join (sorted (attrs))
         result = u"""<a %(attrs)s>%(text)s</a>""" % locals ()
         if obfuscate :
-            result = HTML.obfuscator [scheme] (result)
+            result = TFL.HTML.obfuscator [scheme] (result)
         return result
     # end def uri
 
@@ -343,8 +343,8 @@ class GTW (TFL.Meta.Object) :
         return uuid.uuid1 ().hex
     # end def uuid
 
-    vimeo_video   = staticmethod (HTML.vimeo_video)
-    youtube_video = staticmethod (HTML.youtube_video)
+    vimeo_video   = staticmethod (TFL.HTML.vimeo_video)
+    youtube_video = staticmethod (TFL.HTML.youtube_video)
 
     def xmlattr (self, * ds, ** kw) :
         """Convert (sorted) items of dict `d` to SGML/XML attribute string.

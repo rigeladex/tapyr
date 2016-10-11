@@ -60,6 +60,7 @@
 #     6-Nov-2015 (CT) Move `.encode` from `_formatted` to `_send`
 #    10-Dec-2015 (CT) Add option `-Short_body`
 #    14-Mar-2016 (CT) Change option types from `S` to `U` for `-subject`...
+#    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
 #    ««revision-date»»···
 #--
 
@@ -262,12 +263,11 @@ class Composer (TFL.Meta.Object) :
 
     @Once_Property
     def to_html (self) :
-        from   _GTW  import GTW
         from   _ReST import ReST
         import _ReST.To_Html
-        import _GTW.HTML
+        import _TFL.HTML
         ReST.to_html.add_replacers \
-            ( GTW.HTML.Styler
+            ( TFL.HTML.Styler
             , Re_Replacer (r'border="1"', r"")
             )
         return ReST.to_html

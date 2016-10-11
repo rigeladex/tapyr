@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    27-Nov-2015 (CT) Creation
+#    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
 #    ««revision-date»»···
 #--
 
@@ -29,7 +30,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST._TOP.Page
-import _GTW.HTML
+import _TFL.HTML
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
@@ -52,7 +53,7 @@ class _Video_ (_Ancestor) :
     @getattr_safe
     def render_video (self) :
         name   = "%s_video" % (self.video_server, )
-        result = getattr (GTW.HTML, name)
+        result = getattr (TFL.HTML, name)
         return result
     # end def render_video
 
