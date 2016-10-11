@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -23,6 +23,7 @@
 #     8-Feb-2005 (CED) Various improvements
 #     9-Feb-2005 (CED) Some simplifications done
 #    24-Mar-2005 (CT)  Use `Math_Func.gcd` instead of `predicate.gcd`
+#    11-Oct-2016 (CT)  Implement `Math_Func` from `_TFL`
 #    ««revision-date»»···
 #--
 
@@ -30,11 +31,10 @@ from   __future__                 import print_function
 
 from   _TFL                       import TFL
 
+from   _TFL                       import Math_Func
 from   _TFL.pyk                   import pyk
 from   _TFL.Regexp                import Regexp, re
 from   _TFL._Meta.totally_ordered import totally_ordered
-
-import Math_Func
 
 @pyk.adapt__div__
 @totally_ordered

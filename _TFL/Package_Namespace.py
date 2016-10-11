@@ -147,6 +147,7 @@
 #    13-Nov-2015 (CT) Restrict `__getattr__` change to `__wrapped__`
 #                     [Otherwise, accessing `__PNS__` fails]
 #    10-Oct-2016 (CT) Add `__version__`
+#    11-Oct-2016 (CT) Hide `import` behind `#` in `__doc__`
 #    ««revision-date»»···
 #--
 
@@ -553,10 +554,10 @@ class Derived_Package_Namespace (Package_Namespace) :
            ###    Y.py
            ###                                          Z.py
 
-           from   _D import D
-           import _D.X        ### imports from _D/X.py
-           import _D.Y        ### imports from _B/Y.py
-           import _D.Z        ### imports from _D/Z.py
+           # from   _D import D
+           # import _D.X        ### imports from _D/X.py
+           # import _D.Y        ### imports from _B/Y.py
+           # import _D.Z        ### imports from _D/Z.py
 
        For derived imports to work, the Derived_Package_Namespace must be
        imported before the module needing import derivation is imported (this
@@ -627,12 +628,12 @@ the module name. There are different styles how to access such a
 class::
 
    #1
-   import Bar
-   instance = Bar.Bar ()
+   # import Bar
+   # instance = Bar.Bar ()
 
    #2
-   from Bar import Bar
-   instance = Bar ()
+   # from Bar import Bar
+   # instance = Bar ()
 
 Many Pythoneers use the `Bar.Bar` notation to refer to the class `Bar`
 defined by module `Bar`. I strongly prefer to use `Bar` to refer to
@@ -641,16 +642,16 @@ the class.
 In the presence of packages, there are even more possibilities::
 
    #3
-   import Foo_Package.Bar
-   instance = Foo_Package.Bar.Bar ()
+   # import Foo_Package.Bar
+   # instance = Foo_Package.Bar.Bar ()
 
    #4
-   from Foo_Package import Bar
-   instance = Bar.Bar ()
+   # from Foo_Package import Bar
+   # instance = Bar.Bar ()
 
    #5
-   from Foo_Package.Bar import Bar
-   instance = Bar ()
+   # from Foo_Package.Bar import Bar
+   # instance = Bar ()
 
 If one wants to avoid name clashes only #3 is usable. Unfortunately,
 this makes for very verbose and unreadable code. One way to avoid this
@@ -670,16 +671,16 @@ the `__init__.py`. The disadvantages of this approach are
 :class:`Package_Namespace` provides another option::
 
    #6
-   from   Foo_Package import Foo
-   import Foo_Package.Bar
-   instance = Foo.Bar ()
+   # from   Foo_Package import Foo
+   # import Foo_Package.Bar
+   # instance = Foo.Bar ()
 
 In order to support this, `Foo_Package/__init__.py` must export an
 instance `Foo` of :class:`Package_Namespace`::
 
    ### Foo_Package/__init__.py
-   from _TFL.Package_Namespace import Package_Namespace
-   Foo = Package_Namespace ()
+   # from _TFL.Package_Namespace import Package_Namespace
+   # Foo = Package_Namespace ()
 
 The :class:`Package_Namespace` provides the :meth:`~Package_Namespace._Export`
 method called by modules of the package to export classes/functions module into
@@ -713,9 +714,9 @@ i.e., use the same name but with a leading underscore for the package.
 So, the canonical use of Package_Namespaces looks like::
 
    #7
-   from   _TFL import TFL
-   import _TFL.Filename
-   fn = TFL.Filename ("/some/very/important/file.name")
+   # from   _TFL import TFL
+   # import _TFL.Filename
+   # fn = TFL.Filename ("/some/very/important/file.name")
 
 .. note::
 
@@ -723,7 +724,6 @@ So, the canonical use of Package_Namespaces looks like::
  `_Export_Module`, `_Import_All`, `_Import_Module`, and `_Reload` are part of
  the public interface of `Package_Namespaces` (they start with an underscore to
  avoid name clashes with user-defined attributes of package namespaces).
-
 
 """
 

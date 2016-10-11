@@ -53,30 +53,28 @@
 #    25-Jan-2004 (RMA) Added begin/end_chapter
 #    25-May-2004 (RMA) Fixed itemize_txt
 #    15-Feb-2005 (MG)  Use `isinstance` instead of `type`
-#    15-Feb-2005 (MG) `isinstance (<>, str)`
-#    10-Oct-2016 (CT) Make Python-3 compatible
-#    ««revision-date»»
+#    15-Feb-2005 (MG)  `isinstance (<>, str)`
+#    10-Oct-2016 (CT)  Make Python-3 compatible
+#    11-Oct-2016 (CT)  Make `_TFL` imports absolute
 #--
 
 from   __future__  import absolute_import
 from   __future__  import division
 from   __future__  import print_function
 
-from    Formatted_Stream import Formatted_Stream
-from    Regexp           import *
-import  re
+from    _TFL                  import Environment
+from    _TFL.Formatted_Stream import Formatted_Stream
+from    _TFL.Regexp           import *
 import  time
 import  sys
 import  sos
 import  string
-import  Environment
 
 slash_pat = Regexp (r"[/\\]")
 
 def sanatized_label (txt) :
     txt = slash_pat.sub ("", txt)
     return txt
-
 
 item_head_pat   = Regexp (r"^\s*- ", re.MULTILINE)
 item_tail_pat   = Regexp ( "(\n\n(?=[^- ])|$)")
