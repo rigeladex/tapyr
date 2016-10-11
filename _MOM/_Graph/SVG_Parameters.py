@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -21,6 +21,7 @@
 #    20-Sep-2012 (RS) Fix marker parameters for new size computation
 #    20-Sep-2012 (RS) smaller `attr_marker_size`
 #    25-Sep-2012 (CT) Add `partial_node_opacity`
+#    11-Oct-2016 (CT) Use `TFL.Parameters`, not `GTW.Parameters`
 #    ««revision-date»»···
 #--
 
@@ -29,8 +30,8 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 from   _MOM                   import MOM
 import _MOM._Graph
 
-from _GTW._CSS.import_CSS import *
-from _GTW.Parameters      import Definition, P, P_dict
+from   _TFL.Color             import RGB_X
+from   _TFL.Parameters        import Definition, P, P_dict
 
 class SVG_Parameters (Definition) :
     """Default parameters for MOM.Graph.SVG renderer."""

@@ -30,7 +30,7 @@
 
 from _TFL.Package_Namespace import Package_Namespace
 
-__version__ = "2.0.1"
+__version__ = "2.0.2"
 
 TFL = Package_Namespace ()
 
