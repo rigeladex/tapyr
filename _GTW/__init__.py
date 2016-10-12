@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,10 +16,13 @@
 #
 # Revision Dates
 #    28-Dec-2009 (CT) Creation
+#    12-Oct-2016 (CT) Add `__version__`
 #    ««revision-date»»···
 #--
 
 from _TFL.Package_Namespace import Package_Namespace
+
+__version__ = "1.2.3"
 
 GTW = Package_Namespace ()
 

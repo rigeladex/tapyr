@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -23,6 +23,9 @@
 #     3-May-2013 (CT) Add `META`
 #     4-Oct-2013 (CT) Add `fields` and `add_fields`
 #    27-Mar-2014 (CT) Document `E_Type.OPTIONS`
+#    12-Oct-2016 (CT) Remove spurious import
+#    12-Oct-2016 (CT) Use `#>>`, not `>>>`, to avoid failing tests
+#                     (the code is meant to illustrate but doesn't run!)
 #    ««revision-date»»···
 #--
 
@@ -30,8 +33,6 @@ from   __future__  import absolute_import
 from   __future__  import division
 from   __future__  import print_function
 from   __future__  import unicode_literals
-
-from   _GTW._RST._MOM.import_MOM import *
 
 __doc__ = """
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
@@ -116,7 +117,7 @@ Use the HTTP method ``GET`` to retrieve the list of instances of the ``e-type``.
 
   For instance (using the Python package `requests`_)::
 
-    >>> requests.get ("/PAP-Person").json
+    #>> requests.get ("/PAP-Person").json
     { 'entries' :
         [ '/PAP-Person/1'
         , '/PAP-Person/2'
@@ -130,7 +131,7 @@ Use the HTTP method ``GET`` to retrieve the list of instances of the ``e-type``.
 
   For instance::
 
-    >>> requests.get ("/PAP-Person?brief").json
+    #>> requests.get ("/PAP-Person?brief").json
     { 'entries' :
         [ 1
         , 2
@@ -166,7 +167,7 @@ Use the HTTP method ``GET`` to retrieve the list of instances of the ``e-type``.
 
   For instance::
 
-    >>> requests.get ("/PAP-Person?verbose").json
+    #>> requests.get ("/PAP-Person?verbose").json
     { 'attribute_names' :
         [ 'last_name'
         , 'first_name'
@@ -204,7 +205,7 @@ returned or to search for specific instances. Possible query parameters are:
 
   For instance::
 
-    >>> requests.get ("/PAP-Person/1").json
+    #>> requests.get ("/PAP-Person/1").json
     { 'attributes' :
         { 'first_name' : 'christian'
         , 'last_name' : 'tanzer'
@@ -217,7 +218,7 @@ returned or to search for specific instances. Possible query parameters are:
     , 'url' : '/v1/PAP-Person/1'
     }
 
-    >>> requests.get ("/PAP-Person/1?ckd").json
+    #>> requests.get ("/PAP-Person/1?ckd").json
     { 'attributes' :
         { 'first_name' : 'christian'
         , 'last_name' : 'tanzer'
@@ -246,7 +247,7 @@ returned or to search for specific instances. Possible query parameters are:
 
   For instance::
 
-    >>> requests.get ("/PAP-Person/1?raw").json
+    #>> requests.get ("/PAP-Person/1?raw").json
     { 'attributes_raw' :
         { 'first_name' : 'Christian'
         , 'last_name' : 'Tanzer'
@@ -259,7 +260,7 @@ returned or to search for specific instances. Possible query parameters are:
     , 'url' : '/v1/PAP-Person/1'
     }
 
-    >>> requests.get ("/PAP-Person/1?ckd&raw").json
+    #>> requests.get ("/PAP-Person/1?ckd&raw").json
     { 'attributes' :
         { 'first_name' : 'christian'
         , 'last_name' : 'tanzer'
@@ -368,7 +369,7 @@ supported.
 
 For instance::
 
-    >>> cargo = json.dumps (
+    #>> cargo = json.dumps (
     ...   dict
     ...     ( attributes_raw = dict
     ...         ( last_name   = "Dog"
@@ -378,8 +379,8 @@ For instance::
     ...         )
     ...     )
     ... )
-    >>> headers = { "Content-Type": "application/json" }
-    >>> requests.post ("/PAP-Person", data = cargo, headers = headers).json
+    #>> headers = { "Content-Type": "application/json" }
+    #>> requests.post ("/PAP-Person", data = cargo, headers = headers).json
     { 'attributes_raw' :
         { 'first_name' : 'Snoopy'
         , 'last_name' : 'Dog'
@@ -419,7 +420,7 @@ applied to the resource of the instance's e-type; the query arguments
 
 For instance::
 
-    >>> requests.get ("/PAP-Person/1?raw")
+    #>> requests.get ("/PAP-Person/1?raw")
     { 'attributes_raw' :
         { 'first_name' : 'Christian'
         , 'last_name' : 'Tanzer'
@@ -432,7 +433,7 @@ For instance::
     , 'url' : '/PAP-Person/1'
     }
 
-    >>> requests.get ("/PAP-Person/1?raw&META")
+    #>> requests.get ("/PAP-Person/1?raw&META")
     { 'attributes_raw' :
         { 'first_name' : 'Christian'
         , 'last_name' : 'Tanzer'
