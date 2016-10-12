@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This file is part of the package _ReST.
@@ -18,10 +18,13 @@
 # Revision Dates
 #    15-Feb-2010 (CT) Creation
 #    29-Aug-2014 (CT) Filter warnings from `PIL`
+#    12-Oct-2016 (CT) Add `__version__`
 #    ««revision-date»»···
 #--
 
 from _TFL.Package_Namespace import Package_Namespace
+
+__version__ = "1.1.0"
 
 ReST = Package_Namespace ()
 
