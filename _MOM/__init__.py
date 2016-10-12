@@ -23,7 +23,7 @@
 
 from _TFL.Package_Namespace import Package_Namespace
 
-__version__ = "1.6.0"
+__version__ = "1.6.1"
 __doc__ = """
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 

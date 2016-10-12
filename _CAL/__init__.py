@@ -22,7 +22,7 @@
 
 from   _TFL.Package_Namespace import Package_Namespace
 
-__version__ = "1.4.3"
+__version__ = "1.4.4"
 
 CAL = Package_Namespace ()
 

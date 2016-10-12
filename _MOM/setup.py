@@ -29,6 +29,7 @@ from   setuptools               import setup, Command
 import ast
 import os
 import re
+import subprocess               as     SUBP
 import sys
 
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
@@ -54,6 +55,29 @@ for root, dirs, files in os.walk (os.path.join ('..', p_name)) :
         if d not in dd :
             dirs.remove (d)
     packages.append (root.replace ('/', '.').strip ("."))
+
+data_files = ["LICENSE", "README.rst", "base_babel.cfg"]
+with SUBP.Popen \
+    (["find", ".", "-name", "babel.cfg"], stdout=SUBP.PIPE).stdout as pipe :
+    found = pipe.read ().strip ()
+    if found :
+        bcs = found.split ("\n")
+        data_files.extend (bcs)
+
+data_dirs  = []
+with SUBP.Popen \
+    (["find", ".", "-name", "-I18N"], stdout=SUBP.PIPE).stdout as pipe :
+    found = pipe.read ().strip ()
+    if found :
+        i18n_dirs = found.split ("\n")
+        data_dirs.extend (i18n_dirs)
+for d in data_dirs :
+    with SUBP.Popen \
+        (["find", d, "-type", "f"], stdout=SUBP.PIPE).stdout as pipe :
+        found = pipe.read ().strip ()
+        if found :
+            files = found.split ("\n")
+            data_files.extend (files)
 
 class Test_Command (Command) :
     user_options = []
@@ -82,7 +106,8 @@ setup \
     , author_email         = "tanzer@swing.co.at"
     , url                  = "https://github.com/Tapyr/tapyr"
     , packages             = packages
-    , package_dir          = {p_name : ""}
+    , package_dir          = { p_name : "../" + p_name }
+    , package_data         = { p_name : data_files     }
     , platforms            = 'Any'
     , classifiers          = \
         [ 'Development Status :: 5 - Production/Stable'
