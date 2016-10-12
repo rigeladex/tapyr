@@ -148,6 +148,7 @@
 #                     [Otherwise, accessing `__PNS__` fails]
 #    10-Oct-2016 (CT) Add `__version__`
 #    11-Oct-2016 (CT) Hide `import` behind `#` in `__doc__`
+#    12-Oct-2016 (CT) Change `_Import_All` to skip `setup.py`
 #    ««revision-date»»···
 #--
 
@@ -406,7 +407,8 @@ class Package_Namespace (object) :
                     or sos.path.exists (sos.path.join (dir, f, "__init__.py"))
                     )
                 and not
-                    (   f.startswith (("__", "."))
+                    (  f.startswith (("__", "."))
+                    or f == "setup.py"
                     or ( mod_skip_pat.search (f)
                        if mod_skip_pat is not None else False
                        )
