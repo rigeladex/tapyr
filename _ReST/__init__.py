@@ -24,7 +24,7 @@
 
 from _TFL.Package_Namespace import Package_Namespace
 
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 
 ReST = Package_Namespace ()
 

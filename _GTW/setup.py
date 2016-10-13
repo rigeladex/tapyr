@@ -18,18 +18,20 @@
 #
 # Revision Dates
 #    12-Oct-2016 (CT) Creation
+#    13-Oct-2016 (CT) Use `find_packages`, `_TFL.fs_find`, not home-grown code
 #    ««revision-date»»···
 #--
 
 from   __future__               import print_function
 
 from   codecs                   import open
-from   setuptools               import setup, Command
+from   setuptools               import setup, find_packages, Command
+from   _TFL                     import fs_find
 
 import ast
+import itertools
 import os
 import re
-import subprocess               as     SUBP
 import sys
 
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
@@ -47,37 +49,18 @@ with open ("__init__.py", encoding = "utf-8") as f :
     version = str \
         (ast.literal_eval (_version_re.search (f.read ()).group (1)))
 
-packages = []
-for root, dirs, files in os.walk (os.path.join ('..', p_name)) :
-    # ugly: need to modify dirs in place!
-    dd = set (d for d in dirs if d.startswith ('_') and d != "__pycache__")
-    for d in dirs :
-        if d not in dd :
-            dirs.remove (d)
-    packages.append (root.replace ('/', '.').strip ("."))
-
+packages   = [p_name] + list (".".join ((p_name, p)) for p in find_packages ())
+Q          = fs_find.Filter
+data_dirs  = ["./media"] + fs_find.directories \
+    ( ".", filter = fs_find.Filter (include = Q.IN ("-I18N", "locale")))
 data_files = ["LICENSE", "README.rst"]
-with SUBP.Popen \
-    (["find", ".", "-name", "babel.cfg"], stdout=SUBP.PIPE).stdout as pipe :
-    found = pipe.read ().strip ()
-    if found :
-        bcs = found.split ("\n")
-        data_files.extend (bcs)
-
-data_dirs  = ["./media"]
-with SUBP.Popen \
-    (["find", ".", "-name", "-I18N"], stdout=SUBP.PIPE).stdout as pipe :
-    found = pipe.read ().strip ()
-    if found :
-        i18n_dirs = found.split ("\n")
-        data_dirs.extend (i18n_dirs)
-for d in data_dirs :
-    with SUBP.Popen \
-        (["find", d, "-type", "f"], stdout=SUBP.PIPE).stdout as pipe :
-        found = pipe.read ().strip ()
-        if found :
-            files = found.split ("\n")
-            data_files.extend (files)
+data_files = list \
+    ( itertools.chain
+        ( ["LICENSE", "README.rst", "setup.py"]
+        , fs_find.file_iter (".", filter = Q (include = Q.equal ("babel.cfg")))
+        , fs_find.file_iter (* data_dirs)
+        )
+    )
 
 class Test_Command (Command) :
     user_options = []
@@ -95,7 +78,8 @@ class Test_Command (Command) :
 
 # end class Test_Command
 
-setup \
+if __name__ == "__main__" :
+    setup \
     ( name                 = name
     , version              = version
     , description          =
@@ -107,8 +91,8 @@ setup \
     , author_email         = "tanzer@swing.co.at"
     , url                  = "https://github.com/Tapyr/tapyr"
     , packages             = packages
-    , package_dir          = { p_name : "../" + p_name }
-    , package_data         = { p_name : data_files     }
+    , package_dir          = { p_name : "." }
+    , package_data         = { p_name : data_files }
     , platforms            = 'Any'
     , classifiers          = \
         [ 'Development Status :: 5 - Production/Stable'
@@ -124,11 +108,12 @@ setup \
         , 'Topic :: Software Development :: Libraries :: Python Modules'
         , 'Topic :: Text Processing :: Markup :: HTML'
         ]
+    , setup_requires       = ["TFL"]
     , install_requires     =
         [ "CAL", "CHJ", "JNJ", "MOM-Tapyr", "ReST-Tapyr", "TFL"
         , "python-dateutil", "pillow", "werkzeug"
         ]
-    , extras_require           = dict
+    , extras_require       = dict
         ( client_certificate   = ["M2Crypto", "pyspkac"]
         , convert_rtr_at_data  = ["xlrd"]
         , deploy               = ["plumbum"]

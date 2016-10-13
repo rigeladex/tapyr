@@ -22,7 +22,8 @@
 
 from _TFL.Package_Namespace import Package_Namespace
 
-__version__ = "1.2.5"
+__version__ = "1.2.6"
+
 __doc__     = """
 `GTW` provides a `Werkzeug-based <http://werkzeug.pocoo.org/>`_ framework for
 defining RESTful web applications built on top of :mod:`MOM<_MOM>`.

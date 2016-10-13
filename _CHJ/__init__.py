@@ -20,7 +20,7 @@
 
 from   _TFL.Package_Namespace import Package_Namespace
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 CHJ = Package_Namespace ()
 

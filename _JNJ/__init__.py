@@ -22,7 +22,7 @@
 
 from _TFL.Package_Namespace import Package_Namespace
 
-__version__ = "1.2.4"
+__version__ = "1.2.5"
 
 JNJ = Package_Namespace ()
 
