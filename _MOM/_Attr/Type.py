@@ -407,6 +407,7 @@
 #    19-Jun-2016 (CT) Add "%Y %m %d" to `A_Date.input_formats`
 #    19-Jul-2016 (CT) Move `A_Date`, `A_Date_Time`, `A_Time` to separate module
 #     6-Oct-2016 (CT) Add `Kind_Mixins_X`
+#    14-Oct-2016 (CT) Add `ui_allow_change`, `ui_allow_move` to `_A_Id_Entity_`
 #    ««revision-date»»···
 #--
 
@@ -1768,7 +1769,8 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
     only_e_types        = set ()
     refuse_e_types      = set ()
 
-    ### allow creation of new entity for this attribute
+    ui_allow_change     = False
+    ui_allow_move       = True
     ui_allow_new        = True
 
     class _Doc_Map_ (_A_SPK_Entity_._Doc_Map_) :
@@ -1786,6 +1788,32 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
         refuse_e_types = """
             Remove the E_Types (and their children) specified by
             `refuse_e_types` from the set of eligible E_Types.
+        """
+
+        ui_allow_change = """
+           In the UI, allow the changing of the object referenced by this
+           attribute in the context of the referencing class if the value of
+           `ui_allow_change` is true.
+
+           `ui_allow_change` is only considered if `ui_allow_new` is true.
+
+           Setting `ui_allow_change` to true is dangerous: users might easily
+           change attributes of an object when they should have change the
+           reference to a different object altogether. This might break other
+           referrers to the same object.
+
+           For instance, assume a link `Person_has_Address`.
+           `Person_has_Address.right` refers to an instance of `Address`. When
+           a person changes address, i.e., the person moves from one house to
+           another, `Person_has_Address.right` should be changed to refer to a
+           different instance of `Address`. Changing the attributes of the
+           original instance of `Address` would break all `Person_has_Address`
+           links of other people living at the original address.
+        """
+
+        ui_allow_move = """
+            In the UI, allow this attribute to be changed to refer to a
+            different object than the one it currently refers to.
         """
 
         ui_allow_new = """
