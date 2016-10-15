@@ -72,6 +72,10 @@
 //    23-Dec-2015 (CT) Factor `toggle_add_rev_ref` to DRY and fix
 //                     `max_rev_ref` handling
 //    26-Apr-2016 (CT) Use `form_spec.buddies`
+//    14-Oct-2016 (CT) Change `clear` and `restore` to include `display_id_ref`
+//    14-Oct-2016 (CT) Change `field_type.id_ref.put_input` to clear `edit`
+//                     fields instead of setting `edit` to `undefined`
+//                     + Ditto for `field_type.id_ref_select.put_input`
 //    ««revision-date»»···
 //--
 
@@ -168,6 +172,11 @@
                 var S     = options.selectors;
                 var a$    = $(this);
                 var c$    = a$.closest (S.closable);
+                var d$    = $(S.display_id_ref, c$).first ();
+                var ft    = d$.data ("field_type");
+                if (ft) {
+                    ft.clear (d$);
+                };
                 $(S.input_field, c$).each
                     ( function (n) {
                         var f$ = $(this);
@@ -290,6 +299,11 @@
                 var S     = options.selectors;
                 var a$    = $(this);
                 var c$    = a$.closest (S.closable);
+                var d$    = $(S.display_id_ref, c$).first ();
+                var ft    = d$.data ("field_type");
+                if (ft) {
+                    ft.reset (d$);
+                };
                 $(S.input_field, c$).each
                     ( function (n) {
                         var f$ = $(this);
@@ -692,19 +706,14 @@
                     };
                   }
                 , put_input : function put_input_id_ref (f$, value) {
-                    var h$ = f$.siblings (".value.hidden.id_ref");
-                    var id = f$.prop ("id");
-                    var fv, pid;
+                    var h$  = f$.siblings (".value.hidden.id_ref");
+                    var id  = f$.prop ("id");
+                    var val = $.extend ({display : "", pid : undefined}, value);
+                    var fv;
                     if (typeof value === "object") {
-                        pid = value ["pid"];
-                        h$.val (pid);
-                        f$.val (value ["display"] || "");
-                        if (pid !== undefined) {
-                            field_type.normal.put_cargo (id, value);
-                        } else {
-                            fv      = options.form_spec.cargo.field_values [id];
-                            fv.edit = undefined;
-                        };
+                        h$.val (val.pid);
+                        f$.val (val.display);
+                        field_type.normal.put_cargo (id, val);
                     } else {
                         h$.val (value);
                     };
@@ -741,17 +750,12 @@
                   }
                 , put_input : function put_input_id_ref_select (f$, value) {
                     var id = f$.prop ("id");
-                    var fv, val, pid;
+                    var val = $.extend ({display : "", pid : undefined}, value);
+                    var fv;
                     if (typeof value === "object") {
-                        pid = value ["pid"];
-                        val = value ["display"] || "";
-                        f$.val (val);
-                        if (pid !== undefined) {
-                            field_type.normal.put_cargo (id, value);
-                        } else {
-                            fv      = options.form_spec.cargo.field_values [id];
-                            fv.edit = undefined;
-                        };
+                        h$.val (val.pid);
+                        f$.val (val.display);
+                        field_type.normal.put_cargo (id, value);
                     };
                   }
                 , reset : function reset_id_ref_select (f$, ft) {
