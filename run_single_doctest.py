@@ -19,6 +19,7 @@
 #     7-Aug-2013 (CT) Add `cases` (adapt to change of `run_doctest`)
 #    21-Oct-2015 (CT) Add `py_version`, adapt to Python 3
 #    21-Jun-2016 (CT) Add `expect_except` to `module` before testing
+#    17-Oct-2016 (CT) Add message if no test is found
 #    ««revision-date»»···
 #--
 
@@ -56,10 +57,18 @@ def _main (cmd) :
     try :
         module            = __import__ (m)
         module.expect_except = TFL.CAO.expect_except
-        tests             = set (cmd.argv [1:])
-        for tn in list (getattr (module, "__test__", {})) :
-            if tn not in tests :
+        tests             = cmd.argv [1:]
+        test_set          = set  (tests)
+        m_tests           = list (getattr (module, "__test__", {}))
+        for tn in m_tests :
+            if tn not in test_set :
                 del module.__test__ [tn]
+        if not module.__test__ :
+            print \
+                ( "Test not found: %s\n    Choose one of: %s" 
+                % (", ".join (tests), ", ".join (sorted (m_tests)))
+                )
+            raise SystemExit (23)
         f, t              = doctest.testmod \
             ( module
             , verbose     = cmd.verbose

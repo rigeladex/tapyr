@@ -16,11 +16,12 @@
 #
 # Revision Dates
 #    10-Oct-2016 (CT) Use `TFL.run_doctest`
+#    17-Oct-2016 (CT) Use `import *`
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
-import _TFL.run_doctest
+from   _TFL.run_doctest import *
 
 if __name__ == "__main__" :
     TFL.run_doctest.Command ()
