@@ -121,6 +121,7 @@
 #    22-Feb-2016 (CT) Convert `qname` to property
 #    22-Feb-2016 (CT) Change `root_epk` to `root_spec` (callable or epk-tuple)
 #     6-May-2016 (CT) Add class attribute `playback_p`
+#    17-Oct-2016 (CT) Correct typo in `__doc__`
 #    ««revision-date»»···
 #--
 
@@ -920,7 +921,7 @@ __doc__ = """
     instances of the essential objects and links.
 
     `Scope` instances cannot be created by just calling the `Scope` class,
-    like normal Python types. Instead, :meth:`load` and method:`new` create
+    like normal Python types. Instead, :meth:`load` and :meth:`new` create
     scopes connected to existing or newly created databases, respectively.
 
     For each package namespace defining essential object types, `Scope`
