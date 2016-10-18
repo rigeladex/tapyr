@@ -76,6 +76,9 @@
 //    14-Oct-2016 (CT) Change `field_type.id_ref.put_input` to clear `edit`
 //                     fields instead of setting `edit` to `undefined`
 //                     + Ditto for `field_type.id_ref_select.put_input`
+//    18-Oct-2016 (CT) Add `open4move`
+//                     + Change `setup_entity_display` to use `data-action` for
+//                       callback
 //    ««revision-date»»···
 //--
 
@@ -184,6 +187,7 @@
                         ft.clear (f$);
                       }
                     );
+                $(S.focusables, c$).first ().focus ();
                 return false;
               }
             , close : function close (ev) {
@@ -200,6 +204,19 @@
                 var S     = options.selectors;
                 var a$    = $(this);
                 var c$    = a$.closest (S.closable);
+                c$.removeClass ("closed");
+                $(S.focusables, c$).first ().focus ();
+                return false;
+              }
+            , open4move : function open4move (ev) {
+                var S     = options.selectors;
+                var a$    = $(this);
+                var c$    = a$.closest (S.closable);
+                var d$    = $(S.display_id_ref, c$).first ();
+                var ft    = d$.data ("field_type");
+                if (ft) {
+                    ft.clear (d$);
+                };
                 c$.removeClass ("closed");
                 $(S.focusables, c$).first ().focus ();
                 return false;
@@ -311,6 +328,7 @@
                         ft.reset (f$);
                       }
                     );
+                $(S.focusables, c$).first ().focus ();
                 return false;
               }
             };
@@ -970,8 +988,10 @@
             var S  = options.selectors;
             var f$ = $(this);
             var s$ = f$.closest (S.container);
+            var d$ = $(S.display_id_ref, f$).first ();
+            var ak = d$.data ("action") || "open"
             s$.gtw_hd_input
-                ( { callback       : action_callback.open
+                ( { callback       : action_callback [ak]
                   , clear_callback : action_callback.clear
                   , key_ignore_hi  : 27               // escape
                   , trigger_event  : "click keydown"

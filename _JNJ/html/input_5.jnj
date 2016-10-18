@@ -40,6 +40,7 @@
 ##    13-Jun-2015 (CT) Add `keygen`
 ##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    18-May-2016 (CT) Add `labeled_pure`
+##    18-Oct-2016 (CT) Add `action` to `hd_input`
 ##    ««revision-date»»···
 ##--
 #}
@@ -222,9 +223,13 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 {%- endmacro -%}
 
 {%- macro hd_input (name, h_value, d_value, h_typ = text, d_typ = text) -%}
+  {%- set action  = kwargs.pop ("action",  None) %}
   {%- set class   = kwargs.pop ("class") %}
-  {%- set h_class = kwargs.pop ("h_class", None) %}
   {%- set d_class = kwargs.pop ("d_class", None) %}
+  {%- set h_class = kwargs.pop ("h_class", None) %}
+  {%- if action %}
+    {%- do kwargs.update ({"data-action" : action}) %}
+  {% endif -%}
   {{ h_typ
       ( class     = GTW.filtered_join (" ", (class, "hidden", h_class))
       , name      = name

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.MF3.
@@ -26,6 +26,8 @@
 #                     `MOM.Error.as_json_cargo`
 #    29-Apr-2015 (CT) Add optional arguments `errors` to `List.__init__`
 #    18-Dec-2015 (CT) Fix `__repr__` of `Wrapper` and `List` (3-compatibility)
+#    18-Oct-2016 (CT) Add `__str__`
+#    18-Oct-2016 (CT) Move `e.__keep` into `guard` for `e.attributes` (`finish`)
 #    ««revision-date»»···
 #--
 
@@ -119,6 +121,7 @@ class _Attr_Name_Replacer_ (TFL.Meta.Object) :
 
 # end class _Attr_Name_Replacer_
 
+@pyk.adapt__str__
 class Wrapper (TFL.Meta.Object) :
     """Wrapper around a MOM.Error instance for a specific MF3 entity element."""
 
@@ -236,9 +239,14 @@ class Wrapper (TFL.Meta.Object) :
         return pyk.reprify (result)
     # end def __repr__
 
+    def __str__ (self) :
+        return "%s: %s" % (self.entity, self.error)
+    # end def __str__
+
 # end class Wrapper
 
 @pyk.adapt__bool__
+@pyk.adapt__str__
 class List (TFL.Meta.Object) :
     """Manage a list of errors for a specific MF3 entity element."""
 
@@ -279,8 +287,7 @@ class List (TFL.Meta.Object) :
                 else :
                     for a in attrs :
                         arm [a] = min (e.rank, arm [a])
-            for e in raw_errors :
-                e.__keep = all ((arm [a] == e.rank) for a in e.attributes)
+                    e.__keep = all ((arm [a] == e.rank) for a in attrs)
             errors = dusplit (raw_errors, Q.__keep) [-1]
             ### wrap the filtered error instances
             entity = self.entity
@@ -313,8 +320,12 @@ class List (TFL.Meta.Object) :
     # end def __len__
 
     def __repr__ (self) :
-        return pyk.reprify ("%s: %d errors" % (self.entity, len (self)))
+        return pyk.reprify (str (self))
     # end def __repr__
+
+    def __str__ (self) :
+        return "%s: %d errors" % (self.entity, len (self))
+    # end def __str__
 
 # end class List
 

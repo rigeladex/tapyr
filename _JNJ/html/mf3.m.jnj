@@ -49,6 +49,7 @@
 ##    20-Dec-2015 (CT) Add `class="?"` to label if `elem.aside`
 ##    26-Apr-2016 (CT) Use `elem.polisher.id`, not 1, for `data-polisher`
 ##    20-Sep-2016 (CT) Add `Field_Structured`, factor `_Field_Composite_`
+##    18-Oct-2016 (CT) Add `ui_allow_change`, `ui_allow_move`
 ##    ««revision-date»»···
 ##--
 #}
@@ -112,20 +113,34 @@
   <section class="Field-Entity{%- if elem.collapsed %} closed{% endif -%}">
     <h1>{{ h1_text }}</h1>
     {{ entity_buttons (page, form, elem, t_module) }}
+    {%- set action = "open" if elem.ui_allow_change
+          else ("open4move" if elem.ui_allow_move else "")
+    %}
     {% call GTW.call_macro
         ( "do_field", page, form, elem, t_module, "Display Field"
-        , class      = "value"
-        , templ_name = t_module, ** kwargs
+        , class       = "value"
+        , action      = action
+        , templ_name  = t_module, ** kwargs
         )
     -%}
       <label for="{{ elem.id }}">{# -#}
-        <span class="action-button">{# -#}
-          {{- action_button
-              ( "open", "pencil"
-              , GTW._T ("Open fields of %s for editing") % (elem.label, )
-              )
-          -}}
-        </span>{# -#}
+        {%- if elem.ui_allow_change %}
+          <span class="action-button">{# -#}
+            {{- action_button
+                ( "open", "pencil"
+                , GTW._T ("Open fields of %s for editing") % (elem.label, )
+                )
+            -}}
+          </span>{# -#}
+        {%- elif elem.ui_allow_move %}
+          <span class="action-button">{# -#}
+            {{- action_button
+                ( "open4move", "pencil-square-o"
+                , GTW._T ("Open fields of %s for editing") % (elem.label, )
+                )
+            -}}
+          </span>{# -#}
+        {% endif -%}
       </label>
     {% endcall %}
     <fieldset>

@@ -25,6 +25,7 @@
 #    22-Dec-2015 (CT) Add test `max_rev_ref`
 #    22-Apr-2016 (CT) Adapt to change of `Date_Interval.start.completer`
 #    26-Apr-2016 (CT) Adapt to `buddies` in `as_json_cargo`
+#    17-Oct-2016 (CT) Add test `cls_structure`
 #    ««revision-date»»···
 #--
 
@@ -40,10 +41,13 @@ GTW.OMP.PAP.Phone.change_attribute_default ("cc", "+43")
 from   _GTW.__test__.model        import *
 from   _GTW._MF3                  import Element as MF3_E
 
+from   _TFL._Meta.Def_Map         import Def_Map as DM
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch
 from   _TFL.Regexp                import Multi_Re_Replacer, Re_Replacer, re
 
 import _GTW._OMP._SRM.Ranking
+
+from   collections                import defaultdict
 
 _cleaner = Re_Replacer \
     ( r"'\$sid' : '[0-9a-f]+'"
@@ -118,6 +122,81 @@ def show_formatted (x) :
     result = _cleaner (formatted (x))
     print (result)
 # end def show_formatted
+
+def show_ui_allow (f) :
+    fmt = "%-40s %5s %5s %5s"
+    for e in f.field_elements :
+        if e.action_buttons :
+            print \
+                  ( fmt
+                  % (e, e.ui_allow_change, e.ui_allow_move, e.ui_allow_new)
+                  )
+# end def show_ui_allow
+
+_test_cls_structure = r"""
+
+    >>> mf3_classes = sorted \
+    ...     ( (n, x) for n, x in MF3_E.__dict__.items ()
+    ...     if isinstance (x, MF3_E._M_Element_)
+    ...     )
+    >>> for name, cls in mf3_classes :
+    ...     print ("%%-25s : %%s" %% (name, ", ".join (x.__name__ for x in cls.__mro__[1:-3])))
+    Entity                    : _Entity_, _Entity_Mixin_, _Element_, _Base_
+    Entity_Rev_Ref            : _Field_Entity_Mixin_, _Entity_, _Entity_Mixin_, _Element_, _Base_
+    Field                     : _Field_, _Field_Base_, _Element_, _Base_
+    Field_Composite           : _Field_Composite_, _Field_Composite_Mixin_, _Field_, _Field_Base_, _Element_, _Base_
+    Field_Entity              : _Field_Composite_Mixin_, _Field_Entity_Mixin_, _Entity_Mixin_, _Field_, _Field_Base_, _Element_, _Base_
+    Field_Ref_Hidden          : Field_Entity, _Field_Composite_Mixin_, _Field_Entity_Mixin_, _Entity_Mixin_, _Field_, _Field_Base_, _Element_, _Base_
+    Field_Rev_Ref             : _Field_Base_, _Element_, _Base_
+    Field_Structured          : _Field_Composite_, _Field_Composite_Mixin_, _Field_, _Field_Base_, _Element_, _Base_
+    _Element_                 : _Base_
+    _Entity_                  : _Entity_Mixin_, _Element_, _Base_
+    _Field_                   : _Field_Base_, _Element_, _Base_
+    _Field_Base_              : _Element_, _Base_
+    _Field_Composite_         : _Field_Composite_Mixin_, _Field_, _Field_Base_, _Element_, _Base_
+    _Field_Composite_Mixin_   : _Element_, _Base_
+
+    >>> f_map = defaultdict (set)
+    >>> for f in ("_submit", "submitted_value") :
+    ...   for name, cls in mf3_classes :
+    ...     fl = list (x.__name__ for x in DM [(cls, f)])
+    ...     f_map [f].update (fl)
+    ...     print ("%%-25s : %%s : %%s" %% (name, f, ", ".join (fl) or "---"))
+    Entity                    : _submit : _Entity_Mixin_
+    Entity_Rev_Ref            : _submit : _Entity_Mixin_
+    Field                     : _submit : Field
+    Field_Composite           : _submit : _Field_Composite_
+    Field_Entity              : _submit : _Entity_Mixin_, Field_Entity
+    Field_Ref_Hidden          : _submit : _Entity_Mixin_, Field_Entity, Field_Ref_Hidden
+    Field_Rev_Ref             : _submit : Field_Rev_Ref
+    Field_Structured          : _submit : _Field_Composite_
+    _Element_                 : _submit : ---
+    _Entity_                  : _submit : _Entity_Mixin_
+    _Field_                   : _submit : ---
+    _Field_Base_              : _submit : ---
+    _Field_Composite_         : _submit : _Field_Composite_
+    _Field_Composite_Mixin_   : _submit : ---
+    Entity                    : submitted_value : _Base_, _Entity_Mixin_
+    Entity_Rev_Ref            : submitted_value : _Base_, _Entity_Mixin_
+    Field                     : submitted_value : _Base_
+    Field_Composite           : submitted_value : _Base_, _Field_Composite_Mixin_
+    Field_Entity              : submitted_value : _Base_, _Entity_Mixin_, _Field_Composite_Mixin_, Field_Entity
+    Field_Ref_Hidden          : submitted_value : _Base_, _Entity_Mixin_, _Field_Composite_Mixin_, Field_Entity, Field_Ref_Hidden
+    Field_Rev_Ref             : submitted_value : _Base_
+    Field_Structured          : submitted_value : _Base_, _Field_Composite_Mixin_
+    _Element_                 : submitted_value : _Base_
+    _Entity_                  : submitted_value : _Base_, _Entity_Mixin_
+    _Field_                   : submitted_value : _Base_
+    _Field_Base_              : submitted_value : _Base_
+    _Field_Composite_         : submitted_value : _Base_, _Field_Composite_Mixin_
+    _Field_Composite_Mixin_   : submitted_value : _Base_, _Field_Composite_Mixin_
+
+    >>> for f, fl in sorted (f_map.items ()) :
+    ...     print ("%%-25s : %%s" %% (f, ", ".join (sorted (fl, key = lambda x : (not x.startswith ("_"), x)))))
+    _submit                   : _Entity_Mixin_, _Field_Composite_, Field, Field_Entity, Field_Ref_Hidden, Field_Rev_Ref
+    submitted_value           : _Base_, _Entity_Mixin_, _Field_Composite_Mixin_, Field_Entity, Field_Ref_Hidden
+
+"""
 
 _test_element = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -2090,6 +2169,15 @@ _test_element = """
     <Field_Ref_Hidden E-64:recurrence::rules::left@6@7>
     <Field_Ref_Hidden E-64:recurrence::left@6>
 
+    >>> show_ui_allow (f_pph)
+    <Field_Entity X-122:left>                False  True False
+    <Field_Entity X-122:right>               False  True  True
+
+    >>> show_ui_allow (f_bir)
+    <Field_Entity R-108:left>                False  True  True
+    <Field_Entity R-108:right>               False  True False
+    <Field_Entity R-108:skipper>             False  True  True
+
 """
 
 _test_max_rev_ref = r"""
@@ -2332,7 +2420,8 @@ _test_skip = r"""
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( element        = _test_element
+        ( cls_structure  = _test_cls_structure
+        , element        = _test_element
         , max_rev_ref    = _test_max_rev_ref
         , single_primary = _test_single_primary
         , skip           = _test_skip

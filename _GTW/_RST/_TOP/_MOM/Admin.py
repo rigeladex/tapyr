@@ -324,7 +324,7 @@ class _HTML_Action_ (_Ancestor) :
             sid    = json_cargo.get ("sid")
             secret = self.session_secret (request, sid)
             form   = self.form_instance  (sid = sid, session_secret = secret)
-            result = form (self.scope, json_cargo)
+            result = form.submit         (self.scope, json_cargo)
         except Status.Request_Timeout as exc :
             raise
         except Exception as exc :
@@ -677,8 +677,8 @@ class _Changer_ (_Ancestor) :
         Status = self.top.Status
         result = {}
         if json.get ("cancel") :
-            ### the user has clicked on the cancel button and not on
-            ### the submit button
+            ### POST was triggered by the cancel button,
+            ### not by the submit button
             scope.rollback ()
         else :
             try :

@@ -1,6 +1,6 @@
 {#- jinja template: html/MF3/input.m.jnj -#}
 {#
-## Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -30,6 +30,7 @@
 ##    21-Nov-2014 (CT) Factor `X.input.hd_input`, `_id_entity_display`
 ##    24-Mar-2015 (CT) Add `tabindex="-1"` for readonly fields
 ##     3-Apr-2015 (CT) Add `id_entity_select`
+##    18-Oct-2016 (CT) Change `id_entity` to pass `kwargs` to `hd_input`
 ##    ««revision-date»»···
 ##--
 #}
@@ -79,6 +80,7 @@
         , d_typ     = _id_entity_display
         , typ       = X.input.text
         , elem      = elem
+        , ** kwargs
         )
     }}
   {% endif -%}

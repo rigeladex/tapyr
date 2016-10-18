@@ -103,6 +103,15 @@
 #    14-Jun-2016 (CT) Change `allow_new` to consider `E_Type.polymorphic_epk`
 #    15-Jun-2016 (CT) Fix `ui_display`
 #     8-Sep-2016 (CT) Add `Field_Structured`, factor `_Field_Composite_`
+#    17-Oct-2016 (CT) Rename `Entity.__call__` to `submit`
+#                     + rename `__call__` to `_submit` for:
+#                       `_Entity_Mixin_`, `_Field_Composite_`, `Field`,
+#                       `Field_Entity`, `Field_Ref_Hidden`, `Field_Rev_Ref`
+#    17-Oct-2016 (CT) Factor `Submission`; remove `_submitted_value`...
+#    18-Oct-2016 (CT) Add `ui_allow_change`
+#                     + Redefine `Field_Entity._change_from_submission` to check
+#    19-Oct-2016 (CT) Redefine `Field_Entity._submitted_value_iter`
+#                     + Filter empty elements for creation of optional fields
 #    ««revision-date»»···
 #--
 
@@ -116,6 +125,7 @@ from   _TFL                     import TFL
 import _GTW._MF3.Completer
 import _GTW._MF3.Error
 import _GTW._MF3.Polisher
+import _GTW._MF3.Submission
 
 from   _MOM.import_MOM          import Q
 
@@ -317,6 +327,7 @@ class M_Field_Rev_Ref (M_Field) :
 class _Base_ (TFL.Meta.Object) :
     """Base class of element classes."""
 
+    action_buttons      = ()
     bare_id             = None
     completer           = None
     id_sep              = "."
@@ -328,7 +339,10 @@ class _Base_ (TFL.Meta.Object) :
     q_name              = None
     restrict_completion = False
     skip                = False
+    submission          = None
     template_module     = "mf3"
+    ui_allow_change     = True
+    ui_allow_move       = False
     ui_display          = ""
     undef               = TFL.Undef ("value")
 
@@ -344,7 +358,6 @@ class _Base_ (TFL.Meta.Object) :
     _po_index           = None
     _required           = False
     _reset_properties   = ("template_elements", "po_index")
-    _submitted_value    = undef
     _submission_errors  = ()
     _ui_rank            = (0, )
 
@@ -437,7 +450,8 @@ class _Base_ (TFL.Meta.Object) :
 
     @property
     def submitted_value (self) :
-        return self._submitted_value
+        submission = self.submission
+        return submission.value if submission is not None else self.undef
     # end def submitted_value
 
     @TFL.Meta.Once_Property
@@ -503,6 +517,13 @@ class _Base_ (TFL.Meta.Object) :
     def _my_cargo (self, cargo) :
         return cargo ["field_values"].get (self.id, {})
     # end def _my_cargo
+
+    def _my_submission (self, scope, cargo, submission = None, ** kw) :
+        if submission is None :
+            submission = self.Submission (self, scope, cargo, ** kw)
+        self.submission = submission
+        return submission
+    # end def _my_submission
 
     def _setup_po_index (self) :
         for i, e in enumerate (self.root.elements_transitive ()) :
@@ -615,6 +636,7 @@ class _Entity_Mixin_ (_Base_) :
         (MOM.Attr.Selector.primary, MOM.Attr.Selector.required)
     include_rev_refs    = ()
     render_groups       = ()
+    Submission          = GTW.MF3.Submission.Entity_Mixin
     _pop_to_self        = \
         ( "attr_selector"
         , "include_rev_refs"
@@ -627,61 +649,6 @@ class _Entity_Mixin_ (_Base_) :
         self.buddies_map = {}
         self.__super.__init__ (essence, ** kw)
     # end def __init__
-
-    def __call__ (self, scope, cargo) :
-        essence = self.essence
-        errors  = self._submission_errors = GTW.MF3.Error.List (self)
-        with errors :
-            r_errs  = 0
-            handler = self._create_from_submission if essence is None \
-                else  self._change_from_submission
-            try :
-                to_do = []
-                for e in self.elements :
-                    try :
-                        e (scope, cargo)
-                    except Delay_Call :
-                        to_do.append (e)
-                    else :
-                        if e.attr.kind.is_required :
-                            r_errs += len (e.submission_errors)
-                svs = self.submitted_value or {}
-                if (svs or self.required) and not (self.conflicts or r_errs) :
-                    handler (scope, svs)
-                for e in to_do :
-                    try :
-                        e (scope, cargo)
-                    except Delay_Call :
-                        ### Errors in form submission can result in missing
-                        ### `e.parent.essence` here which raises `Delay_Call`
-                        pass
-            except MOM.Error.Error as exc :
-                if not errors :
-                    errors.append (exc)
-    # end def __call__
-
-    def completer_choose_value_iter (self, value, seen) :
-        """Generate `id, value` pairs for all nested elements and `self`."""
-        if value is not None :
-            AQ = self.E_Type.AQ
-            for e in self.elements :
-                q  = getattr (AQ, e.name).QR
-                ev = q (value)
-                for i, v in e.completer_choose_value_iter (ev, seen) :
-                    yield i, v
-        for i, v in self.__super.completer_choose_value_iter (value, seen) :
-            yield i, v
-    # end def completer_choose_value_iter
-
-    @classmethod
-    def _auto_attributes (cls, E_Type) :
-        result = cls.__c_super._auto_attributes (E_Type)
-        if cls.include_rev_refs :
-            irrs   = MOM.Attr.Selector.Name \
-                (* cls.include_rev_refs, ignore_missing = True) (E_Type)
-            result = tuple (ichain (result, irrs))
-        return result
-    # end def _auto_attributes
 
     @TFL.Meta.Once_Property
     def as_json_cargo (self) :
@@ -759,22 +726,46 @@ class _Entity_Mixin_ (_Base_) :
         return self.submitted_value_transitive ()
     # end def submitted_value
 
+    def completer_choose_value_iter (self, value, seen) :
+        """Generate `id, value` pairs for all nested elements and `self`."""
+        if value is not None :
+            AQ = self.E_Type.AQ
+            for e in self.elements :
+                q  = getattr (AQ, e.name).QR
+                ev = q (value)
+                for i, v in e.completer_choose_value_iter (ev, seen) :
+                    yield i, v
+        for i, v in self.__super.completer_choose_value_iter (value, seen) :
+            yield i, v
+    # end def completer_choose_value_iter
+
     def fields_as_json_cargo (self) :
         return ((f.id, f.field_as_json_cargo) for f in self.field_elements)
     # end def fields_as_json_cargo
 
+    @classmethod
+    def _auto_attributes (cls, E_Type) :
+        result = cls.__c_super._auto_attributes (E_Type)
+        if cls.include_rev_refs :
+            irrs   = MOM.Attr.Selector.Name \
+                (* cls.include_rev_refs, ignore_missing = True) (E_Type)
+            result = tuple (ichain (result, irrs))
+        return result
+    # end def _auto_attributes
+
     def _change_from_submission (self, scope, svs) :
-        on_error = self._submission_errors.append
-        try :
-            self.essence.set_raw (on_error = on_error, ** svs)
-        except MOM.Error.Error as exc :
-            on_error (exc)
-        except Exception as exc :
-            logging.exception \
-                ( "Exception from `set_raw` for %r with %s"
-                % (self.essence, sorted (pyk.iteritems (svs)))
-                )
-            on_error (exc)
+        if svs :
+            on_error = self._submission_errors.append
+            try :
+                self.submission.essence.set_raw (on_error = on_error, ** svs)
+            except MOM.Error.Error as exc :
+                on_error (exc)
+            except Exception as exc :
+                logging.exception \
+                    ( "Exception from `set_raw` for %r with %s"
+                    % (self.essence, sorted (pyk.iteritems (svs)))
+                    )
+                on_error (exc)
     # end def _change_from_submission
 
     def _create_from_submission (self, scope, svs) :
@@ -817,7 +808,7 @@ class _Entity_Mixin_ (_Base_) :
         except MOM.Error.Invariants as exc :
             on_error (exc)
         else :
-            self._submitted_value = result
+            self.submission.value = result
             if result is not self.undef :
                 self.essence = result
             return result
@@ -826,6 +817,42 @@ class _Entity_Mixin_ (_Base_) :
     def _required_missing_error (self, exc, svs) :
         return exc
     # end def _required_missing_error
+
+    def _submit (self, scope, cargo, submission = None) :
+        errors     = self._submission_errors = GTW.MF3.Error.List (self)
+        submission = self._my_submission \
+            (scope, cargo, submission, essence = self.essence)
+        with errors :
+            r_errs  = 0
+            handler = \
+                ( self._create_from_submission if submission.essence is None
+                    else self._change_from_submission
+                )
+            try :
+                to_do = []
+                for e in self.elements :
+                    try :
+                        e._submit (scope, cargo)
+                    except Delay_Call :
+                        to_do.append (e)
+                    else :
+                        if e.attr.kind.is_required :
+                            r_errs += len (e.submission_errors)
+                svs = self.submitted_value or {}
+                if (svs or self.required) and not (self.conflicts or r_errs) :
+                    ### `self.required` --> trigger create checks
+                    handler (scope, svs)
+                for e in to_do :
+                    try :
+                        e._submit (scope, cargo)
+                    except Delay_Call :
+                        ### Errors in form submission can result in missing
+                        ### `e.parent.essence` here which raises `Delay_Call`
+                        pass
+            except MOM.Error.Error as exc :
+                if not errors :
+                    errors.append (exc)
+    # end def _submit
 
     def __iter__ (self) :
         result = self.render_groups or self.elements
@@ -915,8 +942,9 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
     _attr_prop_map          = dict \
         ( ( (k, k) for k in
             ( "css_align",   "css_class"
-            , "description", "explanation", "ui_description", "syntax"
-            , "ui_name"
+            , "description", "explanation", "syntax"
+            , "ui_allow_change", "ui_allow_move", "ui_allow_new"
+            , "ui_description", "ui_name"
             )
           )
         , choices           = "Choices"
@@ -926,7 +954,6 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
         , settable          = "is_settable"
         , template_macro    = "mf3_template_macro"
         , template_module   = "mf3_template_module"
-        , ui_allow_new      = "ui_allow_new"
         , _ui_rank          = "ui_rank"
         )
 
@@ -934,14 +961,14 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
     _element_ids            = ("q_name", )
     _init                   = _Base_.undef
     _pop_to_self            = \
-        ( "allow_new",           "changeable"
+        ( "allow_new"
         , "css_align",           "css_class"
         , "default",             "description"
         , "edit",                "explanation"
         , "init",                "input_widget"
         , "label",               "prefilled"
         , "restrict_completion"
-        , "skip",                "settable"
+        , "skip"
         , "template_module",     "template_macro"
         )
     _pop_to_self_           = ("collapsed", "required")
@@ -1213,6 +1240,8 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_) :
 class _Field_ (_Field_Base_) :
     """Base class for MF3 field classes."""
 
+    Submission          = GTW.MF3.Submission.Field
+
     @property
     def FO (self) :
         if self.id_essence :
@@ -1264,11 +1293,6 @@ class _Field_Composite_ (_Field_Composite_Mixin_, _Field_) :
 
     attr_selector       = MOM.Attr.Selector.editable
 
-    def __call__ (self, scope, cargo) :
-        for e in self.elements :
-            e (scope, cargo)
-    # end def __call__
-
     @TFL.Meta.Once_Property
     def completer_elems (self) :
         return self.elements
@@ -1295,6 +1319,11 @@ class _Field_Composite_ (_Field_Composite_Mixin_, _Field_) :
         return ""
     # end def init
 
+    def _submit (self, scope, cargo, submission = None) :
+        for e in self.elements :
+            e._submit (scope, cargo)
+    # end def _submit
+
 # end class _Field_Composite_
 
 class Entity (_Entity_) :
@@ -1314,13 +1343,6 @@ class Entity (_Entity_) :
         self.scope         = scope
         self.__super.__init__ (essence, ** kw)
     # end def __init__
-
-    def __call__ (self, scope, cargo) :
-        self.populate_new     (cargo)
-        self.check_sigs       (cargo)
-        self.__super.__call__ (scope, cargo)
-        return self
-    # end def __call__
 
     @classmethod
     def Auto (cls, E_Type, ** kw) :
@@ -1414,6 +1436,13 @@ class Entity (_Entity_) :
             result.update (s)
         return portable_repr (result.b64digest (strip = True)).strip (""""'""")
     # end def sig_hash
+
+    def submit (self, scope, cargo) :
+        self.populate_new (cargo)
+        self.check_sigs   (cargo)
+        self._submit      (scope, cargo)
+        return self
+    # end def submit
 
     @TFL.Meta.Class_and_Instance_Method
     def _own_id (soc, E_Type) :
@@ -1536,27 +1565,6 @@ class Field (_Field_) :
     attr_selector       = None
     _reset_properties   = ("field_as_json_cargo", )
 
-    def __call__ (self, scope, cargo) :
-        my_cargo  = self._my_cargo (cargo)
-        if my_cargo :
-            ak    = self.attr.kind
-            undef = self.undef
-            edit  = my_cargo.get ("edit", undef)
-            if edit is not undef :
-                default    = ak.get_raw (None)
-                id_essence = self.id_essence
-                init       = my_cargo.get ("init", default)
-                if id_essence :
-                    asyn = ak.get_raw (self.essence)
-                    if init != asyn :
-                        self.conflicts += 1
-                        self.asyn       = asyn
-                        ### XXX add MOM.Error.?Async_Conflict?...
-                        ###     to id_essence._submission_errors
-                if edit != init or (edit and not id_essence) :
-                    self._submitted_value = edit
-    # end def __call__
-
     @TFL.Meta.Once_Property
     def completer_elems (self) :
         return (self, )
@@ -1604,6 +1612,21 @@ class Field (_Field_) :
         return getattr (FO, self.name) if FO is not None else ""
     # end def ui_display
 
+    def _submit (self, scope, cargo, submission = None) :
+        my_cargo   = self._my_cargo (cargo)
+        submission = self._my_submission (scope, my_cargo, submission)
+        if my_cargo :
+            if submission.value is not self.undef :
+                id_essence = self.id_essence
+                if id_essence is not None :
+                    asyn = self.attr.kind.get_raw (id_essence)
+                    if submission.init != asyn :
+                        self.conflicts += 1
+                        self.asyn       = asyn
+                        ### XXX add MOM.Error.?Async_Conflict?...
+                        ###     to self.Entity._submission_errors
+    # end def _submit
+
 # end class Field
 
 @TFL.Add_To_Class ("MF3_Element", MAT._A_Composite_)
@@ -1616,38 +1639,9 @@ class Field_Composite (_Field_Composite_) :
 class Field_Entity (_Field_Composite_Mixin_, _Field_Entity_Mixin_, _Field_) :
     """Field comprising an attribute referring to another essential Entity."""
 
+    Submission          = GTW.MF3.Submission.Field_Entity
     _collapsed          = _Base_.undef
     _essence            = None
-    _submitted_value_tp = False
-
-    def __call__ (self, scope, cargo) :
-        _essence = self._essence
-        my_cargo = self._my_cargo (cargo)
-        undef    = self.undef
-        value    = undef
-        if my_cargo :
-            if self.readonly :
-                self._submitted_value = my_cargo.get ("init", {}).get ("pid")
-            else :
-                edit = my_cargo.get ("edit", {})
-                if not edit :
-                    edit = my_cargo.get ("init", {})
-                pid  = edit.get ("pid") or None
-                if pid == -1 :
-                    self._submitted_value = None
-                elif pid is not None :
-                    if _essence is None or pid != _essence.pid :
-                        value = scope.pid_query (pid)
-                        self._submitted_value = value
-                    else :
-                        ### XXX
-                        ### will change linked objects inline
-                        ### that's not always what the doctor ordered !!!
-                        with self.LET (_submitted_value_tp = True) :
-                            self.__super.__call__ (scope, cargo)
-                else :
-                    self.__super.__call__ (scope, cargo)
-    # end def __call__
 
     @property
     def collapsed (self) :
@@ -1694,32 +1688,70 @@ class Field_Entity (_Field_Composite_Mixin_, _Field_Entity_Mixin_, _Field_) :
     def essence (self, value) :
         old = self._essence
         if not (old is None or old is self.default_essence) :
-            try :
-                display = old.ui_display
-            except AttributeError :
-                display = "%s" % (old, )
             raise TypeError \
                 ( "%s already has value %s; cannot change to %"
-                % (self, display, value)
+                % ( self
+                  , getattr (old,   "ui_display", value)
+                  , getattr (value, "ui_display", value)
+                  )
                 )
         self._essence = value
     # end def essence
 
     @property
     def submitted_value (self) :
-        result = self._submitted_value
-        undef  = self.undef
-        if result is undef and \
-               (self._essence is None or self._submitted_value_tp) :
-            result = self.submitted_value_transitive () or undef
+        submission = self.submission
+        result     = submission.value
+        if submission.elem_p :
+            result = self.submitted_value_transitive ()
+            if not result :
+                result = self.undef
         return result
     # end def submitted_value
+
+    def _change_from_submission (self, scope, svs) :
+        submission = self.submission
+        if  (   submission.elem_p
+            and submission.value is not None
+            and not self.ui_allow_change
+            ) :
+            if any (e.submission.changed for e in self.elements) :
+                attr = self.attr
+                self._submission_errors.append \
+                    ( MOM.Error.Attribute_Set
+                        (submission.value, attr.name, svs, attr.kind)
+                    )
+                return ### error     --> nothing more to do here
+            else :
+                return ### no change --> nothing to do
+        return self.__super._change_from_submission (scope, svs)
+    # end def _change_from_submission
 
     def _new_element (self, e, ** kw) :
         if not self.allow_new :
             kw ["skip"] = True
         return self.__super._new_element (e, ** kw)
     # end def _new_element
+
+    def _submit (self, scope, cargo, submission = None) :
+        my_cargo   = self._my_cargo (cargo)
+        submission = self._my_submission \
+            (scope, my_cargo, submission, essence = self._essence)
+        if submission.elem_p :
+            self._essence = None
+            self.__super._submit (scope, cargo, submission)
+            submission.elem_p = False
+    # end def _submit
+
+    def _submitted_value_iter (self) :
+        submission  = self.submission
+        create_p    = submission.essence is None
+        yield_empty = not create_p or self.required
+        for k, v in self.__super._submitted_value_iter () :
+            ### For creation of optional fields, filter empty fields
+            if yield_empty or v != "" :
+                yield k, v
+    # end def _submitted_value_iter
 
 # end class Field_Entity
 
@@ -1732,10 +1764,7 @@ class Field_Ref_Hidden (Field_Entity) :
         if  k not in ("input_widget", "_required")
         )
     _required           = False
-
-    def __call__ (self, scope, cargo) :
-        pass
-    # end def __call__
+    Submission          = GTW.MF3.Submission.Field_Ref_Hidden
 
     @property
     def input_widget (self) :
@@ -1748,15 +1777,24 @@ class Field_Ref_Hidden (Field_Entity) :
     # end def prefilled
 
     @property
+    def ref (self) :
+        return self.Parent_Entity.Parent_Entity
+    # end def ref
+
+    @property
     def submitted_value (self) :
-        ref = self.Parent_Entity.Parent_Entity
-        return ref.essence or ref._submitted_value
+        ref = self.ref
+        return ref.essence or ref.submitted_value
     # end def submitted_value
 
     @property
     def ui_display (self) :
         return ""
     # end def ui_display
+
+    def _submit (self, scope, cargo, submission = None) :
+        self._my_submission (scope, cargo, submission)
+    # end def _submit
 
 # end class Field_Ref_Hidden
 
@@ -1800,15 +1838,6 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
                 for rr in rrs
                 )
     # end def __init__
-
-    def __call__ (self, scope, cargo) :
-        self.populate_new (cargo)
-        if self.parent.essence :
-            for e in self.elements :
-                e (scope, cargo)
-        else :
-            raise Delay_Call
-    # end def __call__
 
     @classmethod
     def Auto (cls, ak, E_Type, ** kw) :
@@ -1897,6 +1926,15 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
         else :
             return map [i]
     # end def _new
+
+    def _submit (self, scope, cargo, submission = None) :
+        self.populate_new (cargo)
+        if self.parent.essence :
+            for e in self.elements :
+                e._submit (scope, cargo)
+        else :
+            raise Delay_Call
+    # end def _submit
 
     def __getitem__ (self, key) :
         return self._new_rrs [key]
