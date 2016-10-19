@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -29,10 +29,27 @@
 #    13-Sep-2012 (CT) Add `_test_roles`
 #     6-Dec-2012 (CT) Add `Person_has_Account`
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
+#    19-Oct-2016 (CT) Add test `attr_prop`
 #    ««revision-date»»···
 #--
 
 from   __future__  import print_function
+
+_test_attr_prop = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+
+    >>> PAP.Person.attr_prop ("lifetime")
+    Date_Interval `lifetime`
+
+    >>> PAP.Person.attr_prop ("lifetime.start")
+    Date `start`
+
+    >>> PAP.Person.attr_prop ("lifetime.start.year")
+    Int `year`
+
+"""
 
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -283,7 +300,8 @@ def show_ac (completer, scope, val_dict, complete_entity = False) :
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( main          = _test_code
+        ( attr_prop     = _test_attr_prop
+        , main          = _test_code
         , partial_roles = _test_partial_roles
         , roles         = _test_roles
         )

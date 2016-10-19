@@ -309,6 +309,9 @@
 #    22-Jun-2016 (CT) Add staticmethod `_ui_display`
 #     6-Jul-2016 (CT) Call `attr.set_cooked`, not `attr._set_cooked`
 #    22-Jul-2016 (CT) Move `has_identity` from `An_Entity` to `Entity`
+#    19-Oct-2016 (CT) Change `attr_prop` to handle dotted names
+#                     + I.e., access to nested attribute properties of
+#                       composite/structured attributes
 #    ««revision-date»»···
 #--
 
@@ -636,7 +639,12 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         """Return the property of the attribute named `name`.
            Return None if there is no such attribute.
         """
-        return cls.attributes.get (name)
+        result = cls.attributes.get (name)
+        if result is None :
+            aq = getattr (cls.AQ, name, None)
+            if aq is not None :
+                result = aq._attr.kind
+        return result
     # end def attr_prop
 
     def attr_value_maybe (self, name) :
