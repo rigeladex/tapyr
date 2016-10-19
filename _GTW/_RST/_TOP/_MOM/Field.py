@@ -38,6 +38,8 @@
 #    24-Jun-2015 (CT) Add `zero_width_space` to `Creation.as_html`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    19-Oct-2016 (CT) Add missing `renderer` arg to `_set_as_html`
+#    19-Oct-2016 (CT) Change `Base.value` to let `FO` resolve dotted names
+#                     * needed for structured attributes
 #    ««revision-date»»···
 #--
 
@@ -203,9 +205,12 @@ class Base (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Field)) :
     # end def css_class_dyn
 
     def value (self, o, renderer) :
+        result = None
         if isinstance (o, MOM.Id_Entity) :
-            o  = o.FO
-        result = self._value_getter (o)
+            ### `FO` needs to do resolution of dotted names itself
+            result = getattr (o.FO, self.name, None)
+        if result is None :
+            result = self._value_getter (o)
         return result
     # end def value
 
