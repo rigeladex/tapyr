@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -21,6 +21,7 @@
 #     5-Feb-2015 (CT) Remove rule for `caption`
 #     1-Jun-2015 (CT) Add rule for `data-action=undo`
 #     6-Jul-2015 (CT) Add missing `CSS_Link` for `jQuery_UI`
+#    19-Oct-2016 (CT) Improve `margin` and `padding` of `.action .pure-button`
 #    ««revision-date»»···
 #--
 
@@ -97,7 +98,7 @@ style_sheet = Style_Sheet \
                 , children          =
                     [ Rule_Class
                         ( "action"
-                        , padding_bottom    = 0
+                        , padding           = TRBL (0, Em (0.05))
                         , children          =
                             [ Rule
                                 ( "p"
@@ -107,17 +108,12 @@ style_sheet = Style_Sheet \
                                 )
                             , Rule
                                 ( ".pure-button"
-                                , border_radius     = Em (0.5)
+                                , border_radius     = Em (0.50)
                                 , color             = P.color.m_blue
-                                , margin            =
-                                    TRBL (0, Em (0.5), Em (0.5), 0)
-                                , padding           = Em (0.5)
+                                , margin            = Em (0.25)
+                                , padding           = Em (0.50)
                                 , children          =
-                                    [ Rule_Pseudo
-                                        ( "last-child"
-                                        , margin_right      = 0
-                                        )
-                                    , Rule
+                                    [ Rule
                                         ( ".fa"
                                         , height            = Em (1)
                                         , width             = Em (1)
@@ -141,14 +137,14 @@ style_sheet = Style_Sheet \
                 , children          =
                     [ Rule_Class
                         ( "action"
-                        , padding           = TRBL (Em (0.2), 0, 0, Em (0.5))
+                        , padding           = TRBL (Em (0.2), Em (0.05))
                         , children          =
                             [ Rule
                                 ( ".pure-button"
                                 , font_size         = Em (1.5)
-                                , padding           = TRBL0 (b = Em (0.2))
-                                , margin            = 0
-                                , min_width         = Em (3)
+                                , margin            = TRBL (0, Em (0.25))
+                                , padding           = TRBL (Em (0.2), Em (0.05))
+                                , min_width         = Em (3.0)
                                 , children          =
                                     [ Rule
                                         ( "b"
