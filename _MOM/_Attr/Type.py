@@ -408,6 +408,7 @@
 #    19-Jul-2016 (CT) Move `A_Date`, `A_Date_Time`, `A_Time` to separate module
 #     6-Oct-2016 (CT) Add `Kind_Mixins_X`
 #    14-Oct-2016 (CT) Add `ui_allow_change`, `ui_allow_move` to `_A_Id_Entity_`
+#    19-Oct-2016 (CT) Change `FO_nested` to handle structured attributes
 #    ««revision-date»»···
 #--
 
@@ -1040,7 +1041,12 @@ class A_Attr_Type \
     def FO_nested (self, obj, names, value) :
         if names :
             inner = getattr (obj, self.name)
-            attr  = inner.attributes [names [0]]
+            try :
+                inner_attrs = inner.attributes
+            except AttributeError :
+                ### structured attributes need this
+                inner_attrs = self.E_Type.attributes
+            attr  = inner_attrs [names [0]]
             return attr.FO_nested (inner, names [1:], value)
         else :
             return obj, self.kind, value

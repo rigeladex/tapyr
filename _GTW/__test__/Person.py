@@ -30,6 +30,7 @@
 #     6-Dec-2012 (CT) Add `Person_has_Account`
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    19-Oct-2016 (CT) Add test `attr_prop`
+#    19-Oct-2016 (CT) Add test `FO`
 #    ««revision-date»»···
 #--
 
@@ -192,6 +193,26 @@ _test_code = """
 
 """
 
+_test_FO = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+
+    >>> p = PAP.Person.instance_or_new ("Tanzer", "Christian", lifetime = ("1959-09-26",))
+    >>> print (p.ui_display)
+    Tanzer Christian
+
+    >>> print (getattr (p.FO, "lifetime"))
+    1959-09-26
+
+    >>> print (getattr (p.FO, "lifetime.start"))
+    1959-09-26
+
+    >>> print (getattr (p.FO, "lifetime.start.year"))
+    1959
+
+"""
+
 _test_partial_roles = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -301,6 +322,7 @@ def show_ac (completer, scope, val_dict, complete_entity = False) :
 __test__ = Scaffold.create_test_dict \
     ( dict
         ( attr_prop     = _test_attr_prop
+        , FO            = _test_FO
         , main          = _test_code
         , partial_roles = _test_partial_roles
         , roles         = _test_roles
