@@ -40,6 +40,10 @@
 #    12-May-2016 (CT) Change`referral_query` to use `abs_href_dynamic`
 #                     - Using `abs_href` breaks queries for
 #                       `Referral`/`A_Link` pairs
+#    19-Oct-2016 (CT) Change `_field_type` to use attr-type, not attr-kind, as
+#                     index into `_field_type_map`
+#                     + Copy `_field_type_map` from class to instance
+#                       (it is E_Type specific!)
 #    ««revision-date»»···
 #--
 
@@ -97,7 +101,8 @@ class _TOP_MOM_Mixin_Base_ (GTW.RST.MOM.Mixin) :
     _field_type_map               = {}
 
     def __init__ (self, ** kw) :
-        self._field_map = {}
+        self._field_map      = {}
+        self._field_type_map = dict (self.__class__._field_type_map)
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -201,11 +206,25 @@ class Renderer_Mixin (_TOP_MOM_Mixin_Base_) :
         ft_map = self._field_type_map
         result = ft_map.get (name)
         if result is None :
-            at = E_Type.attr_prop (name)
-            if at is not None :
+            ak = E_Type.attr_prop (name)
+            if ak is not None :
+                at     = ak.attr
                 result = ft_map.get (at)
-            if result is None :
-                result = self._field_type_by_attr  (name, at)
+                if result is None :
+                    result = self._field_type_by_attr  (name, at)
+            if result is None and "." in name :
+                FT_Coll = GTW.RST.TOP.MOM.Field._Id_Entity_Collection_
+                head = name
+                while "." in head :
+                    head, t = head.rsplit (".", 1)
+                    ft      = self._field_type (head, E_Type)
+                    if ft is not None and issubclass (ft, FT_Coll) :
+                        ### XXX would like to have a special type that properly
+                        ###     formats the nested attributes of the
+                        ###     _Id_Entity_Collection_
+                        ### without that, output is a portable repr of the
+                        ### tuple of nested values
+                        break
             if result is None :
                 result = self.Field
         else :

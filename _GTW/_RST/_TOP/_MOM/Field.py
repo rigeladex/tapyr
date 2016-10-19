@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -37,6 +37,7 @@
 #                     (use `&nbsp;` in place of nothing)
 #    24-Jun-2015 (CT) Add `zero_width_space` to `Creation.as_html`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    19-Oct-2016 (CT) Add missing `renderer` arg to `_set_as_html`
 #    ««revision-date»»···
 #--
 
@@ -208,7 +209,7 @@ class Base (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Field)) :
         return result
     # end def value
 
-    def _set_as_html (self, values) :
+    def _set_as_html (self, values, renderer) :
         tag_set   = self.tag_set
         tag_item  = self.tag_item
         ti_head   = "<%s>"  % tag_item if tag_item else ""
