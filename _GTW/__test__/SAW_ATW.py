@@ -43,6 +43,7 @@
 #     9-Sep-2014 (CT) Add test for query with type restriction
 #    12-Mar-2015 (CT) Adapt to sqlalchemy 0.9.8
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    20-Oct-2016 (CT) Add tests `show_table_ancestors`, `show_table_summary`
 #    ««revision-date»»···
 #--
 
@@ -174,6 +175,66 @@ _test_ancestors = """
     PAP.Person_has_Email                 < PAP.Subject_has_Property < MOM.Id_Entity
     PAP.Company_has_Address              < PAP.Subject_has_Property < MOM.Id_Entity
     PAP.Person_has_Address               < PAP.Subject_has_Property < MOM.Id_Entity
+
+    >>> show_table_ancestors (apt)
+    mom_id_entity /5
+    mom_md_change /10
+    auth__account_ /5  <  mom_id_entity /5
+    auth_account_anonymous /1  <  auth__account_ /5  <  mom_id_entity /5
+    auth_account /3  <  auth__account_ /5  <  mom_id_entity /5
+    auth_certificate /8  <  mom_id_entity /5
+    auth_group /3  <  mom_id_entity /5
+    auth_account_in_group /3  <  mom_id_entity /5
+    auth_account_activation /2  <  mom_id_entity /5
+    auth_account_password_change_required /2  <  mom_id_entity /5
+    auth_account_email_verification /5  <  mom_id_entity /5
+    auth_account_password_reset /5  <  mom_id_entity /5
+    evt_calendar /3  <  mom_id_entity /5
+    evt_event /9  <  mom_id_entity /5
+    evt_event_occurs /5  <  mom_id_entity /5
+    evt_recurrence_spec /4  <  mom_id_entity /5
+    evt_recurrence_rule /16  <  mom_id_entity /5
+    pap_address /12  <  mom_id_entity /5
+    pap_company /9  <  mom_id_entity /5
+    pap_email /4  <  mom_id_entity /5
+    pap_phone /5  <  mom_id_entity /5
+    pap_person /12  <  mom_id_entity /5
+    pap_url /3  <  mom_id_entity /5
+    pap_address_position /7  <  mom_id_entity /5
+    pap_subject_has_property /4  <  mom_id_entity /5
+    pap_person_has_account /3  <  mom_id_entity /5
+    srm__boat_class_ /3  <  mom_id_entity /5
+    srm_boat_class /5  <  srm__boat_class_ /3  <  mom_id_entity /5
+    srm_handicap /1  <  srm__boat_class_ /3  <  mom_id_entity /5
+    srm_boat /8  <  mom_id_entity /5
+    srm_club /4  <  mom_id_entity /5
+    srm_regatta_event /9  <  mom_id_entity /5
+    swp_page /12  <  mom_id_entity /5
+    swp_page_y /2  <  swp_page /12  <  mom_id_entity /5
+    swp_clip_o /9  <  mom_id_entity /5
+    swp_clip_x /2  <  swp_page /12  <  mom_id_entity /5
+    swp_gallery /9  <  mom_id_entity /5
+    swp_picture /10  <  mom_id_entity /5
+    swp_referral /11  <  mom_id_entity /5
+    srm_page /3  <  swp_page /12  <  mom_id_entity /5
+    srm_regatta /12  <  mom_id_entity /5
+    srm_regatta_c /2  <  srm_regatta /12  <  mom_id_entity /5
+    srm_regatta_h /1  <  srm_regatta /12  <  mom_id_entity /5
+    srm_sailor /6  <  mom_id_entity /5
+    srm_boat_in_regatta /9  <  mom_id_entity /5
+    srm_race_result /6  <  mom_id_entity /5
+    srm_team /9  <  mom_id_entity /5
+    srm_crew_member /5  <  mom_id_entity /5
+    srm_team_has_boat_in_regatta /3  <  mom_id_entity /5
+    pap_subject_has_phone /2  <  pap_subject_has_property /4  <  mom_id_entity /5
+    pap_company_has_url /1  <  pap_subject_has_property /4  <  mom_id_entity /5
+    pap_person_has_url /1  <  pap_subject_has_property /4  <  mom_id_entity /5
+    pap_company_has_phone /1  <  pap_subject_has_phone /2  <  pap_subject_has_property /4  <  mom_id_entity /5
+    pap_person_has_phone /1  <  pap_subject_has_phone /2  <  pap_subject_has_property /4  <  mom_id_entity /5
+    pap_company_has_email /1  <  pap_subject_has_property /4  <  mom_id_entity /5
+    pap_person_has_email /1  <  pap_subject_has_property /4  <  mom_id_entity /5
+    pap_company_has_address /1  <  pap_subject_has_property /4  <  mom_id_entity /5
+    pap_person_has_address /1  <  pap_subject_has_property /4  <  mom_id_entity /5
 
     >>> show_root_table (apt)
     MOM.Id_Entity                        mom_id_entity
@@ -14099,6 +14160,66 @@ _test_tables = """
     SWP.Page_Y                               : swp_page_y
     SWP.Picture                              : swp_picture
     SWP.Referral                             : swp_referral
+
+    >>> show_table_summary (apt)
+    MOM.Id_Entity                            mom_id_entity                              5   5
+    MOM.MD_Change                            mom_md_change                             10  10
+    Auth._Account_                           auth__account_                             5   4
+    Auth.Account_Anonymous                   auth_account_anonymous                     1   0
+    Auth.Account                             auth_account                               3   2
+    Auth.Certificate                         auth_certificate                           8   6
+    Auth.Group                               auth_group                                 3   2
+    Auth.Account_in_Group                    auth_account_in_group                      3   2
+    Auth.Account_Activation                  auth_account_activation                    2   1
+    Auth.Account_Password_Change_Required    auth_account_password_change_required      2   1
+    Auth.Account_EMail_Verification          auth_account_email_verification            5   4
+    Auth.Account_Password_Reset              auth_account_password_reset                5   4
+    EVT.Calendar                             evt_calendar                               3   2
+    EVT.Event                                evt_event                                  9   6
+    EVT.Event_occurs                         evt_event_occurs                           5   3
+    EVT.Recurrence_Spec                      evt_recurrence_spec                        4   3
+    EVT.Recurrence_Rule                      evt_recurrence_rule                       16  15
+    PAP.Address                              pap_address                               12   6
+    PAP.Company                              pap_company                                9   4
+    PAP.Email                                pap_email                                  4   2
+    PAP.Phone                                pap_phone                                  5   4
+    PAP.Person                               pap_person                                12   6
+    PAP.Url                                  pap_url                                    3   2
+    PAP.Address_Position                     pap_address_position                       7   2
+    PAP.Subject_has_Property                 pap_subject_has_property                   4   3
+    PAP.Person_has_Account                   pap_person_has_account                     3   2
+    SRM._Boat_Class_                         srm__boat_class_                           3   1
+    SRM.Boat_Class                           srm_boat_class                             5   4
+    SRM.Handicap                             srm_handicap                               1   0
+    SRM.Boat                                 srm_boat                                   8   5
+    SRM.Club                                 srm_club                                   4   2
+    SRM.Regatta_Event                        srm_regatta_event                          9   6
+    SWP.Page                                 swp_page                                  12  10
+    SWP.Page_Y                               swp_page_y                                 2   1
+    SWP.Clip_O                               swp_clip_o                                 9   6
+    SWP.Clip_X                               swp_clip_x                                 2   1
+    SWP.Gallery                              swp_gallery                                9   7
+    SWP.Picture                              swp_picture                               10   5
+    SWP.Referral                             swp_referral                              11   9
+    SRM.Page                                 srm_page                                   3   2
+    SRM.Regatta                              srm_regatta                               12   9
+    SRM.Regatta_C                            srm_regatta_c                              2   1
+    SRM.Regatta_H                            srm_regatta_h                              1   0
+    SRM.Sailor                               srm_sailor                                 6   4
+    SRM.Boat_in_Regatta                      srm_boat_in_regatta                        9   8
+    SRM.Race_Result                          srm_race_result                            6   5
+    SRM.Team                                 srm_team                                   9   7
+    SRM.Crew_Member                          srm_crew_member                            5   4
+    SRM.Team_has_Boat_in_Regatta             srm_team_has_boat_in_regatta               3   2
+    PAP.Subject_has_Phone                    pap_subject_has_phone                      2   1
+    PAP.Company_has_Url                      pap_company_has_url                        1   0
+    PAP.Person_has_Url                       pap_person_has_url                         1   0
+    PAP.Company_has_Phone                    pap_company_has_phone                      1   0
+    PAP.Person_has_Phone                     pap_person_has_phone                       1   0
+    PAP.Company_has_Email                    pap_company_has_email                      1   0
+    PAP.Person_has_Email                     pap_person_has_email                       1   0
+    PAP.Company_has_Address                  pap_company_has_address                    1   0
+    PAP.Person_has_Address                   pap_person_has_address                     1   0
 
     >>> show_tables (apt)
     MOM.Id_Entity <Table mom_id_entity>

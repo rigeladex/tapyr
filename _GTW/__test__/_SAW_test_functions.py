@@ -25,6 +25,7 @@
 #     3-Jun-2016 (CT) Add `show_esf_query`
 #    31-Jul-2016 (CT) Move test functions from `SAW_QX` in here
 #     4-Aug-2016 (CT) Change default `pred` to filter `_SAT_Desc_`
+#    20-Oct-2016 (CT) Add `show_table_ancestors`, `show_table_summary`
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,7 @@ from   _MOM._DBW._SAW               import QX
 
 from   _TFL                         import TFL
 from   _TFL.portable_repr           import portable_repr
-from   _TFL.predicate               import split_hst, rsplit_hst
+from   _TFL.predicate               import first, split_hst, rsplit_hst
 from   _TFL.pyk                     import pyk
 
 import _TFL.Regexp
@@ -359,8 +360,8 @@ def show_sequences (apt) :
 # end def show_sequences
 
 def show_table (apt, ETW) :
-    T = ETW.e_type
-    ST = ETW.sa_table
+    T      = ETW.e_type
+    ST     = ETW.sa_table
     second = ("(%s)" % (ETW.parent.type_name, )) if ETW.parent else ""
     third  = "" if T.relevant_root is T \
               else (T.relevant_root and T.relevant_root.type_name)
@@ -383,6 +384,22 @@ def show_tables (apt, pred = pred) :
             , formatted_table (seq.sa_table, nl, indent)
             )
 # end def show_tables
+
+def show_table_ancestors (apt, pred = pred) :
+    for ETW in apt._SAW.e_types_t :
+        if not pred (ETW) :
+            continue
+        fmt = "%s /%d"
+        ts  = (fmt % (t, len (t.columns)) for t in reversed (ETW.sa_tables_strict))
+        print ("  <  ".join (ts).rstrip ())
+# end def show_table_ancestors
+
+def show_table_summary (apt) :
+    for ETW in apt._SAW.e_types_t :
+        T    = ETW.e_type
+        ST   = ETW.sa_table
+        print ("%-40s %-40s %3d %3d" % (T.type_name, ST, len (ST.columns), len (ETW.db_attrs_o)))
+# end def show_table_summary
 
 def show_xs_filter (apt, ET, q) :
     qr = apt.DBW.PNS.Q_Result.E_Type (apt [ET], _strict = False)
