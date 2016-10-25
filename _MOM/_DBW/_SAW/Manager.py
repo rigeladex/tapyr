@@ -45,6 +45,8 @@
 #    23-Apr-2015 (CT) Change `_add_user_defined_indices` to support DESC indices
 #    22-Jul-2016 (CT) Change `finalize` to filter for `has_identity`;
 #                     add `App_Type_Wrapper.db_sig` to signal that change
+#    20-Oct-2016 (CT) Add `iea_type_restrictions` to `update_etype`
+#    25-Oct-2016 (CT) Increase `db_sig` because `iea_type_restrictions`
 #    ««revision-date»»···
 #--
 
@@ -86,7 +88,7 @@ class _Reload_Mixin_ (object) :
 class App_Type_Wrapper (TFL.Meta.Object) :
     """SAW specific information about a derived App_Type"""
 
-    db_sig              = (1, )
+    db_sig              = (2, )
     """Change `db_sig` when a code change in SAW makes db incompatible"""
 
     no_identifier_pat   = Regexp(r"\W")
@@ -236,7 +238,9 @@ class _M_SAW_Manager_ (MOM.DBW._Manager_.__class__) :
                 sa_table = ETW.sa_table
                 if sa_table is None :
                     if e_type.is_relevant :
-                        if not e_type.is_partial :
+                        needs_table = not \
+                            (e_type.is_partial or e_type.iea_type_restrictions)
+                        if needs_table :
                             raise TypeError \
                                 ( "Non-partial revelant type %s "
                                   "without a table?"
@@ -259,11 +263,11 @@ class _M_SAW_Manager_ (MOM.DBW._Manager_.__class__) :
                         sa_table.append_constraint \
                             (SA.schema.UniqueConstraint (* unique))
                         e_type.P_uniqueness [0].ems_check = False
-                    if e_type._Reload_Mixin_ is not None :
-                        e_type._Reload_Mixin_.define_e_type \
-                            (e_type, _Reload_Mixin_)
                     cls._add_check_constraints    (e_type, ETW, sa_table)
                     cls._add_user_defined_indices (e_type, ETW, sa_table)
+                if e_type._Reload_Mixin_ is not None and not e_type.is_partial :
+                    e_type._Reload_Mixin_.define_e_type \
+                        (e_type, _Reload_Mixin_)
             elif ETW.root_table is not None :
                 etw = e_type._SAW = cls.PNS.Partial_E_Type_Wrapper (e_type, ETW)
                 ETW.ATW.add (etw)

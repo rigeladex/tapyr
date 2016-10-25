@@ -227,14 +227,6 @@ _test_ancestors = """
     srm_crew_member /5  <  mom_id_entity /5
     srm_team_has_boat_in_regatta /3  <  mom_id_entity /5
     pap_subject_has_phone /2  <  pap_subject_has_property /4  <  mom_id_entity /5
-    pap_company_has_url /1  <  pap_subject_has_property /4  <  mom_id_entity /5
-    pap_person_has_url /1  <  pap_subject_has_property /4  <  mom_id_entity /5
-    pap_company_has_phone /1  <  pap_subject_has_phone /2  <  pap_subject_has_property /4  <  mom_id_entity /5
-    pap_person_has_phone /1  <  pap_subject_has_phone /2  <  pap_subject_has_property /4  <  mom_id_entity /5
-    pap_company_has_email /1  <  pap_subject_has_property /4  <  mom_id_entity /5
-    pap_person_has_email /1  <  pap_subject_has_property /4  <  mom_id_entity /5
-    pap_company_has_address /1  <  pap_subject_has_property /4  <  mom_id_entity /5
-    pap_person_has_address /1  <  pap_subject_has_property /4  <  mom_id_entity /5
 
     >>> show_root_table (apt)
     MOM.Id_Entity                        mom_id_entity
@@ -2002,15 +1994,6 @@ _test_key_o_p = """
     SRM.Crew_Member                          : None            pid
     SRM.Team_has_Boat_in_Regatta             : None            pid
     PAP.Subject_has_Phone                    : None            pid
-    PAP.Company_has_Url                      : None            pid
-    PAP.Person_has_Url                       : None            pid
-    PAP.Company_has_Phone                    : None            pid
-    PAP.Person_has_Phone                     : None            pid
-    PAP.Company_has_Email                    : None            pid
-    PAP.Person_has_Email                     : None            pid
-    PAP.Company_has_Address                  : None            pid
-    PAP.Person_has_Address                   : None            pid
-
 
 """
 
@@ -2072,13 +2055,16 @@ _test_parents = """
     <SAW : MOM.Id_Entity [mom_id_entity]>
 
     >>> print (nl.join (str (a) for a in ETW.children)) ### PAP.Subject_has_Property
+    <SAW : PAP.Subject_has_Address [pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Subject_has_Email [pap_subject_has_property : mom_id_entity]>
     <SAW : PAP.Subject_has_Phone [pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
-    <SAW : PAP.Company_has_Url [pap_company_has_url : pap_subject_has_property : mom_id_entity]>
-    <SAW : PAP.Person_has_Url [pap_person_has_url : pap_subject_has_property : mom_id_entity]>
-    <SAW : PAP.Company_has_Email [pap_company_has_email : pap_subject_has_property : mom_id_entity]>
-    <SAW : PAP.Person_has_Email [pap_person_has_email : pap_subject_has_property : mom_id_entity]>
-    <SAW : PAP.Company_has_Address [pap_company_has_address : pap_subject_has_property : mom_id_entity]>
-    <SAW : PAP.Person_has_Address [pap_person_has_address : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Subject_has_Url [pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Url [pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Url [pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Email [pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Email [pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Address [pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Address [pap_subject_has_property : mom_id_entity]>
 
     >>> print (nl.join (str (t) for t in ETW.sa_tables)) ### PAP.Subject_has_Property
     mom_id_entity
@@ -2091,8 +2077,8 @@ _test_parents = """
     <SAW : MOM.Id_Entity [mom_id_entity]>
 
     >>> print (nl.join (str (a) for a in ETW.children)) ### PAP.Subject_has_Phone
-    <SAW : PAP.Company_has_Phone [pap_company_has_phone : pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
-    <SAW : PAP.Person_has_Phone [pap_person_has_phone : pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Phone [pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Phone [pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
 
     >>> print (nl.join (str (t) for t in ETW.sa_tables)) ### PAP.Subject_has_Phone
     mom_id_entity
@@ -2111,7 +2097,6 @@ _test_parents = """
     mom_id_entity
     pap_subject_has_property
     pap_subject_has_phone
-    pap_person_has_phone
 
     >>> ETW = apt ["PAP.Person_has_Url"]._SAW
     >>> print (nl.join (str (a) for a in ETW.ancestors)) ### PAP.Person_has_Url
@@ -2123,7 +2108,6 @@ _test_parents = """
     >>> print (nl.join (str (t) for t in ETW.sa_tables)) ### PAP.Person_has_Url
     mom_id_entity
     pap_subject_has_property
-    pap_person_has_url
 
     >>> ETW = apt ["SRM.Regatta_C"]._SAW
     >>> print (nl.join (str (a) for a in ETW.ancestors)) ### SRM.Regatta_C
@@ -3384,7 +3368,7 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Url `right` [pap_subject_has_property.right]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : PAP.Company_has_Url [pap_company_has_url : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Url [pap_subject_has_property : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_subject_has_property.desc]>
       <SAW : Link_Ref_List `events`>
@@ -3394,7 +3378,7 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Url `right` [pap_subject_has_property.right]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : PAP.Person_has_Url [pap_person_has_url : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Url [pap_subject_has_property : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_subject_has_property.desc]>
       <SAW : Link_Ref_List `events`>
@@ -3404,7 +3388,7 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Url `right` [pap_subject_has_property.right]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : PAP.Company_has_Phone [pap_company_has_phone : pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Phone [pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_subject_has_property.desc]>
       <SAW : Link_Ref_List `events`>
@@ -3415,7 +3399,7 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Phone `right` [pap_subject_has_property.right]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : PAP.Person_has_Phone [pap_person_has_phone : pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Phone [pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_subject_has_property.desc]>
       <SAW : Link_Ref_List `events`>
@@ -3426,7 +3410,7 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Phone `right` [pap_subject_has_property.right]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : PAP.Company_has_Email [pap_company_has_email : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Email [pap_subject_has_property : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_subject_has_property.desc]>
       <SAW : Link_Ref_List `events`>
@@ -3436,7 +3420,7 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Email `right` [pap_subject_has_property.right]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : PAP.Person_has_Email [pap_person_has_email : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Email [pap_subject_has_property : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_subject_has_property.desc]>
       <SAW : Link_Ref_List `events`>
@@ -3446,7 +3430,7 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Email `right` [pap_subject_has_property.right]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : PAP.Company_has_Address [pap_company_has_address : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Address [pap_subject_has_property : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_subject_has_property.desc]>
       <SAW : Link_Ref_List `events`>
@@ -3456,7 +3440,7 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Address `right` [pap_subject_has_property.right]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : PAP.Person_has_Address [pap_person_has_address : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Address [pap_subject_has_property : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_subject_has_property.desc]>
       <SAW : Link_Ref_List `events`>
@@ -4855,7 +4839,7 @@ _test_q_able = """
       pid                           : pid
       right                         : property, right, url
       type_name                     : type_name
-    <SAW : PAP.Company_has_Url [pap_company_has_url : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Url [pap_subject_has_property : mom_id_entity]>
       creation                      : creation
       desc                          : desc
       events                        : events
@@ -4865,7 +4849,7 @@ _test_q_able = """
       pid                           : pid
       right                         : property, right, url
       type_name                     : type_name
-    <SAW : PAP.Person_has_Url [pap_person_has_url : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Url [pap_subject_has_property : mom_id_entity]>
       creation                      : creation
       desc                          : desc
       events                        : events
@@ -4875,7 +4859,7 @@ _test_q_able = """
       pid                           : pid
       right                         : property, right, url
       type_name                     : type_name
-    <SAW : PAP.Company_has_Phone [pap_company_has_phone : pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Phone [pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
       creation                      : creation
       desc                          : desc
       events                        : events
@@ -4886,7 +4870,7 @@ _test_q_able = """
       pid                           : pid
       right                         : phone, property, right
       type_name                     : type_name
-    <SAW : PAP.Person_has_Phone [pap_person_has_phone : pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Phone [pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
       creation                      : creation
       desc                          : desc
       events                        : events
@@ -4897,7 +4881,7 @@ _test_q_able = """
       pid                           : pid
       right                         : phone, property, right
       type_name                     : type_name
-    <SAW : PAP.Company_has_Email [pap_company_has_email : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Email [pap_subject_has_property : mom_id_entity]>
       creation                      : creation
       desc                          : desc
       events                        : events
@@ -4907,7 +4891,7 @@ _test_q_able = """
       pid                           : pid
       right                         : email, property, right
       type_name                     : type_name
-    <SAW : PAP.Person_has_Email [pap_person_has_email : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Email [pap_subject_has_property : mom_id_entity]>
       creation                      : creation
       desc                          : desc
       events                        : events
@@ -4917,7 +4901,7 @@ _test_q_able = """
       pid                           : pid
       right                         : email, property, right
       type_name                     : type_name
-    <SAW : PAP.Company_has_Address [pap_company_has_address : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Address [pap_subject_has_property : mom_id_entity]>
       creation                      : creation
       desc                          : desc
       events                        : events
@@ -4927,7 +4911,7 @@ _test_q_able = """
       pid                           : pid
       right                         : address, property, right
       type_name                     : type_name
-    <SAW : PAP.Person_has_Address [pap_person_has_address : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Address [pap_subject_has_property : mom_id_entity]>
       creation                      : creation
       desc                          : desc
       events                        : events
@@ -5946,7 +5930,6 @@ _test_q_result = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_person_has_phone.pid AS pap_person_has_phone_pid,
            pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
            pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
            pap_subject_has_property."desc" AS pap_subject_has_property_desc,
@@ -5956,7 +5939,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_person_has_phone ON pap_subject_has_phone.pid = pap_person_has_phone.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
          WHERE mom_id_entity.pid = :spk
          LIMIT :param_1
 
@@ -5965,14 +5949,16 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_person_has_phone ON pap_subject_has_phone.pid = pap_person_has_phone.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
 
     >>> print (qrt.attr (Q.person.lifetime.start)) ### PAP.Person_has_Phone
     SQL: SELECT DISTINCT pap_person__1.lifetime__start AS pap_person__1_lifetime__start
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_person_has_phone ON pap_subject_has_phone.pid = pap_person_has_phone.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_subject_has_property."left"
 
     >>> print (qrt.attrs (Q.phone.sn, Q.desc, Q.person.lifetime.start)) ### PAP.Person_has_Phone
@@ -5983,7 +5969,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_person_has_phone ON pap_subject_has_phone.pid = pap_person_has_phone.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
            JOIN pap_phone AS pap_phone__1 ON pap_phone__1.pid = pap_subject_has_property."right"
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_subject_has_property."left"
 
@@ -5994,7 +5981,6 @@ _test_q_result = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_person_has_phone.pid AS pap_person_has_phone_pid,
            pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
            pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
            pap_subject_has_property."desc" AS pap_subject_has_property_desc,
@@ -6004,7 +5990,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_person_has_phone ON pap_subject_has_phone.pid = pap_person_has_phone.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_subject_has_property."left"
          WHERE pap_person__1.lifetime__start = :lifetime__start_1
 
@@ -6015,7 +6002,6 @@ _test_q_result = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_person_has_phone.pid AS pap_person_has_phone_pid,
            pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
            pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
            pap_subject_has_property."desc" AS pap_subject_has_property_desc,
@@ -6025,7 +6011,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_person_has_phone ON pap_subject_has_phone.pid = pap_person_has_phone.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_subject_has_property."left"
          ORDER BY pap_person__1.lifetime__start, pap_person__1.lifetime__finish
 
@@ -6039,18 +6026,13 @@ _test_q_result = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_company_has_email.pid AS pap_company_has_email_pid,
-           pap_person_has_email.pid AS pap_person_has_email_pid,
            pap_subject_has_property."desc" AS pap_subject_has_property_desc,
            pap_subject_has_property."left" AS pap_subject_has_property_left,
            pap_subject_has_property."right" AS pap_subject_has_property_right,
            pap_subject_has_property.pid AS pap_subject_has_property_pid
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           LEFT OUTER JOIN pap_company_has_email ON pap_subject_has_property.pid = pap_company_has_email.pid
-           LEFT OUTER JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
-         WHERE mom_id_entity.pid = pap_company_has_email.pid
-            OR mom_id_entity.pid = pap_person_has_email.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
 
     >>> print (qrt.filter (Q.left.lifetime.start > "2000-01-01")) ### PAP.Subject_has_Email
     SQL: SELECT
@@ -6059,22 +6041,17 @@ _test_q_result = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_company_has_email.pid AS pap_company_has_email_pid,
-           pap_person_has_email.pid AS pap_person_has_email_pid,
            pap_subject_has_property."desc" AS pap_subject_has_property_desc,
            pap_subject_has_property."left" AS pap_subject_has_property_left,
            pap_subject_has_property."right" AS pap_subject_has_property_right,
            pap_subject_has_property.pid AS pap_subject_has_property_pid
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           LEFT OUTER JOIN pap_company_has_email ON pap_subject_has_property.pid = pap_company_has_email.pid
-           LEFT OUTER JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
            LEFT OUTER JOIN mom_id_entity AS mom_id_entity__8 ON mom_id_entity__8.pid = pap_subject_has_property."left"
            LEFT OUTER JOIN pap_company AS pap_company__1 ON pap_company__1.pid = pap_subject_has_property."left"
            LEFT OUTER JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_subject_has_property."left"
-         WHERE (mom_id_entity.pid = pap_company_has_email.pid
-            OR mom_id_entity.pid = pap_person_has_email.pid)
-            AND (pap_company__1.lifetime__start > :lifetime__start_1
+         WHERE (pap_company__1.lifetime__start > :lifetime__start_1
             OR pap_person__2.lifetime__start > :lifetime__start_2)
 
     >>> print (qrt.filter (Q.right.address == "lucky@mangari.org")) ### PAP.Subject_has_Email
@@ -6084,20 +6061,15 @@ _test_q_result = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_company_has_email.pid AS pap_company_has_email_pid,
-           pap_person_has_email.pid AS pap_person_has_email_pid,
            pap_subject_has_property."desc" AS pap_subject_has_property_desc,
            pap_subject_has_property."left" AS pap_subject_has_property_left,
            pap_subject_has_property."right" AS pap_subject_has_property_right,
            pap_subject_has_property.pid AS pap_subject_has_property_pid
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           LEFT OUTER JOIN pap_company_has_email ON pap_subject_has_property.pid = pap_company_has_email.pid
-           LEFT OUTER JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
            LEFT OUTER JOIN pap_email AS pap_email__1 ON pap_email__1.pid = pap_subject_has_property."right"
-         WHERE (mom_id_entity.pid = pap_company_has_email.pid
-            OR mom_id_entity.pid = pap_person_has_email.pid)
-            AND pap_email__1.address = :address_1
+         WHERE pap_email__1.address = :address_1
 
     >>> print (qrt.filter (Q.right.address.ENDSWITH ("@mangari.org"))) ### PAP.Subject_has_Email
     SQL: SELECT
@@ -6106,20 +6078,15 @@ _test_q_result = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_company_has_email.pid AS pap_company_has_email_pid,
-           pap_person_has_email.pid AS pap_person_has_email_pid,
            pap_subject_has_property."desc" AS pap_subject_has_property_desc,
            pap_subject_has_property."left" AS pap_subject_has_property_left,
            pap_subject_has_property."right" AS pap_subject_has_property_right,
            pap_subject_has_property.pid AS pap_subject_has_property_pid
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           LEFT OUTER JOIN pap_company_has_email ON pap_subject_has_property.pid = pap_company_has_email.pid
-           LEFT OUTER JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
            LEFT OUTER JOIN pap_email AS pap_email__1 ON pap_email__1.pid = pap_subject_has_property."right"
-         WHERE (mom_id_entity.pid = pap_company_has_email.pid
-            OR mom_id_entity.pid = pap_person_has_email.pid)
-            AND (pap_email__1.address LIKE '%%%%' || :address_1)
+         WHERE (pap_email__1.address LIKE '%%%%' || :address_1)
 
     >>> ET = apt ["PAP.Person_has_Email"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -6131,14 +6098,14 @@ _test_q_result = """
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_person_has_email.pid AS pap_person_has_email_pid,
            pap_subject_has_property."desc" AS pap_subject_has_property_desc,
            pap_subject_has_property."left" AS pap_subject_has_property_left,
            pap_subject_has_property."right" AS pap_subject_has_property_right,
            pap_subject_has_property.pid AS pap_subject_has_property_pid
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
            JOIN pap_email AS pap_email__2 ON pap_email__2.pid = pap_subject_has_property."right"
          WHERE (pap_email__2.address LIKE '%%%%' || :address_1)
 
@@ -6161,6 +6128,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
            LEFT OUTER JOIN mom_id_entity AS mom_id_entity__13 ON mom_id_entity__13.pid = pap_subject_has_property."left"
          WHERE mom_id_entity__13.electric = 1
 
@@ -6180,6 +6148,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
            LEFT OUTER JOIN pap_phone AS pap_phone__2 ON pap_phone__2.pid = pap_subject_has_property."right"
            LEFT OUTER JOIN mom_id_entity AS mom_id_entity__14 ON mom_id_entity__14.pid = pap_subject_has_property."right"
            LEFT OUTER JOIN mom_id_entity AS mom_id_entity__13 ON mom_id_entity__13.pid = pap_subject_has_property."left"
@@ -6201,6 +6170,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
          WHERE mom_id_entity.electric = 1
 
     >>> print (qrt.filter (~ Q.electric)) ### PAP.Subject_has_Phone
@@ -6219,6 +6189,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
          WHERE mom_id_entity.electric != 1
 
     >>> print (qrt.filter (Q.NOT (Q.electric))) ### PAP.Subject_has_Phone
@@ -6237,6 +6208,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
          WHERE mom_id_entity.electric != 1
 
     >>> print (qrt.filter (Q.NOT (~ Q.electric))) ### PAP.Subject_has_Phone
@@ -6255,6 +6227,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
          WHERE mom_id_entity.electric = 1
 
     >>> print (qrt.filter (Q.x_locked)) ### PAP.Subject_has_Phone
@@ -6273,6 +6246,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
          WHERE mom_id_entity.x_locked = 1
 
     >>> print (qrt.filter (Q.left)) ### PAP.Subject_has_Phone
@@ -6291,6 +6265,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
          WHERE pap_subject_has_property."left" IS NOT NULL
 
     >>> ET = apt ["Auth.Account"]
@@ -9330,7 +9305,7 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         url                       : pap_subject_has_property.right
         x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Company_has_Url [pap_company_has_url : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Url [pap_subject_has_property : mom_id_entity]>
         company                   : pap_subject_has_property.left
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_subject_has_property.desc
@@ -9346,7 +9321,7 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         url                       : pap_subject_has_property.right
         x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Person_has_Url [pap_person_has_url : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Url [pap_subject_has_property : mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_subject_has_property.desc
         electric                  : mom_id_entity.electric
@@ -9362,7 +9337,7 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         url                       : pap_subject_has_property.right
         x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Company_has_Phone [pap_company_has_phone : pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Phone [pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
         company                   : pap_subject_has_property.left
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_subject_has_property.desc
@@ -9379,7 +9354,7 @@ _test_qc_map = """
         subject                   : pap_subject_has_property.left
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Person_has_Phone [pap_person_has_phone : pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Phone [pap_subject_has_phone : pap_subject_has_property : mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_subject_has_property.desc
         electric                  : mom_id_entity.electric
@@ -9396,7 +9371,7 @@ _test_qc_map = """
         subject                   : pap_subject_has_property.left
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Company_has_Email [pap_company_has_email : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Email [pap_subject_has_property : mom_id_entity]>
         company                   : pap_subject_has_property.left
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_subject_has_property.desc
@@ -9412,7 +9387,7 @@ _test_qc_map = """
         subject                   : pap_subject_has_property.left
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Person_has_Email [pap_person_has_email : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Email [pap_subject_has_property : mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_subject_has_property.desc
         electric                  : mom_id_entity.electric
@@ -9428,7 +9403,7 @@ _test_qc_map = """
         subject                   : pap_subject_has_property.left
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Company_has_Address [pap_company_has_address : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Company_has_Address [pap_subject_has_property : mom_id_entity]>
         address                   : pap_subject_has_property.right
         company                   : pap_subject_has_property.left
         creation                  : <SAW : Rev_Ref `creation`>
@@ -9444,7 +9419,7 @@ _test_qc_map = """
         subject                   : pap_subject_has_property.left
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Person_has_Address [pap_person_has_address : pap_subject_has_property : mom_id_entity]>
+    <SAW : PAP.Person_has_Address [pap_subject_has_property : mom_id_entity]>
         address                   : pap_subject_has_property.right
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_subject_has_property.desc
@@ -12597,36 +12572,26 @@ _test_select = """
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_address.pid AS pap_company_has_address_pid,
-               pap_person_has_address.pid AS pap_person_has_address_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           LEFT OUTER JOIN pap_company_has_address ON pap_subject_has_property.pid = pap_company_has_address.pid
-           LEFT OUTER JOIN pap_person_has_address ON pap_subject_has_property.pid = pap_person_has_address.pid
-        WHERE mom_id_entity.pid = pap_company_has_address.pid
-            OR mom_id_entity.pid = pap_person_has_address.pid
+           JOIN pap_address ON pap_subject_has_property."right" = pap_address.pid
     PAP.Subject_has_Email PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_email.pid AS pap_company_has_email_pid,
-               pap_person_has_email.pid AS pap_person_has_email_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           LEFT OUTER JOIN pap_company_has_email ON pap_subject_has_property.pid = pap_company_has_email.pid
-           LEFT OUTER JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
-        WHERE mom_id_entity.pid = pap_company_has_email.pid
-            OR mom_id_entity.pid = pap_person_has_email.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
     PAP.Subject_has_Phone PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -12642,59 +12607,54 @@ _test_select = """
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
     PAP.Subject_has_Url PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_url.pid AS pap_company_has_url_pid,
-               pap_person_has_url.pid AS pap_person_has_url_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           LEFT OUTER JOIN pap_company_has_url ON pap_subject_has_property.pid = pap_company_has_url.pid
-           LEFT OUTER JOIN pap_person_has_url ON pap_subject_has_property.pid = pap_person_has_url.pid
-        WHERE mom_id_entity.pid = pap_company_has_url.pid
-            OR mom_id_entity.pid = pap_person_has_url.pid
+           JOIN pap_url ON pap_subject_has_property."right" = pap_url.pid
     PAP.Company_has_Url PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_url.pid AS pap_company_has_url_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_company_has_url ON pap_subject_has_property.pid = pap_company_has_url.pid
+           JOIN pap_company ON pap_subject_has_property."left" = pap_company.pid
+           JOIN pap_url ON pap_subject_has_property."right" = pap_url.pid
     PAP.Person_has_Url PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_person_has_url.pid AS pap_person_has_url_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_person_has_url ON pap_subject_has_property.pid = pap_person_has_url.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_url ON pap_subject_has_property."right" = pap_url.pid
     PAP.Company_has_Phone PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_phone.pid AS pap_company_has_phone_pid,
                pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
                pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
@@ -12704,14 +12664,14 @@ _test_select = """
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_company_has_phone ON pap_subject_has_phone.pid = pap_company_has_phone.pid
+           JOIN pap_company ON pap_subject_has_property."left" = pap_company.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
     PAP.Person_has_Phone PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_person_has_phone.pid AS pap_person_has_phone_pid,
                pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
                pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
@@ -12721,63 +12681,64 @@ _test_select = """
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_person_has_phone ON pap_subject_has_phone.pid = pap_person_has_phone.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
     PAP.Company_has_Email PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_email.pid AS pap_company_has_email_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_company_has_email ON pap_subject_has_property.pid = pap_company_has_email.pid
+           JOIN pap_company ON pap_subject_has_property."left" = pap_company.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
     PAP.Person_has_Email PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_person_has_email.pid AS pap_person_has_email_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
     PAP.Company_has_Address PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_address.pid AS pap_company_has_address_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_company_has_address ON pap_subject_has_property.pid = pap_company_has_address.pid
+           JOIN pap_company ON pap_subject_has_property."left" = pap_company.pid
+           JOIN pap_address ON pap_subject_has_property."right" = pap_address.pid
     PAP.Person_has_Address PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_person_has_address.pid AS pap_person_has_address_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_person_has_address ON pap_subject_has_property.pid = pap_person_has_address.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_address ON pap_subject_has_property."right" = pap_address.pid
 
     >>> PET = apt ["PAP.Person"]
     >>> print (formatted_select (PET, select = PET._SAW.select.count ()))
@@ -13782,14 +13743,14 @@ _test_select_strict = """
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_url.pid AS pap_company_has_url_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_company_has_url ON pap_subject_has_property.pid = pap_company_has_url.pid
+           JOIN pap_company ON pap_subject_has_property."left" = pap_company.pid
+           JOIN pap_url ON pap_subject_has_property."right" = pap_url.pid
         WHERE mom_id_entity.type_name = :type_name_1
     PAP.Person_has_Url PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
@@ -13797,14 +13758,14 @@ _test_select_strict = """
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_person_has_url.pid AS pap_person_has_url_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_person_has_url ON pap_subject_has_property.pid = pap_person_has_url.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_url ON pap_subject_has_property."right" = pap_url.pid
         WHERE mom_id_entity.type_name = :type_name_1
     PAP.Company_has_Phone PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
@@ -13812,7 +13773,6 @@ _test_select_strict = """
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_phone.pid AS pap_company_has_phone_pid,
                pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
                pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
@@ -13822,7 +13782,8 @@ _test_select_strict = """
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_company_has_phone ON pap_subject_has_phone.pid = pap_company_has_phone.pid
+           JOIN pap_company ON pap_subject_has_property."left" = pap_company.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
         WHERE mom_id_entity.type_name = :type_name_1
     PAP.Person_has_Phone PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
@@ -13830,7 +13791,6 @@ _test_select_strict = """
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_person_has_phone.pid AS pap_person_has_phone_pid,
                pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
                pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
@@ -13840,7 +13800,8 @@ _test_select_strict = """
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-           JOIN pap_person_has_phone ON pap_subject_has_phone.pid = pap_person_has_phone.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_phone ON pap_subject_has_property."right" = pap_phone.pid
         WHERE mom_id_entity.type_name = :type_name_1
     PAP.Company_has_Email PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
@@ -13848,14 +13809,14 @@ _test_select_strict = """
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_email.pid AS pap_company_has_email_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_company_has_email ON pap_subject_has_property.pid = pap_company_has_email.pid
+           JOIN pap_company ON pap_subject_has_property."left" = pap_company.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
         WHERE mom_id_entity.type_name = :type_name_1
     PAP.Person_has_Email PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
@@ -13863,14 +13824,14 @@ _test_select_strict = """
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_person_has_email.pid AS pap_person_has_email_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_email ON pap_subject_has_property."right" = pap_email.pid
         WHERE mom_id_entity.type_name = :type_name_1
     PAP.Company_has_Address PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
@@ -13878,14 +13839,14 @@ _test_select_strict = """
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_company_has_address.pid AS pap_company_has_address_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_company_has_address ON pap_subject_has_property.pid = pap_company_has_address.pid
+           JOIN pap_company ON pap_subject_has_property."left" = pap_company.pid
+           JOIN pap_address ON pap_subject_has_property."right" = pap_address.pid
         WHERE mom_id_entity.type_name = :type_name_1
     PAP.Person_has_Address PAP.Subject_has_Property
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
@@ -13893,16 +13854,15 @@ _test_select_strict = """
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               pap_person_has_address.pid AS pap_person_has_address_pid,
                pap_subject_has_property."desc" AS pap_subject_has_property_desc,
                pap_subject_has_property."left" AS pap_subject_has_property_left,
                pap_subject_has_property."right" AS pap_subject_has_property_right,
                pap_subject_has_property.pid AS pap_subject_has_property_pid
         FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
-           JOIN pap_person_has_address ON pap_subject_has_property.pid = pap_person_has_address.pid
+           JOIN pap_person ON pap_subject_has_property."left" = pap_person.pid
+           JOIN pap_address ON pap_subject_has_property."right" = pap_address.pid
         WHERE mom_id_entity.type_name = :type_name_1
-
 
 """
 
@@ -13965,14 +13925,6 @@ _test_sequences = """
     SRM.Crew_Member                          : mom_id_entity_pid_seq
     SRM.Team_has_Boat_in_Regatta             : mom_id_entity_pid_seq
     PAP.Subject_has_Phone                    : mom_id_entity_pid_seq
-    PAP.Company_has_Url                      : mom_id_entity_pid_seq
-    PAP.Person_has_Url                       : mom_id_entity_pid_seq
-    PAP.Company_has_Phone                    : mom_id_entity_pid_seq
-    PAP.Person_has_Phone                     : mom_id_entity_pid_seq
-    PAP.Company_has_Email                    : mom_id_entity_pid_seq
-    PAP.Person_has_Email                     : mom_id_entity_pid_seq
-    PAP.Company_has_Address                  : mom_id_entity_pid_seq
-    PAP.Person_has_Address                   : mom_id_entity_pid_seq
 
 """
 
@@ -14031,14 +13983,6 @@ _test_tables = """
     SRM.Crew_Member
     SRM.Team_has_Boat_in_Regatta
     PAP.Subject_has_Phone
-    PAP.Company_has_Url
-    PAP.Person_has_Url
-    PAP.Company_has_Phone
-    PAP.Person_has_Phone
-    PAP.Company_has_Email
-    PAP.Person_has_Email
-    PAP.Company_has_Address
-    PAP.Person_has_Address
 
     >>> for k, w in sorted (pyk.iteritems (apt._SAW.et_map)) :
     ...   if w.e_type.PNS is not None :
@@ -14096,10 +14040,10 @@ _test_tables = """
     PAP.Address                              : pap_address
     PAP.Address_Position                     : pap_address_position
     PAP.Company                              : pap_company
-    PAP.Company_has_Address                  : pap_company_has_address
-    PAP.Company_has_Email                    : pap_company_has_email
-    PAP.Company_has_Phone                    : pap_company_has_phone
-    PAP.Company_has_Url                      : pap_company_has_url
+    PAP.Company_has_Address                  : None
+    PAP.Company_has_Email                    : None
+    PAP.Company_has_Phone                    : None
+    PAP.Company_has_Url                      : None
     PAP.Email                                : pap_email
     PAP.Group                                : None
     PAP.Id_Entity                            : None
@@ -14110,10 +14054,10 @@ _test_tables = """
     PAP.Object                               : None
     PAP.Person                               : pap_person
     PAP.Person_has_Account                   : pap_person_has_account
-    PAP.Person_has_Address                   : pap_person_has_address
-    PAP.Person_has_Email                     : pap_person_has_email
-    PAP.Person_has_Phone                     : pap_person_has_phone
-    PAP.Person_has_Url                       : pap_person_has_url
+    PAP.Person_has_Address                   : None
+    PAP.Person_has_Email                     : None
+    PAP.Person_has_Phone                     : None
+    PAP.Person_has_Url                       : None
     PAP.Phone                                : pap_phone
     PAP.Property                             : None
     PAP.Subject                              : None
@@ -14212,14 +14156,6 @@ _test_tables = """
     SRM.Crew_Member                          srm_crew_member                            5   4
     SRM.Team_has_Boat_in_Regatta             srm_team_has_boat_in_regatta               3   2
     PAP.Subject_has_Phone                    pap_subject_has_phone                      2   1
-    PAP.Company_has_Url                      pap_company_has_url                        1   0
-    PAP.Person_has_Url                       pap_person_has_url                         1   0
-    PAP.Company_has_Phone                    pap_company_has_phone                      1   0
-    PAP.Person_has_Phone                     pap_person_has_phone                       1   0
-    PAP.Company_has_Email                    pap_company_has_email                      1   0
-    PAP.Person_has_Email                     pap_person_has_email                       1   0
-    PAP.Company_has_Address                  pap_company_has_address                    1   0
-    PAP.Person_has_Address                   pap_person_has_address                     1   0
 
     >>> show_tables (apt)
     MOM.Id_Entity <Table mom_id_entity>
@@ -14563,22 +14499,6 @@ _test_tables = """
     PAP.Subject_has_Phone (PAP.Subject_has_Property) PAP.Subject_has_Property <Table pap_subject_has_phone>
         Column extension                 : Varchar(5)           Primary_Optional Numeric_String extension
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_property.pid')
-    PAP.Company_has_Url (PAP.Subject_has_Property) PAP.Subject_has_Property <Table pap_company_has_url>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_property.pid')
-    PAP.Person_has_Url (PAP.Subject_has_Property) PAP.Subject_has_Property <Table pap_person_has_url>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_property.pid')
-    PAP.Company_has_Phone (PAP.Subject_has_Phone) PAP.Subject_has_Property <Table pap_company_has_phone>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_phone.pid')
-    PAP.Person_has_Phone (PAP.Subject_has_Phone) PAP.Subject_has_Property <Table pap_person_has_phone>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_phone.pid')
-    PAP.Company_has_Email (PAP.Subject_has_Property) PAP.Subject_has_Property <Table pap_company_has_email>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_property.pid')
-    PAP.Person_has_Email (PAP.Subject_has_Property) PAP.Subject_has_Property <Table pap_person_has_email>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_property.pid')
-    PAP.Company_has_Address (PAP.Subject_has_Property) PAP.Subject_has_Property <Table pap_company_has_address>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_property.pid')
-    PAP.Person_has_Address (PAP.Subject_has_Property) PAP.Subject_has_Property <Table pap_person_has_address>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('pap_subject_has_property.pid')
     <Table for Surrogate `pid`>
         Column electric                  : Boolean              Internal Boolean electric
         Column last_cid                  : Integer              Internal Int last_cid
@@ -14656,14 +14576,6 @@ _test_unique = """
     SRM.Crew_Member                left, right
     SRM.Team_has_Boat_in_Regatta   left, right
     PAP.Subject_has_Phone          left, right + extension
-    PAP.Company_has_Url            left, right =
-    PAP.Person_has_Url             left, right =
-    PAP.Company_has_Phone          extension, left, right =
-    PAP.Person_has_Phone           extension, left, right =
-    PAP.Company_has_Email          left, right =
-    PAP.Person_has_Email           left, right =
-    PAP.Company_has_Address        left, right =
-    PAP.Person_has_Address         left, right =
 
 """
 

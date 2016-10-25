@@ -77,6 +77,12 @@
 #    23-Apr-2015 (CT) Add `pid_query`, `pid_query_stmt`, `type_name_select_stmt`
 #                     + plus `_pid_query_direct`, `_pid_query_indirect`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    20-Oct-2016 (CT) Add `iea_type_restrictions` to `E_Type_Wrapper._setup`
+#    20-Oct-2016 (CT) Add `sa_table` guard to `del_stmt`, `ins_stmt`, `upd_stmt`
+#                     `sa_tables_descendents`
+#                     + Add guards for `stmt` to `_delete`, `_exec_insert`,
+#                       `_exec_update`
+#    24-Oct-2016 (CT) Add `iea_type_restriction_map` to `sa_joins_strict`
 #    ««revision-date»»···
 #--
 
@@ -237,6 +243,17 @@ class _E_Type_Wrapper_Base_ (TFL.Meta.Object) :
             result = tables [0]
             for t in tables [1:] :
                 result = result.join (t)
+            iea_tr_map = self.e_type.iea_type_restriction_map
+            if iea_tr_map :
+                for k, tn in sorted (pyk.iteritems (iea_tr_map)) :
+                    if k not in self.db_attrs_o :
+                        akw = self.db_attrs.get (k)
+                        if akw is not None :
+                            etw = self.ATW [tn]
+                            if etw.sa_table is not None :
+                                ac = akw.columns [0]
+                                result = result.join \
+                                    (etw.sa_table, ac == etw.spk_col)
             return result
     # end def sa_joins_strict
 
@@ -498,7 +515,8 @@ class _E_Type_Wrapper_ (_E_Type_Wrapper_Base_) :
             def _gen (self) :
                 is_pr = self.sa_table is None and self.e_type.is_relevant
                 for d in self.descendents :
-                    if is_pr or d.db_attrs_o or d.descendents :
+                    if (is_pr or d.db_attrs_o or d.descendents) \
+                           and d.sa_table is not None :
                         ### don't yield empty tables
                         yield d.sa_table
             return tuple (_gen (self))
@@ -587,12 +605,14 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
 
     @TFL.Meta.Once_Property
     def del_stmt (self) :
-        return self.sa_table.delete ().where (self.where_spk)
+        if self.sa_table is not None :
+            return self.sa_table.delete ().where (self.where_spk)
     # end def del_stmt
 
     @TFL.Meta.Once_Property
     def ins_stmt (self) :
-        return self.sa_table.insert ()
+        if self.sa_table is not None :
+            return self.sa_table.insert ()
     # end def ins_stmt
 
     @TFL.Meta.Once_Property
@@ -646,7 +666,8 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
 
     @TFL.Meta.Once_Property
     def upd_stmt (self) :
-        return self.sa_table.update ().where (self.where_spk)
+        if self.sa_table is not None :
+            return self.sa_table.update ().where (self.where_spk)
     # end def upd_stmt
 
     @TFL.Meta.Once_Property
@@ -717,17 +738,21 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
     # end def update
 
     def _delete (self, session, entity) :
-        session.connection.execute (self.del_stmt, spk = entity.spk)
+        stmt = self.del_stmt
+        if stmt is not None :
+            session.connection.execute (stmt, spk = entity.spk)
     # end def _delete
 
     def _exec_insert (self, session, values) :
-        stmt = self.ins_stmt.values (values)
-        return session.connection.execute (stmt)
+        stmt = self.ins_stmt
+        if stmt is not None :
+            return session.connection.execute (stmt.values (values))
     # end def _exec_insert
 
     def _exec_update (self, session, entity, values, ** xkw) :
-        return session.connection.execute \
-            (self.upd_stmt.values (values), ** xkw)
+        stmt = self.upd_stmt
+        if stmt is not None :
+            return session.connection.execute (stmt.values (values), ** xkw)
     # end def _exec_update
 
     def _insert (self, session, entity, spks, kw) :
@@ -779,7 +804,8 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
 
     def _setup (self, e_type) :
         db_attrs_o = self.db_attrs_o
-        if db_attrs_o or not e_type.is_partial :
+        if db_attrs_o or \
+               not (e_type.is_partial or e_type.iea_type_restrictions) :
             ATW           = self.ATW
             PNS           = self.PNS
             cols, unique  = self._setup_columns (e_type, db_attrs_o, PNS)
@@ -795,9 +821,9 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
                     (t_name, ATW.metadata,  * cols, ** kw)
                 sa_table.MOM_Wrapper = self
             self.unique_o = tuple (sorted (unique))
-            parent = self.parent
-            if parent :
-                parent.children.append (self)
+        parent = self.parent
+        if parent :
+            parent.children.append (self)
     # end def _setup
 
     def _setup_columns (self, e_type, db_attrs_o, PNS) :

@@ -238,6 +238,8 @@
 #    22-Jun-2016 (CT) Add `ui_display.add_type` for `MOM.Entity.Essence`
 #    22-Jun-2016 (CT) Add `MOM.Attr.Kind.is_void.add_type`
 #                     for `MOM.An_Entity.Essence`
+#    20-Oct-2016 (CT) Add `M_E_Type.iea_type_restrictions`
+#                     and `M_E_Type.iea_type_restriction_map`
 #    ««revision-date»»···
 #--
 
@@ -1131,6 +1133,29 @@ class M_E_Type (M_E_Mixin) :
             , db_attributes = dict ((a.name, a.db_sig) for a in cls.db_attr)
             )
     # end def db_sig
+
+    @TFL.Meta.Once_Property_NI
+    def iea_type_restriction_map (cls) :
+        """Type-restrictions for attributes referring to `Id_Entity` instances.
+        """
+        result = {}
+        for ak in cls.id_entity_attr :
+            at = ak.attr
+            if at.E_Type_Parent is not None :
+                result [at.name] = at.E_Type.type_name
+        return result
+    # end def iea_type_restriction_map
+
+    @TFL.Meta.Once_Property_NI
+    def iea_type_restrictions (cls) :
+        """Type-restrictions for attributes referring to `Id_Entity` instances.
+        """
+        from _MOM._Attr.Filter import Q
+        return tuple \
+            (   getattr (Q, k) [v]
+            for k, v in sorted (pyk.iteritems (cls.iea_type_restriction_map))
+            )
+    # end def iea_type_restrictions
 
     @TFL.Meta.Once_Property_NI
     def m_recordable_attrs (cls) :

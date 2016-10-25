@@ -131,6 +131,8 @@
 #     8-Jun-2016 (CT) Change `get_etype_attribute` to use `etype.AQ`
 #                     * DRY
 #                     * Home-grown code didn't support type restriction
+#    20-Oct-2016 (CT) Add `limit (2)` to `query_1` and `singleton`
+#    20-Oct-2016 (CT) Change `r_query` to use `self.query`, not `ems.query`
 #    ««revision-date»»···
 #--
 
@@ -413,7 +415,7 @@ class Id_Entity (Entity) :
         """Return the number of matches and the one single entity, if any,
            for the conditions in `filters` and `kw`.
         """
-        q = self.query (* filters, ** kw)
+        q = self.query (* filters, ** kw).limit (2)
         c = q.count ()
         return c, q.first () if c == 1 else None
     # end def query_1
@@ -470,7 +472,7 @@ class Object (Id_Entity) :
         Type = self._etype
         if Type.max_count == 1 :
             try :
-                return first (self.query ())
+                return first (self.query ().limit (2))
             except IndexError :
                 pass
     # end def singleton
@@ -549,10 +551,9 @@ class Link (Id_Entity) :
              * the returned links are restricted to those linking the
                specified objects
         """
-        sort_key = kw.pop ("sort_key", None)
-        Type     = self._etype
-        map      = getattr (Type, "role_map", None)
-        rkw      = {}
+        Type = self._etype
+        map  = getattr (Type, "role_map", None)
+        rkw  = {}
         if map :
             for k in list (kw) :
                 aie = None
@@ -569,13 +570,10 @@ class Link (Id_Entity) :
                             return []
                         rkw [aie.name] = obj
                     except MOM.Error.No_Such_Entity :
-                        return []
-        ems = self.ems
+                        return TFL.Q_Result (())
         if rkw :
             kw = dict (kw, ** rkw)
-        result = ems.query (self._etype, * filters, ** kw)
-        if sort_key is not None :
-            result = result.order_by (sort_key)
+        result = self.query (* filters, ** kw)
         return result
     # end def r_query
 
@@ -585,21 +583,18 @@ class Link (Id_Entity) :
         """
         ### Need to use `Q_Result_Composite` because `Type.sort_key` doesn't
         ### work with some backends (SQL, I am looking at you)
-        Type     = self._etype
-        sort_key = kw.pop ("sort_key", Type.sort_key)
+        sort_key = kw.pop ("sort_key", self._etype.sort_key)
         result   = self.r_query (* filters, ** kw)
         result   = self.ems.Q_Result_Composite ([result], sort_key)
         return result
     # end def r_query_s
 
     def links_of (self, obj, * filters, ** kw) :
-        """Return all links to `obj`
-           (considers `obj` for each of the roles).
-        """
+        """Return all links to `obj` (considers `obj` for each of the roles)."""
         queries  = []
         r_query  = self.ems.r_query
         sort_key = kw.pop ("sort_key", False)
-        strict   = kw.pop ("strict", False)
+        strict   = kw.pop ("strict",   False)
         Type     = self._etype
         for r in Type.Roles :
             if isinstance (obj, r.role_type) :

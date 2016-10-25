@@ -103,6 +103,7 @@
 #    25-Feb-2016 (CT) Change `_m_setup_roles` to always set `number_of_roles`
 #     1-Jun-2016 (CT) Change `_m_create_auto_children` to honor `refuse_e_types`
 #                     and `refuse_links`
+#    20-Oct-2016 (CT) Change `_m_create_role_child` to set `E_Type_Parent`
 #    ««revision-date»»···
 #--
 
@@ -241,6 +242,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                     ( auto_kw [role.name]
                     , auto_rev_ref   = role.auto_rev_ref_np
                     , auto_derive_np = role.auto_derive_npt
+                    , E_Type_Parent  = role.E_Type
                     , role_type      = etype
                     , __module__     = cls.__module__
                     )

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -104,7 +104,7 @@ _q_result = r"""
     [(PAP.Person ('ln 3', 'fn 3', '', ''), PAP.Address ('s', 'c', 'z', 'c'))]
 
     >>> prepr (PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln")))
-    (5, None)
+    (2, None)
     >>> prepr (PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 1")))
     (1, PAP.Person ('ln 1', 'fn 1', '', ''))
     >>> prepr (PAP.Person.query_1 (Q.last_name.STARTSWITH ("ln 42")))

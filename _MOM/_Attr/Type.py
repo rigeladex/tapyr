@@ -409,6 +409,7 @@
 #     6-Oct-2016 (CT) Add `Kind_Mixins_X`
 #    14-Oct-2016 (CT) Add `ui_allow_change`, `ui_allow_move` to `_A_Id_Entity_`
 #    19-Oct-2016 (CT) Change `FO_nested` to handle structured attributes
+#    20-Oct-2016 (CT) Add default for `_A_Id_Entity_.E_Type_Parent`
 #    ««revision-date»»···
 #--
 
@@ -1767,6 +1768,7 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
     _attrs_to_update_combine = \
         ("allow_e_types", "only_e_types", "refuse_e_types")
 
+    E_Type_Parent       = None
     Q_Ckd_Type          = MOM.Attr.Querier.Id_Entity
 
     is_link_role        = False

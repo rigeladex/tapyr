@@ -30,6 +30,7 @@
 #    13-Apr-2015 (CT) Add `_test_json`
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    24-May-2016 (CT) Add test for `ET.AQ.left ['PAP.Person'].middle_name`
+#    20-Oct-2016 (CT) Add test for `iea_type_restriction_map`
 #    ««revision-date»»···
 #--
 
@@ -358,6 +359,26 @@ _test_json = r"""
 
     >>> prepr (jsonified (pg))
     '{"display": "Gl\\u00fcck Martin", "pid": 1}'
+
+    >>> for et in scope.app_type._T_Extension :
+    ...     if et.iea_type_restriction_map :
+    ...         print ("%%-40s : %%s" %% (et.type_name, et.iea_type_restrictions))
+    PAP.Subject_has_Address                  : (Q.right ["PAP.Address"],)
+    PAP.Subject_has_Email                    : (Q.right ["PAP.Email"],)
+    PAP.Subject_has_Phone                    : (Q.right ["PAP.Phone"],)
+    PAP.Subject_has_Url                      : (Q.right ["PAP.Url"],)
+    PAP.Company_has_Url                      : (Q.left ["PAP.Company"], Q.right ["PAP.Url"])
+    PAP.Person_has_Url                       : (Q.left ["PAP.Person"], Q.right ["PAP.Url"])
+    PAP.Association_has_Url                  : (Q.left ["PAP.Association"], Q.right ["PAP.Url"])
+    PAP.Company_has_Phone                    : (Q.left ["PAP.Company"], Q.right ["PAP.Phone"])
+    PAP.Person_has_Phone                     : (Q.left ["PAP.Person"], Q.right ["PAP.Phone"])
+    PAP.Association_has_Phone                : (Q.left ["PAP.Association"], Q.right ["PAP.Phone"])
+    PAP.Company_has_Email                    : (Q.left ["PAP.Company"], Q.right ["PAP.Email"])
+    PAP.Person_has_Email                     : (Q.left ["PAP.Person"], Q.right ["PAP.Email"])
+    PAP.Association_has_Email                : (Q.left ["PAP.Association"], Q.right ["PAP.Email"])
+    PAP.Company_has_Address                  : (Q.left ["PAP.Company"], Q.right ["PAP.Address"])
+    PAP.Person_has_Address                   : (Q.left ["PAP.Person"], Q.right ["PAP.Address"])
+    PAP.Association_has_Address              : (Q.left ["PAP.Association"], Q.right ["PAP.Address"])
 
 """
 

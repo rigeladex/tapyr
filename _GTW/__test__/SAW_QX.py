@@ -1043,18 +1043,18 @@ _test_joins = """
 
     >>> show_joins (apt, "PAP.Person_has_Phone", Q.subject.electric)
     PAP.Person_has_Phone  :  Q.subject.electric
-      JOIN  pap_subject_has_property.pid = pap_person_has_phone.pid
+      JOIN  pap_subject_has_property.pid = pap_subject_has_phone.pid
       JOIN  pap_person__2.pid = pap_subject_has_property.left
       JOIN  mom_id_entity__4.pid = pap_subject_has_property.left
 
     >>> show_joins (apt, "PAP.Person_has_Phone", Q.subject.lifetime)
     PAP.Person_has_Phone  :  Q.subject.lifetime
-      JOIN  pap_subject_has_property.pid = pap_person_has_phone.pid
+      JOIN  pap_subject_has_property.pid = pap_subject_has_phone.pid
       JOIN  pap_person__2.pid = pap_subject_has_property.left
 
     >>> show_joins (apt, "PAP.Person_has_Phone", Q.subject.lifetime.start)
     PAP.Person_has_Phone  :  Q.subject.lifetime.start
-      JOIN  pap_subject_has_property.pid = pap_person_has_phone.pid
+      JOIN  pap_subject_has_property.pid = pap_subject_has_phone.pid
       JOIN  pap_person__2.pid = pap_subject_has_property.left
 
     >>> show_joins (apt, "Auth.Account", Q.person)

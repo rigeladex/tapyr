@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    19-Jul-2016 (CT) Creation
+#    20-Oct-2016 (CT) Add `iea_type_restrictions to `_SAT_Desc_`
 #    ««revision-date»»···
 #--
 
@@ -39,17 +40,19 @@ from   _TFL.I18N             import _, _T
 class _SAT_Desc_ (TFL.Meta.Object) :
     """Description of structured attribute type."""
 
-    PNS              = None
-    app_type         = None
-    epk_sig          = ()
-    hash_sig         = ()
-    has_identity     = False
-    is_partial       = False
-    parents          = ()
-    relevant_root    = None
-    sorted_by        = None
-    spk_attr_name    = None
-    spk_name         = None
+    PNS                      = None
+    app_type                 = None
+    epk_sig                  = ()
+    hash_sig                 = ()
+    has_identity             = False
+    iea_type_restrictions    = ()
+    iea_type_restriction_map = {}
+    is_partial               = False
+    parents                  = ()
+    relevant_root            = None
+    sorted_by                = None
+    spk_attr_name            = None
+    spk_name                 = None
 
     @staticmethod
     def _saw_table_name (* args, ** kw) :

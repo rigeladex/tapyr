@@ -307,7 +307,7 @@ class _Session_ (TFL.Meta.Object) :
     # end def execute
 
     def instance_from_row (self, ETW, row) :
-        ### if ETW is has children, need to find the right E_Type_Wrapper for
+        ### if ETW has children, need to find the right E_Type_Wrapper for
         ### the instance in `row`, using the `type_name` of `row`
         spk     = row [ETW.spk_col]
         tn      = row [ETW.type_name_col]
