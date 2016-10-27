@@ -56,6 +56,8 @@
 #    15-Feb-2005 (MG)  `isinstance (<>, str)`
 #    10-Oct-2016 (CT)  Make Python-3 compatible
 #    11-Oct-2016 (CT)  Make `_TFL` imports absolute
+#    27-Oct-2016 (CT)  Fix import of `sos`
+#    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import
@@ -65,9 +67,10 @@ from   __future__  import print_function
 from    _TFL                  import Environment
 from    _TFL.Formatted_Stream import Formatted_Stream
 from    _TFL.Regexp           import *
+from    _TFL                  import sos
+
 import  time
 import  sys
-import  sos
 import  string
 
 slash_pat = Regexp (r"[/\\]")
