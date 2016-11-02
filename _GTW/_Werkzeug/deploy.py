@@ -50,6 +50,9 @@
 #    19-Mar-2015 (CT) Add option `-cert_extension` to `create_config`
 #    26-Feb-2016 (CT) Add option `-ssl_chain` to `create_config`
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
+#     2-Nov-2016 (CT) Fix `_wsgi_script_format`
+#                     + leave `sys.path` augmented
+#                     + add `py_path`
 #    ««revision-date»»···
 #--
 
@@ -63,6 +66,7 @@ import _GTW._OMP.deploy
 from   _TFL                   import sos
 from   _TFL.import_module     import import_module
 from   _TFL.predicate         import uniq
+from   _TFL.pyk               import pyk
 from   _TFL.Regexp            import Re_Replacer, re
 
 import sys
@@ -87,9 +91,8 @@ class GT2W_Command (_Ancestor) :
         )
     _wsgi_script_format     = """\
 import sys
-sys.path.insert (0, "%(app_dir)s")
+sys.path [0:0] = %(py_path)s
 from %(app_mod)s import command
-sys.path = sys.path [1:]
 application = command (%(args)s)
     """
 
@@ -254,9 +257,10 @@ application = command (%(args)s)
         s_path   = script_path or cao.script_path
         def write (f, app_dir, app_mod, args) :
             script = self._wsgi_script_format % dict \
-                ( app_dir = app_dir
-                , app_mod = app_mod
-                , args    = list (args) if args else ""
+                ( app_dir  = app_dir
+                , app_mod  = app_mod
+                , args     = list (args) if args else ""
+                , py_path  = [pyk.encoded (app_dir)] + P.py_path.split (":")
                 )
             f.write (script.strip ())
             f.write ("\n")
