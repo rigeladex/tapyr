@@ -40,6 +40,8 @@
 #    19-Oct-2016 (CT) Add missing `renderer` arg to `_set_as_html`
 #    19-Oct-2016 (CT) Change `Base.value` to let `FO` resolve dotted names
 #                     * needed for structured attributes
+#     4-Nov-2016 (CT) Fix `Attr_Set_R.as_html`
+#                     + add missing `renderer`to call of `_set_as_html`
 #    ««revision-date»»···
 #--
 
@@ -312,7 +314,7 @@ class Attr_Set_R (Attr_Set_1) :
     value_sep     = "; "
 
     def as_html (self, o, renderer) :
-        return self._set_as_html (self.as_html_iter (o, renderer))
+        return self._set_as_html (self.as_html_iter (o, renderer), renderer)
     # end def as_html
 
     def as_html_iter (self, o, renderer) :
