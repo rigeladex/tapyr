@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -20,16 +20,24 @@
 #     2-Aug-2012 (CT) Set `response.renderer`, remove `_get_renderer`
 #     6-Aug-2012 (CT) Set `skip_etag` to `True`
 #     5-Dec-2012 (CT) Set `last_page` to `._effective`
+#     9-Nov-2016 (CT) Fix Python-3 compatibility
+#                     + Use `pyk.decoded`
+#                     + Use `portable_repr`, not `repr`
+#                     + Remove `u''` prefixes and hacks
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.portable_repr       import portable_repr
 from   _TFL.pyk                 import pyk
 
 import _GTW._RST.HTTP_Method
@@ -47,7 +55,7 @@ import code
 import re
 import sys
 
-_paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
+_paragraph_re = re.compile(r"(?:\r\n|\r|\n){2,}")
 RegexType     = type(_paragraph_re)
 
 def _add_subclass_info (inner, obj, base) :
@@ -86,7 +94,7 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
             if have_extended_section :
                 buf.append ('</span>')
             buf.append     (right)
-            return _add_subclass_info (u''.join (buf), obj, base)
+            return _add_subclass_info (''.join (buf), obj, base)
         # end def proxy
         return proxy
     # end def _sequence_repr_maker
@@ -102,34 +110,26 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
     del _sequence_repr_maker
 
     def regex_repr (self, obj) :
-        pattern = repr (obj.pattern).decode ('string-escape', 'ignore')
-        if pattern [:1] == 'u' :
-            pattern = 'ur' + pattern [1:]
-        else:
-            pattern = 'r'  + pattern
-        return u're.compile(<span class="string regex">%s</span>)' % pattern
+        pattern = pyk.decoded (portable_repr (obj.pattern), "string-escape")
+        return """re.compile(<span class="string regex">r%s</span>)""" % pattern
     # end def regex_repr
 
     def string_repr (self, obj, limit = 70) :
         buf     = ['<span class="string">']
-        escaped = escape (obj)
-        a       = repr   (escaped [:limit])
-        b       = repr   (escaped [limit:])
-        if isinstance (obj, pyk.text_type) :
-            buf.append ('u')
-            a = a [1:]
-            b = b [1:]
+        escaped = escape        (pyk.decoded (obj))
+        a       = portable_repr (escaped [:limit])
+        b       = portable_repr (escaped [limit:])
         if b != "''" :
             buf.extend ((a [:-1], '<span class="extended">', b [1:], '</span>'))
         else:
             buf.append (a)
         buf.append     ('</span>')
-        return _add_subclass_info (u''.join (buf), obj, pyk.string_types)
+        return _add_subclass_info (''.join (buf), obj, pyk.string_types)
     # end def string_repr
 
     def dict_repr (self, d, recursive, limit = 5) :
         if recursive :
-            return _add_subclass_info (u'{...}', d, dict)
+            return _add_subclass_info ('{...}', d, dict)
         buf = ['{']
         have_extended_section = False
         for idx, (key, value) in enumerate (pyk.iteritems (d)) :
@@ -146,19 +146,19 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
         if have_extended_section :
             buf.append ('</span>')
         buf.append     ('}')
-        return _add_subclass_info (u''.join (buf), d, dict)
+        return _add_subclass_info (''.join (buf), d, dict)
     # end def dict_repr
 
     def object_repr (self, obj) :
         return \
-            ( u'<span class="object">%s</span>'
-            % escape (repr(obj).decode ('utf-8', 'replace'))
+            ( '<span class="object">%s</span>'
+            % escape (pyk.decoded (portable_repr (obj), "utf-8"))
             )
     # end def object_repr
 
     def dispatch_repr (self, obj, recursive) :
         if isinstance (obj, pyk.int_types + (float, complex)) :
-            return u'<span class="number">%r</span>' % (obj, )
+            return '<span class="number">%r</span>' % (obj, )
         if isinstance (obj, pyk.string_types) :
             return self.string_repr    (obj)
         if isinstance (obj, RegexType) :
@@ -184,8 +184,9 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
         except :
             info = '?'
         return \
-            ( u'<span class="brokenrepr">&lt;broken repr (%s)&gt;'
-              u'</span>' % escape (info.decode ('utf-8', 'ignore').strip ())
+            ( '<span class="brokenrepr">&lt;broken repr (%s)&gt;'
+              '</span>'
+            % escape (pyk.decoded (info, "utf-8")).strip ()
             )
     # end def fallback_repr
 
@@ -218,13 +219,13 @@ class _Py_Console_ (code.InteractiveInterpreter) :
         # end def __init__
 
         def consume (self) :
-            result      = "".join (self._lines)
-            self._lines = []
+            result        = "".join (self._lines)
+            self._lines   = []
             return result
         # end def consume
 
         def write (self, line) :
-            self._write (escape (line))
+            self._write (escape (pyk.decoded (line)))
         # end def write
 
         def _write (self, line) :
