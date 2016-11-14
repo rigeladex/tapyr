@@ -63,6 +63,7 @@
 #    16-May-2016 (CT) Add `xmlattr`
 #    16-May-2016 (CT) Add guard for `Undefined` to `filtered_dict`
 #    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
+#    14-Nov-2016 (CT) Add `isinstance`, `pyk`
 #    ««revision-date»»···
 #--
 
@@ -237,6 +238,7 @@ class GTW (TFL.Meta.Object) :
     # end def html_char_ref
 
     ichain     = staticmethod (itertools.chain)
+    isinstance = staticmethod (isinstance)
     len        = staticmethod (len)
     list       = staticmethod (list)
 
@@ -254,6 +256,7 @@ class GTW (TFL.Meta.Object) :
     # end def now
 
     pjoin      = staticmethod (sos.path.join)
+    pyk        = pyk
 
     def render_fofi_widget (self, fofi, widget, * args, ** kw) :
         pushed          = False

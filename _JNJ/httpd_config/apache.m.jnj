@@ -37,9 +37,45 @@
 ##    21-Apr-2015 (CT) Create separate `VirtualHost` for aliases in
 ##                     `gtw_host_80_redirect`; add optional argument `real_name`
 ##    26-Feb-2016 (CT) Add `ssl_chain`
+##    14-Nov-2016 (CT) Add `config_file`
+##    15-Nov-2016 (CT) Add `cert_extension_p`, `ssl_key_name_p`
 ##    ««revision-date»»···
 ##--
 #}
+
+{########## macro ** config_file ** ###########################################}
+{%- macro config_file
+        ( server_name, host_macros
+        , config_name = None
+        , app_root    = None
+        , doc_root    = None
+        , log_dir     = None
+        , aliases     = ()
+        )
+-%}
+### {{ config_name or (server_name + ".conf") }}
+###
+### Apache configuration for `{{ server_name }}`
+### * Use this file as template or just move it into the appropriate
+###   apache configuration directory
+###
+{%- for hm in host_macros %}
+  {%- if GTW.isinstance (hm, GTW.pyk.string_types) %}
+    {%- set hm = GTW.get_macro (hm, templ_name = kwargs.get ("macro_module")) %}
+  {% endif -%}
+{#- #}
+
+{{ hm
+    ( server_name = server_name
+    , app_root    = app_root
+    , doc_root    = doc_root
+    , log_dir     = log_dir
+    , aliases     = aliases
+    , ** kwargs
+    )
+}}
+{% endfor -%}
+{%- endmacro -%} {#- config_file -#}
 
 {%- macro dir_expires_default (path, duration = 1, unit = "year") -%}
   <Directory {{ path }}>
@@ -132,14 +168,14 @@
 {%- endmacro -%} {#- gtw_host_80_redirect -#}
 
 {%- macro gtw_host_ssl
-        ( server_name, script, ssl_key_name, admin, app_root, doc_root
+        ( server_name, script, admin, app_root, doc_root
         , address   = "*"
         , port      = "443"
         , aliases   = ()
-        , ssl_chain = ()
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
+  {%- set kw      = dict (kwargs) %}
   {% call gtw_host
       ( server_name  = server_name
       , script       = script
@@ -149,10 +185,10 @@
       , aliases      = aliases
       , app_root     = app_root
       , doc_root     = doc_root
-      , ** kwargs
+      , ** kw
       )
   -%}
-    {{ use_ssl (ssl_key_name, ssl_chain = ssl_chain, ** kwargs) }}
+    {{ use_ssl (** kw) }}
     {% if _caller %}{{ _caller () }}{% endif -%}
   {% endcall %} {# gtw_host #}
 {% endmacro -%} {#- gtw_host_ssl -#}
@@ -270,23 +306,24 @@
 {% endmacro -%} {#- use_fcgi -#}
 
 {%- macro use_ssl
-        ( ssl_key_name
-        , ssl_protocol = "all -SSLv2 -SSLv3"
-        , ssl_ciphers  = "EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA"
-        , ssl_chain    = ()
+        ( ssl_certificate
+        , ssl_certificate_key
+        , ssl_protocols
+        , ssl_ciphers
+        , ssl_certificate_chain = ()
         )
 -%}
-  {% set cert_ext = config_options.get ("cert_extension", "pem") -%}
+  {%- set _caller = kwargs.pop ("caller", None) %}
   SSLEngine on
-  SSLCertificateFile    /etc/ssl/certs/{{- ssl_key_name -}}.{{ cert_ext }}
-  {% for c in ssl_chain -%}
-    SSLCertificateChainFile /etc/ssl/certs/{{- c }}
+  SSLCertificateFile    {{ ssl_certificate }}
+  {% for c in ssl_certificate_chain -%}
+    SSLCertificateChainFile {{ c }}
   {% endfor -%}
-  SSLCertificateKeyFile /etc/ssl/private/{{- ssl_key_name -}}.key
-  SSLProtocol           {{ ssl_protocol }}
+  SSLCertificateKeyFile {{ ssl_certificate_key }}
+  SSLCipherSuite        '{{- ssl_ciphers -}}'
+  SSLProtocol           {{ ssl_protocols }}
   SSLHonorCipherOrder   On
   SSLCompression        off
-  SSLCipherSuite        '{{- ssl_ciphers -}}'
 {% endmacro -%} {#- use_ssl -#}
 
 {%- macro use_wsgi

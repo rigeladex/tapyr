@@ -53,6 +53,19 @@
 #     2-Nov-2016 (CT) Fix `_wsgi_script_format`
 #                     + leave `sys.path` augmented
 #                     + add `py_path`
+#     9-Nov-2016 (CT) Add sub-command `uwsgi_config`, `_handle_uwsgi_config`
+#    13-Nov-2016 (CT) Factor `_create_config_http`
+#                     + Rename `fcgi_script` to `fcgi_config`,
+#                       `wsgi_script` to `wsgi_config`
+#                     + Call `_create_config_http` in `_handle_*gi_config`
+#                     + Remove sub-command `create_config`
+#    14-Nov-2016 (CT) Improve `_create_config_http`
+#                     + Add option `-HTTP2`
+#                     + Use macro `config_file`
+#                     + Allow multiple `host_macro` values
+#    14-Nov-2016 (CT) Factor `_write_config`
+#    14-Nov-2016 (CT) Add `_create_config_uwsgi`
+#    16-Nov-2016 (CT) Change options for SSL to `ssl_certificate`...
 #    ««revision-date»»···
 #--
 
@@ -64,6 +77,7 @@ from   _TFL                   import TFL
 import _GTW._OMP.deploy
 
 from   _TFL                   import sos
+from   _TFL.Filename          import Filename
 from   _TFL.import_module     import import_module
 from   _TFL.predicate         import uniq
 from   _TFL.pyk               import pyk
@@ -84,17 +98,35 @@ _Ancestor = GTW.OMP.deploy.Command
 class GT2W_Command (_Ancestor) :
     """Manage deployment applications based on GTW.Werkzeug."""
 
-    _rn_prefix              = "GT2W"
+    _rn_prefix                  = "GT2W"
 
-    _defaults               = dict \
+    _defaults                   = dict \
         ( template_package_dirs = ["_JNJ"]
         )
-    _wsgi_script_format     = """\
-import sys
-sys.path [0:0] = %(py_path)s
+
+    _extra_locations            = {}
+
+    _fcgi_script_format         = """\
+#!/bin/sh
+### fcgi script for `%(server_name)s`
+export PYTHONPATH=%(py_path)s
+exec %(app)s
+"""
+
+    _uwsgi_script_format_tail   = """\
 from %(app_mod)s import command
 application = command (%(args)s)
-    """
+"""
+
+    _uwsgi_script_format        = """\
+### uwsgi script for `%(server_name)s`
+""" + _uwsgi_script_format_tail
+
+    _wsgi_script_format         = """\
+### wsgi script for `%(server_name)s`
+import sys
+sys.path [0:0] = %(py_path)s
+""" + _uwsgi_script_format_tail
 
     class _GT2W_HTTP_Config_ (TFL.Command.Root_Command.Config) :
         """Config file for HTTP-config specific options"""
@@ -111,39 +143,26 @@ application = command (%(args)s)
     _Babel_ = _GT2W_Babel_ # end class
 
     class _GT2W_xxGI_ (_Sub_Command_) :
-        """Run application as a FastCGI server."""
 
         is_partial              = True
 
         _defaults               = dict \
-            ( apply_to_version  = "active"
-            )
-
-        _opts                   = \
-            ( "-quiet:B?Don't write information about files created"
-            , "-script_path:Q?Path of script created"
-            )
-
-    _GT2W_xxGI_ # end class
-
-    class _GT2W_FCGI_Script_ (_GT2W_xxGI_) :
-        """Create script for running the application as a FastCGI server."""
-
-    _FCGI_Script_ = _GT2W_FCGI_Script_ # end class
-
-    class _GT2W_Create_Config_ (_GT2W_xxGI_) :
-        """Create config file and fcgi- or wsgi-script for http-server"""
-
-        _defaults               = dict \
             ( address           = "*"
+            , apply_to_version  = "active"
             , ca_key_name       = "CA_crt"
             , ca_path           = "~/CA"
-            , cert_extension    = "pem"
             , document_root     = "~/"
             , host_macro        = "gtw_host"
             , macro_module      = "httpd_config/apache.m.jnj"
             , port              = "80"
             , root_dir          = "~/active"
+            , ssl_ciphers       =
+                "EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:"
+                "EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:"
+                "+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:"
+                "!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:"
+                "CAMELLIA128-SHA:AES128-SHA"
+            , ssl_protocols     = "TLSv1.2 TLSv1.1 TLSv1"
             )
 
         _opts                   = \
@@ -151,27 +170,37 @@ application = command (%(args)s)
             , "-apache2_4:B?Create config for Apache 2.4"
             , "-ca_key_name:S?Name of CA key file"
             , "-ca_path:Q?Path for server-specific CA for client certificates"
-            , "-cert_extension:S?Extension of SSLCertificateFile (pem or crt)"
             , "-config_path:Q?Path for config file"
             , "-document_root:Q?"
                 "Path for DocumentRoot of virtual host. For Apache 2.4, "
                 "`DocumentRoot` must include both `root_dir` and `script_path`."
-            , "-group:S?Define unix group that the wsgi process should be run as"
-            , "-host_macro:S?Name of macro to create virtual host"
+            , "-group:S?Unix group that the wsgi process should be run as"
+            , "-host_macro:T,?Name(s) of macro(s) to create virtual host"
+            , "-http_user:S=www-data?Unix user that the http server runs as"
+            , "-HTTP2:B?Support http2 protocol"
             , "-macro_module:S"
                 "?Name of jinja module providing config-generation macros"
             , "-port:S?Port for virtual host"
+            , "-processes:I=4?Number of worker processes"
+            , "-quiet:B?Don't write information about files created"
             , "-root_dir:Q?Root directory of the web app. This is the path "
                 "to the directory containing www/app and the library "
                 "directories specified by the option `-lib_dir`."
+            , "-script_path:Q?Path of script created"
             , "-server_admin:S?Email address of server admin of virtual host"
             , "-server_aliases:T#8?Alias names for virtual host"
             , "-server_name:S?Fully qualified domain name of virtual host"
-            , "-ssl_key_name:S?Name of SSL key to use for HTTPS"
-            , "-ssl_chain:T#4?Names of files containing SSL chain certificates"
-            , "-use_wsgi:B?Define unix user that the wsgi process should be run as"
-            , "-user:S?Run wsgi process as user specified "
+            , "-ssl_certificate:S"
+                "?Name of file containing SSL certificate(s)"
+            , "-ssl_certificate_chain:T#4"
+                "?Names of files containing intermediate SSL certificates "
+                "(obsolete; use only for Apache < 2.4.8)"
+            , "-ssl_certificate_key:S"
+                "?Name of file containing SSL certificate secret key"
+            , "-ssl_ciphers:S?List of SSL ciphers to use"
+            , "-ssl_protocols:S?List of SSL protocols to use"
             , "-template_dirs:P?Directories containing templates for config"
+            , "-user:S?Unix user that the wsgi process should be run as"
             )
 
         def dynamic_defaults (self, defaults) :
@@ -189,7 +218,12 @@ application = command (%(args)s)
             return result
         # end def dynamic_defaults
 
-    _Create_Config_ = _GT2W_Create_Config_ # end class
+    _GT2W_xxGI_ # end class
+
+    class _GT2W_FCGI_Config_ (_GT2W_xxGI_) :
+        """Create script for running the application as a FastCGI server."""
+
+    _FCGI_Config_ = _GT2W_FCGI_Config_ # end class
 
     class _GT2W_Setup_Cache_ (_Sub_Command_) :
         """Setup the cache of the application."""
@@ -212,11 +246,143 @@ application = command (%(args)s)
 
     _UBYCMS_ = _GT2W_UBYCMS_ # end class
 
-    class _GT2W_WSGI_Script_ (_GT2W_xxGI_) :
+    class _GT2W_UWSGI_Config_ (_GT2W_xxGI_) :
+        """Create script for running the application as a uwsgi server."""
+
+        _defaults               = dict \
+            ( document_root     = "~/active"
+            , macro_module      = "httpd_config/nginx.m.jnj"
+            )
+
+        _opts                   = \
+            ( "-lazy_apps:B?Start app lazily"
+            , "-socket:S"
+                "?Socket to use for communication between webserver and uwsgi"
+            , "-static_pages:B?Serve static pages"
+            , "-stats-server:S"
+                "?Enable the stats server on the specified address/socket"
+            , "-virtualenv:S?Path of virtualenv to use"
+            )
+
+    _UWSGI_Config_ = _GT2W_UWSGI_Config_ # end class
+
+    class _GT2W_WSGI_Config_ (_GT2W_xxGI_) :
         """Create script for running the application as a wsgi server."""
 
 
-    _WSGI_Script_ = _GT2W_WSGI_Script_ # end class
+    _WSGI_Config_ = _GT2W_WSGI_Config_ # end class
+
+    def _create_config_http (self, cao, xxgi_macro_name, ** kw) :
+        from   _JNJ import JNJ
+        import _JNJ.Templateer
+        ssl_certificate = \
+            (  Filename
+                 ( cao.ssl_certificate, ".pem", "/etc/ssl/certs/"
+                 , absolute = True
+                 ).name
+            if cao.ssl_certificate else ""
+            )
+        ssl_certificate_chain = tuple \
+            (  Filename
+                 ( ssc, ".pem", "/etc/ssl/certs/"
+                 , absolute = True
+                 ).name
+            for ssc in cao.ssl_certificate_chain
+            )
+        ssl_certificate_key = \
+            (  Filename
+                 ( cao.ssl_certificate_key, ".key", "/etc/ssl/private/"
+                 , absolute = True
+                 ).name
+            if cao.ssl_certificate_key else ""
+            )
+        config_options         = dict \
+            ( kw
+            , address                = cao.address
+            , admin                  = cao.server_admin
+            , aliases                = cao.server_aliases
+            , apache2_4              = cao.apache2_4
+            , app_root               = cao.root_dir
+            , ca_key_name            = cao.ca_key_name
+            , ca_path                = cao.ca_path
+            , cmd                    = cao
+            , config_name            = cao.config_path
+            , doc_root               = cao.document_root
+            , extra_locations        = dict
+                (cao.GET ("extra_locations", {}), ** self._extra_locations)
+            , group                  = cao.group
+            , host_macros            = cao.host_macro
+            , HTTP2                  = cao.HTTP2
+            , lib_dirs               = cao.lib_dir
+            , macro_name             = "config_file"
+            , macro_module           = cao.macro_module
+            , port                   = cao.port
+            , script                 = cao.script_path
+            , server_name            = cao.server_name
+            , ssl_certificate        = ssl_certificate
+            , ssl_certificate_chain  = ssl_certificate_chain
+            , ssl_certificate_key    = ssl_certificate_key
+            , ssl_ciphers            = cao.ssl_ciphers
+            , ssl_protocols          = cao.ssl_protocols
+            , templ_name             = cao.macro_module
+            , user                   = cao.user
+            )
+        templateer             = JNJ.Templateer \
+            ( encoding         = cao.input_encoding
+            , globals          = dict (config_options = config_options)
+            , load_path        = cao.template_dirs
+            , trim_blocks      = True
+            )
+        xxgi_macro             = templateer.GTW.get_macro \
+            (xxgi_macro_name, templ_name = cao.macro_module)
+        config_options.update (xxgi_macro = xxgi_macro)
+        config   = templateer.call_macro (** config_options)
+        config_s = strip_empty_lines (config)
+        c_path   = cao.config_path
+        self._write_config (cao, c_path, config_s, "Created http  config")
+        return config_options, templateer
+    # end def _create_config_http
+
+    def _create_config_uwsgi (self, cao, config_options, templateer) :
+        P            = self._P (cao)
+        app_dir      = sos.path.dirname  (self._app_path (cao, P))
+        macro        = templateer.GTW.get_macro \
+            ("uwsgi_config_ini", templ_name = config_options ["templ_name"])
+        script_name  = Filename (".ini", cao.script_path, absolute = True)
+        c_path       = script_name.name \
+            if script_name.base not in ("-", "stdout") else ""
+        socket       = config_options ["socket"]
+        if socket.startswith ("unix:") :
+            socket   = socket [5:]
+        stats_server = config_options ["stats_server"]
+        if stats_server.startswith ("unix:") :
+            stats_server     = stats_server [5:]
+        kw     = dict \
+            ( chdir          = script_name.directory
+            , chmod_socket   = "660"
+            , chown_socket   = "%s:%s"
+                % (cao.user or cao.http_user, cao.http_user)
+            , config_name    = c_path
+            , gid            = cao.group or cao.http_user
+            , lazy_apps      = ["false", "true"] [cao.lazy_apps]
+            , master         = "true"
+            , module         = script_name.base
+            , need_threads   = "true"
+            , processes      = cao.processes
+            , py_path        = reversed
+                  ([pyk.encoded (app_dir)] + P.py_path.split (":"))
+            , server_name    = config_options ["server_name"]
+            , socket         = socket
+            , stats_server   = stats_server
+            , threads        = 0
+            , uid            = cao.user or cao.http_user
+            , virtualenv     = cao.virtualenv
+            )
+        config   = macro (** kw)
+        config_s = strip_empty_lines (config)
+        self._write_config \
+            (cao, c_path, config_s, "Created uwsgi config")
+    # end def _create_config_uwsgi
 
     def _create_fcgi_script (self, cao, argv = (), script_path = None) :
         P      = self._P (cao)
@@ -229,111 +395,43 @@ application = command (%(args)s)
         args   = ("fcgi", "-config", config) + tuple (argv)
         app    = self._app_cmd (cao, P, args = args)
         s_path = script_path or cao.script_path
-        def write (f, app, py_path) :
-            f.write ("#!/bin/sh\n")
-            f.write ("export PYTHONPATH=%s\n" % (py_path, ))
-            f.write ("exec %s\n" % (app, ))
-        if s_path and not s_path.endswith (("-", "stdout")) :
-            with open (s_path, "w") as f :
-                write (f, app, P.py_path)
-            self.pbl ["chmod"] ("+x", s_path)
-            if not cao.quiet :
-                print ("Created fcgi script", s_path)
-        else :
-            write (sys.stdout, app, P.py_path)
+        script = self._fcgi_script_format % dict \
+            ( app         = app
+            , py_path     = P.py_path
+            , server_name = cao.server_name
+            )
+        self._write_config (cao, s_path, script, "Created fcgi  script")
     # end def _create_fcgi_script
 
-    def _create_wsgi_script (self, cao, argv = (), script_path = None) :
+    def _create_wsgi_script \
+            (self, cao, argv = (), script_path = None, script_format = None) :
         P      = self._P (cao)
         a_conf = cao.app_config
         try :
             h_conf = cao._spec ["HTTP_Config"].pathes
         except KeyError :
             h_conf = []
-        config   = self.App_Config.auto_split.join (a_conf + h_conf)
+        config   = self.App_Config.auto_split.join (a_conf)
         app_dir  = sos.path.dirname  (self._app_path (cao, P))
         app_mod  = sos.path.splitext (sos.path.basename (cao.app_module)) [0]
         args     = ("wsgi", "-config", config) + tuple (argv)
         s_path   = script_path or cao.script_path
-        def write (f, app_dir, app_mod, args) :
-            script = self._wsgi_script_format % dict \
-                ( app_dir  = app_dir
-                , app_mod  = app_mod
-                , args     = list (args) if args else ""
-                , py_path  = [pyk.encoded (app_dir)] + P.py_path.split (":")
-                )
-            f.write (script.strip ())
-            f.write ("\n")
-        if s_path and not s_path.endswith (("-", "stdout")) :
-            with open (s_path, "w") as f :
-                write (f, app_dir, app_mod, args)
-            if not cao.quiet :
-                print ("Created wsgi script", s_path)
-        else :
-            write (sys.stdout, app_dir, app_mod, args)
+        if script_format is None :
+            script_format = self._wsgi_script_format
+        script = script_format % dict \
+            ( app_dir     = app_dir
+            , app_mod     = app_mod
+            , args        = list (args) if args else ""
+            , py_path     = [pyk.encoded (app_dir)] + P.py_path.split (":")
+            , server_name = cao.server_name
+            )
+        self._write_config (cao, s_path, script, "Created wsgi  script")
     # end def _create_wsgi_script
 
-    def _handle_create_config (self, cao) :
-        if cao.use_wsgi :
-            _create_script  = self._create_wsgi_script
-            xxgi_macro_name = "use_wsgi"
-        else :
-            _create_script  = self._create_fcgi_script
-            xxgi_macro_name = "use_fcgi"
-        _create_script (cao, cao.argv, cao.script_path)
-        from   _JNJ import JNJ
-        import _JNJ.Templateer
-        config_options       = dict \
-            ( address        = cao.address
-            , admin          = cao.server_admin
-            , aliases        = cao.server_aliases
-            , apache2_4      = cao.apache2_4
-            , app_root       = cao.root_dir
-            , ca_key_name    = cao.ca_key_name
-            , ca_path        = cao.ca_path
-            , cert_extension = cao.cert_extension
-            , cmd            = cao
-            , doc_root       = cao.document_root
-            , group          = cao.group
-            , lib_dirs       = cao.lib_dir
-            , macro_name     = cao.host_macro
-            , port           = cao.port
-            , script         = cao.script_path
-            , server_name    = cao.server_name
-            , ssl_key_name   = cao.ssl_key_name
-            , ssl_chain      = cao.ssl_chain
-            , templ_name     = cao.macro_module
-            , user           = cao.user
-            )
-        templateer           = JNJ.Templateer \
-            ( encoding       = cao.input_encoding
-            , globals        = dict (config_options = config_options)
-            , load_path      = cao.template_dirs
-            , trim_blocks    = True
-            )
-        xxgi_macro           = templateer.GTW.get_macro \
-            (xxgi_macro_name, templ_name = cao.macro_module)
-        config_options.update (xxgi_macro = xxgi_macro)
-        config   = templateer.call_macro (** config_options)
-        config_s = strip_empty_lines (config).strip ()
-        c_path   = cao.config_path
-        def write (f, config) :
-            f.write (config)
-            f.write ("\n")
-        if c_path and c_path not in ("-", "stdout") :
-            with open (c_path, "w") as f :
-                write (f, config_s)
-            if not cao.quiet :
-                ### Can't use `cao.verbose` here because that would be
-                ### included in the fcgi script
-                print ("Created config file", c_path)
-        else :
-            write (sys.stdout, config_s)
-    # end def _handle_create_config
-
-    def _handle_fcgi_script (self, cao) :
+    def _handle_fcgi_config (self, cao) :
         self._create_fcgi_script (cao, cao.argv, cao.script_path)
-    # end def _handle_fcgi_script
+        self._create_config_http (cao, "use_fcgi")
+    # end def _handle_fcgi_config
 
     def _handle_setup_cache (self, cao) :
         P    = self._P (cao)
@@ -342,9 +440,43 @@ application = command (%(args)s)
         self._app_call (cao, P, app, args)
     # end def _handle_setup_cache
 
-    def _handle_wsgi_script (self, cao) :
+    def _handle_uwsgi_config (self, cao) :
+        app_name = "%s__%s" % (cao.server_name.replace (".", "_"), cao.port)
+        socket   = cao.socket
+        if not socket :
+            socket = "unix:/tmp/%s.sock" % (app_name, )
+        stats_server = cao.stats_server
+        if not stats_server :
+            stats_server = "unix:/tmp/%s.stats-server" % (app_name, )
+        config_options, templateer = self._create_config_http \
+            ( cao, "use_uwsgi"
+            , app_name     = app_name
+            , socket       = socket
+            , static_pages = cao.static_pages
+            , stats_server = stats_server
+            )
+        self._create_config_uwsgi (cao, config_options, templateer)
+        self._create_wsgi_script \
+            (cao, cao.argv, cao.script_path, self._uwsgi_script_format)
+    # end def _handle_uwsgi_config
+
+    def _handle_wsgi_config (self, cao) :
         self._create_wsgi_script (cao, cao.argv, cao.script_path)
-    # end def _handle_wsgi_script
+        self._create_config_http (cao, "use_wsgi")
+    # end def _handle_wsgi_config
+
+    def _write_config (self, cao, c_path, config, msg) :
+        def write (f, config) :
+            f.write (config.strip ())
+            f.write ("\n")
+        if c_path and not c_path.endswith (("-", "stdout")) :
+            with open (c_path, "w") as f :
+                write (f, config)
+            if not cao.quiet :
+                print (msg, c_path)
+        else :
+            write (sys.stdout, config)
+    # end def _write_config
 
 Command = GT2W_Command # end class
 
