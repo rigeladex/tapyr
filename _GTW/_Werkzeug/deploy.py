@@ -259,7 +259,7 @@ sys.path [0:0] = %(py_path)s
             , "-socket:S"
                 "?Socket to use for communication between webserver and uwsgi"
             , "-static_pages:B?Serve static pages"
-            , "-stats-server:S"
+            , "-stats_server:S"
                 "?Enable the stats server on the specified address/socket"
             , "-virtualenv:S?Path of virtualenv to use"
             )
