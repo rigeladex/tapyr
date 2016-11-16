@@ -26,9 +26,10 @@
 {%- macro block (head, indent = "") -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
   {%- set indent1 = indent + "    " %}
+  {%- set kw      = GTW.dict (kwargs) %}
 {#- #}
 {{ indent }}{{ head }} {{ '{' }}
-{% for k, v in GTW.sorted (kwargs.items ()) -%}
+{% for k, v in GTW.sorted (kw.items ()) -%}
 {#- #}
 {{ indent1 }}{{ k }} {{ v -}};
 {% endfor -%}
@@ -47,6 +48,7 @@
         , aliases     = ()
         )
 -%}
+  {%- set kw = GTW.dict (kwargs) %}
 ### {{ config_name or (server_name + ".conf") }}
 ###
 ### Nginx configuration for `{{ server_name }}`
@@ -57,7 +59,7 @@
 ###
 {%- for hm in host_macros %}
   {%- if GTW.isinstance (hm, GTW.pyk.string_types) %}
-    {%- set hm = GTW.get_macro (hm, templ_name = kwargs.get ("macro_module")) %}
+    {%- set hm = GTW.get_macro (hm, templ_name = kw.get ("macro_module")) %}
   {% endif -%}
 {#- #}
 
@@ -67,7 +69,7 @@
     , doc_root    = doc_root
     , log_dir     = log_dir
     , aliases     = aliases
-    , ** kwargs
+    , ** kw
     )
 }}
 {% endfor -%}
@@ -75,6 +77,7 @@
 
 {########## macro ** force_ssl ** #############################################}
 {%- macro force_ssl () %}
+  {%- set kw = GTW.dict (kwargs) %}
     add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
 {% endmacro -%} {#- force_ssl -#}
 
@@ -124,7 +127,8 @@
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
-  {%- set kw      = dict (kwargs) %}
+  {%- set l_tail  = "ssl" + (" http2" if kwargs.pop ("HTTP2", None) else "") %}
+  {%- set kw      = GTW.dict (kwargs) %}
 {% call gtw_host
     ( server_name  = server_name
     , script       = script
@@ -134,8 +138,7 @@
     , aliases      = aliases
     , app_root     = app_root
     , doc_root     = doc_root
-    , listen_tail  = "ssl"
-                   + (" http2" if kwargs.pop ("HTTP2", None) else "")
+    , listen_tail  = l_tail
     , ** kw
     )
 -%}
@@ -154,8 +157,9 @@
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
+  {%- set kw      = GTW.dict (kwargs) %}
 {% call _server (server_name, address, "80", aliases) -%}
-{{ logfiles (server_name, port, ** kwargs) }}
+{{ logfiles (server_name, port, ** kw) }}
 {#- #}
 
 {% call block ("location /", "    ") %}
@@ -173,6 +177,7 @@
   {%- set lib_media_alias = GTW.pjoin (app_root, lib_dir, "_GTW/media/$1") %}
   {%- set indent0 = "    " %}
   {%- set indent1 = indent0 * 2 %}
+  {%- set kw      = GTW.dict (kwargs) %}
 {#- #}
 {% call block
     ( "location /media/", indent0
@@ -198,6 +203,7 @@
 
 {########## macro ** logfiles ** ##############################################}
 {%- macro logfiles (server_name, port, log_dir = None) -%}
+  {%- set kw = GTW.dict (kwargs) %}
   {%- if not log_dir %}
     {%- set log_dir = "/var/log/nginx" %}
   {%- endif %}
@@ -223,6 +229,7 @@
   {%- if app_root and not doc_root %}
     {%- set doc_root = app_root %}
   {%- endif %}
+  {%- set kw = GTW.dict (kwargs) %}
 {#- #}
 {% call _server
     ( server_name, address, port, aliases
@@ -259,6 +266,7 @@
 {%- macro _server (server_name, address, port, aliases, listen_tail = None)
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   {%- set listen_arg = "%s:%s" % (address, port)
           if address and address != "*" else port
   %}
@@ -272,7 +280,7 @@
     ( "server", ""
     , listen        = listen_arg
     , server_name   = server_names
-    , ** kwargs
+    , ** kw
     )
 -%}
 {#- #}
@@ -289,6 +297,7 @@
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
+  {%- set kw      = GTW.dict (kwargs) %}
 {#- #}
     ssl_certificate           {{ ssl_certificate }};
     ssl_certificate_key       {{ ssl_certificate_key }};
@@ -306,17 +315,19 @@
           (server_name.replace (".", "_"), kwargs.get ("port"))
   -%}
   {%- set socket = kwargs.get ("socket") or "unix:/tmp/%s.sock" % (app, ) %}
+  {%- set kw     = GTW.dict (kwargs) %}
 {#- #}
 
 {%- if kwargs.get ("static_pages") %}
-{{ _use_uwsgi_sd (app_root, app, socket)}}
+{{ _use_uwsgi_sd (app_root, app, socket, ** kw)}}
 {%- else %}
-{{ _use_uwsgi_d (app_root, app, socket)}}
+{{ _use_uwsgi_d (app_root, app, socket, ** kw)}}
 {% endif -%}
 {%- endmacro -%} {#- use_uwsgi -#}
 
 {########## macro ** _use_uwsgi_d ** ##########################################}
 {%- macro _use_uwsgi_d (app_root, app, socket) -%}
+  {%- set kw = GTW.dict (kwargs) %}
 {#- #}
 
 {{ block
@@ -331,6 +342,9 @@
 
 {########## macro ** _use_uwsgi_sd ** #########################################}
 {%- macro _use_uwsgi_sd (app_root, app, socket) -%}
+  {%- set kw = GTW.dict (kwargs) %}
+{#- #}
+
 {{ block
     ( "location @" + app, "    "
     , add_header      = 'Vary "Cookie"'
@@ -352,7 +366,8 @@
 {########## macro ** uwsgi_config_ini ** #############################################}
 {%- macro uwsgi_config_ini (server_name, config_name) -%}
   {%- set py_path = kwargs.pop ("py_path", []) -%}
-  {%- set fmt = "%-15s = %s" %}
+  {%- set fmt     = "%-15s = %s" %}
+  {%- set kw      = GTW.dict (kwargs) %}
 ### {{ config_name or (server_name + ".ini") }}
 ###
 ### uwsgi configuration for `{{ server_name }}`
@@ -361,7 +376,7 @@
 ###   + Debian: /etc/uwsgi/apps-available/ and /etc/uwsgi/apps-enabled/
 ###
 [uwsgi]
-{% for k, v in GTW.sorted (kwargs.items ()) if v != None %}
+{% for k, v in GTW.sorted (kw.items ()) if v != None %}
 {#- #}
 {{ fmt % (k.replace ("_", "-"), v) }}
 {% endfor -%}
