@@ -67,6 +67,7 @@
 #    14-Nov-2016 (CT) Add `_create_config_uwsgi`
 #    16-Nov-2016 (CT) Change options for SSL to `ssl_certificate`...
 #    17-Nov-2016 (CT) Change `ssl_ciphers` [https://weakdh.org/sysadmin.html]
+#    17-Nov-2016 (CT) Move all option defaults to `_defaults`
 #    ««revision-date»»···
 #--
 
@@ -154,8 +155,10 @@ sys.path [0:0] = %(py_path)s
             , ca_path           = "~/CA"
             , document_root     = "~/"
             , host_macro        = "gtw_host"
+            , http_user         = "www-data"
             , macro_module      = "httpd_config/apache.m.jnj"
             , port              = "80"
+            , processes         = 2
             , root_dir          = "~/active"
             , ssl_ciphers       =
                 "ECDHE-RSA-AES128-GCM-SHA256:"
@@ -205,12 +208,12 @@ sys.path [0:0] = %(py_path)s
                 "`DocumentRoot` must include both `root_dir` and `script_path`."
             , "-group:S?Unix group that the wsgi process should be run as"
             , "-host_macro:T,?Name(s) of macro(s) to create virtual host"
-            , "-http_user:S=www-data?Unix user that the http server runs as"
+            , "-http_user:S?Unix user that the http server runs as"
             , "-HTTP2:B?Support http2 protocol"
             , "-macro_module:S"
                 "?Name of jinja module providing config-generation macros"
             , "-port:S?Port for virtual host"
-            , "-processes:I=4?Number of worker processes"
+            , "-processes:I?Number of worker processes"
             , "-quiet:B?Don't write information about files created"
             , "-root_dir:Q?Root directory of the web app. This is the path "
                 "to the directory containing www/app and the library "
