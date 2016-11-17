@@ -39,6 +39,7 @@
 ##    26-Feb-2016 (CT) Add `ssl_chain`
 ##    14-Nov-2016 (CT) Add `config_file`
 ##    15-Nov-2016 (CT) Add `cert_extension_p`, `ssl_key_name_p`
+##    17-Nov-2016 (CT) Make local copy of `kwargs`, consistently
 ##    ««revision-date»»···
 ##--
 #}
@@ -53,6 +54,7 @@
         , aliases     = ()
         )
 -%}
+  {%- set kw      = GTW.dict (kwargs) %}
 ### {{ config_name or (server_name + ".conf") }}
 ###
 ### Apache configuration for `{{ server_name }}`
@@ -71,13 +73,14 @@
     , doc_root    = doc_root
     , log_dir     = log_dir
     , aliases     = aliases
-    , ** kwargs
+    , ** kw
     )
 }}
 {% endfor -%}
 {%- endmacro -%} {#- config_file -#}
 
 {%- macro dir_expires_default (path, duration = 1, unit = "year") -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   <Directory {{ path }}>
     ExpiresActive On
     ExpiresDefault "access plus {{ duration }} {{ unit }}"
@@ -85,12 +88,14 @@
 {% endmacro -%} {#- dir_expires_default -#}
 
 {%- macro dir_expires_match (path, fm_pat, duration = 1, unit = "year") -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   <Directory {{ path }}>
     {{ file_match_expires (fm_pat, duration, unit) }}
   </Directory>
 {% endmacro -%} {#- dir_expires_match -#}
 
 {%- macro file_match_expires (pat, duration = 1, unit = "year") -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   ExpiresActive On
   <FilesMatch "\.({{- pat -}})$">
     ExpiresDefault "access plus {{ duration }} {{ unit }}"
@@ -98,16 +103,19 @@
 {% endmacro -%} {#- file_match_expires -#}
 
 {%- macro force_ssl () -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   Header add Strict-Transport-Security "max-age=15768000"
 {% endmacro -%} {#- force_ssl -#}
 
 {%- macro gtw_aliases (app_root, doc_root, lib_dir = "lib") -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   Alias /media/GTW/ {{ app_root -}}/{{ lib_dir }}/_GTW/media/
   Alias /media/v/   {{ app_root -}}/www/app/media/v/
   Alias /media/     {{ app_root -}}/www/media/
 {% endmacro -%} {#- gtw_aliases -#}
 
 {%- macro gtw_expires (app_root, doc_root, lib_dir = "lib") -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   {%- set lib_media = "/". join ((app_root, lib_dir, "_GTW/media/")) %}
   {{ file_match_expires  ("gif|jpe?g|png",            1, "year") }}
   {{ dir_expires_default (lib_media + "js",           1, "week") }}
@@ -156,6 +164,7 @@
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
+  {%- set kw      = GTW.dict (kwargs) %}
 <VirtualHost {{ address -}}:{{- port -}}>
   ServerName {{ server_name }}
   {{ redirect_to_https (real_name or server_name) }}
@@ -203,6 +212,7 @@
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   {% call gtw_host_ssl
       ( server_name  = server_name
       , script       = script
@@ -213,15 +223,16 @@
       , app_root     = app_root
       , aliases      = aliases
       , ssl_chain    = ssl_chain
-      , ** kwargs
+      , ** kw
       )
   -%}
-    {{ use_client_cert (ca_path, ca_key_name, ** kwargs) }}
+    {{ use_client_cert (ca_path, ca_key_name, ** kw) }}
     {% if _caller %}{{ _caller () }}{% endif -%}
   {% endcall %} {# gtw_host_ssl #}
 {% endmacro -%} {#- gtw_host_ssl_cc -#}
 
 {%- macro gtw_permission_allow_all () -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   {% if config_options.apache2_4 -%}
     Require  all granted{#- -#}
   {% else -%}
@@ -231,6 +242,7 @@
 {%- endmacro -%} {#- gtw_permission_allow_all -#}
 
 {%- macro gtw_permission_allow_host (host) -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   {% if config_options.apache2_4 -%}
     Require  host {{ host -}}
   {% else -%}
@@ -241,6 +253,7 @@
 {%- endmacro -%} {#- gtw_permission_allow_all -#}
 
 {%- macro gtw_permission_deny_all () -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   {% if config_options.apache2_4 -%}
     Require  all denied{#- -#}
   {% else -%}
@@ -250,6 +263,7 @@
 {%- endmacro -%} {#- gtw_permission_deny_all -#}
 
 {%- macro gtw_permissions (app_root, doc_root, lib_dir = "lib") -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   <Directory {{ app_root -}}/{{ lib_dir }}/_GTW/media>
     FileETag all
   </Directory>
@@ -265,21 +279,25 @@
 {% endmacro -%} {#- gtw_permissions -#}
 
 {%- macro logfiles (fqdn, port, fmt = "combined", level = "warn") -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   CustomLog ${APACHE_LOG_DIR}/{{- fqdn -}}-{{- port -}}-access.log {{ fmt }}
   ErrorLog  ${APACHE_LOG_DIR}/{{- fqdn -}}-{{- port -}}-error.log
   LogLevel  {{ level }}
 {% endmacro -%} {#- logfiles -#}
 
 {%- macro redirect_to_https (server_name) -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   Redirect permanent / https://{{- server_name -}}/
 {% endmacro -%} {#- redirect_to_https -#}
 
 {%- macro rewrite_to_https (server_name) -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   RewriteEngine On
   RewriteRule   ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R=permanent]
 {% endmacro -%} {#- rewrite_to_https -#}
 
 {%- macro use_client_cert (ca_path, ca_key_name, verify_depth = 1) -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   SSLCACertificatePath  {{ ca_path }}
   SSLCACertificateFile  {{ ca_path -}}/{{- ca_key_name -}}.crt
   SSLVerifyClient       require
@@ -294,8 +312,8 @@
         , process_max = 5
         )
 -%}
-  {# Use `kwargs.pop` to make `use_fcgi` compatible to `use_wsgi` -#}
-  {% do kwargs.pop ("group", None) -%}
+  {# Access `kwargs` to make `use_fcgi` compatible to `use_wsgi` -#}
+  {%- set kw      = GTW.dict (kwargs) %}
   AddHandler fcgid-script {{ ext }}
   Options    +ExecCGI
 
@@ -314,6 +332,7 @@
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) %}
+  {%- set kw      = GTW.dict (kwargs) %}
   SSLEngine on
   SSLCertificateFile    {{ ssl_certificate }}
   {% for c in ssl_certificate_chain -%}
@@ -338,6 +357,7 @@
   {% if not process_group -%}
     {%- set process_group = server_name -%}
   {% endif -%}
+  {%- set kw      = GTW.dict (kwargs) %}
   WSGIDaemonProcess {{ process_group }}
     {%- if user %} user={{ user }} {%- endif %}
     {%- if group %} group={{ group }} {%- endif %}
@@ -361,6 +381,7 @@
   {%- if app_root and not doc_root %}
     {%- set doc_root = app_root %}
   {%- endif %}
+  {%- set kw      = GTW.dict (kwargs) %}
 
 {#- #}
 <VirtualHost {{ address -}}:{{- port -}}>
