@@ -66,6 +66,7 @@
 #    14-Nov-2016 (CT) Factor `_write_config`
 #    14-Nov-2016 (CT) Add `_create_config_uwsgi`
 #    16-Nov-2016 (CT) Change options for SSL to `ssl_certificate`...
+#    17-Nov-2016 (CT) Change `ssl_ciphers` [https://weakdh.org/sysadmin.html]
 #    ««revision-date»»···
 #--
 
@@ -157,11 +158,39 @@ sys.path [0:0] = %(py_path)s
             , port              = "80"
             , root_dir          = "~/active"
             , ssl_ciphers       =
-                "EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:"
-                "EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:"
-                "+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:"
-                "!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:"
-                "CAMELLIA128-SHA:AES128-SHA"
+                "ECDHE-RSA-AES128-GCM-SHA256:"
+                "ECDHE-ECDSA-AES128-GCM-SHA256:"
+                "ECDHE-RSA-AES256-GCM-SHA384:"
+                "ECDHE-ECDSA-AES256-GCM-SHA384:"
+                "DHE-RSA-AES128-GCM-SHA256:"
+                "DHE-DSS-AES128-GCM-SHA256:"
+                "kEDH+AESGCM:"
+                "ECDHE-RSA-AES128-SHA256:"
+                "ECDHE-ECDSA-AES128-SHA256:"
+                "ECDHE-RSA-AES128-SHA:"
+                "ECDHE-ECDSA-AES128-SHA:"
+                "ECDHE-RSA-AES256-SHA384:"
+                "ECDHE-ECDSA-AES256-SHA384:"
+                "ECDHE-RSA-AES256-SHA:"
+                "ECDHE-ECDSA-AES256-SHA:"
+                "DHE-RSA-AES128-SHA256:"
+                "DHE-RSA-AES128-SHA:"
+                "DHE-DSS-AES128-SHA256:"
+                "DHE-RSA-AES256-SHA256:"
+                "DHE-DSS-AES256-SHA:"
+                "DHE-RSA-AES256-SHA:"
+                "AES128-GCM-SHA256:"
+                "AES256-GCM-SHA384:"
+                "AES128-SHA256:"
+                "AES256-SHA256:"
+                "AES128-SHA:"
+                "AES256-SHA:"
+                "AES:"
+                "CAMELLIA:"
+                "DES-CBC3-SHA:"
+                "!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:"
+                "!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA"
+                ### 17-Nov-2016: https://weakdh.org/sysadmin.html
             , ssl_protocols     = "TLSv1.2 TLSv1.1 TLSv1"
             )
 

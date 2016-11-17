@@ -18,6 +18,8 @@
 ##
 ## Revision Dates
 ##    10-Nov-2016 (CT) Creation
+##    17-Nov-2016 (CT) Add `ssl_dhparam`
+##                     + https://weakdh.org/sysadmin.html
 ##    ««revision-date»»···
 ##--
 #}
@@ -301,7 +303,8 @@
 {#- #}
     ssl_certificate           {{ ssl_certificate }};
     ssl_certificate_key       {{ ssl_certificate_key }};
-    ssl_ciphers               {{ ssl_ciphers }};
+    ssl_ciphers               '{{ ssl_ciphers }}';
+    ssl_dhparam               /etc/ssl/private/dhparams.pem;
     ssl_prefer_server_ciphers on;
     ssl_protocols             {{ ssl_protocols }};
     ssl_session_cache         shared:SSL:128m;
