@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This package is part of the package GTW.
@@ -60,10 +60,15 @@
 #    27-May-2013 (CT) Make `create_new_account_x` argument `password` optional
 #     5-Jun-2013 (CT) Set `password.q_able` to `False`
 #    16-Jun-2015 (CT) Change `random_password` to start with letter or digit
+#    29-Nov-2016 (CT) Remove `Account_Anonymous`
+#    29-Nov-2016 (CT) Remove `_Account_.is_relevant`
 #    ««revision-date»»···
 #--
 
-from   __future__             import unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
@@ -86,7 +91,6 @@ class _Auth_Account_ (_Ancestor_Essence) :
     _real_name  = "_Account_"
 
     is_partial  = True
-    is_relevant = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -95,34 +99,34 @@ class _Auth_Account_ (_Ancestor_Essence) :
         class name (A_Email) :
             """Email that serves as user name for this account"""
 
-            kind       = Attr.Primary
+            kind               = Attr.Primary
 
         # end class name
 
         class active (A_Boolean) :
             """Specifies if this account is currently active."""
 
-            kind            = Attr.Query
-            auto_up_depends = ("suspended", "enabled")
-            query           = (Q.suspended != True) & (Q.enabled == True)
+            kind               = Attr.Query
+            auto_up_depends    = ("suspended", "enabled")
+            query              = (Q.suspended != True) & (Q.enabled == True)
 
         # end class active
 
         class enabled (A_Boolean) :
-            """Specifies if this account is currently enabled
-               (the user can login).
+            """Specifies if this account is currently enabled, i.e.,
+               the user can login.
             """
 
-            kind       = Attr.Optional
-            default    = False
+            kind               = Attr.Optional
+            default            = False
 
         # end class enabled
 
         class superuser (A_Boolean) :
             """Specifies if this account has super-user permissions."""
 
-            kind       = Attr.Optional
-            default    = False
+            kind               = Attr.Optional
+            default            = False
 
         # end class superuser
 
@@ -131,8 +135,8 @@ class _Auth_Account_ (_Ancestor_Essence) :
                (due to a pending action).
             """
 
-            kind       = Attr.Internal
-            default    = True
+            kind               = Attr.Internal
+            default            = True
 
         # end class suspended
 
@@ -144,135 +148,9 @@ _Account_ = _Auth_Account_ # end class _Auth_Account_
 
 _Ancestor_Essence = _Account_
 
-class Account_Anonymous (_Ancestor_Essence) :
-    # """Default account for users which are not logging in."""
-
-    max_count    = 1
-    show_in_ui   = False
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        class active (_Ancestor_Essence._Attributes.active) :
-
-            kind       = Attr.Const
-            default    = False
-
-        # end class active
-
-        class superuser (_Ancestor_Essence._Attributes.superuser) :
-
-            kind       = Attr.Const
-            default    = False
-
-        # end class superuser
-
-        class electric (_Ancestor_Essence._Attributes.electric) :
-
-            kind       = Attr.Const
-            default    = True
-
-        # end class electric
-
-        class x_locked (_Ancestor_Essence._Attributes.x_locked) :
-
-            kind       = Attr.Const
-            default    = True
-
-        # end class x_locked
-
-    # end class _Attributes
-
-# end class Account_Anonymous
-
-_Ancestor_Essence = _Account_
-
-class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
-    # """E-Type manager for password accounts"""
-
-    def apply_migration (self, migration) :
-        """Add all objects and links `migration` to `self.home_scope`."""
-        scope = self.home_scope
-        for k in ("Account", "Group", "Person", "links") :
-            for epk, db_attrs in sorted (pyk.iteritems (migration [k])) :
-                ET  = scope [epk [-1]]
-                obj = ET.instance (* epk, raw = True)
-                if obj is None :
-                    obj = ET (* epk, raw = True, ** dict (db_attrs))
-                elif k == "Account" :
-                    obj.set_raw (** dict (db_attrs))
-    # end def apply_migration
-
-    def create_new_account_x (self, name, password = None, ** kw) :
-        etype = self._etype
-        if not password :
-            password = etype.random_password (32)
-        password = etype.password_hash (password)
-        return self \
-            ( name
-            , password = password
-            , ph_name  = etype.default_ph_name
-            , ** kw
-            )
-    # end def create_new_account_x
-
-    def create_new_account (self, name, password) :
-        account = self.create_new_account_x \
-            (name, password, enabled = True, suspended = True)
-        AEV = self.home_scope.GTW.OMP.Auth.Account_EMail_Verification
-        return account, AEV (account).token
-    # end def create_new_account
-
-    def force_password_change (self, account) :
-        Auth = self.home_scope.GTW.OMP.Auth
-        if isinstance (account, pyk.string_types) :
-            account = self.query (name = account).one ()
-        if not Auth.Account_Password_Change_Required.query \
-            (account = account).count () :
-            Auth.Account_Password_Change_Required (account)
-    # end def force_password_change
-
-    def migration (self, * filters) :
-        """Return a all account instances in migration format."""
-        result = dict \
-            (  (k, {})
-            for k in ("Account", "Group", "Person", "links")
-            )
-        for obj in self.query (* filters).order_by (Q.pid) :
-            result ["Account"].update ((obj.as_migration (), ))
-            if getattr (obj, "person", None) :
-                result ["Person"].update ((obj.person.as_migration (), ))
-                result ["links"].update ((obj.person_link.as_migration (), ))
-            for gl in obj.group_links :
-                result ["Group"].update ((gl.group.as_migration (), ))
-                result ["links"].update ((gl.as_migration (), ))
-        return result
-    # end def migration
-
-    def reset_password (self, account) :
-        Auth  = self.home_scope.GTW.OMP.Auth
-        etype = self._etype
-        if isinstance (account, pyk.string_types) :
-            account = self.query (name = account).one ()
-        if not account.enabled :
-            raise TypeError (u"Account has been disabled")
-        ### first we set the password to someting random nobody knows
-        account.change_password (etype.random_password (32))
-        ### than we create the password change request action
-        self.force_password_change (account)
-        ### now create a reset password action which contains the new password
-        apr = Auth.Account_Password_Reset \
-            (account, password = etype.random_password (16))
-        ### and temporarily suspend the account
-        account.set (suspended = True)
-        return apr.password, apr.token
-    # end def reset_password
-
-# end class Account_Manager
-
 class Account (_Ancestor_Essence) :
     """An acount which uses passwords for authorization."""
 
-    Manager         = Account_Manager
     pw_charset      = \
         ( "abcdefghijklmnopqrstuvwxyz"
           "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -378,6 +256,90 @@ class Account (_Ancestor_Essence) :
     # end def verify_password
 
 # end class Account
+
+@TFL.Add_To_Class ("Manager", Account)
+class Account_Manager (Account.M_E_Type.Manager) :
+    """E_Type_Manager specialized for E_Type `Auth.Account`"""
+
+    def apply_migration (self, migration) :
+        """Add all objects and links `migration` to `self.home_scope`."""
+        scope = self.home_scope
+        for k in ("Account", "Group", "Person", "links") :
+            for epk, db_attrs in sorted (pyk.iteritems (migration [k])) :
+                ET  = scope [epk [-1]]
+                obj = ET.instance (* epk, raw = True)
+                if obj is None :
+                    obj = ET (* epk, raw = True, ** dict (db_attrs))
+                elif k == "Account" :
+                    obj.set_raw (** dict (db_attrs))
+    # end def apply_migration
+
+    def create_new_account_x (self, name, password = None, ** kw) :
+        etype = self._etype
+        if not password :
+            password = etype.random_password (32)
+        password = etype.password_hash (password)
+        return self \
+            ( name
+            , password = password
+            , ph_name  = etype.default_ph_name
+            , ** kw
+            )
+    # end def create_new_account_x
+
+    def create_new_account (self, name, password) :
+        account = self.create_new_account_x \
+            (name, password, enabled = True, suspended = True)
+        AEV = self.home_scope.GTW.OMP.Auth.Account_EMail_Verification
+        return account, AEV (account).token
+    # end def create_new_account
+
+    def force_password_change (self, account) :
+        Auth = self.home_scope.GTW.OMP.Auth
+        if isinstance (account, pyk.string_types) :
+            account = self.query (name = account).one ()
+        if not Auth.Account_Password_Change_Required.query \
+            (account = account).count () :
+            Auth.Account_Password_Change_Required (account)
+    # end def force_password_change
+
+    def migration (self, * filters) :
+        """Return all account instances in migration format."""
+        result = dict \
+            (  (k, {})
+            for k in ("Account", "Group", "Person", "links")
+            )
+        for obj in self.query (* filters).order_by (Q.pid) :
+            result ["Account"].update ((obj.as_migration (), ))
+            if getattr (obj, "person", None) :
+                result ["Person"].update ((obj.person.as_migration (), ))
+                result ["links"].update ((obj.person_link.as_migration (), ))
+            for gl in obj.group_links :
+                result ["Group"].update ((gl.group.as_migration (), ))
+                result ["links"].update ((gl.as_migration (), ))
+        return result
+    # end def migration
+
+    def reset_password (self, account) :
+        Auth  = self.home_scope.GTW.OMP.Auth
+        etype = self._etype
+        if isinstance (account, pyk.string_types) :
+            account = self.query (name = account).one ()
+        if not account.enabled :
+            raise TypeError ("Account has been disabled")
+        ### first we set the password to someting random nobody knows
+        account.change_password (etype.random_password (32))
+        ### than we create the password change request action
+        self.force_password_change (account)
+        ### now create a reset password action which contains the new password
+        apr = Auth.Account_Password_Reset \
+            (account, password = etype.random_password (16))
+        ### and temporarily suspend the account
+        account.set (suspended = True)
+        return apr.password, apr.token
+    # end def reset_password
+
+# end class Account_Manager
 
 __doc__ = """
 

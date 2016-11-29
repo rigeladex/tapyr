@@ -196,7 +196,7 @@ _test_cqf = r"""
     Auth-Group
         (Q.type_name == 'Auth.Group',)
     Auth-Id_Entity
-        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Activation', 'Auth.Account_Anonymous', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Certificate', 'Auth.Group'],),)
+        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Certificate', 'Auth.Group'],),)
     Auth-Link
         (Q.type_name.in_ (['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group'],),)
     Auth-Link1
@@ -204,9 +204,9 @@ _test_cqf = r"""
     Auth-Link2
         (Q.type_name.in_ (['Auth.Account_in_Group'],),)
     Auth-Object
-        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous', 'Auth.Certificate', 'Auth.Group'],),)
+        (Q.type_name.in_ (['Auth.Account', 'Auth.Certificate', 'Auth.Group'],),)
     Auth-_Account_
-        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous'],),)
+        (Q.type_name.in_ (['Auth.Account'],),)
     Auth-_Link_n_
         (Q.type_name.in_ (['Auth.Account_in_Group'],),)
     MOM-Id_Entity
@@ -218,7 +218,7 @@ _test_cqf = r"""
     MOM-Link2
         (Q.type_name.in_ (['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     MOM-Object
-        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous', 'Auth.Certificate', 'Auth.Group', 'PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page', 'SWP.Referral'],),)
+        (Q.type_name.in_ (['Auth.Account', 'Auth.Certificate', 'Auth.Group', 'PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page', 'SWP.Referral'],),)
     MOM-_Link_n_
         (Q.type_name.in_ (['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     PAP-Address
@@ -2020,7 +2020,6 @@ _test_example_1 = r"""
     ...     print (tn, ":", portable_repr (exa.epk_raw) if exa is not None else "------")
     Auth.Account : ('foo@bar.baz', 'Auth.Account')
     Auth.Account_Activation : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
-    Auth.Account_Anonymous : ('foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_EMail_Verification : ------
     Auth.Account_Password_Change_Required : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
@@ -2078,7 +2077,6 @@ _test_example_2 = r"""
     ...     print (tn, ":", portable_repr (exa.epk_raw) if exa is not None else "------")
     Auth.Account : ('foo@bar.baz', 'Auth.Account')
     Auth.Account_Activation : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
-    Auth.Account_Anonymous : ('foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_EMail_Verification : ------
     Auth.Account_Password_Change_Required : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
@@ -2173,7 +2171,6 @@ _test_example_3 = r"""
     Auth.Account_Password_Reset : ------
     Auth.Account_Password_Change_Required : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_EMail_Verification : ------
-    Auth.Account_Anonymous : ('foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_Activation : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
     Auth.Account : ('foo@bar.baz', 'Auth.Account')
 
@@ -2192,7 +2189,6 @@ _test_example_4 = r"""
     ...     print (tn, ":", portable_repr (exa.epk_raw) if exa is not None else "------")
     Auth.Account : ('foo@bar.baz', 'Auth.Account')
     Auth.Account_Activation : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
-    Auth.Account_Anonymous : ('foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_EMail_Verification : ------
     Auth.Account_Password_Change_Required : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
@@ -2246,7 +2242,6 @@ _test_example_4 = r"""
     ...     print (tn, ":", portable_repr (exa.epk_raw) if exa is not None else "------")
     Auth.Account : ('foo@bar.baz', 'Auth.Account')
     Auth.Account_Activation : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
-    Auth.Account_Anonymous : ('foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_EMail_Verification : ------
     Auth.Account_Password_Change_Required : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
@@ -2339,7 +2334,6 @@ _test_example_4 = r"""
     Auth.Account_Password_Reset : ------
     Auth.Account_Password_Change_Required : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_EMail_Verification : ------
-    Auth.Account_Anonymous : ('foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_Activation : (('foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
     Auth.Account : ('foo@bar.baz', 'Auth.Account')
 
@@ -4941,7 +4935,7 @@ _test_rat = r"""
                   , 'ui_name' : 'Name'
                   }
                 , { 'default_value' : 'no'
-                  , 'description' : 'Specifies if this account is currently enabled\n(the user can login).'
+                  , 'description' : 'Specifies if this account is currently enabled, i.e.,\nthe user can login.'
                   , 'example' : 'no'
                   , 'is_changeable' : True
                   , 'is_required' : False
@@ -5190,10 +5184,6 @@ _test_rat = r"""
               , 'url' : '/Doc/Auth-_Account_'
               }
             ]
-        , 'relevant_root' :
-            { 'type_name' : 'Auth._Account_'
-            , 'url' : '/Doc/Auth-_Account_'
-            }
         , 'type_name' : 'Auth.Account'
         , 'ui_name' : 'Auth.Account'
         , 'url' : '/Doc/Auth-Account'

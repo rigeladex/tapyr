@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -1399,7 +1399,6 @@ _test_types = """
       MOM.Object
         Auth.Object
           Auth._Account_
-            Auth.Account_Anonymous
             Auth.Account
           Auth.Certificate
           Auth.Group

@@ -164,8 +164,8 @@ _test_getters = """
         <SAW : Role_Ref_Set `accounts`>>
 
     >>> show_qx (qxp (Q.accounts.name))
-    <Auth._Account_ | QX.Kind for
-         <SAW : Email `name` [auth__account___1.name]>>
+    <Auth.Account | QX.Kind for
+         <SAW : Email `name` [auth_account__1.name]>>
         <PAP.Person | QX.Kind_Rev_Query for
              <SAW : Role_Ref_Set `accounts`>>
 
@@ -255,8 +255,8 @@ _test_getters = """
                  <SAW : Role_Ref `person`>>
 
     >>> show_qx (qxa (Q.person.account_links.account.name))
-    <Auth._Account_ | QX.Kind for
-         <SAW : Email `name` [auth__account___2.name]>>
+    <Auth.Account | QX.Kind for
+         <SAW : Email `name` [auth_account__2.name]>>
         <PAP.Person_has_Account | QX.Kind_EPK for
              <SAW : Account `right` [pap_person_has_account__3.right]>>
             <PAP.Person | QX.Kind_Rev_Query for
@@ -273,8 +273,8 @@ _test_getters = """
                  <SAW : Link_Ref_List `person_links`>>
 
     >>> show_qx (qxa (Q.person_links.person.account_links.account.name))
-    <Auth._Account_ | QX.Kind for
-         <SAW : Email `name` [auth__account___3.name]>>
+    <Auth.Account | QX.Kind for
+         <SAW : Email `name` [auth_account__3.name]>>
         <PAP.Person_has_Account | QX.Kind_EPK for
              <SAW : Account `right` [pap_person_has_account__5.right]>>
             <PAP.Person | QX.Kind_Rev_Query for
@@ -1078,7 +1078,6 @@ _test_joins = """
       OUTER pap_person__3.pid = pap_person_has_account__1.left
       OUTER pap_person_has_account__2.left = pap_person__3.pid
       JOIN  auth_account__1.pid = pap_person_has_account__2.right
-      JOIN  auth__account___1.pid = pap_person_has_account__2.right
 
     >>> show_joins (apt, "Auth.Account", Q.person_links.person.account_links.account.name)
     Auth.Account  :  Q.person_links.person.account_links.account.name
@@ -1086,7 +1085,6 @@ _test_joins = """
       JOIN  pap_person__4.pid = pap_person_has_account__3.left
       OUTER pap_person_has_account__4.left = pap_person__4.pid
       JOIN  auth_account__2.pid = pap_person_has_account__4.right
-      JOIN  auth__account___2.pid = pap_person_has_account__4.right
 
     >>> show_joins (apt, "SRM.Regatta_C", Q.left.date.start.year == 2013)
     SRM.Regatta_C  :  Q.left.date.start.year == 2013
@@ -1099,15 +1097,15 @@ _test_xs_filter = """
 
     >>> show_xs_filter (apt, "Auth.Account", Q.person_links.person.account_links.account.name == "foo")
     Auth.Account  :  Q.person_links.person.account_links.account.name == 'foo'
-        auth__account___1.name = :name_1
+        auth_account__1.name = :name_1
 
     >>> show_xs_filter (apt, "Auth.Account", Q.person_links.person.account_links.account.name)
     Auth.Account  :  Q.person_links.person.account_links.account.name
-        auth__account___1.name != :name_1
+        auth_account__1.name != :name_1
 
     >>> show_xs_filter (apt, "Auth.Account", ~ Q.person_links.person.account_links.account.name)
     Auth.Account  :  ~ Q.person_links.person.account_links.account.name
-        auth__account___1.name = :name_1
+        auth_account__1.name = :name_1
 
     >>> show_xs_filter (apt, "Auth.Account", Q.RAW.person.last_name == "Tanzer")
     Auth.Account  :  Q.RAW.person.last_name == 'Tanzer'

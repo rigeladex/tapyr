@@ -3467,8 +3467,6 @@ _test_entity_attr = """
         person_links
     Auth.Account_Activation
         events
-    Auth.Account_Anonymous
-        events
     Auth.Account_EMail_Verification
         events
     Auth.Account_Password_Change_Required
@@ -3655,10 +3653,6 @@ _test_entity_attr = """
         person_links
         person_link
     Auth.Account_Activation
-        creation
-        last_change
-        events
-    Auth.Account_Anonymous
         creation
         last_change
         events
@@ -3983,7 +3977,6 @@ _test_entity_attr = """
     ...     print ("%%-40s %%s" %% (T.type_name, T.show_in_ui))
     Auth.Account                             True
     Auth.Account_Activation                  False
-    Auth.Account_Anonymous                   False
     Auth.Account_EMail_Verification          False
     Auth.Account_Password_Change_Required    False
     Auth.Account_Password_Reset              False

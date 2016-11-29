@@ -132,9 +132,6 @@ test_code = r"""
     Auth._Account_
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
-    Auth.Account_Anonymous
-        ('EVT.Event', ['left'])
-        ('MOM.Document', ['left'])
     Auth.Account
         ('Auth.Account_Activation', ['left'])
         ('Auth.Account_EMail_Verification', ['left'])

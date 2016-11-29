@@ -298,8 +298,6 @@ _test_code = """
         SWP.Link . . . . . . . . . . . . . . . . . . .           True   True
       MOM.Object . . . . . . . . . . . . . . . . . . .           True   True
         Auth.Object  . . . . . . . . . . . . . . . . .           True   True
-          Auth._Account_ . . . . . . . . . . . . . . .    True
-            Auth.Account_Anonymous . . . . . . . . . .    True
             Auth.Account . . . . . . . . . . . . . . .    True
           Auth.Certificate . . . . . . . . . . . . . .    True
           Auth.Group . . . . . . . . . . . . . . . . .    True

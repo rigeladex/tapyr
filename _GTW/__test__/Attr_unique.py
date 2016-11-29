@@ -38,12 +38,6 @@ _test_unique_hps = """
     ...         print (ET.type_name)
     ...         print (" ".join ((" " * 3, "EMS", ", ".join (str (p) for p in ems_ps))).rstrip ())
     ...         print (" ".join ((" " * 3, "DBW", ", ".join (str (p) for p in dbw_ps))).rstrip ())
-    Auth._Account_
-        EMS
-        DBW Uniqueness predicate: unique_epk ('name',)
-    Auth.Account_Anonymous
-        EMS
-        DBW Uniqueness predicate: unique_epk ('name',)
     Auth.Account
         EMS
         DBW Uniqueness predicate: unique_epk ('name',)
@@ -228,15 +222,9 @@ _test_unique_sql = """
     ...         print (ET.type_name)
     ...         print (" ".join ((" " * 3, "EMS", ", ".join (str (p) for p in ems_ps))).rstrip ())
     ...         print (" ".join ((" " * 3, "DBW", ", ".join (str (p) for p in dbw_ps))).rstrip ())
-    Auth._Account_
+    Auth.Account
         EMS
         DBW Uniqueness predicate: unique_epk ('name',)
-    Auth.Account_Anonymous
-        EMS Uniqueness predicate: unique_epk ('name',)
-        DBW
-    Auth.Account
-        EMS Uniqueness predicate: unique_epk ('name',)
-        DBW
     Auth.Certificate
         EMS
         DBW Uniqueness predicate: unique_epk ('email', 'validity', 'desc')

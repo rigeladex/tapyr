@@ -191,7 +191,7 @@ _test_attr_wrappers_sq = r"""
           Init_Only_Mixin, _Just_Once_Mixin_, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_Range : Time_Range `time`
           _Range_Mixin_, _Structured_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-        time__449__type_desc
+        time__445__type_desc
           Kind_Wrapper_Time : Time `lower`
               _Structured_Mixin_, Optional, _User_, _DB_Attr_
           <SAW : Time `time.lower` [pap_appointmen
@@ -404,91 +404,91 @@ _test_MF3 = r"""
     >>> f_a   = F_A (scope, a)
 
     >>> show_elements (F_A, "q_name")
-    <class Entity A-115> None
-    <class Field_Entity A-115:left> left
-    <class Field A-115:left.last_name> left.last_name
-    <class Field A-115:left.first_name> left.first_name
-    <class Field A-115:left.middle_name> left.middle_name
-    <class Field A-115:left.title> left.title
-    <class Field A-115:date> date
-    <class Field_Structured A-115:time> time
-    <class Field A-115:time.lower> time.lower
-    <class Field A-115:time.upper> time.upper
+    <class Entity A-114> None
+    <class Field_Entity A-114:left> left
+    <class Field A-114:left.last_name> left.last_name
+    <class Field A-114:left.first_name> left.first_name
+    <class Field A-114:left.middle_name> left.middle_name
+    <class Field A-114:left.title> left.title
+    <class Field A-114:date> date
+    <class Field_Structured A-114:time> time
+    <class Field A-114:time.lower> time.lower
+    <class Field A-114:time.upper> time.upper
 
     >>> show_elements (F_A_s, "q_name")
-    <class Entity A-115> None
-    <class Field_Entity A-115:left> left
-    <class Field A-115:left.last_name> left.last_name
-    <class Field A-115:left.first_name> left.first_name
-    <class Field A-115:left.middle_name> left.middle_name
-    <class Field A-115:left.title> left.title
-    <class Field A-115:date> date
-    <class Field_Structured A-115:time> time
-    <class Field A-115:time.lower> time.lower
+    <class Entity A-114> None
+    <class Field_Entity A-114:left> left
+    <class Field A-114:left.last_name> left.last_name
+    <class Field A-114:left.first_name> left.first_name
+    <class Field A-114:left.middle_name> left.middle_name
+    <class Field A-114:left.title> left.title
+    <class Field A-114:date> date
+    <class Field_Structured A-114:time> time
+    <class Field A-114:time.lower> time.lower
 
     >>> show_elements (f_a, "edit")
-    <Entity A-115> ---
-    <Field_Entity A-115:left> 1
-    <Field A-115:date> 2016-07-20
-    <Field_Structured A-115:time>
-    <Field A-115:time.lower> 14:00
-    <Field A-115:time.upper> 16:00
+    <Entity A-114> ---
+    <Field_Entity A-114:left> 1
+    <Field A-114:date> 2016-07-20
+    <Field_Structured A-114:time>
+    <Field A-114:time.lower> 14:00
+    <Field A-114:time.upper> 16:00
 
     >>> show_elements (f_a, "ui_display")
-    <Entity A-115> Tanzer Christian, 2016-07-20, [14:00, 16:00)
-    <Field_Entity A-115:left> Tanzer Christian
-    <Field A-115:date> 2016-07-20
-    <Field_Structured A-115:time> [14:00, 16:00)
-    <Field A-115:time.lower> 14:00
-    <Field A-115:time.upper> 16:00
+    <Entity A-114> Tanzer Christian, 2016-07-20, [14:00, 16:00)
+    <Field_Entity A-114:left> Tanzer Christian
+    <Field A-114:date> 2016-07-20
+    <Field_Structured A-114:time> [14:00, 16:00)
+    <Field A-114:time.lower> 14:00
+    <Field A-114:time.upper> 16:00
 
     >>> show_elements (f_a, "essence")
-    <Entity A-115> (('tanzer', 'christian', '', ''), '2016-07-20', Time_Range (datetime.time(14, 0), datetime.time(16, 0), '[)'))
-    <Field_Entity A-115:left> ('tanzer', 'christian', '', '')
-    <Field A-115:date> (('tanzer', 'christian', '', ''), '2016-07-20', Time_Range (datetime.time(14, 0), datetime.time(16, 0), '[)'))
-    <Field_Structured A-115:time> [14:00, 16:00)
-    <Field A-115:time.lower> [14:00, 16:00)
-    <Field A-115:time.upper> [14:00, 16:00)
+    <Entity A-114> (('tanzer', 'christian', '', ''), '2016-07-20', Time_Range (datetime.time(14, 0), datetime.time(16, 0), '[)'))
+    <Field_Entity A-114:left> ('tanzer', 'christian', '', '')
+    <Field A-114:date> (('tanzer', 'christian', '', ''), '2016-07-20', Time_Range (datetime.time(14, 0), datetime.time(16, 0), '[)'))
+    <Field_Structured A-114:time> [14:00, 16:00)
+    <Field A-114:time.lower> [14:00, 16:00)
+    <Field A-114:time.upper> [14:00, 16:00)
 
     >>> show_elements (f_a, "Entity")
-    <Entity A-115> <Entity A-115>
-    <Field_Entity A-115:left> <Entity A-115>
-    <Field A-115:date> <Entity A-115>
-    <Field_Structured A-115:time> <Entity A-115>
-    <Field A-115:time.lower> <Entity A-115>
-    <Field A-115:time.upper> <Entity A-115>
+    <Entity A-114> <Entity A-114>
+    <Field_Entity A-114:left> <Entity A-114>
+    <Field A-114:date> <Entity A-114>
+    <Field_Structured A-114:time> <Entity A-114>
+    <Field A-114:time.lower> <Entity A-114>
+    <Field A-114:time.upper> <Entity A-114>
 
     >>> show_elements (f_a, "template_macro")
-    <Entity A-115> Entity_Form
-    <Field_Entity A-115:left> Field_Entity
-    <Field A-115:date> Field
-    <Field_Structured A-115:time> Field_Structured
-    <Field A-115:time.lower> Field
-    <Field A-115:time.upper> Field
+    <Entity A-114> Entity_Form
+    <Field_Entity A-114:left> Field_Entity
+    <Field A-114:date> Field
+    <Field_Structured A-114:time> Field_Structured
+    <Field A-114:time.lower> Field
+    <Field A-114:time.upper> Field
 
     >>> show_elements (f_a, "template_module")
-    <Entity A-115> mf3
-    <Field_Entity A-115:left> None
-    <Field A-115:date> None
-    <Field_Structured A-115:time> mf3_h_cols
-    <Field A-115:time.lower> None
-    <Field A-115:time.upper> None
+    <Entity A-114> mf3
+    <Field_Entity A-114:left> None
+    <Field A-114:date> None
+    <Field_Structured A-114:time> mf3_h_cols
+    <Field A-114:time.lower> None
+    <Field A-114:time.upper> None
 
     >>> show_elements (f_a, "label")
-    <Entity A-115> Appointment
-    <Field_Entity A-115:left> Person
-    <Field A-115:date> Date
-    <Field_Structured A-115:time> Time
-    <Field A-115:time.lower> start
-    <Field A-115:time.upper> finish
+    <Entity A-114> Appointment
+    <Field_Entity A-114:left> Person
+    <Field A-114:date> Date
+    <Field_Structured A-114:time> Time
+    <Field A-114:time.lower> start
+    <Field A-114:time.upper> finish
 
     >>> show_elements (f_a, "completer")
-    <Entity A-115> None
-    <Field_Entity A-115:left> None
-    <Field A-115:date> <Completer for <Field A-115:date>, treshold = 4, entity_p = 1>
-    <Field_Structured A-115:time> <C_Completer for <Field_Structured A-115:time>, treshold = 2, entity_p = 1>
-    <Field A-115:time.lower> <Completer for <Field A-115:time.lower>, treshold = 2, entity_p = 0>
-    <Field A-115:time.upper> <Completer for <Field A-115:time.upper>, treshold = 2, entity_p = 0>
+    <Entity A-114> None
+    <Field_Entity A-114:left> None
+    <Field A-114:date> <Completer for <Field A-114:date>, treshold = 4, entity_p = 1>
+    <Field_Structured A-114:time> <C_Completer for <Field_Structured A-114:time>, treshold = 2, entity_p = 1>
+    <Field A-114:time.lower> <Completer for <Field A-114:time.lower>, treshold = 2, entity_p = 0>
+    <Field A-114:time.upper> <Completer for <Field A-114:time.upper>, treshold = 2, entity_p = 0>
 
     >>> show_completers (f_a, "q_name", "attr.completer.kind")
     Type    q_name      attr.completer.kind
@@ -501,10 +501,10 @@ _test_MF3 = r"""
     >>> show_completers (f_a, "q_name", "completer.elems")
     Type    q_name      completer.elems
     =========================================================================================================================
-    F       date        (<Field A-115:date>, <Field_Entity A-115:left>, <Field A-115:time.lower>, <Field A-115:time.upper>)
-    F_S     time        (<Field A-115:time.lower>, <Field A-115:time.upper>, <Field A-115:date>)
-    F       time.lower  (<Field A-115:time.lower>,)
-    F       time.upper  (<Field A-115:time.upper>,)
+    F       date        (<Field A-114:date>, <Field_Entity A-114:left>, <Field A-114:time.lower>, <Field A-114:time.upper>)
+    F_S     time        (<Field A-114:time.lower>, <Field A-114:time.upper>, <Field A-114:date>)
+    F       time.lower  (<Field A-114:time.lower>,)
+    F       time.upper  (<Field A-114:time.upper>,)
 
     >>> show_completers (f_a, "q_name", "completer.etn", "completer.attr_names")
     Type    q_name      completer.etn    completer.attr_names
@@ -517,26 +517,26 @@ _test_MF3 = r"""
     >>> show_formatted (f_a.as_json_cargo)
     { 'buddies' :
         { 1 :
-            [ 'A-115:date'
-            , 'A-115:left'
-            , 'A-115:time.lower'
-            , 'A-115:time.upper'
+            [ 'A-114:date'
+            , 'A-114:left'
+            , 'A-114:time.lower'
+            , 'A-114:time.upper'
             ]
-        , 2 : ['A-115:time.lower']
-        , 3 : ['A-115:time.upper']
+        , 2 : ['A-114:time.lower']
+        , 3 : ['A-114:time.upper']
         }
     , 'cargo' :
         { 'field_values' :
-            { 'A-115:date' : {'init' : '2016-07-20'}
-            , 'A-115:left' :
+            { 'A-114:date' : {'init' : '2016-07-20'}
+            , 'A-114:left' :
                 { 'init' :
                     { 'cid' : 1
                     , 'display' : 'Tanzer Christian'
                     , 'pid' : 1
                     }
                 }
-            , 'A-115:time.lower' : {'init' : '14:00'}
-            , 'A-115:time.upper' : {'init' : '16:00'}
+            , 'A-114:time.lower' : {'init' : '14:00'}
+            , 'A-114:time.upper' : {'init' : '16:00'}
             }
         , 'pid' : 2
         , 'sid' : 0
@@ -1161,7 +1161,7 @@ _test_tables_pg = r"""
 
     >>> show_qx (qxp (Q.time.lower == dtt (8, 30)))
     Bin:__eq__:
-      <time__449__type_desc | QX.Kind_Structured_Field_Extractor for
+      <time__445__type_desc | QX.Kind_Structured_Field_Extractor for
            <SAW : Time `time.lower` [lower(pap_appointment.time)]>>
           <PAP.Appointment | QX._QX_Range_ for
                <SAW : Time_Range `time` [pap_appointment.time]>>
@@ -1169,7 +1169,7 @@ _test_tables_pg = r"""
 
     >>> show_qx (qxp (Q.time.lower.minute == 30))
     Bin:__eq__:
-      <time__449__type_desc | QX.Kind_Structured_Field_Extractor for
+      <time__445__type_desc | QX.Kind_Structured_Field_Extractor for
            <SAW : Time `time.lower` [lower(pap_appointment.time)]>>
           <PAP.Appointment | QX._QX_Range_ for
                <SAW : Time_Range `time` [pap_appointment.time]>>
@@ -1273,34 +1273,34 @@ _test_tables_sq = r"""
     [Exclusion predicate: exclusive_left_date_time ('left', 'date', 'time')]
 
     >>> show_qx (qxp (Q.time))
-    <time__449__type_desc | QX._QX_Range_ for
+    <time__445__type_desc | QX._QX_Range_ for
          <SAW : Time_Range `time` [pap_appointment.time__lower, pap_appointment.time__upper]>>
 
     >>> show_qx (qxp (Q.time.CONTAINS (Q.time)))
     Call:contains:
-      <time__449__type_desc | QX._QX_Range_ for
+      <time__445__type_desc | QX._QX_Range_ for
            <SAW : Time_Range `time` [pap_appointment.time__lower, pap_appointment.time__upper]>>
 
     >>> show_qx (qxp (Q.time == Q.time))
     Bin:__eq__:
-      <time__449__type_desc | QX._QX_Range_ for
+      <time__445__type_desc | QX._QX_Range_ for
            <SAW : Time_Range `time` [pap_appointment.time__lower, pap_appointment.time__upper]>>
-      <time__449__type_desc | QX._QX_Range_ for
+      <time__445__type_desc | QX._QX_Range_ for
            <SAW : Time_Range `time` [pap_appointment.time__lower, pap_appointment.time__upper]>>
 
     >>> show_qx (qxp (Q.time.lower == dtt (8, 30)))
     Bin:__eq__:
-      <time__449__type_desc | QX.Kind_Structured_Field_Extractor for
+      <time__445__type_desc | QX.Kind_Structured_Field_Extractor for
            <SAW : Time `time.lower` [pap_appointment.time__lower]>>
-          <time__449__type_desc | QX._QX_Range_ for
+          <time__445__type_desc | QX._QX_Range_ for
                <SAW : Time_Range `time` [pap_appointment.time__lower, pap_appointment.time__upper]>>
       08:30:00
 
     >>> show_qx (qxp (Q.time.lower.minute == 30))
     Bin:__eq__:
-      <time__449__type_desc | QX.Kind_Structured_Field_Extractor for
+      <time__445__type_desc | QX.Kind_Structured_Field_Extractor for
            <SAW : Time `time.lower` [pap_appointment.time__lower]>>
-          <time__449__type_desc | QX._QX_Range_ for
+          <time__445__type_desc | QX._QX_Range_ for
                <SAW : Time_Range `time` [pap_appointment.time__lower, pap_appointment.time__upper]>>
       30
 
@@ -1367,7 +1367,7 @@ _test_tables_sq = r"""
         left                      : pap_appointment.left
         person                    : pap_appointment.left
         pid                       : mom_id_entity.pid
-        time                      : <Col-Mapper for time__449__type_desc>
+        time                      : <Col-Mapper for time__445__type_desc>
             time.lower            : <Col-Mapper for <SAW : Time `time.lower` [pap_appointmen>
                 hour              : <SAW : Int `time__lower.hour`>
                 minute            : <SAW : Int `time__lower.minute`>

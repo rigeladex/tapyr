@@ -69,8 +69,7 @@ _test_ancestors = """
     Auth.Id_Entity                       < MOM.Id_Entity
     Auth.Object                          < MOM.Id_Entity
     Auth._Account_                       < MOM.Id_Entity
-    Auth.Account_Anonymous               < Auth._Account_   < MOM.Id_Entity
-    Auth.Account                         < Auth._Account_   < MOM.Id_Entity
+    Auth.Account                         < MOM.Id_Entity
     MOM.Date_Time_Interval
     MOM.Date_Time_Interval_C
     MOM.Date_Time_Interval_N
@@ -179,9 +178,7 @@ _test_ancestors = """
     >>> show_table_ancestors (apt)
     mom_id_entity /5
     mom_md_change /10
-    auth__account_ /5  <  mom_id_entity /5
-    auth_account_anonymous /1  <  auth__account_ /5  <  mom_id_entity /5
-    auth_account /3  <  auth__account_ /5  <  mom_id_entity /5
+    auth_account /7  <  mom_id_entity /5
     auth_certificate /8  <  mom_id_entity /5
     auth_group /3  <  mom_id_entity /5
     auth_account_in_group /3  <  mom_id_entity /5
@@ -240,7 +237,6 @@ _test_ancestors = """
     Auth.Id_Entity                       mom_id_entity
     Auth.Object                          mom_id_entity
     Auth._Account_                       mom_id_entity
-    Auth.Account_Anonymous               mom_id_entity
     Auth.Account                         mom_id_entity
     MOM.Date_Time_Interval               None
     MOM.Date_Time_Interval_C             None
@@ -439,15 +435,14 @@ _test_attr_wrappers = """
     Auth._Account_
       Kind_Wrapper_Q : Boolean `active`
           _Auto_Update_Mixin_, Query, _Cached_, _Volatile_, _System_
-      Kind_Wrapper : Boolean `enabled`
+      Kind_Wrapper_P : Boolean `enabled`
           Optional, _User_, _DB_Attr_
-      Kind_Wrapper : Email `name`
+      Kind_Wrapper_P : Email `name`
           Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_Wrapper : Boolean `superuser`
+      Kind_Wrapper_P : Boolean `superuser`
           Optional, _User_, _DB_Attr_
-      Kind_Wrapper : Boolean `suspended`
+      Kind_Wrapper_P : Boolean `suspended`
           Internal, _DB_System_, _DB_Attr_, _System_
-    Auth.Account_Anonymous <-- Auth._Account_
     Auth.Account
       Kind_Wrapper_R : Link_Ref_List `_account_action_s`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -459,12 +454,22 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_R : Link_Ref `activation`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_Q : Boolean `active`
+          _Auto_Update_Mixin_, Query, _Cached_, _Volatile_, _System_
+      Kind_Wrapper : Boolean `enabled`
+          Optional, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `groups`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper : Email `name`
+          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref `password_change_required`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_R : Role_Ref `person`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper : Boolean `superuser`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper : Boolean `suspended`
+          Internal, _DB_System_, _DB_Attr_, _System_
     MOM.Date_Time_Interval
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
@@ -1946,8 +1951,6 @@ _test_key_o_p = """
     >>> show_key_o_p (apt)
     MOM.Id_Entity                            : pid             None
     MOM.MD_Change                            : cid             None
-    Auth._Account_                           : None            pid
-    Auth.Account_Anonymous                   : None            pid
     Auth.Account                             : None            pid
     Auth.Certificate                         : cert_id         pid
     Auth.Group                               : None            pid
@@ -2238,29 +2241,19 @@ _test_q_able = """
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : Auth._Account_ [auth__account_ : mom_id_entity]>
+    <SAW : Auth._Account_ [mom_id_entity]>
       <SAW : Boolean `active`>
       <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `enabled` [auth__account_.enabled]>
+      <SAW : Boolean `enabled` (Auth.Account)>
       <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Email `name` [auth__account_.name]>
+      <SAW : Email `name` (Auth.Account)>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Boolean `superuser` [auth__account_.superuser]>
-      <SAW : Boolean `suspended` [auth__account_.suspended]>
+      <SAW : Boolean `superuser` (Auth.Account)>
+      <SAW : Boolean `suspended` (Auth.Account)>
       <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : Auth.Account_Anonymous [auth_account_anonymous : auth__account_ : mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `enabled` [auth__account_.enabled]>
-      <SAW : Link_Ref_List `events`>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Email `name` [auth__account_.name]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Boolean `suspended` [auth__account_.suspended]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-    <SAW : Auth.Account [auth_account : auth__account_ : mom_id_entity]>
+    <SAW : Auth.Account [auth_account : mom_id_entity]>
       <SAW : Link_Ref_List `_account_action_s`>
       <SAW : Link_Ref_List `_account_token_action_s`>
       <SAW : Link_Ref_List `account_email_verifications`>
@@ -2268,17 +2261,17 @@ _test_q_able = """
       <SAW : Link_Ref `activation`>
       <SAW : Boolean `active`>
       <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `enabled` [auth__account_.enabled]>
+      <SAW : Boolean `enabled` [auth_account.enabled]>
       <SAW : Link_Ref_List `events`>
       <SAW : Role_Ref_Set `groups`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Email `name` [auth__account_.name]>
+      <SAW : Email `name` [auth_account.name]>
       <SAW : Link_Ref `password_change_required`>
       <SAW : Role_Ref `person`>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Boolean `superuser` [auth__account_.superuser]>
-      <SAW : Boolean `suspended` [auth__account_.suspended]>
+      <SAW : Boolean `superuser` [auth_account.superuser]>
+      <SAW : Boolean `suspended` [auth_account.suspended]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
     <SAW : MOM.Date_Time_Interval []>
       <SAW : Boolean `alive`>
@@ -3547,7 +3540,7 @@ _test_q_able = """
       last_cid                      : last_cid
       pid                           : pid
       type_name                     : type_name
-    <SAW : Auth._Account_ [auth__account_ : mom_id_entity]>
+    <SAW : Auth._Account_ [mom_id_entity]>
       active                        : active
       creation                      : creation
       enabled                       : enabled
@@ -3559,17 +3552,7 @@ _test_q_able = """
       superuser                     : superuser
       suspended                     : suspended
       type_name                     : type_name
-    <SAW : Auth.Account_Anonymous [auth_account_anonymous : auth__account_ : mom_id_entity]>
-      creation                      : creation
-      enabled                       : enabled
-      events                        : events
-      last_change                   : last_change
-      last_cid                      : last_cid
-      name                          : name
-      pid                           : pid
-      suspended                     : suspended
-      type_name                     : type_name
-    <SAW : Auth.Account [auth_account : auth__account_ : mom_id_entity]>
+    <SAW : Auth.Account [auth_account : mom_id_entity]>
       _account_action_s             : _account_action_s
       _account_token_action_s       : _account_token_action_s
       account_email_verifications   : account_email_verifications
@@ -6273,99 +6256,90 @@ _test_q_result = """
 
     >>> print (qrt.attrs (Q.enabled, Q.person, Q.person.lifetime)) ### Auth.Account
     SQL: SELECT DISTINCT
-           auth__account_.enabled AS auth__account__enabled,
+           auth_account.enabled AS auth_account_enabled,
            pap_person__3.lifetime__finish AS pap_person__3_lifetime__finish,
            pap_person__3.lifetime__start AS pap_person__3_lifetime__start,
            pap_person_has_account__1."left" AS pap_person_has_account__1_left
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
 
     >>> print (apt.DBW.PNS.Q_Result.E_Type_Reload (ET)) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
          WHERE mom_id_entity.pid = :spk
          LIMIT :param_1
 
     >>> print (qrt.filter (Q.person)) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person_has_account__1."left" IS NOT NULL
 
     >>> print (qrt.filter (Q.person.lifetime == ("2013-07-15", ))) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.lifetime__start = :lifetime__start_1
 
     >>> print (qrt.filter (Q.person.lifetime == ("2013-07-15", "2013-07-21"))) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.lifetime__start = :lifetime__start_1
@@ -6376,304 +6350,276 @@ _test_q_result = """
 
     >>> print (qrt.filter (Q.RAW.person.last_name == "Tanzer")) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.__raw_last_name = :__raw_last_name_1
 
     >>> print (qrt.filter (Q.person.last_name == "tanzer")) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.last_name = :last_name_1
 
     >>> print (qrt.filter (Q.person.last_name.STARTSWITH ("tan"))) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE (pap_person__3.last_name LIKE :last_name_1 || '%%%%')
 
     >>> print (qrt.order_by (- Q.superuser).order_by (Q.name)) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
-         ORDER BY auth__account_.name, auth__account_.superuser DESC
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
+         ORDER BY auth_account.name, auth_account.superuser DESC
 
     >>> print (qrt.order_by (Q.name, - Q.superuser)) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
-         ORDER BY auth__account_.name, auth__account_.superuser DESC
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
+         ORDER BY auth_account.name, auth_account.superuser DESC
 
     >>> print (qrt.order_by (Q.person)) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name, pap_person__3.first_name, pap_person__3.middle_name, pap_person__3.title
 
     >>> print (qrt.order_by (- Q.person)) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name DESC, pap_person__3.first_name DESC, pap_person__3.middle_name DESC, pap_person__3.title DESC
 
     >>> print (qrt.order_by (Q.person.lifetime)) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.lifetime__start, pap_person__3.lifetime__finish
 
     >>> print (qrt.order_by (- Q.person.lifetime)) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.lifetime__start DESC, pap_person__3.lifetime__finish DESC
 
     >>> print (qrt.order_by ("person.last_name", "-name")) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
-         ORDER BY pap_person__3.last_name, auth__account_.name DESC
+         ORDER BY pap_person__3.last_name, auth_account.name DESC
 
     >>> print (qrt.order_by ("person.last_name")) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name
 
     >>> print (qrt.order_by (Q.person.last_name)) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name
 
     >>> print (qrt.order_by (- Q.person.last_name)) ### Auth.Account
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name DESC
 
     >>> print (qrt.filter (Q.person.last_name.STARTSWITH ("tan") | Q.person.last_name.ENDSWITH ("beck"))) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE (pap_person__3.last_name LIKE :last_name_1 || '%%%%')
@@ -6681,113 +6627,102 @@ _test_q_result = """
 
     >>> print (qrt.filter (Q.person_links)) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
          WHERE pap_person_has_account__2."right" IS NOT NULL
 
     >>> print (qrt.filter (Q.person_links.person)) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
          WHERE pap_person_has_account__2."left" IS NOT NULL
 
     >>> print (qrt.filter (Q.person_links.person == 42)) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
          WHERE pap_person_has_account__2."left" = :left_1
 
     >>> print (qrt.filter (Q.person_links.person.last_name == "tanzer")) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
            JOIN pap_person AS pap_person__4 ON pap_person__4.pid = pap_person_has_account__2."left"
          WHERE pap_person__4.last_name = :last_name_1
 
     >>> print (qrt.filter (Q.person_links.person.account_links.account.name == "foo@bar.baz")) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
            JOIN pap_person AS pap_person__4 ON pap_person__4.pid = pap_person_has_account__2."left"
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__3 ON pap_person_has_account__3."left" = pap_person__4.pid
            JOIN auth_account AS auth_account__1 ON auth_account__1.pid = pap_person_has_account__3."right"
-           JOIN auth__account_ AS auth__account___1 ON auth__account___1.pid = pap_person_has_account__3."right"
-         WHERE auth__account___1.name = :name_1
+         WHERE auth_account__1.name = :name_1
 
     >>> ET = apt ["PAP.Person_has_Account"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -7203,12 +7138,11 @@ _test_q_result = """
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__4 ON pap_person_has_account__4."left" = pap_person.pid
            JOIN auth_account AS auth_account__2 ON auth_account__2.pid = pap_person_has_account__4."right"
-           JOIN auth__account_ AS auth__account___2 ON auth__account___2.pid = pap_person_has_account__4."right"
-         ORDER BY NOT (auth__account___2.suspended != 1 AND auth__account___2.enabled = 1)
+         ORDER BY NOT (auth_account__2.suspended != 1 AND auth_account__2.enabled = 1)
 
     >>> show_query (qrt.order_by (~ Q.account_links.account.active).distinct ()) ### PAP.Person
     SQL: SELECT DISTINCT
-           NOT (auth__account___2.suspended != 1 AND auth__account___2.enabled = 1),
+           NOT (auth_account__2.suspended != 1 AND auth_account__2.enabled = 1),
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
@@ -7230,8 +7164,7 @@ _test_q_result = """
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__4 ON pap_person_has_account__4."left" = pap_person.pid
            JOIN auth_account AS auth_account__2 ON auth_account__2.pid = pap_person_has_account__4."right"
-           JOIN auth__account_ AS auth__account___2 ON auth__account___2.pid = pap_person_has_account__4."right"
-         ORDER BY NOT (auth__account___2.suspended != 1 AND auth__account___2.enabled = 1)
+         ORDER BY NOT (auth_account__2.suspended != 1 AND auth_account__2.enabled = 1)
 
     >>> show_query (qrt.order_by (~ Q.account_links).distinct ()) ### PAP.Person
     SQL: SELECT DISTINCT
@@ -7644,35 +7577,21 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : Auth._Account_ [auth__account_ : mom_id_entity]>
+    <SAW : Auth._Account_ [mom_id_entity]>
         active                    : <SAW : Boolean `active`>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
-        enabled                   : auth__account_.enabled
+        enabled                   : <SAW : Boolean `enabled` (Auth.Account)>
         events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
-        name                      : auth__account_.name
+        name                      : <SAW : Email `name` (Auth.Account)>
         pid                       : mom_id_entity.pid
-        superuser                 : auth__account_.superuser
-        suspended                 : auth__account_.suspended
+        superuser                 : <SAW : Boolean `superuser` (Auth.Account)>
+        suspended                 : <SAW : Boolean `suspended` (Auth.Account)>
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
-    <SAW : Auth.Account_Anonymous [auth_account_anonymous : auth__account_ : mom_id_entity]>
-        active                    : <SAW : Boolean `active`>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        enabled                   : auth__account_.enabled
-        events                    : <SAW : Link_Ref_List `events`>
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        name                      : auth__account_.name
-        pid                       : mom_id_entity.pid
-        superuser                 : auth__account_.superuser
-        suspended                 : auth__account_.suspended
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : Auth.Account [auth_account : auth__account_ : mom_id_entity]>
+    <SAW : Auth.Account [auth_account : mom_id_entity]>
         _account_action_s         : <SAW : Link_Ref_List `_account_action_s`>
         _account_token_action_s   : <SAW : Link_Ref_List `_account_token_action_s`>
         account_email_verifications: <SAW : Link_Ref_List `account_email_verifications`>
@@ -7682,13 +7601,13 @@ _test_qc_map = """
         active                    : <SAW : Boolean `active`>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
-        enabled                   : auth__account_.enabled
+        enabled                   : auth_account.enabled
         events                    : <SAW : Link_Ref_List `events`>
         group_links               : <SAW : Link_Ref_List `group_links`>
         groups                    : <SAW : Role_Ref_Set `groups`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
-        name                      : auth__account_.name
+        name                      : auth_account.name
         password                  : auth_account.password
         password_change_required  : <SAW : Link_Ref `password_change_required`>
         password_change_requireds : <SAW : Link_Ref_List `password_change_requireds`>
@@ -7697,8 +7616,8 @@ _test_qc_map = """
         person_links              : <SAW : Link_Ref_List `person_links`>
         ph_name                   : auth_account.ph_name
         pid                       : mom_id_entity.pid
-        superuser                 : auth__account_.superuser
-        suspended                 : auth__account_.suspended
+        superuser                 : auth_account.superuser
+        suspended                 : auth_account.suspended
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : Auth.Certificate [auth_certificate : mom_id_entity]>
@@ -9443,14 +9362,13 @@ _test_select = """
 
     >>> show_selects (apt)
     MOM.Id_Entity
-        SELECT auth__account_.enabled AS auth__account__enabled,
-               auth__account_.name AS auth__account__name,
-               auth__account_.pid AS auth__account__pid,
-               auth__account_.superuser AS auth__account__superuser,
-               auth__account_.suspended AS auth__account__suspended,
+        SELECT auth_account.enabled AS auth_account_enabled,
+               auth_account.name AS auth_account_name,
                auth_account.password AS auth_account_password,
                auth_account.ph_name AS auth_account_ph_name,
                auth_account.pid AS auth_account_pid,
+               auth_account.superuser AS auth_account_superuser,
+               auth_account.suspended AS auth_account_suspended,
                auth_account_activation."left" AS auth_account_activation_left,
                auth_account_activation.pid AS auth_account_activation_pid,
                auth_account_email_verification."left" AS auth_account_email_verification_left,
@@ -9722,8 +9640,7 @@ _test_select = """
                swp_referral.target_url AS swp_referral_target_url,
                swp_referral.title AS swp_referral_title
         FROM mom_id_entity
-           LEFT OUTER JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           LEFT OUTER JOIN auth_account ON auth__account_.pid = auth_account.pid
+           LEFT OUTER JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN auth_certificate ON mom_id_entity.pid = auth_certificate.pid
            LEFT OUTER JOIN auth_group ON mom_id_entity.pid = auth_group.pid
            LEFT OUTER JOIN auth_account_in_group ON mom_id_entity.pid = auth_account_in_group.pid
@@ -10239,14 +10156,13 @@ _test_select = """
             OR mom_id_entity.pid = srm_crew_member.pid
             OR mom_id_entity.pid = srm_team_has_boat_in_regatta.pid
     MOM.Object
-        SELECT auth__account_.enabled AS auth__account__enabled,
-               auth__account_.name AS auth__account__name,
-               auth__account_.pid AS auth__account__pid,
-               auth__account_.superuser AS auth__account__superuser,
-               auth__account_.suspended AS auth__account__suspended,
+        SELECT auth_account.enabled AS auth_account_enabled,
+               auth_account.name AS auth_account_name,
                auth_account.password AS auth_account_password,
                auth_account.ph_name AS auth_account_ph_name,
                auth_account.pid AS auth_account_pid,
+               auth_account.superuser AS auth_account_superuser,
+               auth_account.suspended AS auth_account_suspended,
                auth_certificate."desc" AS auth_certificate_desc,
                auth_certificate.cert_id AS auth_certificate_cert_id,
                auth_certificate.email AS auth_certificate_email,
@@ -10372,8 +10288,7 @@ _test_select = """
                swp_referral.target_url AS swp_referral_target_url,
                swp_referral.title AS swp_referral_title
         FROM mom_id_entity
-           LEFT OUTER JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           LEFT OUTER JOIN auth_account ON auth__account_.pid = auth_account.pid
+           LEFT OUTER JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN auth_certificate ON mom_id_entity.pid = auth_certificate.pid
            LEFT OUTER JOIN auth_group ON mom_id_entity.pid = auth_group.pid
            LEFT OUTER JOIN evt_calendar ON mom_id_entity.pid = evt_calendar.pid
@@ -10393,8 +10308,7 @@ _test_select = """
            LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
            LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
            LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
-        WHERE mom_id_entity.pid = auth__account_.pid
-            OR mom_id_entity.pid = auth_account.pid
+        WHERE mom_id_entity.pid = auth_account.pid
             OR mom_id_entity.pid = auth_certificate.pid
             OR mom_id_entity.pid = auth_group.pid
             OR mom_id_entity.pid = evt_calendar.pid
@@ -10415,14 +10329,13 @@ _test_select = """
             OR mom_id_entity.pid = swp_gallery.pid
             OR mom_id_entity.pid = swp_referral.pid
     Auth.Id_Entity
-        SELECT auth__account_.enabled AS auth__account__enabled,
-               auth__account_.name AS auth__account__name,
-               auth__account_.pid AS auth__account__pid,
-               auth__account_.superuser AS auth__account__superuser,
-               auth__account_.suspended AS auth__account__suspended,
+        SELECT auth_account.enabled AS auth_account_enabled,
+               auth_account.name AS auth_account_name,
                auth_account.password AS auth_account_password,
                auth_account.ph_name AS auth_account_ph_name,
                auth_account.pid AS auth_account_pid,
+               auth_account.superuser AS auth_account_superuser,
+               auth_account.suspended AS auth_account_suspended,
                auth_account_activation."left" AS auth_account_activation_left,
                auth_account_activation.pid AS auth_account_activation_pid,
                auth_account_email_verification."left" AS auth_account_email_verification_left,
@@ -10457,8 +10370,7 @@ _test_select = """
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked
         FROM mom_id_entity
-           LEFT OUTER JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           LEFT OUTER JOIN auth_account ON auth__account_.pid = auth_account.pid
+           LEFT OUTER JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN auth_certificate ON mom_id_entity.pid = auth_certificate.pid
            LEFT OUTER JOIN auth_group ON mom_id_entity.pid = auth_group.pid
            LEFT OUTER JOIN auth_account_in_group ON mom_id_entity.pid = auth_account_in_group.pid
@@ -10466,8 +10378,7 @@ _test_select = """
            LEFT OUTER JOIN auth_account_password_change_required ON mom_id_entity.pid = auth_account_password_change_required.pid
            LEFT OUTER JOIN auth_account_email_verification ON mom_id_entity.pid = auth_account_email_verification.pid
            LEFT OUTER JOIN auth_account_password_reset ON mom_id_entity.pid = auth_account_password_reset.pid
-        WHERE mom_id_entity.pid = auth__account_.pid
-            OR mom_id_entity.pid = auth_account.pid
+        WHERE mom_id_entity.pid = auth_account.pid
             OR mom_id_entity.pid = auth_certificate.pid
             OR mom_id_entity.pid = auth_group.pid
             OR mom_id_entity.pid = auth_account_in_group.pid
@@ -10476,14 +10387,13 @@ _test_select = """
             OR mom_id_entity.pid = auth_account_email_verification.pid
             OR mom_id_entity.pid = auth_account_password_reset.pid
     Auth.Object
-        SELECT auth__account_.enabled AS auth__account__enabled,
-               auth__account_.name AS auth__account__name,
-               auth__account_.pid AS auth__account__pid,
-               auth__account_.superuser AS auth__account__superuser,
-               auth__account_.suspended AS auth__account__suspended,
+        SELECT auth_account.enabled AS auth_account_enabled,
+               auth_account.name AS auth_account_name,
                auth_account.password AS auth_account_password,
                auth_account.ph_name AS auth_account_ph_name,
                auth_account.pid AS auth_account_pid,
+               auth_account.superuser AS auth_account_superuser,
+               auth_account.suspended AS auth_account_suspended,
                auth_certificate."desc" AS auth_certificate_desc,
                auth_certificate.cert_id AS auth_certificate_cert_id,
                auth_certificate.email AS auth_certificate_email,
@@ -10501,63 +10411,43 @@ _test_select = """
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked
         FROM mom_id_entity
-           LEFT OUTER JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           LEFT OUTER JOIN auth_account ON auth__account_.pid = auth_account.pid
+           LEFT OUTER JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN auth_certificate ON mom_id_entity.pid = auth_certificate.pid
            LEFT OUTER JOIN auth_group ON mom_id_entity.pid = auth_group.pid
-        WHERE mom_id_entity.pid = auth__account_.pid
-            OR mom_id_entity.pid = auth_account.pid
+        WHERE mom_id_entity.pid = auth_account.pid
             OR mom_id_entity.pid = auth_certificate.pid
             OR mom_id_entity.pid = auth_group.pid
     Auth._Account_
-        SELECT auth__account_.enabled AS auth__account__enabled,
-               auth__account_.name AS auth__account__name,
-               auth__account_.pid AS auth__account__pid,
-               auth__account_.superuser AS auth__account__superuser,
-               auth__account_.suspended AS auth__account__suspended,
+        SELECT auth_account.enabled AS auth_account_enabled,
+               auth_account.name AS auth_account_name,
                auth_account.password AS auth_account_password,
                auth_account.ph_name AS auth_account_ph_name,
                auth_account.pid AS auth_account_pid,
+               auth_account.superuser AS auth_account_superuser,
+               auth_account.suspended AS auth_account_suspended,
                mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked
         FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           LEFT OUTER JOIN auth_account ON auth__account_.pid = auth_account.pid
-    Auth.Account_Anonymous Auth._Account_
-        SELECT auth__account_.enabled AS auth__account__enabled,
-               auth__account_.name AS auth__account__name,
-               auth__account_.pid AS auth__account__pid,
-               auth__account_.superuser AS auth__account__superuser,
-               auth__account_.suspended AS auth__account__suspended,
-               auth_account_anonymous.pid AS auth_account_anonymous_pid,
-               mom_id_entity.electric AS mom_id_entity_electric,
-               mom_id_entity.last_cid AS mom_id_entity_last_cid,
-               mom_id_entity.pid AS mom_id_entity_pid,
-               mom_id_entity.type_name AS mom_id_entity_type_name,
-               mom_id_entity.x_locked AS mom_id_entity_x_locked
-        FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account_anonymous ON auth__account_.pid = auth_account_anonymous.pid
-    Auth.Account Auth._Account_
-        SELECT auth__account_.enabled AS auth__account__enabled,
-               auth__account_.name AS auth__account__name,
-               auth__account_.pid AS auth__account__pid,
-               auth__account_.superuser AS auth__account__superuser,
-               auth__account_.suspended AS auth__account__suspended,
+           LEFT OUTER JOIN auth_account ON mom_id_entity.pid = auth_account.pid
+        WHERE mom_id_entity.pid = auth_account.pid
+    Auth.Account
+        SELECT auth_account.enabled AS auth_account_enabled,
+               auth_account.name AS auth_account_name,
                auth_account.password AS auth_account_password,
                auth_account.ph_name AS auth_account_ph_name,
                auth_account.pid AS auth_account_pid,
+               auth_account.superuser AS auth_account_superuser,
+               auth_account.suspended AS auth_account_suspended,
                mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked
         FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
     Auth.Certificate
         SELECT auth_certificate."desc" AS auth_certificate_desc,
                auth_certificate.cert_id AS auth_certificate_cert_id,
@@ -12856,42 +12746,24 @@ _test_select_strict = """
         FROM mom_id_entity
         WHERE false
     Auth._Account_
-        SELECT auth__account_.pid
-        FROM auth__account_
-        WHERE false
-    Auth.Account_Anonymous Auth._Account_
-        SELECT auth__account_.enabled AS auth__account__enabled,
-               auth__account_.name AS auth__account__name,
-               auth__account_.pid AS auth__account__pid,
-               auth__account_.superuser AS auth__account__superuser,
-               auth__account_.suspended AS auth__account__suspended,
-               auth_account_anonymous.pid AS auth_account_anonymous_pid,
-               mom_id_entity.electric AS mom_id_entity_electric,
-               mom_id_entity.last_cid AS mom_id_entity_last_cid,
-               mom_id_entity.pid AS mom_id_entity_pid,
-               mom_id_entity.type_name AS mom_id_entity_type_name,
-               mom_id_entity.x_locked AS mom_id_entity_x_locked
+        SELECT mom_id_entity.pid
         FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account_anonymous ON auth__account_.pid = auth_account_anonymous.pid
-        WHERE mom_id_entity.type_name = :type_name_1
-    Auth.Account Auth._Account_
-        SELECT auth__account_.enabled AS auth__account__enabled,
-               auth__account_.name AS auth__account__name,
-               auth__account_.pid AS auth__account__pid,
-               auth__account_.superuser AS auth__account__superuser,
-               auth__account_.suspended AS auth__account__suspended,
+        WHERE false
+    Auth.Account
+        SELECT auth_account.enabled AS auth_account_enabled,
+               auth_account.name AS auth_account_name,
                auth_account.password AS auth_account_password,
                auth_account.ph_name AS auth_account_ph_name,
                auth_account.pid AS auth_account_pid,
+               auth_account.superuser AS auth_account_superuser,
+               auth_account.suspended AS auth_account_suspended,
                mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
                mom_id_entity.pid AS mom_id_entity_pid,
                mom_id_entity.type_name AS mom_id_entity_type_name,
                mom_id_entity.x_locked AS mom_id_entity_x_locked
         FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
         WHERE mom_id_entity.type_name = :type_name_1
     Auth.Certificate
         SELECT auth_certificate."desc" AS auth_certificate_desc,
@@ -13877,8 +13749,6 @@ _test_sequences = """
     >>> show_sequences (apt)
     MOM.Id_Entity                            : mom_id_entity_pid_seq
     MOM.MD_Change                            : mom_md_change_cid_seq
-    Auth._Account_                           : mom_id_entity_pid_seq
-    Auth.Account_Anonymous                   : mom_id_entity_pid_seq
     Auth.Account                             : mom_id_entity_pid_seq
     Auth.Certificate                         : mom_id_entity_pid_seq, auth_certificate_cert_id_seq
     Auth.Group                               : mom_id_entity_pid_seq
@@ -13935,8 +13805,6 @@ _test_tables = """
     ...     print (ETW.type_name)
     MOM.Id_Entity
     MOM.MD_Change
-    Auth._Account_
-    Auth.Account_Anonymous
     Auth.Account
     Auth.Certificate
     Auth.Group
@@ -13989,7 +13857,6 @@ _test_tables = """
     ...     print ("%%-40s : %%s" %% (k, w.sa_table))
     Auth.Account                             : auth_account
     Auth.Account_Activation                  : auth_account_activation
-    Auth.Account_Anonymous                   : auth_account_anonymous
     Auth.Account_EMail_Verification          : auth_account_email_verification
     Auth.Account_Password_Change_Required    : auth_account_password_change_required
     Auth.Account_Password_Reset              : auth_account_password_reset
@@ -14001,7 +13868,7 @@ _test_tables = """
     Auth.Link1                               : None
     Auth.Link2                               : None
     Auth.Object                              : None
-    Auth._Account_                           : auth__account_
+    Auth._Account_                           : None
     Auth._Account_Action_                    : None
     Auth._Account_Token_Action_              : None
     Auth._Link_n_                            : None
@@ -14108,9 +13975,7 @@ _test_tables = """
     >>> show_table_summary (apt)
     MOM.Id_Entity                            mom_id_entity                              5   5
     MOM.MD_Change                            mom_md_change                             10  10
-    Auth._Account_                           auth__account_                             5   4
-    Auth.Account_Anonymous                   auth_account_anonymous                     1   0
-    Auth.Account                             auth_account                               3   2
+    Auth.Account                             auth_account                               7   6
     Auth.Certificate                         auth_certificate                           8   6
     Auth.Group                               auth_group                                 3   2
     Auth.Account_in_Group                    auth_account_in_group                      3   2
@@ -14175,18 +14040,14 @@ _test_tables = """
         Column time                      : Datetime             Internal__Computed__Sync_Change__Structured Date-Time time
         Column type_name                 : Smallint             Internal__Computed__Sync_Change String type_name
         Column user                      : Integer              Internal__Id_Entity_Reference__Computed__Sync_Change Entity user Id_Entity()
-    Auth._Account_ (MOM.Id_Entity) <Table auth__account_>
+    Auth.Account (MOM.Id_Entity) <Table auth_account>
         Column enabled                   : Boolean              Optional Boolean enabled
         Column name                      : Varchar(80)          Primary Email name
+        Column password                  : Varchar(120)         Internal String password
+        Column ph_name                   : Varchar(64)          Internal__Sticky String ph_name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column superuser                 : Boolean              Optional Boolean superuser
         Column suspended                 : Boolean              Internal Boolean suspended
-    Auth.Account_Anonymous (Auth._Account_) Auth._Account_ <Table auth_account_anonymous>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('auth__account_.pid')
-    Auth.Account (Auth._Account_) Auth._Account_ <Table auth_account>
-        Column password                  : Varchar(120)         Internal String password
-        Column ph_name                   : Varchar(64)          Internal__Sticky String ph_name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('auth__account_.pid')
     Auth.Certificate (MOM.Id_Entity) <Table auth_certificate>
         Column cert_id                   : Integer              Internal__Just_Once Surrogate cert_id primary
         Column desc                      : Varchar(40)          Primary_Optional String desc
@@ -14533,8 +14394,7 @@ _test_unique = """
     ...         tail = "" if ui == uo else \\
     ...             (((" + " if ui else "") + ", ".join (uo)) if uo else " =")
     ...         print (("%%-30s %%s%%s" %% (ETW.type_name, ", ".join (ui), tail)).strip ())
-    Auth._Account_                 name
-    Auth.Account                   name =
+    Auth.Account                   name
     Auth.Certificate               desc, email, validity__finish, validity__start
     Auth.Group                     name
     Auth.Account_in_Group          left, right

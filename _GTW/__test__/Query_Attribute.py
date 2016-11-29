@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Martin Glueck All rights reserved
+# Copyright (C) 2013-2016 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -151,14 +151,13 @@ _test_saw = """
 
     >>> qra.filter (qfa)
     SQL: SELECT
-           auth__account_.enabled AS auth__account__enabled,
-           auth__account_.name AS auth__account__name,
-           auth__account_.pid AS auth__account__pid,
-           auth__account_.superuser AS auth__account__superuser,
-           auth__account_.suspended AS auth__account__suspended,
+           auth_account.enabled AS auth_account_enabled,
+           auth_account.name AS auth_account_name,
            auth_account.password AS auth_account_password,
            auth_account.ph_name AS auth_account_ph_name,
            auth_account.pid AS auth_account_pid,
+           auth_account.superuser AS auth_account_superuser,
+           auth_account.suspended AS auth_account_suspended,
            auth_account_t.pid AS auth_account_t_pid,
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -166,8 +165,7 @@ _test_saw = """
            mom_id_entity.type_name AS mom_id_entity_type_name,
            mom_id_entity.x_locked AS mom_id_entity_x_locked
          FROM mom_id_entity
-           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
-           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            JOIN auth_account_t ON auth_account.pid = auth_account_t.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_account__1."left"
