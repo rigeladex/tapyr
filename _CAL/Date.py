@@ -66,6 +66,7 @@
 #    21-Apr-2016 (CT) Add check for tail to `from_string`
 #    14-May-2016 (CT) Strip leading `+` from delta arg for `_Date_Arg_`
 #    26-Sep-2016 (CT) Move `sidereal_time` to `CAL.Sky`
+#    30-Nov-2016 (CT) Use `CAL.G8R.Months.LC`, not `CAL.G8R.Months`
 #    ««revision-date»»···
 #--
 
@@ -393,7 +394,7 @@ class Date (CAL._DTW_) :
 
     @classmethod
     def month_from_string (cls, s) :
-        v = CAL.G8R.Months (s.lower ())
+        v = CAL.G8R.Months.LC (s)
         try :
             result = cls.months [v]
         except KeyError :

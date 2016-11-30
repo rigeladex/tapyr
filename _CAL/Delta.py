@@ -78,7 +78,7 @@ class _Delta_Mixin_ (TFL.Meta.Object) :
 
     @classmethod
     def from_string (cls, s) :
-        match = cls.delta_pattern.match (CAL.G8R.Units (s))
+        match = cls.delta_pattern.match (CAL.G8R.Units.LC (s))
         if match :
             return cls (** cls._from_string_match_kw (s, match))
         else :

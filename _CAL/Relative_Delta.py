@@ -26,6 +26,7 @@
 #    20-Apr-2016 (CT) Change `month_pattern` to allow digits, too
 #    20-Apr-2016 (CT) Use `CAL.Date.month_from_string`, not home-grown code
 #    14-May-2016 (CT) Add `_Relative_Delta_Arg_`
+#    30-Nov-2016 (CT) Use `.LC` of `G8R`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ import operator
 class Relative_Delta (CAL._Delta_Mixin_) :
     """Relative delta based on `dateutil.relativedelta`
 
-    >>> G8R = CAL.G8R.All
+    >>> G8R = CAL.G8R.All.LC
     >>> RD  = Relative_Delta
     >>> d   = datetime.date (2016, 2, 11)
     >>> dt  = datetime.datetime (2016, 2, 11)
@@ -235,7 +236,7 @@ class Relative_Delta (CAL._Delta_Mixin_) :
         ( r",?\s*"
         + r"\b"
         +   r"(?P<wkd> "
-        +    "|".join (sorted (CAL.G8R.Week_Days.keys))
+        +    "|".join (CAL.G8R.Week_Days.LC.words)
         +   r")"
         + r"\b\s*"
         + r"(?: \( (?P<n> [-+]?\d+) \))?"
@@ -270,7 +271,7 @@ class Relative_Delta (CAL._Delta_Mixin_) :
             kw.update (CAL.Time._from_string_match_kw (s, match))
             s  = s [match.end () :]
         ### Absolute units (any of `absolute_units`)
-        s      = CAL.G8R.Units (s)
+        s      = CAL.G8R.Units.LC (s)
         spans  = []
         for match in cls.absolute_pattern.search_iter (s) :
             kw [match.group ("unit")] = int (match.group ("value"))
@@ -280,7 +281,7 @@ class Relative_Delta (CAL._Delta_Mixin_) :
             kw ["month"] = CAL.Date.month_from_string (match.group ("value"))
             spans.append (match.span ())
         ### Weekday instance
-        s      = CAL.G8R.Week_Days (s)
+        s      = CAL.G8R.Week_Days.LC (s)
         match  = cls.weekday_pattern.search (s)
         if match :
             wkd = getattr (cls, match.group ("wkd").upper ())

@@ -19,6 +19,8 @@
 #    10-Feb-2016 (CT) Creation
 #    15-Feb-2016 (CT) Add `localized`, `map_r`, `replacer_r`, `G8R_Multi`
 #    30-Nov-2016 (CT) Add `words`
+#    30-Nov-2016 (CT) Add `LC`
+#    30-Nov-2016 (CT) Add `keys`, `words`, `globalized` to `G8R_Multi`
 #    ««revision-date»»···
 #--
 
@@ -68,6 +70,21 @@ class G8R (TFL.Meta.Object) :
         """
         return self._transformed (text, count, self.replacer)
     # end def __call__
+
+    @TFL.Meta.Once_Property
+    def LC (self) :
+        """Globalizer enforcing lower case. """
+        if self._lowercase :
+            return self
+        else :
+            return self.__class__ \
+                ( self._words
+                , lowercase     = True
+                , re_head       = self._re_head
+                , re_tail       = self._re_tail
+                , skip_language = self._skip_language
+                )
+    # end def LC
 
     @property
     def keys (self) :
@@ -163,7 +180,7 @@ class G8R (TFL.Meta.Object) :
     # end def localized
 
     def _transformed (self, text, count, replacer) :
-        result   = text.lower () if self._lowercase else text
+        result = text.lower () if self._lowercase else text
         if replacer is not None :
             result = replacer (result, count)
         return result
@@ -174,7 +191,44 @@ class G8R (TFL.Meta.Object) :
 class G8R_Multi (Multi_Re_Replacer) :
     """Wrap multiple `G8R` instances."""
 
+    _lowercase     = False
+
+    @TFL.Meta.Once_Property
+    def LC (self) :
+        """Globalizer enforcing lower case."""
+        if self._lowercase :
+            return self
+        else :
+            rereps_lc = tuple (g8r.LC for g8r in self.rereps)
+            result    = self.__class__ (* rereps_lc)
+            result._lowercase = True
+            return result
+    # end def LC
+
+    @TFL.Meta.Once_Property
+    def keys (self) :
+        return set (self.words)
+    # end def keys
+
+    @TFL.Meta.Once_Property
+    def words (self) :
+        return sorted (ichain (* (g8r.words for g8r in self.rereps)))
+    # end def words
+
+    def globalized (self, text, count = 0) :
+        """Globalize `text`, i.e., replace localized words in `text` with their
+           primary — normally english — version.
+        """
+        result = text
+        for g8r in self.rereps :
+            result = g8r.globalized (result, count)
+        return result
+    # end def globalized
+
     def localized (self, text, count = 0) :
+        """Localize `text`, i.e., replace globalized words in `text` with their
+           localized version.
+        """
         result = text
         for g8r in self.rereps :
             result = g8r.localized (result, count)

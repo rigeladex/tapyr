@@ -25,6 +25,9 @@
 #    30-Nov-2016 (CT) Factor `Month_Abbrs`, `Month_Names`,
 #                     `Week_Day_Abbrs_3`, and `Week_Day_Names`
 #    30-Nov-2016 (CT) Use title-case for `Month_Abbrs`, `Month_Names`
+#    30-Nov-2016 (CT) Use `LC`
+#                     + Remove `lowercase` from `Months`, `Recurrence_Units`
+#                       and all week-day related instances
 #    ««revision-date»»···
 #--
 
@@ -46,15 +49,27 @@ language to the primary language (which often is english).
     >>> ur4 = "2Tage5Stunden3min5sek"
 
     >>> _show  (CAL.G8R.Months, mr1)
+    de : März-Mai --> March-May
+
+    >>> _show  (CAL.G8R.Months.LC, mr1)
     de : März-Mai --> march-may
 
-    >>> _show  (CAL.G8R.Months, mr2)
+    >>> _show  (CAL.G8R.Months, mr2, localized_p = True)
+    de : Jan, März, Mai, Dez --> Jan, March, May, Dec --> Jän, März, Mai, Dez
+
+    >>> _show  (CAL.G8R.Months.LC, mr2)
     de : Jan, März, Mai, Dez --> jan, march, may, dec
 
     >>> _show (CAL.G8R.Week_Days, wr1)
+    de : Mo-Mi, Do, SO --> Mo-We, Th, SO
+
+    >>> _show (CAL.G8R.Week_Days.LC, wr1)
     de : Mo-Mi, Do, SO --> mo-we, th, su
 
     >>> _show (CAL.G8R.Week_Days, wr2)
+    de : MI(-1) --> MI(-1)
+
+    >>> _show (CAL.G8R.Week_Days.LC, wr2)
     de : MI(-1) --> we(-1)
 
     >>> _show (CAL.G8R.Units, ur1)
@@ -73,15 +88,15 @@ language to the primary language (which often is english).
     de : 2Tage5Stunden3min5sek --> 2days5hours3min5sec --> 2tage5stunden3min5sek
 
     >>> with TFL.I18N.test_language ("de") :
-    ...    CAL.G8R.All (mr1) == CAL.G8R.Months (mr1)
+    ...    CAL.G8R.All (mr1) == CAL.G8R.Months.LC (mr1)
     True
 
     >>> with TFL.I18N.test_language ("de") :
-    ...    CAL.G8R.All (mr2) == CAL.G8R.Months (mr2)
+    ...    CAL.G8R.All (mr2) == CAL.G8R.Months.LC (mr2)
     True
 
     >>> with TFL.I18N.test_language ("de") :
-    ...    CAL.G8R.All (wr1) == CAL.G8R.Week_Days (wr1)
+    ...    CAL.G8R.All (wr1) == CAL.G8R.Week_Days.LC (wr1)
     True
 
     >>> with TFL.I18N.test_language ("de") :
@@ -97,10 +112,18 @@ language to the primary language (which often is english).
 
     >>> with TFL.I18N.test_language ("de") :
     ...    print (portable_repr (sorted (CAL.G8R.Months.map.items ())))
+    [('Dez', 'Dec'), ('Dezember', 'December'), ('Feber', 'February'), ('Juli', 'July'), ('Juni', 'June'), ('J\xe4n', 'Jan'), ('J\xe4nner', 'January'), ('Mai', 'May'), ('M\xe4r', 'Mar'), ('M\xe4rz', 'March'), ('Okt', 'Oct'), ('Oktober', 'October')]
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...    print (portable_repr (sorted (CAL.G8R.Months.LC.map.items ())))
     [('dez', 'dec'), ('dezember', 'december'), ('feber', 'february'), ('juli', 'july'), ('juni', 'june'), ('j\xe4n', 'jan'), ('j\xe4nner', 'january'), ('mai', 'may'), ('m\xe4r', 'mar'), ('m\xe4rz', 'march'), ('okt', 'oct'), ('oktober', 'october')]
 
     >>> with TFL.I18N.test_language ("de") :
     ...    print (CAL.G8R.Months.replacer.regexp._pattern.pattern)
+    \b(Dezember|Oktober|J\änner|Feber|Juli|Juni|M\ärz|Dez|J\än|Mai|M\är|Okt)\b
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...    print (CAL.G8R.Months.LC.replacer.regexp._pattern.pattern)
     \b(dezember|oktober|j\änner|feber|juli|juni|m\ärz|dez|j\än|mai|m\är|okt)\b
 
     >>> with TFL.I18N.test_language ("de") :
@@ -113,20 +136,35 @@ language to the primary language (which often is english).
 
     >>> with TFL.I18N.test_language ("de") :
     ...    print (portable_repr (sorted (CAL.G8R.Week_Days.map.items ())))
+    [('Di', 'Tu'), ('Dienstag', 'Tuesday'), ('Do', 'Th'), ('Donnerstag', 'Thursday'), ('Fr', 'Fri'), ('Freitag', 'Friday'), ('Mi', 'We'), ('Mittwoch', 'Wednesday'), ('Mo', 'Mo'), ('Montag', 'Monday'), ('Sa', 'Sa'), ('Samstag', 'Saturday'), ('So', 'Su'), ('Sonntag', 'Sunday'), ('fr', 'Fr')]
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...    print (portable_repr (sorted (CAL.G8R.Week_Days.LC.map.items ())))
     [('di', 'tu'), ('dienstag', 'tuesday'), ('do', 'th'), ('donnerstag', 'thursday'), ('fr', 'fr'), ('freitag', 'friday'), ('mi', 'we'), ('mittwoch', 'wednesday'), ('mo', 'mo'), ('montag', 'monday'), ('sa', 'sa'), ('samstag', 'saturday'), ('so', 'su'), ('sonntag', 'sunday')]
 
     >>> with TFL.I18N.test_language ("de") :
     ...    print (CAL.G8R.Week_Days.replacer.regexp._pattern.pattern)
+    \b(Donnerstag|Dienstag|Mittwoch|Freitag|Samstag|Sonntag|Montag|Di|Do|Fr|Mi|Mo|Sa|So|fr)\b
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...    print (CAL.G8R.Week_Days.LC.replacer.regexp._pattern.pattern)
     \b(donnerstag|dienstag|mittwoch|freitag|samstag|sonntag|montag|di|do|fr|mi|mo|sa|so)\b
 
     >>> _show (CAL.G8R.Recurrence_Units, "weekly")
     de : weekly --> weekly
 
     >>> _show (CAL.G8R.Recurrence_Units, "Wöchentlich")
+    de : Wöchentlich --> Weekly
+
+    >>> _show (CAL.G8R.Recurrence_Units.LC, "Wöchentlich")
     de : Wöchentlich --> weekly
 
     >>> with TFL.I18N.test_language ("de") :
     ...     print (portable_repr (sorted (CAL.G8R.Recurrence_Units.map.items ())))
+    [('J\xe4hrlich', 'Yearly'), ('Monatlich', 'Monthly'), ('T\xe4glich', 'Daily'), ('W\xf6chentlich', 'Weekly')]
+
+    >>> with TFL.I18N.test_language ("de") :
+    ...     print (portable_repr (sorted (CAL.G8R.Recurrence_Units.LC.map.items ())))
     [('j\xe4hrlich', 'yearly'), ('monatlich', 'monthly'), ('t\xe4glich', 'daily'), ('w\xf6chentlich', 'weekly')]
 
 """
@@ -157,15 +195,10 @@ Month_Names = TFL.G8R \
       ]
     )
 
-Months = TFL.G8R \
-    ( Month_Abbrs.words, Month_Names.words
-    , lowercase = True
-    )
+Months = TFL.G8R (Month_Abbrs.words, Month_Names.words)
 
 Recurrence_Units = TFL.G8R \
-    ( [ _("Daily"), _("Weekly"), _("Monthly"), _("Yearly")]
-    , lowercase = True
-    )
+    ( [ _("Daily"), _("Weekly"), _("Monthly"), _("Yearly")])
 
 Units = TFL.G8R \
     ( [ _("d"),  _("day"),   _("days")]
@@ -183,33 +216,26 @@ Units = TFL.G8R \
 
 Week_Day_Abbrs_2 = TFL.G8R \
     ( [ _("Mo"), _("Tu"), _("We"), _("Th"), _("Fr"), _("Sa"), _("Su")]
-    , lowercase = True
-    , re_tail   = r"(?:\b|(?=\(-?\d+\)))"
+    , re_tail    = r"(?:\b|(?=\(-?\d+\)))"
     )
 
 Week_Day_Abbrs_3 = TFL.G8R \
-    ( [ _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun")]
-    , lowercase = True
-    )
+    ( [ _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun")])
 
 Week_Day_Names   = TFL.G8R \
     ( [ _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday")
       , _("Friday"), _("Saturday"), _("Sunday")
       ]
-    , lowercase = True
     )
 
 Week_Days = TFL.G8R \
-    ( Week_Day_Abbrs_2.words, Week_Day_Abbrs_3.words, Week_Day_Names.words
-    , lowercase = True
-    )
+    ( Week_Day_Abbrs_2.words, Week_Day_Abbrs_3.words, Week_Day_Names.words)
 
-All = TFL.G8R_Multi \
-    (Units, TFL.G8R (Months.keys, Week_Days.keys, lowercase = True))
+All = TFL.G8R_Multi (Units.LC, Months.LC, Week_Days.LC)
 
 def _show (g8r, text, lang = "de", localized_p = False) :
     with TFL.I18N.test_language (lang) :
-        globalized = g8r (text)
+        globalized = g8r.globalized (text)
         result = (lang, ":", text, "-->", globalized)
         if localized_p :
             result += ("-->", g8r.localized (globalized))

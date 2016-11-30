@@ -47,6 +47,7 @@
 #    28-Apr-2016 (CT) Convert `_from_string` to `Class_and_Instance_Method`
 #    28-Apr-2016 (CT) Add `value_range`
 #    15-Jun-2016 (CT) Add `A_Unit_RR`
+#    30-Nov-2016 (CT) Use `CAL.G8R.Months.LC`, not `CAL.G8R.Months`
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,7 @@ class A_Unit_RR (_A_Named_Value_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj = None) :
-        v = CAL.G8R.Recurrence_Units.globalized (s).capitalize ()
+        v = CAL.G8R.Recurrence_Units.LC.globalized (s).capitalize ()
         ### when called for the class, `soc.__super` doesn't
         ### work while `super (A_Unit_RR, soc)` does
         return super (A_Unit_RR, soc)._from_string (v)
@@ -123,7 +124,7 @@ class A_Weekday_RR (A_Attr_Type) :
         if isinstance (value, int) :
             value = soc.Table [soc.Names [value]]
         elif isinstance (value, pyk.string_types) :
-            v = CAL.G8R.Week_Days.globalized (value)
+            v = CAL.G8R.Week_Days.LC.globalized (value)
             value = soc.Table [v]
         if value is not None and not isinstance (value, soc.P_Type) :
             raise ValueError \
@@ -147,7 +148,7 @@ class A_Weekday_RR (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj = None) :
         if s :
-            v = CAL.G8R.Week_Days.globalized (s).upper ()
+            v = CAL.G8R.Week_Days.LC.globalized (s).upper ()
             return soc.cooked (soc._call_eval (v, ** soc.Table))
     # end def _from_string
 
