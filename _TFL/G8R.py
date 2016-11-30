@@ -18,6 +18,7 @@
 # Revision Dates
 #    10-Feb-2016 (CT) Creation
 #    15-Feb-2016 (CT) Add `localized`, `map_r`, `replacer_r`, `G8R_Multi`
+#    30-Nov-2016 (CT) Add `words`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,8 @@ class G8R (TFL.Meta.Object) :
     _skip_language = "en"
 
     def __init__ (self, * word_lists, ** kw) :
-        self._keys        = set (ichain (* word_lists))
+        self._words = ws  = tuple (ichain (* word_lists))
+        self._keys        = set (ws)
         self._maps        = {}
         self._maps_r      = {}
         self._replacers   = {}
@@ -139,6 +141,12 @@ class G8R (TFL.Meta.Object) :
                     (map_r, 0, self._re_head, self._re_tail)
             return result
     # end def replacer
+
+    @property
+    def words (self) :
+        """Words globalized by this globalizer."""
+        return self._words
+    # end def words
 
     def globalized (self, text, count = 0) :
         """Globalize `text`, i.e., replace localized words in `text` with their
