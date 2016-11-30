@@ -1,0 +1,12 @@
+To create translations for the packages,use the following commands:
+
+    # Include all directories that need updated translations in `dirs`, e.g.,
+    $ dirs="_CAL _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_PAP/_E164 _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _GTW/_MF3 _GTW/_RST _GTW/_RST/_MOM _GTW/_RST/_TOP _GTW/_RST/_TOP/_MOM"
+
+    $ ./babel.sh extract "${dirs}"
+    $ ./babel.sh language en,de "${dirs}"
+
+Now update the translations in ...de.po. Then compile the message catalogue
+used by the unit tests:
+
+    $ ./babel.sh compile-all de,en
