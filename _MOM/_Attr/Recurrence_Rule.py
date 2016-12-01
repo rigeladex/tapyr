@@ -48,6 +48,8 @@
 #    28-Apr-2016 (CT) Add `value_range`
 #    15-Jun-2016 (CT) Add `A_Unit_RR`
 #    30-Nov-2016 (CT) Use `CAL.G8R.Months.LC`, not `CAL.G8R.Months`
+#     1-Dec-2016 (CT) Use `CAL.G8R.Recurrence_Units.words`, not home-grown
+#                     definitions
 #    ««revision-date»»···
 #--
 
@@ -76,7 +78,7 @@ class A_Unit_RR (_A_Named_Value_) :
     C_Type             = A_Int
     Table              = dict \
         (  (k, getattr (dateutil.rrule, k.upper ()))
-        for k in (_("Daily"), _("Weekly"), _("Monthly"), _("Yearly"))
+        for k in CAL.G8R.Recurrence_Units.words
         )
     typ                = "Unit"
     default            = Table ["Daily"]
@@ -95,12 +97,13 @@ class A_Unit_RR (_A_Named_Value_) :
 class A_Weekday_RR (A_Attr_Type) :
     """Weekday specification in recurrence rule."""
 
-    example = u"TU"
-    typ     = "Weekday_RR"
+    example            = u"Tu"
+    typ                = "Weekday_RR"
 
-    P_Type = dateutil.rrule.weekday
-    Names  = (_("MO"), _("TU"), _("WE"), _("TH"), _("FR"), _("SA"), _("SU"))
-    Table  = dict ((k, getattr (dateutil.rrule, k)) for k in Names)
+    P_Type             = dateutil.rrule.weekday
+    Names              = CAL.G8R.Week_Day_Abbrs_2.words
+    Table              = dict \
+        ((k, getattr (dateutil.rrule, k.upper ())) for k in Names)
 
     class Pickler (Pickler_As_String) :
 
@@ -148,7 +151,7 @@ class A_Weekday_RR (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj = None) :
         if s :
-            v = CAL.G8R.Week_Days.LC.globalized (s).upper ()
+            v = CAL.G8R.Week_Days.LC.globalized (s).capitalize ()
             return soc.cooked (soc._call_eval (v, ** soc.Table))
     # end def _from_string
 

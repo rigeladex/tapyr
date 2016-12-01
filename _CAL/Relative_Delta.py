@@ -27,6 +27,7 @@
 #    20-Apr-2016 (CT) Use `CAL.Date.month_from_string`, not home-grown code
 #    14-May-2016 (CT) Add `_Relative_Delta_Arg_`
 #    30-Nov-2016 (CT) Use `.LC` of `G8R`
+#     1-Dec-2016 (CT) Use `CAL.G8R.Units...words`, not home-grown definitions
 #    ««revision-date»»···
 #--
 
@@ -183,11 +184,7 @@ class Relative_Delta (CAL._Delta_Mixin_) :
     SA = SAT = SATURDAY  = _CIOP (lambda soc : soc.RD.SA)
     SU = SUN = SUNDAY    = _CIOP (lambda soc : soc.RD.SU)
 
-    absolute_units = \
-        ( _ ("year"), _ ("month"), _ ("day")
-        , _ ("hour"), _ ("minute"), _ ("second"), _ ("microsecond")
-        , _ ("yearday"), _ ("nlyearday"), _ ("leapdays")
-        )
+    absolute_units = CAL.G8R.Units_Abs.words + CAL.G8R.Units_YD.words
 
     absolute_pattern = Regexp \
         ( r",?\s*"
@@ -217,10 +214,7 @@ class Relative_Delta (CAL._Delta_Mixin_) :
         , flags = re.VERBOSE | re.IGNORECASE
         )
 
-    delta_units = \
-        ( _ ("years"), _ ("months"), _ ("days")
-        , _ ("hours"), _ ("minutes"), _ ("seconds"), _ ("microseconds")
-        )
+    delta_units = CAL.G8R.Units_Delta.words
 
     month_pattern = Regexp \
         ( r",?\s*"

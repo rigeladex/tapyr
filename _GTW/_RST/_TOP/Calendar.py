@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -32,6 +32,7 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    14-Oct-2015 (CT) Change `_Event_Wrapper_` to apply `text_type` to `date`
 #                     and `time`
+#     1-Dec-2016 (CT) Use `CAL.G8R...words`, not home-grown definitions
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _TFL                       import TFL
 
 import _CAL.Calendar
 import _CAL.Delta
+import _CAL.G8R
 
 import _GTW._RST.HTTP_Method
 import _GTW._RST._TOP.Dir
@@ -297,26 +299,11 @@ class Calendar (_Mixin_, _Ancestor) :
     year_window_size   = 3
 
     _cal               = None
-    day_abbrs          = \
-        ( _("Mon"), _("Tue"), _("Wed"), _("Thu")
-        , _("Fri"), _("Sat"), _("Sun")
-        )
-    day_names          = \
-        ( _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday")
-        , _("Friday"), _("Saturday"), _("Sunday")
-        )
-    month_abbrs        = \
-        ( _("Jan"), _("Feb"), _("Mar")
-        , _("Apr"), _("May"), _("Jun")
-        , _("Jul"), _("Aug"), _("Sep")
-        , _("Oct"), _("Nov"), _("Dec")
-        )
-    month_names        = \
-        ( _("January"), _("February"), _("March")
-        , _("April"),   _("May"),      _("June")
-        , _("July"),    _("August"),   _("September")
-        , _("October"), _("November"), _("December")
-        )
+
+    day_abbrs          = CAL.G8R.Week_Day_Abbrs_3.words
+    day_names          = CAL.G8R.Week_Day_Names.words
+    month_abbrs        = CAL.G8R.Month_Abbrs.words
+    month_names        = CAL.G8R.Month_Names.words
 
     anchor             = property (TFL.Getter.today)
 

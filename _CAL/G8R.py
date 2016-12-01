@@ -28,6 +28,8 @@
 #    30-Nov-2016 (CT) Use `LC`
 #                     + Remove `lowercase` from `Months`, `Recurrence_Units`
 #                       and all week-day related instances
+#     1-Dec-2016 (CT) Factor `Units_Abs`, `Units_Abs_Abbr`, `Units_Delta`,
+#                     `Units_YD`
 #    ««revision-date»»···
 #--
 
@@ -128,7 +130,7 @@ language to the primary language (which often is english).
 
     >>> with TFL.I18N.test_language ("de") :
     ...    print (CAL.G8R.Units.replacer.regexp._pattern.pattern)
-    (?:\b|(?<=\d))(schalttage|sekunden|jahrtag|minuten|sekunde|stunden|monate|stunde|wochen|jahre|monat|woche|jahr|tage|sek|tag|kw|j|t)(?:\b|(?=\d))
+    (?:\b|(?<=\d))(mikrosekunden|mikrosekunde|schalttage|wochentag|sekunden|jahrtag|minuten|quartal|sekunde|stunden|monate|stunde|wochen|jahre|monat|woche|jahr|tage|sek|tag|kw|j|t)(?:\b|(?=\d))
 
     >>> with TFL.I18N.test_language ("de") :
     ...    print (portable_repr (sorted (CAL.G8R.Week_Days.keys)))
@@ -200,15 +202,44 @@ Months = TFL.G8R (Month_Abbrs.words, Month_Names.words)
 Recurrence_Units = TFL.G8R \
     ( [ _("Daily"), _("Weekly"), _("Monthly"), _("Yearly")])
 
+Units_Abs = TFL.G8R \
+    ( [_("year"), _("month"),  _("day")]
+    , [_("hour"), _("minute"), _("second"), _ ("microsecond")]
+    , lowercase = True
+    , re_head   = r"(?:\b|(?<=\d))" # look-behind assertion must be fixed width
+    , re_tail   = r"(?:\b|(?=\d))"
+    )
+
+Units_Abs_Abbr = TFL.G8R \
+    ( [_("y"), _("d")]
+    , [_("h"), _("m"), _("min"), _("s"), _("sec")]
+    , lowercase = True
+    , re_head   = r"(?:\b|(?<=\d))" # look-behind assertion must be fixed width
+    , re_tail   = r"(?:\b|(?=\d))"
+    )
+
+Units_Delta = TFL.G8R \
+    ( [_("years"), _("months"),  _("days")]
+    , [_("hours"), _("minutes"), _("seconds"), _ ("microseconds")]
+    , lowercase = True
+    , re_head   = r"(?:\b|(?<=\d))" # look-behind assertion must be fixed width
+    , re_tail   = r"(?:\b|(?=\d))"
+    )
+
+Units_YD = TFL.G8R \
+    ( [_("yearday"), _("nlyearday"), _("leapdays")]
+    , lowercase = True
+    , re_head   = r"(?:\b|(?<=\d))" # look-behind assertion must be fixed width
+    , re_tail   = r"(?:\b|(?=\d))"
+    )
+
 Units = TFL.G8R \
-    ( [ _("d"),  _("day"),   _("days")]
-    , [ _("h"),  _("hour"),  _("hours")]
-    , [ _("m"),  _("min"),   _("minute"), _("minutes")]
-    , [ _("s"),  _("sec"),   _("second"), _("seconds")]
-    , [ _("wk"), _("week"),  _("weeks")]
-    , [          _("month"), _("months")]
-    , [ _("y"),  _("year"),  _("years")]
-    , [ _("yearday"), _("nlyearday"), _("leapdays")]
+    ( Units_Abs.words
+    , Units_Abs_Abbr.words
+    , Units_Delta.words
+    , [ _("wk"), _("week"),  _("weeks"), _("weekday")]
+    , [ _("q"),  _("quarter")]
+    , Units_YD.words
     , lowercase = True
     , re_head   = r"(?:\b|(?<=\d))" # look-behind assertion must be fixed width
     , re_tail   = r"(?:\b|(?=\d))"

@@ -452,12 +452,12 @@ class Date (CAL._DTW_) :
         m = self.replace (day = 1)
         q = m.replace    (month = (self.quarter - 1) * 3 + 1)
         y = m.replace    (month = 1)
-        result = \
-            { _ ("week")    : (w, w + 6)
-            , _ ("month")   : (m, m.inc_month (1) - 1)
-            , _ ("quarter") : (q, q.inc_month (3) - 1)
-            , _ ("year")    : (y, y.replace (year  = y.year  + 1) - 1)
-            }
+        result = dict \
+            ( week    = (w, w + 6)
+            , month   = (m, m.inc_month (1) - 1)
+            , quarter = (q, q.inc_month (3) - 1)
+            , year    = (y, y.replace (year  = y.year  + 1) - 1)
+            )
         return result
     # end def periods
 

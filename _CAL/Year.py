@@ -70,6 +70,8 @@
 #     2-Feb-2016 (CT) Add translation markup `_`
 #    19-Apr-2016 (CT) Export `Year` only, not `*`;
 #                     add `Day`, ..., `Week` to `Year`
+#     1-Dec-2016 (CT) Use `CAL.G8R.Week_Day_Abbrs_2.words`, not home-grown
+#                     definitions
 #    ««revision-date»»···
 #--
 
@@ -83,6 +85,7 @@ from   _TFL                       import TFL
 
 import _CAL.Appointment
 import _CAL.Date
+import _CAL.G8R
 import _CAL.Holiday
 
 from   _TFL.I18N                  import _, _T, _Tn
@@ -312,8 +315,7 @@ class Week (_Ordinal_) :
     cal        = property (TFL.Getter.year.cal)
     ordinal    = property (TFL.Getter.mon.wk_ordinal)
 
-    _day_names = \
-        (_ ("Mo"), _ ("Tu"), _ ("We"), _ ("Th"), _ ("Fr"), _ ("Sa"), _ ("Su"))
+    _day_names = CAL.G8R.Week_Day_Abbrs_2.words
 
     def __init__ (self, year, number, mon) :
         self.year   = year
