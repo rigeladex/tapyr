@@ -70,6 +70,7 @@
 #    22-Feb-2016 (CT) Change `Unit` to allow `_default_unit != 1`
 #    24-Feb-2016 (CT) Add `is_partial` to `Root.__new__`
 #    29-Apr-2016 (CT) Add `Typed_List`
+#    14-Dec-2016 (CT) Add `Enum.syntax`
 #    ««revision-date»»···
 #--
 
@@ -211,6 +212,13 @@ class Enum (Root) :
         cls.__m_super.__init__ (name, bases, dct)
         if cls.C_Type is not None :
             cls.P_Type = cls.C_Type.P_Type
+        Table = getattr (cls, "Table", None)
+        if Table and not cls.syntax :
+            cls.syntax = \
+                ( "The following string values are accepted as valid "
+                  "%s values: %s"
+                % (cls.typ, ", ".join (sorted (pyk.iterkeys (Table))))
+                )
     # end def __init__
 
 # end class Enum

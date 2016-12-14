@@ -410,6 +410,7 @@
 #    14-Oct-2016 (CT) Add `ui_allow_change`, `ui_allow_move` to `_A_Id_Entity_`
 #    19-Oct-2016 (CT) Change `FO_nested` to handle structured attributes
 #    20-Oct-2016 (CT) Add default for `_A_Id_Entity_.E_Type_Parent`
+#    14-Dec-2016 (CT) DRY `A_Enum.Choices`
 #    ««revision-date»»···
 #--
 
@@ -2929,7 +2930,7 @@ class A_Enum \
         ### cannot cache this because of L10N
         ### XXX cache by language
         return sorted \
-            (  (k, "%s [%s]" % (k, _T (v)))
+            (  (k, "%s" % (_T (v), ))
             for k, v in pyk.iteritems (self.Table)
             )
     # end def Choices

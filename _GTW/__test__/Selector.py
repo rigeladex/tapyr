@@ -1025,7 +1025,7 @@ _test_templates = r"""
             <option value="PAP.Company">Company</option>
             <option value="PAP.Company_1P">Company_1P</option>
             <option value="PAP.Person">Person</option>
-            <option value="SRM.Page">Regatta_Page</option>
+            <option value="SRM.Page">SRM.Page [Regatta_Page]</option>
             <option value="SRM.Regatta_C">Regatta_C</option>
             <option value="SRM.Regatta_Event">Regatta_Event</option>
             <option value="SRM.Regatta_H">Regatta_H</option>
@@ -1225,7 +1225,7 @@ _test_templates = r"""
         <div class=" pure-control-group">
         <label for="[SWP.Clip_O]left/E_Type_NP">Select type of Object_PN</label>
           <select class="E_Type" id="[SWP.Clip_O]left/E_Type_NP" name="[SWP.Clip_O]left/E_Type_NP" title="Select type of Object_PN">
-                      <option value="SRM.Page">Regatta_Page</option>
+                      <option value="SRM.Page">SRM.Page [Regatta_Page]</option>
             <option value="SWP.Clip_X">Clip_X</option>
             <option value="SWP.Gallery">Gallery</option>
             <option value="SWP.Page" selected="selected">Page</option>

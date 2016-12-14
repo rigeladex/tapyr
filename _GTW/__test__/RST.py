@@ -1025,7 +1025,11 @@ _test_doc = r"""
                   , 'type' : 'Int'
                   , 'ui_name' : 'Discards'
                   }
-                , { 'default_value' : ''
+                , { 'Choices' :
+                      [ 'no'
+                      , 'yes'
+                      ]
+                  , 'default_value' : ''
                   , 'description' : 'Indicates that the regatta is cancelled'
                   , 'example' : 'no'
                   , 'is_changeable' : True
@@ -1308,7 +1312,11 @@ _test_doc = r"""
                   , 'type' : 'Int'
                   , 'ui_name' : 'Discards'
                   }
-                , { 'default_value' : ''
+                , { 'Choices' :
+                      [ 'no'
+                      , 'yes'
+                      ]
+                  , 'default_value' : ''
                   , 'description' : 'Indicates that the regatta is cancelled'
                   , 'example' : 'no'
                   , 'is_changeable' : True
@@ -1413,7 +1421,11 @@ _test_doc = r"""
                   , 'type' : 'Int'
                   , 'ui_name' : 'Starters rl'
                   }
-                , { 'default_value' : 'no'
+                , { 'Choices' :
+                      [ 'no'
+                      , 'yes'
+                      ]
+                  , 'default_value' : 'no'
                   , 'description' : 'Boolean attribute.'
                   , 'example' : 'no'
                   , 'is_changeable' : True
@@ -1631,7 +1643,11 @@ _test_doc = r"""
                   , 'type' : 'Int'
                   , 'ui_name' : 'Discards'
                   }
-                , { 'default_value' : ''
+                , { 'Choices' :
+                      [ 'no'
+                      , 'yes'
+                      ]
+                  , 'default_value' : ''
                   , 'description' : 'Indicates that the regatta is cancelled'
                   , 'example' : 'no'
                   , 'is_changeable' : True
@@ -4934,7 +4950,11 @@ _test_rat = r"""
                   , 'type' : 'Email'
                   , 'ui_name' : 'Name'
                   }
-                , { 'default_value' : 'no'
+                , { 'Choices' :
+                      [ 'no'
+                      , 'yes'
+                      ]
+                  , 'default_value' : 'no'
                   , 'description' : 'Specifies if this account is currently enabled, i.e.,\nthe user can login.'
                   , 'example' : 'no'
                   , 'is_changeable' : True
@@ -4947,7 +4967,11 @@ _test_rat = r"""
                   , 'type' : 'Boolean'
                   , 'ui_name' : 'Enabled'
                   }
-                , { 'default_value' : 'no'
+                , { 'Choices' :
+                      [ 'no'
+                      , 'yes'
+                      ]
+                  , 'default_value' : 'no'
                   , 'description' : 'Specifies if this account has super-user permissions.'
                   , 'example' : 'no'
                   , 'is_changeable' : True
@@ -5025,7 +5049,11 @@ _test_rat = r"""
                   , 'type' : 'String'
                   , 'ui_name' : 'Type name'
                   }
-                , { 'default_value' : ''
+                , { 'Choices' :
+                      [ 'no'
+                      , 'yes'
+                      ]
+                  , 'default_value' : ''
                   , 'description' : 'Specifies if this account is currently active.'
                   , 'example' : 'no'
                   , 'is_changeable' : False
@@ -5038,7 +5066,11 @@ _test_rat = r"""
                   , 'type' : 'Boolean'
                   , 'ui_name' : 'Active'
                   }
-                , { 'default_value' : 'yes'
+                , { 'Choices' :
+                      [ 'no'
+                      , 'yes'
+                      ]
+                  , 'default_value' : 'yes'
                   , 'description' : 'Specifies if this account is currently suspended\n(due to a pending action).'
                   , 'example' : 'no'
                   , 'is_changeable' : True

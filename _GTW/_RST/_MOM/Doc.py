@@ -36,6 +36,7 @@
 #     1-Apr-2014 (CT) Add `max_value` and `min_value` to
 #                     `E_Type.GET._response_attr`
 #    19-Jul-2016 (CT) Change guard for `attr.E_Type` in `_response_attr`
+#    14-Dec-2016 (CT) Add `Choices` to `_response_attr`
 #    ««revision-date»»···
 #--
 
@@ -166,7 +167,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                 else :
                     result ["url"] = resource.e_type_href (tn)
             else :
-                self._add_attr_prop (attr, "example", result)
+                self._add_attr_props (attr, ("Choices", "example"), result)
             if attr.P_Type :
                 result ["p_type"] = attr.P_Type.__name__
             return result

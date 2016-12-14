@@ -542,325 +542,284 @@ _test_code = """
 
     >>> print (formatted (list (f.As_Template_Elem for f in qrs.Attrs)))
     [ Record
-      ( Class = 'Entity'
-      , attr = Boat `left`
-      , attrs =
+        ( Class = 'Entity'
+        , attr = Boat `left`
+        , attrs =
           [ Record
-            ( Class = 'Entity'
-            , attr = Boat_Class `left`
-            , attrs =
+              ( Class = 'Entity'
+              , attr = Boat_Class `left`
+              , attrs =
                 [ Record
-                  ( attr = String `name`
-                  , full_name = 'left.left.name'
-                  , id = 'left__left__name'
-                  , name = 'name'
-                  , sig_key = 3
-                  , ui_name = 'Boat/Class/Name'
+                    ( attr = String `name`
+                    , full_name = 'left.left.name'
+                    , id = 'left__left__name'
+                    , name = 'name'
+                    , sig_key = 3
+                    , ui_name = 'Boat/Class/Name'
+                    )
+                ]
+              , full_name = 'left.left'
+              , id = 'left__left'
+              , name = 'left'
+              , sig_key = 2
+              , type_name = 'SRM.Boat_Class'
+              , ui_name = 'Boat/Class'
+              , ui_type_name = 'Boat_Class'
+              )
+          , Record
+              ( attr = Int `sail_number`
+              , full_name = 'left.sail_number'
+              , id = 'left__sail_number'
+              , name = 'sail_number'
+              , sig_key = 4
+              , ui_name = 'Boat/Sail number'
+              )
+          , Record
+              ( attr = Nation `nation`
+              , choices =
+                [ ( 'AUS'
+                  , 'Australia'
+                  )
+                , ( 'AUT'
+                  , 'Austria'
+                  )
+                , ( 'BEL'
+                  , 'Belgium'
+                  )
+                , ( 'CAN'
+                  , 'Canada'
+                  )
+                , ( 'CRO'
+                  , 'Croatia'
+                  )
+                , ( 'CYP'
+                  , 'Cyprus'
+                  )
+                , ( 'CZE'
+                  , 'Czech Republic'
+                  )
+                , ( 'DEN'
+                  , 'Denmark'
+                  )
+                , ( 'ESP'
+                  , 'Spain'
+                  )
+                , ( 'EST'
+                  , 'Estonia'
+                  )
+                , ( 'FIN'
+                  , 'Finland'
+                  )
+                , ( 'FRA'
+                  , 'France'
+                  )
+                , ( 'GBR'
+                  , 'Great Britain'
+                  )
+                , ( 'GER'
+                  , 'Germany'
+                  )
+                , ( 'GRE'
+                  , 'Greece'
+                  )
+                , ( 'HUN'
+                  , 'Hungary'
+                  )
+                , ( 'IRL'
+                  , 'Ireland'
+                  )
+                , ( 'ISL'
+                  , 'Iceland'
+                  )
+                , ( 'ITA'
+                  , 'Italy'
+                  )
+                , ( 'LAT'
+                  , 'Latvia'
+                  )
+                , ( 'LIE'
+                  , 'Lichtenstein'
+                  )
+                , ( 'LTU'
+                  , 'Lithuania'
+                  )
+                , ( 'LUX'
+                  , 'Luxembourg'
+                  )
+                , ( 'MLT'
+                  , 'Malta'
+                  )
+                , ( 'MNE'
+                  , 'Montenegro'
+                  )
+                , ( 'MON'
+                  , 'Monaco'
+                  )
+                , ( 'NED'
+                  , 'Netherlands'
+                  )
+                , ( 'NOR'
+                  , 'Norway'
+                  )
+                , ( 'NZL'
+                  , 'New Zealand'
+                  )
+                , ( 'POL'
+                  , 'Poland'
+                  )
+                , ( 'POR'
+                  , 'Portugal'
+                  )
+                , ( 'ROU'
+                  , 'Romania'
+                  )
+                , ( 'RSA'
+                  , 'South Africa'
+                  )
+                , ( 'RUS'
+                  , 'Russia'
+                  )
+                , ( 'SLO'
+                  , 'Slovenia'
+                  )
+                , ( 'SRB'
+                  , 'Serbia'
+                  )
+                , ( 'SUI'
+                  , 'Switzerland'
+                  )
+                , ( 'SVK'
+                  , 'Slovakia'
+                  )
+                , ( 'SWE'
+                  , 'Sweden'
+                  )
+                , ( 'UKR'
+                  , 'Ukraine'
+                  )
+                , ( 'USA'
+                  , 'United States'
                   )
                 ]
-            , full_name = 'left.left'
-            , id = 'left__left'
-            , name = 'left'
-            , sig_key = 2
-            , type_name = 'SRM.Boat_Class'
-            , ui_name = 'Boat/Class'
-            , ui_type_name = 'Boat_Class'
-            )
+              , full_name = 'left.nation'
+              , id = 'left__nation'
+              , name = 'nation'
+              , sig_key = 0
+              , ui_name = 'Boat/Nation'
+              )
           , Record
-            ( attr = Int `sail_number`
-            , full_name = 'left.sail_number'
-            , id = 'left__sail_number'
-            , name = 'sail_number'
-            , sig_key = 4
-            , ui_name = 'Boat/Sail number'
-            )
-          , Record
-            ( attr = Nation `nation`
-            , choices =
-                [
-                  ( 'AUS'
-                  , 'AUS [Australia]'
-                  )
-                ,
-                  ( 'AUT'
-                  , 'AUT [Austria]'
-                  )
-                ,
-                  ( 'BEL'
-                  , 'BEL [Belgium]'
-                  )
-                ,
-                  ( 'CAN'
-                  , 'CAN [Canada]'
-                  )
-                ,
-                  ( 'CRO'
-                  , 'CRO [Croatia]'
-                  )
-                ,
-                  ( 'CYP'
-                  , 'CYP [Cyprus]'
-                  )
-                ,
-                  ( 'CZE'
-                  , 'CZE [Czech Republic]'
-                  )
-                ,
-                  ( 'DEN'
-                  , 'DEN [Denmark]'
-                  )
-                ,
-                  ( 'ESP'
-                  , 'ESP [Spain]'
-                  )
-                ,
-                  ( 'EST'
-                  , 'EST [Estonia]'
-                  )
-                ,
-                  ( 'FIN'
-                  , 'FIN [Finland]'
-                  )
-                ,
-                  ( 'FRA'
-                  , 'FRA [France]'
-                  )
-                ,
-                  ( 'GBR'
-                  , 'GBR [Great Britain]'
-                  )
-                ,
-                  ( 'GER'
-                  , 'GER [Germany]'
-                  )
-                ,
-                  ( 'GRE'
-                  , 'GRE [Greece]'
-                  )
-                ,
-                  ( 'HUN'
-                  , 'HUN [Hungary]'
-                  )
-                ,
-                  ( 'IRL'
-                  , 'IRL [Ireland]'
-                  )
-                ,
-                  ( 'ISL'
-                  , 'ISL [Iceland]'
-                  )
-                ,
-                  ( 'ITA'
-                  , 'ITA [Italy]'
-                  )
-                ,
-                  ( 'LAT'
-                  , 'LAT [Latvia]'
-                  )
-                ,
-                  ( 'LIE'
-                  , 'LIE [Lichtenstein]'
-                  )
-                ,
-                  ( 'LTU'
-                  , 'LTU [Lithuania]'
-                  )
-                ,
-                  ( 'LUX'
-                  , 'LUX [Luxembourg]'
-                  )
-                ,
-                  ( 'MLT'
-                  , 'MLT [Malta]'
-                  )
-                ,
-                  ( 'MNE'
-                  , 'MNE [Montenegro]'
-                  )
-                ,
-                  ( 'MON'
-                  , 'MON [Monaco]'
-                  )
-                ,
-                  ( 'NED'
-                  , 'NED [Netherlands]'
-                  )
-                ,
-                  ( 'NOR'
-                  , 'NOR [Norway]'
-                  )
-                ,
-                  ( 'NZL'
-                  , 'NZL [New Zealand]'
-                  )
-                ,
-                  ( 'POL'
-                  , 'POL [Poland]'
-                  )
-                ,
-                  ( 'POR'
-                  , 'POR [Portugal]'
-                  )
-                ,
-                  ( 'ROU'
-                  , 'ROU [Romania]'
-                  )
-                ,
-                  ( 'RSA'
-                  , 'RSA [South Africa]'
-                  )
-                ,
-                  ( 'RUS'
-                  , 'RUS [Russia]'
-                  )
-                ,
-                  ( 'SLO'
-                  , 'SLO [Slovenia]'
-                  )
-                ,
-                  ( 'SRB'
-                  , 'SRB [Serbia]'
-                  )
-                ,
-                  ( 'SUI'
-                  , 'SUI [Switzerland]'
-                  )
-                ,
-                  ( 'SVK'
-                  , 'SVK [Slovakia]'
-                  )
-                ,
-                  ( 'SWE'
-                  , 'SWE [Sweden]'
-                  )
-                ,
-                  ( 'UKR'
-                  , 'UKR [Ukraine]'
-                  )
-                ,
-                  ( 'USA'
-                  , 'USA [United States]'
-                  )
-                ]
-            , full_name = 'left.nation'
-            , id = 'left__nation'
-            , name = 'nation'
-            , sig_key = 0
-            , ui_name = 'Boat/Nation'
-            )
-          , Record
-            ( attr = String `sail_number_x`
-            , full_name = 'left.sail_number_x'
-            , id = 'left__sail_number_x'
-            , name = 'sail_number_x'
-            , sig_key = 3
-            , ui_name = 'Boat/Sail number x'
-            )
+              ( attr = String `sail_number_x`
+              , full_name = 'left.sail_number_x'
+              , id = 'left__sail_number_x'
+              , name = 'sail_number_x'
+              , sig_key = 3
+              , ui_name = 'Boat/Sail number x'
+              )
           ]
-      , full_name = 'left'
-      , id = 'left'
-      , name = 'left'
-      , sig_key = 2
-      , type_name = 'SRM.Boat'
-      , ui_name = 'Boat'
-      , ui_type_name = 'Boat'
-      )
+        , full_name = 'left'
+        , id = 'left'
+        , name = 'left'
+        , sig_key = 2
+        , type_name = 'SRM.Boat'
+        , ui_name = 'Boat'
+        , ui_type_name = 'Boat'
+        )
     , Record
-      ( Class = 'Entity'
-      , attr = Regatta `right`
-      , attrs =
+        ( Class = 'Entity'
+        , attr = Regatta `right`
+        , attrs =
           [ Record
-            ( Class = 'Entity'
-            , attr = Regatta_Event `left`
-            , attrs =
+              ( Class = 'Entity'
+              , attr = Regatta_Event `left`
+              , attrs =
                 [ Record
-                  ( attr = String `name`
-                  , full_name = 'right.left.name'
-                  , id = 'right__left__name'
-                  , name = 'name'
-                  , sig_key = 3
-                  , ui_name = 'Regatta/Event/Name'
-                  )
+                    ( attr = String `name`
+                    , full_name = 'right.left.name'
+                    , id = 'right__left__name'
+                    , name = 'name'
+                    , sig_key = 3
+                    , ui_name = 'Regatta/Event/Name'
+                    )
                 , Record
-                  ( attr = Date_Interval `date`
-                  , attrs =
+                    ( attr = Date_Interval `date`
+                    , attrs =
                       [ Record
-                        ( attr = Date `start`
-                        , full_name = 'right.left.date.start'
-                        , id = 'right__left__date__start'
-                        , name = 'start'
-                        , sig_key = 0
-                        , ui_name = 'Regatta/Event/Date/Start'
-                        )
+                          ( attr = Date `start`
+                          , full_name = 'right.left.date.start'
+                          , id = 'right__left__date__start'
+                          , name = 'start'
+                          , sig_key = 0
+                          , ui_name = 'Regatta/Event/Date/Start'
+                          )
                       , Record
-                        ( attr = Date `finish`
-                        , full_name = 'right.left.date.finish'
-                        , id = 'right__left__date__finish'
-                        , name = 'finish'
-                        , sig_key = 0
-                        , ui_name = 'Regatta/Event/Date/Finish'
-                        )
+                          ( attr = Date `finish`
+                          , full_name = 'right.left.date.finish'
+                          , id = 'right__left__date__finish'
+                          , name = 'finish'
+                          , sig_key = 0
+                          , ui_name = 'Regatta/Event/Date/Finish'
+                          )
                       ]
-                  , full_name = 'right.left.date'
-                  , id = 'right__left__date'
-                  , name = 'date'
-                  , ui_name = 'Regatta/Event/Date'
-                  )
+                    , full_name = 'right.left.date'
+                    , id = 'right__left__date'
+                    , name = 'date'
+                    , ui_name = 'Regatta/Event/Date'
+                    )
                 ]
-            , full_name = 'right.left'
-            , id = 'right__left'
-            , name = 'left'
-            , sig_key = 2
-            , type_name = 'SRM.Regatta_Event'
-            , ui_name = 'Regatta/Event'
-            , ui_type_name = 'Regatta_Event'
-            )
+              , full_name = 'right.left'
+              , id = 'right__left'
+              , name = 'left'
+              , sig_key = 2
+              , type_name = 'SRM.Regatta_Event'
+              , ui_name = 'Regatta/Event'
+              , ui_type_name = 'Regatta_Event'
+              )
           , Record
-            ( Class = 'Entity'
-            , attr = Entity `boat_class`
-            , attrs =
+              ( Class = 'Entity'
+              , attr = Entity `boat_class`
+              , attrs =
                 [ Record
-                  ( attr = String `name`
-                  , full_name = 'right.boat_class.name'
-                  , id = 'right__boat_class__name'
-                  , name = 'name'
-                  , sig_key = 3
-                  , ui_name = 'Regatta/Boat class/Name'
-                  )
+                    ( attr = String `name`
+                    , full_name = 'right.boat_class.name'
+                    , id = 'right__boat_class__name'
+                    , name = 'name'
+                    , sig_key = 3
+                    , ui_name = 'Regatta/Boat class/Name'
+                    )
                 ]
-            , full_name = 'right.boat_class'
-            , id = 'right__boat_class'
-            , name = 'boat_class'
-            , sig_key = 2
-            , type_name = 'SRM._Boat_Class_'
-            , ui_name = 'Regatta/Boat class'
-            , ui_type_name = '_Boat_Class_'
-            )
+              , full_name = 'right.boat_class'
+              , id = 'right__boat_class'
+              , name = 'boat_class'
+              , sig_key = 2
+              , type_name = 'SRM._Boat_Class_'
+              , ui_name = 'Regatta/Boat class'
+              , ui_type_name = '_Boat_Class_'
+              )
           ]
-      , full_name = 'right'
-      , id = 'right'
-      , name = 'right'
-      , sig_key = 2
-      , type_name = 'SRM.Regatta'
-      , ui_name = 'Regatta'
-      , ui_type_name = 'Regatta'
-      )
+        , full_name = 'right'
+        , id = 'right'
+        , name = 'right'
+        , sig_key = 2
+        , type_name = 'SRM.Regatta'
+        , ui_name = 'Regatta'
+        , ui_type_name = 'Regatta'
+        )
     , Record
-      ( attr = Int `place`
-      , full_name = 'place'
-      , id = 'place'
-      , name = 'place'
-      , sig_key = 0
-      , ui_name = 'Place'
-      )
+        ( attr = Int `place`
+        , full_name = 'place'
+        , id = 'place'
+        , name = 'place'
+        , sig_key = 0
+        , ui_name = 'Place'
+        )
     , Record
-      ( attr = Int `points`
-      , full_name = 'points'
-      , id = 'points'
-      , name = 'points'
-      , sig_key = 0
-      , ui_name = 'Points'
-      )
+        ( attr = Int `points`
+        , full_name = 'points'
+        , id = 'points'
+        , name = 'points'
+        , sig_key = 0
+        , ui_name = 'Points'
+        )
     ]
 
     >>> AS  = MOM.Attr.Selector

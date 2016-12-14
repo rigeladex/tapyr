@@ -27,6 +27,7 @@
 ##    28-Mar-2014 (CT) Add link-ref-attributes to `e_type_cross_refs`
 ##     1-Apr-2014 (CT) Add `max_value`, `min_value` to `attributes`
 ##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
+##    14-Dec-2016 (CT) Add `choices`
 ##    ««revision-date»»···
 ##--
 #}
@@ -147,6 +148,12 @@
             {{- a.example -}}
           </dd>
         {% endif -%}
+        {%- if a.Choices %}
+          <dt>Valid values</dt>
+          <dd>
+            {{ choices (resource, a)}}
+          </dd>
+        {% endif -%}
       {% endif -%}
       <dt>Description</dt>
       <dd>
@@ -176,6 +183,25 @@
     </dl>
   {% endfor -%}
 {%- endmacro -%} {#- attributes -#}
+
+{%- macro choices (resource, attr) -%}
+  {%- set cs = attr.Choices %}
+  {%- set c1 = GTW.first (cs) %}
+  {%- if GTW.isinstance (c1, GTW.pyk.string_types) %}
+    {{ ", ".join (cs) }}
+  {%- else %}
+    <table class="Choices">
+      <tbody>
+        {%- for k, v in cs %}
+          <tr>
+            <td class="Value">{{- k -}}</td>
+            <td class="Desc">[{{- v -}}]</td>
+          </tr>
+        {% endfor -%}
+      </tbody>
+    </table>
+  {% endif -%}
+{%- endmacro -%} {#- choices -#}
 
 {%- macro header (name) -%}
   {%- set tag = kwargs.pop ("tag", "h2") -%}
