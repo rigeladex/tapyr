@@ -72,6 +72,7 @@
 #                     add `Day`, ..., `Week` to `Year`
 #     1-Dec-2016 (CT) Use `CAL.G8R.Week_Day_Abbrs_2.words`, not home-grown
 #                     definitions
+#    16-Dec-2016 (CT) Add property `Day.Week`
 #    ««revision-date»»···
 #--
 
@@ -215,6 +216,11 @@ class Day (_Ordinal_) :
     def sort_appointments (self) :
         self.appointments.sort ()
     # end def sort_appointments
+
+    @TFL.Meta.Once_Property
+    def Week (self) :
+        return self._cal.week [self.wk_ordinal]
+    # end def Week
 
     @TFL.Meta.Once_Property
     def Year (self) :
