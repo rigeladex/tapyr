@@ -41,6 +41,7 @@
 #    12-Feb-2016 (CT) Change `new_dtw` to use `T._kind`, not `cls._kind`
 #    17-Jun-2016 (CT) Change `_delta` to wrap `.Delta._Type` instances
 #    21-Jun-2016 (CT) Allow single argument of `self._Type` in `__init__`
+#    19-Dec-2016 (CT) Add `DT`
 #    ««revision-date»»···
 #--
 
@@ -121,6 +122,12 @@ class _DTW_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _DTW_Meta_)) :
                     attrs [name] = xkw.pop (name)
             self._body = self._new_object (attrs)
     # end def __init__
+
+    @property
+    def DT (self) :
+        """Wrapped datetime specific instance."""
+        return self._body
+    # end def DT
 
     @TFL.Meta.Class_and_Instance_Method
     def new_dtw (soc, body) :
