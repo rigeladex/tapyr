@@ -152,6 +152,7 @@
 #     3-Dec-2015 (CT) Consider `dynamic_p`, `static_p` in `template_iter`
 #    19-Dec-2016 (CT) Move `LET` of `user` to `wsgi_app`
 #                     + Makes `user` available in `_http_response_context`
+#    19-Dec-2016 (CT) Add info about resource to `__getattr__` error
 #    ««revision-date»»···
 #--
 
@@ -950,8 +951,12 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
             ### which accesses `__wrapped__` and eventually throws `ValueError`
             return getattr (self.__super, name)
         if self.parent is not None :
-            return getattr (self.parent, name)
-        raise AttributeError (name)
+            try :
+                return getattr (self.parent, name)
+            except AttributeError :
+                pass ### following `raise` provides additional context info
+        raise AttributeError \
+            ("Resource %s has not attribute named %s" % (self, name))
     # end def __getattr__
 
     def __repr__ (self) :
