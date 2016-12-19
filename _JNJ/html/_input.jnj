@@ -30,6 +30,7 @@
 ##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    18-May-2016 (CT) Change `select` to allow empty `name` argument
 ##    14-Dec-2016 (CT) Change `option` to display `value`, too, if appropriate
+##    19-Dec-2016 (CT) Fix `option` display
 ##    ««revision-date»»···
 ##--
 #}
@@ -38,10 +39,14 @@
   {%- set vc = value if (value != None) else content %}
   {%- set sa = ' selected="selected"' if selected and vc == selected else "" -%}
   {%- set va = (' value="%s"' % (value, )) if value != None else "" -%}
+  {%- set vs = ('%s' % (value, )) if value != None else "" -%}
   {%- set content_t = GTW._T (content) %}
-  {%- set display =
-      "%s [%s]" % (value, content_t) if value and not value.endswith (content) else content_t
-  %}
+  {%- set display = "%s [%s]" % (vs, content_t)
+        if   vs
+        and  GTW.isinstance  (value, GTW.pyk.string_types)
+        and  not vs.endswith (content)
+        else content_t
+  -%}
   <option{{ va }}{{ sa }}{{ GTW.xmlattr (kwargs) }}>{{ display }}</option>
 {%- endmacro -%} {#- option -#}
 
