@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -150,6 +150,8 @@
 #    18-Nov-2015 (CT) Add  `_Base_.static_pages`, `.static_roots`
 #    18-Nov-2015 (CT) Redefine `A_Link.permalink`
 #     3-Dec-2015 (CT) Consider `dynamic_p`, `static_p` in `template_iter`
+#    19-Dec-2016 (CT) Move `LET` of `user` to `wsgi_app`
+#                     + Makes `user` available in `_http_response_context`
 #    ««revision-date»»···
 #--
 
@@ -1752,13 +1754,13 @@ class RST_Root (_Ancestor) :
         request  = self.Request  (environ)
         response = self.Response (request)
         entries_transitive = self.first_time
-        with self.LET (_change_infos = {}) :
+        with self.LET (user = request.user, _change_infos = {}) :
             try :
                 href     = request.path
                 resource = self.resource_from_href (href, request)
                 if resource :
                     request.resource = resource
-                    result  = self._http_response (resource, request, response)
+                    result = self._http_response (resource, request, response)
                 else :
                     raise Status.Not_Found ()
             except Status.Status as status :
@@ -1826,9 +1828,8 @@ class RST_Root (_Ancestor) :
     @TFL.Contextmanager
     def _http_response_context (self, resource, request, response) :
         language  = request.language or self.language
-        user      = request.user
         scope     = self.scope
-        r_context = dict (request = request, response = response, user = user)
+        r_context = dict (request = request, response = response)
         if language :
             ### Cannot use `with TFL.I18N.context (language)` here
             ### because the final WSGI call at the end of `wsgi_app` would be
@@ -1836,7 +1837,7 @@ class RST_Root (_Ancestor) :
             TFL.I18N.use (language)
         with self.LET (** r_context) :
             if scope and getattr (scope, "LET", None) :
-                with scope.LET (user = user) :
+                with scope.LET (user = request.user) :
                     yield
             else :
                 yield
