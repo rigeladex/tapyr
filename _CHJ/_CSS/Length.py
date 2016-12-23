@@ -28,6 +28,7 @@
 #    18-Jan-2012 (CT) Factor `_TRBL_`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
+#    23-Dec-2016 (CT) Add `adapt__str__` to `_Length_`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,7 @@ class M_Length (TFL.Meta.Object.__class__) :
 
 @pyk.adapt__bool__
 @pyk.adapt__div__
+@pyk.adapt__str__
 class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
     """Model a CSS length value.
 
