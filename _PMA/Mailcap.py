@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -19,6 +19,7 @@
 #     6-Sep-2004 (CT) `needsterminal` considered in `Mailcap_Entry.system`
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#    27-Dec-2016 (CT) Add `encoding` to `as_text`
 #    ««revision-date»»···
 #--
 
@@ -57,10 +58,13 @@ class Mailcap_Entry (TFL.Meta.Object) :
         return True
     # end def applicable
 
-    def as_text (self, key, filename = "", plist = []) :
-        pipe   = sos.popen (self.command (key, filename, plist), "r")
-        result = pipe.read ().split ("\n")
+    def as_text (self, key, filename = "", plist = [], encoding = None) :
+        pipe   = sos.popen  (self.command (key, filename, plist), "r")
+        body   = pipe.read  ()
         pipe.close ()
+        if encoding is not None :
+            body = pyk.decoded (body, encoding)
+        result = body.split ("\n")
         return result
     # end def as_text
 
@@ -107,10 +111,10 @@ class Mailcap_Type (TFL.Meta.Object) :
         self._setup (mime_type, cap_dict_list)
     # end def __init__
 
-    def as_text (self, filename, plist = []) :
+    def as_text (self, filename, plist = [], encoding = None) :
         for entry in self.action_dict.get ("int_view", []) :
             if entry.applicable (filename, plist) :
-                return entry.as_text ("view", filename, plist)
+                return entry.as_text ("view", filename, plist, encoding)
     # end def as_text
 
     def system (self, key, filename, plist = []) :

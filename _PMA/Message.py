@@ -172,6 +172,7 @@
 #     4-Nov-2015 (CT) Remove `message_from_string` because broken Python 3
 #     9-Nov-2015 (CT) Change `body_lines` to call `pyk.decoded` before `.split`
 #    23-Feb-2016 (CT) Change `_main` to encode `subject` after `%`, not before
+#    27-Dec-2016 (CT) Change `body_lines` to pass `encoding` to `as_text`
 #    ««revision-date»»···
 #--
 
@@ -604,7 +605,8 @@ class Message_Body (_Msg_Part_) :
                 else :
                     cap = PMA.Mailcap [type]
                     if cap :
-                        lines = cap.as_text (self._temp_body ())
+                        lines = cap.as_text \
+                            (self._temp_body (), encoding = charset)
                     if lines is None and type.startswith ("text/") :
                         lines = pyk.decoded (self.body, charset).split ("\n")
                 if lines is not None :
