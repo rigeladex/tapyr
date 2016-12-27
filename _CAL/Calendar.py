@@ -87,7 +87,7 @@ class Calendar (TFL.Meta.Object) :
        >>> C.week [d.wk_ordinal] is y.weeks [d.week - 1]
        True
        >>> C.week [d.wk_ordinal]
-       week 47 <2004/11/15 to 2004/11/21>
+       Wk 47/2004 <2004/11/15 to 2004/11/21>
        >>> len (C.week)
        53
     """
