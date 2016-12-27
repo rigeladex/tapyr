@@ -21,6 +21,10 @@
 #                     `Justify_Content`, `Order`, `Width`; factor `_Prop_`
 #     9-Jul-2014 (CT) Add `* args` to `Property.__call__`
 #    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
+#    27-Dec-2016 (CT) Add `Flex_Direction`, `Scroll_Snap_Align`,
+#                     `Scroll_Snap_Type`
+#    27-Dec-2016 (CT) Remove `-webkit` prefix from flex properties/values
+#    27-Dec-2016 (CT) Remove `-moz` prefix from `Box`, `Font_Feat`
 #    ««revision-date»»···
 #--
 
@@ -53,16 +57,16 @@ vendor prefixes::
     {'-ms-transform' : 'rotate(-45deg)', '-ms-transform-origin' : '60% 100%', '-ms-transform-translate' : '100px', '-webkit-transform' : 'rotate(-45deg)', '-webkit-transform-origin' : '60% 100%', '-webkit-transform-translate' : '100px', 'transform' : 'rotate(-45deg)', 'transform-origin' : '60% 100%', 'transform-translate' : '100px'}
 
     >>> show (Align_Items ("center"))
-    {'-webkit-align-items' : 'center', 'align-items' : 'center'}
+    {'-ms-align-items' : 'center', 'align-items' : 'center'}
 
     >>> show (Display ("flex"))
-    {'display' : ['flex', '-ms-flex', '-webkit-flex']}
+    {'display' : ['flex', '-ms-flex']}
 
     >>> show (Flex  (flow = "row wrap", grow = 8))
-    {'-ms-flex-flow' : 'row wrap', '-ms-flex-grow' : 8, '-webkit-flex-flow' : 'row wrap', '-webkit-flex-grow' : 8, 'flex-flow' : 'row wrap', 'flex-grow' : 8}
+    {'-ms-flex-flow' : 'row wrap', '-ms-flex-grow' : 8, 'flex-flow' : 'row wrap', 'flex-grow' : 8}
 
     >>> show (Order (3))
-    {'-webkit-order' : '3', 'order' : '3'}
+    {'-ms-order' : '3', 'order' : '3'}
 
     >>> show (Width ("min_content"))
     {'width' : ['min-content', '-moz-min-content', '-webkit-min-content']}
@@ -152,7 +156,6 @@ class Value (_Prop_) :
             values = [v]
             for p in prefs :
                 values.append ("-".join ((p, v)))
-
         else :
             values = v
         result = {name : values}
@@ -163,28 +166,29 @@ class Value (_Prop_) :
 
 # end class Value
 
-Border      = Property ("border")
-Box         = Property ("box",                   "-moz",        "-webkit")
-Calc        = Property ("calc")
-Column      = Property ("column",                "-moz",        "-webkit")
-Filter      = Property ("filter",                               "-webkit")
-Flex        = Property ("flex",                          "-ms", "-webkit")
-Font_Feat   = Property ("font-feature-settings", "-moz",        "-webkit")
-Gradient    = Property ("gradient",                             "-webkit")
-Transform   = Property ("transform",                     "-ms", "-webkit")
-Transition  = Property ("transition",                           "-webkit")
+Border         = Property ("border")
+Box            = Property ("box",                                  "-webkit")
+Calc           = Property ("calc")
+Column         = Property ("column",                "-moz",        "-webkit")
+Filter         = Property ("filter",                               "-webkit")
+Flex           = Property ("flex",                          "-ms")
+Flex_Direction = Property ("flex-direction",                "-ms")
+Font_Feat      = Property ("font-feature-settings",                "-webkit")
+Gradient       = Property ("gradient",                             "-webkit")
+Transform      = Property ("transform",                     "-ms", "-webkit")
+Transition     = Property ("transition",                           "-webkit")
 
 ### http://www.adobe.com/devnet/html5/articles/working-with-flexbox-the-new-spec.html
 ### http://caniuse.com/#feat=flexbox
-Align_Items       = Value ("align_items",      "-webkit")
-Align_Self        = Value ("align_self",       "-webkit")
+Align_Items       = Value ("align_items",     "-ms")
+Align_Self        = Value ("align_self",      "-ms")
 Display           = Value \
     ( "display"
-    , flex        = ("-ms", "-webkit")
-    , inline_flex = ("-ms", "-webkit")
+    , flex        = ("-ms", )
+    , inline_flex = ("-ms", )
     )
-Justify_Content   = Value ("justify_content",  "-webkit")
-Order             = Value ( "order",           "-webkit")
+Justify_Content   = Value ("justify_content", "-ms")
+Order             = Value ( "order",          "-ms")
 
 ### http://dev.w3.org/csswg/css-sizing/#column-sizing
 ### http://caniuse.com/#feat=intrinsic-width
@@ -195,6 +199,12 @@ Width             = Value    \
     , max_content = ("-moz", "-webkit")
     , min_content = ("-moz", "-webkit")
     )
+
+### https://drafts.csswg.org/css-scroll-snap/#properties-on-the-scroll-container
+### https://drafts.csswg.org/css-scroll-snap/#properties-on-the-elements
+### http://caniuse.com/#search=scroll-snap
+Scroll_Snap_Align = Value ("scroll-snap-align",           "-ms", "-webkit")
+Scroll_Snap_Type  = Value ("scroll-snap-type",            "-ms", "-webkit")
 
 if __name__ != "__main__" :
     CHJ.CSS._Export ("*")
