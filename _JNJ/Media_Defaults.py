@@ -62,6 +62,7 @@
 #     2-Dec-2015 (CT) Change `nav_col.color_spec_link_current.background_color`
 #    31-Dec-2015 (CT) Change `pg_nav_show` to allow embedded rel-nav buttons
 #    11-Oct-2016 (CT) Import from `CHJ`, not `GTW`
+#    27-Dec-2016 (CT) Add `breakpoint.really_narrow`
 #    ««revision-date»»···
 #--
 
@@ -357,6 +358,10 @@ class Media_Defaults (Definition) :
 
     class breakpoint (Definition) :
         """Breakpoints for responsive rules"""
+
+        really_narrow          = P_dict \
+            ( max_width        = Px (360)
+            )
 
         very_narrow            = P_dict \
             ( max_width        = Px (420)
