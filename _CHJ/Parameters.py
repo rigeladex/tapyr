@@ -34,6 +34,9 @@
 #    14-Jun-2016 (CT) Add `/media/GTW/js/V5a/form_field.js`
 #    11-Oct-2016 (CT) Factor `TFL.Parameters`
 #    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
+#    29-Dec-2016 (CT) Allow `Rule` instances as `P_dict` elements
+#                     + Factor `_CHJ_Parameter_`
+#                     + Redefine `P_dict`
 #    ««revision-date»»···
 #--
 
@@ -56,18 +59,16 @@ import _TFL._Meta.Object
 import _TFL.Caller
 import _TFL.Q_Exp
 
-class Rule (_Parameter_) :
-    """Parameterized CSS rule"""
+class _CHJ_Parameter_ (_Parameter_) :
 
-    def __call__ (self, P) :
-        from _CHJ._CSS import Rule as CSS_Rule
-        RT       = getattr (CSS_Rule, self.__class__.__name__)
-        args     = tuple (self._resolved_args (P, self.args))
-        children = list  \
-            (self._resolved_children (P, self.kw.pop ("children", [])))
-        kw       = dict  (self._resolved_kw   (P, self.kw))
-        return RT (* args, children = children, ** kw)
-    # end def __call__
+    _real_name = "_Parameter_"
+
+    def _resolved_kw (self, P, kw) :
+        children = kw.get ("children")
+        if children :
+            kw ["children"] = list (self._resolved_children (P, children))
+        return self.__super._resolved_kw (P, kw)
+    # end def _resolved_kw
 
     def _resolved_children (self, P, children) :
         Q_Root = TFL.Q_Exp.Q_Root
@@ -78,6 +79,25 @@ class Rule (_Parameter_) :
                 c = c (P)
             yield c
     # end def _resolved_children
+
+_Parameter_ = _CHJ_Parameter_ # end class
+
+class _CHJ_P_dict_ (_Parameter_, P_dict) :
+
+    _real_name = "P_dict"
+
+P_dict = _CHJ_P_dict_ # end class
+
+class Rule (_Parameter_) :
+    """Parameterized CSS rule"""
+
+    def __call__ (self, P) :
+        from _CHJ._CSS import Rule as CSS_Rule
+        RT       = getattr (CSS_Rule, self.__class__.__name__)
+        args     = tuple (self._resolved_args (P, self.args))
+        kw       = dict  (self._resolved_kw   (P, self.kw))
+        return RT (* args, ** kw)
+    # end def __call__
 
 # end class Rule
 
