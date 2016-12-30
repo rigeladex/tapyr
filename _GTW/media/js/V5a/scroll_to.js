@@ -14,6 +14,8 @@
 //
 // Revision Dates
 //    21-Jan-2016 (CT) Creation
+//    30-Dec-2016 (CT) Rename `scroll_to` to `_scroll_to` to avoid name clash
+//                     inside `$.scroll_to`
 //    ««revision-date»»···
 //--
 
@@ -34,7 +36,11 @@
         , scroll_pos     : "scrollTop"
         , size           : "height"
         };
-    function scroll_to (el, rel_pos, S) {
+    function _scroll_to (el, rel_pos, S) {
+        // Beware::
+        // the `offsetParent` of `el` must have `overflow` set to `scroll`
+        //   otherwise, the assignment to `scrollLeft` or `scrollTop` will
+        //   silently do nothing
         var parent       = el.offsetParent || el;
         var el_offset    = el [S.offset];
         var el_size      = el.getBoundingClientRect     () [S.size];
@@ -47,14 +53,14 @@
         parent [S.scroll_pos] = scroll_pos;
     };
     $.scroll_to_h = function scroll_to_h (el, rel_pos) {
-        scroll_to (el, rel_pos, spec_h);
+        _scroll_to (el, rel_pos, spec_h);
     };
     $.scroll_to_v = function scroll_to_v (el, rel_pos) {
-        scroll_to (el, rel_pos, spec_v);
+        _scroll_to (el, rel_pos, spec_v);
     };
     $.scroll_to   = function scroll_to   (el, rel_pos_h, rel_pos_v) {
-        scroll_to (el, rel_pos_h, spec_h);
-        scroll_to (el, rel_pos_v, spec_v);
+        _scroll_to (el, rel_pos_h, spec_h);
+        _scroll_to (el, rel_pos_v, spec_v);
     };
   } ($V5a)
 );
