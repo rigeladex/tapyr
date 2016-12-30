@@ -56,6 +56,7 @@
 #    20-Jan-2016 (CT) Add `_clean_minified_js` to remove superfluous `;`
 #     5-Feb-2016 (CT) Add encoding dance around `_clean_minified_js` call
 #    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
+#    30-Dec-2016 (CT) Add `./` to `dont_join` of `Media_List_href._gen_all`
 #    ««revision-date»»···
 #--
 
@@ -335,11 +336,12 @@ class Media_List_href (Media_List) :
     # end def __init__
 
     def _gen_own (self) :
-        prefix = self.prefix
-        url    = self.media.url
+        prefix    = self.prefix
+        url       = self.media.url
+        dont_join = ("http://", "https://", "/", "./")
         for mob in self.__super._gen_own () :
-            href = mob.href
-            if href and not href.startswith (("http://", "https://", "/")) :
+            href  = mob.href
+            if href and not href.startswith (dont_join) :
                 href = pjoin \
                     (* (x for x in (url, prefix, href) if x is not None))
             if (   href

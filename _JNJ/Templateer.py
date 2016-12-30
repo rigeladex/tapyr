@@ -75,7 +75,7 @@
 #    15-Apr-2014 (CT) Add `media.script_files` to `Template_E.js`
 #    24-Apr-2014 (CT) Add `afs_input`
 #    24-Apr-2014 (CT) Add `mf3`, `mf3_input`, `mf3_v_seq`, `mf3_h_cols`
-#     9-Jul-2014 (CT) Changge `js` to use `pyk.decoded`, not home-grown code,
+#     9-Jul-2014 (CT) Change `js` to use `pyk.decoded`, not home-grown code,
 #                     to decode entries of `media.script_files`
 #    29-Aug-2014 (CT) Remove `AFS` specific templates
 #    12-Oct-2014 (CT) Add `sk` to `__lt__` to avoid Python-3 exception
@@ -87,6 +87,8 @@
 #                     `account_change_password_info`
 #     2-Jun-2016 (CT) Add `e_type_selector`
 #    11-Oct-2016 (CT) Import from `CHJ`, not `GTW`
+#    30-Dec-2016 (CT) Allow scripts in template directories
+#                     + Change `js` to try `env.loader.get_source`, too
 #    ««revision-date»»···
 #--
 
@@ -271,8 +273,9 @@ class Template_E (_Template_) :
            loaded from a single file or included inline in a html <script>
            element.
         """
-        encoding = self.env.encoding
-        handler  = self.env.static_handler
+        env      = self.env
+        encoding = env.encoding
+        handler  = env.static_handler
         media    = self._Media_R
         if handler and media :
             def _gen (handler, encoding, scripts, media) :
@@ -281,6 +284,14 @@ class Template_E (_Template_) :
                     if p :
                         with open (p, "rb") as file :
                             yield file.read ().decode (encoding)
+                    else :
+                        try :
+                            src, p, _ = env.loader.get_source (env, s.src)
+                        except Exception :
+                            pass
+                        else :
+                            if p :
+                                yield src
                 for s in sorted (media.script_files, key = TFL.Getter.rank) :
                     yield pyk.decoded (s.body, encoding)
             result = "\n\n".join \
