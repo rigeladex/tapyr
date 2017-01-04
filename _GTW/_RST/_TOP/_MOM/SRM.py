@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -65,6 +65,7 @@
 #    24-May-2016 (CT) Add `sorted` to `Field_Regatta_Kinds`;
 #                     Use `Is cancelled`, not `Cancelled` as text for cancelled
 #                     regattas (L10N)
+#     4-Jan-2017 (CT) Add `bir_admin` guard to `Regatta._get_child`
 #    ««revision-date»»···
 #--
 
@@ -897,17 +898,18 @@ class Regatta (_Regatta_Mixin_, _Ancestor) :
                         result = result._get_child (* grandchildren)
             elif child == "register" :
                 bir_admin = self._get_bir_admin ()
-                result = GTW.RST.TOP.Alias \
-                    ( name          = child
-                    , hidden        = True
-                    , parent        = self
-                    , short_title   = child
-                    , target        = bir_admin._get_child ("create")
-                    , title         =
-                        ( _T ("Register an entry for %s at %s")
-                        % (self.short_title, self.parent.short_title)
+                if bir_admin is not None :
+                    result = GTW.RST.TOP.Alias \
+                        ( name          = child
+                        , hidden        = True
+                        , parent        = self
+                        , short_title   = child
+                        , target        = bir_admin._get_child ("create")
+                        , title         =
+                            ( _T ("Register an entry for %s at %s")
+                            % (self.short_title, self.parent.short_title)
+                            )
                         )
-                    )
         return result
     # end def _get_child
 
