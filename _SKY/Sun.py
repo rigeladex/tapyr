@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -36,6 +36,7 @@
 #    30-Sep-2016 (CT) Use `decl` and `ra`,
 #                     not `declination` and `right_ascension`
 #     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
+#     9-Jan-2017 (CT) Add option `-year`
 #    ««revision-date»»···
 #--
 
@@ -320,34 +321,48 @@ def _main (cmd) :
     else :
         location = SKY.Location.Table [cmd.Location]
     print (location, "*" * 20)
-    for d in cmd.argv :
-        date = CAL.Date.from_string (d)
-        rts  = RTS_Sun.On_Day (date, location)
-        print \
-            ( "Date : %s, Sunrise : %s, transit : %s, sunset : %s"
-            % (date, rts.rise, rts.transit, rts.set)
+    year = cmd.year
+    if year :
+        from _CAL.Year import Year
+        Y = Year (year)
+        for d in Y.days :
+            date = d.date
+            rts  = RTS_Sun.On_Day (date, location)
+            print \
+            ( "%s, Sunrise : %s, transit : %s, sunset : %s, day length: %s"
+            % ( date, rts.rise, rts.transit, rts.set
+              , "%02d:%02d" % rts.day_length.hh_mm
+              )
             )
-        if cmd.day_length :
-            print ("Day length: %02d:%02d" % (rts.day_length).hh_mm)
-        if cmd.transit :
-            print ("Rise    azimuth : %6.2f degrees" % rts.rise.azimuth.degrees)
-            print ("Transit height  : %6.2f degrees" % rts.transit.altitude.degrees)
-            print ("Set     azimuth : %6.2f degrees" % rts.set.azimuth.degrees)
-        if cmd.civil_twilight :
+    else :
+        for d in cmd.argv :
+            date = CAL.Date.from_string (d)
+            rts  = RTS_Sun.On_Day (date, location)
             print \
-                ( "Civil  twilight starts %s, ends %s"
-                % (rts.civil_twilight_start, rts.civil_twilight_finis)
+                ( "Date : %s, Sunrise : %s, transit : %s, sunset : %s"
+                % (date, rts.rise, rts.transit, rts.set)
                 )
-        if cmd.nautic_twilight :
-            print \
-                ( "Nautic twilight starts %s, ends %s"
-                % (rts.nautic_twilight_start, rts.nautic_twilight_finis)
-                )
-        if cmd.astro_twilight :
-            print \
-                ( "Astro  twilight starts %s, ends %s"
-                % (rts.astro_twilight_start, rts.astro_twilight_finis)
-                )
+            if cmd.day_length :
+                print ("Day length: %02d:%02d" % (rts.day_length).hh_mm)
+            if cmd.transit :
+                print ("Rise    azimuth : %6.2f degrees" % rts.rise.azimuth.degrees)
+                print ("Transit height  : %6.2f degrees" % rts.transit.altitude.degrees)
+                print ("Set     azimuth : %6.2f degrees" % rts.set.azimuth.degrees)
+            if cmd.civil_twilight :
+                print \
+                    ( "Civil  twilight starts %s, ends %s"
+                    % (rts.civil_twilight_start, rts.civil_twilight_finis)
+                    )
+            if cmd.nautic_twilight :
+                print \
+                    ( "Nautic twilight starts %s, ends %s"
+                    % (rts.nautic_twilight_start, rts.nautic_twilight_finis)
+                    )
+            if cmd.astro_twilight :
+                print \
+                    ( "Astro  twilight starts %s, ends %s"
+                    % (rts.astro_twilight_start, rts.astro_twilight_finis)
+                    )
 # end def _main
 
 _Command = TFL.CAO.Cmd \
@@ -366,6 +381,7 @@ _Command = TFL.CAO.Cmd \
         , "-nautic_twilight:B"
             "?Show time of nautic twilight (sun -12 degrees below horizon)"
         , "-transit:B?Show transit height"
+        , "-year:I?Show sunrise/transit/set data for whole year"
         )
     )
 
