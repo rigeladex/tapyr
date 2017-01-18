@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -73,6 +73,7 @@
 #     1-Dec-2016 (CT) Use `CAL.G8R.Week_Day_Abbrs_2.words`, not home-grown
 #                     definitions
 #    16-Dec-2016 (CT) Add property `Day.Week`
+#     5-Jan-2017 (CT) Fix doctest of `Quarter` (explicit `Year (2016)`!)
 #    ««revision-date»»···
 #--
 
@@ -497,7 +498,7 @@ class Month (TFL.Meta.Object) :
 class Quarter (TFL.Meta.Object) :
     """Model a single quarter (year) in a calendar.
 
-       >>> y = Year()
+       >>> y = Year (2016)
        >>> q = y.Q1
        >>> q
        Quarter (2016, 1)

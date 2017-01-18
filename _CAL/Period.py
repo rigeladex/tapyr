@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package _CAL.
@@ -18,6 +18,7 @@
 # Revision Dates
 #    19-Apr-2016 (CT) Creation
 #    17-Jun-2016 (CT) Fix `__iter__`, add tests
+#     5-Jan-2017 (CT) Fix doctest of `Week` (set `Week.now`)
 #    ««revision-date»»···
 #--
 
@@ -550,6 +551,7 @@ class Week (_Period_) :
     >>> Week.from_string ("2016/W1")
     Week (2016, 1)
 
+    >>> Week.now = CAL.Date (2016, 4, 19)
     >>> Week.from_string ("W13", add_year = True)
     Week (2016, 13)
 
