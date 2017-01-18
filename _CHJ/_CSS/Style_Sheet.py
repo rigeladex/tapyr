@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package CHJ.CSS.
@@ -29,6 +29,7 @@
 #    10-Oct-2014 (CT) Use `@pyk.adapt__str__` abnd `pyk.decoded`
 #    22-Jan-2016 (CT) Use `pyk.text_type`, not `str`, in `__str__`
 #    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
+#     5-Jan-2017 (CT) Remove alias `S`
 #    ««revision-date»»···
 #--
 
@@ -134,8 +135,6 @@ class Style_File (_Style_Sheet_) :
     # end def __str__
 
 # end class Style_File
-
-S = Style_Sheet
 
 __all__ = tuple \
     ( k for (k, v) in pyk.iteritems (globals ())

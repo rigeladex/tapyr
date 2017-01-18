@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package CHJ.CSS.
@@ -27,6 +27,8 @@
 #     9-Jul-2014 (CT) `Rule.__init__` changed to allow `Rule` arguments
 #                     passed positionally
 #    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
+#     5-Jan-2017 (CT) Factor child selector classes to `CHS.CSS.CS...`
+#    20-Jan-2017 (CT) Add `Rule_Prefixed`
 #    ««revision-date»»···
 #--
 
@@ -36,7 +38,7 @@ from   __future__  import print_function, unicode_literals
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
-import _CHJ._CSS
+import _CHJ._CSS.CS
 
 import _TFL._Meta.Object
 
@@ -44,9 +46,9 @@ from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.predicate             import cartesian
 from   _TFL.pyk                   import pyk
 
-### Add support for CSS3 elements that need browser-prefixes (e.g.,
-### border-radius, ...)
-### http://www.usabilitypost.com/2011/02/05/simplify-css-with-less-elements/
+from   itertools                  import chain as ichain
+
+CS = CHJ.CSS.CS
 
 def Kits (* ds, ** kw) :
     result = {}
@@ -62,13 +64,12 @@ class M_Rule (TFL.Meta.Object.__class__) :
 # end class M_Rule
 
 class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
-    """Model a CSS rule.
+    r"""Model a CSS rule.
 
-    >>> import itertools
     >>> tr = Rule_Pseudo ("target", background_color = "yellow", color = "red")
     >>> r1 = Rule ("tr.row1", "div.row1", color = "grey", clear = "both", children = [tr])
     >>> r2 = Rule ("tr.row2", "div.row2", color = "blue", clear = "both", children = [tr])
-    >>> for x in itertools.chain (r1, r2) :
+    >>> for x in ichain (r1, r2) :
     ...   print (x)
     ...
     tr.row1, div.row1
@@ -88,19 +89,65 @@ class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
         ; color            : red
         }
 
+    >>> r = Rule \
+    ...     ( "form"
+    ...     , padding      = "1em"
+    ...     , children     =
+    ...         [ Rule
+    ...             ( CS.Class    ("mf3")
+    ...             , CS.Attr     ("data-validate")
+    ...             , CS.Pseudo_E (":before")
+    ...             , background_color = "yellow"
+    ...             , color            = "blue"
+    ...             , children         =
+    ...                 [ Rule_Prefixed
+    ...                     ( ".no-js"
+    ...                     , "a"
+    ...                     , color    = "red"
+    ...                     )
+    ...                 ]
+    ...             )
+    ...         ]
+    ...     )
+    ...
+    >>> for x in r :
+    ...   print (x)
+    ...
+    form { padding : 1em }
+      form.mf3, form[data-validate], form::before
+        { background-color : yellow
+        ; color            : blue
+        }
+        .no-js form.mf3 a, .no-js form[data-validate] a, .no-js form::before a { color : red }
+
     """
 
     base_level   = 0
+    Default_CS   = CS.Descendant
     media_rule   = None
     parent       = None
-    parent_sep    = " "
+    _prefix      = None
+
+    @property
+    def prefix (self) :
+        return self._prefix
+    # end def prefix
+
+    @prefix.setter
+    def prefix (self, value) :
+        if isinstance (value, pyk.string_types) :
+            value = self.Default_CS (value)
+        self._prefix = value
+    # end def prefix
 
     def __init__ (self, * selectors, ** declarations) :
         proto = declarations.pop ("proto", None)
         if proto :
-            self.parent_sep = proto.parent_sep
-        self.pop_to_self (declarations, "base_level", "parent", "parent_sep")
+            self.Default_CS = proto.Default_CS
+        self.pop_to_self \
+            (declarations, "base_level", "parent", "prefix", "Default_CS")
         self.children = list (self._pop_children (declarations))
+        DCS           = self.Default_CS
         sels          = []
         kits          = []
         if proto :
@@ -108,6 +155,8 @@ class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
             kits.append (proto.declarations)
             self.children = proto.children + self.children
         for s in selectors :
+            if isinstance (s, pyk.string_types) :
+                s = DCS (s)
             if isinstance (s, Rule) :
                 declarations = dict (s.declarations, ** declarations)
             else :
@@ -130,7 +179,8 @@ class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
         d = dict \
             ( self.declarations
             , children   = self.children
-            , parent_sep = self.parent_sep
+            , prefix     = self.prefix
+            , Default_CS = self.Default_CS
             )
         return self.__class__ (* self._selectors, ** d)
     # end def copy
@@ -146,14 +196,15 @@ class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
     @Once_Property
     def selectors (self) :
         parent = self.parent
-        parent_sep = self.parent_sep
-        if parent is not None :
-            return \
-                [   parent_sep.join (s)
-                for s in cartesian (parent.selectors, self._selectors)
-                ]
-        ps = parent_sep.strip ()
-        return [(ps + s) for s in self._selectors]
+        prefix = self.prefix
+        result = []
+        if self._selectors :
+            result = list (ichain (* (s (parent) for s in self._selectors)))
+        elif parent and prefix :
+            result = parent.selectors
+        if result and prefix :
+            result = list (prefix.prefixed (s) for s in result)
+        return result
     # end def selectors
 
     def _formatted_decl (self, declarations, sep) :
@@ -213,35 +264,45 @@ class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
 class Rule_Attr (Rule) :
     """Rule for attribute selection"""
 
-    parent_sep = ""
+    Default_CS   = CS.Attr
 
 # end class Rule_Attr
 
 class Rule_Child (Rule) :
-    """Rule for a child of another element."""
+    """Rule for a (direct) child of another element."""
 
-    parent_sep = " > "
+    Default_CS   = CS.Child
 
 # end class Rule_Child
 
 class Rule_Class (Rule) :
     """Rule for a class."""
 
-    parent_sep = "."
+    Default_CS   = CS.Class
 
 # end class Rule_Class
+
+class Rule_Prefixed (Rule) :
+    """Rule that is prefixed with a selector."""
+
+    def __init__ (self, prefix, * selectors, ** declarations) :
+        declarations.update   (prefix = prefix)
+        self.__super.__init__ (* selectors, ** declarations)
+    # end def __init__
+
+# end class Rule_Prefixed
 
 class Rule_Pseudo (Rule) :
     """Rule for pseudo-classes"""
 
-    parent_sep = ":"
+    Default_CS   = CS.Pseudo
 
 # end class Rule_Pseudo
 
 class Rule_Sibling (Rule) :
     """Rule for adjacent sibling element."""
 
-    parent_sep = " + "
+    Default_CS   = CS.Sibling
 
 # end class Rule_Sibling
 

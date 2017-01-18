@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package CHJ.
@@ -37,6 +37,10 @@
 #    29-Dec-2016 (CT) Allow `Rule` instances as `P_dict` elements
 #                     + Factor `_CHJ_Parameter_`
 #                     + Redefine `P_dict`
+#    16-Jan-2017 (CT) Add `_includes` guard to `Include`
+#    17-Jan-2017 (CT) Redefine `Definition` to fix `Calc` instances with
+#                     symbolic parameter values
+#    20-Jan-2017 (CT) Add `Rule_Prefixed`
 #    ««revision-date»»···
 #--
 
@@ -53,11 +57,59 @@ from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.pyk                   import pyk
 from   _TFL                       import sos
 from   _TFL.Parameters            import \
-    Definition, ddict, P, P_dict, _Parameter_
+    Definition, ddict, M_Definition, P, P_dict, _Parameter_
 
 import _TFL._Meta.Object
 import _TFL.Caller
 import _TFL.Q_Exp
+
+class Lazy_Calc (object) :
+    """Property lazily computing a `Calc` expression"""
+
+    def __init__ (self, name, calc_x, Calc) :
+        self.name   = self.__name__ = name
+        self.calc_x = calc_x
+        self.Calc   = Calc
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            return self
+        result = obj._resolved_calc (self.calc_x, self.Calc)
+        setattr (obj, self.name, result)
+        return result
+    # end def __get__
+
+# end class Lazy_Calc
+
+class _CHJ_M_Definition_ (M_Definition) :
+
+    def _setup_prop (cls, k, v, Q_Root, _nested_) :
+        from _CHJ._CSS.Calc import Calc
+        if isinstance (v, Calc) :
+            setattr (cls, k, Lazy_Calc (k, v, Calc))
+        else :
+            return cls.__m_super._setup_prop (k, v, Q_Root, _nested_)
+    # end def _setup_prop
+
+# end class _CHJ_M_Definition_
+
+class _CHJ_Definition_ \
+        (TFL.Meta.BaM (Definition, metaclass = _CHJ_M_Definition_)) :
+
+    def _resolved_calc (self, c, Calc) :
+        Q_Root = TFL.Q_Exp.Q_Root
+        def _resolved_args () :
+            for a in c.args :
+                if isinstance (a, Calc) :
+                    a = self._resolved_calc (a, Calc)
+                elif isinstance (a, Q_Root) :
+                    a = a (self)
+                yield a
+        return c.__class__ (* tuple (_resolved_args ()))
+    # end def _resolved_calc
+
+Definition = _CHJ_Definition_ # end class
 
 class _CHJ_Parameter_ (_Parameter_) :
 
@@ -101,11 +153,20 @@ class Rule (_Parameter_) :
 
 # end class Rule
 
-class Rule_Attr    (Rule) : pass
-class Rule_Child   (Rule) : pass
-class Rule_Class   (Rule) : pass
-class Rule_Pseudo  (Rule) : pass
-class Rule_Sibling (Rule) : pass
+class Rule_Attr     (Rule) : pass
+class Rule_Child    (Rule) : pass
+class Rule_Class    (Rule) : pass
+class Rule_Pseudo   (Rule) : pass
+class Rule_Sibling  (Rule) : pass
+
+class Rule_Prefixed (Rule) :
+
+    def __init__ (self, prefix, * selectors, ** declarations) :
+        declarations.update   (prefix = prefix)
+        self.__super.__init__ (* selectors, ** declarations)
+    # end def __init__
+
+# end class Rule_Prefixed
 
 class Rule_Definition (Definition) :
     """Definition of parameterized CSS rules"""
@@ -198,6 +259,7 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
             )
         self.env              = env
         self.script_files     = []
+        self._includes        = set ()
         self.__super.__init__ \
             ( object = import_CSS
             , locls  = dict (Include = self.Include)
@@ -222,7 +284,9 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
             if not fn.endswith (".media") :
                 fn = "%s.media" % (fn, )
             source, path, _ = get_source (env, fn)
-            self._eval_file (path)
+            if path not in self._includes :
+                self._includes.add (path)
+                self._eval_file    (path)
     # end def Include
 
     def Script_File (self, src, ** kw) :

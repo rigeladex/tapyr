@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    11-Oct-2016 (CT) Creation (factor from GTW.Parameters)
+#    17-Jan-2017 (CT) Factor `M_Definition._setup_prop`
 #    ««revision-date»»···
 #--
 
@@ -91,10 +92,7 @@ class M_Definition (TFL.Meta.Object.__class__) :
         cls._nested_ = _nested_ = ddict (* bn)
         Q_Root = TFL.Q_Exp.Q_Root
         for k, v in pyk.iteritems (dct) :
-            if isinstance (v, Q_Root) :
-                setattr (cls, k, Lazy_Property (k, v))
-            elif isinstance (v, M_Definition) :
-                _nested_ [k] = v
+            cls._setup_prop (k, v, Q_Root, _nested_)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -103,6 +101,13 @@ class M_Definition (TFL.Meta.Object.__class__) :
             setattr (result, k, v (R = result))
         return result
     # end def __call__
+
+    def _setup_prop (cls, k, v, Q_Root, _nested_) :
+        if isinstance (v, Q_Root) :
+            setattr (cls, k, Lazy_Property (k, v))
+        elif isinstance (v, M_Definition) :
+            _nested_ [k] = v
+    # end def _setup_prop
 
 # end class M_Definition
 

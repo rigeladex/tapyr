@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CHJ.CSS.
@@ -25,6 +25,11 @@
 #                     `Scroll_Snap_Type`
 #    27-Dec-2016 (CT) Remove `-webkit` prefix from flex properties/values
 #    27-Dec-2016 (CT) Remove `-moz` prefix from `Box`, `Font_Feat`
+#    11-Jan-2017 (CT) Add `Align_Content`
+#    12-Jan-2017 (CT) Support symbolic arguments in `Property.__call__`
+#                     * add `as_text`
+#    12-Jan-2017 (CT) Remove `Calc`
+#    18-Jan-2017 (CT) Remove `-webkit` prefix from `Box`
 #    ««revision-date»»···
 #--
 
@@ -112,8 +117,9 @@ class Property (_Prop_) :
         name      = self.name
         prefixes  = self.prefixes
         vp_map    = self.vp_map
+        as_text   = pyk.text_type
         if args :
-            v = result [name] = " ".join (args)
+            v = result [name] = " ".join (as_text (a) for a in args)
             for p in prefixes :
                 result ["-".join ((p, name))] = v
         for k, v in pyk.iteritems (decls) :
@@ -167,8 +173,7 @@ class Value (_Prop_) :
 # end class Value
 
 Border         = Property ("border")
-Box            = Property ("box",                                  "-webkit")
-Calc           = Property ("calc")
+Box            = Property ("box")
 Column         = Property ("column",                "-moz",        "-webkit")
 Filter         = Property ("filter",                               "-webkit")
 Flex           = Property ("flex",                          "-ms")
@@ -180,6 +185,7 @@ Transition     = Property ("transition",                           "-webkit")
 
 ### http://www.adobe.com/devnet/html5/articles/working-with-flexbox-the-new-spec.html
 ### http://caniuse.com/#feat=flexbox
+Align_Content     = Value ("align_content",   "-ms")
 Align_Items       = Value ("align_items",     "-ms")
 Align_Self        = Value ("align_self",      "-ms")
 Display           = Value \

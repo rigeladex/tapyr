@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package CHJ.CSS.
@@ -29,6 +29,7 @@
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
 #    23-Dec-2016 (CT) Add `adapt__str__` to `_Length_`
+#    12-Jan-2017 (CT) Use `Calc` for mixed arithmetic
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ from   _TFL                       import TFL
 
 import _CHJ._CSS
 import _CHJ._CSS._TRBL_
+import _CHJ._CSS.Calc
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property   import Once_Property
@@ -88,12 +90,17 @@ class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
     6px
     >>> print (Px (3) + Px (2))
     5px
-    >>> print (Px (3) + In (2))
-    Traceback (most recent call last):
-      ...
-    TypeError: Cannot add 'Px' and 'In' objects
     >>> print (Px (3) % 2)
     1px
+
+    >>> print (Px (3) + In (2))
+    calc(3px + 2in)
+    >>> print (Px (3) - In (2))
+    calc(3px - 2in)
+    >>> print (Px (3) * In (2))
+    calc(3px * 2in)
+    >>> print (Px (3) / In (2))
+    calc(3px / 2in)
 
     >>> print (Percent (100), Percent (100) / 2, Percent (100) / 2.5)
     100% 50.0% 40.0%
@@ -122,20 +129,18 @@ class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
 
     def __add__ (self, rhs) :
         if not isinstance (rhs, self.__class__) :
-            raise TypeError \
-                ( "Cannot add %r and %r objects"
-                % (self.__class__.__name__, rhs.__class__.__name__)
-                )
-        return self.__class__ (self.value + rhs.value)
+            result = CHJ.CSS.Calc   (self, "+", rhs)
+        else :
+            result = self.__class__ (self.value + rhs.value)
+        return result
     # end def __add__
 
     def __truediv__ (self, rhs) :
         if not isinstance (rhs, (int, float)) :
-            raise TypeError \
-                ( "Cannot divide %r and %r objects"
-                % (self.__class__.__name__, rhs.__class__.__name__)
-                )
-        return self.__class__ (self.value / rhs)
+            result = CHJ.CSS.Calc   (self, "/", rhs)
+        else :
+            result = self.__class__ (self.value / rhs)
+        return result
     # end def __truediv__
 
     def __eq__ (self, rhs) :
@@ -180,14 +185,19 @@ class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
 
     def __mul__ (self, rhs) :
         if not isinstance (rhs, (int, float)) :
-            raise TypeError \
-                ( "Cannot multiply %r and %r objects"
-                % (self.__class__.__name__, rhs.__class__.__name__)
-                )
-        return self.__class__ (self.value * rhs)
+            result = CHJ.CSS.Calc   (self, "*", rhs)
+        else :
+            result = self.__class__ (self.value * rhs)
+        return result
     # end def __mul__
 
-    __rmul__ = __mul__
+    def __rmul__ (self, rhs) :
+        if not isinstance (rhs, (int, float)) :
+            result = CHJ.CSS.Calc   (rhs, "*", self)
+        else :
+            result = self.__class__ (self.value * rhs)
+        return result
+    # end def __rmul__
 
     def __neg__ (self) :
         return self.__class__ (- self.value)
@@ -203,11 +213,10 @@ class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
 
     def __sub__ (self, rhs) :
         if not isinstance (rhs, self.__class__) :
-            raise TypeError \
-                ( "Cannot subtract %r and %r objects"
-                % (self.__class__.__name__, rhs.__class__.__name__)
-                )
-        return self.__class__ (self.value - rhs.value)
+            result = CHJ.CSS.Calc   (self, "-", rhs)
+        else :
+            result = self.__class__ (self.value - rhs.value)
+        return result
     # end def __sub__
 
     def __str__ (self) :

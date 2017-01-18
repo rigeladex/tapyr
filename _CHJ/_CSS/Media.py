@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package CHJ.CSS.
@@ -23,6 +23,8 @@
 #    17-Oct-2014 (CT) Put uppercased names into `Type.Table` because `print`
 #    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
 #    11-Oct-2016 (CT) Move from `GTW` to `CHJ`
+#    12-Jan-2017 (CT) Add `__invert__` to `Expression` and `Query`
+#    17-Jan-2017 (CT) Add `op` to `Query`
 #    ««revision-date»»···
 #--
 
@@ -64,8 +66,13 @@ class Expression (_Media_) :
 
     >>> print (MX ("color"))
     (color)
+
     >>> print (MX ("min_width", "1000px"))
     (min-width: 1000px)
+
+    >>> print (~ MX ("min_width", "1000px"))
+    (max-width: 999px)
+
     """
 
     nick = "MX"
@@ -74,6 +81,29 @@ class Expression (_Media_) :
         self.feature = feature.replace ("_", "-")
         self.expr    = expr
     # end def __init__
+
+    def __invert__ (self) :
+        f = self.feature
+        x = self.expr
+        l = None
+        d = 0
+        if x is not None and f.endswith (("width", "height")) :
+            from _CHJ._CSS.Length import Length
+            try :
+                l = Length (x)
+            except ValueError :
+                pass
+        if f.startswith ("max-") :
+            f = "min" + f [3:]
+            d = +1
+        elif f.startswith ("min") :
+            f = "max" + f [3:]
+            d = -1
+        if l is not None and d :
+            ### correct length to avoid overlap between expr and its negation
+            x = l + l.__class__ (d)
+        return self.__class__ (f, x)
+    # end def __invert__
 
     def __str__ (self) :
         if self.expr is not None :
@@ -102,9 +132,26 @@ class Query (_Media_) :
 
     >>> print (MQ ("color", min_width = "1000px"))
     color and (min-width: 1000px)
+
+    >>> print (MQ ("screen", min_device_width = "768px", min_width = "681px"))
+    screen and (min-device-width: 768px) and (min-width: 681px)
+    >>> print (~ MQ ("screen", min_device_width = "768px", min_width = "681px"))
+    screen and (max-device-width: 767px) and (max-width: 680px)
+    >>> print (~~ MQ ("screen", min_device_width = "768px", min_width = "681px"))
+    screen and (min-device-width: 768px) and (min-width: 681px)
+
+    >>> print (MQ ("screen", min_device_width = "768px", min_width = "681px", op="or"))
+    screen and (min-device-width: 768px), screen and (min-width: 681px)
+    >>> print (~ MQ ("screen", min_device_width = "768px", min_width = "681px", op="or"))
+    screen and (max-device-width: 767px), screen and (max-width: 680px)
+
+    >>> print (~~ MQ ("screen", min_device_width = "768px", min_width = "681px", op="or"))
+    screen and (min-device-width: 768px), screen and (min-width: 681px)
+
     """
 
     nick = "MQ"
+    op   = "and"
 
     def __init__ (self, type = None, * exprs, ** kw) :
         if isinstance (type, Expression) :
@@ -112,7 +159,7 @@ class Query (_Media_) :
             type  = None
         self.type = type
         self.flag = kw.pop ("flag", None)
-        self._setup_exprs  (exprs, kw)
+        self._setup_exprs  (exprs,  kw)
     # end def __init__
 
     @property
@@ -131,30 +178,55 @@ class Query (_Media_) :
         self._type = value
     # end def type
 
+    def _as_string (self, * exprs) :
+        type  = self.type
+        parts = [str (type)] if type else []
+        parts.extend (str (x) for x in exprs)
+        result = " and ".join (parts)
+        if result and self.flag :
+            result = self.flag + " " + result
+        return result
+    # end def _as_string
+
     def _setup_exprs (self, exprs, kw) :
         self.exprs = []
         add        = self.exprs.append
         for x in exprs :
             if isinstance (x, dict) :
-                for f, e in sorted (pyk.iteritems (x)) :
-                    add (Expression (f, e))
+                self._setup_exprs_kw (x, add)
             else :
                 if isinstance (x, pyk.string_types) :
                     x = (x, )
                 if not isinstance (x, Expression) :
                     x = Expression (* x)
                 add (x)
-        for f, e in sorted (pyk.iteritems (kw)) :
-            add (Expression (f, e))
+        self._setup_exprs_kw (kw, add)
     # end def _setup_exprs
 
+    def _setup_exprs_kw (self, kw, add) :
+        for f, e in sorted (pyk.iteritems (kw)) :
+            if f == "op" :
+                self.op = e
+            else :
+                add (Expression (f, e))
+    # end def _setup_exprs_kw
+
+    def __invert__ (self) :
+        exprs = tuple (~x for x in self.exprs)
+        return self.__class__ \
+            ( self.type, * exprs
+            , ** dict (flag = self.flag, op = self.op)
+            )
+    # end def __invert__
+
     def __str__ (self) :
-        type  = self.type
-        parts = [str (type)] if type else []
-        parts.extend (str (x) for x in self.exprs)
-        result = " and ".join (parts)
-        if result and self.flag :
-            result = self.flag + " " + result
+        if self.op == "or" :
+            def _gen (self) :
+                for x in self.exprs :
+                    yield self._as_string (x)
+            result = ", ".join (_gen (self))
+        else :
+            result = self._as_string (* self.exprs)
         return result
     # end def __str__
 
