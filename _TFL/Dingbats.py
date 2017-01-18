@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -22,6 +22,8 @@
 #    13-Mar-2014 (CT) Add some symbols for triangles and blocks
 #    23-Jan-2015 (CT) Add some symbols for various space characters
 #    29-Jun-2016 (CT) Add `infinity`
+#     4-Jan-2017 (CT) Add `white...triangle` symbols (geometric_shapes)
+#     4-Jan-2017 (CT) Add some miscellaneous_technical symbols
 #    ««revision-date»»···
 #--
 
@@ -238,6 +240,15 @@ black_up_pointing_triangle                                          = "\u25B2"
 black_upper_left_triangle                                           = "\u25E4"
 black_upper_right_triangle                                          = "\u25E5"
 
+white_down_pointing_triangle                                        = "\u25BD"
+white_left_pointing_triangle                                        = "\u25C1"
+white_lower_left_triangle                                           = "\u25FA"
+white_lower_right_triangle                                          = "\u25FF"
+white_right_pointing_triangle                                       = "\u25B7"
+white_up_pointing_triangle                                          = "\u25B3"
+white_upper_left_triangle                                           = "\u25F8"
+white_upper_right_triangle                                          = "\u25F9"
+
 ### http://www.alanwood.net/unicode/block_elements.html
 left_one_eighth_block                                               = "\u258F"
 left_one_quarter_block                                              = "\u258E"
@@ -248,6 +259,13 @@ infinity                                                            = "\u221E"
 
 ### http://www.alanwood.net/unicode/miscellaneous_symbols.html
 trigram_for_heaven                                                  = "\u2630"
+
+### http://www.alanwood.net/unicode/miscellaneous_technical.html
+house                                                               = "\u2302"
+up_arrowhead                                                        = "\u2303"
+down_arrowhead                                                      = "\u2304"
+left_pointing_angle_bracket                                         = "\u2329"
+right_pointing_angle_bracket                                        = "\u232A"
 
 ### various space characters
 figure_space                                                        = "\u2007"
