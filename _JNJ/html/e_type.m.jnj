@@ -1,6 +1,6 @@
 {#- jinja template: html/e_type.m.jnj -#}
 {#
-## Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2017 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -65,6 +65,7 @@
 ##    17-May-2016 (CT) Remove trailing blank from `esf_title`
 ##     2-Jun-2016 (CT) Import `e_type_selector.m.jnj`
 ##     7-Jun-2016 (CT) Remove `entity_selector_form` (see e_type_selector.m.jnj)
+##    11-Jan-2017 (CT) Remove obsolete `nav_buttons` once used by `admin_table`
 ##    ««revision-date»»···
 ##--
 #}
@@ -74,18 +75,8 @@
 {%- import "html/e_type_q.m.jnj" as ETQ with context %}
 {#- Import ESF just to make sure the template is known to be used -#}
 {%- import "html/e_type_selector.m.jnj" as ESF with context %}
-{%- import "STD::html/navigation.jnj" as NT with context %}
 
 {%- set attr_filter_pure = ETQ.attr_filter_field %}
-
-{%- macro nav_buttons (page, fields, objects) -%}
-  {%- set nof = GTW.len (fields)  %}
-  {%- set start_tag = '<tfoot class="rel-nav"><tr><td colspan="%s">'
-      % (nof + 2, )
-  %}
-  {%- set end_tag = "</td></tr></tfoot>" %}
-  {{ NT.rel_nav_buttons (page, start_tag, end_tag, first_last_p = True) }}
-{%- endmacro -%} {#- nav_buttons -#}
 
 {%- macro order_by_form (page) -%}
   <form class = "QR order-by" {# -#}

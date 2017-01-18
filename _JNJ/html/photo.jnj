@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: photo.jnj -#}
 {#
-## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -21,11 +21,12 @@
 ##    27-Jan-2010 (CT) Creation
 ##    23-Mar-2010 (CT) Adapted to work with GTW.NAV.E_Type.Gallery
 ##    14-Mar-2014 (CT) Use `NT.rel_link`, not `NT.neighbor`
+##    16-Jan-2017 (CT) Import `rel_nav.m.jnj`, not `navigation.jnj`
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- import "STD::html/navigation.jnj" as NT with context %}
+{%- import "html/rel_nav.m.jnj"             as RN with context %}
 
 {%- macro buttons (page) %}
   {%- set gall = page.parent.permalink %}
@@ -35,11 +36,11 @@
   {%- set tail = page.last  and page.last.permalink %}
   {%- set gallery_title = "%s %s" % (GTW._T ('Gallery'), page.parent.title) %}
   <p class="rel-nav">
-    {{ NT.rel_first  (page, head, GTW._T ("First picture")) }}
-    {{ NT.rel_prev   (page, prev, GTW._T ("Previous picture")) }}
-    {{ NT.rel_parent (page, gall, gallery_title) }}
-    {{ NT.rel_next   (page, next, GTW._T ("Next picture")) }}
-    {{ NT.rel_last   (page, tail, GTW._T ("Last picture")) }}
+    {{ RN.rel_first  (page, head, GTW._T ("First picture")) }}
+    {{ RN.rel_prev   (page, prev, GTW._T ("Previous picture")) }}
+    {{ RN.rel_parent (page, gall, gallery_title) }}
+    {{ RN.rel_next   (page, next, GTW._T ("Next picture")) }}
+    {{ RN.rel_last   (page, tail, GTW._T ("Last picture")) }}
   </p>
 {%- endmacro %} {#- buttons -#}
 

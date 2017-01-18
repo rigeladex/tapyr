@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -63,6 +63,13 @@
 #    31-Dec-2015 (CT) Change `pg_nav_show` to allow embedded rel-nav buttons
 #    11-Oct-2016 (CT) Import from `CHJ`, not `GTW`
 #    27-Dec-2016 (CT) Add `breakpoint.really_narrow`
+#    12-Jan-2017 (CT) Add `breakpoint.supports_two_column`
+#    13-Jan-2017 (CT) Add `body_margin`, `hidden_collapse`, `target_visible`,
+#                     `visible`
+#    16-Jan-2017 (CT) Add `border_double`, `border_simple_light`
+#    16-Jan-2017 (CT) Change `nav_col` to `nav.main`; modernize nav styling
+#    16-Jan-2017 (CT) Add `nav.header`, `nav.rel`
+#    19-Jan-2017 (CT) Add `Rule.main_nav_off`, `.main_nav_on`
 #    ««revision-date»»···
 #--
 
@@ -275,11 +282,16 @@ class Media_Defaults (Definition) :
 
     block_margin_bottom    = Em (1./2)
 
+    body_margin            = TRBL (Em (0.2), Em (0.5))
+
     border_added           = "1px solid "  + P.color.m_red
     border_button          = "2px outset " + P.color_medium_grey
     border_deleted         = "1px solid "  + P.color.m_blue
-    border_simple          = "1px solid "  + P.color_medium_grey
+    border_double          = "2px solid "  + P.color_medium_grey
+    border_double_light    = "2px solid "  + P.color_light_grey
     border_selected        = "2px solid "  + P.color_selected
+    border_simple          = "1px solid "  + P.color_medium_grey
+    border_simple_light    = "1px solid "  + P.color_light_grey
 
     button_spec            = P_dict \
         ( border           = P.border_button
@@ -379,6 +391,10 @@ class Media_Defaults (Definition) :
             ( max_device_width = Px (767)
             )
 
+        supports_two_column    = P_dict \
+            ( min_width        = Px (768)
+            )
+
         broad                  = P_dict \
             ( min_width        = Px (1280)
             )
@@ -388,86 +404,6 @@ class Media_Defaults (Definition) :
             )
 
     # end class breakpoint
-
-    class menu_icon (Definition) :
-
-        color                  = P.R.color_selected
-        line_width             = Rem (0.1875)
-        margin_ab              = Em (0.4375)
-        margin_m               = Em (0.125)
-        width                  = Em  (1.25)
-
-    # end class menu_icon
-
-    class nav_col (Definition) :
-
-        background_color       = RGB_X     ("#EFF3FE")
-
-        button_spec            = P_dict \
-            ( border           = P.R.border_button
-            , color            = P.R.link_color
-            , margin           = 0
-            , text_align       = "center"
-            )
-
-        color_spec_heading     = P_dict \
-            ( background_color = P.R.color_heading
-            , color            = P.background_color
-            )
-
-        color_spec_heading_rev = P_dict \
-            ( background_color = P.background_color
-            , color            = P.R.color_heading
-            )
-
-        color_spec_label       = P_dict \
-            ( background_color = P.background_color
-            , color            = P.R.text_color
-            )
-
-        color_spec_link        = P_dict \
-            ( background_color = P.background_color
-            , color            = P.R.link_color
-            )
-        color_spec_link_current    = P_dict \
-            ( background_color = P.R.visited_color
-            , color            = P.background_color
-            )
-
-        color_spec_no_link     = P_dict \
-            ( background_color = P.background_color
-            , color            = P.R.no_link_color
-            )
-
-        color_spec_section_current = P_dict \
-            ( background_color = P.background_color
-            , color            = P.R.color_heading
-            )
-
-        color_spec_visited     = P_dict \
-            ( color_spec_link
-            , color            = P.R.visited_color
-            )
-
-        color_spec_web_link_hover = P_dict \
-            ( color_spec_link
-            , background_color = RGB_8 (255, 153, 0)
-            )
-
-        li_left                = Em (0.75)
-        line_height_larger     = 1.50
-        line_height_normal     = 1.35
-        mark_color_link        = P.R.css_arrow_color
-        mark_color_section     = P.R.color_heading
-        mark_width             = Em (0.40)
-
-        vert_padding           = Rem (0.2)
-        width                  = Rem (11.875) ### Px (190)
-
-        full_width             = P.width      + 2 * P.R.col_padding
-        right                  = P.full_width + 2 * P.R.col_padding
-
-    ### end class nav_col
 
     class cal (Definition) :
 
@@ -484,6 +420,115 @@ class Media_Defaults (Definition) :
         week_height            = Em    (8)
 
     # end class cal
+
+    class menu_icon (Definition) :
+
+        color                  = P.R.color_selected
+        line_width             = Rem (0.1875)
+        margin_ab              = Em (0.4375)
+        margin_m               = Em (0.125)
+        width                  = Em  (1.25)
+
+    # end class menu_icon
+
+    class nav (Definition) :
+
+        border_radius              = Em (0.625) ### Px (10)
+
+        class header (Definition) :
+
+            a_color                = P.T.color_target
+            a_margin               = 0
+            a_padding              = Em (1)
+
+            hbt_sep                = Em (1)
+
+        # end class header
+
+        class main (Definition) :
+
+            a_font_size            = "small"
+            a_font_size_current    = Em (0.875)
+            background_color       = P.T.background_color
+
+            button_spec            = P_dict \
+                ( border           = P.T.border_button
+                , color            = P.link_color
+                , margin           = 0
+                , text_align       = "center"
+                )
+
+            color_no_link          = P.T.color_heading
+            color_spec_heading     = P_dict \
+                ( background_color = P.T.color_heading
+                , color            = P.background_color
+                )
+
+            color_spec_heading_rev = P_dict \
+                ( background_color = P.background_color
+                , color            = P.T.color_heading
+                )
+
+            color_spec_label       = P_dict \
+                ( background_color = P.background_color
+                , color            = P.T.text_color
+                )
+
+            color_spec_link        = P_dict \
+                ( background_color = P.background_color
+                , color            = P.link_color
+                )
+            color_spec_link_current    = P_dict \
+                ( background_color = P.T.color_lighter_grey
+                , color            = P.T.color_heading
+                )
+
+            color_spec_no_link     = P_dict \
+                ( background_color = P.background_color
+                , color            = P.color_no_link
+                , opacity          = 0.7
+                )
+
+            color_spec_section_current = P_dict \
+                ( background_color = P.background_color
+                , color            = P.T.color_heading
+                )
+
+            color_spec_visited     = P_dict \
+                ( color_spec_link
+                , color            = P.visited_color
+                )
+
+            color_spec_web_link_hover = P_dict \
+                ( background_color = P.link_color
+                , color            = P.background_color
+                )
+
+            li_left                = Em (0.75)
+            line_height_larger     = 1.50
+            line_height_normal     = 1.35
+            link_color             = P.T.color_selected
+            mark_color_link        = P.T.css_arrow_color
+            mark_color_section     = P.T.color_heading
+            mark_width             = Em (0.40)
+            max_button_width       = Em (20)
+            padding                = TRBL (Rem (1./4), Rem (0.625), 0)
+            visited_color          = P.T.color_heading
+
+            vert_padding           = Rem (0.2)
+            width                  = Rem (11.875) + 3 * P.T.col_padding
+
+        # end class main
+
+        class rel (Definition) :
+
+            a_color                = P.T.color_target
+            a_margin               = Em (0.5)
+            a_padding              = Em (1)
+
+        # end class rel
+
+    # end class nav
 
     class pure (Definition) :
         """Parameters of `pure` css as of version v0.4.2."""
@@ -537,6 +582,11 @@ class Media_Defaults (Definition) :
             , visibility   = "hidden"
             )
 
+        hidden_collapse    = Rule \
+            ( display      = "none"
+            , visibility   = "collapse"
+            )
+
         hover              = Rule_Pseudo \
             ( "hover"
             ,  P.R.color_spec_selected
@@ -557,29 +607,19 @@ class Media_Defaults (Definition) :
 
         link               = Rule_Pseudo \
             ( "link"
-            , color = P.R.link_color
+            , color        = P.R.link_color
             )
 
-        pg_nav_show        = Rule \
-            ( ".pg_nav_show"
-            , background_color = P.R.nav_col.background_color
-            , display          = "block"
-            , font_size        = Percent (200)
-            , max_width        = Percent (100)
-            , overflow         = "hidden"
-            , visibility       = "visible"
-            , width            = Vw (100)
-            , children         = [P.R.Rule.pg_nav_show_a]
+        main_nav_off       = Rule \
+            ( height       = 0
+            , padding      = 0
+            , width        = 0
             )
 
-        pg_nav_show_a      = Rule_Child \
-            ( "a"
-            , color            = P.R.color_selected
-            , font_weight      = "bold"
-            , display          = "inline-block"
-            , padding          = TRBL (Em (0.25), Em (0.50))
-            , children         = [P.R.Rule.hover]
-            , ** Border (radius = Px (10))
+        main_nav_on        = Rule \
+            ( height       = "auto"
+            , padding      = P.R.nav.main.padding
+            , width        = "auto"
             )
 
         rotate_45_left     = Rule \
@@ -608,6 +648,27 @@ class Media_Defaults (Definition) :
             , outline      = P.R.outline_focus
             )
 
+        target_visible     = Rule_Pseudo \
+            ( "target"
+            , visibility   = "visible"
+            )
+
+        target_visible_block = Rule_Pseudo \
+            ( "target"
+            , display      = "block"
+            , visibility   = "visible"
+            )
+
+        visible            = Rule_Pseudo \
+            ( "target"
+            , visibility   = "visible"
+            )
+
+        visible_block      = Rule_Pseudo \
+            ( display      = "block"
+            , visibility   = "visible"
+            )
+
         visited            = Rule_Pseudo \
             ( "visited"
             , color        = P.R.visited_color
@@ -621,7 +682,7 @@ class Media_Defaults (Definition) :
         )
     color_spec_gallery_heading = P_dict \
         ( background_color = RGB_P     (50, 75, 100)
-        , color            = P.nav_col.background_color
+        , color            = P.nav.main.background_color
         )
     color_spec_heading     = P_dict \
         ( background_color = P.background_color
@@ -731,9 +792,13 @@ class Media_Defaults (Definition) :
     outline_focus          = "2px solid "   + P.color_focus
     outline_target         = "2px dotted "  + P.color_target
 
-    pg_head_height         = Px (100)
+    pg_body_margin_lr      = Em (3.6)
+    pg_head_height         = "auto"
+    pg_header_nav_height   = Rem (3.5)
     pg_main_max_width      = Em (45)
     pg_main_min_width      = Em (15)
+    pg_short_nav_font_size = Rem (1.20)
+    pg_short_nav_top       = Em (3)
 
     thumbnail_size         = Px (155)
     thumbnail_selected_color = P.color_selected

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -87,6 +87,7 @@
 #    12-May-2016 (CT) Guard `asp is not None` in `_handle_generate_static_pages`
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
+#    17-Jan-2017 (CT) Add `css_nav_side`, `css_nav_type`
 #    ««revision-date»»···
 #--
 
@@ -213,6 +214,12 @@ class GT2W_Command (GTW.OMP.Command) :
             , "-cert_auth_path:P"
                 "?Path of certification authority .crt and .key files"
             , "-CSRF_check:B?Perform checks to protect against CSRF"
+            , "-css_nav_side:S"
+                "?Side where navigation is displayed. "
+                "Values: 'left', 'right', 'bottom'."
+            , "-css_nav_type:S"
+                "?Navigation type of CSS style. "
+                "Values: 'header', 'long', 'short'."
             , "-external_media_path:P"
                 "?Path where the /media/X url should be bound to"
             , "-force_HSTS:B?Include HSTS header"
@@ -381,6 +388,10 @@ class GT2W_Command (GTW.OMP.Command) :
         result = self.root
         if result is None :
             cookie_salt = cao.GET ("cookie_salt", self.SALT)
+            if cao.css_nav_side :
+                kw.update (css_nav_side = cao.css_nav_side)
+            if cao.css_nav_type :
+                kw.update (css_nav_type = cao.css_nav_type)
             if cookie_salt == Command.SALT :
                 warnings.warn \
                     ( "Cookie salt should be specified for every application! "

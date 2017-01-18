@@ -1,6 +1,6 @@
 {#- jinja template: html/base.jnj -#}
 {#
-## Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2017 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -44,70 +44,69 @@
 ##    10-Jun-2015 (CT) Factor `page_notifications.render`
 ##    17-Nov-2015 (CT) Add guard for `page.top.dynamic_nav_p`
 ##    31-Dec-2015 (CT) Add `rel_nav_buttons` to `pg_nav_show`
+##     4-Jan-2017 (CT) Factor `html/base.m.jnj`
+##    17-Jan-2017 (CT) Add `css_nav_side`, `css_nav_type`
+##    18-Jan-2017 (CT) Add blocks `body_header_head`, `_body`, and `_tail`
+##    18-Jan-2017 (CT) Add blocks `body_footer_copyright`,
+##                     `body_footer_top_link`, `body_footer_last_change`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj")   as X -%}
 {%- import "html/media_fragments.jnj"       as MF with context %}
-{%- import "html/navigation.jnj"            as NF with context %}
-{%- import "STD::html/navigation.jnj"       as NT with context %}
+{%- import "html/main_nav.m.jnj"            as MN with context %}
+{%- import "html/navigation.jnj"            as NT with context %}
+{%- import "html/rel_nav.m.jnj"             as RN with context %}
 {%- import "html/page_notifications.m.jnj"  as PN with context %}
+{%- import "html/base.m.jnj"                as BM with context %}
 
 {%- call X.html (lang = page.language|default ("en")) -%}
   {%- if not page -%}{%- set page = NAV -%}{%- endif -%}
   {%- if not template -%}{%- set template = page.template -%}{%- endif -%}
   {%- call X.head () -%}
     {%- block head_elements -%}
-      <meta charset="{{ page.encoding|default ("utf-8") }}" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      {%- if page.exclude_robots %}
-        <meta name="robots" content="NOINDEX, NOFOLLOW">
-      {% endif -%}
-      {%- block related_links -%}
-        {{ MF.link_rel (template) }}
-      {%- endblock related_links -%}
-      {% if page.permalink -%}
-        {{ MF.permalink (page) }}
-      {% endif %}
+      {%- block meta_elements -%}
+        {{ BM.meta_headers (page, description = page.h_title) }}
+      {%- endblock meta_elements -%}
+      {{ BM.link_rel_headers (page, template) }}
       {% block head_base_element %}{% endblock head_base_element %}
         {% block title %}
           <title>{{ page.h_title }}</title>
         {% endblock title -%}
       {%- block styles %}
-        {%- if template.css_href %}
-          {{ X.link_stylesheet (template.css_href) }}
-        {%- else %}
-          {{ MF.inline_CSS (template.CSS) }}
-        {% endif -%}
-        {{ MF.link_css (template) }}
+        {{ BM.style_headers (page, template) }}
       {%- endblock styles %}
         {%- block scripts %}
           {{ MF.scripts (template) }}
         {%- endblock scripts -%}
-      {%- block meta_elements -%}
-        <!-- copyright "{{ page.copyright.year }} {{ page.copyright.holder }}"-->
-        <meta name="generator" content="GTW, JNJ, Jinja2" />
-        {{ X.meta_content_url (page.permalink) }}
-      {%- endblock meta_elements -%}
       {{ page.add_headers|safe }}
     {%- endblock head_elements %}
   {%- endcall %} {# X.head #}
   <body {% if page.document_class %}class="{{ page.document_class }}" {% endif %}{{ page.body_attr|safe }} {%- block body_attrs %}{% endblock %}>
     {%- block body -%}
     {% call X.header (id = "header", class = "pg_head") -%}
-      {%- block body_header %}{% endblock body_header -%}
+      {%- block body_header -%}
+        {%- block body_header_head -%}{%- endblock body_header_head -%}
+        {%- block body_header_body -%}{%- endblock body_header_body -%}
+        {%- block body_header_tail -%}{%- endblock body_header_tail -%}
+      {%- endblock body_header -%}
     {% endcall %} {# X.header #}
     {%- block body_main -%}
-      <div id="main" class="pg_main{%- if page.nav_off_canvas %} nav-off-canvas{%- endif -%}">
-        <p class="pg_nav_show">
-          <a href="#navigate" title="{{- GTW._T ("Show navigation") -}}">
-            {{- GTW.Dingbats.trigram_for_heaven -}}
-          </a>
-          {{ NT.rel_nav_buttons (page, start_tag = '<span class="rel-nav">', end_tag="</span>") -}}
-        </p>
+      {%- set nav_type       = page.css_nav_type or "short" -%}
+      {%- set nav_side       = page.css_nav_side or "left"  %}
+      {%- set nav_off_canvas = " nav-off-canvas"
+            if   page.nav_off_canvas or nav_type != "long"
+            else ""
+      -%}
+      <main id="main" {# -#}
+         class="pg_main{{ nav_off_canvas }} nav-side-{{ nav_side }} nav-type-{{ nav_type }}"{# -#}
+      >
         {%- block body_document -%}
           <div id="document" class="pg_body">
+            {%- block short_nav -%}
+              {{ MN.short_nav (page) }}
+            {%- endblock short_nav -%}
             {%- if page.top.dynamic_nav_p %}
               {%- block page_notifications -%}
                 {{ PN.render (notifications) }}
@@ -122,17 +121,49 @@
           </div> {# #document .pg_body #}
         {%- endblock body_document -%}
         {%- block nav_block -%}
-          {% call X.nav (id = "navigate", class="pg_nav") -%}
+          {% call MN.nav () -%}
             {%- block navigate -%}
-              {{ NF.main (page) }}
+              {{ NT.main (page) }}
             {%- endblock -%}
           {%- endcall %} {# X.nav #}
         {%- endblock nav_block -%}
-      </div> {# #main .pg_main #}
+      </main> {# #main .pg_main #}
     {%- endblock body_main -%}
-    {% call X.footer (id = "footer", class="pg_foot") -%}
-      {%- block body_footer %}{% endblock body_footer -%}
-    {%- endcall -%} {# X.footer #}
+
+    {%- block body_footer %}
+      {% call X.footer (id = "footer", class="pg_foot") -%}
+
+        {%- block body_footer_copyright -%}
+          {%- if page.copyright %}
+            <div class="copyright">
+              Copyright &copy;
+              {{ page.copyright.year if page.copyright.year else GTW.now ("%Y") }}
+              <a href="{{ page.copyright.url }}">
+                {{- page.copyright.holder|default (page.owner) -}}
+              </a>
+            </div>
+          {% endif -%}
+        {%- endblock body_footer_copyright -%}
+
+        {%- block body_footer_top_link %}
+          <div class="top-link">
+            <a id="Bottom" href="#header">{{- GTW._T ("Top of page") -}}</a>
+          </div>
+        {% endblock body_footer_top_link -%}
+
+        {%- block body_footer_last_change %}
+          <div class="last-change">
+            {{- GTW._T ("Last change") -}}:
+            {%- if page.last_changed %}
+              {{ page.last_changed.split (" ") [0] -}}
+            {%- else %}
+              {{ GTW.now ("%Y-%m-%d %H:%M") -}}
+            {% endif -%}
+          </div>
+        {% endblock body_footer_last_change -%}
+      {%- endcall -%} {# X.footer #}
+    {% endblock body_footer -%}
+
     {%- endblock body -%}
     {%- block body_tail_scripts -%}
       {{ MF.js_on_ready (template) }}

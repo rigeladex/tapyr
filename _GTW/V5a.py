@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.
@@ -24,6 +24,8 @@
 #     5-May-2016 (CT) Add `V5a_new_window`
 #    10-Jun-2016 (CT) Add `V5a_form_field`
 #    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
+#    19-Jan-2017 (CT) Add `V5a_is_in_viewport`
+#                     + Adapt `requires` of `V5a_nav_off_canvas`
 #    ««revision-date»»···
 #--
 
@@ -113,6 +115,12 @@ CHJ.Script \
     ( src       = "/media/GTW/js/V5a/history_push.js"
     , name      = "V5a_history_push"
     , requires  = (CHJ.Script._.V5a_history_test, )
+    )
+
+CHJ.Script \
+    ( src       = "/media/GTW/js/V5a/is_in_viewport.js"
+    , name      = "V5a_is_in_viewport"
+    , requires  = (CHJ.Script._.V5a, )
     )
 
 CHJ.Script \
@@ -386,7 +394,9 @@ CHJ.Script \
     ( src       = "/media/GTW/js/V5a/nav_off_canvas.js"
     , name      = "V5a_nav_off_canvas"
     , requires  =
-        ( CHJ.Script._.V5a_merge
+        ( CHJ.Script._.V5a_is_in_viewport
+        , CHJ.Script._.V5a_history_push
+        , CHJ.Script._.V5a_merge
         , CHJ.Script._.V5a_query
         , CHJ.Script._.V5a_wrapped_bind
         )

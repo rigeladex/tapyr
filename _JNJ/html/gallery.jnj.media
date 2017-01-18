@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -37,23 +37,6 @@ style_sheet = Style_Sheet \
         , width                    = Percent (100)
         , children                 =
             [ Rule
-                ( "button"
-                , display          = "inline-block"
-                , padding          = 0
-                , margin           = TRBL (Em (0.5), Em (0.25))
-                , min_width        = 0
-                , children         =
-                    [ P.Rule.hover
-                    , Rule
-                        ( "i.fa"
-                        , color            = P.color.m_orange
-                        , height           = Em (1.0)
-                        , padding          = Em (1)
-                        , width            = Em (1.0)
-                        )
-                    ]
-                )
-            , Rule
                 ( "h1", "h2"
                 , margin_bottom    = Px (10)
                 , padding          = TRBL (Px (10), 0)
@@ -65,19 +48,52 @@ style_sheet = Style_Sheet \
                 , display          = "none"
                 , children         =
                     [ Rule
+                        ( "img"
+                        , display          = "block"
+                        , margin           = "auto"
+                        )
+                    , Rule
                         ( ".photo"
                         , cursor           = "pointer"
-                        , display          = "block"
                         , margin           = "auto"
                         , max_width        = Percent (100)
                         )
                     , Rule
                         ( ".photo-nav"
-                        , border     = 0
-                        , margin     = TRBL (Px (5), 0)
-                        , padding    = 0
-                        , width      = Percent (100)
-                        , text_align = "center"
+                        , Display          ("flex")
+                        , Flex             ("row wrap")
+                        , border           = 0
+                        , margin           = TRBL (Em (0.5), "auto")
+                        , padding          = 0
+                        , width            = Percent (100)
+                        , text_align       = "center"
+                        , children         =
+                            [ Rule
+                                ( "button"
+                                , Flex             ("0 0 auto")
+                                , background_color = "inherit"
+                                , display          = "inline-block"
+                                , font_size        = Em (1.5)
+                                , padding          = Em (0.5)
+                                , margin           = TRBL (0, Em (0.25))
+                                , min_width        = 0
+                                , children         =
+                                    [ P.Rule.hover
+                                    , Rule
+                                        ( "i.fa"
+                                        , color            = P.color.m_orange
+                                        )
+                                    , Rule_Class
+                                        ( ".first"
+                                        , margin_right     = "auto"
+                                        )
+                                    , Rule_Class
+                                        ( ".last"
+                                        , margin_left      = "auto"
+                                        )
+                                    ]
+                                )
+                            ]
                         )
                     ]
                 )

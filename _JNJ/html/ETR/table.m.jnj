@@ -1,6 +1,6 @@
 {#- jinja template: html/ETR/table.m.jnj -#}
 {#
-## Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2015-2017 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -28,12 +28,13 @@
 ##     9-Jun-2015 (CT) Re-add `href` to `action_button_create`
 ##     2-Jan-2016 (CT) Pass `first_last_p` to `rel_nav_buttons`
 ##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
+##    16-Jan-2017 (CT) Import `rel_nav.m.jnj`, not `navigation.jnj`
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- import "html/action_button.m.jnj" as AB with context %}
-{%- import "STD::html/navigation.jnj" as NT with context %}
+{%- import "html/action_button.m.jnj"       as AB with context %}
+{%- import "html/rel_nav.m.jnj"             as RN with context %}
 
 {%- macro action_button
     ( renderer, action
@@ -177,7 +178,7 @@
 {%- endmacro -%} {#- E_Type_head -#}
 
 {%- macro E_Type_tail (renderer) -%}
-  {{ NT.rel_nav_buttons (renderer.resource, first_last_p = True) }}
+  {{ RN.rel_nav_buttons (renderer.resource, first_last_p = True) }}
 {%- endmacro -%} {#- E_Type_tail -#}
 
 {%- macro Instance (renderer) -%}

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -64,6 +64,7 @@
 #    16-May-2016 (CT) Add guard for `Undefined` to `filtered_dict`
 #    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
 #    14-Nov-2016 (CT) Add `isinstance`, `pyk`
+#    19-Jan-2017 (CT) Add `split_hst`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,7 @@ from   _JNJ                     import JNJ
 from   _TFL                     import TFL
 
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.predicate           import filtered_join
+from   _TFL.predicate           import filtered_join, split_hst
 from   _TFL.pyk                 import pyk
 from   _TFL                     import sos
 
@@ -300,6 +301,7 @@ class GTW (TFL.Meta.Object) :
 
     sorted     = staticmethod (sorted)
     Sorted_By  = TFL.Sorted_By
+    split_hst  = staticmethod (split_hst)
     styler     = staticmethod (TFL.HTML.Styler)
 
     def tel_uri (self, phone_number, text = None, ** kw) :

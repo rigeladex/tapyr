@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    html/rel_nav.media
+#    html/rel_nav.m.jnj.media
 #
 # Purpose
 #    Media fragment for relative navigation
@@ -20,16 +20,26 @@
 #     5-Dec-2014 (CT) Use pure buttons for `.rel-nav`
 #    31-Dec-2015 (CT) Add rule for `visibility` of `.pure-button-disabled`
 #     2-Jan-2016 (CT) Add rule for ".pg_body .rel-nav"
+#    11-Jan-2017 (CT) Use `flex`, not (broken) absolute positioning
 #    ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
     ( Rule
         ( ".rel-nav"
+        , Display              ("flex")
+        , Flex                 ("row wrap")
+        , line_height          = "inherit"
         , children             =
             [ Rule
+                ( "a"
+                , Flex                 ("0 0 auto")
+                , line_height          = "inherit"
+                , padding              = P.nav.rel.a_padding
+                )
+            , Rule
                 ( ".fa"
-                , color                = P.color_target
+                , color                = P.nav.rel.a_color
                 , children             =
                     [ Rule
                         ( "b"
@@ -44,33 +54,27 @@ style_sheet = Style_Sheet \
             ]
         )
     , Rule
-        ( ".pg_body .rel-nav"
-        , height               = Em (2.0)
-        , position             = "relative"
+        ( ".pg_body .rel-nav", ".rel-nav.spread"
+        , margin               = TRBL0 (l = P.nav.rel.a_margin)
+        , max_width            = Percent (100)
         , width                = Percent (100)
         , children             =
             [ Rule
-                ( "a:first-child"
-                , position     = "absolute"
-                , left         = 0
-                )
-            , Rule
-                ( "a:nth-last-child(3)"
-                , position     = "absolute"
-                , left         = Em (3.0)
-                )
-            , Rule
-                ( "a:nth-child(3)"
-                , position     = "absolute"
-                , right        = Em (4.0)
-                )
-            , Rule
-                ( "a:last-child"
-                , position     = "absolute"
-                , right        = Em (1.0)
+                ( "a"
+                , margin       = TRBL (0, P.nav.rel.a_margin)
+                , children             =
+                    [ Rule_Class
+                        ( ".first"
+                        , margin_left  = P.nav.rel.a_margin
+                        )
+                    , Rule_Class
+                        ( ".last"
+                        , margin_right = P.nav.rel.a_margin
+                        )
+                    ]
                 )
             ]
         )
     )
 
-### __END__ html/rel_nav.media
+### __END__ html/rel_nav.m.jnj.media

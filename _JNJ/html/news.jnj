@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: news.jnj -#}
 {#
-## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -26,16 +26,15 @@
 ##    22-Jan-2014 (CT) Factor variable `changer`
 ##    14-Mar-2014 (CT) Add `rel_nav_buttons`
 ##    27-Nov-2015 (CT) Factor macro `entry` to html/news.m.jnj
+##    16-Jan-2017 (CT) Remove `rel_nav_buttons`
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- import "STD::html/navigation.jnj" as NT with context %}
 {%- import "html/news.m.jnj"          as NW with context %}
 
 {%- block document -%}
   {{- NW.entry (page) }}
-  {{ NT.rel_nav_buttons (page) -}}
 {%- endblock document -%}
 
 {#- __END__ jinja template: html/news.jnj -#}
