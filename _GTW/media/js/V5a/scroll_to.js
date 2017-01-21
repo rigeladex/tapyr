@@ -18,6 +18,7 @@
 //                     inside `$.scroll_to`
 //    21-Jan-2017 (CT) Add and use `scrolling_parent`, add argument `off`
 //                     + simplify `_scroll_to`
+//    21-Jan-2017 (CT) Fix `scroll_to` for `scrolling_parent == documentElement`
 //    ««revision-date»»···
 //--
 
@@ -44,7 +45,13 @@
         var sp_bcr   = sp.getBoundingClientRect ();
         var offset   = (off || 0) + Math.max
             ((sp_bcr [S.size] - el_bcr [S.size]) * (rel_pos || 0), 0);
-        sp [S.scroll_pos] += el_bcr [S.side] - offset;
+        var delta    = el_bcr [S.side] - offset;
+        if (sp === document.documentElement) {
+            var arg = {}; arg [S.side] = delta;
+            window.scrollBy (arg);
+        } else {
+            sp [S.scroll_pos] += delta;
+        };
     };
     $.scrolling_parent = function scrolling_parent (el) {
         var parent = el.parentElement;
