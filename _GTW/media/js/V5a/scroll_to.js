@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This module is licensed under the terms of the BSD 3-Clause License
@@ -16,6 +16,8 @@
 //    21-Jan-2016 (CT) Creation
 //    30-Dec-2016 (CT) Rename `scroll_to` to `_scroll_to` to avoid name clash
 //                     inside `$.scroll_to`
+//    21-Jan-2017 (CT) Add and use `scrolling_parent`, add argument `off`
+//                     + simplify `_scroll_to`
 //    ««revision-date»»···
 //--
 
@@ -24,43 +26,47 @@
     "use strict";
 
     var scroll_min = 0;
-    var spec_h     =
-        { offset         : "offsetLeft"
-        , scroll_size    : "scrollWidth"
-        , scroll_pos     : "scrollLeft"
-        , size           : "width"
+    var spec       =
+        { left     :
+            { scroll_pos     : "scrollLeft"
+            , side           : "left"
+            , size           : "width"
+            }
+        , top      :
+            { scroll_pos     : "scrollTop"
+            , side           : "top"
+            , size           : "height"
+            }
         };
-    var spec_v     =
-        { offset         : "offsetTop"
-        , scroll_size    : "scrollHeight"
-        , scroll_pos     : "scrollTop"
-        , size           : "height"
+    function _scroll_to (S, el, rel_pos, off) {
+        var el_bcr   = el.getBoundingClientRect () ;
+        var sp       = $.scrolling_parent       (el);
+        var sp_bcr   = sp.getBoundingClientRect ();
+        var offset   = (off || 0) + Math.max
+            ((sp_bcr [S.size] - el_bcr [S.size]) * (rel_pos || 0), 0);
+        sp [S.scroll_pos] += el_bcr [S.side] - offset;
+    };
+    $.scrolling_parent = function scrolling_parent (el) {
+        var parent = el.parentElement;
+        var result = document.documentElement;
+        while (parent !== null) {
+            if (parent.scrollWidth != parent.offsetWidth) {
+                result = parent;
+                break;
+            };
+            parent = parent.parentElement;
         };
-    function _scroll_to (el, rel_pos, S) {
-        // Beware::
-        // the `offsetParent` of `el` must have `overflow` set to `scroll`
-        //   otherwise, the assignment to `scrollLeft` or `scrollTop` will
-        //   silently do nothing
-        var parent       = el.offsetParent || el;
-        var el_offset    = el [S.offset];
-        var el_size      = el.getBoundingClientRect     () [S.size];
-        var vp_size      = parent.getBoundingClientRect () [S.size];
-        var scroll_size  = parent [S.scroll_size];
-        var scroll_max   = scroll_size - el_size;
-        var scroll_off   = (vp_size - el_size) * (rel_pos || 0);
-        var scroll_pos   = Math.min
-            (Math.max (el_offset - scroll_off, 0), scroll_max);
-        parent [S.scroll_pos] = scroll_pos;
+        return result;
     };
-    $.scroll_to_h = function scroll_to_h (el, rel_pos) {
-        _scroll_to (el, rel_pos, spec_h);
+    $.scroll_to_h = function scroll_to_h (el, rel_pos, off) {
+        _scroll_to (spec.left, el, rel_pos, off);
     };
-    $.scroll_to_v = function scroll_to_v (el, rel_pos) {
-        _scroll_to (el, rel_pos, spec_v);
+    $.scroll_to_v = function scroll_to_v (el, rel_pos, off) {
+        _scroll_to (spec.top,  el, rel_pos, off);
     };
-    $.scroll_to   = function scroll_to   (el, rel_pos_h, rel_pos_v) {
-        _scroll_to (el, rel_pos_h, spec_h);
-        _scroll_to (el, rel_pos_v, spec_v);
+    $.scroll_to = function scroll_to (el, rel_pos_h, off_h, rel_pos_v, off_v) {
+        _scroll_to (spec.left, el, rel_pos_h, off_h);
+        _scroll_to (spec.top,  el, rel_pos_v, off_v);
     };
   } ($V5a)
 );

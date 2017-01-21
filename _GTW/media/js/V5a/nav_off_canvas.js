@@ -15,7 +15,7 @@
 // Revision Dates
 //    15-Jan-2016 (CT) Creation
 //    24-Jan-2016 (CT) Use `$.$$`
-//    13-Jan-2017 (CT) Remove calls of `$.prevent_default`
+//    21-Jan-2017 (CT) Use `scroll_to_v`
 //    ««revision-date»»···
 //--
 
@@ -38,15 +38,8 @@
             var hide_cb     = function hide_cb (ev) {
                 mcl.add    (off_cls);
                 mcl.remove (on_cls);
-                if ($.is_in_viewport (main_el, 0.6, 0.4)) {
-                    // avoid automatic scrolling to the anchor
-                    // if it is already visible
-                    $V5a.history_push (main_id);
-                } else {
-                    // the `toggle` alwyas points to `nav_el`
-                    // --> don't follow the link
-                    // --> set window.location manually to `main_el`
-                    window.location  = main_id;
+                if (! $.is_in_viewport (main_el, 0.6, 0.4)) {
+                    $V5a.scroll_to_v (main_el, 0, 32);
                 };
                 $.prevent_default (ev);
             };
@@ -59,12 +52,10 @@
                 if (nav_off) {
                     mcl.remove (off_cls);
                     mcl.add    (on_cls);
-                    if ($.is_in_viewport (nav_el, 0.75, 0.9)) {
-                        // avoid automatic scrolling to the anchor
-                        // if it is already visible
-                        $.prevent_default (ev);
-                        $V5a.history_push ("#" + nav_el.id);
+                    if (! $.is_in_viewport (nav_el, 0.75, 0.9)) {
+                       $.scroll_to_v (nav_el, 0, 32);
                     };
+                    $.prevent_default (ev);
                 } else {
                     hide_cb (ev);
                 };

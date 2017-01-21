@@ -26,6 +26,7 @@
 #    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
 #    19-Jan-2017 (CT) Add `V5a_is_in_viewport`
 #                     + Adapt `requires` of `V5a_nav_off_canvas`
+#    21-Jan-2017 (CT) Change `requires` of `V5a_nav_off_canvas`, again
 #    ««revision-date»»···
 #--
 
@@ -395,9 +396,9 @@ CHJ.Script \
     , name      = "V5a_nav_off_canvas"
     , requires  =
         ( CHJ.Script._.V5a_is_in_viewport
-        , CHJ.Script._.V5a_history_push
         , CHJ.Script._.V5a_merge
         , CHJ.Script._.V5a_query
+        , CHJ.Script._.V5a_scroll_to
         , CHJ.Script._.V5a_wrapped_bind
         )
     )
