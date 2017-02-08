@@ -29,6 +29,7 @@
 ##     2-Jan-2016 (CT) Pass `first_last_p` to `rel_nav_buttons`
 ##    16-May-2016 (CT) Use `GTW.xmlattr (kw)`, not `kw|xmlattr`
 ##    16-Jan-2017 (CT) Import `rel_nav.m.jnj`, not `navigation.jnj`
+##     8-Feb-2017 (CT) Remove `rel_nav_buttons` from `E_Type_tail`
 ##    ««revision-date»»···
 ##--
 #}
@@ -178,7 +179,6 @@
 {%- endmacro -%} {#- E_Type_head -#}
 
 {%- macro E_Type_tail (renderer) -%}
-  {{ RN.rel_nav_buttons (renderer.resource, first_last_p = True) }}
 {%- endmacro -%} {#- E_Type_tail -#}
 
 {%- macro Instance (renderer) -%}

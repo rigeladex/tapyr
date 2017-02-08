@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -141,6 +141,8 @@
 #    10-Jun-2016 (CT) Change `QX_Completed._rendered_post` to return `values`
 #    10-Jun-2016 (CT) Factor `_rendered_post_esf_form`,
 #                     move `html` generation there (from `_rendered_esf`)
+#     8-Feb-2017 (CT) Remove redefinitions of `E_Type.first`, `.last`, `.next`,
+#                     `.prev`
 #    ««revision-date»»···
 #--
 
@@ -1441,17 +1443,6 @@ class E_Type \
 
     @property
     @getattr_safe
-    def first (self) :
-        qr = getattr (self, "query_restriction", None)
-        if qr is None :
-            return self.__super.first_child
-        else :
-            if qr.prev_p and qr.request_args :
-                return dict (qr.request_args_abs, offset = 0)
-    # end def first
-
-    @property
-    @getattr_safe
     def head_line (self) :
         co      = getattr (self, "query_size", None)
         if co is None :
@@ -1484,39 +1475,6 @@ class E_Type \
     def manager (self) :
         return self.etype_manager (self.E_Type)
     # end def manager
-
-    @property
-    @getattr_safe
-    def last (self) :
-        qr = getattr (self, "query_restriction", None)
-        if qr is None :
-            return self.__super.first_child
-        else :
-            if qr.next_p and qr.request_args :
-                return dict (qr.request_args_abs, offset = - qr.limit)
-    # end def last
-
-    @property
-    @getattr_safe
-    def next (self) :
-        qr = getattr (self, "query_restriction", None)
-        if qr is None :
-            return self.__super.next
-        else :
-            if qr.next_p and qr.request_args :
-                return dict (qr.request_args_abs, offset = qr.offset_next)
-    # end def next
-
-    @property
-    @getattr_safe
-    def prev (self) :
-        qr = getattr (self, "query_restriction", None)
-        if qr is None :
-            return self.__super.prev
-        else :
-            if qr.prev_p and qr.request_args :
-                return dict (qr.request_args_abs, offset = qr.offset_prev)
-    # end def prev
 
     @Once_Property
     @getattr_safe
@@ -1574,6 +1532,7 @@ class E_Type \
                 ( fields            = self.fields
                 , objects           = objects
                 , query_restriction = qr
+                , query_size        = self.query_size
                 )
             renderer = self.renderer
             if response.renderer and response.renderer.name == "JSON" :

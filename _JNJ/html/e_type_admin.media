@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -22,6 +22,7 @@
 #     1-Jun-2015 (CT) Add rule for `data-action=undo`
 #     6-Jul-2015 (CT) Add missing `CSS_Link` for `jQuery_UI`
 #    19-Oct-2016 (CT) Improve `margin` and `padding` of `.action .pure-button`
+#     8-Feb-2017 (CT) Remove rules for `.rel-nav`
 #    ««revision-date»»···
 #--
 
@@ -40,11 +41,6 @@ style_sheet = Style_Sheet \
                         , visibility       = "collapse"
                         )
                     ]
-                )
-            , Rule
-                ( ".rel-nav"
-                , display          = "block"
-                , visibility       = "visible"
                 )
             ]
         )
@@ -255,11 +251,6 @@ style_sheet = Style_Sheet \
                     ]
                 )
             ]
-        )
-    , Rule
-        ( ".rel-nav"
-        , display               = "none"
-        , visibility            = "collapse"
         )
     )
 

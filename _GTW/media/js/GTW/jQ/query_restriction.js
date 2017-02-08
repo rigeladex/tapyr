@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2016 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2017 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -90,6 +90,7 @@
 //     4-May-2016 (CT) Change `attr_filters` to allow both `attrs` and
 //                     `children_np` for the same filter
 //    19-May-2016 (CT) Add guard for `typ.attrs` to `new_menu__add_sub_cnp`
+//     8-Feb-2017 (CT) Support several `qr_form_buttons` in `submit_ajax_cb`
 //    ««revision-date»»···
 //--
 ( function ($, undefined) {
@@ -1055,7 +1056,7 @@
         };
         var submit_ajax_cb = function submit_ajax_cb (response) {
             var S    = options.selectors;
-            var qfb$ = $(S.qr_form_buttons).last ();
+            var qfb$ = $(S.qr_form_buttons);
             var p;
             if ("object_container" in response) {
                 $(S.object_container).last ().replaceWith
@@ -1072,13 +1073,21 @@
             };
             if ("qr_next_p" in response) {
                 p = response.qr_next_p;
-                fix_button_state (S.next_button,  qfb$, p);
-                fix_button_state (S.last_button,  qfb$, p);
+                qfb$.each
+                    ( function () {
+                        fix_button_state (S.next_button,  this, p);
+                        fix_button_state (S.last_button,  this, p);
+                      }
+                    );
             };
             if ("qr_prev_p" in response) {
                 p = response.qr_prev_p;
-                fix_button_state (S.first_button, qfb$, p);
-                fix_button_state (S.prev_button , qfb$, p);
+                qfb$.each
+                    ( function () {
+                        fix_button_state (S.first_button, this, p);
+                        fix_button_state (S.prev_button , this, p);
+                      }
+                    );
             };
             if ("callbacks" in response) {
                 for ( var i = 0, li = response.callbacks.length, cb, cbn

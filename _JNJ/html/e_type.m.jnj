@@ -66,6 +66,7 @@
 ##     2-Jun-2016 (CT) Import `e_type_selector.m.jnj`
 ##     7-Jun-2016 (CT) Remove `entity_selector_form` (see e_type_selector.m.jnj)
 ##    11-Jan-2017 (CT) Remove obsolete `nav_buttons` once used by `admin_table`
+##     8-Feb-2017 (CT) Add trailing `qr_form` to `admin`
 ##    ««revision-date»»···
 ##--
 #}
@@ -193,6 +194,11 @@
      , templ_name = renderer.template_module
      )
   }}
+  {% if page.query_size > 5 %}
+    {{- ETQ.qr_form
+       (page, renderer.fields, page.query_restriction, show_config = False)
+    -}}
+  {% endif %}
 {%- endmacro -%} {#- admin -#}
 
 {#- __END__ jinja template: html/e_type.m.jnj -#}

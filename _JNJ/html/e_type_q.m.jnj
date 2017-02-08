@@ -1,6 +1,6 @@
 {#- jinja template: html/e_type_q.m.jnj -#}
 {#
-## Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -24,6 +24,7 @@
 ##                     (needed by MF3 input wigdets)
 ##     3-Dec-2014 (CT) Factor `esf_field` from `attr_filter_field`
 ##     4-Dec-2014 (CT) Use pure grid for `settings` and `attr-filter`
+##     8-Feb-2017 (CT) Add `show_config` argument to `qr_form`
 ##    ««revision-date»»···
 ##--
 #}
@@ -189,7 +190,7 @@
   </div>
 {%- endmacro -%} {#- qr_form_buttons -#}
 
-{%- macro qr_form (page, fields, qr) -%}
+{%- macro qr_form (page, fields, qr, show_config = True) -%}
   {%- set action  = page.abs_href -%}
   {%- set E_Type  = page.E_Type %}
   {%- set c_class = "config hidden" %}
@@ -200,63 +201,65 @@
       )
   -%}
     {{ qr_form_buttons (page, qr, c_class) }}
-    <fieldset class="{{ c_class }}">
-      <fieldset class="settings pure-g">
-        {{ field
-            ( page, GTW._ ("limit")
-            , GTW._T ("Limit number of entities displayed per page")
-            , qr.limit
-            , f_class = "number"
-            , p_class = "pure-u-1-2 pure-u-sm-1-4 pure-u-md-1-6 pure-u-xl-1-8"
-            )
-        }}
-        {{ field
-            ( page, GTW._ ("offset")
-            , GTW._T ("Number of first entity to display on page")
-            , qr.offset_f
-            , f_class = "number"
-            , p_class = "pure-u-1-2 pure-u-sm-1-4 pure-u-md-1-6 pure-u-xl-1-8"
-            )
-        }}
-        {% call field
-            ( page, GTW._ ("order_by")
-            , GTW._T ("Field(s) to use for ordering entities")
-            , label = GTW._T ("Order by")
-            , p_class = "pure-u-1"
-            )
-        %}
-          {{ X.input.hd_input
-              ( class     = "value"
-              , name      = "order_by"
-              , h_value   = qr.order_by_names
-              , d_value   = qr.order_by_ui_names
-              , id        = "QR-order_by"
-              , readonly  = True
+    {%- if show_config %}
+      <fieldset class="{{ c_class }}">
+        <fieldset class="settings pure-g">
+          {{ field
+              ( page, GTW._ ("limit")
+              , GTW._T ("Limit number of entities displayed per page")
+              , qr.limit
+              , f_class = "number"
+              , p_class = "pure-u-1-2 pure-u-sm-1-4 pure-u-md-1-6 pure-u-xl-1-8"
               )
           }}
-        {% endcall %} {# field #}
-        {%- if not page.skip_qr_attr_select %}
+          {{ field
+              ( page, GTW._ ("offset")
+              , GTW._T ("Number of first entity to display on page")
+              , qr.offset_f
+              , f_class = "number"
+              , p_class = "pure-u-1-2 pure-u-sm-1-4 pure-u-md-1-6 pure-u-xl-1-8"
+              )
+          }}
           {% call field
-              ( page, GTW._ ("fields")
-              , GTW._T ("Field(s) to display for each entity")
-              , label = GTW._T ("Fields")
+              ( page, GTW._ ("order_by")
+              , GTW._T ("Field(s) to use for ordering entities")
+              , label = GTW._T ("Order by")
               , p_class = "pure-u-1"
               )
           %}
             {{ X.input.hd_input
                 ( class     = "value"
-                , name      = "fields"
-                , h_value   = GTW.attr_join (",",  fields, "name")
-                , d_value   = GTW.attr_join (", ", fields, "ui_name")
-                , id        = "QR-fields"
+                , name      = "order_by"
+                , h_value   = qr.order_by_names
+                , d_value   = qr.order_by_ui_names
+                , id        = "QR-order_by"
                 , readonly  = True
                 )
             }}
           {% endcall %} {# field #}
-        {% endif -%}
+          {%- if not page.skip_qr_attr_select %}
+            {% call field
+                ( page, GTW._ ("fields")
+                , GTW._T ("Field(s) to display for each entity")
+                , label = GTW._T ("Fields")
+                , p_class = "pure-u-1"
+                )
+            %}
+              {{ X.input.hd_input
+                  ( class     = "value"
+                  , name      = "fields"
+                  , h_value   = GTW.attr_join (",",  fields, "name")
+                  , d_value   = GTW.attr_join (", ", fields, "ui_name")
+                  , id        = "QR-fields"
+                  , readonly  = True
+                  )
+              }}
+            {% endcall %} {# field #}
+          {% endif -%}
+        </fieldset>
+        {{ attr_filter_widget (page, qr.filters) }}
       </fieldset>
-      {{ attr_filter_widget (page, qr.filters) }}
-    </fieldset>
+    {% endif -%}
   {% endcall %} {# Form.form #}
 {%- endmacro -%} {#- qr_form -#}
 
