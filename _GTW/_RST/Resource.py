@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -153,6 +153,8 @@
 #    19-Dec-2016 (CT) Move `LET` of `user` to `wsgi_app`
 #                     + Makes `user` available in `_http_response_context`
 #    19-Dec-2016 (CT) Add info about resource to `__getattr__` error
+#     8-Feb-2017 (CT) Make argument `nav_page` of `show_in_nav` optional
+#     8-Feb-2017 (CT) Change `show_in_nav` to check `short_title`
 #    ««revision-date»»···
 #--
 
@@ -873,8 +875,8 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
                 pass
     # end def send_email
 
-    def show_in_nav (self, nav_page) :
-        return not self.hidden
+    def show_in_nav (self, nav_page = None) :
+        return (not self.hidden) and getattr (self, "short_title", None)
     # end def show_in_nav
 
     def template_iter (self) :

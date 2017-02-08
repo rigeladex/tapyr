@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -53,6 +53,8 @@
 #    17-Nov-2015 (CT) Add `as_static_page`
 #    18-Nov-2015 (CT) Remove redundant redefinition of `permalink`
 #    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
+#     8-Feb-2017 (CT) Change `Index.next`, `.prev`, to use `show_in_nav`
+#                     instead of `hidden`
 #    ««revision-date»»···
 #--
 
@@ -210,10 +212,10 @@ class _TOP_Base_ (_Ancestor) :
             except IndexError :
                 pass
             else :
-                while result.hidden and i+1 < len (entries) :
+                while (not result.show_in_nav ()) and i+1 < len (entries) :
                     i += 1
                     result = entries [i]
-                if not result.hidden :
+                if result.show_in_nav () :
                     return result
         # end def next
 
@@ -226,10 +228,10 @@ class _TOP_Base_ (_Ancestor) :
                 except IndexError :
                     pass
                 else :
-                    while result.hidden and i > 0 :
+                    while (not result.show_in_nav ()) and i > 0 :
                         i -= 1
                         result = entries [i]
-                    if not result.hidden :
+                    if result.show_in_nav () :
                         return result
         # end def prev
 

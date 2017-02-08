@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -27,6 +27,7 @@
 #    12-Mar-2014 (CT) Add `Alias.independent_permissions_p`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    12-May-2016 (CT) Redefine `A_Link.as_static_page` to `pass`
+#     8-Feb-2017 (CT) Make argument `nav_page` of `show_in_nav` optional
 #    ««revision-date»»···
 #--
 
@@ -48,10 +49,10 @@ class TOP_Page (GTW.RST.TOP._Base_, GTW.RST.Leaf) :
 
     dir_template_name          = None
 
-    def show_in_nav (self, nav_page) :
+    def show_in_nav (self, nav_page = None) :
         return \
             (  self.__super.show_in_nav (nav_page)
-            or self.is_current_page (nav_page)
+            or (nav_page is not None and self.is_current_page (nav_page))
             )
     # end def show_in_nav
 
