@@ -25,6 +25,7 @@
 ##     3-Dec-2014 (CT) Factor `esf_field` from `attr_filter_field`
 ##     4-Dec-2014 (CT) Use pure grid for `settings` and `attr-filter`
 ##     8-Feb-2017 (CT) Add `show_config` argument to `qr_form`
+##     9-Feb-2017 (CT) Add `show_config` argument to `qr_form_buttons`
 ##    ««revision-date»»···
 ##--
 #}
@@ -155,38 +156,40 @@
   </div>
 {%- endmacro -%} {#- field -#}
 
-{%- macro qr_form_buttons (page, qr, c_class = "config") -%}
+{%- macro qr_form_buttons (page, qr, c_class = "config", show_config = True) -%}
   <div class="buttons">
     {{ button_first (page, qr) }}
     {{ button_prev  (page, qr) }}
     {{ button_next  (page, qr) }}
     {{ button_last  (page, qr) }}
-    {{ button
-        ( page
-        , name      = GTW._  ("Config")
-        , title     = GTW._T
-            ( "Select the fields displayed, fields used for ordering, "
-              "filters conditions used to select the objects to be displayed."
-            )
-        )
-    }}
+    {%- if show_config %}
+      {{ button
+          ( page
+          , name      = GTW._  ("Config")
+          , title     = GTW._T
+              ( "Select the fields displayed, fields used for ordering, "
+                "filters conditions used to select the objects to be displayed."
+              )
+          )
+      }}
 
-    {{ button
-        ( page
-        , class     = c_class
-        , name      = GTW._  ("Add")
-        , title     = GTW._T
+      {{ button
+          ( page
+          , class     = c_class
+          , name      = GTW._  ("Add")
+          , title     = GTW._T
             ("Add a rule to restrict the objects to a specific attribute value")
-        )
-    }}
-    {{ button
-        ( page
-        , class     = c_class
-        , name      = GTW._  ("Apply")
-        , title     = GTW._T
-            ("Display list of objects matching the restriction")
-        )
-    }}
+          )
+      }}
+      {{ button
+          ( page
+          , class     = c_class
+          , name      = GTW._  ("Apply")
+          , title     = GTW._T
+              ("Display list of objects matching the restriction")
+          )
+      }}
+    {% endif -%}
   </div>
 {%- endmacro -%} {#- qr_form_buttons -#}
 
@@ -200,7 +203,7 @@
       , class  = "QR pure-form pure-form-stacked"
       )
   -%}
-    {{ qr_form_buttons (page, qr, c_class) }}
+    {{ qr_form_buttons (page, qr, c_class, show_config) }}
     {%- if show_config %}
       <fieldset class="{{ c_class }}">
         <fieldset class="settings pure-g">
