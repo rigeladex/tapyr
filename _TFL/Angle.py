@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #    27-Sep-2016 (CT) Change `__str__` to handle `sign`, show fractional seconds
 #    28-Sep-2016 (CT) Change `Angle_D.normalized` to accept `_Angle_` instances
 #                     + Add `Angle_R.normalized`
+#    10-Feb-2017 (CT) Add function `Angle`
 #    ««revision-date»»···
 #--
 
@@ -292,6 +293,29 @@ class Angle_R (_Angle_) :
     # end def __mod__
 
 # end class Angle_R
+
+def Angle (angle) :
+    """Return `angle` `Angle_D` or `Angle_R` instance.
+
+    A numerical `angle` is interpreted as `Angle_D`.
+
+    >>> a = Angle (405)
+    >>> a
+    Angle_D (45)
+
+    >>> b = Angle (Angle_D (45))
+    >>> a == b
+    True
+
+    >>> c = Angle (Angle_R (0.78539816339744828))
+    >>> a == c
+    True
+
+    """
+    result = angle if isinstance (angle, _Angle_) \
+        else Angle_D.normalized (angle)
+    return result
+# end def Angle
 
 if __name__ == "__main__" :
     TFL._Export ("*", "_Angle_")
