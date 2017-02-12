@@ -28,6 +28,7 @@
 #    28-Sep-2016 (CT) Change `Angle_D.normalized` to accept `_Angle_` instances
 #                     + Add `Angle_R.normalized`
 #    10-Feb-2017 (CT) Add function `Angle`
+#    13-Feb-2017 (CT) Add `__neg__`
 #    ««revision-date»»···
 #--
 
@@ -237,6 +238,10 @@ class Angle_D (_Angle_) :
         return self.degrees % rhs
     # end def __mod__
 
+    def __neg__ (self) :
+        return self.__class__ (- self.degrees)
+    # end def __neg__
+
 # end class Angle_D
 
 class Angle_R (_Angle_) :
@@ -291,6 +296,10 @@ class Angle_R (_Angle_) :
     def __mod__ (self, rhs) :
         return self.radians % rhs
     # end def __mod__
+
+    def __neg__ (self) :
+        return self.__class__ (- self.radians)
+    # end def __neg__
 
 # end class Angle_R
 

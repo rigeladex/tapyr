@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -23,6 +23,7 @@
 #    16-Oct-2014 (CT) Wrap generic functions in dict created from
 #                     `_portable_repr_properties` by `dict_from_class`
 #    22-Oct-2015 (CT) Add `logging.exception` to `generic_portable_repr`
+#    13-Feb-2017 (CT) Add `_float_epsilon`
 #    ««revision-date»»···
 #--
 
@@ -203,7 +204,8 @@ class _portable_repr_properties (object) :
 
     @generic_portable_repr.add_type (float)
     def float (obj, seen) :
-        return "%.12g" % obj
+        return "%.12g" % obj if abs (obj) >= portable_repr._float_epsilon \
+            else "0"
     # end def float
 
     @generic_portable_repr.add_type (type (call.top_func))
@@ -277,7 +279,7 @@ _portable_repr_properties.update \
     for k in ("add_type", "dispatch", "top_func")
     )
 
-@Attributed (** _portable_repr_properties)
+@Attributed (_float_epsilon = 1e-16, ** _portable_repr_properties)
 def portable_repr (obj) :
     """Return a portable canonical string representation of `obj`.
 
