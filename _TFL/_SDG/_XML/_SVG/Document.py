@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -26,6 +26,7 @@
 #    20-Sep-2012 (RS) Add `Arrow_Head_Bar`
 #    26-Sep-2012 (CT) Add `klass` to `Root`
 #    27-Sep-2012 (CT) Add `preserve_aspect_ratio` to `Root`
+#    13-Feb-2017 (CT) Add `Gradient_Stop`, `Radial_Gradient`, and `SVG` elements
 #    ««revision-date»»···
 #--
 
@@ -135,6 +136,7 @@ TFL.SDG.XML.Node.attr_name_translate.update \
     , ref_x                   = "refX"
     , ref_y                   = "refY"
     , start_offset            = "startOffset"
+    , stop_color              = "stop-color"
     , stroke_dasharray        = "stroke-dasharray"
     , stroke_dashoffset       = "stroke-dashoffset"
     , stroke_linecap          = "stroke-linecap"
@@ -305,6 +307,14 @@ Ellipse                     = TFL.SDG.XML.Elem_Type \
     , ** _shape_attr
     )
 
+Gradient_Stop               = TFL.SDG.XML.Elem_Type \
+    ( "stop"
+    , (TFL.SDG.XML.Empty, )
+    , offset                = None
+    , stop_color            = None
+    , stop_opacity          = None
+    )
+
 Group                       = TFL.SDG.XML.Elem_Type \
     ( "g"
     , ** _shape_text_attr
@@ -366,6 +376,19 @@ Polyline                    = TFL.SDG.XML.Elem_Type \
     , ** dict (_shape_attr, ** _marker_use_attr)
     )
 
+Radial_Gradient             = TFL.SDG.XML.Elem_Type \
+    ( "radialGradient"
+    , cx                    = None
+    , cy                    = None
+    , elid                  = None
+    , fx                    = None
+    , fy                    = None
+    , gradientUnits         = "userSpaceOnUse"
+    , r                     = None
+    , spreadMethod          = None
+    , xlink_href            = None
+    )
+
 Rect                        = TFL.SDG.XML.Elem_Type \
     ( "rect"
     , (TFL.SDG.XML.Empty, )
@@ -388,6 +411,18 @@ Root                        = TFL.SDG.XML.Elem_Type \
     , view_box              = None
     , width                 = None
     , xmlns                 = "http://www.w3.org/2000/svg"
+    , x                     = None
+    , y                     = None
+    , ** _viewport_attr
+    )
+
+### nested `svg` element
+SVG                         = TFL.SDG.XML.Elem_Type \
+    ( "svg"
+    , height                = None
+    , klass                 = None
+    , view_box              = None
+    , width                 = None
     , x                     = None
     , y                     = None
     , ** _viewport_attr
