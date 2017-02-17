@@ -232,6 +232,7 @@ _shape_attr                 = dict \
     , stroke_width          = None
     , style                 = None
     , transform             = None
+    , vector_effect         = None
     , visibility            = None
     , x                     = None
     , y                     = None
@@ -252,7 +253,6 @@ _text_attr                  = dict \
     , rotate                = None
     , text_anchor           = None
     , text_decoration       = None
-    , vector_effect         = None
     , word_spacing          = None
     )
 
