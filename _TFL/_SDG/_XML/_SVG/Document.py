@@ -27,6 +27,7 @@
 #    26-Sep-2012 (CT) Add `klass` to `Root`
 #    27-Sep-2012 (CT) Add `preserve_aspect_ratio` to `Root`
 #    13-Feb-2017 (CT) Add `Gradient_Stop`, `Radial_Gradient`, and `SVG` elements
+#    17-Feb-2017 (CT) Add `vector_effect`
 #    ««revision-date»»···
 #--
 
@@ -146,6 +147,7 @@ TFL.SDG.XML.Node.attr_name_translate.update \
     , stroke_width            = "stroke-width"
     , text_anchor             = "text-anchor"
     , text_decoration         = "text-decoration"
+    , vector_effect           = "vector-effect"
     , view_box                = "viewBox"
     , word_spacing            = "word-spacing"
     , xlink_href              = "xlink:href"
@@ -248,6 +250,7 @@ _text_attr                  = dict \
     , rotate                = None
     , text_anchor           = None
     , text_decoration       = None
+    , vector_effect         = None
     , word_spacing          = None
     )
 
