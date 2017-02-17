@@ -28,6 +28,8 @@
 #    27-Sep-2012 (CT) Add `preserve_aspect_ratio` to `Root`
 #    13-Feb-2017 (CT) Add `Gradient_Stop`, `Radial_Gradient`, and `SVG` elements
 #    17-Feb-2017 (CT) Add `vector_effect`
+#    17-Feb-2017 (CT) Change `_convert_points` to use `%s`, not `%d`
+#                     + Ditto for `_convert_points_path`
 #    ««revision-date»»···
 #--
 
@@ -264,7 +266,7 @@ _viewport_attr              = dict \
 def _convert_points (self, k, value) :
     result = value
     if isinstance (value, (list, tuple)) :
-        result = " ".join ("%d,%d" % (x, y) for x, y in value)
+        result = " ".join ("%s,%s" % (x, y) for x, y in value)
     return result
 # end def _convert_points
 
@@ -272,9 +274,9 @@ def _convert_points_path (self, k, value) :
     result = value
     if isinstance (value, (list, tuple)) :
         x, y  = value [0]
-        parts = ["M %d %d L" % (x, y)]
+        parts = ["M %s %s L" % (x, y)]
         parts.extend \
-            ("%d %d" % (x, y) for x, y in value [1:])
+            ("%s %s" % (x, y) for x, y in value [1:])
         result = " ".join (parts)
     return result
 # end def _convert_points_path
