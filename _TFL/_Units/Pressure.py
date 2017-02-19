@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,12 +16,15 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
+#    19-Feb-2017 (CT) Add `hectopascal`
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
+
 import _TFL._Meta.Object
 import _TFL._Units.Kind
+import _TFL._Units.Prefix
 
 class Pressure (TFL.Units.Kind) :
     """Units of pressure
@@ -39,8 +42,10 @@ class Pressure (TFL.Units.Kind) :
     base_unit         = Unit ("pascal", 1.0, "Pa")
     _units            = \
         ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
+        # SI prefixes
+          Unit ("hectopascal",           TFL.Units.hecto, "hPa")
         # Usual units
-          Unit ("torr",                  133.3223684,     "torr")
+        , Unit ("torr",                  133.3223684,     "torr")
         , Unit ("atmosphere",              1.01325E+5,    "atm")
         , Unit ("bar",                     1.0E+5,        "bar")
         # US customary units
