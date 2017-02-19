@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -31,6 +31,7 @@
 #     6-Oct-2015 (CT) Adapt `hex`, `hex_CSS` to Python 3.5
 #                     ("%X" requires `int`, blows up for `float`)
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    19-Feb-2017 (CT) Add `relative_luminance`, `contrast_ratio`
 #    ««revision-date»»···
 #--
 
@@ -448,6 +449,24 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     # end def red
 
     @property
+    def relative_luminance (self) :
+        """Relative brightness, normalized to 0 for darkest black and 1 for
+           lightest white.
+
+           https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+        """
+        def normalized (x) :
+            return x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4
+        red   = self.red
+        green = self.green
+        blue  = self.blue
+        r     = normalized (red)
+        g     = normalized (green)
+        b     = normalized (blue)
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    # end def relative_luminance
+
+    @property
     def rgb (self) :
         return self.value.rgb
     # end def rgb
@@ -470,6 +489,18 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
         h, s, l = self.value.hsl
         self.value = Value.from_hsl ((h, float (value), l))
     # end def saturation
+
+    def contrast_ratio (self, other) :
+        """Contrast ratio between `self` and `other`.
+
+           https://www.w3.org/TR/WCAG20/#contrast-ratiodef
+        """
+        l1 = self.relative_luminance
+        l2 = other.relative_luminance
+        if l1 < l2 :
+            l1, l2 = l2, l1
+        return (l1 + 0.05) / (l2 + 0.05)
+    # end def contrast_ratio
 
     def formatted (self) :
         v = self._formatted_values ()
@@ -940,6 +971,18 @@ Classes modelling various color representations::
     >>> _Color_.formatter = None
     >>> print (SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5))
     grey darkred rgba(0, 0, 255, 0.5)
+
+    >>> _Color_.formatter = RGB_X
+    >>> print (w, w.relative_luminance)
+    #FFF 1.0
+    >>> print (b, b.relative_luminance)
+    #000 0.0
+
+    >>> print (w, b, w.contrast_ratio (b), b.contrast_ratio (w))
+    #FFF #000 21.0 21.0
+
+    >>> print (w, b, w.contrast_ratio (w), b.contrast_ratio (b))
+    #FFF #000 1.0 1.0
 
 """
 
