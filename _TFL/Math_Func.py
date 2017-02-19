@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -44,6 +44,8 @@
 #    15-Jun-2010 (CT)  `periodic_pattern_gen` removed (needs to go into
 #                      different module)
 #    26-Feb-2016 (CT) Import `division` from `__future__`
+#    19-Feb-2017 (CT) Add `median`, `median_s`
+#    20-Feb-2017 (CT) Add `percentile`, `percentile_s`
 #    ««revision-date»»···
 #--
 
@@ -147,6 +149,79 @@ def linear_regression_1 (ys, xs) :
 def log2  (x) :
     return log (x) / _log2
 # end def log2
+
+def median (seq) :
+    """Return the median value of `seq`.
+
+    >>> median ([1, 5, 2, 8, 7])
+    5
+    """
+    return median_s (sorted (seq))
+# end def median
+
+def median_s (sorted_seq) :
+    """Return the median value of `sorted_seq`.
+
+    >>> median ([1, 2, 2, 3, 14])
+    2
+
+    >>> median ([1, 2, 2, 3, 3, 14])
+    2.5
+
+    """
+    l = len (sorted_seq)
+    if l % 2 :
+        result =  sorted_seq [l // 2]
+    else :
+        l -= 1
+        result = (sorted_seq [l // 2] + sorted_seq [l // 2 + 1]) / 2.0
+    return result
+# end def median_s
+
+def percentile (p, seq) :
+    """Return percentile `p` of `seq`.
+
+    >>> percentile (30, [15, 20, 35, 40, 50])
+    20
+
+    >>> percentile (40, [15, 20, 35, 40, 50])
+    20
+
+    >>> percentile (50, [15, 20, 35, 40, 50])
+    35
+
+    >>> percentile (100, [15, 20, 35, 40, 50])
+    50
+
+    """
+    return percentile_s (p, sorted (seq))
+# end def percentile
+
+def percentile_s (p, sorted_seq) :
+    """Return percentile `p` of `sorted_seq`.
+
+    >>> l1 = [3, 6, 7, 8, 8,    10, 13, 15, 16, 20]
+    >>> l2 = [3, 6, 7, 8, 8, 9, 10, 13, 15, 16, 20]
+    >>> for l in (l1, l2) :
+    ...   for p in (0, 25, 50, 75, 100) :
+    ...     print ("%3s percentile of %s elements: %2s" % (p, len (l), percentile (p, l)))
+      0 percentile of 10 elements:  3
+     25 percentile of 10 elements:  7
+     50 percentile of 10 elements:  8
+     75 percentile of 10 elements: 15
+    100 percentile of 10 elements: 20
+      0 percentile of 11 elements:  3
+     25 percentile of 11 elements:  7
+     50 percentile of 11 elements:  9
+     75 percentile of 11 elements: 15
+    100 percentile of 11 elements: 20
+
+    """
+    l      = len (sorted_seq)
+    i      = int (0.99 + (p * l) / 100) - 1 if p else 0
+    result = sorted_seq [i]
+    return result
+# end def percentile_s
 
 def p2_ceil (n) :
     """Return next larger power of 2 for `n`.
