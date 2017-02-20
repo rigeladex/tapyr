@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -36,6 +36,7 @@
 #     6-May-2014 (CT) Add optional `filter` to `Filter_Atoms`
 #    11-May-2016 (CT) Factor `MOM.Attr.Querier.regexp`
 #    12-May-2016 (CT) Change `_pepk_filter` to use `getattr` of `E_Type.AQ`
+#    20-Feb-2017 (CT) Add guard for `ET.sorted_by`
 #    ««revision-date»»···
 #--
 
@@ -442,7 +443,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         else :
             q     = getattr (E_Type.AQ, name)
             ET    = getattr (q._attr, "E_Type", None)
-            if ET :
+            if ET and ET.sorted_by is not None :
                 keys = tuple ("%s%s.%s" % (sign, name, k) for k in ET.sorted_by)
             else :
                 keys = (s, )
