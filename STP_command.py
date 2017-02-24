@@ -16,6 +16,7 @@
 # Revision Dates
 #    23-Feb-2017 (CT) Creation
 #    24-Feb-2017 (CT) Use `twine` for upload
+#    24-Feb-2017 (CT) Update `__doc__` doctest output
 #    ««revision-date»»···
 #--
 
@@ -31,12 +32,13 @@ looks like::
 
     >>> _ = Command () (["-help=cmds"]) # doctest:+ELLIPSIS
     Sub commands of .../STP_command.py
-        clean              : Clean everything created by setup.py
-        list               : List packages selected by `-package`, `-all`, `-py-path`
-        release            : Use setup.py to package and upload the packages selected
-        setup              : Apply the specified setup commands to the packages selected
-        tag                : Tag repository version
-        version            : Show version of packages
+        clean   : Clean everything created by setup.py
+        list    : List packages selected by `-package`, `-all`, `-py-path`
+        release : Use setup.py to package and upload the packages selected
+        setup   : Apply the specified setup.py commands to the packages selected
+        tag     : Tag repository version
+        twine   : Apply the specified twine commands to the packages selected
+        version : Show version of packages
 
 `STP_command clean` cleans **all** files created by `setup.py`::
 
