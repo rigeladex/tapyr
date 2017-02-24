@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This file is part of the package _MOM.
@@ -18,12 +18,12 @@
 # Revision Dates
 #    17-Sep-2009 (CT) Creation (factored from TOM)
 #    11-Oct-2016 (CT) Add ``__version__``
+#    22-Feb-2017 (CT) Remove `__version__`
 #    ««revision-date»»···
 #--
 
 from _TFL.Package_Namespace import Package_Namespace
 
-__version__ = "1.6.2"
 __doc__ = """
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 

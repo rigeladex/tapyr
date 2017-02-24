@@ -1,51 +1,52 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 Mag. Christian Tanzer. All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria.
-# Web: http://www.c-tanzer.at/en/ Email: tanzer@swing.co.at
-# All rights reserved
-# ****************************************************************************
+# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package TFL_STP.
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
-# ****************************************************************************
+# #*** </License> ***********************************************************#
 #
 #++
 # Name
-#    _ReST.setup
+#    TFL_STP.setup
 #
 # Purpose
-#    Setup file for package namespace ReST
+#    Setup file for package TFL_STP
 #
 # Revision Dates
-#    12-Oct-2016 (CT) Creation
-#    13-Oct-2016 (CT) Use `find_packages`, `_TFL.fs_find`, not home-grown code
-#    22-Feb-2017 (CT) Use `TFL_STP`, not home-grown code
+#    23-Feb-2017 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
+from   __future__  import print_function
 
-from   setuptools               import setup
+### `unicode_literals` break `distutils`
+### https://bugs.python.org/issue13943 (Created on 2012-02-04 20:41)
+### from   __future__  import unicode_literals
 
-import TFL_STP as STP
+from   codecs      import open
+from   setuptools  import setup
+import os
 
-STP.change_to_dir (__file__)
+src_dir = os.path.dirname (__file__)
+if src_dir :
+    os.chdir (src_dir)
 
 license = "BSD License"
-name    = "ReST-Tapyr"
-p_name  = "_ReST"
+name    = "TFL_STP"
+p_name  = "TFL_STP"
 
-version              = STP.package_version ()
-long_description     = STP.long_description ()
-packages, data_files = STP.packages_plus_data_files (p_name)
-Test_Command         = STP.Test_Command
+long_description = open ("README.rst", encoding = "utf-8").read ().strip ()
+packages         = [ p_name ]
+data_files       = ["LICENSE", "README.rst", "setup.py", "setup.cfg"]
 
 if __name__ == "__main__" :
     setup \
     ( name                 = name
-    , version              = version
-    , description          =
-        "Package augmenting docutil's reStructuredText handling."
+    , version              = "0.9.5"
+    , description          = "Setup helper functions for TFL-based packages"
     , long_description     = long_description
     , license              = license
     , author               = "Christian Tanzer"
@@ -55,6 +56,7 @@ if __name__ == "__main__" :
     , package_dir          = { p_name : "." }
     , package_data         = { p_name : data_files }
     , platforms            = "Any"
+    , include_package_data = True
     , classifiers          = \
         [ "Development Status :: 5 - Production/Stable"
         , "License :: OSI Approved :: " + license
@@ -67,11 +69,9 @@ if __name__ == "__main__" :
         , "Intended Audience :: Developers"
         , "Topic :: Software Development :: Libraries :: Python Modules"
         ]
-    , setup_requires       = ["TFL_STP"]
-    , install_requires     = ["TFL", "docutils"]
-    , extras_require       = dict ()
-    , cmdclass             = dict (test = Test_Command)
+    , setup_requires       = []
+    , install_requires     = []
     , zip_safe             = False ### no eggs, please
     )
 
-### __END__ _ReST.setup
+### __END__ TFL_STP.setup

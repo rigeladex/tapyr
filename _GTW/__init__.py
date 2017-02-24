@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,12 +17,11 @@
 # Revision Dates
 #    28-Dec-2009 (CT) Creation
 #    12-Oct-2016 (CT) Add `__version__`
+#    22-Feb-2017 (CT) Remove `__version__`
 #    ««revision-date»»···
 #--
 
 from _TFL.Package_Namespace import Package_Namespace
-
-__version__ = "1.2.6"
 
 __doc__     = """
 `GTW` provides a `Werkzeug-based <http://werkzeug.pocoo.org/>`_ framework for

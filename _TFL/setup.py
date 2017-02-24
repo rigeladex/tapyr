@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria.
 # Web: http://www.c-tanzer.at/en/ Email: tanzer@swing.co.at
 # All rights reserved
@@ -27,62 +27,26 @@
 #    10-Oct-2016 (CT) Get `long_description` from `README`
 #    10-Oct-2016 (CT) Use `setuptools`, not `distutils.core`
 #    13-Oct-2016 (CT) Use `find_packages`, `_TFL.fs_find`, not home-grown code
+#    22-Feb-2017 (CT) Factor `TFL_STP`
 #    ««revision-date»»···
 #--
 
 from   __future__               import print_function
 
-from   codecs                   import open
-from   setuptools               import setup, find_packages, Command
-from   _TFL                     import fs_find
+from   setuptools               import setup
 
-import ast
-import itertools
-import os
-import re
-import sys
+import TFL_STP as STP
 
-_version_re = re.compile(r'__version__\s+=\s+(.*)')
-
-src_dir = os.path.dirname (__file__)
-if src_dir :
-    os.chdir (src_dir)
+STP.change_to_dir (__file__)
 
 license = "BSD License"
-
 name    = "TFL"
 p_name  = "_TFL"
 
-with open ("__init__.py", encoding = "utf-8") as f :
-    version = str \
-        (ast.literal_eval (_version_re.search (f.read ()).group (1)))
-
-packages   = [p_name] + list (".".join ((p_name, p)) for p in find_packages ())
-Q          = fs_find.Filter
-data_dirs  = fs_find.directories \
-    ( ".", filter = fs_find.Filter (include = Q.IN ("-I18N", "locale")))
-data_files = list \
-    ( itertools.chain
-        ( ["LICENSE", "README.rst", "setup.py"]
-        , fs_find.file_iter (".", filter = Q (include = Q.equal ("babel.cfg")))
-        , fs_find.file_iter (* data_dirs)
-        )
-    )
-
-class Test_Command (Command) :
-    user_options = []
-
-    def initialize_options (self) :
-        pass
-
-    def finalize_options (self) :
-        pass
-
-    def run (self) :
-        import _TFL.run_doctest
-        _TFL.run_doctest.Command (["-summary", "-transitive", "./"])
-
-# end class Test_Command
+version              = STP.package_version ()
+long_description     = STP.long_description ()
+packages, data_files = STP.packages_plus_data_files (p_name)
+Test_Command         = STP.Test_Command
 
 if __name__ == "__main__" :
     setup \
@@ -90,8 +54,7 @@ if __name__ == "__main__" :
     , version              = version
     , description          =
         "Library with lots of useful stuff (says Ralf Schlatterbeck)"
-    , long_description     =
-        open ("README.rst", encoding = "utf-8").read ().strip ()
+    , long_description     = long_description
     , license              = license
     , author               = "Christian Tanzer"
     , author_email         = "tanzer@swing.co.at"
@@ -99,20 +62,21 @@ if __name__ == "__main__" :
     , packages             = packages
     , package_dir          = { p_name : "." }
     , package_data         = { p_name : data_files }
-    , platforms            = 'Any'
+    , platforms            = "Any"
     , classifiers          = \
-        [ 'Development Status :: 5 - Production/Stable'
-        , 'License :: OSI Approved :: ' + license
-        , 'Operating System :: OS Independent'
-        , 'Programming Language :: Python'
-        , 'Programming Language :: Python :: 2'
-        , 'Programming Language :: Python :: 2.7'
-        , 'Programming Language :: Python :: 3'
-        , 'Programming Language :: Python :: 3.5'
-        , 'Intended Audience :: Developers'
-        , 'Topic :: Software Development :: Libraries :: Python Modules'
+        [ "Development Status :: 5 - Production/Stable"
+        , "License :: OSI Approved :: " + license
+        , "Operating System :: OS Independent"
+        , "Programming Language :: Python"
+        , "Programming Language :: Python :: 2"
+        , "Programming Language :: Python :: 2.7"
+        , "Programming Language :: Python :: 3"
+        , "Programming Language :: Python :: 3.5"
+        , "Intended Audience :: Developers"
+        , "Topic :: Software Development :: Libraries :: Python Modules"
         ]
-    , install_requires     = []
+    , setup_requires       = ["TFL_STP"]
+    , install_requires     = ["TFL_STP"]
     , extras_require       = dict
         ( bcrypt               = ["bcrypt"]
         , doc                  = ["plumbum", "sphinx"]
@@ -124,3 +88,5 @@ if __name__ == "__main__" :
     , cmdclass             = dict (test = Test_Command)
     , zip_safe             = False ### no eggs, please
     )
+
+### __END__ _TFL.setup
