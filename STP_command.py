@@ -15,6 +15,7 @@
 #
 # Revision Dates
 #    23-Feb-2017 (CT) Creation
+#    24-Feb-2017 (CT) Use `twine` for upload
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,7 @@ class STP_Command (TFL.Command.Root_Command) :
         _opts                   = \
             ( "-message:S?Annotate the tag with message specified"
             , "-tag:S?New tag value (`+` means increment)"
+            , "-test:B?Use the repository testpypi.python.org"
             )
 
     # end class _STP_SR_Base_
@@ -148,7 +150,7 @@ class STP_Command (TFL.Command.Root_Command) :
 
         _opts                   = \
             ( "-source:B?Upload source distribution, too [sdist]"
-            , "-test:B?Upload to testpypi.python.org"
+            ,
             )
 
     _Release_ = _STP_Release_ # end class
@@ -178,6 +180,17 @@ class STP_Command (TFL.Command.Root_Command) :
 
     _Tag_ = _STP_Tag_ # end class
 
+    class _STP_Twine_ (_STP_SR_Base_) :
+        """Apply the specified twine commands to the packages selected"""
+
+        max_args                = -1
+        _args                   = \
+            ( "twine_cmd:S?Command(s) passed to `twine`"
+            ,
+            )
+
+    _Twine_ = _STP_Twine_ # end class
+
     class _STP_Version_ (_Sub_Command_) :
         """Show version of packages"""
 
@@ -188,15 +201,30 @@ class STP_Command (TFL.Command.Root_Command) :
 
     _Version_ = _STP_Version_ # end class
 
+    def _do_clean (self, cao, packages) :
+        for pn, pp in packages :
+            with sos.changed_dir (pp) :
+                if cao.verbose :
+                    print ("Cleaning", pn)
+                to_clean = \
+                    ( [".eggs", "build", "dist"]
+                    + sos.expanded_glob ("*.egg-info")
+                    )
+                if to_clean :
+                    TFL_STP.run_command (["rm", "-rf"] + to_clean)
+    # end def _do_clean
+
     def _do_setup (self, cao, argv, packages) :
-        setup_cmd  = [sys.executable, "setup.py"] + argv
+        r_args   = ["-r", "pypitest"] \
+            if cao.test and ("register" in argv or "upload" in argv) else []
+        setup_cmd  = [sys.executable, "setup.py"] + argv + r_args
         args       = " ".join (argv)
         for pn, pp in packages :
             with sos.changed_dir (pp) :
                 if cao.verbose :
                     print ("Starting", args, "for", pn, "...")
                 if cao.dry_run :
-                    print (" ".join (setup_cmd [1:]))
+                    print (" ", " ".join (setup_cmd [1:]))
                 else :
                     try :
                         subprocess.call (setup_cmd)
@@ -228,6 +256,30 @@ class STP_Command (TFL.Command.Root_Command) :
         return new
     # end def _do_tag
 
+    def _do_twine (self, cao, cmd, args, packages) :
+        r_args   = ["-r", "pypitest"] if cao.test else []
+        twc_head = ["twine", cmd] + r_args
+        for pn, pp in packages :
+            with sos.changed_dir (pp) :
+                twc_tail = args
+                if cmd == "register" :
+                    dist     = sos.expanded_glob (args [-1])
+                    twc_tail = args [:-1] + dist
+                twc = twc_head + twc_tail
+                if cao.verbose :
+                    print ("Starting twine upload for", pn, "...")
+                if cao.dry_run :
+                    print (" ", " ".join (twc))
+                else :
+                    try :
+                        subprocess.call (twc)
+                    except subprocess.CalledProcessError as exc :
+                        print (exc)
+                        raise SystemExit (127)
+                if cao.verbose :
+                    print ("... Finished", pn)
+    # end def _do_setup
+
     def _git_version (self, abort_on_error = False) :
         d_v = TFL_STP.git_date_version  (abort_on_error = abort_on_error)
         if d_v :
@@ -236,17 +288,7 @@ class STP_Command (TFL.Command.Root_Command) :
     # end def _git_version
 
     def _handle_clean (self, cao) :
-        for pn, pp in self._packages (cao) :
-            with sos.changed_dir (pp) :
-                TFL_STP.git_date_version ()
-                if cao.verbose :
-                    print ("Cleaning", pn)
-                to_clean = \
-                    ( [".eggs", "build", "dist"]
-                    + sos.expanded_glob ("*.egg-info")
-                    )
-                if to_clean :
-                    TFL_STP.run_command (["rm", "-rf"] + to_clean)
+        self._do_clean (cao, self._packages (cao))
     # end def _handle_clean
 
     def _handle_list (self, cao) :
@@ -278,18 +320,16 @@ class STP_Command (TFL.Command.Root_Command) :
                 print ("Please use `git tag` to define your package's version.")
                 raise SystemExit (128)
         packages    = self._packages (cao)
-        upload      = ["upload"] + \
-            ["-r", "https://testpypi.python.org/pypi"] if cao.test else []
         argv_groups = \
             (  ["-q", "check"]
             ,  ["-q", "bdist_wheel"]
-            ,  ["-q", "sdist"]                 if cao.source else []
-            ,  ["-q", "bdist_wheel"] + upload
-            , (["-q", "sdist"]       + upload) if cao.source else []
+            ,  ["-q", "sdist"] if cao.source else []
             )
+        self._do_clean (cao, packages)
         for argv in argv_groups :
             if argv :
                 self._do_setup (cao, argv, packages)
+        self._do_twine (cao, "upload", ["dist/*"], packages)
     # end def _handle_release
 
     def _handle_setup (self, cao) :
@@ -320,6 +360,14 @@ class STP_Command (TFL.Command.Root_Command) :
             nt = self._do_tag (cao, new_tag, message)
             print ("Repository tag: %s" % (nt, ))
     # end def _handle_tag
+
+    def _handle_twine (self, cao) :
+        packages = self._packages (cao)
+        argv_groups = iter_split (cao, "--", list)
+        for argv in argv_groups :
+            if argv :
+                self._do_twine (cao, argv [0], argv [1:], packages)
+    # end def _handle_twine
 
     def _handle_version (self, cao) :
         packages = self._packages (cao)

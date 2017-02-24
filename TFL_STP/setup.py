@@ -45,7 +45,7 @@ data_files       = ["LICENSE", "README.rst", "setup.py", "setup.cfg"]
 if __name__ == "__main__" :
     setup \
     ( name                 = name
-    , version              = "0.9.5"
+    , version              = "0.9.6"
     , description          = "Setup helper functions for TFL-based packages"
     , long_description     = long_description
     , license              = license
