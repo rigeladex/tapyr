@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,6 +38,7 @@
 #    12-Jun-2013 (CT) Add `bool_split_iters`
 #     7-Oct-2014 (CT) Change `paired_map` not to use `len`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    24-Feb-2017 (CT) Add `iter_split`
 #    ««revision-date»»···
 #--
 
@@ -173,14 +174,6 @@ def enumerate_slice (seq, head, tail = None) :
         i += 1
 # end def enumerate_slice
 
-def Integers (n) :
-    """Generates integers from 0 to `n`."""
-    i = 0
-    while i < n :
-        yield i
-        i += 1
-# end def Integers
-
 def Indices (seq) :
     """Generates indices of sequence `seq`.
 
@@ -189,6 +182,37 @@ def Indices (seq) :
     """
     return Integers (len (seq))
 # end def Indices
+
+def Integers (n) :
+    """Generates integers from 0 to `n`."""
+    i = 0
+    while i < n :
+        yield i
+        i += 1
+# end def Integers
+
+def iter_split (iterable, pred, T = tuple) :
+    """Generate subsets of `iterable` with elements for which `pred` is True.
+
+    If `pred` isn't callable, it is assumed to be the delimiter between the
+    groups.
+
+    The subsets are instances of `T`.
+
+    >>> _show (iter_split (["check", "--", "test"], lambda a : a != "--"))
+    [('check',), ('test',)]
+
+    >>> _show (iter_split (["check", "--", "test"], "--", list))
+    [['check'], ['test']]
+
+    """
+    if not callable (pred) :
+        sep  = pred
+        pred = lambda elem : elem != sep
+    it = Look_Ahead_Gen (iterable)
+    while it :
+        yield T (itertools.takewhile (pred, it))
+# end def iter_split
 
 def pairwise (seq) :
     """Generates a list of pairs `(seq [0:1], seq [1:2], ..., seq [n-1:n])`.
