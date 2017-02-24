@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -75,7 +75,8 @@ from   __future__  import unicode_literals, print_function
 from   _MOM.import_MOM            import *
 from   _MOM._Attr.Date_Interval   import *
 from   _MOM._Attr.Number_Interval import A_Float_Interval
-from   _MOM.inspect               import show_children
+from   _MOM.Inspect               import \
+    show_children, show_ref_map, show_ref_maps
 from   _MOM.Product_Version       import Product_Version, IV_Number
 
 from   _TFL.Package_Namespace     import Derived_Package_Namespace
@@ -1856,8 +1857,6 @@ to load the objects involved into memory::
     ((2, 25.0, 50.0), (3, 25.0, 75.0))
 
 """
-
-from   _MOM.inspect             import show_ref_map, show_ref_maps
 
 __doc__ = doctest = dt_form % dict \
     ( import_DBW = "from _MOM._DBW._HPS.Manager import Manager"

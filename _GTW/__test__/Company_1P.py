@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #     5-Feb-2016 (CT) Creation
+#    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    ««revision-date»»···
 #--
 
@@ -70,7 +71,7 @@ _test_saw = """
 from   _GTW.__test__.model               import *
 from   _GTW.__test__._SAW_test_functions import show_table
 from   _MOM.import_MOM                   import Q
-from   _MOM.inspect                      import children_trans_iter
+from   _MOM.Inspect                      import children_trans_iter
 from   _TFL.pyk                          import pyk
 
 import _GTW._OMP._PAP.Company_1P

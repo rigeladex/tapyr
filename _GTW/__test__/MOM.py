@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -64,6 +64,7 @@
 #    17-Jun-2014 (RS) `Date_Time_Delta`, `Int_Interval`, `Int_Interval_C`
 #    23-Jun-2014 (RS) Add `reaction_time_range` to test `Int_Interval_C`
 #    22-Feb-2016 (CT) Add test for `height`, an attribute with unit
+#    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,8 @@ from   _MOM._Attr.Number_Interval import A_Float_Interval
 from   _MOM._Attr.Number_Interval import A_Int_Interval_C
 from   _MOM._Attr.Date_Time_Delta import A_Date_Time_Delta
 
-from   _MOM.inspect               import show_children
+from   _MOM.Inspect               import \
+    show_children, show_ref_map, show_ref_maps
 from   _MOM.Product_Version       import Product_Version, IV_Number
 from   _TFL.Package_Namespace     import Derived_Package_Namespace
 from   _TFL                       import sos
@@ -2230,8 +2232,6 @@ Attributes with unit
 
 
 """
-
-from   _MOM.inspect             import show_ref_map, show_ref_maps
 
 def last_change (scope) :
     return scope.query_changes().order_by (TFL.Sorted_By ("-cid")).first ()

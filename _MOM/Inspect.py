@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -10,7 +10,7 @@
 #
 #++
 # Name
-#    MOM.inspect
+#    MOM.Inspect
 #
 # Purpose
 #    Provide functions for introspection of MOM meta object model
@@ -23,10 +23,14 @@
 #    20-Sep-2012 (CT) Add `children_trans_iter`
 #     6-Mar-2013 (CT) Add optional argument `sort_key` to `children_trans_iter`
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
+#    24-Feb-2017 (CT) Rename to `Inspect` (`inspect` breaks setuptools)
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
+from   __future__  import unicode_literals
 
 from   _TFL                  import TFL
 from   _MOM                  import MOM
@@ -103,4 +107,4 @@ def show_ref_maps (scope, name = "Ref_Req_Map") :
 
 if __name__ != "__main__" :
     MOM._Export_Module ()
-### __END__ MOM.inspect
+### __END__ MOM.Inspect

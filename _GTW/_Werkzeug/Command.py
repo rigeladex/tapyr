@@ -88,6 +88,7 @@
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
 #    17-Jan-2017 (CT) Add `css_nav_side`, `css_nav_type`
+#    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    ««revision-date»»···
 #--
 
@@ -586,7 +587,7 @@ class GT2W_Command (GTW.OMP.Command) :
         if scope is not None :
             scope.close_connections ()
         if cao.debug :
-            import _MOM.inspect
+            import _MOM.Inspect
         if cao.Break :
             TFL.Environment.py_shell (vars ())
         return result

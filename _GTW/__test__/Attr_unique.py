@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -19,6 +19,7 @@
 #     4-Aug-2013 (CT) Creation
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    25-Feb-2016 (CT) Add `test_unique_hps`
+#    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    ««revision-date»»···
 #--
 
@@ -26,7 +27,7 @@ from   __future__ import division, print_function
 from   __future__ import absolute_import, unicode_literals
 
 from   _GTW.__test__.model import *
-from   _MOM.inspect        import children_trans_iter
+from   _MOM.Inspect        import children_trans_iter
 
 _test_unique_hps = """
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)

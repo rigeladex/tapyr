@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2017 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -19,6 +19,7 @@
 #    12-Feb-2010 (MG) Creation
 #    16-Feb-2010 (MG) Test for database migration added
 #    27-Sep-2012 (CT) Move test code from `MOM.DBW.SAW.__doc__` in here
+#    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    ««revision-date»»···
 #--
 
@@ -28,7 +29,7 @@ from   _GTW.__test__.MOM import \
     ( dt_form, MOM, BMT, show, NL, sos, last_change
     , portable_repr, prepr, pyk
     )
-from   _MOM.inspect import show_children, show_ref_map, show_ref_maps
+from   _MOM.Inspect import show_children, show_ref_map, show_ref_maps
 
 from   _TFL.formatted_repr        import formatted_repr as formatted
 from   _TFL.Regexp                import Dict_Replacer, re

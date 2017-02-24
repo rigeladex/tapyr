@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -31,6 +31,7 @@
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    24-May-2016 (CT) Add test for `ET.AQ.left ['PAP.Person'].middle_name`
 #    20-Oct-2016 (CT) Add test for `iea_type_restriction_map`
+#    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    ««revision-date»»···
 #--
 
@@ -535,7 +536,7 @@ _test_acr = """
 
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
-from   _MOM.inspect             import children_trans_iter
+from   _MOM.Inspect             import children_trans_iter
 
 from   itertools                import chain as ichain
 

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,7 @@
 # Revision Dates
 #     5-Jun-2013 (CT) Creation
 #     1-Aug-2013 (CT) Add `test_no_reuse`
+#    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    ««revision-date»»···
 #--
 
@@ -25,7 +26,7 @@ from   __future__ import division, print_function
 from   __future__ import absolute_import, unicode_literals
 
 from   _GTW.__test__.model import *
-from   _MOM.inspect        import children_trans_iter
+from   _MOM.Inspect        import children_trans_iter
 
 import _GTW._OMP._Auth.import_Auth
 

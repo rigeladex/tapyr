@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -20,6 +20,7 @@
 #    26-Jun-2013 (CT) Add `test_pickled_types`, factor `_attr_map`
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
+#    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    ««revision-date»»···
 #--
 
@@ -34,7 +35,7 @@ import _GTW._OMP._SWP.import_SWP
 import _GTW._OMP._SRM.import_SRM
 
 from   _GTW.__test__.model import *
-from   _MOM.inspect        import children_trans_iter
+from   _MOM.Inspect        import children_trans_iter
 from   _TFL.pyk            import pyk
 
 def _attr_map (Top) :

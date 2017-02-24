@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -37,6 +37,7 @@
 #    21-Oct-2015 (CT) Use `pyk.as_str`, not home-grown code
 #     1-Jun-2016 (CT) Add `fake_request`
 #     3-Jun-2016 (CT) Add `esf_completer`, `show_esf_form`
+#    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,7 @@ from   _MOM                     import MOM
 from   _TFL                     import TFL
 
 from   _MOM.import_MOM          import *
-from   _MOM.inspect             import show_ref_map, show_ref_maps
+from   _MOM.Inspect             import show_ref_map, show_ref_maps
 from   _MOM.Product_Version     import Product_Version, IV_Number
 
 from   _TFL._Meta.Once_Property import Once_Property
