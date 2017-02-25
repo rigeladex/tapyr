@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    23-Feb-2017 (CT) Creation
+#    25-Feb-2017 (CT) Add `kwds` with `data_dirs` to `packages_plus_data_files`
 #    ««revision-date»»···
 #--
 
@@ -132,14 +133,15 @@ def long_description () :
     return open ("README.rst", encoding = "utf-8").read ().strip ()
 # end def long_description
 
-def packages_plus_data_files (p_name, * extras) :
+def packages_plus_data_files (p_name, * extras, ** kwds) :
     """Find packages, data directories, and data files to include"""
-    Q          = fs_find.Filter
-    packages   = [p_name] \
-               + list (".".join ((p_name, p)) for p in find_packages ())
-    data_dirs  = fs_find.directories \
-        ( ".", filter = Q (include = Q.IN ("-I18N", "locale")))
-    data_files = list \
+    Q           = fs_find.Filter
+    packages    = [p_name] \
+                + list (".".join ((p_name, p)) for p in find_packages ())
+    x_data_dirs = tuple (kwds.pop ("data_dirs", ()))
+    data_dirs   = fs_find.directories \
+        ( ".", filter = Q (include = Q.IN ("-I18N", "locale", * x_data_dirs)))
+    data_files  = list \
         ( itertools.chain
             ( ["LICENSE", "README.rst", "setup.py", "setup.cfg", "stp.cfg"]
             , extras

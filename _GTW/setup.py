@@ -20,6 +20,7 @@
 #    12-Oct-2016 (CT) Creation
 #    13-Oct-2016 (CT) Use `find_packages`, `_TFL.fs_find`, not home-grown code
 #    22-Feb-2017 (CT) Use `TFL_STP`, not home-grown code
+#    25-Feb-2017 (CT) Pass `data_dirs` to `packages_plus_data_files`
 #    ««revision-date»»···
 #--
 
@@ -37,7 +38,8 @@ p_name  = "_GTW"
 
 version              = STP.package_version ()
 long_description     = STP.long_description ()
-packages, data_files = STP.packages_plus_data_files (p_name)
+packages, data_files = STP.packages_plus_data_files \
+    (p_name, data_dirs = ["media"])
 Test_Command         = STP.Test_Command.NEW \
     (head_args = ["GTW_test_backends=sq"])
 
