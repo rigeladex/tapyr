@@ -28,6 +28,7 @@
 #    10-Oct-2016 (CT) Use `setuptools`, not `distutils.core`
 #    13-Oct-2016 (CT) Use `find_packages`, `_TFL.fs_find`, not home-grown code
 #    22-Feb-2017 (CT) Factor `TFL_STP`
+#    27-Feb-2017 (CT) Add Python 3.6 to `classifiers`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ if __name__ == "__main__" :
         , "Programming Language :: Python :: 2.7"
         , "Programming Language :: Python :: 3"
         , "Programming Language :: Python :: 3.5"
+        , "Programming Language :: Python :: 3.6"
         , "Intended Audience :: Developers"
         , "Topic :: Software Development :: Libraries :: Python Modules"
         ]

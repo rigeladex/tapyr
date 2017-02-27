@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    23-Feb-2017 (CT) Creation
+#    27-Feb-2017 (CT) Add Python 3.6 to `classifiers`
 #    ««revision-date»»···
 #--
 
@@ -45,7 +46,7 @@ data_files       = ["LICENSE", "README.rst", "setup.py", "setup.cfg"]
 if __name__ == "__main__" :
     setup \
     ( name                 = name
-    , version              = "0.9.7"
+    , version              = "0.9.8"
     , description          = "Setup helper functions for TFL-based packages"
     , long_description     = long_description
     , license              = license
@@ -66,6 +67,7 @@ if __name__ == "__main__" :
         , "Programming Language :: Python :: 2.7"
         , "Programming Language :: Python :: 3"
         , "Programming Language :: Python :: 3.5"
+        , "Programming Language :: Python :: 3.6"
         , "Intended Audience :: Developers"
         , "Topic :: Software Development :: Libraries :: Python Modules"
         ]
