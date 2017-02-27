@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -25,6 +25,9 @@
 #     9-Sep-2016 (CT) Add `FO`
 #    14-Sep-2016 (CT) Add `ui_display`
 #    20-Sep-2016 (CT) Factor `bound_from_string`
+#    27-Feb-2017 (CT) Make `_test_json` Python 3.6 compatible
+#                     * Adapt to change of format of `TypeError`
+#                       raised by `json.dump`
 #    ««revision-date»»···
 #--
 
@@ -2136,8 +2139,8 @@ _test_json = r"""
     >>> r = Int_Range (23, 42)
 
     >>> with expect_except (TypeError) :
-    ...     print (json.dumps ({ "test_range" : r }))
-    TypeError: Int_Range (23, 42, '[)') is not JSON serializable
+    ...     print (json.dumps ({ "test_range" : r })) # doctest:+ELLIPSIS
+    TypeError: ... is not JSON serializable
 
     >>> import _TFL.json_dump
     >>> print (TFL.json_dump.to_string ({ "test_range" : r }))

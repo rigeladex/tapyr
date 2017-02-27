@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -19,6 +19,8 @@
 #    11-Oct-2014 (CT) Creation
 #    12-Oct-2014 (CT) Continue creation
 #    14-Oct-2015 (CT) Change `b64digest` to return `pyk.text_type`
+#    27-Feb-2017 (CT) Make doctest Python 3.6 compatible
+#                     * Remove enumeration of `.algorithms`
 #    ««revision-date»»···
 #--
 
@@ -381,16 +383,6 @@ care of this difference. You can also feed arbitrary Python objects to
     >>> hmac.update ([1, 2, 3])
     >>> print (portable_repr (hmac.hexdigest ())) ### after update
     'bc02ee3ca85743ac30c928baed2989c05024a23d5e19c37c5260807ae784d83f'
-
-    >>> for a in sorted (Secure_Hash.algorithms) :
-    ...    sha = getattr (Secure_Hash,a)
-    ...    print (sha.name, sha ().digest_size)
-    ...
-    sha1   20
-    sha224 28
-    sha256 32
-    sha384 48
-    sha512 64
 
 """
 
