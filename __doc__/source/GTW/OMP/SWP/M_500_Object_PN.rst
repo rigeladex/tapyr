@@ -5,3 +5,4 @@ Module `Object_PN`
 
 .. automodule:: _GTW._OMP._SWP.Object_PN
   :members: 
+  :special-members:

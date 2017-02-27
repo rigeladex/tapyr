@@ -5,3 +5,4 @@ Module `Property`
 
 .. automodule:: _GTW._OMP._PAP.Property
   :members: 
+  :special-members:

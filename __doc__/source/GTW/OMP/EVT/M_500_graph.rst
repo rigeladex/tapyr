@@ -5,3 +5,4 @@ Module `graph`
 
 .. automodule:: _GTW._OMP._EVT.graph
   :members: 
+  :special-members:

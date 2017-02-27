@@ -5,3 +5,4 @@ Module `Video`
 
 .. automodule:: _GTW._OMP._SWP.Video
   :members: 
+  :special-members:

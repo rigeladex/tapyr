@@ -5,3 +5,4 @@ Module `Address`
 
 .. automodule:: _GTW._OMP._PAP.Address
   :members: 
+  :special-members:

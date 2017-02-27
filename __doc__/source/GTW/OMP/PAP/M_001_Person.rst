@@ -5,3 +5,4 @@ Module `Person`
 
 .. automodule:: _GTW._OMP._PAP.Person
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Account_in_Group`
 
 .. automodule:: _GTW._OMP._Auth.Account_in_Group
   :members: 
+  :special-members:

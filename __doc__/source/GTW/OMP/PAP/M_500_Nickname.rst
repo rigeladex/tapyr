@@ -5,3 +5,4 @@ Module `Nickname`
 
 .. automodule:: _GTW._OMP._PAP.Nickname
   :members: 
+  :special-members:

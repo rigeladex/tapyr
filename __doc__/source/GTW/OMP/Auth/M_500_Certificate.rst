@@ -5,3 +5,4 @@ Module `Certificate`
 
 .. automodule:: _GTW._OMP._Auth.Certificate
   :members: 
+  :special-members:

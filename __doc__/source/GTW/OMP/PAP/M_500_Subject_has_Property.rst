@@ -5,3 +5,4 @@ Module `Subject_has_Property`
 
 .. automodule:: _GTW._OMP._PAP.Subject_has_Property
   :members: 
+  :special-members:

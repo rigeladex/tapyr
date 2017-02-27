@@ -5,3 +5,4 @@ Module `Picture`
 
 .. automodule:: _GTW._OMP._SWP.Picture
   :members: 
+  :special-members:

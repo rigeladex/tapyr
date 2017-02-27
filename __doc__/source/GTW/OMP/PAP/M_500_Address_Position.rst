@@ -5,3 +5,4 @@ Module `Address_Position`
 
 .. automodule:: _GTW._OMP._PAP.Address_Position
   :members: 
+  :special-members:

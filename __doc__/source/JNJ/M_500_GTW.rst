@@ -5,3 +5,4 @@ Module `GTW`
 
 .. automodule:: _JNJ.GTW
   :members: 
+  :special-members:

@@ -337,11 +337,11 @@
       PAP.Address is-a PAP.Property: PAP.Address is derived from PAP.Property
     </title>
     <polyline fill="none" marker-end="url(#MOM:IM)"
-              points="480,675 480,600 1400,600 1400,475" stroke="#08D"
-              stroke-opacity="0.45" stroke-width="5"
+              points="480.0,675.0 480.0,600.0 1400.0,600.0 1400.0,475.0"
+              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 480 675 L 480 600" id="PAP.Address:is_a:PAP.Property::path"
-          fill="none" stroke="none"
+    <path d="M 480.0 675.0 L 480.0 600.0"
+          id="PAP.Address:is_a:PAP.Property::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -361,9 +361,10 @@
       PAP.Address_Position role address: Postal address of the `position`
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="480,975 480,775" stroke="#666" stroke-width="5"
+              points="480.0,975.0 480.0,775.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 480 975 L 480 775"
+    <path d="M 480.0 975.0 L 480.0 775.0"
           id="PAP.Address_Position.left:PAP.Address::path" fill="none"
           stroke="none"
     >
@@ -392,11 +393,12 @@
       PAP.Adhoc_Group is-a PAP.Group: PAP.Adhoc_Group is derived from PAP.Group
     </title>
     <polyline fill="none" marker-end="url(#MOM:IM)"
-              points="240,1025 280,1025 280,450 400,450" stroke="#08D"
-              stroke-opacity="0.45" stroke-width="5"
+              points="240.0,1025.0 280.0,1025.0 280.0,450.0 400.0,450.0"
+              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 280 1025 L 280 450" id="PAP.Adhoc_Group:is_a:PAP.Group::path"
-          fill="none" stroke="none"
+    <path d="M 280.0 1025.0 L 280.0 450.0"
+          id="PAP.Adhoc_Group:is_a:PAP.Group::path" fill="none"
+          stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -415,10 +417,11 @@
     <title>
       PAP.Association is-a PAP.Legal_Entity: PAP.Association is derived from PAP.Legal_Entity
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="160,175 160,375"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="160.0,175.0 160.0,375.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 160 175 L 160 375"
+    <path d="M 160.0 175.0 L 160.0 375.0"
           id="PAP.Association:is_a:PAP.Legal_Entity::path" fill="none"
           stroke="none"
     >
@@ -439,10 +442,11 @@
     <title>
       PAP.Company is-a PAP.Legal_Entity: PAP.Company is derived from PAP.Legal_Entity
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="160,675 160,475"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="160.0,675.0 160.0,475.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 160 675 L 160 475"
+    <path d="M 160.0 675.0 L 160.0 475.0"
           id="PAP.Company:is_a:PAP.Legal_Entity::path" fill="none"
           stroke="none"
     >
@@ -464,11 +468,11 @@
       PAP.Email is-a PAP.Property: PAP.Email is derived from PAP.Property
     </title>
     <polyline fill="none" marker-end="url(#MOM:IM)"
-              points="800,675 800,625 1420,625 1420,475" stroke="#08D"
-              stroke-opacity="0.45" stroke-width="5"
+              points="800.0,675.0 800.0,625.0 1420.0,625.0 1420.0,475.0"
+              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 800 675 L 800 625" id="PAP.Email:is_a:PAP.Property::path"
-          fill="none" stroke="none"
+    <path d="M 800.0 675.0 L 800.0 625.0"
+          id="PAP.Email:is_a:PAP.Property::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -487,11 +491,12 @@
     <title>
       PAP.Group is-a PAP.Subject: PAP.Group is derived from PAP.Subject
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="560,425 720,425"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="560.0,425.0 720.0,425.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 560 425 L 720 425" id="PAP.Group:is_a:PAP.Subject::path"
-          fill="none" stroke="none"
+    <path d="M 560.0 425.0 L 720.0 425.0"
+          id="PAP.Group:is_a:PAP.Subject::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -511,10 +516,10 @@
       PAP.IM_Handle is-a PAP.Property: PAP.IM_Handle is derived from PAP.Property
     </title>
     <polyline fill="none" marker-end="url(#MOM:IM)"
-              points="1760,675 1760,650 1480,650 1480,475" stroke="#08D"
-              stroke-opacity="0.45" stroke-width="5"
+              points="1760.0,675.0 1760.0,650.0 1480.0,650.0 1480.0,475.0"
+              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 1480 650 L 1760 650"
+    <path d="M 1480.0 650.0 L 1760.0 650.0"
           id="PAP.IM_Handle:is_a:PAP.Property::path" fill="none"
           stroke="none"
     >
@@ -535,11 +540,13 @@
     <title>
       PAP.Legal_Entity is-a PAP.Group: PAP.Legal_Entity is derived from PAP.Group
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="240,400 400,400"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="240.0,400.0 400.0,400.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 240 400 L 400 400" id="PAP.Legal_Entity:is_a:PAP.Group::path"
-          fill="none" stroke="none"
+    <path d="M 240.0 400.0 L 400.0 400.0"
+          id="PAP.Legal_Entity:is_a:PAP.Group::path" fill="none"
+          stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -559,10 +566,10 @@
       PAP.Nickname is-a PAP.Property: PAP.Nickname is derived from PAP.Property
     </title>
     <polyline fill="none" marker-end="url(#MOM:IM)"
-              points="1680,425 1520,425" stroke="#08D" stroke-opacity="0.45"
-              stroke-width="5"
+              points="1680.0,425.0 1520.0,425.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 1520 425 L 1680 425"
+    <path d="M 1520.0 425.0 L 1680.0 425.0"
           id="PAP.Nickname:is_a:PAP.Property::path" fill="none"
           stroke="none"
     >
@@ -583,11 +590,12 @@
     <title>
       PAP.Person is-a PAP.Subject: PAP.Person is derived from PAP.Subject
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="800,175 800,375"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="800.0,175.0 800.0,375.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 800 175 L 800 375" id="PAP.Person:is_a:PAP.Subject::path"
-          fill="none" stroke="none"
+    <path d="M 800.0 175.0 L 800.0 375.0"
+          id="PAP.Person:is_a:PAP.Subject::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -607,9 +615,10 @@
       PAP.Person_has_Account role person: Person using the account.
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="1040,125 880,125" stroke="#666" stroke-width="5"
+              points="1040.0,125.0 880.0,125.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 880 125 L 1040 125"
+    <path d="M 880.0 125.0 L 1040.0 125.0"
           id="PAP.Person_has_Account.left:PAP.Person::path" fill="none"
           stroke="none"
     >
@@ -629,9 +638,10 @@
       PAP.Person_has_Account role account: Account used by a person.
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="1200,125 1360,125" stroke="#666" stroke-width="5"
+              points="1200.0,125.0 1360.0,125.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 1200 125 L 1360 125"
+    <path d="M 1200.0 125.0 L 1360.0 125.0"
           id="PAP.Person_has_Account.right:Auth.Account::path" fill="none"
           stroke="none"
     >
@@ -660,9 +670,10 @@
       PAP.Person_in_Group role person: Person linked to Group
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="560,125 720,125" stroke="#666" stroke-width="5"
+              points="560.0,125.0 720.0,125.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 560 125 L 720 125"
+    <path d="M 560.0 125.0 L 720.0 125.0"
           id="PAP.Person_in_Group.left:PAP.Person::path" fill="none"
           stroke="none"
     >
@@ -682,9 +693,10 @@
       PAP.Person_in_Group role group: Group of person
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="480,175 480,375" stroke="#666" stroke-width="5"
+              points="480.0,175.0 480.0,375.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 480 175 L 480 375"
+    <path d="M 480.0 175.0 L 480.0 375.0"
           id="PAP.Person_in_Group.right:PAP.Group::path" fill="none"
           stroke="none"
     >
@@ -704,11 +716,11 @@
       PAP.Phone is-a PAP.Property: PAP.Phone is derived from PAP.Property
     </title>
     <polyline fill="none" marker-end="url(#MOM:IM)"
-              points="1120,675 1120,650 1440,650 1440,475" stroke="#08D"
-              stroke-opacity="0.45" stroke-width="5"
+              points="1120.0,675.0 1120.0,650.0 1440.0,650.0 1440.0,475.0"
+              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 1120 650 L 1440 650" id="PAP.Phone:is_a:PAP.Property::path"
-          fill="none" stroke="none"
+    <path d="M 1120.0 650.0 L 1440.0 650.0"
+          id="PAP.Phone:is_a:PAP.Property::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -728,9 +740,10 @@
       PAP.Subject_has_Property role subject: Subject linked to Property
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="1040,425 880,425" stroke="#666" stroke-width="5"
+              points="1040.0,425.0 880.0,425.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 880 425 L 1040 425"
+    <path d="M 880.0 425.0 L 1040.0 425.0"
           id="PAP.Subject_has_Property.left:PAP.Subject::path" fill="none"
           stroke="none"
     >
@@ -750,9 +763,10 @@
       PAP.Subject_has_Property role property: Property of subject
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="1200,425 1360,425" stroke="#666" stroke-width="5"
+              points="1200.0,425.0 1360.0,425.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 1200 425 L 1360 425"
+    <path d="M 1200.0 425.0 L 1360.0 425.0"
           id="PAP.Subject_has_Property.right:PAP.Property::path" fill="none"
           stroke="none"
     >
@@ -772,11 +786,11 @@
       PAP.Url is-a PAP.Property: PAP.Url is derived from PAP.Property
     </title>
     <polyline fill="none" marker-end="url(#MOM:IM)"
-              points="1460,675 1460,475" stroke="#08D" stroke-opacity="0.45"
-              stroke-width="5"
+              points="1460.0,675.0 1460.0,475.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 1460 675 L 1460 475" id="PAP.Url:is_a:PAP.Property::path"
-          fill="none" stroke="none"
+    <path d="M 1460.0 675.0 L 1460.0 475.0"
+          id="PAP.Url:is_a:PAP.Property::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"

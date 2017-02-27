@@ -5,3 +5,4 @@ Module `Recurrence_Spec`
 
 .. automodule:: _GTW._OMP._EVT.Recurrence_Spec
   :members: 
+  :special-members:

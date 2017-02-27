@@ -5,3 +5,4 @@ Module `Attr_Type`
 
 .. automodule:: _GTW._OMP._PAP.Attr_Type
   :members: 
+  :special-members:

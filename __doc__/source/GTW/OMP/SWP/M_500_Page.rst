@@ -5,3 +5,4 @@ Module `Page`
 
 .. automodule:: _GTW._OMP._SWP.Page
   :members: 
+  :special-members:

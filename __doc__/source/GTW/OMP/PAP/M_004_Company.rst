@@ -5,3 +5,4 @@ Module `Company`
 
 .. automodule:: _GTW._OMP._PAP.Company
   :members: 
+  :special-members:

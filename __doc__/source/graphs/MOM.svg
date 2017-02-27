@@ -181,11 +181,12 @@
     <title>
       MOM.Document is-a MOM.Link1: MOM.Document is derived from MOM.Link1
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="160,175 160,375"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="160.0,175.0 160.0,375.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 160 175 L 160 375" id="MOM.Document:is_a:MOM.Link1::path"
-          fill="none" stroke="none"
+    <path d="M 160.0 175.0 L 160.0 375.0"
+          id="MOM.Document:is_a:MOM.Link1::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -205,9 +206,10 @@
       MOM.Id_Entity_has_Tag role entity: Entity which has the tag
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="720,425 560,425" stroke="#666" stroke-width="5"
+              points="720.0,425.0 560.0,425.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 560 425 L 720 425"
+    <path d="M 560.0 425.0 L 720.0 425.0"
           id="MOM.Id_Entity_has_Tag.left:MOM.Id_Entity::path" fill="none"
           stroke="none"
     >
@@ -227,9 +229,10 @@
       MOM.Id_Entity_has_Tag role tag: The tag
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="800,375 800,175" stroke="#666" stroke-width="5"
+              points="800.0,375.0 800.0,175.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 800 375 L 800 175"
+    <path d="M 800.0 375.0 L 800.0 175.0"
           id="MOM.Id_Entity_has_Tag.right:MOM.Tag::path" fill="none"
           stroke="none"
     >
@@ -248,10 +251,11 @@
     <title>
       MOM.Id_Entity_has_Tag is-a MOM.Link2: MOM.Id_Entity_has_Tag is derived from MOM.Link2
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="800,475 800,675"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="800.0,475.0 800.0,675.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 800 475 L 800 675"
+    <path d="M 800.0 475.0 L 800.0 675.0"
           id="MOM.Id_Entity_has_Tag:is_a:MOM.Link2::path" fill="none"
           stroke="none"
     >
@@ -273,11 +277,11 @@
       MOM.Link1 attribute left: None
     </title>
     <polyline fill="none" marker-start="url(#MOM:AM)"
-              points="240,450 400,450" stroke="#FFA022" stroke-opacity="0.7"
-              stroke-width="5"
+              points="240.0,450.0 400.0,450.0" stroke="#FFA022"
+              stroke-opacity="0.7" stroke-width="5"
     />
-    <path d="M 240 450 L 400 450" id="MOM.Link1.left:MOM.Id_Entity::path"
-          fill="none" stroke="none"
+    <path d="M 240.0 450.0 L 400.0 450.0"
+          id="MOM.Link1.left:MOM.Id_Entity::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#FFA022" fill-opacity="0.7" font-family="sans-serif"
@@ -307,11 +311,12 @@
     <title>
       MOM.Link1 is-a MOM.Id_Entity: MOM.Link1 is derived from MOM.Id_Entity
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="240,400 400,400"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="240.0,400.0 400.0,400.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 240 400 L 400 400" id="MOM.Link1:is_a:MOM.Id_Entity::path"
-          fill="none" stroke="none"
+    <path d="M 240.0 400.0 L 400.0 400.0"
+          id="MOM.Link1:is_a:MOM.Id_Entity::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -330,11 +335,12 @@
     <title>
       MOM.Link2 is-a MOM._Link_n_: MOM.Link2 is derived from MOM._Link_n_
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="720,725 560,725"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="720.0,725.0 560.0,725.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 560 725 L 720 725" id="MOM.Link2:is_a:MOM._Link_n_::path"
-          fill="none" stroke="none"
+    <path d="M 560.0 725.0 L 720.0 725.0"
+          id="MOM.Link2:is_a:MOM._Link_n_::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -354,11 +360,12 @@
       MOM.Link3 attribute middle: None
     </title>
     <polyline fill="none" marker-start="url(#MOM:AM)"
-              points="160,675 160,650 420,650 420,475" stroke="#FFA022"
-              stroke-opacity="0.7" stroke-width="5"
+              points="160.0,675.0 160.0,650.0 420.0,650.0 420.0,475.0"
+              stroke="#FFA022" stroke-opacity="0.7" stroke-width="5"
     />
-    <path d="M 160 650 L 420 650" id="MOM.Link3.middle:MOM.Id_Entity::path"
-          fill="none" stroke="none"
+    <path d="M 160.0 650.0 L 420.0 650.0"
+          id="MOM.Link3.middle:MOM.Id_Entity::path" fill="none"
+          stroke="none"
     >
     </path>
     <text fill="#FFA022" fill-opacity="0.7" font-family="sans-serif"
@@ -388,11 +395,12 @@
     <title>
       MOM.Link3 is-a MOM._Link_n_: MOM.Link3 is derived from MOM._Link_n_
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="240,725 400,725"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="240.0,725.0 400.0,725.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 240 725 L 400 725" id="MOM.Link3:is_a:MOM._Link_n_::path"
-          fill="none" stroke="none"
+    <path d="M 240.0 725.0 L 400.0 725.0"
+          id="MOM.Link3:is_a:MOM._Link_n_::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -411,11 +419,12 @@
     <title>
       MOM.Object is-a MOM.Id_Entity: MOM.Object is derived from MOM.Id_Entity
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="480,175 480,375"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="480.0,175.0 480.0,375.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 480 175 L 480 375" id="MOM.Object:is_a:MOM.Id_Entity::path"
-          fill="none" stroke="none"
+    <path d="M 480.0 175.0 L 480.0 375.0"
+          id="MOM.Object:is_a:MOM.Id_Entity::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -434,10 +443,11 @@
     <title>
       MOM.Tag is-a MOM.Object: MOM.Tag is derived from MOM.Object
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="720,125 560,125"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="720.0,125.0 560.0,125.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 560 125 L 720 125" id="MOM.Tag:is_a:MOM.Object::path"
+    <path d="M 560.0 125.0 L 720.0 125.0" id="MOM.Tag:is_a:MOM.Object::path"
           fill="none" stroke="none"
     >
     </path>
@@ -458,11 +468,12 @@
       MOM._Link_n_ attribute left: None
     </title>
     <polyline fill="none" marker-start="url(#MOM:AM)"
-              points="460,675 460,475" stroke="#FFA022" stroke-opacity="0.7"
-              stroke-width="5"
+              points="460.0,675.0 460.0,475.0" stroke="#FFA022"
+              stroke-opacity="0.7" stroke-width="5"
     />
-    <path d="M 460 675 L 460 475" id="MOM._Link_n_.left:MOM.Id_Entity::path"
-          fill="none" stroke="none"
+    <path d="M 460.0 675.0 L 460.0 475.0"
+          id="MOM._Link_n_.left:MOM.Id_Entity::path" fill="none"
+          stroke="none"
     >
     </path>
     <text fill="#FFA022" fill-opacity="0.7" font-family="sans-serif"
@@ -493,10 +504,10 @@
       MOM._Link_n_ attribute right: None
     </title>
     <polyline fill="none" marker-start="url(#MOM:AM)"
-              points="540,675 540,475" stroke="#FFA022" stroke-opacity="0.7"
-              stroke-width="5"
+              points="540.0,675.0 540.0,475.0" stroke="#FFA022"
+              stroke-opacity="0.7" stroke-width="5"
     />
-    <path d="M 540 675 L 540 475"
+    <path d="M 540.0 675.0 L 540.0 475.0"
           id="MOM._Link_n_.right:MOM.Id_Entity::path" fill="none"
           stroke="none"
     >
@@ -528,11 +539,13 @@
     <title>
       MOM._Link_n_ is-a MOM.Id_Entity: MOM._Link_n_ is derived from MOM.Id_Entity
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="500,675 500,475"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="500.0,675.0 500.0,475.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 500 675 L 500 475" id="MOM._Link_n_:is_a:MOM.Id_Entity::path"
-          fill="none" stroke="none"
+    <path d="M 500.0 675.0 L 500.0 475.0"
+          id="MOM._Link_n_:is_a:MOM.Id_Entity::path" fill="none"
+          stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"

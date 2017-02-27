@@ -5,3 +5,4 @@ Module `Phone`
 
 .. automodule:: _GTW._OMP._PAP.Phone
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `SRM`
 
 .. automodule:: _JNJ.SRM
   :members: 
+  :special-members:

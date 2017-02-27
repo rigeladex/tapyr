@@ -5,3 +5,4 @@ Module `UI_Spec`
 
 .. automodule:: _GTW._OMP._EVT.UI_Spec
   :members: 
+  :special-members:

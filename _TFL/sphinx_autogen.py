@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -22,6 +22,7 @@
 #    10-Dec-2015 (CT) Add support for `__sphinx__members`
 #     1-Jul-2016 (CT) Add `:special-members` to `_stub_mod_template`
 #     9-Oct-2016 (CT) Adapt to move of Package_Namespaces `DRA`, `SKY`
+#    27-Feb-2017 (CT) Remove some entries from `pns_skip`
 #    ««revision-date»»···
 #--
 
@@ -73,14 +74,13 @@ class TFL_SAG_Command (TFL.Command.Root_Command) :
         { "__doc__" # not a package anyway
         # ### not yet documented (high priority)
         , "GTW.OMP.PAP.E164", "GTW.OMP.SRM"
-        , "GTW.CSS", "GTW.MF3", "GTW.RST", "GTW.Werkzeug"
-        # "JNJ"
+        , "GTW.MF3", "GTW.RST", "GTW.Werkzeug"
         , "MOM.EMS", "MOM.DBW"
         , "ReST"
         # ### not yet documented (low priority)
         , "GTW.OMP.DNS", "GTW.OMP.NET"
         , "ATAX", "CAL", "SKY", "LNX", "PMA", "TFL.Babel"
-        , "TFL.D2", "TFL.DRA", "TFL.FMW", "TFL.SDG", "TFL.Units"
+        , "TFL.DRA", "TFL.FMW", "TFL.SDG"
         }
 
     pns_skip_modules        = \

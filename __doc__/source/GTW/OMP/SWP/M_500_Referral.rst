@@ -5,3 +5,4 @@ Module `Referral`
 
 .. automodule:: _GTW._OMP._SWP.Referral
   :members: 
+  :special-members:

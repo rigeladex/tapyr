@@ -5,3 +5,4 @@ Module `Group`
 
 .. automodule:: _GTW._OMP._PAP.Group
   :members: 
+  :special-members:

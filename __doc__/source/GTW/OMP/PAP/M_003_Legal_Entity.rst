@@ -5,3 +5,4 @@ Module `Legal_Entity`
 
 .. automodule:: _GTW._OMP._PAP.Legal_Entity
   :members: 
+  :special-members:

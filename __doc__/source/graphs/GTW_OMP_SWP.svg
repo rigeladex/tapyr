@@ -150,10 +150,11 @@
       SWP.Clip_O role object: Object the news clip refers to
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="720,425 560,425" stroke="#666" stroke-width="5"
+              points="720.0,425.0 560.0,425.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 560 425 L 720 425" id="SWP.Clip_O.left:SWP.Object_PN::path"
-          fill="none" stroke="none"
+    <path d="M 560.0 425.0 L 720.0 425.0"
+          id="SWP.Clip_O.left:SWP.Object_PN::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#666" font-family="sans-serif" font-size="18">
@@ -170,11 +171,12 @@
     <title>
       SWP.Clip_X is-a SWP.Page: SWP.Clip_X is derived from SWP.Page
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="720,725 560,725"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="720.0,725.0 560.0,725.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 560 725 L 720 725" id="SWP.Clip_X:is_a:SWP.Page::path"
-          fill="none" stroke="none"
+    <path d="M 560.0 725.0 L 720.0 725.0"
+          id="SWP.Clip_X:is_a:SWP.Page::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -193,11 +195,13 @@
     <title>
       SWP.Gallery is-a SWP.Object_PN: SWP.Gallery is derived from SWP.Object_PN
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="480,175 480,375"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="480.0,175.0 480.0,375.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 480 175 L 480 375" id="SWP.Gallery:is_a:SWP.Object_PN::path"
-          fill="none" stroke="none"
+    <path d="M 480.0 175.0 L 480.0 375.0"
+          id="SWP.Gallery:is_a:SWP.Object_PN::path" fill="none"
+          stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -216,11 +220,12 @@
     <title>
       SWP.Page is-a SWP.Object_PN: SWP.Page is derived from SWP.Object_PN
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="480,675 480,475"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="480.0,675.0 480.0,475.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 480 675 L 480 475" id="SWP.Page:is_a:SWP.Object_PN::path"
-          fill="none" stroke="none"
+    <path d="M 480.0 675.0 L 480.0 475.0"
+          id="SWP.Page:is_a:SWP.Object_PN::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -239,11 +244,12 @@
     <title>
       SWP.Page_Y is-a SWP.Page: SWP.Page_Y is derived from SWP.Page
     </title>
-    <polyline fill="none" marker-end="url(#MOM:IM)" points="240,725 400,725"
-              stroke="#08D" stroke-opacity="0.45" stroke-width="5"
+    <polyline fill="none" marker-end="url(#MOM:IM)"
+              points="240.0,725.0 400.0,725.0" stroke="#08D"
+              stroke-opacity="0.45" stroke-width="5"
     />
-    <path d="M 240 725 L 400 725" id="SWP.Page_Y:is_a:SWP.Page::path"
-          fill="none" stroke="none"
+    <path d="M 240.0 725.0 L 400.0 725.0"
+          id="SWP.Page_Y:is_a:SWP.Page::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#08D" fill-opacity="0.45" font-family="sans-serif"
@@ -263,10 +269,11 @@
       SWP.Picture role gallery: Gallery to which this picture belongs.
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="720,125 560,125" stroke="#666" stroke-width="5"
+              points="720.0,125.0 560.0,125.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 560 125 L 720 125" id="SWP.Picture.left:SWP.Gallery::path"
-          fill="none" stroke="none"
+    <path d="M 560.0 125.0 L 720.0 125.0"
+          id="SWP.Picture.left:SWP.Gallery::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#666" font-family="sans-serif" font-size="18">

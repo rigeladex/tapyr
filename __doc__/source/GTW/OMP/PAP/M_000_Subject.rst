@@ -5,3 +5,4 @@ Module `Subject`
 
 .. automodule:: _GTW._OMP._PAP.Subject
   :members: 
+  :special-members:

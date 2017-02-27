@@ -5,3 +5,4 @@ Module `Templateer`
 
 .. automodule:: _JNJ.Templateer
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Person_has_Account`
 
 .. automodule:: _GTW._OMP._PAP.Person_has_Account
   :members: 
+  :special-members:

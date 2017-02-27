@@ -5,3 +5,4 @@ Module `Group`
 
 .. automodule:: _GTW._OMP._Auth.Group
   :members: 
+  :special-members:

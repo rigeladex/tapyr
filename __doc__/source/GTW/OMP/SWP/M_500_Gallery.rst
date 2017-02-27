@@ -5,3 +5,4 @@ Module `Gallery`
 
 .. automodule:: _GTW._OMP._SWP.Gallery
   :members: 
+  :special-members:

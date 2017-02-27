@@ -5,3 +5,4 @@ Module `Format`
 
 .. automodule:: _GTW._OMP._SWP.Format
   :members: 
+  :special-members:

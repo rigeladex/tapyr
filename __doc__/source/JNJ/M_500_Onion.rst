@@ -5,3 +5,4 @@ Module `Onion`
 
 .. automodule:: _JNJ.Onion
   :members: 
+  :special-members:

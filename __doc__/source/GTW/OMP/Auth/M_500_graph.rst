@@ -5,3 +5,4 @@ Module `graph`
 
 .. automodule:: _GTW._OMP._Auth.graph
   :members: 
+  :special-members:

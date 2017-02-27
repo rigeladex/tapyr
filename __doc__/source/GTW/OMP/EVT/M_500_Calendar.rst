@@ -5,3 +5,4 @@ Module `Calendar`
 
 .. automodule:: _GTW._OMP._EVT.Calendar
   :members: 
+  :special-members:

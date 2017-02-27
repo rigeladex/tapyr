@@ -5,3 +5,4 @@ Module `Event`
 
 .. automodule:: _GTW._OMP._EVT.Event
   :members: 
+  :special-members:

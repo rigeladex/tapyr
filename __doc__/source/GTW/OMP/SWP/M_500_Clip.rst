@@ -5,3 +5,4 @@ Module `Clip`
 
 .. automodule:: _GTW._OMP._SWP.Clip
   :members: 
+  :special-members:

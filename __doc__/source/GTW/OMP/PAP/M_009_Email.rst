@@ -5,3 +5,4 @@ Module `Email`
 
 .. automodule:: _GTW._OMP._PAP.Email
   :members: 
+  :special-members:

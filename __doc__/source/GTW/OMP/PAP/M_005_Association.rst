@@ -5,3 +5,4 @@ Module `Association`
 
 .. automodule:: _GTW._OMP._PAP.Association
   :members: 
+  :special-members:

@@ -5,3 +5,4 @@ Module `Environment`
 
 .. automodule:: _JNJ.Environment
   :members: 
+  :special-members:

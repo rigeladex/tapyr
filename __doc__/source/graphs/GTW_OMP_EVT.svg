@@ -128,11 +128,12 @@
       EVT.Event attribute calendar: Calendar to which the event belongs
     </title>
     <polyline fill="none" marker-start="url(#MOM:AM)"
-              points="480,375 480,175" stroke="#FFA022" stroke-opacity="0.7"
-              stroke-width="5"
+              points="480.0,375.0 480.0,175.0" stroke="#FFA022"
+              stroke-opacity="0.7" stroke-width="5"
     />
-    <path d="M 480 375 L 480 175" id="EVT.Event.calendar:EVT.Calendar::path"
-          fill="none" stroke="none"
+    <path d="M 480.0 375.0 L 480.0 175.0"
+          id="EVT.Event.calendar:EVT.Calendar::path" fill="none"
+          stroke="none"
     >
     </path>
     <text fill="#FFA022" fill-opacity="0.7" font-family="sans-serif"
@@ -163,10 +164,11 @@
       EVT.Event role object: Object which this event is bound to.
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="400,425 240,425" stroke="#666" stroke-width="5"
+              points="400.0,425.0 240.0,425.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 240 425 L 400 425" id="EVT.Event.left:MOM.Id_Entity::path"
-          fill="none" stroke="none"
+    <path d="M 240.0 425.0 L 400.0 425.0"
+          id="EVT.Event.left:MOM.Id_Entity::path" fill="none" stroke="none"
     >
     </path>
     <text fill="#666" font-family="sans-serif" font-size="18">
@@ -184,9 +186,10 @@
       EVT.Recurrence_Rule role recurrence_spec: Recurrence-spec this rule applies to.
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="1040,425 880,425" stroke="#666" stroke-width="5"
+              points="1040.0,425.0 880.0,425.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 880 425 L 1040 425"
+    <path d="M 880.0 425.0 L 1040.0 425.0"
           id="EVT.Recurrence_Rule.left:EVT.Recurrence_Spec::path"
           fill="none" stroke="none"
     >
@@ -206,9 +209,10 @@
       EVT.Recurrence_Spec role event: Event that recurs
     </title>
     <polyline fill="none" marker-start="url(#MOM:RM)"
-              points="720,425 560,425" stroke="#666" stroke-width="5"
+              points="720.0,425.0 560.0,425.0" stroke="#666"
+              stroke-width="5"
     />
-    <path d="M 560 425 L 720 425"
+    <path d="M 560.0 425.0 L 720.0 425.0"
           id="EVT.Recurrence_Spec.left:EVT.Event::path" fill="none"
           stroke="none"
     >

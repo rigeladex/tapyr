@@ -5,3 +5,4 @@ Module `Id_Entity_permits_Group`
 
 .. automodule:: _GTW._OMP._PAP.Id_Entity_permits_Group
   :members: 
+  :special-members:
