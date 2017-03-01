@@ -28,6 +28,9 @@
 #    27-Feb-2017 (CT) Make `_test_json` Python 3.6 compatible
 #                     * Adapt to change of format of `TypeError`
 #                       raised by `json.dump`
+#     1-Mar-2017 (CT) Add `Float_Range_Discrete`
+#     9-Mar-2017 (CT) Add `epsilon` to `_Range_Discrete_.__iter__`
+#                     and `Float_Range_Discrete`
 #    ««revision-date»»···
 #--
 
@@ -491,6 +494,7 @@ class _Range_Discrete_ (_Range_) :
     """Base class for type-specific discrete range classes."""
 
     exclusive_continuous = False
+    epsilon              = 0
 
     @property
     def delta (self) :
@@ -565,10 +569,12 @@ class _Range_Discrete_ (_Range_) :
 
            Does not work for ranges with infinite lower bound.
         """
-        next  = self.LB.first
-        last  = self.UB.first if self.UB.first is not None else TFL.Infinity
-        delta = self.delta
         add   = self._sub_type_add
+        delta = self.delta
+        eps   = self.epsilon
+        next  = self.LB.first
+        last  = \
+            (self.UB.first if self.UB.first is not None else TFL.Infinity) + eps
         if next is None or last is None :
             raise ValueError \
                 ( "Cannot iterate over range `%s` with infinite bound"
@@ -603,6 +609,23 @@ class Float_Range (_Range_Continuous_) :
     """`Float_Range` has subtype `float`."""
 
 # end class Float_Range
+
+class Float_Range_Discrete (_Range_Discrete_) :
+    """Range of float values wit discrete delta."""
+
+    S_Type = float
+    """`Float_Range` has subtype `float`."""
+
+    delta  = 1.0
+    """Default delta between adjacent values of `Float_Range_Discrete` is 1."""
+
+    def __init__ (self, * args, ** kwds) :
+        self.pop_to_self (kwds, "delta")
+        self.epsilon = self.delta / 10.
+        self.__super.__init__ (* args, ** kwds)
+    # end def __init__
+
+# end class Float_Range_Discrete
 
 class Int_Range (_Range_Discrete_) :
     """Range of integer values."""
@@ -1497,6 +1520,16 @@ _test_float_range = r"""
     [2, 2) : Float_Range (2.0, 2.0, '[)')
     (1, 5] : Float_Range (1.0, 5.0, '(]')
     (1, 3) : Float_Range (1.0, 3.0, '()')
+
+    >>> Rd = Float_Range_Discrete
+
+    >>> r1 = Rd (0.0, 1.0, "[]", delta = 0.2)
+    >>> print (portable_repr (list (r1)))
+    [0, 0.2, 0.4, 0.6, 0.8, 1]
+
+    >>> r2 = Rd (0.0, 1.0, "()", delta = 0.2)
+    >>> print (portable_repr (list (r2)))
+    [0.2, 0.4, 0.6, 0.8]
 
 """ ### _test_float_range
 
