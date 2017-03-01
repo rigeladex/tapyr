@@ -18,6 +18,7 @@
 # Revision Dates
 #    11-Oct-2016 (CT) Creation (factor from GTW.Parameters)
 #    17-Jan-2017 (CT) Factor `M_Definition._setup_prop`
+#     1-Mar-2017 (CT) Add `Definition.__call__`
 #    ««revision-date»»···
 #--
 
@@ -135,16 +136,17 @@ class Definition (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Definition)) :
     ...
     >>> D = Defaults ()
     >>> E = App ()
+    >>> F = E   (foo = 3, bar = 23)
     >>> D.foo, E.foo
     (1, 2)
-    >>> D.bar, E.bar
-    (2, 4)
-    >>> D.nav_col.own_links.qux, E.nav_col.own_links.qux
-    (84, 274)
-    >>> D.nav_col.own_links.quy, E.nav_col.own_links.quy
-    (4, 8)
-    >>> D.nav_col.own_links.quz, E.nav_col.own_links.quz
-    (0.5, 1.0)
+    >>> D.bar, E.bar, F.bar
+    (2, 4, 23)
+    >>> D.nav_col.own_links.qux, E.nav_col.own_links.qux, F.nav_col.own_links.qux
+    (84, 274, 274)
+    >>> D.nav_col.own_links.quy, E.nav_col.own_links.quy, F.nav_col.own_links.quy
+    (4, 8, 46)
+    >>> D.nav_col.own_links.quz, E.nav_col.own_links.quz, F.nav_col.own_links.quz
+    (0.5, 1.0, 1.5)
     >>> print (portable_repr (D.nav_col.spec), portable_repr (E.nav_col.spec))
     {'a' : 42, 'border' : 'solid'} {'a' : 137, 'border' : 'solid'}
 
@@ -153,6 +155,13 @@ class Definition (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Definition)) :
     def __init__ (self, R = None) :
         self.R = R
     # end def __init__
+
+    def __call__ (self, ** kwds) :
+        """Return a copy of `self` with the additional parameters of `kwds`"""
+        result = self.__class__ ()
+        result.__dict__.update  (kwds, P = self)
+        return result
+    # end def __call__
 
     @Once_Property
     def T (self) :
