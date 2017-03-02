@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -52,6 +52,7 @@
 #     6-Aug-2015 (CT) Add `Option.explanation`
 #    15-Jun-2016 (CT) Add `_wrapped_handler` to LET `_cao`
 #                     + Rename handler argument `cmd` to `cao`
+#     2-Mar-2017 (CT) Add `Key_Option` and `Set_Option`
 #    ««revision-date»»···
 #--
 
@@ -147,7 +148,8 @@ class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
     # end def __init__
 
     def __call__ (self) :
-        result = self.type (** self.kw)
+        kwds   = self.kw
+        result = self.type (** kwds)
         return result
     # end def __call__
 
@@ -195,6 +197,20 @@ class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
     # end def name
 
 Option = TFL_Option # end class
+
+class TFL_Key_Option (Option) :
+
+    choice_dict             = None ### sub-class responsibility
+    type                    = TFL.CAO.Opt.Key
+
+    @TFL.Meta.Once_Property
+    def kw (self) :
+        result = self.__super.kw
+        result.update (dct = None, choice_dict = self.choice_dict)
+        return result
+    # end def kw
+
+Key_Option = TFL_Key_Option # end class
 
 class TFL_Rel_Path_Option (Option) :
 
@@ -273,6 +289,20 @@ class TFL_Config_Option (Rel_Path_Option) :
     # end def base_dirs
 
 Config_Option = TFL_Config_Option # end class
+
+class TFL_Set_Option (Option) :
+
+    choices                 = None ### sub-class responsibility
+    type                    = TFL.CAO.Opt.Set
+
+    @TFL.Meta.Once_Property
+    def kw (self) :
+        result = self.__super.kw
+        result.update (choices = self.choices)
+        return result
+    # end def kw
+
+Set_Option = TFL_Set_Option # end class
 
 class _M_Command_ (_Meta_Base_) :
     ### Meta class for `Command`

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -123,6 +123,7 @@
 #    10-Feb-2016 (CT) Factor `Cmd.cao` from `__call__`
 #    29-Sep-2016 (CT) Add `Percent`
 #     2-Oct-2016 (CT) Factor `_resolved_range`, add range support to `Float`
+#     2-Mar-2017 (CT) Add `dct` guard anc `choice_dict` to `Key.__init__`
 #    ««revision-date»»···
 #--
 
@@ -1229,6 +1230,8 @@ class Key (_Spec_) :
     """Argument or option that specifies a key of a dictionary `dct`."""
 
     def __init__ (self, dct, ** kw) :
+        if dct is None :
+            dct = kw.pop ("choice_dict", {})
         assert all (isinstance (k, pyk.string_types) for k in dct)
         self._dict = dct
         self.__super.__init__ (** kw)
