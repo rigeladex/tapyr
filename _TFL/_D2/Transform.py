@@ -17,6 +17,8 @@
 #
 # Revision Dates
 #    12-Feb-2017 (CT) Creation
+#     2-Mar-2017 (CT) Change `Scale.__str__` to avoid `.__super.__str__`
+#                     * breaks in 2.7 due to effect of `@adapt__str__`
 #    ««revision-date»»···
 #--
 
@@ -154,6 +156,9 @@ Model 2-dimensional affine coordinate transformations::
 
     >>> Rotate (90) * Scale (1, -1)
     Matrix (0, 1, 1, 0, 0, 0)
+
+    >>> print (Scale (1, -1))
+    scale(1, -1)
 
 """
 
@@ -350,16 +355,24 @@ class _Affine_Transform_ (TFL.Meta.Object) :
     # end def __mul__
 
     def __repr__ (self) :
+        return self._formatted_r ()
+    # end def __repr__
+
+    def __str__ (self) :
+        return self._formatted_s ()
+    # end def __str__
+
+    def _formatted_r (self) :
         name = self.name
         return "%s (%s)" % \
             ( self.__class__.__name__ if name is None else name
             , ", ".join (portable_repr (a) for a in self.args)
             )
-    # end def __repr__
+    # end def _formatted_r
 
-    def __str__ (self) :
-        return repr (self).lower ().replace (" (", "(")
-    # end def __str__
+    def _formatted_s (self) :
+        return self._formatted_r ().lower ().replace (" (", "(")
+    # end def _formatted_s
 
 # end class _Affine_Transform_
 
@@ -460,7 +473,7 @@ class Scale (_Affine_Transform_) :
 
     def __str__ (self) :
         return "scale(%s)" % self.sx if self.sx == self.sy \
-            else self.__super.__str__ ()
+            else self._formatted_s ()
     # end def __str__
 
 # end class Scale
