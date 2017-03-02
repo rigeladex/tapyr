@@ -30,6 +30,7 @@
 #    17-Feb-2017 (CT) Add `vector_effect`
 #    17-Feb-2017 (CT) Change `_convert_points` to use `%s`, not `%d`
 #                     + Ditto for `_convert_points_path`
+#     4-Mar-2017 (CT) Add and use `_convert_view_box`
 #    ««revision-date»»···
 #--
 
@@ -135,6 +136,7 @@ TFL.SDG.XML.Node.attr_name_translate.update \
     , marker_start            = "marker-start"
     , marker_units            = "markerUnits"
     , marker_width            = "markerWidth"
+    , path_length             = "pathLength"
     , preserve_aspect_ratio   = "preserveAspectRatio"
     , ref_x                   = "refX"
     , ref_y                   = "refY"
@@ -263,6 +265,13 @@ _viewport_attr              = dict \
     , overflow              = None
     )
 
+def _convert_view_box (self, k, value) :
+    result = value
+    if isinstance (value, (list, tuple)) :
+        result = " ".join ("%s" % (x, ) for x in value)
+    return result
+# end def _convert_view_box
+
 def _convert_points (self, k, value) :
     result = value
     if isinstance (value, (list, tuple)) :
@@ -354,13 +363,14 @@ Marker                      = TFL.SDG.XML.Elem_Type \
     , ref_x                 = None
     , ref_y                 = None
     , view_box              = None
+    , _autoconvert          = dict (view_box = _convert_view_box)
     , ** dict (_shape_attr, ** _viewport_attr)
     )
 
 Path                        = TFL.SDG.XML.Elem_Type \
     ( "path"
     , d                     = None
-    , pathLength            = None
+    , path_length           = None
     , _autoconvert          = dict (d = _convert_points_path)
     , ** dict (_shape_attr, ** _marker_use_attr)
     )
@@ -418,6 +428,7 @@ Root                        = TFL.SDG.XML.Elem_Type \
     , xmlns                 = "http://www.w3.org/2000/svg"
     , x                     = None
     , y                     = None
+    , _autoconvert          = dict (view_box = _convert_view_box)
     , ** _viewport_attr
     )
 
@@ -430,6 +441,7 @@ SVG                         = TFL.SDG.XML.Elem_Type \
     , width                 = None
     , x                     = None
     , y                     = None
+    , _autoconvert          = dict (view_box = _convert_view_box)
     , ** _viewport_attr
     )
 
@@ -538,7 +550,7 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", design_size = 10, ref_x = None, st
         , ref_x         = ref_x
         , ref_y         = size_2
         , stroke        = stroke
-        , view_box      = "0 0 %(size)s %(size)s" % scope
+        , view_box      = (0, 0, size, size)
         , ** kw
         )
     return result
@@ -641,7 +653,7 @@ def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", design_size = 12, ref_x = None
         , ref_x         = ref_x
         , ref_y         = size_2
         , stroke        = stroke
-        , view_box      = "0 0 %(size)s %(size)s" % scope
+        , view_box      = (0, 0, size, size)
         , ** kw
         )
     return result
@@ -757,12 +769,11 @@ def Arrow_Head_Bar (cls, elid = "SVG:Arrow_Head_Bar", design_size = 70, fill = "
         , ref_x         = ref_x
         , ref_y         = size_2
         , stroke        = stroke
-        , view_box      = "0 0 %(size)s %(size)s" % locals ()
+        , view_box      = (0, 0, size, size)
         , ** kw
         )
     return result
 # end def Arrow_Head_Bar
-
 
 @TFL.Add_New_Method (Marker, decorator = classmethod)
 def Plug (cls, elid = "SVG:Plug", size = 2, stroke = "black", marker_height = 3, marker_width = 3, ** kw) :
@@ -827,7 +838,7 @@ def Plug (cls, elid = "SVG:Plug", size = 2, stroke = "black", marker_height = 3,
         , ref_x         = 0
         , ref_y         = size
         , stroke        = stroke
-        , view_box      = "0 0 %(size2)s %(size2)s" % scope
+        , view_box      = (0, 0, size2, size2)
         , ** kw
         )
     return result
