@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #     2-Mar-2017 (CT) Creation
+#     4-Apr-2017 (CT) Use `Parameters`, not `Definition`, in doctest
 #    ««revision-date»»···
 #--
 
@@ -466,7 +467,7 @@ class _Plot_Element_ (TFL.Meta.Object) :
 class Plot (_Plot_Element_) :
     """Define a data plot using SVG.
 
-    >>> plot = Plot (100, 80, P = Definition ())
+    >>> plot = Plot (100, 80, P = Parameters ())
     >>> plot.frame
     Frame (Frame_Axis (min = 0, size = 100), Frame_Axis (min = 0, size = 80))
 
