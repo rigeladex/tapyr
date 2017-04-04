@@ -32,6 +32,8 @@
 #                     ("%X" requires `int`, blows up for `float`)
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    19-Feb-2017 (CT) Add `relative_luminance`, `contrast_ratio`
+#     4-Apr-2017 (CT) Add `__repr__` to `_Color_`
+#                     + Add `reprified` to `_Color_`, `SVG_Color`
 #    ««revision-date»»···
 #--
 
@@ -44,6 +46,7 @@ from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.portable_repr       import portable_repr
 from   _TFL.predicate           import identity
 
 import _TFL._Meta.Object
@@ -510,6 +513,17 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
             return "%s(%s)" % (self.name, v)
     # end def formatted
 
+    def reprified (self) :
+        v = self._formatted_values ()
+        if v.startswith ("#") :
+            v = portable_repr (v)
+        else :
+            v = v.replace ("%", "")
+        alpha = self.alpha
+        args  = (v, ) if alpha is None else (v, portable_repr (alpha))
+        return "%s (%s)" % (self.__class__.__name__, ", ".join (args))
+    # end def reprified
+
     def with_alpha (self, alpha) :
         return self.cast (self, alpha)
     # end def with_alpha
@@ -547,6 +561,12 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
             , self.alpha
             )
     # end def __mul__
+
+    def __repr__ (self) :
+        if self.formatter is not None :
+            self = self.formatter.cast (self)
+        return self.reprified ()
+    # end def __repr__
 
     def __str__ (self) :
         if self.formatter is not None :
@@ -586,8 +606,8 @@ class HUSL (_Color_) :
        http://www.husl-colors.org/
     """
 
-    name   = "husl"
-    P_Type = HUSL_Value
+    name      = "husl"
+    P_Type    = HUSL_Value
 
     def __init__ (self, hue, saturation, lightness, alpha = None) :
         hue = (((hue % 360.0) + 360.0) % 360.0)
@@ -896,6 +916,19 @@ class SVG_Color (RGB_X) :
             return self.as_RGB_8.formatted ()
     # end def formatted
 
+    def reprified (self) :
+        name = self.Pam.get (self.value.hex)
+        if name is not None :
+            alpha = self.alpha
+            args  = (name, ) if alpha is None else (name, alpha)
+            return "%s (%s)" % \
+                ( self.__class__.__name__
+                , ", ".join (portable_repr (a) for a in args)
+                )
+        else :
+            return self.__super.reprified ()
+    # end def reprified
+
     @property
     def Pam (self) :
         if self._Pam is None :
@@ -920,12 +953,18 @@ Classes modelling various color representations::
     >>> u = c.as_HUSL
     >>> print (c, d, h, u)
     rgb(255, 0, 0) #F00 hsl(0, 100%, 50%) husl(12, 100%, 53%)
+    >>> print (HUSL (12, 100, 53))
+    husl(12, 100%, 53%)
+    >>> (c, d, h, u)
+    (RGB_8 (255, 0, 0), RGB_X ('#F00'), HSL (0, 100, 50), HUSL (12, 100, 53))
 
     >>> cn = ~ c
     >>> hn = ~ h
     >>> un = ~ u
     >>> print (cn, hn, un)
     rgb(0, 255, 255) hsl(180, 100%, 50%) husl(192, 99%, 91%)
+    >>> (cn, hn, un)
+    (RGB_8 (0, 255, 255), HSL (180, 100, 50), HUSL (192, 99, 91))
 
     >>> ca = RGB (* c.rgb, alpha = 0.25).as_RGB_8
     >>> da = ca.as_RGB_X
@@ -933,6 +972,8 @@ Classes modelling various color representations::
     >>> ua = ca.as_HUSL
     >>> print (ca, da, ha, ua)
     rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0, 100%, 50%, 0.25) husla(12, 100%, 53%, 0.25)
+    >>> (ca, da, ha, ua)
+    (RGB_8 (255, 0, 0, 0.25), RGB_X ('#F00', 0.25), HSL (0, 100, 50, 0.25), HUSL (12, 100, 53, 0.25))
 
     >>> b  = RGB (0, 0, 0)
     >>> hb = b.as_HSL
@@ -944,17 +985,29 @@ Classes modelling various color representations::
     rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%) husl(0, 0%, 0%) husl(19, 0%, 100%)
     >>> print (~w, w, ~hw, hw, uw, ~ uw)
     rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%) husl(19, 0%, 100%) husl(0, 0%, 0%)
+    >>> (b, ~b, hb, ~hb, ub, ~ub)
+    (RGB (0, 0, 0), RGB (100, 100, 100), HSL (0, 0, 0), HSL (0, 0, 100), HUSL (0, 0, 0), HUSL (19, 0, 100))
+    >>> (~w, w, ~hw, hw, uw, ~ uw)
+    (RGB (0, 0, 0), RGB (100, 100, 100), HSL (0, 0, 0), HSL (0, 0, 100), HUSL (19, 0, 100), HUSL (0, 0, 0))
 
     >>> print (c * 0.5, w * 0.8)
     rgb(127, 0, 0) rgb(80%, 80%, 80%)
+    >>> (c * 0.5, w * 0.8)
+    (RGB_8 (127, 0, 0), RGB (80, 80, 80))
 
     >>> _Color_.formatter = RGB_X
     >>> print (b, ~b, hb, ~hb, ub, ~ub)
     #000 #FFF #000 #FFF #000 #FFF
+    >>> (b, ~b, hb, ~hb, ub, ~ub)
+    (RGB_X ('#000'), RGB_X ('#FFF'), RGB_X ('#000'), RGB_X ('#FFF'), RGB_X ('#000'), RGB_X ('#FFF'))
     >>> print (cn, hn, un)
     #0FF #0FF #0FF
+    >>> (cn, hn, un)
+    (RGB_X ('#0FF'), RGB_X ('#0FF'), RGB_X ('#0FF'))
     >>> print (ca, da, ha, ua)
     rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25)
+    >>> (ca, da, ha, ua)
+    (RGB_X ('#F00', 0.25), RGB_X ('#F00', 0.25), RGB_X ('#F00', 0.25), RGB_X ('#F00', 0.25))
 
     >>> _Color_.formatter = HSL
     >>> print (b, ~b, hb, ~hb, ub, ~ub)
@@ -971,6 +1024,8 @@ Classes modelling various color representations::
     >>> _Color_.formatter = None
     >>> print (SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5))
     grey darkred rgba(0, 0, 255, 0.5)
+    >>> (SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5))
+    (SVG_Color ('grey'), SVG_Color ('darkred'), SVG_Color ('blue', 0.5))
 
     >>> _Color_.formatter = RGB_X
     >>> print (w, w.relative_luminance)
