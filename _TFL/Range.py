@@ -31,6 +31,7 @@
 #     1-Mar-2017 (CT) Add `Float_Range_Discrete`
 #     9-Mar-2017 (CT) Add `epsilon` to `_Range_Discrete_.__iter__`
 #                     and `Float_Range_Discrete`
+#     4-Apr-2017 (CT) Add guard for `eps` and `last` to `__iter__`
 #    ««revision-date»»···
 #--
 
@@ -574,7 +575,9 @@ class _Range_Discrete_ (_Range_) :
         eps   = self.epsilon
         next  = self.LB.first
         last  = \
-            (self.UB.first if self.UB.first is not None else TFL.Infinity) + eps
+            (self.UB.first if self.UB.first is not None else TFL.Infinity)
+        if eps and last is not None :
+            last += eps
         if next is None or last is None :
             raise ValueError \
                 ( "Cannot iterate over range `%s` with infinite bound"
