@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -18,6 +18,7 @@
 #    13-May-2016 (CT) Add `__str__`
 #    29-Sep-2016 (CT) Improve support for `height`
 #     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
+#     5-Apr-2017 (CT) Add [simple] `_Location_Arg_`
 #    ««revision-date»»···
 #--
 
@@ -30,9 +31,10 @@ from   _SKY                     import SKY
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
 
-import _TFL._Meta.Object
-
 from   _TFL.Angle               import Angle_D, Angle_R
+
+import _TFL.CAO
+import _TFL._Meta.Object
 
 @pyk.adapt__str__
 class Location (TFL.Meta.Object) :
@@ -83,6 +85,33 @@ class Location (TFL.Meta.Object) :
 
 Location (Angle_D (48, 14),     Angle_D (-16, -22),     "Vienna",     180)
 Location (Angle_D (37, 51,  7), Angle_D (  8,  47, 31), "Porto Covo",  25)
+
+class _Location_Arg_ (TFL.CAO.Str) :
+    """Argument or option defining a location"""
+
+    _real_name = "Location"
+
+    def cook (self, value, cao = None) :
+        if value :
+            try :
+                result = Location.Table [value]
+            except KeyError :
+                raw_lat, raw_lon = tuple (v.strip () for v in value.split (","))
+                lat    = self._latituded  (raw_lat)
+                lon    = self._longituded (raw_lon)
+                result = Location (lat, lon)
+            return result
+    # end def cook
+
+    def _latituded (self, value) :
+        return float (value)
+    # end def _latituded
+
+    def _longituded (self, value) :
+        return float (value)
+    # end def _longituded
+
+# end class _Location_Arg_
 
 if __name__ != "__main__" :
     SKY._Export ("*")
