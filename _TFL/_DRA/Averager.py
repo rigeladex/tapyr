@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -17,12 +17,14 @@
 #    22-Nov-2006 (CT) Creation
 #     1-Sep-2008 (CT) `moving_average` added
 #     9-Oct-2016 (CT) Move to Package_Namespace `TFL`
+#     6-Apr-2017 (CT) Reduce number of divisions in `moving_average`
+#     6-Apr-2017 (CT) Factor `indexed_moving_average`
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 
-from   _TFL.DL_List import DL_Ring
+from   _TFL.DL_List          import DL_Ring
 
 import _TFL._Meta.Object
 import _TFL._DRA
@@ -66,46 +68,78 @@ class Averager (TFL.Meta.Object) :
 
 # end class Averager
 
-def moving_average (s, n, central = False) :
-    """Generator for moving average of `n` data points over sequence `s`.
+def indexed_moving_average (s, n, central = False) :
+    """Generator for indexed moving average of `n` data points over sequence `s`.
 
-       >>> list (moving_average (range (10), 3))
-       [(2, 1.0), (3, 2.0), (4, 3.0), (5, 4.0), (6, 5.0), (7, 6.0), (8, 7.0), (9, 8.0)]
-       >>> list (moving_average (range (10), 4))
-       [(3, 1.5), (4, 2.5), (5, 3.5), (6, 4.5), (7, 5.5), (8, 6.5), (9, 7.5)]
-       >>> list (moving_average (range (10), 5))
-       [(4, 2.0), (5, 3.0), (6, 4.0), (7, 5.0), (8, 6.0), (9, 7.0)]
-       >>> list (moving_average (range (10), 3, True))
-       [(1, 1.0), (2, 2.0), (3, 3.0), (4, 4.0), (5, 5.0), (6, 6.0), (7, 7.0), (8, 8.0)]
-       >>> list (moving_average (range (10), 5, True))
-       [(2, 2.0), (3, 3.0), (4, 4.0), (5, 5.0), (6, 6.0), (7, 7.0)]
-       >>> list (moving_average (range (10), 7, True))
-       [(3, 3.0), (4, 4.0), (5, 5.0), (6, 6.0)]
-       >>> list (moving_average (range (10), 9, True))
-       [(4, 4.0), (5, 5.0)]
-       >>> list (moving_average (range (10), 10, True))
-       [(5, 4.5)]
-       >>> list (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 3, True))
-       [(1, 1.2933333333333332), (2, 1.2933333333333332), (3, 1.2899999999999998), (4, 1.2966666666666664), (5, 1.293333333333333)]
-       >>> list (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 5, True))
-       [(2, 1.292), (3, 1.298), (4, 1.29)]
-       >>> list (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 7, True))
-       [(3, 1.2914285714285714)]
+    >>> def show (ma_s, fmt = "(%d, %.1f)") :
+    ...     print ("[" + ", ".join (fmt % (i, v) for i, v in ma_s) + "]")
+
+    >>> show (indexed_moving_average (range (10), 2))
+    [(1, 0.5), (2, 1.5), (3, 2.5), (4, 3.5), (5, 4.5), (6, 5.5), (7, 6.5), (8, 7.5), (9, 8.5)]
+    >>> show (indexed_moving_average (range (10), 3))
+    [(2, 1.0), (3, 2.0), (4, 3.0), (5, 4.0), (6, 5.0), (7, 6.0), (8, 7.0), (9, 8.0)]
+    >>> show (indexed_moving_average (range (10), 4))
+    [(3, 1.5), (4, 2.5), (5, 3.5), (6, 4.5), (7, 5.5), (8, 6.5), (9, 7.5)]
+    >>> show (indexed_moving_average (range (10), 5))
+    [(4, 2.0), (5, 3.0), (6, 4.0), (7, 5.0), (8, 6.0), (9, 7.0)]
+    >>> show (indexed_moving_average (range (10), 3, True))
+    [(1, 1.0), (2, 2.0), (3, 3.0), (4, 4.0), (5, 5.0), (6, 6.0), (7, 7.0), (8, 8.0)]
+    >>> show (indexed_moving_average (range (10), 5, True))
+    [(2, 2.0), (3, 3.0), (4, 4.0), (5, 5.0), (6, 6.0), (7, 7.0)]
+    >>> show (indexed_moving_average (range (10), 7, True))
+    [(3, 3.0), (4, 4.0), (5, 5.0), (6, 6.0)]
+    >>> show (indexed_moving_average (range (10), 9, True))
+    [(4, 4.0), (5, 5.0)]
+    >>> show (indexed_moving_average (range (10), 10, True))
+    [(5, 4.5)]
+    >>> fmt = "(%d, %.2f)"
+    >>> show (indexed_moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 3, True), fmt)
+    [(1, 1.29), (2, 1.29), (3, 1.29), (4, 1.30), (5, 1.29)]
+    >>> show (indexed_moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 5, True), fmt)
+    [(2, 1.29), (3, 1.30), (4, 1.29)]
+    >>> show (indexed_moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 7, True), fmt)
+    [(3, 1.29)]
     """
     if central :
         i = n // 2
     else :
         i = n - 1
-    s = iter    (s)
-    w = DL_Ring (next (s) for k in range (n))
-    m = float   (n)
-    v = sum     (w.values ()) / m
-    yield i, v
+    return enumerate (moving_average (s, n), start = i)
+# end def indexed_moving_average
+
+def moving_average (s, n) :
+    """Generator for moving average of `n` data points over sequence `s`.
+
+    >>> def show (ma_s, fmt = "%.1f") :
+    ...     print ("[" + ", ".join (fmt % v for v in ma_s) + "]")
+
+    >>> show (moving_average (range (10), 2))
+    [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5]
+    >>> show (moving_average (range (10), 3))
+    [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
+    >>> show (moving_average (range (10), 4))
+    [1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5]
+    >>> show (moving_average (range (10), 5))
+    [2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
+    >>> fmt = "%.2f"
+    >>> show (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 3), fmt)
+    [1.29, 1.29, 1.29, 1.30, 1.29]
+    >>> show (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 5), fmt)
+    [1.29, 1.30, 1.29]
+    >>> show (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 7), fmt)
+    [1.29]
+    """
+    m  = float   (n)
+    s  = iter    (s)
+    w  = DL_Ring (next (s) / m for k in range (n))
+    ma = sum     (w.values ())
+    yield ma
     for x in s :
-        i += 1
-        v += (- w.pop_front () / m) + (x / m)
-        w.append (x)
-        yield i, v
+        x_m  = x / m
+        ma  -= w.pop_front ()
+        ma  += x_m
+        w.append (x_m)
+        yield ma
 # end def moving_average
 
 if __name__ != "__main__" :
