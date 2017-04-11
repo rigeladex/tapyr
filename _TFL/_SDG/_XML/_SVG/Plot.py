@@ -20,6 +20,7 @@
 #     4-Apr-2017 (CT) Use `Parameters`, not `Definition`, in doctest
 #    11-Apr-2017 (CT) Add `x_range_s`, `y_range_s` to `add_grid`
 #    11-Apr-2017 (CT) Add `Parameters.x_sub_tick_len` and friends
+#    11-Apr-2017 (CT) Support multi-line labels in `x_labels`, `y_labels`
 #    ««revision-date»»···
 #--
 
@@ -858,8 +859,13 @@ class Viewport (_Plot_Element_) :
             )
         if dy is None :
             dy = DC.Y (P.line_height)
-        for xi, xl in zip (x_range, x_labels) :
-            result.add (self.text (xl, dx = dx, dy = dy, x = xi, y = y))
+        dyd = DC.Y (P.line_height) * 1.25
+        for xi, x_label in zip (x_range, x_labels) :
+            xls = x_label.split ("\n")
+            dyi = dy
+            for xl in xls :
+                result.add (self.text (xl, dx = dx, dy = dyi, x = xi, y = y))
+                dyi += dyd
         return result
     # end def x_labels
 
@@ -886,8 +892,13 @@ class Viewport (_Plot_Element_) :
             dx = - DC.X (P.font_char_width)
         if dy is None :
             dy = DC.Y (P.font_size * 0.25)
-        for yi, yl in zip (y_range, y_labels) :
-            result.add (self.text (yl, dx = dx, dy = dy, x = x, y = yi))
+        dyd = DC.Y (P.line_height) * 1.25
+        for yi, y_label in zip (y_range, y_labels) :
+            yls = y_label.split ("\n")
+            dyi = dy
+            for yl in yls :
+                result.add (self.text (yl, dx = dx, dy = dyi, x = x, y = yi))
+                dyi -= dyd
         return result
     # end def y_labels
 
