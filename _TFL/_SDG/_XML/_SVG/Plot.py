@@ -18,6 +18,8 @@
 # Revision Dates
 #     2-Mar-2017 (CT) Creation
 #     4-Apr-2017 (CT) Use `Parameters`, not `Definition`, in doctest
+#    11-Apr-2017 (CT) Add `x_range_s`, `y_range_s` to `add_grid`
+#    11-Apr-2017 (CT) Add `Parameters.x_sub_tick_len` and friends
 #    ««revision-date»»···
 #--
 
@@ -43,29 +45,6 @@ import _TFL.Accessor
 import _TFL.Decorator
 
 import operator
-
-@TFL.eval_function_body
-class Parameters (Definition) :
-    """Default parameters for SVG renderer."""
-
-    class color (Definition) :
-
-        axis                = RGB_X     ("#AAAAAA")
-        axis_text           = RGB_X     ("#0088DD")
-        color_map_text      = RGB_X     ("#888888")
-        symbol              = RGB_X     ("#0088DD")
-        text                = RGB_X     ("#000033")
-
-    # end class color
-
-    font_family             = "sans-serif"
-    font_size               = 5
-    font_char_width         = P.font_size   / 2.0
-    line_height             = P.font_size   * 1.5
-    stroke_width            = 0.25
-    symbol_size             = 2.5
-
-# end class Parameters
 
 class Frame_Axis (TFL.Meta.Object) :
     """Model an axis of a frame of reference.
@@ -682,6 +661,8 @@ class Viewport (_Plot_Element_) :
             , P            = None
             , x_len        = None
             , y_len        = None
+            , x_range_s    = None
+            , y_range_s    = None
             ) :
         """Add a grid of x- and y-lines at points in `x_range` and `y_range`."""
         P      = self.P if P is None else P
@@ -692,9 +673,15 @@ class Viewport (_Plot_Element_) :
         if font_size is None :
             font_size = P.font_size
         if x_len is None :
-            x_len = x2
+            x_len   = x2
+            x_len_s = P.x_sub_tick_len
+        else :
+            x_len_s = x_len / (P.x_tick_len / P.x_sub_tick_len)
         if y_len is None :
-            y_len = y2
+            y_len   = y2
+            y_len_s = P.y_sub_tick_len
+        else :
+            y_len_s = y_len / (P.y_tick_len / P.y_sub_tick_len)
         frame  = self.frame
         result = self.group \
             ( font_size    = font_size * 1.5
@@ -704,8 +691,14 @@ class Viewport (_Plot_Element_) :
         self.svg.add (result)
         result.add \
             (self.rect (x1, y1, x2, y2, stroke_width = P.stroke_width * 1.5))
+        if x_range_s :
+            for xi in x_range_s :
+                result.add (self.line (xi, y1, xi, y_len_s))
         for xi in x_range :
             result.add (self.line (xi, y1, xi, y_len))
+        if y_range_s :
+            for yi in y_range_s :
+                result.add (self.line (x1, yi, x_len_s, yi))
         for yi in y_range :
             result.add (self.line (x1, yi, x_len, yi))
         if label_x :
@@ -937,6 +930,33 @@ class Viewport (_Plot_Element_) :
     # end def _svg_element
 
 # end class Viewport
+
+@TFL.eval_function_body
+class Parameters (Definition) :
+    """Default parameters for SVG renderer."""
+
+    class color (Definition) :
+
+        axis                = RGB_X     ("#AAAAAA")
+        axis_text           = RGB_X     ("#0088DD")
+        color_map_text      = RGB_X     ("#888888")
+        symbol              = RGB_X     ("#0088DD")
+        text                = RGB_X     ("#000033")
+
+    # end class color
+
+    font_family             = "sans-serif"
+    font_size               = 5
+    font_char_width         = P.font_size   / 2.0
+    line_height             = P.font_size   * 1.5
+    stroke_width            = 0.25
+    symbol_size             = 2.5
+    x_sub_tick_len          = P.x_tick_len / 2.0
+    y_sub_tick_len          = P.y_tick_len / 2.0
+    x_tick_len              = DC.Y (4.0)
+    y_tick_len              = DC.X (4.0)
+
+# end class Parameters
 
 if __name__ != "__main__" :
     TFL.SDG.XML.SVG._Export_Module ()
