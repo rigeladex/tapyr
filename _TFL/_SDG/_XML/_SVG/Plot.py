@@ -21,6 +21,7 @@
 #    11-Apr-2017 (CT) Add `x_range_s`, `y_range_s` to `add_grid`
 #    11-Apr-2017 (CT) Add `Parameters.x_sub_tick_len` and friends
 #    11-Apr-2017 (CT) Support multi-line labels in `x_labels`, `y_labels`
+#    13-Apr-2017 (CT) Put sub-ticks on both sides
 #    ««revision-date»»···
 #--
 
@@ -695,11 +696,13 @@ class Viewport (_Plot_Element_) :
         if x_range_s :
             for xi in x_range_s :
                 result.add (self.line (xi, y1, xi, y_len_s))
+                result.add (self.line (xi, y2, xi, y2 - y_len_s))
         for xi in x_range :
             result.add (self.line (xi, y1, xi, y_len))
         if y_range_s :
             for yi in y_range_s :
                 result.add (self.line (x1, yi, x_len_s, yi))
+                result.add (self.line (x2, yi, x2 - x_len_s, yi))
         for yi in y_range :
             result.add (self.line (x1, yi, x_len, yi))
         if label_x :
