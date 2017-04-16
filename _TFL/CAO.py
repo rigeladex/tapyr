@@ -123,7 +123,8 @@
 #    10-Feb-2016 (CT) Factor `Cmd.cao` from `__call__`
 #    29-Sep-2016 (CT) Add `Percent`
 #     2-Oct-2016 (CT) Factor `_resolved_range`, add range support to `Float`
-#     2-Mar-2017 (CT) Add `dct` guard anc `choice_dict` to `Key.__init__`
+#     2-Mar-2017 (CT) Add `dct` guard and `choice_dict` to `Key.__init__`
+#    16-Apr-2017 (CT) Add `choice_abbr`, factor `_get_choice`
 #    ««revision-date»»···
 #--
 
@@ -298,14 +299,51 @@ class Opt (Arg) :
 class _Spec_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
 
     auto_split    = None
+    choices       = None
     explanation   = ""
     needs_value   = True
+
+    @TFL.Meta.Once_Property
+    def choice_abbr (self) :
+        choices = self.choices
+        if choices is not None :
+            return Trie (choices)
+    # end def choice_abbr
 
     @TFL.Meta.Once_Property
     def user_config (self) :
         from _TFL.User_Config import user_config
         return user_config
     # end def user_config
+
+    def _choice_ambiguous (self, value, matches) :
+        return \
+            ( "Ambiguous value `%s` for %s\n    Matches any of: %s"
+            % (value, self, portable_repr (sorted (matches)))
+            )
+    # end def _choice_ambiguous
+
+    def _choice_unknown (self, value, choices) :
+        return \
+            ( "Unkown value `%s` for %s\n    Specify one of: (%s)"
+            % (value, self, sorted (choices))
+            )
+    # end def _choice_unknown
+
+    def _get_choice (self, k) :
+        choices         = self.choices
+        abbrs           = self.choice_abbr
+        matches, unique = abbrs.completions (k)
+        if unique :
+            if isinstance (choices, dict) :
+                return choices [unique]
+            else :
+                return unique
+        else :
+            msg = (self._choice_ambiguous if matches else self._choice_unknown) \
+                (k, matches if matches else choices)
+            raise Err (msg)
+    # end def _get_choice
 
     def _help_items (self) :
         if self.description :
@@ -324,7 +362,6 @@ class _Spec_ (_Spec_Base_) :
     """Base class for argument and option types"""
 
     alias         = None
-    choices       = None
     implied_value = None
     kind          = "argument"
 
@@ -651,7 +688,7 @@ class Cmd_Choice (_Spec_Base_) :
     # end def __init__
 
     def __call__ (self, value, cao) :
-        cao._cmd     = sc = self._get_sub_cmd (value)
+        cao._cmd     = sc = self._get_choice (value)
         cao._name         = " ".join ([cao._name, sc._name])
         cao._min_args     = sc._min_args
         cao._max_args     = sc._max_args
@@ -680,24 +717,19 @@ class Cmd_Choice (_Spec_Base_) :
         return self.default
     # end def cooked_default
 
-    def _get_sub_cmd (self, name) :
-        sub_abbr = self.sub_abbr
-        sub_cmds = self.sub_cmds
-        matches, unique = sub_abbr.completions (name)
-        if unique :
-            return sub_cmds [unique]
-        else :
-            if matches :
-                raise Err \
-                    ( "Ambiguous sub-command `%s`, matches any of %s"
-                    % (name, portable_repr (matches))
-                    )
-            else :
-                raise Err \
-                    ( "Unkown sub-command `%s`, specify one of: (%s)"
-                    % (name, ", ".join (sorted (sub_cmds)))
-                    )
-    # end def _get_sub_cmd
+    def _choice_ambiguous (self, value, matches) :
+        return  \
+            ( "Ambiguous sub-command `%s`, matches any of %s"
+            % (value, portable_repr (matches))
+            )
+    # end def _choice_ambiguous
+
+    def _choice_unknown (self, value, choices) :
+        return  \
+            ( "Unkown sub-command `%s`, specify one of: (%s)"
+            % (value, ", ".join (sorted (choices)))
+            )
+    # end def _choice_unknown
 
     def __getattr__ (self, name) :
         """Return the sub-command with `name`."""
@@ -1243,15 +1275,7 @@ class Key (_Spec_) :
     # end def choices
 
     def cook (self, value, cao = None) :
-        if value :
-            try :
-                return self._dict [value]
-            except KeyError :
-                raise Err \
-                    ( "Unkown key `%s` for %s\n    Specify one of: %s"
-                    % (value, self, sorted (self._dict))
-                    )
-        return value
+        return self._get_choice (value) if value else value
     # end def cook
 
 # end class Key
@@ -1493,12 +1517,7 @@ class Set (_Spec_) :
     # end def __init__
 
     def cook (self, value, cao = None) :
-        if value and value not in self.choices :
-            raise Err \
-                ( "Unkown value `%s` for %s\n    Specify one of: %s"
-                % (value, self, sorted (self.choices))
-                )
-        return self.__super.cook (value, cao)
+        return self.__super.cook (self._get_choice (value), cao)
     # end def cook
 
 # end class Set
