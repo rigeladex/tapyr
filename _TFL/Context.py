@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -25,6 +25,7 @@
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    14-Mar-2014 (CT) Add `dict_let`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#     8-May-2017 (CT) Add optional argument `index` to `list_push`
 #    ««revision-date»»···
 #--
 
@@ -91,14 +92,49 @@ def dict_let (dct, ** kw) :
 # end def dict_let
 
 @TFL.Contextmanager
-def list_push (list, item) :
-    """Context manager for temporarily pushing `item` onto `list`."""
-    list.append (item)
+def list_push (list, item, index = None) :
+    """Context manager for temporarily pushing `item` onto `list`.
+
+    >>> l = pyk.range (0, 5)
+    >>> l
+    [0, 1, 2, 3, 4]
+
+    >>> with list_push (l, 42) :
+    ...     l
+    [0, 1, 2, 3, 4, 42]
+    >>> l
+    [0, 1, 2, 3, 4]
+
+    >>> with list_push (l, 42, 0) :
+    ...     l
+    [42, 0, 1, 2, 3, 4]
+    >>> l
+    [0, 1, 2, 3, 4]
+
+    >>> with list_push (l, 42, 3) :
+    ...     l
+    [0, 1, 2, 42, 3, 4]
+    >>> l
+    [0, 1, 2, 3, 4]
+
+    >>> with expect_except (TypeError) :
+    ...   with list_push (l, 42, 3) :
+    ...     l.insert (3, 23)
+    TypeError: List [0, 1, 2, 23, 42, 3, 4] changed during `with list_push (..., 42, 3)`
+
+    """
+    if index is None :
+        index = len (list)
+    list.insert (index, item)
     try :
         yield list
     finally :
-        assert list [-1] is item
-        list.pop ()
+        if list [index] is not item :
+            raise TypeError \
+                ( "List %r changed during `with list_push (..., %s, %s)`"
+                % (list, item, index)
+                )
+        list.pop (index)
 # end def list_push
 
 @TFL.Contextmanager
