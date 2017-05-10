@@ -70,6 +70,7 @@
 #    16-Jan-2017 (CT) Change `nav_col` to `nav.main`; modernize nav styling
 #    16-Jan-2017 (CT) Add `nav.header`, `nav.rel`
 #    19-Jan-2017 (CT) Add `Rule.main_nav_off`, `.main_nav_on`
+#    10-May-2017 (CT) Add system-specific fonts to `font_family_normal`
 #    ««revision-date»»···
 #--
 
@@ -730,7 +731,10 @@ class Media_Defaults (Definition) :
         # XXX ???
         )
 
-    font_family_normal     = """"Lucida Grande", verdana, sans-serif"""
+    font_family_normal     = \
+        ( """"-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, """
+          """"Lucida Grande", verdana, sans-serif"""
+        )
     font_family_pre        = \
         """"Lucida Sans Typewriter", "Lucida Console", "Courier New", Courier, monospace"""
     font_family_print      = "serif"
