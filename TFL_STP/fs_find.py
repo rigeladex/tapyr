@@ -18,6 +18,7 @@
 # Revision Dates
 #    13-Oct-2016 (CT) Creation
 #    23-Feb-2017 (CT) Move to package `TFL_STP` (from `_TFL`)
+#    12-May-2017 (CT) Add `Filter.startswith`
 #    ««revision-date»»···
 #--
 
@@ -104,6 +105,12 @@ class Filter (object) :
         rx  = pat if len (extensions) == 1 else "(" + pat + ")"
         return re.compile (rx + "$").search
     # end def has_extension
+
+    @staticmethod
+    def startswith (* prefixes) :
+        """Predicate for directories/files with a name starting with any of `prefixes`."""
+        return lambda x : x.startswith (prefixes)
+    # end def startswith
 
     def __init__ \
             ( self
