@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -75,6 +75,7 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    24-May-2016 (CT) Add `_display_filter_q_`
 #    20-Jul-2016 (CT) Add `_Exp_.OVERLAPS`
+#    15-May-2017 (CT) Add `TUPLE`
 #    ««revision-date»»···
 #--
 
@@ -1005,6 +1006,24 @@ class _Self_ (_Get_) :
 
 # end class _Self_
 
+@TFL.Add_To_Class ("TUPLE", Base)
+class _Q_Tuple_ (TFL.Meta.Object) :
+    """Model a query expression that returns a tuple of attributes."""
+
+    def __init__ (self, * qs) :
+        self.qs = qs
+    # end def __init__
+
+    def __call__ (self, obj) :
+        return tuple (q (obj) for q in self.qs)
+    # end def __call__
+
+    def __repr__ (self) :
+        return "Q.TUPLE (%s)" % (", ".join (repr (q) for q in self.qs))
+    # end def __repr__
+
+# end class _Q_Tuple_
+
 class _BVAR_Get_ (TFL.Meta.Object) :
     """Syntactic sugar for creating bound variables for query expressions."""
 
@@ -1050,7 +1069,7 @@ class _BVAR_Descriptor_ (object) :
         return _BVAR_Get_ (obj)
     # end def __get__
 
-# end class _RAW_DESC_
+# end class _BVAR_Descriptor_
 
 Base.BVAR = _BVAR_Descriptor_ ()
 
