@@ -39,6 +39,7 @@
 #     7-Oct-2014 (CT) Change `paired_map` not to use `len`
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    24-Feb-2017 (CT) Add `iter_split`
+#    16-May-2017 (CT) Add property `succ` to `Look_Ahead_Gen`
 #    ««revision-date»»···
 #--
 
@@ -121,24 +122,34 @@ class Look_Ahead_Gen (object) :
        0 True
        >>> lag = Look_Ahead_Gen (range (3))
        >>> for i in lag :
-       ...   print (i, lag.is_finished)
+       ...   print (i, lag.succ, lag.is_finished)
        ...
-       0 False
-       1 False
-       2 True
+       0 1 False
+       1 2 False
+       2 <Undef/sentinel> True
     """
 
     is_finished        = property (lambda s : not s)
 
     def __init__ (self, source) :
-        self.source    = source    = iter (source)
-        self._sentinel = self.succ = TFL.Undef ("sentinel")
+        self.source    = source     = iter (source)
+        self._sentinel = self._succ = TFL.Undef ("sentinel")
     # end def __init__
+
+    @property
+    def succ (self) :
+        if self._succ is self._sentinel :
+            try :
+                self._succ = next (self.source)
+            except StopIteration :
+                return self._sentinel
+        return self._succ
+    # end def succ
 
     def __bool__ (self) :
         try :
-            if self.succ is self._sentinel :
-                self.succ = next (self.source)
+            if self._succ is self._sentinel :
+                self._succ = next (self.source)
         except StopIteration :
             return False
         return True
@@ -148,11 +159,11 @@ class Look_Ahead_Gen (object) :
         source    = self.source
         _sentinel = self._sentinel
         while True :
-            if self.succ is _sentinel :
-                succ      = next (source)
+            if self._succ is _sentinel :
+                succ       = next (source)
             else :
-                succ      = self.succ
-                self.succ = _sentinel
+                succ       = self._succ
+                self._succ = _sentinel
             yield succ
     # end def __iter__
 
