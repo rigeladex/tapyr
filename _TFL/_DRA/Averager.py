@@ -19,6 +19,7 @@
 #     9-Oct-2016 (CT) Move to Package_Namespace `TFL`
 #     6-Apr-2017 (CT) Reduce number of divisions in `moving_average`
 #     6-Apr-2017 (CT) Factor `indexed_moving_average`
+#    16-May-2017 (CT) Support `n == 1` in `moving_average`
 #    ««revision-date»»···
 #--
 
@@ -129,17 +130,21 @@ def moving_average (s, n) :
     >>> show (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 7), fmt)
     [1.29]
     """
-    m  = float   (n)
-    s  = iter    (s)
-    w  = DL_Ring (next (s) / m for k in range (n))
-    ma = sum     (w.values ())
-    yield ma
-    for x in s :
-        x_m  = x / m
-        ma  -= w.pop_front ()
-        ma  += x_m
-        w.append (x_m)
+    if n == 1 :
+        for x in s :
+            yield x
+    else :
+        m  = float   (n)
+        s  = iter    (s)
+        w  = DL_Ring (next (s) / m for k in range (n))
+        ma = sum     (w.values ())
         yield ma
+        for x in s :
+            x_m  = x / m
+            ma  -= w.pop_front ()
+            ma  += x_m
+            w.append (x_m)
+            yield ma
 # end def moving_average
 
 if __name__ != "__main__" :
