@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -168,11 +168,12 @@
 #    12-Jun-2013 (CT)  Change `bool_split` to use `bool_split_iters`
 #     8-Jul-2014 (CT)  Change `split_hst`, `rsplit_hst` to allow multiple `seps`
 #     9-Sep-2014 (CT)  Add guard for `seps` to `split_hst`, `rsplit_hst`
-#    26-Sep-2014 (CT) Add `is_mixed_case`, `is_not_mixed_case`
-#    22-Jun-2016 (CT) Change `extender` to use `extend` for (list, tuple), only
-#                     + Use `append` for all other `tail` values
-#                     + Otherwise, strings are split into characters,
-#                       datetime.time triggers an exception, ...
+#    26-Sep-2014 (CT)  Add `is_mixed_case`, `is_not_mixed_case`
+#    22-Jun-2016 (CT)  Change `extender` to use `extend` for (list, tuple), only
+#                      + Use `append` for all other `tail` values
+#                      + Otherwise, strings are split into characters,
+#                        datetime.time triggers an exception, ...
+#    19-May-2017 (CT)  Add `round_robin`
 #    ««revision-date»»···
 #--
 
@@ -933,6 +934,31 @@ def rounded_up (value, granularity) :
     """
     return value + ((granularity - value) % granularity)
 # end def rounded_up
+
+def round_robin (* iterables):
+    """Yield elements from `iterables` in round-robin sequence.
+
+    Recipe credited to George Sakkis by Python documentation for itertools.
+
+    >>> print (", ".join (str (x) for x in round_robin ([1, 2, 3], "AB", "uvwxyz")))
+    1, A, u, 2, B, v, 3, w, x, y, z
+
+    """
+    def advancer (it) :
+        ### Python 2.x uses `it.next`
+        ### Python 3.x uses `it.__next__`
+        ### but `next (it)` is supported by 2.7 and 3.x
+        return lambda : next (it)
+    pending = len (iterables)
+    nexts   = itertools.cycle (advancer (iter (it)) for it in iterables)
+    while pending:
+        try:
+            for nxt in nexts:
+                yield nxt ()
+        except StopIteration:
+            pending -= 1
+            nexts    = itertools.cycle (itertools.islice (nexts, pending))
+# end def round_robin
 
 def second_arg (x, y, * args, ** kw) :
     """Returns the second argument unchanged"""
