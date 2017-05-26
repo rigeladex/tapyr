@@ -22,6 +22,7 @@
 #    11-Apr-2017 (CT) Add `Parameters.x_sub_tick_len` and friends
 #    11-Apr-2017 (CT) Support multi-line labels in `x_labels`, `y_labels`
 #    13-Apr-2017 (CT) Put sub-ticks on both sides
+#    26-May-2017 (CT) Add `Parameters.color.background`
 #    ««revision-date»»···
 #--
 
@@ -953,6 +954,7 @@ class Parameters (Definition) :
 
         axis                = RGB_X     ("#AAAAAA")
         axis_text           = RGB_X     ("#0088DD")
+        background          = RGB_X     ("#FFFFFF")
         color_map_text      = RGB_X     ("#888888")
         symbol              = RGB_X     ("#0088DD")
         text                = RGB_X     ("#000033")
