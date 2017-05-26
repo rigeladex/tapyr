@@ -23,6 +23,7 @@
 #    11-Apr-2017 (CT) Support multi-line labels in `x_labels`, `y_labels`
 #    13-Apr-2017 (CT) Put sub-ticks on both sides
 #    26-May-2017 (CT) Add `Parameters.color.background`
+#    26-May-2017 (CT) Add support for thin sub-tick grid lines
 #    ««revision-date»»···
 #--
 
@@ -673,6 +674,7 @@ class Viewport (_Plot_Element_) :
         x2     = NC.X (1.0)
         y1     = NC.Y (0.0)
         y2     = NC.Y (1.0)
+        sw     = P.stroke_width
         if font_size is None :
             font_size = P.font_size
         if x_len is None :
@@ -693,17 +695,25 @@ class Viewport (_Plot_Element_) :
             )
         self.svg.add (result)
         result.add \
-            (self.rect (x1, y1, x2, y2, stroke_width = P.stroke_width * 1.5))
+            (self.rect (x1, y1, x2, y2, stroke_width = sw * 1.5))
         if x_range_s :
             for xi in x_range_s :
-                result.add (self.line (xi, y1, xi, y_len_s))
-                result.add (self.line (xi, y2, xi, y2 - y_len_s))
+                if y_len_s < y2 :
+                    result.add (self.line (xi, y1, xi, y_len_s))
+                    result.add (self.line (xi, y2, xi, y2 - y_len_s))
+                else :
+                    result.add \
+                        (self.line (xi, y1, xi, y_len_s, stroke_width = sw / 2.))
         for xi in x_range :
             result.add (self.line (xi, y1, xi, y_len))
         if y_range_s :
             for yi in y_range_s :
-                result.add (self.line (x1, yi, x_len_s, yi))
-                result.add (self.line (x2, yi, x2 - x_len_s, yi))
+                if x_len_s < x2 :
+                    result.add (self.line (x1, yi, x_len_s, yi))
+                    result.add (self.line (x2, yi, x2 - x_len_s, yi))
+                else :
+                    result.add \
+                        (self.line (x1, yi, x_len_s, yi, stroke_width = sw / 2.))
         for yi in y_range :
             result.add (self.line (x1, yi, x_len, yi))
         if label_x :
