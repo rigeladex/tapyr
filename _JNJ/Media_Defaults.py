@@ -71,6 +71,7 @@
 #    16-Jan-2017 (CT) Add `nav.header`, `nav.rel`
 #    19-Jan-2017 (CT) Add `Rule.main_nav_off`, `.main_nav_on`
 #    10-May-2017 (CT) Add system-specific fonts to `font_family_normal`
+#    28-May-2017 (CT) Add missing `"` in `font_family_normal`
 #    ««revision-date»»···
 #--
 
@@ -732,7 +733,7 @@ class Media_Defaults (Definition) :
         )
 
     font_family_normal     = \
-        ( """"-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, """
+        ( """"-apple-system", BlinkMacSystemFont, "Segoe UI", Roboto, """
           """"Lucida Grande", verdana, sans-serif"""
         )
     font_family_pre        = \
