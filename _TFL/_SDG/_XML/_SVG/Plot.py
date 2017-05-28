@@ -24,6 +24,8 @@
 #    13-Apr-2017 (CT) Put sub-ticks on both sides
 #    26-May-2017 (CT) Add `Parameters.color.background`
 #    26-May-2017 (CT) Add support for thin sub-tick grid lines
+#    28-May-2017 (CT) Fix support for thin sub-tick grid lines
+#                     (use `!=`, not `<`)
 #    ««revision-date»»···
 #--
 
@@ -698,7 +700,7 @@ class Viewport (_Plot_Element_) :
             (self.rect (x1, y1, x2, y2, stroke_width = sw * 1.5))
         if x_range_s :
             for xi in x_range_s :
-                if y_len_s < y2 :
+                if y_len_s != y2 :
                     result.add (self.line (xi, y1, xi, y_len_s))
                     result.add (self.line (xi, y2, xi, y2 - y_len_s))
                 else :
@@ -708,7 +710,7 @@ class Viewport (_Plot_Element_) :
             result.add (self.line (xi, y1, xi, y_len))
         if y_range_s :
             for yi in y_range_s :
-                if x_len_s < x2 :
+                if x_len_s != x2 :
                     result.add (self.line (x1, yi, x_len_s, yi))
                     result.add (self.line (x2, yi, x2 - x_len_s, yi))
                 else :
