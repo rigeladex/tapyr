@@ -125,6 +125,8 @@
 #     2-Oct-2016 (CT) Factor `_resolved_range`, add range support to `Float`
 #     2-Mar-2017 (CT) Add `dct` guard and `choice_dict` to `Key.__init__`
 #    16-Apr-2017 (CT) Add `choice_abbr`, factor `_get_choice`
+#    30-May-2017 (CT) Add guard for `cao` to `Cmd.__call__`
+#    30-May-2017 (CT) Change `Cmd.cao` to print `exc` after `help`
 #    ««revision-date»»···
 #--
 
@@ -1766,7 +1768,8 @@ class Cmd (TFL.Meta.Object) :
         handler_args = _kw.pop  ("args", ())
         handler_kw   = _kw.pop  ("kw",   {})
         cao          = self.cao (_argv, ** _kw)
-        return cao (* handler_args, ** handler_kw)
+        if cao is not None :
+            return cao (* handler_args, ** handler_kw)
     # end def __call__
 
     @TFL.Meta.Once_Property
@@ -1791,14 +1794,15 @@ class Cmd (TFL.Meta.Object) :
         else :
             help = False
             if _argv is None :
-                help  = True
-                _argv = sys.argv [1:]
+                help   = True
+                _argv  = sys.argv [1:]
             try :
                 result = self.parse (_argv)
             except Exception as exc :
                 if help :
-                    pyk.fprint (exc, "Usage :", sep = "\n\n")
+                    pyk.fprint ("Usage :")
                     self.help (CAO (self), indent = 4)
+                    pyk.fprint ("", exc, sep = "\n")
                     return
                 else :
                     raise
