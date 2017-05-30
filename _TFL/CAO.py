@@ -127,6 +127,7 @@
 #    16-Apr-2017 (CT) Add `choice_abbr`, factor `_get_choice`
 #    30-May-2017 (CT) Add guard for `cao` to `Cmd.__call__`
 #    30-May-2017 (CT) Change `Cmd.cao` to print `exc` after `help`
+#    30-May-2017 (CT) Add method `ABORT` to `CAO`
 #    ««revision-date»»···
 #--
 
@@ -2027,6 +2028,11 @@ class CAO (TFL.Meta.Object) :
             return handler (self, * args, ** kw)
         return self
     # end def __call__
+
+    def ABORT (self, reason, err_no = 42) :
+        pyk.fprint ("*** Error:", reason)
+        raise SystemExit (err_no)
+    # end def ABORT
 
     def GET (self, name, default) :
         """Return argument/option/keyword value with `name` or `default`, if
