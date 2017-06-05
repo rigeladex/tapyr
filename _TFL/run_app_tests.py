@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #     8-May-2017 (CT) Creation
+#     5-Jun-2017 (CT) Fix Py-3 compatibility of `py_version`
 #    ««revision-date»»···
 #--
 
@@ -88,8 +89,8 @@ def py_version (pyx) :
     except KeyError :
         result = py_version.map [pyx] = subprocess.check_output \
             ( [pyx, "--version"], stderr = subprocess.STDOUT
-            ).split (" ") [-1].strip ()
-    return result
+            ).split (b" ") [-1].strip ()
+    return pyk.decoded (result)
 # end def py_version
 
 def run_app_tests_dir \
