@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -56,6 +56,8 @@
 #    13-Nov-2015 (CT) Add metaclass to `Bound_Method` to fix `__getattr__`
 #     1-Jun-2016 (CT) Add `Lazy_Property_NI`
 #    25-Jul-2016 (CT) Add `Class_and_Instance_Lazy_Property_NI`
+#     5-Jun-2017 (CT) Add `Optional_Computed_Property`,
+#                     `Optional_Computed_Once_Property`
 #    ««revision-date»»···
 #--
 
@@ -591,6 +593,139 @@ class Class_and_Instance_Lazy_Property_NI (Lazy_Property_NI) :
     # end def __get__
 
 # end class Class_and_Instance_Lazy_Property_NI
+
+class _Optional_Computed_Property_ (object) :
+    """Property which value is computed unless explicitly set"""
+
+    def __init__ (self, name, computer, compute_once = False, doc = None) :
+        self.name         = self.__name__ = name
+        self.computer     = self.__func__ = computer
+        self.compute_once = compute_once
+        self.__doc__      = doc or computer.__doc__
+        self._s_name      = "__" + self.name
+    # end def __init__
+
+    def __delete__ (self, obj) :
+        try :
+            del obj.__dict__ [self._s_name]
+        except KeyError :
+            pass
+    # end def __delete__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            return self._class_get (cls)
+        return self._get_stored_or_computed (obj)
+    # end def __get__
+
+    def __set__ (self, obj, value) :
+        obj.__dict__ [self._s_name] = value
+    # end def __set__
+
+    def _class_get (self, cls) :
+        return self
+    # end def _class_get
+
+    def _get_stored_or_computed (self, obj) :
+        s_name = self._s_name
+        try :
+            result = obj.__dict__  [s_name]
+        except KeyError :
+            result = self.computer (obj)
+            if self.compute_once :
+                obj.__dict__ [s_name] = result
+        return result
+    # end def _get_stored_or_computed
+
+# end class _Optional_Computed_Property_
+
+def Optional_Computed_Property (f) :
+    """Decorator returning a `_Optional_Computed_Property_`.
+
+    >>> class Test (TFL.Meta.Object) :
+    ...     def __init__ (self, ** kwds) :
+    ...         self._bar = 0
+    ...         self.pop_to_self (kwds, "foo")
+    ...     @Optional_Computed_Property
+    ...     def foo (self) :
+    ...         result = self._bar
+    ...         self._bar += 1
+    ...         return result
+
+    >>> a = Test ()
+    >>> a.foo
+    0
+    >>> a.foo
+    1
+    >>> a.foo
+    2
+
+    >>> del a.foo
+    >>> a.foo
+    3
+    >>> a.foo
+    4
+
+    >>> b = Test (foo = 42)
+    >>> b.foo
+    42
+    >>> b.foo
+    42
+
+    >>> del b.foo
+    >>> b.foo
+    0
+    >>> b.foo
+    1
+
+    """
+    return _Optional_Computed_Property_ (f.__name__, f, False, f.__doc__)
+# end def Optional_Computed_Property
+
+def Optional_Computed_Once_Property (f) :
+    """Decorator returning a `_Optional_Computed_Property_` computed once.
+
+    >>> class Test (TFL.Meta.Object) :
+    ...     def __init__ (self, ** kwds) :
+    ...         self._bar = 0
+    ...         self.pop_to_self (kwds, "foo")
+    ...     @Optional_Computed_Once_Property
+    ...     def foo (self) :
+    ...         result = self._bar
+    ...         self._bar += 1
+    ...         return result
+
+    >>> a = Test ()
+    >>> a.foo
+    0
+    >>> a.foo
+    0
+
+    >>> del a.foo
+    >>> a.foo
+    1
+    >>> a.foo
+    1
+
+    >>> b = Test (foo = 42)
+    >>> b.foo
+    42
+    >>> b.foo
+    42
+
+    >>> del b.foo
+    >>> b.foo
+    0
+    >>> b.foo
+    0
+
+    >>> del b.foo
+    >>> b.foo
+    1
+
+    """
+    return _Optional_Computed_Property_ (f.__name__, f, True, f.__doc__)
+# end def Optional_Computed_Once_Property
 
 class Property (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
     """A property that can be applied to the instance and possibly to the
