@@ -174,6 +174,8 @@
 #                      + Otherwise, strings are split into characters,
 #                        datetime.time triggers an exception, ...
 #    19-May-2017 (CT)  Add `round_robin`
+#     7-Jun-2017 (CT)  Adapt `rounded_down` to `0 < granularity < 1`
+#                      + ditto for `rounded_up`
 #    ««revision-date»»···
 #--
 
@@ -900,8 +902,35 @@ def rounded_down (value, granularity) :
        -5
        >>> rounded_down (-8, 5)
        -10
+
+       >>> rounded_down (0.97, 0.01)
+       0.97
+       >>> rounded_down (0.971, 0.01)
+       0.97
+       >>> rounded_down (0.9699999999, 0.01)
+       0.96
+       >>> rounded_down (0.9799999999, 0.01)
+       0.97
+       >>> rounded_down (0.97, 0.05)
+       0.95
+       >>> rounded_down (-0.97, 0.01)
+       -0.97
+       >>> rounded_down (-0.971, 0.01)
+       -0.98
+       >>> rounded_down (-0.9699999999, 0.01)
+       -0.97
+       >>> rounded_down (-0.9799999999, 0.01)
+       -0.98
+       >>> rounded_down (-0.97, 0.05)
+       -1.0
+
     """
-    return value - (value % granularity)
+    if 0 < granularity < 1 :
+        scale  = 1.0 / granularity
+        result = rounded_down (value * scale, 1.0) / scale
+    else :
+        result = value - (value % granularity)
+    return result
 # end def rounded_down
 
 def rounded_to (value, granularity) :
@@ -923,16 +952,25 @@ def rounded_to (value, granularity) :
 def rounded_up (value, granularity) :
     """Returns `value` rounded up to nearest multiple of `granularity`.
 
-       >>> rounded_up (3, 5)
-       5
-       >>> rounded_up (8, 5)
-       10
-       >>> rounded_up (-3, 5)
-       0
-       >>> rounded_up (-8, 5)
-       -5
+    >>> rounded_up (3, 5)
+    5
+    >>> rounded_up (8, 5)
+    10
+    >>> rounded_up (-3, 5)
+    0
+    >>> rounded_up (-8, 5)
+    -5
+
+    >>> rounded_up (0.024 / 0.005, 1.0)
+    5.0
+
     """
-    return value + ((granularity - value) % granularity)
+    if 0 < granularity < 1 :
+        scale  = 1.0 / granularity
+        result = rounded_up (value * scale, 1.0) / scale
+    else :
+        result = value + ((granularity - value) % granularity)
+    return result
 # end def rounded_up
 
 def round_robin (* iterables):
