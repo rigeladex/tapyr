@@ -27,6 +27,7 @@
 #    12-Oct-2015 (CT) Apply `pyk.decoded` to `result` of `_encoded`
 #     9-Jun-2017 (CT) Add guard to, fix decoding/encoding in, `_main`
 #     9-Jun-2017 (CT) Add `is_non_ascii` predicate
+#     9-Jun-2017 (CT) Fix typo
 #    ««revision-date»»···
 #--
 
@@ -171,7 +172,7 @@ def _main (cmd) :
                 if cmd.verbose :
                     pyk.fprint ("Renamed", f, "to", sf)
         else :
-            pyk.fprint (sf, end = cao.separator)
+            pyk.fprint (sf, end = cmd.separator)
 # end def _main
 
 _Command = TFL.CAO.Cmd \
