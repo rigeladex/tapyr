@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -25,6 +25,8 @@
 #                     home-grown code
 #    18-Oct-2010 (CT) `_quote_map` added and used
 #    12-Oct-2015 (CT) Apply `pyk.decoded` to `result` of `_encoded`
+#     9-Jun-2017 (CT) Add guard to, fix decoding/encoding in, `_main`
+#     9-Jun-2017 (CT) Add `is_non_ascii` predicate
 #    ««revision-date»»···
 #--
 
@@ -97,6 +99,25 @@ def _show (s) :
     pyk.fprint (result)
 # end def _show
 
+def is_non_ascii (x) :
+    """Return true if byte-string `x` contains non-ascii characters.
+
+    >>> is_non_ascii ("abc")
+    False
+
+    >>> is_non_ascii ("äbc")
+    True
+
+    """
+    y = pyk.encoded (x, "utf-8")
+    try :
+        y.decode ("ascii")
+    except UnicodeDecodeError :
+        return True
+    else :
+        return False
+# end def is_non_ascii
+
 def sanitized_unicode (s, translate_table = None) :
     """Return sanitized version of unicode string `s` reduced to
        pure ASCII 8-bit string. Caveat: passing in an 8-bit string with
@@ -140,14 +161,17 @@ def _main (cmd) :
     """
     from _TFL     import sos
     from _TFL.pyk import pyk
-    for f in cmd.argv :
-        sf = sanitized_filename (pyk.decoded (f))
+    for f_b in cmd.argv :
+        f    = pyk.decoded (f_b)
+        sf   = sanitized_filename (f)
+        sf_b = pyk.encoded (sf)
         if cmd.rename :
-            sos.rename (f, sf)
-            if cmd.verbose :
-                pyk.fprint ("Renamed", f, "to", sf)
+            if f_b != sf_b and sos.path.exists (f_b) :
+                sos.rename (f_b, sf_b)
+                if cmd.verbose :
+                    pyk.fprint ("Renamed", f, "to", sf)
         else :
-            pyk.fprint (sf, end = " ")
+            pyk.fprint (sf, end = cao.separator)
 # end def _main
 
 _Command = TFL.CAO.Cmd \
@@ -162,6 +186,7 @@ _Command = TFL.CAO.Cmd \
             , default       = "utf-8"
             )
         , "-rename:B?Rename the files to names by `sanitized_filename`"
+        , "-separator:S= "
         , "-verbose:B"
         )
     , min_args      = 1
