@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.SDG.XML.SVG.
@@ -26,6 +26,15 @@
 #    26-May-2017 (CT) Add support for thin sub-tick grid lines
 #    28-May-2017 (CT) Fix support for thin sub-tick grid lines
 #                     (use `!=`, not `<`)
+#    22-Jun-2017 (CT) Add support for medium tick marks to `add_grid`
+#                     + Factor `x_ticks`, `y_ticks`
+#                     + Remove arguments `x_len`, `y_len`
+#                     + Factor `NC.top`, `NC.right`, `NC.bottom`, `NC.left`
+#                     + Add comparison operators to `_Coordinate_`
+#    23-Jun-2017 (CT) Factor `Grid`, simplify grid parameterization
+#                     + Use `TFL.Ticker.Axis` instances
+#                     + Add `add_viewport_ta`
+#                     + Add arguments `lines`, `sides` to `x_ticks`, `y_ticks`
 #    ««revision-date»»···
 #--
 
@@ -136,7 +145,6 @@ class _Coordinate_Op_ (TFL.Meta.Object) :
     _op_map         = dict \
         ( add       = "+"
         , div       = "/"
-        , floordiv  = "/"
         , mod       = "%"
         , mul       = "*"
         , sub       = "-"
@@ -247,13 +255,49 @@ class _Coordinate_ (TFL.Meta.Object) :
         return bool (self.value)
     # end def __bool__
 
+    def __eq__ (self, rhs) :
+        if self.__class__ == rhs.__class__ :
+            return self.value == rhs.value
+        return False
+    # end def __eq__
+
     def __floordiv__ (self, rhs) :
         return self.__class__ (self.value // rhs)
     # end def __floordiv__
 
+    def __ge__ (self, rhs) :
+        if self.__class__ == rhs.__class__ :
+            return self.value >= rhs.value
+        return False
+    # end def __ge__
+
+    def __gt__ (self, rhs) :
+        if self.__class__ == rhs.__class__ :
+            return self.value > rhs.value
+        return False
+    # end def __gt__
+
+    def __le__ (self, rhs) :
+        if self.__class__ == rhs.__class__ :
+            return self.value <= rhs.value
+        return False
+    # end def __le__
+
+    def __lt__ (self, rhs) :
+        if self.__class__ == rhs.__class__ :
+            return self.value < rhs.value
+        return False
+    # end def __lt__
+
     def __mul__ (self, rhs) :
         return self.__class__ (self.value * rhs)
     __rmul__ = __mul__ # end def
+
+    def __ne__ (self, rhs) :
+        if self.__class__ == rhs.__class__ :
+            return self.value != rhs.value
+        return True
+    # end def __ne__
 
     def __neg__ (self) :
         return self.__class__ (- self.value)
@@ -399,10 +443,32 @@ class NC_y (_Normalized_Coordinate_) :
 # end class NC_y
 
 class NC (_Coordinate_Pair_) :
-    """Pair of x, y normalized viewport coordinates."""
+    """Pair of x, y normalized viewport coordinates.
 
-    X    = NC_x
-    Y    = NC_y
+    >>> NC.top == NC_y (1.0)
+    True
+    >>> NC.top != NC_y (1.0)
+    False
+
+    >>> NC.top == DC.Y (1.0)
+    False
+    >>> NC.top != DC.Y (1.0)
+    True
+
+    >>> NC.right == NC_x (1.0)
+    True
+    >>> NC.right != NC_x (1.0)
+    False
+
+    """
+
+    X       = NC_x
+    Y       = NC_y
+
+    top     = NC_y (1.0)
+    right   = NC_x (1.0)
+    bottom  = NC_y (0.0)
+    left    = NC_x (0.0)
 
 # end class NC
 
@@ -448,6 +514,234 @@ class _Plot_Element_ (TFL.Meta.Object) :
     # end def _create_svg
 
 # end class _Plot_Element_
+
+class Grid (_Plot_Element_) :
+    """Grid of a viewport."""
+
+    all_sides                   = "trbl"
+
+    def __init__ \
+            ( self, vp
+            , font_size         = None
+            , klass             = "grid"
+            , P                 = None
+            , sides             = "trbl"
+            , xta               = None ### Ticker.Axis for x
+            , yta               = None ### Ticker.Axis for y
+            ) :
+        self.P  = P  = vp.P if P is None else P
+        self.vp = vp
+        if font_size is None :
+            font_size = P.font_size
+        self.svg = svg = vp.group \
+            ( font_size    = font_size * 1.5
+            , klass        = klass
+            , stroke       = P.color.axis
+            )
+        if sides == self.all_sides :
+            svg.add (self.box ())
+        elif sides :
+            svg.add (* self.sides (sides))
+        for (ta, ticker, labeler) in \
+            [ (xta, self.x_ticks, self.x_labels)
+            , (yta, self.y_ticks, self.y_labels)
+            ] :
+            if ta is not None :
+                svg.add \
+                    ( * ticker
+                        ( ta.major_range
+                        , P.major_ticks
+                        , ta.major_lines
+                        , sides
+                        )
+                    )
+                if ta.medium_range :
+                    svg.add \
+                        ( * ticker
+                            ( ta.medium_range
+                            , P.medium_ticks
+                            , ta.medium_lines
+                            , sides
+                            )
+                        )
+                if ta.minor_range :
+                    svg.add \
+                        ( * ticker
+                            ( ta.minor_range
+                            , P.minor_ticks
+                            , ta.minor_lines
+                            , sides
+                            )
+                        )
+                if ta.labels :
+                    svg.add \
+                        ( labeler
+                            (ta.major_range, ta.labels, fill = ta.label_fill)
+                        )
+    # end def __init__
+
+    def box (self) :
+        """Return box around `self.vp`."""
+        return self.vp.rect \
+            ( NC.left, NC.bottom, NC.right, NC.top
+            , stroke_width = self.P.grid_stroke_width
+            )
+    # end def box
+
+    def sides (self, sides = "trbl", delta = 0, ** kwds) :
+        """Generate lines for each side in `sides`."""
+        vp      = self.vp
+        sw      = self.P.grid_stroke_width
+        kwds    = dict (dict (stroke_width = sw), ** kwds)
+        if "t" in sides :
+            y   = NC.top + delta
+            yield vp.line (NC.left, y, NC.right, y)
+        if "r" in sides :
+            x   = NC.right + delta
+            yield vp.line (x, NC.bottom, x, NC.top)
+        if "b" in sides :
+            y   = NC.bottom + delta
+            yield vp.line (NC.left, y, NC.right, y)
+        if "l" in sides :
+            x   = NC.left + delta
+            yield vp.line (x, NC.bottom, x, NC.top)
+    # end def sides
+
+    def x_labels \
+            ( self, x_range, x_labels
+            , dx           = 0
+            , dy           = None
+            , fill         = None
+            , klass        = "x labels"
+            , stroke_width = 0
+            , text_anchor  = "begin"
+            , y            = NC.Y (1.0)
+            , ** kwds
+            ) :
+        P       = self.P
+        vp      = self.vp
+        result  = vp.group \
+            ( fill         = P.color.axis_text if fill is None else fill
+            , klass        = klass
+            , stroke_width = stroke_width
+            , text_anchor  = text_anchor
+            , ** kwds
+            )
+        if dy is None :
+            dy = DC.Y (P.line_height)
+        dyd = DC.Y (P.line_height) * 1.25
+        for xi, x_label in zip (x_range, x_labels) :
+            xls = x_label.split ("\n")
+            dyi = dy
+            for xl in xls :
+                result.add (vp.text (xl, dx = dx, dy = dyi, x = xi, y = y))
+                dyi += dyd
+        return result
+    # end def x_labels
+
+    def x_ticks \
+            ( self, x_range, tick_spec
+            , lines     = ""
+            , sides     = "tb"
+            , ** kwds
+            ) :
+        """Generate marks, and lines if `lines_p`, at every `x` in `x_range`."""
+        bot     = NC.bottom
+        top     = NC.top
+        lines_p = lines is True or "-" in lines
+        l_kwds  = dict \
+            ( dict
+                ( opacity      = tick_spec.line_opacity
+                , stroke_width = tick_spec.line_width
+                )
+            , ** kwds
+            ) if lines_p else {}
+        t_kwds  = dict \
+            ( dict
+                ( stroke_width = tick_spec.width
+                )
+            , ** kwds
+            )
+        tlen    = tick_spec.length
+        vp      = self.vp
+        for xi in x_range :
+            if "b" in sides :
+                yield (vp.line (xi, bot,        xi, bot + tlen, ** t_kwds))
+            if "t" in sides :
+                yield (vp.line (xi, top,        xi, top - tlen, ** t_kwds))
+            if lines_p :
+                yield (vp.line (xi, bot + tlen, xi, top - tlen, ** l_kwds))
+    # end def x_ticks
+
+    def y_labels \
+            ( self, y_range, y_labels
+            , dx           = None
+            , dy           = None
+            , fill         = None
+            , klass        = "y labels"
+            , stroke_width = 0
+            , text_anchor  = "end"
+            , x            = NC.X (0.0)
+            , ** kwds
+            ) :
+        P       = self.P
+        vp      = self.vp
+        result  = vp.group \
+            ( fill         = P.color.axis_text if fill is None else fill
+            , klass        = klass
+            , stroke_width = stroke_width
+            , text_anchor  = text_anchor
+            , ** kwds
+            )
+        if dx is None :
+            dx = - DC.X (P.font_char_width)
+        if dy is None :
+            dy =   DC.Y (P.font_size * 0.25)
+        dyd = DC.Y (P.line_height) * 1.25
+        for yi, y_label in zip (y_range, y_labels) :
+            yls = y_label.split ("\n")
+            dyi = dy
+            for yl in yls :
+                result.add (vp.text (yl, dx = dx, dy = dyi, x = x, y = yi))
+                dyi -= dyd
+        return result
+    # end def y_labels
+
+    def y_ticks \
+            ( self, y_range, tick_spec
+            , lines     = ""
+            , sides     = "rl"
+            , ** kwds
+            ) :
+        """Generate marks, and lines if `lines_p`, at every `y` in `y_range`."""
+        left    = NC.left
+        right   = NC.right
+        lines_p = lines is True or "|" in lines
+        l_kwds  = dict \
+            ( dict
+                ( opacity      = tick_spec.line_opacity
+                , stroke_width = tick_spec.line_width
+                )
+            , ** kwds
+            ) if lines_p else {}
+        t_kwds  = dict \
+            ( dict
+                ( stroke_width = tick_spec.width
+                )
+            , ** kwds
+            )
+        tlen    = tick_spec.length
+        vp      = self.vp
+        for yi in y_range :
+            if "l" in sides :
+                yield (vp.line (left,        yi, left  + tlen, yi, ** t_kwds))
+            if "r" in sides :
+                yield (vp.line (right,       yi, right - tlen, yi, ** t_kwds))
+            if lines_p :
+                yield (vp.line (left + tlen, yi, right - tlen, yi, ** l_kwds))
+    # end def y_ticks
+
+# end class Grid
 
 class Plot (_Plot_Element_) :
     """Define a data plot using SVG.
@@ -542,6 +836,17 @@ class Plot (_Plot_Element_) :
         self.add (result.svg)
         return result
     # end def add_viewport
+
+    def add_viewport_ta (self, width, height, xta, yta, ** kwds) :
+        result = self.add_viewport \
+            ( width, height
+            , wc_x_min      = xta.ax_min
+            , wc_x_max      = xta.ax_max
+            , wc_y_min      = yta.ax_min
+            , wc_y_max      = yta.ax_max
+            )
+        return result
+    # end def add_viewport_ta
 
     def _viewport_frame_axis (self, fa, size, margin_1, margin_2) :
         if size is None :
@@ -659,75 +964,10 @@ class Viewport (_Plot_Element_) :
         return svg_element
     # end def add
 
-    def add_grid \
-            ( self, x_range, y_range
-            , font_size    = None
-            , label_x      = True
-            , label_y      = True
-            , P            = None
-            , x_len        = None
-            , y_len        = None
-            , x_range_s    = None
-            , y_range_s    = None
-            ) :
-        """Add a grid of x- and y-lines at points in `x_range` and `y_range`."""
-        P      = self.P if P is None else P
-        x1     = NC.X (0.0)
-        x2     = NC.X (1.0)
-        y1     = NC.Y (0.0)
-        y2     = NC.Y (1.0)
-        sw     = P.stroke_width
-        if font_size is None :
-            font_size = P.font_size
-        if x_len is None :
-            x_len   = x2
-            x_len_s = P.x_sub_tick_len
-        else :
-            x_len_s = x_len / (P.x_tick_len / P.x_sub_tick_len)
-        if y_len is None :
-            y_len   = y2
-            y_len_s = P.y_sub_tick_len
-        else :
-            y_len_s = y_len / (P.y_tick_len / P.y_sub_tick_len)
-        frame  = self.frame
-        result = self.group \
-            ( font_size    = font_size * 1.5
-            , klass        = "axes"
-            , stroke       = P.color.axis
-            )
-        self.svg.add (result)
-        result.add \
-            (self.rect (x1, y1, x2, y2, stroke_width = sw * 1.5))
-        if x_range_s :
-            for xi in x_range_s :
-                if y_len_s != y2 :
-                    result.add (self.line (xi, y1, xi, y_len_s))
-                    result.add (self.line (xi, y2, xi, y2 - y_len_s))
-                else :
-                    result.add \
-                        (self.line (xi, y1, xi, y_len_s, stroke_width = sw / 2.))
-        for xi in x_range :
-            result.add (self.line (xi, y1, xi, y_len))
-        if y_range_s :
-            for yi in y_range_s :
-                if x_len_s != x2 :
-                    result.add (self.line (x1, yi, x_len_s, yi))
-                    result.add (self.line (x2, yi, x2 - x_len_s, yi))
-                else :
-                    result.add \
-                        (self.line (x1, yi, x_len_s, yi, stroke_width = sw / 2.))
-        for yi in y_range :
-            result.add (self.line (x1, yi, x_len, yi))
-        if label_x :
-            result.add \
-                ( self.x_labels
-                    (x_range, (formatted_repr (xi) for xi in x_range))
-                )
-        if label_y :
-            result.add \
-                ( self.y_labels
-                    (y_range, (formatted_repr (yi) for yi in y_range))
-                )
+    def add_grid (self, ** kwds) :
+        """Add a `Grid`."""
+        result = Grid (self, ** kwds)
+        self.svg.add  (result.svg)
         return result
     # end def add_grid
 
@@ -854,70 +1094,6 @@ class Viewport (_Plot_Element_) :
         return self._svg_element (SVG.Use, args, kwds)
     # end def use
 
-    def x_labels \
-            ( self, x_range, x_labels
-            , dx           = 0
-            , dy           = None
-            , fill         = None
-            , klass        = "x labels"
-            , stroke_width = 0
-            , text_anchor  = "begin"
-            , y            = NC.Y (1.0)
-            , ** kwds
-            ) :
-        P = self.P
-        result = self.group \
-            ( fill         = P.color.axis_text if fill is None else fill
-            , klass        = klass
-            , stroke_width = stroke_width
-            , text_anchor  = text_anchor
-            , ** kwds
-            )
-        if dy is None :
-            dy = DC.Y (P.line_height)
-        dyd = DC.Y (P.line_height) * 1.25
-        for xi, x_label in zip (x_range, x_labels) :
-            xls = x_label.split ("\n")
-            dyi = dy
-            for xl in xls :
-                result.add (self.text (xl, dx = dx, dy = dyi, x = xi, y = y))
-                dyi += dyd
-        return result
-    # end def x_labels
-
-    def y_labels \
-            ( self, y_range, y_labels
-            , dx           = None
-            , dy           = None
-            , fill         = None
-            , klass        = "y labels"
-            , stroke_width = 0
-            , text_anchor  = "end"
-            , x            = NC.X (0.0)
-            , ** kwds
-            ) :
-        P = self.P
-        result = self.group \
-            ( fill         = P.color.axis_text if fill is None else fill
-            , klass        = klass
-            , stroke_width = stroke_width
-            , text_anchor  = text_anchor
-            , ** kwds
-            )
-        if dx is None :
-            dx = - DC.X (P.font_char_width)
-        if dy is None :
-            dy = DC.Y (P.font_size * 0.25)
-        dyd = DC.Y (P.line_height) * 1.25
-        for yi, y_label in zip (y_range, y_labels) :
-            yls = y_label.split ("\n")
-            dyi = dy
-            for yl in yls :
-                result.add (self.text (yl, dx = dx, dy = dyi, x = x, y = yi))
-                dyi -= dyd
-        return result
-    # end def y_labels
-
     def _converted_points (self, points) :
         return tuple \
             (   (WC.X (x).as_pos (self), WC.Y (y).as_pos (self))
@@ -973,16 +1149,42 @@ class Parameters (Definition) :
 
     # end class color
 
+    class major_ticks (Definition) :
+
+        length              = P.T.tick_length
+        line_opacity        = 1.0
+        line_width          = P.T.stroke_width / 2.5
+        width               = P.T.tick_stroke_width
+
+    # end class major_ticks
+
+    class medium_ticks (Definition) :
+
+        length             = P.T.major_ticks.length * 2 / 3
+        line_opacity       = 0.85
+        line_width         = P.T.major_ticks.line_width
+        width              = P.T.major_ticks.width
+
+    # end class medium_ticks
+
+    class minor_ticks (Definition) :
+
+        length             = P.T.major_ticks.length / 3
+        line_opacity       = 0.70
+        line_width         = P.T.major_ticks.line_width
+        width              = P.T.major_ticks.width
+
+    # end class minor_ticks
+
     font_family             = "sans-serif"
     font_size               = 5
-    font_char_width         = P.font_size   / 2.0
-    line_height             = P.font_size   * 1.5
+    font_char_width         = P.font_size    / 2.0
+    grid_stroke_width       = P.stroke_width * 1.5
+    line_height             = P.font_size    * 1.5
     stroke_width            = 0.25
     symbol_size             = 2.5
-    x_sub_tick_len          = P.x_tick_len / 2.0
-    y_sub_tick_len          = P.y_tick_len / 2.0
-    x_tick_len              = DC.Y (4.0)
-    y_tick_len              = DC.X (4.0)
+    tick_length             = DC.Y (4.0)
+    tick_stroke_width       = P.stroke_width
 
 # end class Parameters
 
