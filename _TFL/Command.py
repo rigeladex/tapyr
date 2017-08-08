@@ -53,6 +53,7 @@
 #    15-Jun-2016 (CT) Add `_wrapped_handler` to LET `_cao`
 #                     + Rename handler argument `cmd` to `cao`
 #     2-Mar-2017 (CT) Add `Key_Option` and `Set_Option`
+#     8-Aug-2017 (CT) Add guard for `None` to `_sub_commands`
 #    ««revision-date»»···
 #--
 
@@ -470,9 +471,10 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
             for sc in self._sub_commands :
                 if isinstance (sc, pyk.string_types) :
                     sc = getattr  (self, sc)
-                if not isinstance (sc, TFL.CAO.Cmd) :
-                    sc = sc (_parent = self, ** defaults)
-                yield sc
+                if sc is not None :
+                    if not isinstance (sc, TFL.CAO.Cmd) :
+                        sc = sc (_parent = self, ** defaults)
+                    yield sc
         return tuple (_gen (self))
     # end def sub_commands
 
