@@ -37,6 +37,7 @@
 #                     not `declination` and `right_ascension`
 #     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
 #     9-Jan-2017 (CT) Add option `-year`
+#     9-Aug-2017 (CT) Remove redundant `h0` argument from doctests
 #    ««revision-date»»···
 #--
 
@@ -242,7 +243,7 @@ class RTS_Sun (SKY.RTS) :
        >>> import _CAL.Date
        >>> s = Sun (CAL.Date (2007, 6, 13))
        >>> rts = RTS_Sun ((s - 1, s, s + 1),
-       ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
+       ...   Angle_D (48, 14), Angle_D (-16, -20))
        >>> [x.time for x in (rts.rise, rts.transit, rts.set)]
        [Time (4, 53, 41, 617488), Time (12, 54, 26, 688802), Time (20, 55, 49, 329041)]
        >>> print (", ".join ("%s" % x.azimuth for x in (rts.rise, rts.set)))
@@ -250,7 +251,7 @@ class RTS_Sun (SKY.RTS) :
 
        >>> s = Sun (CAL.Date (2007, 11, 13))
        >>> rts = RTS_Sun ((s - 1, s, s + 1),
-       ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
+       ...   Angle_D (48, 14), Angle_D (-16, -20))
        >>> [str (x.time) for x in (rts.rise, rts.transit, rts.set)]
        ['06:57:54.736862', '11:38:47.111081', '16:19:21.794159']
        >>> [str (x.time) for x in (rts.civil_twilight_start, rts.civil_twilight_finis)]
@@ -265,27 +266,27 @@ class RTS_Sun (SKY.RTS) :
 
        ### Tests stolen from sunriseset.py
        >>> s = Sun (CAL.Date (2002, 1, 1))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0)
        >>> rts.rise.time, rts.set.time
        (Time (7, 47, 23, 883358), Time (16, 52, 0, 951961))
        >>> s = Sun (CAL.Date (2002, 3, 30))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0)
        >>> rts.rise.time, rts.set.time
        (Time (6, 1, 45, 620799), Time (18, 39, 52, 938918))
        >>> s = Sun (CAL.Date (2002, 8, 1))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0)
        >>> rts.rise.time, rts.set.time
        (Time (6, 6, 41, 19043), Time (20, 38, 24, 434771))
        >>> s = Sun (CAL.Date (2004, 8, 1))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0)
        >>> rts.rise.time, rts.set.time
        (Time (6, 7, 14, 96321), Time (20, 37, 49, 265441))
        >>> s = Sun (CAL.Date (2000, 6, 21))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0, -0.8333)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0)
        >>> rts.rise.time, rts.set.time
        (Time (6, 58, 7, 710588), Time (19, 5, 30, 247617))
        >>> s = Sun (CAL.Date (2000, 12, 21))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0, -0.8333)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0)
        >>> rts.rise.time, rts.set.time
        (Time (5, 54, 30, 62686), Time (18, 2, 1, 95085))
 
