@@ -23,6 +23,12 @@
 #     9-Aug-2017 (CT) Change to modern `longitude` definition (W <-> negative)
 #                     + Add `longitude_meuss` for old convention
 #     9-Aug-2017 (CT) Add support for time zones
+#     9-Aug-2017 (CT) Add `ui_name`, `kwds` to `__init__`
+#                     + Add `args` to `_Location_Arg_.cook`
+#                     + Add `as_json_cargo`
+#                     + Add `__new__` to use `Table [name]` if it exists
+#                       * Add `normalized_lat`, `normalized_lon` to
+#                         semantically normalize and ensure the latitude range
 #    ««revision-date»»···
 #--
 
@@ -51,19 +57,80 @@ class Location (TFL.Meta.Object) :
 
     Table = {}
 
-    def __init__ (self, latitude, longitude, name = None, height = None, tz_name = None) :
-        self.latitude  = Angle (latitude)
-        self.longitude = Angle (longitude)
+    def __new__ (cls, latitude, longitude, name = None, * args, ** kwds) :
+        Table = cls.Table
+        if name and name in Table :
+            result = Table [name]
+            lat    = cls.normalized_lat (latitude)
+            if abs (result.latitude - lat) > 1e-9 :
+                raise ValueError \
+                    ( "Different latitude for location named %s: %s vs. %s"
+                    % (name, result.latitude.degrees, lat.degrees)
+                    )
+            lon    = cls.normalized_lon (longitude)
+            if lon > 180 :
+                lon -= 360.
+            if abs (result.longitude - lon) > 1e-9 :
+                raise ValueError \
+                    ( "Different longitude for location named %s: %s vs. %s"
+                    % (name, result.longitude.degrees, lon.degrees)
+                    )
+        else :
+            result = Table [name] = cls.__c_super.__new__ \
+                (cls, latitude, longitude, name, * args, ** kwds)
+            result._init_ (latitude, longitude, name, * args, ** kwds)
+        return result
+    # end def __new__
+
+    def _init_ \
+            ( self, latitude, longitude
+            , name    = None
+            , height  = None
+            , tz_name = None
+            , ui_name = None
+            , ** kwds
+            ) :
+        self.latitude  = self.normalized_lat (latitude)
+        self.longitude = self.normalized_lon (longitude)
         self.name      = name
-        self.height    = 0 if height is None else height
+        self.height    = 0 if height is None else float (height)
         self.tz_name   = tz_name
-        if name is not None :
-            Table      = self.Table
-            assert name not in Table
-            Table [name] = self
-            if name [0].isupper :
-                setattr (Location, name, self)
-    # end def __init__
+        self.ui_name   = ui_name
+        self._kwds     = kwds
+        self.__dict__.update (kwds)
+    # end def _init_
+
+    @classmethod
+    def normalized_lat (cls, latitude) :
+        result = Angle (latitude)
+        if result.degrees > 270 :
+            result -= 360
+        if result.degrees > 90 :
+            raise ValueError \
+                ("Latitude must be in (-90, +90); got %s" % (latitude))
+        return result
+    # end def normalized_lat
+
+    @classmethod
+    def normalized_lon (cls, longitude) :
+        result = Angle (longitude)
+        if result.degrees > 180 :
+            result -= 360.
+        return result
+    # end def normalized_lon
+
+    @Once_Property
+    def as_json_cargo (self) :
+        result = dict \
+            ( latitude  = self.latitude.degrees
+            , longitude = self.longitude.degrees
+            )
+        for k in ("name", "height", "tz_name", "ui_name", "_kwds") :
+            v = getattr (self, k, None)
+            if v :
+                result [k] = v
+        return result
+    # end def as_json_cargo
 
     @Once_Property
     def longitude_meuss (self) :
@@ -88,6 +155,17 @@ class Location (TFL.Meta.Object) :
         return result
     # end def tz
 
+    @property
+    def ui_name (self) :
+        result = self._ui_name or self.name
+        return result
+    # end def ui_name
+
+    @ui_name.setter
+    def ui_name (self, value) :
+        self._ui_name = value
+    # end def ui_name
+
     def __str__ (self) :
         lon    = self.longitude
         lat    = self.latitude
@@ -100,7 +178,7 @@ class Location (TFL.Meta.Object) :
         if self.height :
             result = "%s, %2.0fm above sea level" % (result, self.height)
         if self.name :
-            result = "%s [%s]" % (self.name, result)
+            result = "%s [%s]" % (self.ui_name, result)
         return result
     # end def __str__
 
@@ -132,10 +210,11 @@ class _Location_Arg_ (TFL.CAO.Str) :
             try :
                 result = Location.Table [value]
             except KeyError :
-                raw_lat, raw_lon = tuple (v.strip () for v in value.split (","))
+                args   = tuple (v.strip () for v in value.split (","))
+                raw_lat, raw_lon = args [:2]
                 lat    = self._latituded  (raw_lat)
                 lon    = self._longituded (raw_lon)
-                result = Location (lat, lon)
+                result = Location (lat, lon, * args [2:])
             return result
     # end def cook
 
