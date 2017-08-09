@@ -29,6 +29,7 @@
 #                     + Add `Angle_R.normalized`
 #    10-Feb-2017 (CT) Add function `Angle`
 #    13-Feb-2017 (CT) Add `__neg__`
+#     9-Aug-2017 (CT) Change `Angle` to accept tuple arguments
 #    ««revision-date»»···
 #--
 
@@ -320,9 +321,17 @@ def Angle (angle) :
     >>> a == c
     True
 
+    >>> d = Angle ((48, 30, 18))
+    >>> d
+    Angle_D (48.505)
+
     """
-    result = angle if isinstance (angle, _Angle_) \
-        else Angle_D.normalized (angle)
+    if isinstance (angle, _Angle_) :
+        result = angle
+    else :
+        if isinstance (angle, (list, tuple)) :
+            angle = Angle_D (* angle)
+        result = Angle_D.normalized (angle)
     return result
 # end def Angle
 

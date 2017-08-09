@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -20,6 +20,8 @@
 #    26-Sep-2016 (CT) Creation
 #    27-Sep-2016 (CT) Add `altitude`, `azimuth`, and `hour_angle`
 #     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
+#     9-Aug-2017 (CT) Use one argument `loc`, not two arguments `lat` and `lon`
+#                     + Use `loc.longitude_meuss`
 #    ««revision-date»»···
 #--
 
@@ -33,6 +35,8 @@ from   _SKY                       import SKY
 from   _TFL                       import TFL
 
 import _CAL.Date_Time
+
+import _SKY.Location
 
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.Angle                 import Angle_D, Angle_R
@@ -62,22 +66,24 @@ def air_mass (altitude) :
     return result
 # end def air_mass
 
-def altitude (decl, ha, lat) :
+def altitude (decl, ha, loc) :
     """Altitude of a celestial body with declination `decl` and hour angle `ha`
-       for latitude `lat`.
+       for location `loc`.
     """
     ### J. Meeus, p. 93, Eq. (13.6)
+    lat  = loc.latitude
     return Angle_R.asin \
         (lat.sin * decl.sin + lat.cos * decl.cos * ha.cos)
 # end def altitude
 
-def azimuth (decl, ha, lat) :
+def azimuth (decl, ha, loc) :
     """Azimuth of a celestial body with declination `decl` and hour angle `ha`
-       for latitude `lat`.
+       for location `loc`.
 
        Azimuth is measured eastward from the North.
     """
     ### J. Meeus, p. 93, Eq. (13.5)
+    lat      = loc.latitude
     tan_A    = \
         ( ha.sin
         / (ha.cos * lat.sin - decl.tan * lat.cos)
@@ -92,14 +98,15 @@ def azimuth (decl, ha, lat) :
     return Angle_D.normalized (result.degrees)
 # end def azimuth
 
-def hour_angle (sid_UT, lon, ra) :
-    """Hour angle for sidereal_time `sid_UT`, `longitude `lon` and
+def hour_angle (sid_UT, loc, ra) :
+    """Hour angle for sidereal_time `sid_UT`, location `loc`, and
        right ascension `ra`.
 
-       `sid_UT`, `lon` and `ra` must be Angle_D/Angle_R instances.
+       `sid_UT` and `ra` must be Angle_D/Angle_R instances.
     """
     ### J. Meeus, p. 92
-    ha = (sid_UT - lon - ra).degrees
+    lon = loc.longitude_meuss
+    ha  = (sid_UT - lon - ra).degrees
     if abs (ha) >= 360.0 :
         ha = ha % 360.0
     if ha > 180.0 :
@@ -391,12 +398,11 @@ Example 13.b of J. Meeus, p.95, Venus at Washington
 
 
     >>> d     = CAL.Date_Time (1987, 4, 10, 19, 21)
-    >>> lat   = Angle_D (38, 55, 17)
-    >>> lon   = Angle_D (77,  3, 56)
+    >>> loc   = SKY.Location (Angle_D (38, 55, 17), - Angle_D (77,  3, 56))
     >>> ra    = Angle_D.normalized (Angle_D (23*15, 9*15, 16.641*15))
     >>> decl  = Angle_D (-6, 43, 11.61)
     >>> time  = Time (d)
-    >>> ha    = hour_angle (time.sidereal_deg, lon, ra)
+    >>> ha    = hour_angle (time.sidereal_deg, loc, ra)
 
     >>> print (time.mean_sidereal_time)
     08:34:57.089579
@@ -413,10 +419,10 @@ Example 13.b of J. Meeus, p.95, Venus at Washington
     >>> ha
     Angle_D (64.3529401502)
 
-    >>> Angle_D (altitude (decl, ha, lat).degrees)
+    >>> Angle_D (altitude (decl, ha, loc).degrees)
     Angle_D (16.1109801199)
 
-    >>> azimuth  (decl, ha, lat)
+    >>> azimuth  (decl, ha, loc)
     Angle_D (249.12301149)
 
 Example 22.a of J. Meeus, p.148

@@ -38,6 +38,8 @@
 #     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
 #     9-Jan-2017 (CT) Add option `-year`
 #     9-Aug-2017 (CT) Remove redundant `h0` argument from doctests
+#     9-Aug-2017 (CT) Use one argument `loc`, not two arguments `lat` and `lon`
+#                     + Use `loc.longitude_meuss`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +50,7 @@ from   _SKY                       import SKY
 from   _TFL                       import TFL
 
 from   _TFL._Meta.Once_Property   import Once_Property
-from   _TFL.Angle                 import Angle_D, Angle_R
+from   _TFL.Angle                 import Angle, Angle_D, Angle_R
 from   _TFL.portable_repr         import portable_repr
 
 import _SKY.Earth
@@ -204,25 +206,25 @@ class Sun (TFL.Meta.Object) :
             ).degrees * 4.0
     # end def equation_of_time
 
-    def alt_az (self, lat, lon) :
-        """Solar altitude and azimuth angle for location `lat`, `lon`.
+    def alt_az (self, loc) :
+        """Solar altitude and azimuth angle for location `loc`.
 
            Azimuth is measured eastward from the North.
         """
-        return self.ha_alt_az (lat, lon) [1:]
+        return self.ha_alt_az (loc) [1:]
     # end def alt_az
 
-    def ha_alt_az (self, lat, lon) :
-        """Solar hour angle, altitude and azimuth angle for `lat`, `lon`.
+    def ha_alt_az (self, loc) :
+        """Solar hour angle, altitude and azimuth angle for `loc`.
 
            Azimuth is measured eastward from the North.
         """
         from _SKY.Earth import altitude, azimuth, hour_angle
         ra   = self.ra
         decl = self.decl
-        ha   = hour_angle (self.time.sidereal_deg, lon, ra)
-        alt  = altitude   (decl, ha, lat)
-        az   = azimuth    (decl, ha, lat)
+        ha   = hour_angle (self.time.sidereal_deg, loc, ra)
+        alt  = altitude   (decl, ha, loc)
+        az   = azimuth    (decl, ha, loc)
         return ha, alt, az
     # end def ha_alt_az
 
@@ -241,17 +243,16 @@ class RTS_Sun (SKY.RTS) :
        geographical position.
 
        >>> import _CAL.Date
+       >>> loc = SKY.Location (Angle_D (48, 14), Angle_D (16, 20), tz_name = "Europe/Vienna")
        >>> s = Sun (CAL.Date (2007, 6, 13))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1),
-       ...   Angle_D (48, 14), Angle_D (-16, -20))
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), loc)
        >>> [x.time for x in (rts.rise, rts.transit, rts.set)]
        [Time (4, 53, 41, 617488), Time (12, 54, 26, 688802), Time (20, 55, 49, 329041)]
        >>> print (", ".join ("%s" % x.azimuth for x in (rts.rise, rts.set)))
        053°46'10.29'', 306°17'44.37''
 
        >>> s = Sun (CAL.Date (2007, 11, 13))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1),
-       ...   Angle_D (48, 14), Angle_D (-16, -20))
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), loc)
        >>> [str (x.time) for x in (rts.rise, rts.transit, rts.set)]
        ['06:57:54.736862', '11:38:47.111081', '16:19:21.794159']
        >>> [str (x.time) for x in (rts.civil_twilight_start, rts.civil_twilight_finis)]
@@ -265,35 +266,33 @@ class RTS_Sun (SKY.RTS) :
 
 
        ### Tests stolen from sunriseset.py
+       >>> loc_t = SKY.Location (43.0, -79.0, tz_name = "America/Toronto")
        >>> s = Sun (CAL.Date (2002, 1, 1))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), loc_t)
        >>> rts.rise.time, rts.set.time
        (Time (7, 47, 23, 883358), Time (16, 52, 0, 951961))
        >>> s = Sun (CAL.Date (2002, 3, 30))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), loc_t)
        >>> rts.rise.time, rts.set.time
        (Time (6, 1, 45, 620799), Time (18, 39, 52, 938918))
        >>> s = Sun (CAL.Date (2002, 8, 1))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), loc_t)
        >>> rts.rise.time, rts.set.time
        (Time (6, 6, 41, 19043), Time (20, 38, 24, 434771))
        >>> s = Sun (CAL.Date (2004, 8, 1))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), loc_t)
        >>> rts.rise.time, rts.set.time
        (Time (6, 7, 14, 96321), Time (20, 37, 49, 265441))
-       >>> s = Sun (CAL.Date (2000, 6, 21))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0)
-       >>> rts.rise.time, rts.set.time
-       (Time (6, 58, 7, 710588), Time (19, 5, 30, 247617))
+       >>> loc_0 = SKY.Location (0, 0)
        >>> s = Sun (CAL.Date (2000, 12, 21))
-       >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0)
+       >>> rts = RTS_Sun ((s - 1, s, s + 1), loc_0)
        >>> rts.rise.time, rts.set.time
        (Time (5, 54, 30, 62686), Time (18, 2, 1, 95085))
 
     """
 
-    def __init__ (self, ephs, lat, lon, h0 = Angle_D (-0.8333)) :
-        self.__super.__init__ (ephs, lat, lon, h0)
+    def __init__ (self, ephs, loc, h0 = Angle_D (-0.8333)) :
+        self.__super.__init__ (ephs, loc, h0)
         vars = self.vars
         vars ["h0"]                = Angle_D (-6.0)
         self.civil_twilight_start  = self._Event_ (self.m1, ** vars)
@@ -309,8 +308,7 @@ class RTS_Sun (SKY.RTS) :
     @classmethod
     def On_Day (cls, date, location, h0 = Angle_D (-0.8333)) :
         s = Sun (date)
-        return cls \
-            ((s - 1, s, s + 1), location.latitude, location.longitude, h0)
+        return cls ((s - 1, s, s + 1), location, h0)
     # end def On_Day
 
 # end class RTS_Sun
@@ -320,7 +318,7 @@ def _main (cmd) :
         location = SKY.Location \
             (cmd.latitude, cmd.longitude, cmd.Location or None)
     else :
-        location = SKY.Location.Table [cmd.Location]
+        location = cmd.Location
     print (location, "*" * 20)
     year = cmd.year
     if year :
@@ -377,12 +375,16 @@ _Command = TFL.CAO.Cmd \
         , "civil_twilight:B?Show civil twilight (-6 degrees below horizon)"
         , "day_length:B?Show length of day in hours"
         , "latitude:F?Latitude (north is positive)"
-        , "Location:S=Vienna?Location of observer"
         , "longitude:F?Longitude (negative is east of Greenwich)"
         , "-nautic_twilight:B"
             "?Show time of nautic twilight (sun -12 degrees below horizon)"
         , "-transit:B?Show transit height"
         , "-year:I?Show sunrise/transit/set data for whole year"
+        , TFL.CAO.Opt.Location
+            ( name        = "Location"
+            , description = "Location of observer"
+            , default     = "Vienna"
+            )
         )
     )
 

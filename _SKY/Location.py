@@ -19,6 +19,10 @@
 #    29-Sep-2016 (CT) Improve support for `height`
 #     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
 #     5-Apr-2017 (CT) Add [simple] `_Location_Arg_`
+#     9-Aug-2017 (CT) Use `Angle`, not home-grown `_normalized` function
+#     9-Aug-2017 (CT) Change to modern `longitude` definition (W <-> negative)
+#                     + Add `longitude_meuss` for old convention
+#     9-Aug-2017 (CT) Add support for time zones
 #    ««revision-date»»···
 #--
 
@@ -31,22 +35,28 @@ from   _SKY                     import SKY
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
 
-from   _TFL.Angle               import Angle_D, Angle_R
+from   _TFL.Angle               import Angle, Angle_D, Angle_R
+from   _TFL.predicate           import rounded_to
+from   _TFL._Meta.Once_Property import Once_Property
 
 import _TFL.CAO
 import _TFL._Meta.Object
 
 @pyk.adapt__str__
 class Location (TFL.Meta.Object) :
-    """Model terrestrial location of observer."""
+    """Model terrestrial location of observer.
+
+    `longitude` is negative for locations west of the prime meridian.
+    """
 
     Table = {}
 
-    def __init__ (self, latitude, longitude, name = None, height = None) :
-        self.latitude  = self._normalized (latitude)
-        self.longitude = self._normalized (longitude)
+    def __init__ (self, latitude, longitude, name = None, height = None, tz_name = None) :
+        self.latitude  = Angle (latitude)
+        self.longitude = Angle (longitude)
         self.name      = name
         self.height    = 0 if height is None else height
+        self.tz_name   = tz_name
         if name is not None :
             Table      = self.Table
             assert name not in Table
@@ -55,15 +65,28 @@ class Location (TFL.Meta.Object) :
                 setattr (Location, name, self)
     # end def __init__
 
-    def _normalized (self, value) :
-        if isinstance (value, (list, tuple)) :
-            result = Angle_D.normalized (* value)
-        elif not isinstance (value, (Angle_D, Angle_R)) :
-            result = Angle_D.normalized (value)
+    @Once_Property
+    def longitude_meuss (self) :
+        """Return `longitude` in old-style astronomical system (positive W of
+        prime meridian).
+        """
+        return - self.longitude
+    # end def longitude_meuss
+
+    @Once_Property
+    def tz (self) :
+        """Timezone object"""
+        import dateutil.tz
+        result  = None
+        tz_name = self.tz_name
+        if tz_name is not None :
+            result = dateutil.tz.gettz (tz_name)
         else :
-            result = value
+            name   = self.name
+            offset = (rounded_to (self.longitude.degrees, 15) / 15) * 3600.
+            result = dateutil.tz.tzoffset (name or str (offset), offset)
         return result
-    # end def _normalized
+    # end def tz
 
     def __str__ (self) :
         lon    = self.longitude
@@ -71,7 +94,7 @@ class Location (TFL.Meta.Object) :
         if lon.degrees > 180.0 :
             lon -= 360.0
         result = "%s %s, %s %s" % \
-            ( abs (lon), "E" if lon.degrees < 0.0 else "W"
+            ( abs (lon), "W" if lon.degrees < 0.0 else "E"
             , abs (lat), "S" if lat.degrees < 0.0 else "N"
             )
         if self.height :
@@ -83,8 +106,21 @@ class Location (TFL.Meta.Object) :
 
 # end class Location
 
-Location (Angle_D (48, 14),     Angle_D (-16, -22),     "Vienna",     180)
-Location (Angle_D (37, 51,  7), Angle_D (  8,  47, 31), "Porto Covo",  25)
+Location \
+    ( Angle_D (48, 14)
+    , Angle_D (16, 22)
+    , "Vienna"
+    , 180
+    , tz_name = "Europe/Vienna"
+    )
+
+Location \
+    ( Angle_D (37, 51,  7)
+    , - Angle_D ( 8, 47, 31)
+    , "Porto Covo"
+    , 25
+    , tz_name = "Europe/Lisbon"
+    )
 
 class _Location_Arg_ (TFL.CAO.Str) :
     """Argument or option defining a location"""
@@ -104,11 +140,15 @@ class _Location_Arg_ (TFL.CAO.Str) :
     # end def cook
 
     def _latituded (self, value) :
-        return float (value)
+        sign = -1 if value.endswith ("S") else +1
+        v    = value.rstrip ("NS ")
+        return float (v) * sign
     # end def _latituded
 
     def _longituded (self, value) :
-        return float (value)
+        sign = -1 if value.endswith ("W") else +1
+        v    = value.rstrip ("EW ")
+        return float (v) * sign
     # end def _longituded
 
 # end class _Location_Arg_

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,6 +36,9 @@
 #                     nor `declination` and `right_ascension`
 #     9-Oct-2016 (CT) Adapt to move of Package_Namespace `DRA`
 #     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
+#     9-Aug-2017 (CT) Use one argument `loc`, not two arguments `lat` and `lon`
+#                     + Use `loc.longitude_meuss`
+#                     + Use `loc.tz`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -52,7 +55,7 @@ import _CAL.Delta
 import _CAL.Time
 
 from   _TFL.predicate           import rounded_to
-from   _TFL.Angle               import Angle_D, Angle_R
+from   _TFL.Angle               import Angle, Angle_D, Angle_R
 
 import _TFL._Meta.Object
 import _TFL.Accessor
@@ -85,8 +88,7 @@ class RTS (TFL.Meta.Object) :
        ...           , decl = Angle_D (18.82742)
        ...           )
        ...       )
-       ...       , lat = Angle_D (42.3333)
-       ...       , lon = Angle_D (71.0833)
+       ...       , loc = SKY.Location (Angle_D (42.3333), - Angle_D (71.0833))
        ...       , h0  = Angle_D (-0.5667)
        ...     )
        >>> rts.day, rts.sid
@@ -118,7 +120,6 @@ class RTS (TFL.Meta.Object) :
             this.m = m
             this.__dict__.update (vars)
             this.calc            (m)
-            #this.azimuth = azimuth (this.delta, this.ha, this.lat)
         # end def __init__
 
         def calc (self, m) :
@@ -131,8 +132,7 @@ class RTS (TFL.Meta.Object) :
 
         def _at_time (self, m) :
             ### J. Meeus, p. 103
-            lat           = self.lat
-            lon           = self.lon
+            loc           = self.loc
             rts           = self.rts
             ### sid: sidereal time at Greenwich, in degrees,
             ###      at time `m` (expressed as fraction of a day)
@@ -143,8 +143,8 @@ class RTS (TFL.Meta.Object) :
             self.n        = n        = m + self.day.delta_T / 86400.0
             self.alpha    = alpha    = Angle_R (rts.interpolator_a (n))
             self.delta    = delta    = Angle_R (rts.interpolator_d (n))
-            self.ha       = ha       = hour_angle (sid,   lon, alpha)
-            self.altitude = alt      = altitude   (delta, ha,  lat)
+            self.ha       = ha       = hour_angle (sid,   loc, alpha)
+            self.altitude = alt      = altitude   (delta, ha,  loc)
             return ha, delta, alt
         # end def _at_time
 
@@ -158,16 +158,8 @@ class RTS (TFL.Meta.Object) :
         # end def _delta_m
 
         def _to_local_time (self, hours_ut) :
-            from dateutil.tz import tzlocal
-            lon         = rounded_to (self.lon.degrees, 15)
-            hours_local = \
-                ( hours_ut
-                - (CAL.Time.from_degrees (lon).seconds / 3600.0)
-                ) % 24.0
-            dt          = CAL.Date_Time.combine \
-                (self.day, CAL.Time.from_decimal_hours (hours_local))
-            delta       = CAL.Date_Time_Delta \
-                (seconds = tzlocal ().dst (dt._body).seconds)
+            dt    = CAL.Date_Time.combine (self.day, self.time_ut)
+            delta = self.loc.tz.utcoffset (dt._body)
             return CAL.Time (time = (dt + delta)._body.time ())
         # end def _to_local_time
 
@@ -215,20 +207,12 @@ class RTS (TFL.Meta.Object) :
     rise = None
     set  = None
 
-    def __init__ (self, ephs, lat, lon, h0 = Angle_D (-0.5667)) :
+    def __init__ (self, ephs, loc, h0 = Angle_D (-0.5667)) :
         """Arguments:
 
            * ephs : triple of positions for UT=0:0 for (day-1, day, day+1)
 
-           * lat  : latitude in degrees
-
-                    + positive in northern hemisphere
-                    + negative in southern hemisphere
-
-           * lon  : longitude in degrees
-
-                    + positive W of Greenwich
-                    + negative E of Greenwich
+           * loc  : SKY.Location instance
 
            * h0   : "standard" altitude, i.e., the geometric altitude of the
                     center of the body at the time of apparent rising or
@@ -240,9 +224,10 @@ class RTS (TFL.Meta.Object) :
         """
         rts         = self
         self.ephs   = ephs
-        self.lat    = lat   = Angle_D (getattr (lat, "degrees", lat))
-        self.lon    = lon   = Angle_D (getattr (lon, "degrees", lon))
-        self.h0     = h0    = Angle_D (getattr (h0,  "degrees", h0))
+        self.loc    = loc
+        self.lat    = lat   = loc.latitude
+        self.lon    = lon   = loc.longitude_meuss
+        self.h0     = h0    = Angle (h0)
         self.day    = day   = ephs [1].day
         self.alpha  = alpha = ephs [1].ra
         self.delta  = delta = ephs [1].decl
