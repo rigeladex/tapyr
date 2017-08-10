@@ -128,6 +128,13 @@
 #    30-May-2017 (CT) Add guard for `cao` to `Cmd.__call__`
 #    30-May-2017 (CT) Change `Cmd.cao` to print `exc` after `help`
 #    30-May-2017 (CT) Add method `ABORT` to `CAO`
+#    10-Aug-2017 (CT) Change `_choice_ambiguous` to use `self.name`, not `self`
+#                     + Ditto for `_choice_unknown`
+#                       * And use `portable_repr` for `choices` here, too
+#                     + Using `self` in the error message can trigger `getattr`
+#                       which can lead to `maximum recursion depth exceeded`
+#                       (`_choice_unknown` can be triggered by `_finish_setup`
+#                       for options of a sub-command via `getattr`)
 #    ««revision-date»»···
 #--
 
@@ -321,15 +328,15 @@ class _Spec_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
 
     def _choice_ambiguous (self, value, matches) :
         return \
-            ( "Ambiguous value `%s` for %s\n    Matches any of: %s"
-            % (value, self, portable_repr (sorted (matches)))
+            ( "Ambiguous value `%s` for %s `%s`\n    Matches any of: %s"
+            % (value, self.kind, self.name, portable_repr (sorted (matches)))
             )
     # end def _choice_ambiguous
 
     def _choice_unknown (self, value, choices) :
         return \
-            ( "Unkown value `%s` for %s\n    Specify one of: (%s)"
-            % (value, self, sorted (choices))
+            ( "Unkown value `%s` for %s `%s`\n    Specify one of: %s"
+            % (value, self.kind, self.name, portable_repr (sorted (choices)))
             )
     # end def _choice_unknown
 
