@@ -22,6 +22,7 @@
 #     9-Oct-2016 (CT) Move out from `CAL` to toplevel package
 #     9-Aug-2017 (CT) Use one argument `loc`, not two arguments `lat` and `lon`
 #                     + Use `loc.longitude_meuss`
+#    11-Aug-2017 (CT) Rename `solar_intensity` to `solar_irradiance`
 #    ««revision-date»»···
 #--
 
@@ -117,15 +118,15 @@ def hour_angle (sid_UT, loc, ra) :
 # end def hour_angle
 
 @Attributed (in_orbit = 1353.0, in_zenith = 1040.0)
-def solar_intensity (air_mass, above_sealevel = 0) :
-    """Solar intensity for `air_mass` considering atmospheric extinction.
+def solar_irradiance (air_mass, above_sealevel = 0) :
+    """Solar irradiance for `air_mass` considering atmospheric extinction.
 
-       air_mass == 0 : intensity in orbit
-       air_mass == 1 : intensity for sun in zenith
-       air_mass == 2 : intensity for sun at altitude == 30°
+       air_mass == 0 : irradiance in orbit
+       air_mass == 1 : irradiance for sun in zenith
+       air_mass == 2 : irradiance for sun at altitude == 30°
 
        >>> for am in (0, 1, 1.09, 1.15, 1.41, 1.5, 2, 2.9, 3.8, 5.6, 10, 38) :
-       ...     I = solar_intensity (am)
+       ...     I = solar_irradiance (am)
        ...     print ("AM %5.2f @ sea level : %4.0f W/sqm" % (am, I))
        AM  0.00 @ sea level : 1353 W/sqm
        AM  1.00 @ sea level : 1040 W/sqm
@@ -142,7 +143,7 @@ def solar_intensity (air_mass, above_sealevel = 0) :
 
        >>> for h in (45, 200, 800, 2000) :
        ...   for am in (0, 1, 1.09, 1.15, 1.41, 1.5, 2, 2.9, 3.8, 5.6, 10, 38) :
-       ...     I = solar_intensity (am, h)
+       ...     I = solar_irradiance (am, h)
        ...     print ("AM %5.2f @ %4d m : %4.0f W/sqm" % (am, h, I))
        AM  0.00 @   45 m : 1353 W/sqm
        AM  1.00 @   45 m : 1040 W/sqm
@@ -195,7 +196,7 @@ def solar_intensity (air_mass, above_sealevel = 0) :
 
        https://en.wikipedia.org/wiki/Air_mass_(solar_energy), formulas I.1, I.2
     """
-    I0 = solar_intensity.in_orbit
+    I0 = solar_irradiance.in_orbit
     if air_mass == 0 :
         result = I0
     else :
@@ -207,7 +208,7 @@ def solar_intensity (air_mass, above_sealevel = 0) :
             I = (I0 * (((1 - hf) * 0.7 ** air_mass ** 0.678) + hf))
         result = round (I / 10.0) * 10.0
     return result
-# end def solar_intensity
+# end def solar_irradiance
 
 class Time (TFL.Meta.Object) :
     """Model astronomical time for a single Date.
