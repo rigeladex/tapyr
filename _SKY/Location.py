@@ -29,6 +29,7 @@
 #                     + Add `__new__` to use `Table [name]` if it exists
 #                       * Add `normalized_lat`, `normalized_lon` to
 #                         semantically normalize and ensure the latitude range
+#    11-Aug-2017 (CT) Add supprt for `json_dump` (`_import_cb_json_dump`)
 #    ««revision-date»»···
 #--
 
@@ -231,6 +232,13 @@ class _Location_Arg_ (TFL.CAO.Str) :
     # end def _longituded
 
 # end class _Location_Arg_
+
+@TFL._Add_Import_Callback ("_TFL.json_dump")
+def _import_cb_json_dump (module) :
+    @module.default.add_type (Location)
+    def json_encode_ordinal_or_year (o) :
+        return o.as_json_cargo
+# end def _import_cb_json_dump
 
 if __name__ != "__main__" :
     SKY._Export ("*")
