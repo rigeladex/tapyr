@@ -136,6 +136,7 @@
 #                       (`_choice_unknown` can be triggered by `_finish_setup`
 #                       for options of a sub-command via `getattr`)
 #    14-Aug-2017 (CT) Change `Percent` to allow float input values
+#    14-Aug-2017 (CT) Fix last commit
 #    ««revision-date»»···
 #--
 
@@ -1485,7 +1486,9 @@ class Percent (Float) :
 
     def _cook (self, value) :
         if isinstance (value, pyk.string_types) :
-            value = float (value) / 100.
+            value = int (value, 0)
+        if isinstance (value, (int, float)) :
+            value = value / 100.
         if not (0.0 <= value <= 1.0) :
             raise (ValueError ("Invalid percentage value %s" % value))
         return value
