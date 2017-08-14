@@ -135,6 +135,7 @@
 #                       which can lead to `maximum recursion depth exceeded`
 #                       (`_choice_unknown` can be triggered by `_finish_setup`
 #                       for options of a sub-command via `getattr`)
+#    14-Aug-2017 (CT) Change `Percent` to allow float input values
 #    ««revision-date»»···
 #--
 
@@ -1475,7 +1476,7 @@ class Rel_Path (Path) :
 
 class Percent (Float) :
     """Argument or option with a percentage value,
-       specified as integer between 0 and 100.
+       specified as integer or float value between 0 and 100.
 
        Cooked value is float between 0.0 and 1.0.
     """
@@ -1484,9 +1485,7 @@ class Percent (Float) :
 
     def _cook (self, value) :
         if isinstance (value, pyk.string_types) :
-            value = int (value, 0)
-        if isinstance (value, int) :
-            value = value / 100.
+            value = float (value) / 100.
         if not (0.0 <= value <= 1.0) :
             raise (ValueError ("Invalid percentage value %s" % value))
         return value
