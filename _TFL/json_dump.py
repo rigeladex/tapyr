@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -21,6 +21,8 @@
 #     6-May-2015 (CT) Add `add_date_time_serializers`
 #    16-Jul-2015 (CT) Use `expect_except` in doc-tests
 #    22-Oct-2015 (CT) Add workaround for Python-3 issue25457 (`_fix_keys`)
+#    14-Aug-2017 (CT) Change `to_file` to pass `w`, not `wb`, for `open`
+#                     * Python-3 `json` always produces str objects, not byte
 #    ««revision-date»»···
 #--
 
@@ -111,7 +113,7 @@ def to_file (cargo, file_name, default = default, sort_keys = True, ** kw) :
 
        The arguments have the same meaning as in `json.dump`.
     """
-    with open (file_name, "wb") as fp :
+    with open (file_name, "w") as fp :
         return _do_dump \
             ( json.dump, cargo, fp
             , default = default, sort_keys = sort_keys, ** kw
