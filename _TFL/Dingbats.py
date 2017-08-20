@@ -24,6 +24,7 @@
 #    29-Jun-2016 (CT) Add `infinity`
 #     4-Jan-2017 (CT) Add `white...triangle` symbols (geometric_shapes)
 #     4-Jan-2017 (CT) Add some miscellaneous_technical symbols
+#    20-Aug-2017 (CT) Add astronomical symbols (earth, moon, star, sun)
 #    ««revision-date»»···
 #--
 
@@ -258,6 +259,14 @@ right_one_eighth_block                                              = "\u2595"
 infinity                                                            = "\u221E"
 
 ### http://www.alanwood.net/unicode/miscellaneous_symbols.html
+earth                                                               = "\u2641"
+moon_fq                                                             = "\u263D"
+moon_lq                                                             = "\u263E"
+star_black                                                          = "\u2605"
+star_white                                                          = "\u2606"
+sun                                                                 = "\u2609"
+sun_black_with_rays                                                 = "\u2600"
+sun_white_with_rays                                                 = "\u263C"
 trigram_for_heaven                                                  = "\u2630"
 
 ### http://www.alanwood.net/unicode/miscellaneous_technical.html
