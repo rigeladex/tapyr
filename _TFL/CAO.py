@@ -137,6 +137,7 @@
 #                       for options of a sub-command via `getattr`)
 #    14-Aug-2017 (CT) Change `Percent` to allow float input values
 #    14-Aug-2017 (CT) Fix last commit
+#    17-Aug-2017 (CT) Add import callback for `Q_Exp`
 #    ««revision-date»»···
 #--
 
@@ -2336,6 +2337,11 @@ def show (cao) :
             )
     pyk.fprint ("    argv       : %s" % (portable_repr (cao.argv), ))
 # end def show
+
+@TFL._Add_Import_Callback ("_TFL.Q_Exp")
+def _import_Q_Exp_CAO (module) :
+    import _TFL.Q_Exp_CAO
+# end def _import_Q_Exp_CAO
 
 ### «text» ### start of documentation
 __doc__ = r"""
