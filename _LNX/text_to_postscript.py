@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2017 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -18,6 +18,7 @@
 #     3-Jan-2014 (CT) Change `-header` to `U`, use `pyk.encoded` for `options`
 #    11-Feb-2014 (CT) Add support for STDIN
 #     3-Oct-2014 (CT) Add `$b` for header (to select basename of file)
+#    27-Aug-2017 (CT) Lstrip newlines, rstrip whitespace to avoid empty pages
 #    ««revision-date»»···
 #--
 
@@ -271,7 +272,7 @@ class TTP_Command (TFL.Command.Root_Command) :
                 fn        = Filename (arg).relative_to ("~/")
                 with open (arg, "rb") as fi :
                     txt_in = fi.read ()
-            txt     = txt_in.decode  (i_enc)
+            txt     = txt_in.decode  (i_enc).lstrip ("\n").rstrip ()
             ft      = time.strftime  (time_format, file_time)
             txt_out = txt.encode     (o_enc, "replace")
             options = tuple \
