@@ -17,6 +17,8 @@
 #
 # Revision Dates
 #    17-Aug-2017 (CT) Creation
+#     2-Sep-2017 (CT) Move import of `TFL.Q_Exp` into lazy property
+#                     * avoid circular imports
 #    ««revision-date»»···
 #--
 
@@ -25,15 +27,14 @@ from   __future__  import division
 from   __future__  import print_function
 from   __future__  import unicode_literals
 
-from   _TFL        import TFL
-
-from   _TFL.Q_Exp  import Q
+from   _TFL                       import TFL
+from   _TFL._Meta.Once_Property   import Once_Property
 
 import _TFL.CAO
 
 import itertools
 
-class _Q_Exp_Arg_ (TFL.CAO.Str) :
+class _Q_Exp_Arg_ (TFL.CAO.Opt.Str) :
     """Argument or option with a query-expression value"""
 
     _real_name     = "Q_Exp"
@@ -52,7 +53,14 @@ class _Q_Exp_Arg_ (TFL.CAO.Str) :
         , NE       = "__ne__"
         )
 
+    @Once_Property
+    def Q (self) :
+        from _TFL.Q_Exp import Q as result
+        return result
+    # end def Q
+
     def cook (self, value, cao = None) :
+        Q = self.Q
         name, op_key, v = tuple (a.strip () for a in value.split (",", 3))
         vs              = tuple (x.strip () for x in v.split ("|"))
         try :
@@ -89,7 +97,7 @@ class _Q_Exp_Arg_ (TFL.CAO.Str) :
     def cooked (self, value, cao = None) :
         result = self.__super.cooked (value, cao)
         if len (result) > 1 :
-           result = [Q.AND (* result)]
+           result = [self.Q.AND (* result)]
         return result
     # end def cooked
 

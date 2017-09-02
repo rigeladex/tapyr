@@ -138,6 +138,9 @@
 #    14-Aug-2017 (CT) Change `Percent` to allow float input values
 #    14-Aug-2017 (CT) Fix last commit
 #    17-Aug-2017 (CT) Add import callback for `Q_Exp`
+#     2-Sep-2017 (CT) Move import callback after `TFL._Export_Module`
+#                     * otherwise, for some import orders, `TFL.CAO` isn't
+#                       available in imported module
 #    ««revision-date»»···
 #--
 
@@ -2338,11 +2341,6 @@ def show (cao) :
     pyk.fprint ("    argv       : %s" % (portable_repr (cao.argv), ))
 # end def show
 
-@TFL._Add_Import_Callback ("_TFL.Q_Exp")
-def _import_Q_Exp_CAO (module) :
-    import _TFL.Q_Exp_CAO
-# end def _import_Q_Exp_CAO
-
 ### «text» ### start of documentation
 __doc__ = r"""
 This module provides classes for defining and processing **commands**,
@@ -2904,4 +2902,10 @@ values passed to it::
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
+
+    @TFL._Add_Import_Callback ("_TFL.Q_Exp")
+    def _import_Q_Exp_CAO (module) :
+        import _TFL.Q_Exp_CAO
+    # end def _import_Q_Exp_CAO
+
 ### __END__ TFL.CAO
