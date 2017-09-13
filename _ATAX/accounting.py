@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -164,6 +164,7 @@
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    29-Oct-2015 (CT) Fix usage of `vat_privat` (use `get`, not `[]`)
 #     9-Oct-2016 (CT) Remove dependency on `TGL`
+#    13-Sep-2017 (CT) Add `13%` to `V_Account._ust_cat` and `._ige_cat`
 #    ««revision-date»»···
 #--
 
@@ -1067,8 +1068,8 @@ class V_Account (Account) :
                 )
     # end def print_summary_online
 
-    _ust_cat = {20 : "022", 10 : "029", 0 : ""}
-    _ige_cat = {20 : "072", 10 : "073", 0 : ""}
+    _ust_cat = {20 : "022", 10 : "029", 13 : "006", 0 : ""}
+    _ige_cat = {20 : "072", 10 : "073", 13 : "008", 0 : ""}
 
     def print_ust_dict_ (self, umsatz_dict, ust_dict, cat) :
         for vat_p in sorted (umsatz_dict, reverse = True) :
