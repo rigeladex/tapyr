@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,6 +20,8 @@
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #     4-Nov-2015 (CT) Use `pyk.email_message_from_bytes`,
 #                     not `Lib.message_from_string` because Python 3
+#    18-Sep-2017 (CT) Add `use_file__mime` to `guess_type`, `Part`
+#                     + Add `guess_type_file__mime`
 #    ««revision-date»»···
 #--
 
@@ -39,11 +41,13 @@ from   _TFL.pyk                import pyk
 from   _TFL.Regexp             import *
 
 import mimetypes
+import subprocess
 
 default_type         = "application/octet-stream"
 unencoded_mime_types = ("text/plain", "message/rfc822")
 
 _sep                 = TFL.sos.sep
+file__mime_pat       = Regexp (r"^[^:]+: (?P<typ>[^;]+); charset=(?P<enc>.+)")
 mh_pat               = Regexp (r"%sMH%s.*%s\d+$" % (_sep, _sep, _sep))
 
 extension_map        = {}
@@ -121,7 +125,7 @@ MIME_Map = dict \
     , text        = _M_Type_Text_  (Lib.MIMEText)
     )
 
-def guess_type (name) :
+def guess_type (name, use_file__mime = False) :
     fname = TFL.Filename (name)
     try :
         typ, enc = extension_map [fname.ext]
@@ -131,18 +135,33 @@ def guess_type (name) :
             if mh_pat.search (name) :
                 typ = "message/rfc822"
             else :
-                typ = default_type
+                if use_file__mime :
+                    typ, enc = guess_type_file__mime (name)
+                if not typ :
+                    typ = default_type
     if typ not in unencoded_mime_types :
         enc = "base64"
     return typ, enc
 # end def guess_type
 
-def Part (filename, additional_headers) :
+def guess_type_file__mime (name) :
+    try :
+        file__mime = subprocess.check_output \
+            (["file", "--mime", name], stderr=subprocess.STDOUT)
+    except Exception :
+        pass
+    else :
+        if file__mime_pat.match (file__mime) :
+            return file__mime_pat.typ, file__mime_pat.enc
+    return default_type, "base64"
+# end def guess_type_file__mime
+
+def Part (filename, additional_headers, use_file__mime = False) :
     """Returns a MIME object with the contents of the file named `filename`.
 
        The result can be attached to a `email.Message` object.
     """
-    typ, enc = guess_type (filename)
+    typ, enc = guess_type (filename, use_file__mime = use_file__mime)
     if additional_headers :
         t = additional_headers.get ("Content-Type", None)
         if t :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -61,6 +61,7 @@
 #    10-Dec-2015 (CT) Add option `-Short_body`
 #    14-Mar-2016 (CT) Change option types from `S` to `U` for `-subject`...
 #    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
+#    18-Sep-2017 (CT) Pass `use_file__mime` to `Mime.Part`
 #    ««revision-date»»···
 #--
 
@@ -452,7 +453,9 @@ class Composer (TFL.Meta.Object) :
 
     def _process_attachement (self, email, name, add_headers = None) :
         p = PMA.Mime.Part \
-            (TFL.sos.expanded_path (name.strip (";")), add_headers)
+            ( TFL.sos.expanded_path (name.strip (";")), add_headers
+            , use_file__mime = True
+            )
         if p :
             if not email.is_multipart () :
                 email = self._as_multipart (email)
