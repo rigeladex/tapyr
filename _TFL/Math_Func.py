@@ -46,6 +46,9 @@
 #    26-Feb-2016 (CT) Import `division` from `__future__`
 #    19-Feb-2017 (CT) Add `median`, `median_s`
 #    20-Feb-2017 (CT) Add `percentile`, `percentile_s`
+#    18-Sep-2017 (CT) Use `math.fsum`, not `sum`
+#                     + Use `fmod`, not `%`, for floats
+#    18-Sep-2017 (CT) Add `isclose`
 #    ««revision-date»»···
 #--
 
@@ -65,19 +68,27 @@ def average (seq) :
        >>> "%4.2f" % (average (s),)
        '1.29'
     """
-    return float (sum (seq)) / len (seq)
+    return float (fsum (seq)) / len (seq)
 # end def average
 
-def gcd (a, b) :
-    """Calculates the greates common devisor of `a` and  `b`"""
-    a = abs (a)
-    b = abs (b)
-    if (a < b) :
-        a, b = b, a
-    while (b) :
-        a, b = b, a % b
-    return a or 1
-# end def gcd
+try :
+    gcd
+except NameError :
+    def gcd (a, b) :
+        """Calculates the greates common devisor of `a` and  `b`"""
+        if a == 0 and b == 0 :
+            ### be compatible with Python 3.5
+            return 0
+        mod = fmod if isinstance (a, float) or isinstance (b, float) \
+            else operator.mod
+        a = abs (a)
+        b = abs (b)
+        if (a < b) :
+            a, b = b, a
+        while (b) :
+            a, b = b, mod (a, b)
+        return a or 1
+    # end def gcd
 
 def greatest_common_divisor (seq, default = None) :
     """Calculates the greates common devisor of `seq`"""
@@ -104,6 +115,13 @@ def horner (x, ai) :
         result += a
     return result
 # end def horner
+
+try :
+    isclose
+except NameError :
+    def isclose (a, b, rel_tol = 1e-09, abs_tol = 0.0) :
+        return abs (a-b) <= max (rel_tol * max (abs (a), abs (b)), abs_tol)
+    # end def isclose
 
 def lcm (a, b) :
     """Calculates the least common multiple of `a` and `b`"""
@@ -137,10 +155,10 @@ def linear_regression_1 (ys, xs) :
     """
     assert len (xs) == len (ys)
     n       = float (len (xs))
-    sx      = sum (xs)
-    sy      = sum (ys)
-    sxx     = sum (x * x  for x    in xs)
-    sxy     = sum (x * y  for x, y in zip (xs, ys))
+    sx      = fsum (xs)
+    sy      = fsum (ys)
+    sxx     = fsum (x * x  for x    in xs)
+    sxy     = fsum (x * y  for x, y in zip (xs, ys))
     k       = (n*sxy - sx*sy) / (n*sxx - sx*sx)
     d       = (sy - k*sx) / n
     return d, k
@@ -260,7 +278,7 @@ def standard_deviation_plain (seq) :
     """
     n    = len     (seq)
     mean = average (seq)
-    return sqrt (sum (((mean - v) ** 2) for v in seq) / (n - 1))
+    return sqrt (fsum (((mean - v) ** 2) for v in seq) / (n - 1))
 # end def standard_deviation_plain
 
 def standard_deviation (seq) :
@@ -272,8 +290,8 @@ def standard_deviation (seq) :
        '0.016'
     """
     n     = len (seq)
-    a1    = sum (v * v for v in seq) * n
-    a2    = sum (seq) ** 2
+    a1    = fsum (v * v for v in seq) * n
+    a2    = fsum (seq) ** 2
     return sqrt ((a1 - a2) / (n * (n - 1)))
 # end def standard_deviation
 
