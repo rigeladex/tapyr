@@ -19,6 +19,7 @@
 #    11-Feb-2014 (CT) Add support for STDIN
 #     3-Oct-2014 (CT) Add `$b` for header (to select basename of file)
 #    27-Aug-2017 (CT) Lstrip newlines, rstrip whitespace to avoid empty pages
+#    22-Sep-2017 (CT) Replace some unicode chars with latin-1 approximations
 #    ««revision-date»»···
 #--
 
@@ -33,6 +34,7 @@ from   _TFL.FCM                import open_tempfile
 from   _TFL.Filename           import Filename
 from   _TFL.predicate          import split_hst
 from   _TFL.pyk                import pyk
+from   _TFL.Regexp             import Regexp, Re_Replacer, Dict_Replacer, re
 from   _TFL.User_Config        import user_config
 
 import _TFL.Accessor
@@ -44,6 +46,17 @@ from   plumbum                 import local as pbl
 
 import sys
 import time
+
+_encode_map = \
+    { "€"   : "EUR"
+    , "­"   : "-"
+    , "–"   : "--"
+    , "—"   : "---"
+    , "×"   : "*"
+    , "÷"   : "/"
+    , "±"   :"+/-"
+    }
+_encode_rep = Dict_Replacer (_encode_map)
 
 class _TTP_Sub_Command_ (TFL.Command.Sub_Command) :
 
@@ -257,6 +270,11 @@ class TTP_Command (TFL.Command.Root_Command) :
 
     _Enscript_ = _TTP_Enscript_ # end class
 
+    def _encoded (self, txt, enc) :
+        result = _encode_rep (txt)
+        return result.encode (enc, "replace")
+    # end def _encoded
+
     def _handler (self, sub, cmd) :
         time_format        = _Sub_Command_.time_fmt = cmd.time_format
         i_enc              = cmd.input_encoding
@@ -274,7 +292,7 @@ class TTP_Command (TFL.Command.Root_Command) :
                     txt_in = fi.read ()
             txt     = txt_in.decode  (i_enc).lstrip ("\n").rstrip ()
             ft      = time.strftime  (time_format, file_time)
-            txt_out = txt.encode     (o_enc, "replace")
+            txt_out = self._encoded  (txt, o_enc)
             options = tuple \
                 (pyk.encoded (o) for o in sub.options (cmd, fn, ft))
             pbl_cmd = sub.pbl_cmd.__getitem__ (options)
