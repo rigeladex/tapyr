@@ -28,6 +28,7 @@
 #     9-Jun-2017 (CT) Add guard to, fix decoding/encoding in, `_main`
 #     9-Jun-2017 (CT) Add `is_non_ascii` predicate
 #     9-Jun-2017 (CT) Fix typo
+#     1-Oct-2017 (CT) Add "´" to `_quote_map`
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,7 @@ _non_print_rep  = Re_Replacer \
 _quote_map      = \
     { "«"      : "<<"
     , "»"      : ">>"
+    , "´"      : "'"
     , "\u2018" : "'"
     , "\u2019" : "'"
     , "\u201A" : "'"
