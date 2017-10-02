@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2017 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -25,6 +25,8 @@
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    31-Oct-2015 (CT) Add `@pyk.adapt__str__` to `FB_Entry`
 #    28-Dec-2015 (CT) Fix `__str__` (use `pyk.text_type`, not `str`)
+#     2-Oct-2017 (CT) Factor `FB_Entry.from_line`
+#                     + move `_new_entry` from `Fahrtenbuch` to `FB_Entry`
 #    ««revision-date»»···
 #--
 
@@ -69,6 +71,17 @@ class FB_Entry (TFL.Meta.Object) :
         self.__dict__.update (kw)
     # end def __init__
 
+    @classmethod
+    def from_line (cls, line, last) :
+        try :
+            d, km_finis, priv, desc = \
+                [f.strip () for f in line.split ("&", 4)]
+        except ValueError :
+            raise ValueError ("Split error `%s`" % line)
+        else :
+            return cls._new_entry (last, d, km_finis, priv, desc)
+    # end def from_line
+
     @Once_Property
     def delta (self) :
         return self.km_finis - self.km_start
@@ -102,6 +115,15 @@ class FB_Entry (TFL.Meta.Object) :
         return self.atax_format % (date, f * km, km)
     # end def atax
 
+    @classmethod
+    def _new_entry (cls, last, d, km_finis, priv, desc) :
+        km_start = km_finis
+        if last is not None :
+            km_start = last.km_finis
+        return cls \
+            (CAL.Date_Time.from_string (d), km_start, km_finis, priv, desc)
+    # end def _new_entry
+
     def __bool__ (self) :
         return bool (self.delta)
     # end def __bool__
@@ -132,19 +154,17 @@ class Fahrtenbuch (TFL.Meta.Object) :
 
     @classmethod
     def from_file (cls, user, file_name) :
+        Entry  = cls.Entry
         result = cls (user)
         add    = result.add
         last   = None
         with open (file_name, "rb") as file :
             for l in result._read_lines (file) :
-                line = pyk.decoded (l, "utf-8", "iso-8859-1")
                 try :
-                    d, km, priv, desc = \
-                        [f.strip () for f in line.split ("&", 4)]
-                except ValueError :
-                    pyk.fprint ("Split error `%s`" % line)
+                    last = Entry.from_line (l, last)
+                except ValueError as exc :
+                    pyk.fprint (exc)
                 else :
-                    last = result._new_entry (last, d, km, priv, desc)
                     add (last)
         return result
     # end def from_file
@@ -223,14 +243,6 @@ class Fahrtenbuch (TFL.Meta.Object) :
             add (r"\end{fahrtenbuch}")
         return "\n".join (result)
     # end def tex
-
-    def _new_entry (self, last, d, km_finis, priv, desc) :
-        km_start = km_finis
-        if last is not None :
-            km_start = last.km_finis
-        return self.Entry \
-            (CAL.Date_Time.from_string (d), km_start, km_finis, priv, desc)
-    # end def _new_entry
 
     def _read_lines (self, file) :
         for l in file :
