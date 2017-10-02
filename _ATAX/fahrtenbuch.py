@@ -28,6 +28,7 @@
 #     2-Oct-2017 (CT) Factor `FB_Entry.from_line`
 #                     + move `_new_entry` from `Fahrtenbuch` to `FB_Entry`
 #     2-Oct-2017 (CT) Factor `FB_Entry.date_formatted`
+#     2-Oct-2017 (CT) Factor `fahrtenbuch.tex_total`
 #    ««revision-date»»···
 #--
 
@@ -238,17 +239,20 @@ class Fahrtenbuch (TFL.Meta.Object) :
                         add (r"\begin{fahrtenbuch}")
                         i = 1
             add (r"\hline\hline")
-            kmb  = self.km_business
-            kmp  = self.km_private
-            priv = self.private_percent
-            add ( FB_Entry.tex_format
-                % ( "Total", head.km_start, tail.km_finis, kmb, kmp
-                  , r"\hfill Privatanteil = \percent{%5.2f} \CR" % priv
-                  )
-                )
+            add (self.tex_total (head, tail))
             add (r"\end{fahrtenbuch}")
         return "\n".join (result)
     # end def tex
+
+    def tex_total (self, head, tail) :
+        kmb  = self.km_business
+        kmp  = self.km_private
+        priv = self.private_percent
+        return FB_Entry.tex_format % \
+            ( "Total", head.km_start, tail.km_finis, kmb, kmp
+            , r"\hfill Privatanteil = \percent{%5.2f} \CR" % priv
+            )
+    # end def tex_total
 
     def _read_lines (self, file) :
         for l in file :
