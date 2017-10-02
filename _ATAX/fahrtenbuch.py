@@ -13,7 +13,7 @@
 #    ATAX.fahrtenbuch
 #
 # Purpose
-#    Fahrtenbuch
+#    Fahrtenbuch für Firmenfahrzeug
 #
 # Revision Dates
 #     4-Jan-2008 (CT) Creation (ported from a perl version)
@@ -27,6 +27,7 @@
 #    28-Dec-2015 (CT) Fix `__str__` (use `pyk.text_type`, not `str`)
 #     2-Oct-2017 (CT) Factor `FB_Entry.from_line`
 #                     + move `_new_entry` from `Fahrtenbuch` to `FB_Entry`
+#     2-Oct-2017 (CT) Factor `FB_Entry.date_formatted`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +84,11 @@ class FB_Entry (TFL.Meta.Object) :
     # end def from_line
 
     @Once_Property
+    def date_formatted (self) :
+        return self.date.formatted ("%d.%m.%Y")
+    # end def date_formatted
+
+    @Once_Property
     def delta (self) :
         return self.km_finis - self.km_start
     # end def delta
@@ -98,7 +104,7 @@ class FB_Entry (TFL.Meta.Object) :
     # end def km_private
 
     def tex (self) :
-        date    = self.date.formatted ("%d.%m.%Y")
+        date    = self.date_formatted
         bus_km  = self.km_business
         priv_km = self.km_private
         desc    = self.desc ### TeX-quote `desc`
@@ -129,14 +135,14 @@ class FB_Entry (TFL.Meta.Object) :
     # end def __bool__
 
     def __str__ (self) :
-        date = self.date.formatted ("%d.%m.%Y")
+        date = self.date_formatted
         return self.str_format % (date, self.km_finis, self.priv, self.desc)
     # end def __str__
 
 # end class FB_Entry
 
 class Fahrtenbuch (TFL.Meta.Object) :
-    """Model a Fahrtenbuch"""
+    """Fahrtenbuch für Firmenfahrzeug"""
 
     lines_per_page = 50
     Entry          = FB_Entry
