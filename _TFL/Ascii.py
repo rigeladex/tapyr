@@ -29,6 +29,7 @@
 #     9-Jun-2017 (CT) Add `is_non_ascii` predicate
 #     9-Jun-2017 (CT) Fix typo
 #     1-Oct-2017 (CT) Add "´" to `_quote_map`
+#     6-Oct-2017 (CT) Support wildcards for argument `file`
 #    ««revision-date»»···
 #--
 
@@ -180,7 +181,7 @@ def _main (cmd) :
 _Command = TFL.CAO.Cmd \
     ( handler       = _main
     , args          =
-        ( "file:P?File(s) to rename"
+        ( "file:P:?File(s) to rename"
         ,
         )
     , opts          =
