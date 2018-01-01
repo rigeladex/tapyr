@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package ATAX.
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #     2-Oct-2017 (CT) Creation
+#     1-Jan-2018 (CT) Add `\CR` to `tex_total`, improve `tex_format`
 #    ««revision-date»»···
 #--
 
@@ -43,7 +44,7 @@ class FB_Entry_P (FB_Entry) :
     """One entry of Fahrtenbuch_P"""
 
     str_format  = r"  %-11s & %8d & %8d & %-10s & %s"
-    tex_format  = r"  %-10s & %6s & %6s & %4d & %-10s & \sf %s"
+    tex_format  = r"  %-10s & %6s & %6s & %4d & \tt %s & \sf %s"
 
     def __init__ (self, date, km_start, km_finis, car, desc, ** kwds) :
         self.car = car
@@ -93,8 +94,8 @@ class Fahrtenbuch_P (Fahrtenbuch) :
     def tex_total (self, head, tail) :
         kmb  = self.km_business
         kmg  = self.km_geld
-        eur  = "" if kmg is None else \
-            ("\hfill KM-Geld = %s" % (EUR (kmb * kmg), ))
+        eur  = "\CR" if kmg is None else \
+            ("\hfill KM-Geld = %s \CR" % (EUR (kmb * kmg), ))
         return FB_Entry_P.tex_format % ("Total", "", "", kmb, "", eur)
     # end def tex_total
 
