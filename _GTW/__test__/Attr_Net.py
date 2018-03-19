@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2012-2018 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A--3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -34,6 +34,7 @@
 #     6-Aug-2013 (CT) Adapt to major surgery of GTW.OMP.NET.Attr_Type
 #    18-Aug-2013 (RS) Fix sort order of IP networks
 #    29-Apr-2014 (RS) Fix traceback messages for new rsclib
+#    19-Mar-2018 (CT) Use `expect_except` (Python-3 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -148,28 +149,25 @@ _test_ip4 = """
     >>> Test_IP4_Address (address = '111.222.233.244', raw = True)
     GTW.OMP.NET.Test_IP4_Address ("111.222.233.244")
 
-    >>> Test_IP4_Address ('111.222.233.244/22', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Attribute_Value) :
+    ...   Test_IP4_Address ('111.222.233.244/22', raw = True)
     Attribute_Value: Can't set IP4-address `address` attribute Test_IP4_Address.address to 111.222.232.0/22.
         Invalid netmask: 22; must be empty or 32
 
-    >>> Test_IP4_Address (address = '1.2.3.4/22', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Attribute_Value) :
+    ...   Test_IP4_Address (address = '1.2.3.4/22', raw = True)
     Attribute_Value: Can't set IP4-address `address` attribute Test_IP4_Address.address to 1.2.0.0/22.
         Invalid netmask: 22; must be empty or 32
 
-    >>> Test_IP4_Address (address = '256.255.255.2', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP4_Address (address = '256.255.255.2', raw = True)
     Invariants: `IP4_Address: Syntax: Invalid octet: 256` for : `IP4-address `address``
          expected type  : 'IP4-address'
          got      value : '256.255.255.2'
     IP4 address must contain 4 decimal octets separated by `.`.
-    >>> Test_IP4_Address (address = '2560.255.2.2', raw = True)
-    Traceback (most recent call last):
-     ...
+
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP4_Address (address = '2560.255.2.2', raw = True)
     Invariants: `IP4_Address: Syntax: Invalid octet: 2560` for : `IP4-address `address``
          expected type  : 'IP4-address'
          got      value : '2560.255.2.2'
@@ -184,16 +182,14 @@ _test_ip4 = """
     GTW.OMP.NET.Test_IP4_Network ("0.0.0.0/0")
     >>> Test_IP4_Network (address = '1.2.3.4/22', raw = True)
     GTW.OMP.NET.Test_IP4_Network ("1.2.0.0/22")
-    >>> Test_IP4_Network (address = '1.2.3.4/33', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP4_Network (address = '1.2.3.4/33', raw = True)
     Invariants: `IP4_Address: Syntax: Invalid netmask: 33` for : `IP4-network `address``
          expected type  : 'IP4-network'
          got      value : '1.2.3.4/33'
     IP4 network must contain 4 decimal octets separated by `.`, optionally followed by `/` and a number between 0 and 32. The bits right of the netmask are automatically set to zero.
-    >>> Test_IP4_Network (address = '1.2.3.4/333', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP4_Network (address = '1.2.3.4/333', raw = True)
     Invariants: `IP4_Address: Syntax: Invalid netmask: 333` for : `IP4-network `address``
          expected type  : 'IP4-network'
          got      value : '1.2.3.4/333'
@@ -269,141 +265,122 @@ _test_ip6 = """
     GTW.OMP.NET.Test_IP6_Address ("::ffff:c000:280")
     >>> Test_IP6_Address (address = '::', raw = True)
     GTW.OMP.NET.Test_IP6_Address ("::")
-    >>> Test_IP6_Address (address = '::ffff:12.34.56.78', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '::ffff:12.34.56.78', raw = True)
     Invariants: `IP6_Address: Syntax: Hex value too long: 12.34.56.78` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '::ffff:12.34.56.78'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '::ffff:192.0.2.128', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '::ffff:192.0.2.128', raw = True)
     Invariants: `IP6_Address: Syntax: Hex value too long: 192.0.2.128` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '::ffff:192.0.2.128'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '123', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '123', raw = True)
     Invariants: `IP6_Address: Syntax: Not enough hex parts in 123` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '123'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = 'ldkfj', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = 'ldkfj', raw = True)
     Invariants: `IP6_Address: Syntax: Hex value too long: ldkfj` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : 'ldkfj'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '2001::FFD3::57ab', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '2001::FFD3::57ab', raw = True)
     Invariants: `IP6_Address: Syntax: Only one '::' allowed` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '2001::FFD3::57ab'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address \\
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address \\
     ...     ( address = '2001:db8:85a3::8a2e:37023:7334'
     ...     , raw = True
     ...     )
-    Traceback (most recent call last):
-     ...
     Invariants: `IP6_Address: Syntax: Hex value too long: 37023` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '2001:db8:85a3::8a2e:37023:7334'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address \\
+    >>> with expect_except (MOM.Error.Invariants) : # doctest:+ELLIPSIS
+    ...   Test_IP6_Address \\
     ...     ( address = '2001:db8:85a3::8a2e:370k:7334'
     ...     , raw = True
     ...     )
-    Traceback (most recent call last):
-     ...
-    Invariants: `IP6_Address: Syntax: invalid literal for long() with base 16: '370k'` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: invalid literal for...
          expected type  : 'IP6-address'
          got      value : '2001:db8:85a3::8a2e:370k:7334'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '1:2:3:4:5:6:7:8:9', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '1:2:3:4:5:6:7:8:9', raw = True)
     Invariants: `IP6_Address: Syntax: Too many hex parts in 1:2:3:4:5:6:7:8:9` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '1:2:3:4:5:6:7:8:9'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '1::2::3', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '1::2::3', raw = True)
     Invariants: `IP6_Address: Syntax: Only one '::' allowed` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '1::2::3'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '1:::3:4:5', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '1:::3:4:5', raw = True)
     Invariants: `IP6_Address: Syntax: Too many ':': 1:::3:4:5` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '1:::3:4:5'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '1:2:3::4:5:6:7:8:9', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '1:2:3::4:5:6:7:8:9', raw = True)
     Invariants: `IP6_Address: Syntax: Too many hex parts in 1:2:3::4:5:6:7:8:9` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '1:2:3::4:5:6:7:8:9'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '::ffff:2.3.4', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '::ffff:2.3.4', raw = True)
     Invariants: `IP6_Address: Syntax: Hex value too long: 2.3.4` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '::ffff:2.3.4'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '::ffff:257.1.2.3', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '::ffff:257.1.2.3', raw = True)
     Invariants: `IP6_Address: Syntax: Hex value too long: 257.1.2.3` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '::ffff:257.1.2.3'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '1.2.3.4', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '1.2.3.4', raw = True)
     Invariants: `IP6_Address: Syntax: Hex value too long: 1.2.3.4` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '1.2.3.4'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = ':aa:aa:aa', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = ':aa:aa:aa', raw = True)
     Invariants: `IP6_Address: Syntax: No single ':' at start allowed` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : ':aa:aa:aa'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = 'aa:aa:aa:', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = 'aa:aa:aa:', raw = True)
     Invariants: `IP6_Address: Syntax: No single ':' at end allowed` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : 'aa:aa:aa:'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '1:2:3:4:5:6:7', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = '1:2:3:4:5:6:7', raw = True)
     Invariants: `IP6_Address: Syntax: Not enough hex parts in 1:2:3:4:5:6:7` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : '1:2:3:4:5:6:7'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = ':::', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Address (address = ':::', raw = True)
     Invariants: `IP6_Address: Syntax: No ':' at start and end` for : `IP6-address `address``
          expected type  : 'IP6-address'
          got      value : ':::'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (address = '1:2:3::/127', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Attribute_Value) :
+    ...   Test_IP6_Address (address = '1:2:3::/127', raw = True)
     Attribute_Value: Can't set IP6-address `address` attribute Test_IP6_Address.address to 1:2:3::/127.
         Invalid netmask: 127; must be empty or 128
 
@@ -426,16 +403,14 @@ _test_ip6 = """
     GTW.OMP.NET.Test_IP6_Network ("::/0")
     >>> Test_IP6_Network (address = '1:2:3::/1', raw = True)
     GTW.OMP.NET.Test_IP6_Network ("::/1")
-    >>> Test_IP6_Network (address = '1:2:3::/129', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Network (address = '1:2:3::/129', raw = True)
     Invariants: `IP6_Address: Syntax: Invalid netmask: 129` for : `IP6-network `address``
          expected type  : 'IP6-network'
          got      value : '1:2:3::/129'
     IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.
-    >>> Test_IP6_Network (address = '1:2:3::/1290', raw = True)
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   Test_IP6_Network (address = '1:2:3::/1290', raw = True)
     Invariants: `IP6_Address: Syntax: Invalid netmask: 1290` for : `IP6-network `address``
          expected type  : 'IP6-network'
          got      value : '1:2:3::/1290'
@@ -453,9 +428,8 @@ _test_mac = """
     >>> MAC_Address ("00:11:22:33:44:55")
     GTW.OMP.NET.MAC_Address ('00:11:22:33:44:55')
 
-    >>> MAC_Address ("000:11:22:33:44:55")
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   MAC_Address ("000:11:22:33:44:55")
     Invariants: Condition `AC_check_address_length` : Value for address must not be longer than 17 characters (length <= 17)
         address = '000:11:22:33:44:55'
         length = 18 << len (address)
@@ -464,17 +438,15 @@ _test_mac = """
          got      value : '000:11:22:33:44:55'
     A MAC address must contain 6 hexadecimal octets separated by `:`.
 
-    >>> MAC_Address ("00:11:22:33:44")
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   MAC_Address ("00:11:22:33:44")
     Invariants: `Syntax error` for : `MAC-address `address``
          expected type  : 'MAC-address'
          got      value : '00:11:22:33:44'
     A MAC address must contain 6 hexadecimal octets separated by `:`.
 
-    >>> MAC_Address ("00:11:22:33:44:55:66")
-    Traceback (most recent call last):
-     ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...   MAC_Address ("00:11:22:33:44:55:66")
     Invariants: Condition `AC_check_address_length` : Value for address must not be longer than 17 characters (length <= 17)
         address = '00:11:22:33:44:55:66'
         length = 20 << len (address)
@@ -542,9 +514,8 @@ _test_query = r"""
     >>> Test_IP4_Address.query (Q.address <= address).count ()
     2
 
-    >>> Test_IP4_Address.query (Q.address.mask == 27).count ()
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (AttributeError) :
+    ...   Test_IP4_Address.query (Q.address.mask == 27).count ()
     AttributeError: mask
 
     >>> Test_IP4_Address.query (Q.address.mask_len == 27).count ()
