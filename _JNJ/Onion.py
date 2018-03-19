@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -19,6 +19,7 @@
 #    12-Oct-2014 (CT) Use `next` function, not method (Python-3 compatibility)
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    11-Dec-2015 (CT) Fix doc-string of `Onion`
+#    19-Mar-2018 (CT) Factor `_if_node` to deal with Jinja2 change
 #    ««revision-date»»···
 #--
 
@@ -107,7 +108,7 @@ class Onion (Extension) :
             h_else = None
         next (parser.stream)
         body   = parser.parse_statements (["name:endonion", "name:tail"])
-        result = [nodes.If ( cond, h_then, h_else)]
+        result = [self._if_node (cond, h_then, h_else)]
         result.extend (body)
         if parser.stream.current.value == "tail" :
             next (parser.stream)
@@ -117,10 +118,27 @@ class Onion (Extension) :
                 t_else = parser.parse_statements (["name:endonion"])
             else :
                 t_else = None
-            result.append (nodes.If (cond, t_then, t_else))
+            result.append (self._if_node (cond, t_then, t_else))
         next (parser.stream)
         return result
     # end def parse
+
+    _nodes_if_field_no = len (nodes.If.fields)
+
+    if _nodes_if_field_no == 3 :
+        def _if_node (self, cond, then_block, else_block) :
+            return nodes.If (cond, then_block, else_block)
+        # end def _if_node
+    elif _nodes_if_field_no == 4 :
+        def _if_node (self, cond, then_block, else_block) :
+            return nodes.If (cond, then_block, [], else_block)
+        # end def _if_node
+    else :
+        raise NotImplementedError \
+            ( "Cannot deal with jinja2.nodes.If with number of fields "
+              "other than 3 or 4"
+            )
+    del _nodes_if_field_no
 
 # end class Onion
 
