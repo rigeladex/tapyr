@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -58,6 +58,8 @@
 #    12-Sep-2014 (CT) Use `A_Join.key`, not `A_Join.table`, for `joined` set
 #     9-Oct-2014 (CT) Use `portable_repr`
 #    23-Apr-2015 (CT) Change `formatted` to include `bvar_man.bindings`
+#    20-Mar-2018 (CT) Add module-level `formatted`
+#    20-Mar-2018 (CT) Add `formatted_xqpi`, factor `formatted_parts`
 #    ««revision-date»»···
 #--
 
@@ -76,6 +78,7 @@ import _TFL._Meta.Once_Property
 from   _TFL.Decorator            import subclass_responsibility
 from   _TFL.portable_repr        import portable_repr
 from   _TFL.pyk                  import pyk
+from   _TFL.Regexp               import Dict_Replacer
 
 import _TFL.Accessor
 import _TFL.Decorator
@@ -228,18 +231,13 @@ class _Base_ (TFL.Meta.Object) :
     # end def first
 
     def formatted (self) :
-        result = [portable_repr (self)]
-        sq     = self.sa_query
-        cq     = sq.compile ()
-        params = dict (cq.params or {}, ** self.bvar_man.bindings)
-        if params :
-            result.append ("Parameters:")
-            result.extend \
-                (   ("     %-20s : %s" % (k, portable_repr (v)))
-                for k, v in sorted (pyk.iteritems (params))
-                )
-        return "\n".join (result)
+        return formatted (self)
     # end def formatted
+
+    def formatted_xqpi (self) :
+        """Return formatted query with query parameters expanded inline."""
+        return formatted_xqpi (self)
+    # end def formatted_xqpi
 
     def group_by (self, * columns) :
         result           = self._clone ()
@@ -600,6 +598,43 @@ class E_Type_Reload (E_Type) :
     # end def reload
 
 # end class E_Type_Reload
+
+def formatted (qr) :
+    """Return `qr` formatted as SQL."""
+    result, params = formatted_parts (qr)
+    if params :
+        fps = list \
+            (   ("     %-20s : %s" % (k, portable_repr (v)))
+            for k, v in sorted (pyk.iteritems (params))
+            )
+        result = "\n".join ([result, "Parameters:"] + fps)
+    return result
+# end def formatted
+
+def formatted_parts (qr) :
+    fq     = str (qr)
+    sq     = getattr (qr, "sa_query", qr)
+    cq     = sq.compile ()
+    try :
+        bindings = sq.bvar_man.bindings
+    except AttributeError :
+        bindings = {}
+    params = dict (cq.params or {}, ** bindings)
+    return fq, params
+# end def formatted_parts
+
+def formatted_xqpi (qr) :
+    """Return `qr` formatted as SQL with query parameters expanded inline."""
+    result, params = formatted_parts (qr)
+    if params :
+        r_dict     = \
+            { ":" + k : ("<$QP: %s>" % portable_repr (v))
+            for k, v in pyk.iteritems (params)
+            }
+        p_expander = Dict_Replacer (r_dict)
+        result     = p_expander    (result)
+    return result
+# end def formatted_xqpi
 
 if __name__ != "__main__" :
     MOM.DBW.SAW._Export_Module ()

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -1055,7 +1055,7 @@ _test_q_result_sq = r"""
            pap_appointment.time__upper AS pap_appointment_time__upper
          FROM mom_id_entity
            JOIN pap_appointment ON mom_id_entity.pid = pap_appointment.pid
-         WHERE 1 = 1
+         WHERE true
 
     >>> show_query (qrt.filter (Q.time.IN (inf_u)))
     SQL: SELECT

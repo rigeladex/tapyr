@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package _GTW.__test__.
@@ -26,6 +26,12 @@
 #    31-Jul-2016 (CT) Move test functions from `SAW_QX` in here
 #     4-Aug-2016 (CT) Change default `pred` to filter `_SAT_Desc_`
 #    20-Oct-2016 (CT) Add `show_table_ancestors`, `show_table_summary`
+#    19-Mar-2018 (CT) Adapt to SQL changes in sqlalchemy 1.1
+#                     + add `true` to `fixed_booleans`
+#                     + map `= true` and `= false` to `= 1` and `= 0`,
+#                       respectively
+#    20-Mar-2018 (CT) Add `formatted_select_xqpi`, `show_query_xqpi`
+#                     + add `formatter` to `formatted_select`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +42,7 @@ from   _GTW.__test__.Test_Command   import esf_completer
 
 from   _MOM.import_MOM              import MOM, Q
 from   _MOM._DBW._SAW               import QX
+from   _MOM._DBW._SAW.Q_Result      import formatted_xqpi as qr_formatted_xqpi
 
 from   _TFL                         import TFL
 from   _TFL.portable_repr           import portable_repr
@@ -53,7 +60,14 @@ pred   = lambda ETW : ETW.e_type.PNS is not None
 def fixed_booleans (qf) :
     if not isinstance (qf, pyk.string_types) :
         qf = pyk.text_type (qf)
-    return qf.replace ("WHERE 0 = 1", "WHERE false")
+    result = \
+        ( qf.replace ("WHERE 0 = 1", "WHERE false")
+            .replace ("WHERE 1 = 1", "WHERE true")
+            .replace ("= false",    "= 0")
+            .replace ("= true",     "= 1")
+
+        )
+    return result
 # end def fixed_booleans
 
 def formatted_column (c) :
@@ -88,13 +102,13 @@ def formatted_foreign_key (fk) :
     return result
 # end def formatted_foreign_key
 
-def formatted_select (ETW, name = "select", select = None) :
+def formatted_select (ETW, name = "select", select = None, formatter = str) :
     sep = nl + indent
     if select is None :
         select = getattr (ETW, name, None)
     if select is None :
         return "No '%s'" % (name, )
-    text = str (select)
+    text = formatter (select)
     def _gen (lines, indent = 7) :
         s = "," + sep + (" " * indent)
         inner_indent = " " * (indent - 7)
@@ -139,6 +153,10 @@ def formatted_select (ETW, name = "select", select = None) :
         result = sep.join (( result, " " * 5 + t_sep + r_tail))
     return result.rstrip ()
 # end def formatted_select
+
+def formatted_select_xqpi (ETW, name = "select", select = None) :
+    return formatted_select (ETW, name, select, qr_formatted_xqpi)
+# end def formatted_select_xqpi
 
 def formatted_table (ST, nl, indent) :
     sep   = nl + indent
@@ -315,6 +333,10 @@ def show_qc_map (apt, pred = pred) :
 def show_query (qr) :
     print (fixed_booleans (qr.formatted ()))
 # end def show_query
+
+def show_query_xqpi (qr) :
+    print (fixed_booleans (qr.formatted_xqpi ()))
+# end def show_query_xqpi
 
 def show_qx (qx, level = 0) :
     print (QX.display (qx, level = 0))
