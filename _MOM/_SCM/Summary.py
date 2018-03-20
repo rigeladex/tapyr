@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.SCM.
@@ -42,6 +42,7 @@
 #     5-May-2015 (CT) Add `as_json_cargo`, `from_pickle_cargo`;
 #                     add `json_encode_change` to `TFL.json_dump.default`
 #     6-May-2015 (CT) Add `redo`, `restore`, `undo`
+#    20-Mar-2018 (CT) Add `sorted` to `Summary.entities` (Py-3.6 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -434,7 +435,7 @@ class Summary (TFL.Meta.Object) :
     # end def change_conflicts
 
     def entities (self, ems) :
-        for pid, csp in pyk.iteritems (self.by_pid) :
+        for pid, csp in sorted (pyk.iteritems (self.by_pid)) :
             if not csp.is_dead :
                 yield ems.pid_query (pid)
     # end def entities
