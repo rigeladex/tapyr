@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -155,6 +155,7 @@
 #    19-Dec-2016 (CT) Add info about resource to `__getattr__` error
 #     8-Feb-2017 (CT) Make argument `nav_page` of `show_in_nav` optional
 #     8-Feb-2017 (CT) Change `show_in_nav` to check `short_title`
+#    21-Mar-2018 (CT) Add `_password_elider_2`
 #    ««revision-date»»···
 #--
 
@@ -205,11 +206,20 @@ import sys
 import time
 import traceback
 
-_password_elider = Re_Replacer \
+_password_elider_1 = Re_Replacer \
     ( "'password' *: *'[^']+'"
     , "'password' : '...'"
     )
-_error_email_cleaner = Multi_Re_Replacer (_password_elider)
+
+_password_elider_2 = Re_Replacer \
+    ( '"password" *: *"[^"]+"'
+    , '"password" : "..."'
+    )
+
+_error_email_cleaner = Multi_Re_Replacer \
+    ( _password_elider_1
+    , _password_elider_2
+    )
 
 class _RST_Meta_ (TFL.Meta.M_Class) :
 
