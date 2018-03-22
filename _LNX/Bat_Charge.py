@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is part of the package LNX.
@@ -17,8 +17,13 @@
 #
 # Revision Dates
 #    15-Feb-2011 (CT) Creation
+#    22-Mar-2018 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
 
 from   _LNX           import LNX
 from   _TFL           import TFL
@@ -151,5 +156,5 @@ class Bat_Charge (TFL.Meta.Object) :
 if __name__ != "__main__" :
     LNX._Export ("*")
 if __name__ == "__main__" :
-    print Bat_Charge ()
+    print (Bat_Charge ())
 ### __END__ Bat_Charge

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package LNX.
@@ -18,16 +18,20 @@
 # Revision Dates
 #    12-May-2009 (CT) Creation
 #     8-Nov-2013 (CT) Improve `_ignore_rep` for `i[357]` CPUs
+#    22-Mar-2018 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
 
-from   __future__  import with_statement
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
 
-from   _LNX import LNX
-from   _TFL import TFL
+from   _LNX        import LNX
+from   _TFL        import TFL
+
+from   _TFL.Regexp import *
 
 import _TFL._Meta.Object
-from   _TFL.Regexp import *
 
 class _Cpu_Info_ (TFL.Meta.Object) :
 
@@ -122,5 +126,5 @@ cpu_info = _Cpu_Info_ ()
 if __name__ != "__main__" :
     LNX._Export ("cpu_info")
 else :
-    print "%(model name)s/%(cpu MHz)s" % cpu_info
+    print ("%(model name)s/%(cpu MHz)s" % cpu_info)
 ### __END__ LNX.cpu_info

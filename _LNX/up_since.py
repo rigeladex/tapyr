@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package LNX.
@@ -10,15 +10,20 @@
 #
 #++
 # Name
-#    up_since
+#    LNX.up_since
 #
 # Purpose
 #    Provide the date/time at which the kernel was booted
 #
 # Revision Dates
 #    10-Nov-2010 (CT) Creation
+#    22-Mar-2018 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
+
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
 
 import datetime
 
@@ -33,5 +38,5 @@ if __name__ != "__main__" :
     from _LNX import LNX
     LNX._Export ("up_since")
 else :
-    print up_since ().strftime ("%Y/%m/%d %H:%M")
-### __END__ up_since
+    print (up_since ().strftime ("%Y/%m/%d %H:%M"))
+### __END__ LNX.up_since

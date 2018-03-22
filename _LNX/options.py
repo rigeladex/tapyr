@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is part of the package LNX.
@@ -17,9 +17,13 @@
 #
 # Revision Dates
 #    17-May-2011 (CT) Creation
+#    22-Mar-2018 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
 from   __future__  import unicode_literals
 
 from   _LNX           import LNX
@@ -42,7 +46,7 @@ def split (argv) :
 
 def _Command () :
     opts, args = split (sys.argv [1:])
-    print " ".join (opts)
+    print (" ".join (opts))
 # end def _Command
 
 if __name__ != "__main__" :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -21,8 +21,14 @@
 #     2-Apr-2015 (CT) Use `bcc_addr`, not `email_address`, for `Bcc`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #    10-Dec-2015 (CT) Add `formatted_replacers_sb`
+#    22-Mar-2018 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
+
+from   __future__              import absolute_import
+from   __future__              import division
+from   __future__              import print_function
+from   __future__              import unicode_literals
 
 from   _PMA                    import PMA
 import _PMA.Composer
@@ -37,20 +43,20 @@ PMA.Composer.editor           = "emacsclient --alternate-editor vi"
 
 PMA.Composer.formatted_replacers.add \
     ( Re_Replacer
-        ( u"""^Subject: *$"""
-        , u"""Subject:     «text»"""
+        ( """^Subject: *$"""
+        , """Subject:     «text»"""
         , re.IGNORECASE | re.MULTILINE
         )
     , Re_Replacer
-        ( u"""^To: *$"""
-        , u"""To:          «text»"""
+        ( """^To: *$"""
+        , """To:          «text»"""
         , re.IGNORECASE | re.MULTILINE
         )
     )
 
 PMA.Composer.formatted_replacers_sb = Multi_Re_Replacer \
-    ( Re_Replacer (ur"««mail-b?cc»»\n", u"", re.IGNORECASE | re.MULTILINE)
-    , Re_Replacer (ur"««text»»\n",      u"", re.IGNORECASE | re.MULTILINE)
+    ( Re_Replacer (r"««mail-b?cc»»\n", "", re.IGNORECASE | re.MULTILINE)
+    , Re_Replacer (r"««text»»\n",      "", re.IGNORECASE | re.MULTILINE)
     )
 
 PMA.Composer.compose_format   = "\n".join \

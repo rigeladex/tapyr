@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is part of the package LNX.
@@ -17,14 +17,19 @@
 #
 # Revision Dates
 #    13-May-2011 (CT) Creation
+#    22-Mar-2018 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import
+from   __future__  import division
+from   __future__  import print_function
 from   __future__  import unicode_literals
 
-from   _LNX import LNX
-from   _TFL import TFL
-from   _TFL import sos
+from   _LNX        import LNX
+from   _TFL        import TFL
+from   _TFL.pyk    import pyk
+from   _TFL        import sos
 
 import _TFL.CAO
 import _TFL._Meta.Object
@@ -39,7 +44,7 @@ class VCS_Typer (TFL.Meta.Object) :
 
     def __call__ (self, p) :
         """Return type of repository `p`, if any."""
-        for type, rdn in self.type_map.iteritems () :
+        for type, rdn in pyk.iteritems (self.type_map) :
             if path.isdir (path.join (p, rdn)) :
                 return type
     # end def __call__
@@ -60,7 +65,7 @@ vcs_typer = VCS_Typer \
 def _main (cmd) :
     result = vcs_typer (cmd.arg)
     if result :
-        print result
+        print (result)
     else :
         raise SystemExit (9)
 # end def _main

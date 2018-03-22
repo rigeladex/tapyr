@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is part of the package LNX.
@@ -18,9 +18,13 @@
 # Revision Dates
 #    13-May-2011 (CT) Creation
 #    17-May-2011 (CT) Use `LNX.options.split`
+#    22-Mar-2018 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
 
+from   __future__     import absolute_import
+from   __future__     import division
+from   __future__     import print_function
 from   __future__     import unicode_literals
 
 from   _LNX           import LNX
@@ -55,7 +59,7 @@ def _Command () :
     for a in args :
         for dol in sos.expanded_glob (a) :
             add (gen ("", [dol], LNX.vcs_typer))
-    print "\n".join (sorted (result))
+    print ("\n".join (sorted (result)))
 # end def _main
 
 if __name__ != "__main__" :
