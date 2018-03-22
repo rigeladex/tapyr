@@ -71,6 +71,7 @@
 #    22-Mar-2018 (CT) Fix `py_path` in `_create_config_uwsgi`
 #                     * Python 3 needs `pyk.decoded (app_dir)`,
 #                       not `pyk.encoded (app_dir)`
+#    22-Mar-2018 (CT) Add `plugin` to `uwsgi_config`
 #    ««revision-date»»···
 #--
 
@@ -291,6 +292,7 @@ sys.path [0:0] = %(py_path)s
 
         _opts                   = \
             ( "-lazy_apps:B?Start app lazily"
+            , "-plugin:S?Name of plugin to use for Python"
             , "-socket:S"
                 "?Socket to use for communication between webserver and uwsgi"
             , "-static_pages:B?Serve static pages"
@@ -386,6 +388,9 @@ sys.path [0:0] = %(py_path)s
         script_name  = Filename (".ini", cao.script_path, absolute = True)
         c_path       = script_name.name \
             if script_name.base not in ("-", "stdout") else ""
+        plugin       = cao.plugin
+        if not plugin :
+            plugin   = "python3" if sys.version_info >= (3, ) else "python"
         socket       = config_options ["socket"]
         if socket.startswith ("unix:") :
             socket   = socket [5:]
@@ -403,6 +408,7 @@ sys.path [0:0] = %(py_path)s
             , master         = "true"
             , module         = script_name.base
             , need_threads   = "true"
+            , plugin         = plugin
             , processes      = cao.processes
             , py_path        = reversed
                   ([pyk.decoded (app_dir)] + P.py_path.split (":"))

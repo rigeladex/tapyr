@@ -1,6 +1,6 @@
 {#- jinja template: nginx.m.jnj -#}
 {#
-## Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2016-2018 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -20,6 +20,7 @@
 ##    10-Nov-2016 (CT) Creation
 ##    17-Nov-2016 (CT) Add `ssl_dhparam`
 ##                     + https://weakdh.org/sysadmin.html
+##    22-Mar-2018 (CT) Add `plugin` to `uwsgi_config_ini`
 ##    ««revision-date»»···
 ##--
 #}
@@ -369,6 +370,7 @@
 {########## macro ** uwsgi_config_ini ** #############################################}
 {%- macro uwsgi_config_ini (server_name, config_name) -%}
   {%- set py_path = kwargs.pop ("py_path", []) -%}
+  {%- set plugin  = kwargs.pop ("plugin", "python") -%}
   {%- set fmt     = "%-15s = %s" %}
   {%- set kw      = GTW.dict (kwargs) %}
 ### {{ config_name or (server_name + ".ini") }}
@@ -379,6 +381,7 @@
 ###   + Debian: /etc/uwsgi/apps-available/ and /etc/uwsgi/apps-enabled/
 ###
 [uwsgi]
+{{ fmt % ("plugin", plugin) }}
 {% for k, v in GTW.sorted (kw.items ()) if v != None %}
 {#- #}
 {{ fmt % (k.replace ("_", "-"), v) }}
