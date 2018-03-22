@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -141,6 +141,7 @@
 #     2-Sep-2017 (CT) Move import callback after `TFL._Export_Module`
 #                     * otherwise, for some import orders, `TFL.CAO` isn't
 #                       available in imported module
+#    22-Mar-2018 (CT) Change `_handle_arg` to catch IndexError
 #    ««revision-date»»···
 #--
 
@@ -2087,7 +2088,7 @@ class CAO (TFL.Meta.Object) :
         self._finish_setup ()
         min_args = self._min_args
         max_args = self._max_args
-        argn     = len (self.argv)
+        argn     = len (self.argv_raw)
         if not self.help :
             if argn < min_args :
                 raise Err \
@@ -2157,7 +2158,12 @@ class CAO (TFL.Meta.Object) :
                     )
         else :
             al   = self._arg_list
-            spec = al [min (len (self.argv_raw), len (al) - 1)]
+            try :
+                spec = al [min (len (self.argv_raw), len (al) - 1)]
+            except IndexError :
+                if arg :
+                    self.argv_raw.append (arg)
+                return ### Let `_check` deal with the superfluous `arg`
         self._set_arg (spec, arg)
     # end def _handle_arg
 
