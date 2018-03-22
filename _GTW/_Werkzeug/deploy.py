@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -68,6 +68,9 @@
 #    16-Nov-2016 (CT) Change options for SSL to `ssl_certificate`...
 #    17-Nov-2016 (CT) Change `ssl_ciphers` [https://weakdh.org/sysadmin.html]
 #    17-Nov-2016 (CT) Move all option defaults to `_defaults`
+#    22-Mar-2018 (CT) Fix `py_path` in `_create_config_uwsgi`
+#                     * Python 3 needs `pyk.decoded (app_dir)`,
+#                       not `pyk.encoded (app_dir)`
 #    ««revision-date»»···
 #--
 
@@ -402,7 +405,7 @@ sys.path [0:0] = %(py_path)s
             , need_threads   = "true"
             , processes      = cao.processes
             , py_path        = reversed
-                  ([pyk.encoded (app_dir)] + P.py_path.split (":"))
+                  ([pyk.decoded (app_dir)] + P.py_path.split (":"))
             , server_name    = config_options ["server_name"]
             , socket         = socket
             , stats_server   = stats_server
