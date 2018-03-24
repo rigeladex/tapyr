@@ -142,6 +142,8 @@
 #                     * otherwise, for some import orders, `TFL.CAO` isn't
 #                       available in imported module
 #    22-Mar-2018 (CT) Change `_handle_arg` to catch IndexError
+#    24-Mar-2018 (CT) Fix `argn` in `_check`
+#                     + Use larger len of `argv` and `argv_raw`
 #    ««revision-date»»···
 #--
 
@@ -2088,7 +2090,7 @@ class CAO (TFL.Meta.Object) :
         self._finish_setup ()
         min_args = self._min_args
         max_args = self._max_args
-        argn     = len (self.argv_raw)
+        argn     = max (len (self.argv_raw), len (self.argv))
         if not self.help :
             if argn < min_args :
                 raise Err \
