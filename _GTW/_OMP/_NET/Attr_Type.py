@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.NET.
@@ -41,6 +41,7 @@
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
 #    14-Sep-2016 (CT) Attach import callback to "_MOM._DBW._SAW.Attr"
 #                     - not "_MOM._DBW._SAW.Manager"
+#    27-Mar-2018 (CT) Add import callback for `json_dump`
 #    ««revision-date»»···
 #--
 
@@ -217,4 +218,12 @@ if __name__ != "__main__" :
     def _import_saw_pg (module) :
         import _GTW._OMP._NET.SAW_PG
     # end def _import_saw_pg
+
+    @TFL._Add_Import_Callback ("_TFL.json_dump")
+    def _import_cb_json_dump (module) :
+        @module.default.add_type (R_IP4_Address, R_IP6_Address)
+        def json_encode_cal (o) :
+            return str (o)
+    # end def _import_cb_json_dump
+
 ### __END__ GTW.OMP.NET.Attr_Type
