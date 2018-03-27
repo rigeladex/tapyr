@@ -156,6 +156,7 @@
 #     8-Feb-2017 (CT) Make argument `nav_page` of `show_in_nav` optional
 #     8-Feb-2017 (CT) Change `show_in_nav` to check `short_title`
 #    21-Mar-2018 (CT) Add `_password_elider_2`
+#    27-Mar-2018 (CT) Change `_password_elider_*` to match all password fields
 #    ««revision-date»»···
 #--
 
@@ -206,19 +207,19 @@ import sys
 import time
 import traceback
 
-_password_elider_1 = Re_Replacer \
-    ( "'password' *: *'[^']+'"
-    , "'password' : '...'"
+_password_elider_d = Re_Replacer \
+    ( r'"(?P<k>[nov]?password)"' r" *: *" r'"(?P<v>[^"]+)"'
+    , r'"\g<k>" : "..."'
     )
 
-_password_elider_2 = Re_Replacer \
-    ( '"password" *: *"[^"]+"'
-    , '"password" : "..."'
+_password_elider_s = Re_Replacer \
+    ( r"'(?P<k>[nov]?password)'" r' *: *' r"'(?P<v>[^']+)'"
+    , r"'\g<k>' : '...'"
     )
 
 _error_email_cleaner = Multi_Re_Replacer \
-    ( _password_elider_1
-    , _password_elider_2
+    ( _password_elider_d
+    , _password_elider_s
     )
 
 class _RST_Meta_ (TFL.Meta.M_Class) :
