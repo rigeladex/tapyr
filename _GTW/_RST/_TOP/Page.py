@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -28,6 +28,9 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    12-May-2016 (CT) Redefine `A_Link.as_static_page` to `pass`
 #     8-Feb-2017 (CT) Make argument `nav_page` of `show_in_nav` optional
+#    28-Mar-2018 (CT) Fix `A_Link.as_static_page`
+#                     + If it refers to another resource, return that
+#                       resource's static page (otherwise, --> 404)
 #    ««revision-date»»···
 #--
 
@@ -145,8 +148,10 @@ class TOP_A_Link (GTW.RST.TOP._Mixin_, GTW.RST.A_Link) :
     _real_name = "A_Link"
 
     def as_static_page (self) :
-        """There is no static HTML page for this resource: it's just a link!"""
-        pass
+        """If this a link to another resource, return that one's static page"""
+        target = self.top.resource_from_href (self.target_url)
+        if target is not None :
+            return target.as_static_page ()
     # end def as_static_page
 
 A_Link = TOP_A_Link # end class
