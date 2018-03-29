@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -72,6 +72,7 @@
 #    19-Jan-2017 (CT) Add `Rule.main_nav_off`, `.main_nav_on`
 #    10-May-2017 (CT) Add system-specific fonts to `font_family_normal`
 #    28-May-2017 (CT) Add missing `"` in `font_family_normal`
+#    29-Mar-2018 (CT) Add `system-ui` to `font_family_normal`
 #    ««revision-date»»···
 #--
 
@@ -733,7 +734,8 @@ class Media_Defaults (Definition) :
         )
 
     font_family_normal     = \
-        ( """"-apple-system", BlinkMacSystemFont, "Segoe UI", Roboto, """
+        ( """"system-ui","-apple-system", BlinkMacSystemFont, """
+          """"Segoe UI", Roboto, "Fira Sans", """
           """"Lucida Grande", verdana, sans-serif"""
         )
     font_family_pre        = \
