@@ -60,6 +60,8 @@
 #    23-Apr-2015 (CT) Change `formatted` to include `bvar_man.bindings`
 #    20-Mar-2018 (CT) Add module-level `formatted`
 #    20-Mar-2018 (CT) Add `formatted_xqpi`, factor `formatted_parts`
+#    13-Apr-2018 (CT) Change `formatted_parts` to double `%`
+#                     * sqlalchemy 1.2.4 (`'%'`) differs from 1.0.8 (`'%%'`)
 #    ««revision-date»»···
 #--
 
@@ -612,7 +614,7 @@ def formatted (qr) :
 # end def formatted
 
 def formatted_parts (qr) :
-    fq     = str (qr)
+    fq     = str (qr).replace ("'%'", "'%%'")
     sq     = getattr (qr, "sa_query", qr)
     cq     = sq.compile ()
     try :
