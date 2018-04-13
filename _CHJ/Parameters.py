@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package CHJ.
@@ -41,6 +41,7 @@
 #    17-Jan-2017 (CT) Redefine `Definition` to fix `Calc` instances with
 #                     symbolic parameter values
 #    20-Jan-2017 (CT) Add `Rule_Prefixed`
+#    13-Apr-2018 (CT) Apply `pyk.decoded` to `file.read ()` (Py-3 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -305,8 +306,16 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
     def _eval_file (self, filename) :
         with open (filename, "rt") as file :
+            media = file.read ()
             self.globs ["__name__"] = filename
-            exec (file.read (), self.globs, self)
+            try :
+                ### Python-2 complains about encoding declaration if `.decoded`
+                ### is applied
+                exec (media, self.globs, self)
+            except UnicodeDecodeError :
+                ### Python-3 needs the `.decoded` if the system locale is set
+                ### to ASCII
+                exec (pyk.decoded (media), self.globs, self)
     # end def _eval_file
 
     def _setup_media (self) :
@@ -343,8 +352,9 @@ __doc__ = r"""
     >>> os.chdir (base_dir)
 
     >>> def as_string (fragments) :
+    ...     sk = TFL.Getter.rank
     ...     return "\n\n".join \
-    ...         (str (s) for s in sorted (fragments, key = TFL.Getter.rank))
+    ...         (pyk.decoded (s) for s in sorted (fragments, key = sk))
 
     >>> scope = Scope (Media_Defaults, env).Eval (base_media)
     >>> print (as_string (scope.style_sheets))
@@ -377,7 +387,7 @@ __doc__ = r"""
     [href="/media/GTW/css/jquery.gritter.rel.css"]
 
     >>> print (as_string (scope.js_on_ready))
-    /* this is a JS on ready code */;
+    /* this is a JS on ready code with some non-Ascii äöü« chars */;
 
 """
 

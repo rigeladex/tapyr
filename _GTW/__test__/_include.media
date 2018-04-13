@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # media file which will be included
-JS_On_Ready ("/* this is a JS on ready code */")
+JS_On_Ready ("/* this is a JS on ready code with some non-Ascii äöü« chars */")
 border = 0
