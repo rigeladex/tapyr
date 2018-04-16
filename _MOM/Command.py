@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -73,6 +73,7 @@
 #    28-Oct-2015 (CT) Use `pyk.pickle_protocol`
 #    15-Jun-2016 (CT) Add option `-debug` to sub-command `_Create_`
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
+#    16-Apr-2018 (CT) Improve error message in `_read_auth_mig`
 #    ««revision-date»»···
 #--
 
@@ -590,8 +591,11 @@ class MOM_Command (TFL.Command.Root_Command) :
             f = open (sos.expanded_path (mig_auth_file), "rb")
         except IOError as exc :
             print \
-                ( "Couldn't open", mig_auth_file, "due to exception\n    "
+                ( "Couldn't open", mig_auth_file
+                , "[migration of the authorization objects]"
+                , "due to exception\n    "
                 , exc
+                , "\n  Ignoring migration"
                 )
         else :
             with contextlib.closing (f) :
