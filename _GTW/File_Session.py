@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2018 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -35,6 +35,7 @@
 #    11-Dec-2014 (CT) Remove obsolete code from `remove`
 #    11-Dec-2014 (CT) Change `save` to skip/remove empty sessions
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#    16-Apr-2018 (CT) Use `pyk.pickle_protocol`, remove `cPickle`
 #    ««revision-date»»···
 #--
 
@@ -48,8 +49,6 @@ import _GTW.Session
 import os
 import stat
 import sys
-
-cPickle = pyk.pickle
 
 class Lock_Failed (Exception) :
     pass
@@ -226,7 +225,7 @@ class File_Session (GTW.Session) :
         fn = self.file_name
         if bool (self) :
             with Locked_File (fn, "wb") as f :
-                cPickle.dump (self._data, f)
+                pyk.pickle.dump (self._data, f, pyk.pickle_protocol)
         elif os.path.exists (fn) :
             self.remove ()
     # end def save
@@ -250,7 +249,7 @@ class File_Session (GTW.Session) :
                 )
         else :
             try :
-                result = cPickle.loads (cargo)
+                result = pyk.pickle.loads (cargo)
             except Exception as exc :
                 print \
                     ( ">>> Exception"
