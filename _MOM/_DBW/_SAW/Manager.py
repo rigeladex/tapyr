@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -47,6 +47,7 @@
 #                     add `App_Type_Wrapper.db_sig` to signal that change
 #    20-Oct-2016 (CT) Add `iea_type_restrictions` to `update_etype`
 #    25-Oct-2016 (CT) Increase `db_sig` because `iea_type_restrictions`
+#    16-Apr-2018 (CT) Use `pyk.pickle_protocol`
 #    ««revision-date»»···
 #--
 
@@ -174,7 +175,10 @@ class _M_SAW_Manager_ (MOM.DBW._Manager_.__class__) :
             ( scope_metadata     =
                 ( SA.schema.Column ("pk", SA_Type.Integer, primary_key = True)
                 , SA.schema.Column ("readonly",  SA_Type.Boolean)
-                , SA.schema.Column ("meta_data", SA_Type.PickleType)
+                , SA.schema.Column
+                    ( "meta_data"
+                    , SA_Type.PickleType (protocol = pyk.pickle_protocol)
+                    )
                 ,
                 )
             )

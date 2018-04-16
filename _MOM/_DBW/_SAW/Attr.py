@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -112,6 +112,7 @@
 #    21-Sep-2016 (CT) Add `_saw_column_type` for `A_Time_X`
 #    22-Sep-2016 (CT) Add `_saw_cooked`
 #    23-Sep-2016 (CT) Remove unused `fix_bool`
+#    16-Apr-2018 (CT) Use `pyk.pickle_protocol`
 #    ««revision-date»»···
 #--
 
@@ -910,7 +911,7 @@ def _saw_column_type_binary_string (self, DBW, wrapper, pts) :
 @TFL.Add_To_Class ("_saw_column_type", MOM.Attr.A_Binary_String_P)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_column_type_binary_string_pickled (self, DBW, wrapper, pts) :
-    return wrapper.ATW.SA_Type.PickleType ()
+    return wrapper.ATW.SA_Type.PickleType (protocol = pyk.pickle_protocol)
 # end def _saw_column_type_binary_string_pickled
 
 @TFL.Add_To_Class ("_saw_column_type", MOM.Attr._A_Decimal_)
