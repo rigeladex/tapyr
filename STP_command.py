@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -17,6 +17,7 @@
 #    23-Feb-2017 (CT) Creation
 #    24-Feb-2017 (CT) Use `twine` for upload
 #    24-Feb-2017 (CT) Update `__doc__` doctest output
+#    16-Apr-2018 (CT) Adapt to New `PyPI`
 #    ««revision-date»»···
 #--
 
@@ -63,7 +64,7 @@ specified. For instance, ::
     # python STP_command.py release -all -tag=2.0.42 -message "..."
 
 Adding the `-test` option to a `release` command will upload to
-https://testpypi.python.org instead of the real thing.
+https://test.pypi.org instead of the real thing.
 
 """
 
@@ -142,7 +143,7 @@ class STP_Command (TFL.Command.Root_Command) :
         _opts                   = \
             ( "-message:S?Annotate the tag with message specified"
             , "-tag:S?New tag value (`+` means increment)"
-            , "-test:B?Use the repository testpypi.python.org"
+            , "-test:B?Use the repository test.pypi.org"
             )
 
     # end class _STP_SR_Base_
@@ -217,7 +218,7 @@ class STP_Command (TFL.Command.Root_Command) :
     # end def _do_clean
 
     def _do_setup (self, cao, argv, packages) :
-        r_args   = ["-r", "pypitest"] \
+        r_args   = ["--repository", "testpypi"] \
             if cao.test and ("register" in argv or "upload" in argv) else []
         setup_cmd  = [sys.executable, "setup.py"] + argv + r_args
         args       = " ".join (argv)
@@ -259,7 +260,7 @@ class STP_Command (TFL.Command.Root_Command) :
     # end def _do_tag
 
     def _do_twine (self, cao, cmd, args, packages) :
-        r_args   = ["-r", "pypitest"] if cao.test else []
+        r_args   = ["--repository", "testpypi"] if cao.test else []
         twc_head = ["twine", cmd] + r_args
         for pn, pp in packages :
             with sos.changed_dir (pp) :

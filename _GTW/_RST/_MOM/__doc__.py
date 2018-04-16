@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -26,6 +26,7 @@
 #    12-Oct-2016 (CT) Remove spurious import
 #    12-Oct-2016 (CT) Use `#>>`, not `>>>`, to avoid failing tests
 #                     (the code is meant to illustrate but doesn't run!)
+#    16-Apr-2018 (CT) Adapt to New `PyPI`
 #    ««revision-date»»···
 #--
 
@@ -479,7 +480,7 @@ fail with a HTTP status code of 409.
 .. _`REST`: http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
 .. _`standard HTTP methods`: http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods
 .. _`JSON`: http://en.wikipedia.org/wiki/JSON
-.. _`requests`: http://pypi.python.org/pypi/requests
+.. _`requests`: https://pypi.org/project/requests/
 
 Bibliography
 --------------
