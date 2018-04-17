@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -57,6 +57,8 @@
 #    16-Oct-2015 (CT) Add command line option `-Extra_Interpreters`
 #    10-Oct-2016 (CT) Move to package namespace TFL
 #    10-Oct-2016 (CT) Use `__file__`, not `TFL.Environment.script_name`
+#    17-Apr-2018 (CT) Add option `-DxO` to test `__debug__` and `-O`
+#                     + Fix `format_x`
 #    ««revision-date»»···
 #--
 
@@ -98,7 +100,7 @@ summary        = TFL.Record \
 
 format_f = """%(module.__file__)s fails %(f)s of %(t)s doc-tests in %(cases)s test-cases%(et)s%(py_version)s"""
 format_s = """%(module.__file__)s passes all of %(t)s doc-tests in %(cases)s test-cases%(et)s%(py_version)s"""
-format_x = """%s  [py %s] raises exception `%r` during doc-tests%s"""
+format_x = """%s  %s raises exception `%r` during doc-tests%s"""
 sum_pat  = Regexp \
     ( "(?P<module>.+?) (?:fails (?P<failed>\d+)|passes all) of "
       "(?P<total>\d+) doc-tests (?:in (?P<cases>\d+) test-cases)?"
@@ -165,8 +167,10 @@ def _main (cmd) :
     if one_arg_p and not cmd.Extra_Interpreters :
         f              = Filename (a)
         m              = f.base
-        py_version     = " [py %s]" % \
-            ".".join (str (v) for v in sys.version_info [:3])
+        py_version     = " [py %s%s]" % \
+            ( ".".join (str (v) for v in sys.version_info [:3])
+            , " -O" if "-O" in sos.python_options () else ""
+            )
         sys.path [0:0] = cmd_path
         mod_path       = f.directory if f.directory else "./"
         if sos.path.exists \
@@ -204,11 +208,15 @@ def _main (cmd) :
             print (replacer (format % TFL.Caller.Scope ()), file = sys.stderr)
     else :
         py_executables = [sys.executable] + list (cmd.Extra_Interpreters)
+        py_opts        = sos.python_options ()
         py_version     = ""
-        head_pieces    = sos.python_options () + \
+        head_pieces    = py_opts + \
             [ __file__
             , "-path %r" % (",".join (cmd_path), ) if cmd_path else ""
             ]
+        if cmd.DxO :
+            py_executables += list ("%s -O" % pyx for pyx in py_executables)
+            py_opts         = list (pyo for pyo in py_opts if pyo != "-O")
         for opt in ("nodiff", "timing", "verbose") :
             if getattr (cmd, opt) :
                 head_pieces.append ("-" + opt)
@@ -284,7 +292,8 @@ Command = TFL.CAO.Cmd \
     ( handler      = _main
     , args         = ("module:P?Module(s) to test", )
     , opts         =
-        ( "exclude:S?Glob pattern to exclude certain tests"
+        ( "DxO:B?Run test both in __debug__ and `-O` mode"
+        , "exclude:S?Glob pattern to exclude certain tests"
         , "Extra_Interpreters:P:?Extra python interpreters to run tests through"
         , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
         , "path:P:?Path to add to sys.path"

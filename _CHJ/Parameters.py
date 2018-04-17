@@ -42,6 +42,7 @@
 #                     symbolic parameter values
 #    20-Jan-2017 (CT) Add `Rule_Prefixed`
 #    13-Apr-2018 (CT) Apply `pyk.decoded` to `file.read ()` (Py-3 compatibility)
+#    17-Apr-2018 (CT) Change doctest to work with and without `-O`
 #    ««revision-date»»···
 #--
 
@@ -340,23 +341,43 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
 Scope = _Parameters_Scope_ # end class
 
-__doc__ = r"""
-    >>> from _JNJ.Media_Defaults import Media_Defaults
-    >>> from _JNJ.Environment    import HTML
-    >>> import _GTW.jQuery
-    >>> import os
-    >>> base_dir        = os.path.abspath \
-    ...    (os.path.join (os.path.dirname (__file__), "..", "_GTW", "__test__"))
-    >>> env             = HTML (load_path = base_dir)
-    >>> base_media      = os.path.join (base_dir, "_test.media")
-    >>> os.chdir (base_dir)
+def _test_scope () :
+    from _JNJ.Media_Defaults import Media_Defaults
+    from _JNJ.Environment    import HTML
+    import _GTW.jQuery
+    import os
+    base_dir        = os.path.abspath \
+       (os.path.join (os.path.dirname (__file__), "..", "_GTW", "__test__"))
+    env             = HTML (load_path = base_dir)
+    base_media      = os.path.join (base_dir, "_test.media")
+    os.chdir (base_dir)
+    result = Scope (Media_Defaults, env).Eval (base_media)
+    return result
+# end def _test_scope
 
+if __debug__ :
+    _test_scripts = r"""
+    >>> scope = _test_scope ()
+    >>> list (scope.scripts)
+    [/media/GTW/js/jquery.js: text/javascript, /media/GTW/js/jquery-ui.js: text/javascript, /media/GTW/js/V5a/V5a.js: text/javascript, /media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/jQ/button_pure.js: text/javascript, /media/GTW/js/V5a/history_test.js: text/javascript, /media/GTW/js/V5a/history_push.js: text/javascript, /media/GTW/js/GTW/util.js: text/javascript, /media/GTW/js/GTW/jQ/util.js: text/javascript, /media/GTW/js/GTW/jQ/autocomplete.js: text/javascript, /media/GTW/js/V5a/form_field.js: text/javascript, /media/GTW/js/GTW/jQ/e_type_selector.js: text/javascript, /media/GTW/js/GTW/L.js: text/javascript, /media/GTW/js/GTW/jQ/mf3.js: text/javascript]
+
+    """
+else :
+    _test_scripts = r"""
+    >>> scope = _test_scope ()
+    >>> list (scope.scripts)
+    [/media/GTW/js/jquery.min.js: text/javascript, /media/GTW/js/jquery-ui.min.js: text/javascript, /media/GTW/js/V5a/V5a.js: text/javascript, /media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/jQ/button_pure.js: text/javascript, /media/GTW/js/V5a/history_test.js: text/javascript, /media/GTW/js/V5a/history_push.js: text/javascript, /media/GTW/js/GTW/util.js: text/javascript, /media/GTW/js/GTW/jQ/util.js: text/javascript, /media/GTW/js/GTW/jQ/autocomplete.js: text/javascript, /media/GTW/js/V5a/form_field.js: text/javascript, /media/GTW/js/GTW/jQ/e_type_selector.js: text/javascript, /media/GTW/js/GTW/L.js: text/javascript, /media/GTW/js/GTW/jQ/mf3.js: text/javascript]
+
+    """
+
+__test__ = dict \
+    ( test_m = r"""
+    >>> scope = _test_scope ()
     >>> def as_string (fragments) :
     ...     sk = TFL.Getter.rank
     ...     return "\n\n".join \
     ...         (pyk.decoded (s) for s in sorted (fragments, key = sk))
 
-    >>> scope = Scope (Media_Defaults, env).Eval (base_media)
     >>> print (as_string (scope.style_sheets))
     a, abbr, acronym, address, article, aside, audio
       { border         : 0
@@ -374,11 +395,12 @@ __doc__ = r"""
         display:          none
     }
     /* <-- */
+
     >>> print (as_string (scope.script_files))
     /* a test javascript file directly included */
 
-    >>> list (scope.scripts)
-    [/media/GTW/js/jquery.js: text/javascript, /media/GTW/js/jquery-ui.js: text/javascript, /media/GTW/js/V5a/V5a.js: text/javascript, /media/GTW/js/GTW.js: text/javascript, /media/GTW/js/GTW/jQ/button_pure.js: text/javascript, /media/GTW/js/V5a/history_test.js: text/javascript, /media/GTW/js/V5a/history_push.js: text/javascript, /media/GTW/js/GTW/util.js: text/javascript, /media/GTW/js/GTW/jQ/util.js: text/javascript, /media/GTW/js/GTW/jQ/autocomplete.js: text/javascript, /media/GTW/js/V5a/form_field.js: text/javascript, /media/GTW/js/GTW/jQ/e_type_selector.js: text/javascript, /media/GTW/js/GTW/L.js: text/javascript, /media/GTW/js/GTW/jQ/mf3.js: text/javascript]
+    >>> print (as_string (scope.js_on_ready))
+    /* this is a JS on ready code with some non-Ascii äöü« chars */;
 
     >>> list (scope.css_links)
     [all: /media/GTW/css/jquery.gritter.css]
@@ -386,10 +408,9 @@ __doc__ = r"""
     >>> list (scope.rel_links)
     [href="/media/GTW/css/jquery.gritter.rel.css"]
 
-    >>> print (as_string (scope.js_on_ready))
-    /* this is a JS on ready code with some non-Ascii äöü« chars */;
-
-"""
+    """
+    , test_s = _test_scripts
+    )
 
 if __name__ != "__main__" :
     CHJ._Export_Module ()

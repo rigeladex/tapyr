@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,6 +29,7 @@
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #     5-Jun-2014 (CT) Remove `__properties`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    17-Apr-2018 (CT) Change doctest to work with and without `-O`
 #    ««revision-date»»···
 #--
 
@@ -55,45 +56,6 @@ class _TFL_Meta_Object_Root_ (object) :
        Don't inherit from _TFL_Meta_Object_Root_ directly (unless you really
        know what you're doing).
 
-       >>> class A (object) :
-       ...     def __init__ (self, x = 2) :
-       ...         print ("A.__init__:", x)
-       ...         self.x = x
-       ...         super (A, self).__init__ ()
-       ...
-       >>> class B (TFL.Meta.Object, A) :
-       ...     def __init__ (self, y) :
-       ...         print ("B.__init__:", y)
-       ...         self.y = y
-       ...         self.__super.__init__ ()
-       ...
-       >>> b = B (1) ### Test fails if run with `-O` !!!
-       Traceback (most recent call last):
-           ...
-       AssertionError: MRO conflict for B.__init__: super != object,
-           ('B', 'Object', '_TFL_Meta_Object_Root_', 'A', 'object')
-
-       >>> class C (object) :
-       ...     def __init__ (self, x = 2) :
-       ...         print ("C.__init__:", x)
-       ...         self.x = x
-       ...         super (C, self).__init__ ()
-       ...
-       >>> class D (TFL.Meta.Object, C) :
-       ...     def __init__ (self, y, x = 3) :
-       ...         print ("D.__init__:", y)
-       ...         self.y = y
-       ...         self.__super.__init__ (y = y, x = x)
-       ...         C.__init__ (self, x)
-       ...     @classmethod
-       ...     def _check_MRO (cls, args, kw) :
-       ...         '''We know what we're doing and explicitly call `C__init__`.'''
-       ...
-       >>> d = D (42)
-       D.__init__: 42
-       C.__init__: 3
-       >>> print (d.x, d.y)
-       3 42
     """
 
     def __new__ (cls, * args, ** kw) :
@@ -182,6 +144,60 @@ class _TFL_Meta_Object_ (Meta.BaM (_Object_Root_, metaclass = Meta.M_Class)) :
     # end def pop_to_self
 
 Object = _TFL_Meta_Object_ # end class
+
+_test_MRO = """
+In __debug__ mode, :class:`_Object_Root_` checks the MRO to ensure
+that there is no class intervening between
+`_TFL_Meta_Object_Root_` and `object` in `cls.__mro__`.
+
+Due to http://bugs.python.org/issue1683368, cooperative
+calls to `__new__` and `__init__` can't work **unless**
+all cooperating classes derive from the same root (that
+is not `object`)::
+
+    >>> class A (object) :
+    ...     def __init__ (self, x = 2) :
+    ...         print ("A.__init__:", x)
+    ...         self.x = x
+    ...         super (A, self).__init__ ()
+    ...
+    >>> class B (TFL.Meta.Object, A) :
+    ...     def __init__ (self, y) :
+    ...         print ("B.__init__:", y)
+    ...         self.y = y
+    ...         self.__super.__init__ ()
+    ...
+    >>> b = B (1) ### Test fails if run with `-O` !!!
+    Traceback (most recent call last):
+        ...
+    AssertionError: MRO conflict for B.__init__: super != object,
+        ('B', 'Object', '_TFL_Meta_Object_Root_', 'A', 'object')
+
+    >>> class C (object) :
+    ...     def __init__ (self, x = 2) :
+    ...         print ("C.__init__:", x)
+    ...         self.x = x
+    ...         super (C, self).__init__ ()
+    ...
+    >>> class D (TFL.Meta.Object, C) :
+    ...     def __init__ (self, y, x = 3) :
+    ...         print ("D.__init__:", y)
+    ...         self.y = y
+    ...         self.__super.__init__ (y = y, x = x)
+    ...         C.__init__ (self, x)
+    ...     @classmethod
+    ...     def _check_MRO (cls, args, kw) :
+    ...         '''We know what we're doing and explicitly call `C__init__`.'''
+    ...
+    >>> d = D (42)
+    D.__init__: 42
+    C.__init__: 3
+    >>> print (d.x, d.y)
+    3 42
+"""
+
+if __debug__ :
+    __test__ = dict (test_MRO = _test_MRO)
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("Object")
