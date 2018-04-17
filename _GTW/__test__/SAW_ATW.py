@@ -46,6 +46,7 @@
 #    20-Oct-2016 (CT) Add tests `show_table_ancestors`, `show_table_summary`
 #    19-Mar-2018 (CT) Use `show_query`, not `print` (sqlalchemy changes)
 #    20-Mar-2018 (CT) Use `show_query_xqpi` (sqlalchemy changes)
+#    17-Apr-2018 (CT) Remove spurious `strftime_1` parameter from `show_query`
 #    ««revision-date»»···
 #--
 
@@ -14573,7 +14574,6 @@ _test_date_extraction_pg = """
          WHERE EXTRACT(year FROM srm_regatta_event__1.date__start) = :param_1
     Parameters:
          param_1              : 2013
-         strftime_1           : '%%Y'
 
     >>> show_query (qrt.filter (Q.event.date.start.year == 2010)) ### SRM.Regatta_C
     SQL: SELECT
