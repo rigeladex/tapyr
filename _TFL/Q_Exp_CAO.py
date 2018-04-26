@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -19,6 +19,7 @@
 #    17-Aug-2017 (CT) Creation
 #     2-Sep-2017 (CT) Move import of `TFL.Q_Exp` into lazy property
 #                     * avoid circular imports
+#    26-Apr-2018 (CT) Add support for value ranges
 #    ««revision-date»»···
 #--
 
@@ -77,12 +78,22 @@ class _Q_Exp_Arg_ (TFL.CAO.Opt.Str) :
                       )
                     )
         else :
+            def _convert_1 (v) :
+                try :
+                    return int (v, 0)
+                except ValueError :
+                    return float (v)
             def _convert (vs) :
+                pat = self.range_pat
                 for v in vs :
-                    try :
-                        yield int (v, 0)
-                    except ValueError :
-                        yield float (v)
+                    if v and pat.match (v) :
+                        head  = _convert_1 (pat.head)
+                        tail  = _convert_1 (pat.tail) + 1
+                        delta = _convert_1 (pat.delta) if pat.delta else 1
+                        for v in range (head, tail, delta) :
+                            yield v
+                    else :
+                        yield _convert_1 (v)
             vs = _convert (vs)
         def _gen (name, op_name, vs) :
             for v in vs :
