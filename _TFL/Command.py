@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -54,6 +54,7 @@
 #                     + Rename handler argument `cmd` to `cao`
 #     2-Mar-2017 (CT) Add `Key_Option` and `Set_Option`
 #     8-Aug-2017 (CT) Add guard for `None` to `_sub_commands`
+#     4-May-2018 (CT) Factor `Command._get_cao` to allow redefinition
 #    ««revision-date»»···
 #--
 
@@ -380,7 +381,11 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
     # end def __init__
 
     def __call__ (self, _argv = None, ** _kw) :
-        return self._cmd (_argv, ** _kw)
+        handler_args = _kw.pop  ("args", ())
+        handler_kw   = _kw.pop  ("kw",   {})
+        cao          = self._get_cao (_argv, ** _kw)
+        if cao is not None :
+            return cao (* handler_args, ** handler_kw)
     # end def __call__
 
     @TFL.Meta.Once_Property
@@ -481,6 +486,10 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
     def dynamic_defaults (self, defaults) :
         return {}
     # end def dynamic_defaults
+
+    def _get_cao (self, _argv = None, ** _kw) :
+        return self._cmd.cao (_argv, ** _kw)
+    # end def _get_cao
 
     def _wrapped_handler (self, cao, * args, ** kw) :
         with self._wrapped_handler_context (cao, * args, ** kw) :
