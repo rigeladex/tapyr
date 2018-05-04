@@ -144,6 +144,8 @@
 #    22-Mar-2018 (CT) Change `_handle_arg` to catch IndexError
 #    24-Mar-2018 (CT) Fix `argn` in `_check`
 #                     + Use larger len of `argv` and `argv_raw`
+#     4-May-2018 (CT) Allow abbreviations of `Bundle` names
+#                     + Factor `_get_bun_spec`
 #    ««revision-date»»···
 #--
 
@@ -2006,6 +2008,7 @@ class CAO (TFL.Meta.Object) :
         self._arg_dict        = dict (cmd._arg_dict)
         self._arg_list        = list (cmd._arg_list)
         self._bun_dict        = dict (cmd._bun_dict)
+        self._bun_abbr        = Trie (cmd._bun_dict)
         self._opt_dict        = dict (cmd._opt_dict)
         self._opt_abbr        = Trie (cmd._opt_dict, cmd._opt_alias)
         self._opt_alias       = dict (cmd._opt_alias)
@@ -2145,19 +2148,30 @@ class CAO (TFL.Meta.Object) :
                 argv.extend (ckd)
     # end def _finish_setup
 
+    def _get_bun_spec (self, arg, k) :
+        matches, unique = self._bun_abbr.completions (k)
+        if unique :
+            return unique, self._bun_dict [unique]
+        else :
+            if matches :
+                raise Err \
+                    ( "Ambiguous bundle `%s`, matches any of %s"
+                    % (arg, portable_repr (matches))
+                    )
+            else :
+                raise Err  \
+                    ( "Unknown bundle `%s`, specify one of (%s)"
+                    % ( arg
+                      , ", ".join ("@%s" % b for b in sorted (self._bun_dict))
+                      )
+                    )
+    # end def _get_bun_spec
+
     def _handle_arg (self, arg, argv_it, check_bun = True) :
         bd  = self._bun_dict
         pat = self._bun_pat
         if check_bun and pat.match (arg) :
-            name = pat.name
-            if name in bd :
-                spec = bd [name]
-                arg  = name
-            else :
-                raise Err \
-                    ( "Unknown bundle `%s`, specify one of (%s)"
-                    % (arg, ", ".join ("@%s" % b for b in sorted (bd)))
-                    )
+            arg, spec = self._get_bun_spec (arg, pat.name)
         else :
             al   = self._arg_list
             try :
