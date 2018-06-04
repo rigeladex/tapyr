@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -165,6 +165,7 @@
 #    29-Oct-2015 (CT) Fix usage of `vat_privat` (use `get`, not `[]`)
 #     9-Oct-2016 (CT) Remove dependency on `TGL`
 #    13-Sep-2017 (CT) Add `13%` to `V_Account._ust_cat` and `._ige_cat`
+#     4-Jun-2018 (CT) Apply `vst_korrektur` for (`erloes`) `minderung`, too
 #    ««revision-date»»···
 #--
 
@@ -322,14 +323,14 @@ class Account_Entry (_Entry_) :
             if not self.minderung :
                 self.konto         = self.soll
                 self.gegen_konto   = self.haben
-                if self.vat_p != 1 :
-                    self.vat_vstk  = self.vat
-                    self.vat       = self.vat * vst_korrektur
-                    self.vat_vstk -= self.vat
-                    self.vat_x    = self.vat
             else :
                 self.konto         = self.haben
                 self.gegen_konto   = self.soll
+            if self.vat_p != 1 :
+                self.vat_vstk  = self.vat
+                self.vat       = self.vat * vst_korrektur
+                self.vat_vstk -= self.vat
+                self.vat_x    = self.vat
         elif "+" in self.dir :
             self.haben_betrag  = self.netto
             self.soll_betrag   = source_currency (0)
