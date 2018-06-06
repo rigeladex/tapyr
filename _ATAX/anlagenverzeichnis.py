@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -44,6 +44,7 @@
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #     3-Jan-2014 (CT) Add `output_encoding`; use `pyk.fprint`, not `print`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#     6-Jun-2018 (CT) Add `death_reason`
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,7 @@ from   __future__       import absolute_import, unicode_literals
 from   _ATAX.accounting import *
 from   _ATAX.accounting import _Base_, _Entry_
 
+from   _TFL.predicate   import split_hst
 from   _TFL.pyk         import pyk
 from   _TFL.Regexp      import *
 
@@ -142,10 +144,12 @@ class Anlagen_Entry (_Mixin_, _Entry_) :
         except ValueError as exc :
             print (line)
             raise
+        death, _, d_reason   = split_hst (self.death_date, "#")
         final                = "31.12.2037"
         self.p_konto         = self._get_p_konto (self.flags)
         self.birth_time      = Date (self.birth_date)
-        self.death_time      = Date (self.death_date or final)
+        self.death_time      = Date (death.strip () or final)
+        self.death_reason    = d_reason.strip () if d_reason else ""
         self.alive           = self.death_time > anlagenverzeichnis.tail_time
         self.contemporary    = \
             (   self.birth_time <= anlagenverzeichnis.tail_time
