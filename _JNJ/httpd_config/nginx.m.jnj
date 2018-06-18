@@ -21,6 +21,10 @@
 ##    17-Nov-2016 (CT) Add `ssl_dhparam`
 ##                     + https://weakdh.org/sysadmin.html
 ##    22-Mar-2018 (CT) Add `plugin` to `uwsgi_config_ini`
+##    18-Jun-2018 (CT) Change `block` to allow `list` values for `kwargs`
+##    18-Jun-2018 (CT) Add `X-` headers to `_use_uwsgi_*` macros
+##    18-Jun-2018 (CT) Add `force_ssl_p` to `gtw_host`, `_use_uwsgi_*`
+##    18-Jun-2018 (CT) Add `Content-Security-Policy` header
 ##    ««revision-date»»···
 ##--
 #}
@@ -34,7 +38,15 @@
 {{ indent }}{{ head }} {{ '{' }}
 {% for k, v in GTW.sorted (kw.items ()) -%}
 {#- #}
+{%- if GTW.isinstance (v, GTW.list) %}
+{%- for ve in v %}
+{%- if ve %}
+{{ indent1 }}{{ k }} {{ ve -}};
+{% endif -%}
+{% endfor -%}
+{%- else %}
 {{ indent1 }}{{ k }} {{ v -}};
+{% endif -%}
 {% endfor -%}
 {#- #}
 {%- if _caller %}{{ _caller () }}{% endif %}
@@ -92,11 +104,12 @@
         , aliases    = ()
         )
 -%}
-  {%- set _caller    = kwargs.pop ("caller", None) -%}
-  {%- set lib_dir    = kwargs.get ("lib_dirs", ["lib"]) [-1] -%}
-  {%- set x_locs     = kwargs.pop ("extra_locations", {}) -%}
-  {%- set xxgi_macro = kwargs.pop ("xxgi_macro", use_uwsgi) -%}
-  {%- set kw         = GTW.dict   (kwargs, port = port) -%}
+  {%- set _caller       = kwargs.pop ("caller", None) -%}
+  {%- set force_ssl_p   = kwargs.get ("force_ssl_p", 0) -%}
+  {%- set lib_dir       = kwargs.get ("lib_dirs", ["lib"]) [-1] -%}
+  {%- set x_locs        = kwargs.pop ("extra_locations", {}) -%}
+  {%- set xxgi_macro    = kwargs.pop ("xxgi_macro", use_uwsgi) -%}
+  {%- set kw            = GTW.dict   (kwargs, port = port) -%}
 {% call server
     ( server_name  = server_name
     , address      = address
@@ -108,6 +121,7 @@
     )
 -%}
 {% if _caller %}{{ _caller () }}{% endif %}
+{%- if force_ssl_p %}{{ force_ssl () }}{% endif %}
 {#- #}
 {{ gtw_locations (app_root, doc_root, lib_dir) }}
 {%- for loc, spec in GTW.sorted (x_locs.items ()) %}
@@ -141,12 +155,12 @@
     , aliases      = aliases
     , app_root     = app_root
     , doc_root     = doc_root
+    , force_ssl_p  = 1
     , listen_tail  = l_tail
     , ** kw
     )
 -%}
 {{ use_ssl   (** kw) }}
-{{ force_ssl () }}
 {% if _caller %}{{ _caller () }}{% endif -%}
 {% endcall %} {# gtw_host #}
 {% endmacro -%} {#- gtw_host_ssl -#}
@@ -247,8 +261,9 @@
 
     {{- logfiles (server_name, port, log_dir) }}
 
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-Content-Type-Options "nosniff" always;
+    add_header Content-Security-Policy "frame-ancestors 'none'; base-uri 'none'";
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff 'always'";
     add_header X-Xss-Protection "1";
 
     gzip on;
@@ -331,32 +346,54 @@
 
 {########## macro ** _use_uwsgi_d ** ##########################################}
 {%- macro _use_uwsgi_d (app_root, app, socket) -%}
+  {%- set force_ssl_p = kwargs.pop ("force_ssl_p", 0) %}
   {%- set kw = GTW.dict (kwargs) %}
 {#- #}
-
-{{ block
+{#-
+## `location /` needs to list all required `add_header` statements
+## * the ones defined in the `server` scope do not apply :-(
+-#}
+{% call block
     ( "location /", "    "
-    , add_header      = 'Vary "Cookie"'
+    , add_header      =
+        [ 'Vary "Cookie"'
+        , 'Content-Security-Policy "frame-ancestors \'none\'; base-uri \'none\'"'
+        , 'X-Content-Type-Options "nosniff"'
+        , 'X-Xss-Protection "1"'
+        ]
     , include         = "uwsgi_params"
     , proxy_buffering = "off"
     , uwsgi_pass      = socket
     )
-}}
+-%}
+{%- if force_ssl_p %}{{ force_ssl () }}{% endif %}
+{% endcall %} {# block #}
 {%- endmacro -%} {#- _use_uwsgi_sd -#}
 
 {########## macro ** _use_uwsgi_sd ** #########################################}
 {%- macro _use_uwsgi_sd (app_root, app, socket) -%}
+  {%- set force_ssl_p = kwargs.pop ("force_ssl_p", 0) %}
   {%- set kw = GTW.dict (kwargs) %}
 {#- #}
-
-{{ block
+{#-
+## `location @` needs to list all required `add_header` statements
+## * the ones defined in the `server` scope do not apply :-(
+-#}
+{% call block
     ( "location @" + app, "    "
-    , add_header      = 'Vary "Cookie"'
+    , add_header      =
+        [ 'Vary "Cookie"'
+        , 'Content-Security-Policy "frame-ancestors \'none\'; base-uri \'none\'"'
+        , 'X-Content-Type-Options "nosniff"'
+        , 'X-Xss-Protection "1"'
+        ]
     , include         = "uwsgi_params"
     , proxy_buffering = "off"
     , uwsgi_pass      = socket
     )
-  }}
+-%}
+{%- if force_ssl_p %}{{ force_ssl () }}{% endif %}
+{% endcall %} {# block #}
 {#- #}
 
 {{ block
