@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -238,6 +238,7 @@
 #                       `Init_Only_Mixin`
 #     6-Oct-2016 (CT) Add guard for `changed == 42` to
 #                     `Id_Entity_Reference_Mixin._set_cooked_value`
+#     5-Jul-2018 (CT) Add guard for valid `spk` to `_entity_from_spk`
 #    ««revision-date»»···
 #--
 
@@ -682,7 +683,8 @@ class _EPK_Mixin_ (_SPK_Mixin_) :
     # end def _check_sanity
 
     def _entity_from_spk (self, scope, ETM, spk) :
-        return ETM.pid_query (spk)
+        if spk :
+            return ETM.pid_query (spk)
     # end def _entity_from_spk
 
     def _set_cooked_inner (self, obj, value, changed = 42) :
