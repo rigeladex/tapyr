@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,9 @@
 # Revision Dates
 #    30-Mar-2012 (CT) Creation
 #    18-Apr-2012 (CT) Use `I18N.decode` and `pyk.fprint`
+#    11-Jul-2018 (CT) Quote `[`, `]` inside character groups of regexpes
+#                     + Python 3.7 gives `FutureWarning: Possible nested set`
+#                       otherwise (https://bugs.python.org/issue30349)
 #    ««revision-date»»···
 #--
 
@@ -35,7 +38,7 @@ import _TFL.CAO
 import _TFL.I18N
 
 date_time_localizer_pattern = Regexp \
-    ( ( r"(?P<head> ^|[[(\s])"
+    ( ( r"(?P<head> ^|[\[(\s])"
         r"(?P<year>  \d{4,4})"
         r"([-/]?)"
         r"(?P<month> \d{2,2})"
@@ -44,12 +47,12 @@ date_time_localizer_pattern = Regexp \
         r"[T ]"
       )
     + CAL.Date_Time.time_pattern.pattern
-    + r"(?P<tail> $|[])\s])"
+    + r"(?P<tail> $|[\])\s])"
     , flags = re.VERBOSE | re.IGNORECASE
     )
 _cleaned = Multi_Re_Replacer \
-    ( Re_Replacer (r"^[[(\s]", "")
-    , Re_Replacer (r"[])\s]$", "")
+    ( Re_Replacer (r"^[\[(\s]", "")
+    , Re_Replacer (r"[\])\s]$", "")
     )
 
 def date_time_localizer \
@@ -58,10 +61,10 @@ def date_time_localizer \
 
     >>> print (portable_repr (date_time_localizer ("09d82ac 2012-03-29 21:06:26 +0200 martin@mangari.org")))
     '09d82ac 2012-03-29 21:06 martin@mangari.org'
-    >>> print (portable_repr (date_time_localizer ("f6baffa 2012-03-29 10:06:46 -0400 martin@mangari.org")))
-    'f6baffa 2012-03-29 16:06 martin@mangari.org'
-    >>> print (portable_repr (date_time_localizer ("f99a29d 2005-03-22 09:34:40 +0000 tanzer@swing.co.at")))
-    'f99a29d 2005-03-22 10:34 tanzer@swing.co.at'
+    >>> print (portable_repr (date_time_localizer ("f6baffa [2012-03-29 10:06:46 -0400] martin@mangari.org")))
+    'f6baffa [2012-03-29 16:06] martin@mangari.org'
+    >>> print (portable_repr (date_time_localizer ("f99a29d (2005-03-22 09:34:40 +0000) tanzer@swing.co.at")))
+    'f99a29d (2005-03-22 10:34) tanzer@swing.co.at'
 
     """
     if pattern is None :
