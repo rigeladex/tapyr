@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -21,6 +21,8 @@
 #                     unpack `CAL.Time_Delta` value
 #     8-Feb-2016 (CT) Add test
 #    28-Apr-2016 (CT) Remove `glob`, `locl` from `from_string`, `_from_string`
+#    11-Jul-2018 (CT) Remove `print` of `timedelta` values from doctest
+#                     + Python 3.7 changes in `repr` of `datetime.timedelta`
 #    ««revision-date»»···
 #--
 
@@ -97,20 +99,14 @@ __doc__ = """
      >>> a = A_Time_Delta.cooked ("1.5h10.25m7.125s")
      >>> print (A_Time_Delta.as_string (a))
      1:40:22.125000
-     >>> a
-     datetime.timedelta(0, 6022, 125000)
 
      >>> b = A_Time_Delta.cooked ("1.5h")
      >>> print (A_Time_Delta.as_string (b))
      1:30
-     >>> b
-     datetime.timedelta(0, 5400)
 
      >>> c = A_Time_Delta.cooked ("1:30")
      >>> print (A_Time_Delta.as_string (c))
      1:30
-     >>> c
-     datetime.timedelta(0, 5400)
 
 """
 

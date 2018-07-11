@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
@@ -30,6 +30,7 @@
 #                       and all week-day related instances
 #     1-Dec-2016 (CT) Factor `Units_Abs`, `Units_Abs_Abbr`, `Units_Delta`,
 #                     `Units_YD`
+#    11-Jul-2018 (CT) Adapt doctest to Python 3.7
 #    ««revision-date»»···
 #--
 
@@ -119,14 +120,6 @@ language to the primary language (which often is english).
     >>> with TFL.I18N.test_language ("de") :
     ...    print (portable_repr (sorted (CAL.G8R.Months.LC.map.items ())))
     [('dez', 'dec'), ('dezember', 'december'), ('feber', 'february'), ('juli', 'july'), ('juni', 'june'), ('j\xe4n', 'jan'), ('j\xe4nner', 'january'), ('mai', 'may'), ('m\xe4r', 'mar'), ('m\xe4rz', 'march'), ('okt', 'oct'), ('oktober', 'october')]
-
-    >>> with TFL.I18N.test_language ("de") :
-    ...    print (CAL.G8R.Months.replacer.regexp._pattern.pattern)
-    \b(Dezember|Oktober|J\änner|Feber|Juli|Juni|M\ärz|Dez|J\än|Mai|M\är|Okt)\b
-
-    >>> with TFL.I18N.test_language ("de") :
-    ...    print (CAL.G8R.Months.LC.replacer.regexp._pattern.pattern)
-    \b(dezember|oktober|j\änner|feber|juli|juni|m\ärz|dez|j\än|mai|m\är|okt)\b
 
     >>> with TFL.I18N.test_language ("de") :
     ...    print (CAL.G8R.Units.replacer.regexp._pattern.pattern)

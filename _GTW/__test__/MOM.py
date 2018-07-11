@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -65,6 +65,8 @@
 #    23-Jun-2014 (RS) Add `reaction_time_range` to test `Int_Interval_C`
 #    22-Feb-2016 (CT) Add test for `height`, an attribute with unit
 #    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
+#    11-Jul-2018 (CT) Adapt doctest to Python 3.7
+#                     - `repr` of `database.timedelta` changed
 #    ««revision-date»»···
 #--
 
@@ -1395,8 +1397,8 @@ appropriate class:
     BMT.Rodent_in_Trap (('axel', ), ('x', 2))
 
     >>> tt1 = TT (r, "1w 2d 2:2:17.5", raw = True)
-    >>> tt1.expected_traptime
-    datetime.timedelta(9, 7337, 500000)
+    >>> print (tt1.expected_traptime)
+    9 days, 2:02:17.500000
 
     >>> PoT (p, t1)
     BMT.Person_owns_Trap (('luke', 'lucky', ''), ('x', 1))
