@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Dr. Ralf Schlatterbeck Open Source Consulting.
+# Copyright (C) 2004-2018 Dr. Ralf Schlatterbeck Open Source Consulting.
 # Reichergasse 131, A-3411 Weidling.
 # Web: http://www.runtux.com Email: office@runtux.com
 # All rights reserved
@@ -47,6 +47,8 @@
 #    11-Apr-2007 (CT)  `_difference_iter` changed to skip empty intervals of
 #                      `other`
 #     2-Aug-2007 (CED) Property `length` added
+#    11-Jul-2018 (CT) Add guards for `StopIteration`, `RuntimeError`
+#                     + Python 3.7 breakage due to PEP 479
 #    ««revision-date»»···
 #--
 
@@ -222,18 +224,27 @@ class Interval_Set (TFL.Meta.Object) :
         """
         min_size = kw.pop ("min_size", 0)
         assert not kw, "Undefined arguments passed: %s" % (sorted (kw), )
-        iv_iters = [cls._IVS_Iter_ (ivs, min_size) for ivs in iv_sets]
-        while True :
-            r = iv_iters [0].value
-            for ivi in iv_iters [1:] :
-                r = r.intersection (ivi.value)
-                if r.length < min_size :
+        try :
+            iv_iters = [cls._IVS_Iter_ (ivs, min_size) for ivs in iv_sets]
+        except RuntimeError :
+            pass
+        else :
+            while True :
+                r = iv_iters [0].value
+                for ivi in iv_iters [1:] :
+                    r = r.intersection (ivi.value)
+                    if r.length < min_size :
+                        break
+                else :
+                    yield r
+                try :
+                    small = min \
+                        ( iv_iters
+                        , key = lambda v : (v.value.upper, - v.value.lower)
+                        )
+                    small.advance ()
+                except (RuntimeError, StopIteration) :
                     break
-            else :
-                yield r
-            small = min \
-                (iv_iters, key = lambda v : (v.value.upper, - v.value.lower))
-            small.advance ()
     # end def intersection_iter
 
     @classmethod
@@ -249,35 +260,44 @@ class Interval_Set (TFL.Meta.Object) :
         else :
             seen     = set ()
             sort_key = lambda i : (i.value.upper, i.value.lower)
-            iv_iters = dusort \
-                ( (x for x in (cls._IVS_Iter_X_ (i, min_size) for i in iv_sets)
-                     if  x
-                  )
-                , sort_key
-                )
-            slack = len (iv_iters) - k
-            while slack >= 0 :
-                for j in range (slack + 1) :
-                    hits   = 1
-                    misses = j
-                    r      = iv_iters [j].value
-                    for ivi in iv_iters [j+1:] :
-                        s = r.intersection (ivi.value)
-                        if s.length >= min_size :
-                            hits += 1
-                            key = (s.lower, s.upper)
-                            if hits >= k and key not in seen :
-                                seen.add (key)
-                                yield s
-                            r = s
-                        else :
-                            misses += 1
-                            if misses > slack :
-                                break
-                small = min       (iv_iters, key = sort_key)
-                small.advance     ()
-                iv_iters = dusort ((ivi for ivi in iv_iters if ivi), sort_key)
-                slack    = len    (iv_iters) - k
+            try :
+                iv_iters = dusort \
+                    ( (   x
+                      for x in (cls._IVS_Iter_X_ (i, min_size) for i in iv_sets)
+                      if  x
+                      )
+                    , sort_key
+                    )
+            except RuntimeError :
+                pass
+            else :
+                slack = len (iv_iters) - k
+                while slack >= 0 :
+                    for j in range (slack + 1) :
+                        hits   = 1
+                        misses = j
+                        r      = iv_iters [j].value
+                        for ivi in iv_iters [j+1:] :
+                            s = r.intersection (ivi.value)
+                            if s.length >= min_size :
+                                hits += 1
+                                key = (s.lower, s.upper)
+                                if hits >= k and key not in seen :
+                                    seen.add (key)
+                                    yield s
+                                r = s
+                            else :
+                                misses += 1
+                                if misses > slack :
+                                    break
+                    try :
+                        small = min       (iv_iters, key = sort_key)
+                        small.advance     ()
+                    except (RuntimeError, StopIteration) :
+                        break
+                    iv_iters = dusort \
+                        ((ivi for ivi in iv_iters if ivi), sort_key)
+                    slack    = len    (iv_iters) - k
     # end def k_of_n_intersection_iter
 
     def is_empty (self) :
@@ -309,20 +329,29 @@ class Interval_Set (TFL.Meta.Object) :
 
     def _difference_iter (self, other) :
         lit = iter (self)
-        l   = next (lit)
+        try :
+            l   = next (lit)
+        except StopIteration :
+            return
         for r in other :
             if not r :
                 continue
             while l.upper <= r.lower :
                 yield l
-                l = next (lit)
+                try :
+                    l = next (lit)
+                except StopIteration :
+                    return
             if l.lower < r.upper :
                 if l.lower < r.lower :
                     yield l.__class__ (l.lower, r.lower)
                 if r.upper < l.upper :
                     l = l.__class__ (r.upper, l.upper)
                 else :
-                    l = next (lit)
+                    try :
+                        l = next (lit)
+                    except StopIteration :
+                        return
                     if l.lower < r.upper < l.upper :
                         l = l.__class__ (r.upper, l.upper)
         yield l
@@ -331,17 +360,24 @@ class Interval_Set (TFL.Meta.Object) :
     # end def _difference_iter
 
     def _intersection_iter (self, other) :
-        l_iter = iter (self)
-        r_iter = iter (other)
-        l, r   = next (l_iter), next (r_iter)
-        while True :
-            i = r.intersection (l)
-            if i.is_valid () :
-                yield i
-            if l.upper < r.upper :
-                l = next (l_iter)
-            else :
-                r = next (r_iter)
+        l_iter  = iter (self)
+        r_iter  = iter (other)
+        try :
+            l, r    = next (l_iter), next (r_iter)
+        except StopIteration :
+            pass
+        else :
+            while True :
+                i   = r.intersection (l)
+                if i.is_valid () :
+                    yield i
+                try :
+                    if l.upper < r.upper :
+                        l = next (l_iter)
+                    else :
+                        r = next (r_iter)
+                except StopIteration :
+                    break
     # end def _intersection_iter
 
     def __bool__ (self) :
@@ -372,7 +408,6 @@ class Interval_Set (TFL.Meta.Object) :
             while v.length < min_size :
                 v = succ ()
             self.value = v
-            return v
         # end def advance
 
     # end class _IVS_Iter_
@@ -388,7 +423,6 @@ class Interval_Set (TFL.Meta.Object) :
                 self.value = v = None
             else :
                 self.done  = False
-            return v
         # end def advance
 
         def __bool__ (self) :

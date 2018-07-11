@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -40,6 +40,8 @@
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    24-Feb-2017 (CT) Add `iter_split`
 #    16-May-2017 (CT) Add property `succ` to `Look_Ahead_Gen`
+#    11-Jul-2018 (CT) Add guards for `StopIteration`, `RuntimeError`
+#                     + Python 3.7 breakage due to PEP 479
 #    ««revision-date»»···
 #--
 
@@ -160,7 +162,10 @@ class Look_Ahead_Gen (object) :
         _sentinel = self._sentinel
         while True :
             if self._succ is _sentinel :
-                succ       = next (source)
+                try :
+                    succ   = next (source)
+                except StopIteration :
+                    break
             else :
                 succ       = self._succ
                 self._succ = _sentinel
@@ -371,14 +376,23 @@ def window_wise (seq, size) :
     """
     from _TFL.DL_List import DL_Ring
     s = iter  (seq)
-    h = tuple ((next (s) for i in range (size)))
-    if len (h) == size :
-        w = DL_Ring (h)
-        yield tuple (w.values ())
-        while True:
-            w.pop_front ()
-            w.append    (next (s))
+    try :
+        h = tuple ((next (s) for i in range (size)))
+    except RuntimeError :
+        pass
+    else :
+        if len (h) == size :
+            w = DL_Ring (h)
             yield tuple (w.values ())
+            while True:
+                w.pop_front ()
+                try :
+                    nxt = next (s)
+                except StopIteration :
+                    break
+                else :
+                    w.append    (nxt)
+                    yield tuple (w.values ())
 # end def window_wise
 
 def _show (it) :
