@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -173,6 +173,9 @@
 #     9-Nov-2015 (CT) Change `body_lines` to call `pyk.decoded` before `.split`
 #    23-Feb-2016 (CT) Change `_main` to encode `subject` after `%`, not before
 #    27-Dec-2016 (CT) Change `body_lines` to pass `encoding` to `as_text`
+#    17-Jul-2018 (CT) Fix Python 3 encoding issues
+#                     + Open files in text, not binary mode
+#                     + Use `pyk.fprint`, not `print`, for `text`, not `bytes`
 #    ««revision-date»»···
 #--
 
@@ -871,7 +874,7 @@ class Message (_Message_) :
             if self.mailbox :
                 result = self.mailbox.reparsed (self)
             else :
-                with open (self.path, "rb") as fp :
+                with open (self.path, "r") as fp :
                     result = Lib.message_from_file (fp)
             result._pma_dir  = getattr (self.email, "_pma_dir",  None)
             result._pma_path = getattr (self.email, "_pma_path", None)
@@ -1008,7 +1011,7 @@ class _Pending_Action_ (TFL.Meta.Object) :
 def message_from_file (filename, parser = None) :
     if parser is None :
         parser = Lib.Parser ()
-    with open (filename, "rb") as fp :
+    with open (filename, "r") as fp :
         email = parser.parse (fp)
         email._pma_parsed_body = True
     return PMA.Message (email, sos.path.split (filename) [-1])
@@ -1042,15 +1045,14 @@ def formatted (msg, encoding = "utf-8", body_only = False) :
         h, _, t = split_hst (fmt_msg, "\n\n")   ### split off headers
         b, _, s = split_hst (t,       "\n--\n") ### split off signature
         fmt_msg = "\n" + b.lstrip ("-").strip () + "\n"
-    return fmt_msg.encode (encoding, "replace")
+    if encoding :
+        fmt_msg = fmt_msg.encode (encoding, "replace")
+    return fmt_msg
 # end def formatted
 
 def _main (cmd) :
-    if cmd.encoding :
-        encoding = cmd.encoding
-    else :
-        encoding = "iso8859-1" if cmd.Print else "utf-8"
-    PMA.default_encoding = encoding
+    PMA.default_encoding = encoding = \
+        "iso8859-1" if cmd.Print else pyk.user_config.output_encoding
     for msg in messages_from_args (cmd.argv, cmd.msg_base_dirs) :
         txt = formatted (msg, encoding = encoding)
         if cmd.Print :
@@ -1071,7 +1073,7 @@ def _main (cmd) :
                     print (a2ps)
                 a2ps ()
         else :
-            print (txt)
+            pyk.fprint (pyk.decoded (txt, encoding))
 # end def _main
 
 _Command = TFL.CAO.Cmd \
@@ -1083,10 +1085,10 @@ _Command = TFL.CAO.Cmd \
     , opts          =
         ( "-body_only:B?Restrict output to body of message"
         , "-msg_base_dirs:Q:?Base directories for searching `message`"
-        , "-encoding:S?Encoding to use for output"
         , "-Print:B?Print the message(s)"
         , "-printer_name:S=lp?Name of printer to print to"
         , "-verbose:B"
+        , TFL.CAO.Opt.Output_Encoding ()
         )
     , description   = "Format mail messages for viewing and printing"
     )
