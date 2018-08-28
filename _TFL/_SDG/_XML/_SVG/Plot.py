@@ -35,6 +35,8 @@
 #                     + Use `TFL.Ticker.Axis` instances
 #                     + Add `add_viewport_ta`
 #                     + Add arguments `lines`, `sides` to `x_ticks`, `y_ticks`
+#    28-Aug-2018 (CT) Add `Parameters.major_ticks.color`
+#                     + Ditto for `.medium_ticks`, `.minor_ticks`
 #    ««revision-date»»···
 #--
 
@@ -658,7 +660,8 @@ class Grid (_Plot_Element_) :
             ) if lines_p else {}
         t_kwds  = dict \
             ( dict
-                ( stroke_width = tick_spec.width
+                ( stroke       = tick_spec.color
+                , stroke_width = tick_spec.width
                 )
             , ** kwds
             )
@@ -726,7 +729,8 @@ class Grid (_Plot_Element_) :
             ) if lines_p else {}
         t_kwds  = dict \
             ( dict
-                ( stroke_width = tick_spec.width
+                ( stroke       = tick_spec.color
+                , stroke_width = tick_spec.width
                 )
             , ** kwds
             )
@@ -1146,11 +1150,13 @@ class Parameters (Definition) :
         color_map_text      = RGB_X     ("#888888")
         symbol              = RGB_X     ("#0088DD")
         text                = RGB_X     ("#000033")
+        ticks               = RGB_X     ("#0066AA")
 
     # end class color
 
     class major_ticks (Definition) :
 
+        color               = P.T.color.ticks
         length              = P.T.tick_length
         line_opacity        = 1.0
         line_width          = P.T.stroke_width / 2.5
@@ -1160,19 +1166,21 @@ class Parameters (Definition) :
 
     class medium_ticks (Definition) :
 
-        length             = P.T.major_ticks.length * 2 / 3
-        line_opacity       = 0.85
-        line_width         = P.T.major_ticks.line_width
-        width              = P.T.major_ticks.width
+        color               = P.T.major_ticks.color
+        length              = P.T.major_ticks.length * 2 / 3
+        line_opacity        = 0.85
+        line_width          = P.T.major_ticks.line_width
+        width               = P.T.major_ticks.width
 
     # end class medium_ticks
 
     class minor_ticks (Definition) :
 
-        length             = P.T.major_ticks.length / 3
-        line_opacity       = 0.70
-        line_width         = P.T.major_ticks.line_width
-        width              = P.T.major_ticks.width
+        color               = P.T.major_ticks.color
+        length              = P.T.major_ticks.length / 3
+        line_opacity        = 0.70
+        line_width          = P.T.major_ticks.line_width
+        width               = P.T.major_ticks.width
 
     # end class minor_ticks
 
