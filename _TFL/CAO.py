@@ -146,6 +146,10 @@
 #                     + Use larger len of `argv` and `argv_raw`
 #     4-May-2018 (CT) Allow abbreviations of `Bundle` names
 #                     + Factor `_get_bun_spec`
+#     4-Sep-2018 (CT) Change `_Spec_.raw_default` to look at `cao.defaults`
+#                     + Change `_Spec_.default` to use `_Spec_.raw_default`,
+#                       not home-grown code
+#                     + Add property `defaults` to `CAO`
 #    ««revision-date»»···
 #--
 
@@ -457,9 +461,7 @@ class _Spec_ (_Spec_Base_) :
     # end def cooked
 
     def cooked_default (self, cao = None) :
-        result = self.__default
-        if TFL.callable (result) :
-            result = result ()
+        result = self.raw_default (cao)
         if isinstance (result, pyk.string_types) :
             result = self.cooked (result, cao)
         elif result is None :
@@ -482,9 +484,9 @@ class _Spec_ (_Spec_Base_) :
         self._set_default (value)
     # end def default
 
-    @property
-    def raw_default (self) :
-        result = self.__default
+    def raw_default (self, cao = None) :
+        crd    = cao.defaults.get (self.name) if cao is not None else None
+        result = crd or self.__default
         if TFL.callable (result) :
             result = result ()
         return result
@@ -698,7 +700,6 @@ class Cmd_Choice (_Spec_Base_) :
     hide          = False
     kind          = "sub-command"
     max_number    = 1
-    raw_default   = None
 
     def __init__ (self, name, * cmds, ** kw) :
         self.name        = name
@@ -737,6 +738,10 @@ class Cmd_Choice (_Spec_Base_) :
     def cooked_default (self, cao = None) :
         return self.default
     # end def cooked_default
+
+    def raw_default (self, cao = None) :
+        return None
+    # end def raw_default
 
     def _choice_ambiguous (self, value, matches) :
         return  \
@@ -1192,8 +1197,8 @@ class Help (_Spec_O_) :
         except KeyError :
             raw = None
         if raw is None or raw == [] :
-            raw = ao.raw_default
-        e_raw   = pyk.encoded (raw)
+            raw = ao.raw_default (cao)
+        e_raw   = pyk.encoded    (raw)
         if e_raw == "" :
             raw = None
         try :
@@ -2064,6 +2069,11 @@ class CAO (TFL.Meta.Object) :
         """Display help for the command."""
         self._cmd.help (self)
     # end def HELP
+
+    @property
+    def defaults (self) :
+        return self._cmd.defaults
+    # end def defaults
 
     def _attribute_value (self, name, map = None) :
         if map is None :

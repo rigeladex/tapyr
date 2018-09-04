@@ -55,6 +55,8 @@
 #     2-Mar-2017 (CT) Add `Key_Option` and `Set_Option`
 #     8-Aug-2017 (CT) Add guard for `None` to `_sub_commands`
 #     4-May-2018 (CT) Factor `Command._get_cao` to allow redefinition
+#     4-Sep-2018 (CT) Add `_parent_defaults` to `Command`
+#                     + Don't pass `** defaults` in `sub_commands`
 #    ««revision-date»»···
 #--
 
@@ -420,7 +422,8 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
 
     @TFL.Meta.Once_Property
     def defaults (self) :
-        result = dict (self._defaults)
+        result = dict (self._parent_defaults)
+        result.update (self._defaults)
         result.update (self._init_kw)
         result.update (self.dynamic_defaults (result))
         return result
@@ -472,13 +475,12 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
     @TFL.Meta.Once_Property
     def sub_commands (self) :
         def _gen (self) :
-            defaults = self.defaults
             for sc in self._sub_commands :
                 if isinstance (sc, pyk.string_types) :
                     sc = getattr  (self, sc)
                 if sc is not None :
                     if not isinstance (sc, TFL.CAO.Cmd) :
-                        sc = sc (_parent = self, ** defaults)
+                        sc = sc (_parent = self)
                     yield sc
         return tuple (_gen (self))
     # end def sub_commands
@@ -490,6 +492,11 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
     def _get_cao (self, _argv = None, ** _kw) :
         return self._cmd.cao (_argv, ** _kw)
     # end def _get_cao
+
+    @TFL.Meta.Once_Property
+    def _parent_defaults (self) :
+        return self._parent.defaults if self._parent else {}
+    # end def _parent_defaults
 
     def _wrapped_handler (self, cao, * args, ** kw) :
         with self._wrapped_handler_context (cao, * args, ** kw) :
