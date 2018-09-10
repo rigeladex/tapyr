@@ -57,6 +57,7 @@
 #     4-May-2018 (CT) Factor `Command._get_cao` to allow redefinition
 #     4-Sep-2018 (CT) Add `_parent_defaults` to `Command`
 #                     + Don't pass `** defaults` in `sub_commands`
+#    10-Sep-2018 (CT) Add `_do_shell`
 #    ««revision-date»»···
 #--
 
@@ -488,6 +489,10 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
     def dynamic_defaults (self, defaults) :
         return {}
     # end def dynamic_defaults
+
+    def _do_shell (self, glob_dct = None, locl_dct = None, depth = 1, ** kw) :
+        TFL.Environment.py_shell (glob_dct, locl_dct, depth = depth, ** kw)
+    # end def _do_shell
 
     def _get_cao (self, _argv = None, ** _kw) :
         return self._cmd.cao (_argv, ** _kw)

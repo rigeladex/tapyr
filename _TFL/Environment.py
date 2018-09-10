@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -42,6 +42,7 @@
 #    21-Jun-2010 (CT) `py_shell` added
 #    28-May-2013 (CT) Use `in`, not `has_key`
 #    12-Oct-2014 (CT) Change `exec_python_startup` to `open` with flags `rb`
+#    10-Sep-2018 (CT) Add optional argument `depth` to `py_shell`
 #    ««revision-date»»···
 #--
 
@@ -103,15 +104,15 @@ def mailname () :
             pass
 # end def mailname
 
-def py_shell (glob_dct = None, locl_dct = None, ps1 = None, banner = None, readfunc = None) :
+def py_shell (glob_dct = None, locl_dct = None, ps1 = None, banner = None, readfunc = None, depth = 0) :
     """Provide a shell to the running python interpreter."""
     import code
     import _TFL.Context
     import _TFL.Caller
     if glob_dct is None :
-        glob_dct = TFL.Caller.globals ()
+        glob_dct = TFL.Caller.globals (depth)
     if locl_dct is None :
-        locl_dct = TFL.Caller.locals  ()
+        locl_dct = TFL.Caller.locals  (depth)
     dct = dict (glob_dct, ** locl_dct)
     exec_python_startup ()
     try :
