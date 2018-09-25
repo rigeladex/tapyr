@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,6 +31,7 @@
 #    17-Jun-2016 (CT) Change `__sub__` to allow delta values, too
 #    20-Jul-2016 (CT) Change `Time.pattern` to bare `hour` without any `minute`
 #    26-Sep-2016 (CT) Correct `microsecond` in `from_decimal_hours`, `seconds`
+#    25-Sep-2018 (CT) Dry `as_degrees`: use `.seconds`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -131,8 +132,10 @@ class Time (CAL._DTW_) :
 
     @Once_Property
     def as_degrees (self) :
-        """Returns `self` converted to an angle in degress."""
-        return (self.hour + self.minute / 60. + self.second / 3600.) * 15
+        """Returns `self` converted to an angle in degrees."""
+        ### 3600 seconds per hour
+        ###   15 degrees per hour --> 3600 / 15 --> 240
+        return self.seconds / 240.
     # end def as_degrees
 
     def as_delta (self) :
