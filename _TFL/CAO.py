@@ -150,6 +150,7 @@
 #                     + Change `_Spec_.default` to use `_Spec_.raw_default`,
 #                       not home-grown code
 #                     + Add property `defaults` to `CAO`
+#     5-Nov-2018 (CT) Change `Abs_Path` to leave `"-"` alone
 #    ««revision-date»»···
 #--
 
@@ -1373,13 +1374,13 @@ class Abs_Path (Path) :
         ### Need to redefine `cook` because instances without `auto_split`
         ### don't go through `_resolve_range`
         result = self.__super.cook (value, cao)
-        if result :
+        if result and result != "-" :
             result = sos.path.abspath (result)
         return result
     # end def cook
 
     def _resolve_range_1 (self, value, cao) :
-        yield sos.path.abspath (value)
+        yield value if value is "-" else sos.path.abspath (value)
     # end def _resolve_range_1
 
 # end class Abs_Path
@@ -1825,7 +1826,7 @@ class Cmd (TFL.Meta.Object) :
             except Exception as exc :
                 if help :
                     pyk.fprint ("Usage :")
-                    self.help (CAO (self), indent = 4)
+                    self.help  (CAO (self), indent = 4)
                     pyk.fprint ("", exc, sep = "\n")
                     return
                 else :
