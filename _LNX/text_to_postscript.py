@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2018 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -20,6 +20,9 @@
 #     3-Oct-2014 (CT) Add `$b` for header (to select basename of file)
 #    27-Aug-2017 (CT) Lstrip newlines, rstrip whitespace to avoid empty pages
 #    22-Sep-2017 (CT) Replace some unicode chars with latin-1 approximations
+#     5-Nov-2018 (CT) Add option `-PDF`
+#                     + Factor `_check_print`, `_output_option`
+#                     + Improve Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -118,6 +121,8 @@ class TTP_Command (TFL.Command.Root_Command) :
         , "-dry_run:B?Don't actually run the command"
         , "-header:U?Header to use for each page"
         , "-medium:S=A4?Medium used for output"
+        , "-PDF:B?Create a pdf file"
+        , "-pdf_program:S=ps2pdf"
         , "-Print:B?Print the file(s)"
         , "-printer_name:S=%s?Name of printer to print to"
             % pbl.env.get ("PRINTER", "lp")
@@ -145,7 +150,6 @@ class TTP_Command (TFL.Command.Root_Command) :
             , "-font_scale:F=1.0?Scale font up or down by specified factor"
             , "-margin:I?Define an interior margin"
             , "-portrait:B?Use portrait instead of landscape orientation"
-            ,
             )
 
         @TFL.Meta.Once_Property
@@ -153,7 +157,7 @@ class TTP_Command (TFL.Command.Root_Command) :
             return pbl ["/usr/bin/a2ps"]
         # end def pbl_cmd
 
-        def options (self, cmd, file_name, file_time) :
+        def options (self, cmd, file_name, file_time, * xtra_opts) :
             """Options for `a2ps` reflecting `cmd`"""
             portrait = cmd.portrait
             cols     = cmd.columns
@@ -180,11 +184,7 @@ class TTP_Command (TFL.Command.Root_Command) :
                 result.append ("--margin=%d" % margin)
             if portrait :
                 result.append ("--portrait")
-            Print    = cmd.Print
-            if Print :
-                result.append ("--printer=%s" % cmd.printer_name)
-            else :
-                result.append ("--output=%s" % (cmd.Output or "-"))
+            result.extend (xtra_opts)
             ### last option influencing font size wins
             result.append ("--chars-per-line=%d" % (cpl / cmd.font_scale))
             return result
@@ -207,7 +207,6 @@ class TTP_Command (TFL.Command.Root_Command) :
             , "-Header_Font:S=Courier-Bold@14"
             , "-landscape:B?Use landscape instead of portrait orientation"
             , "-margins:I:#4?Define margins for LEFT:RIGHT:TOP:BOTTOM"
-            ,
             )
 
         @TFL.Meta.Once_Property
@@ -215,7 +214,7 @@ class TTP_Command (TFL.Command.Root_Command) :
             return pbl ["enscript"]
         # end def pbl_cmd
 
-        def options (self, cmd, file_name, file_time) :
+        def options (self, cmd, file_name, file_time, * xtra_opts) :
             """Options for `a2ps` reflecting `cmd`"""
             cols   = cmd.columns
             result = \
@@ -256,11 +255,7 @@ class TTP_Command (TFL.Command.Root_Command) :
                         )
                 result.append \
                     ("--margins=%s" % ":".join (str (m) for m in margins))
-            Print  = cmd.Print
-            if Print :
-                result.append ("--printer=%s" % cmd.printer_name)
-            else :
-                result.append ("--output=%s" % (cmd.Output or "-"))
+            result.extend (xtra_opts)
             return result
         # end def options
 
@@ -269,6 +264,12 @@ class TTP_Command (TFL.Command.Root_Command) :
         # end def _page_number_header
 
     _Enscript_ = _TTP_Enscript_ # end class
+
+    def _check_print (self, cmd, other_opt) :
+        if cmd.Print :
+            print ("Specify either -%s or -Print, but not both" % other_opt)
+            raise SystemExit (10)
+    # end def _check_print
 
     def _encoded (self, txt, enc) :
         result = _encode_rep (txt)
@@ -290,13 +291,13 @@ class TTP_Command (TFL.Command.Root_Command) :
                 fn        = Filename (arg).relative_to ("~/")
                 with open (arg, "rb") as fi :
                     txt_in = fi.read ()
-            txt     = txt_in.decode  (i_enc).lstrip ("\n").rstrip ()
-            ft      = time.strftime  (time_format, file_time)
-            txt_out = self._encoded  (txt, o_enc)
-            options = tuple \
-                (pyk.encoded (o) for o in sub.options (cmd, fn, ft))
+            txt     = txt_in.decode       (i_enc).lstrip ("\n").rstrip ()
+            ft      = time.strftime       (time_format, file_time)
+            txt_out = self._encoded       (txt, o_enc)
+            out_opt = self._output_option (cmd)
+            options = self._pbl_options   (* sub.options (cmd, fn, ft, out_opt))
             pbl_cmd = sub.pbl_cmd.__getitem__ (options)
-            with open_tempfile () as (fo, no) :
+            with open_tempfile ("wb") as (fo, no) :
                 fo.write (txt_out)
                 fo.close ()
                 cx  = pbl_cmd [no]
@@ -304,19 +305,38 @@ class TTP_Command (TFL.Command.Root_Command) :
                     print (pbl_cmd, arg, "[%s]" % no)
                 if not cmd.dry_run :
                     if cmd.Display :
-                        if cmd.Print :
-                            print \
-                                ( "Specify either -Display or -Print, "
-                                  "but not both"
-                                )
-                            raise SystemExit (10)
+                        self._check_print (cmd, "Display")
                         with open_tempfile () as (fd, nd) :
                             fd.write (cx ())
                             fd.close ()
                             pbl [cmd.display_program] [nd] ()
+                    elif cmd.PDF :
+                        self._check_print (cmd, "PDF")
+                        if fn == "-" :
+                            target = "-"
+                        else :
+                            target = cmd.Output or \
+                                (arg.replace (".", "__") + ".pdf")
+                        pdf_opts   = self._pbl_options ("-", target)
+                        px  = cx \
+                            | (pbl [cmd.pdf_program].__getitem__ (pdf_opts))
+                        px ()
                     else :
                         cx ()
     # end def _handler
+
+    def _pbl_options (self, * opts) :
+        return tuple (pyk.text_type (o) for o in opts)
+    # end def _pbl_options
+
+    def _output_option (self, cmd) :
+        if cmd.Print :
+            result = "--printer=%s" % cmd.printer_name
+        else :
+            fn     = ("" if cmd.PDF else cmd.Output) or "-"
+            result = "--output=%s"  % fn
+        return result
+    # end def _output_option
 
 Command = TTP_Command # end class
 
