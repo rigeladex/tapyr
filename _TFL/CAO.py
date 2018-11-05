@@ -151,6 +151,7 @@
 #                       not home-grown code
 #                     + Add property `defaults` to `CAO`
 #     5-Nov-2018 (CT) Change `Abs_Path` to leave `"-"` alone
+#     5-Nov-2018 (CT) Change `Unicode.cook` to use `decoded`, not `text_type`
 #    ««revision-date»»···
 #--
 
@@ -1586,7 +1587,7 @@ class Unicode (_Spec_) :
     type_abbr     = "U"
 
     def cook (self, value, cao = None) :
-        result = pyk.text_type (value, self.user_config.input_encoding)
+        result = pyk.decoded (value, self.user_config.input_encoding)
         return result
     # end def cook
 
