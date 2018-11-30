@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -176,6 +176,7 @@
 #    19-May-2017 (CT)  Add `round_robin`
 #     7-Jun-2017 (CT)  Adapt `rounded_down` to `0 < granularity < 1`
 #                      + ditto for `rounded_up`
+#    30-Nov-2018 (CT) Add `is_int`
 #    ««revision-date»»···
 #--
 
@@ -633,6 +634,21 @@ def is_contiguous (seq) :
             return False
     return True
 # end def is_contiguous
+
+def is_int (num, eps = 1e-8) :
+    """Returns true if value of `num` is an integer.
+
+    >>> is_int (2)
+    True
+    >>> is_int (2.0)
+    True
+    >>> is_int (2.00000000001)
+    True
+    >>> is_int (2.000001)
+    False
+    """
+    return isinstance (num, pyk.int_types) or abs (int (num) - num) < eps
+# end def is_int
 
 def is_mixed_case (s) :
     """Returns true if `s` is a mixed case string.
