@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2018 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -23,6 +23,7 @@
 #    11-Feb-2006 (CT)  Moved into package `TFL`
 #    27-Nov-2011 (CT)  Modernize
 #    11-Oct-2016 (CT)  Import `Command_Line` from `_TFL.Command_Line`
+#     3-Dec-2018 (CT)  Correct typo in exception message
 #    ««revision-date»»···
 #--
 
@@ -65,7 +66,7 @@ class _Divisor_Dag_ :
 
     def __init__ (self, n) :
         if n < 1 :
-            raise ValueError (n, "must be > 0")
+            raise ValueError (n, "must be > 1")
         self.Table [n]  = self
         self.number     = n
         self.subdags    = []
