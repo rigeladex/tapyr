@@ -152,6 +152,11 @@
 #                     + Add property `defaults` to `CAO`
 #     5-Nov-2018 (CT) Change `Abs_Path` to leave `"-"` alone
 #     5-Nov-2018 (CT) Change `Unicode.cook` to use `decoded`, not `text_type`
+#     5-Dec-2018 (CT) Change `_finish_setup` to put config values in `defaults`
+#                     + Instead of modifying the `default` property of the
+#                       corresponding option or arg instance
+#                     + After the `_Spec_.raw_default` change [4-Sep], values
+#                       read from config files were ignored
 #    ««revision-date»»···
 #--
 
@@ -2130,25 +2135,24 @@ class CAO (TFL.Meta.Object) :
     # end def _cooked
 
     def _finish_setup (self) :
-        sc = self._cmd._sub_cmd_choice
+        sc       = self._cmd._sub_cmd_choice
+        arg_dict = self._arg_dict
+        opt_dict = self._opt_dict
+        key_vals = self._key_values
+        defaults = self.defaults
         for co in self._opt_conf :
             ckds = self._cooked (co)
             for ckd in ckds :
                 if sc and sc.name in ckd :
                     self._set_arg (sc, ckd.pop (sc.name))
                 for k, v in pyk.iteritems (ckd) :
-                    ao = None
-                    if k in self._opt_dict :
-                        ao = self._opt_dict [k]
-                        ao.default = v
-                    elif k in self._arg_dict :
-                        ao = self._arg_dict [k]
-                        ao.default = (v, )
-                    elif k not in self._key_values :
-                        self._key_values [k] = v
+                    if k in opt_dict or k in arg_dict :
+                        defaults [k] = v
+                    elif k not in key_vals :
+                        key_vals [k] = v
         map = self._map
         pending = self._pending
-        for k in self._opt_dict :
+        for k in opt_dict :
             if k not in map or map [k] is pending :
                 ### pre-cook un-evaluated options to trigger side effects
                 ### if necessary (like _User_Config_Entry_)
