@@ -21,6 +21,7 @@
 #    29-Nov-2018 (CT) Add divisors to `scaled_deltas` in `Base.scaled`
 #     2-Dec-2018 (CT) Improve computation of `sub_ticks`
 #                     + Move computation of `major_delta`, `sub_ticks` to `Base`
+#     5-Dec-2018 (CT) Add `label_delta`
 #    ««revision-date»»···
 #--
 
@@ -146,6 +147,7 @@ class Axis (TFL.Meta.Object) :
 
     """
 
+    label_delta             = 1
     label_fill              = None
     major_lines             = ""
     max_major_ticks         = 20
@@ -224,10 +226,18 @@ class Axis (TFL.Meta.Object) :
 
     @property
     def labels (self) :
+        ld     = self.label_delta
         result = self._labels
         if result is True :
             result = self._labels = \
                 tuple (formatted_repr (m) for m in self.major_range)
+        if ld > 1 :
+            def _gen (result, ld) :
+                for r in result [::ld] :
+                    yield r
+                    for i in range (ld - 1) :
+                        yield ""
+            result = tuple (_gen (result, ld))
         return result
     # end def labels
 
