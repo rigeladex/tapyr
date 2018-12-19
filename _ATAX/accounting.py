@@ -166,6 +166,7 @@
 #     9-Oct-2016 (CT) Remove dependency on `TGL`
 #    13-Sep-2017 (CT) Add `13%` to `V_Account._ust_cat` and `._ige_cat`
 #     4-Jun-2018 (CT) Apply `vst_korrektur` for (`erloes`) `minderung`, too
+#    19-Dec-2018 (CT) Replace `desc_strip_pat` by `desc_cleaner`, add `–`
 #    ««revision-date»»···
 #--
 
@@ -203,7 +204,11 @@ code_pat               = Regexp ( r"^\s*\$")
 perl_dict_pat          = Regexp ( r"""\{\s*"?(\s*\d+\s*)"?\s*\}""")
 split_pat              = Regexp ( r"\s*&\s*")
 currency_pat           = Regexp ( r"([A-Za-z]+)$")
-desc_strip_pat         = Regexp ( r"\s*&\s*$")
+
+desc_cleaner           = Multi_Re_Replacer \
+    ( Re_Replacer   (r"\s*&\s*$", "")
+    , Dict_Replacer ({"–" : "--" , "—" : "---"})
+    )
 
 def underlined (text) :
     bu = "\b_"
@@ -275,7 +280,7 @@ class Account_Entry (_Entry_) :
             pyk.fprint (exc)
             pyk.fprint (line)
             raise
-        self.desc           = desc_strip_pat.sub ("", desc)
+        self.desc           = desc_cleaner (desc)
         self.vst_korrektur  = vst_korrektur
         self.time           = mktime             (tuple (self.dtuple))
         self.p_konto        = self._get_p_konto  (self.cat)
