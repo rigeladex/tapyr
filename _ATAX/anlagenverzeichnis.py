@@ -46,6 +46,7 @@
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #     6-Jun-2018 (CT) Add `death_reason`
 #    19-Dec-2018 (CT) Use `desc_cleaner`, not `desc_strip_pat`
+#    30-Dec-2018 (CT) Correct invocation of `desc_cleaner`
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,7 @@ class Anlagen_Entry (_Mixin_, _Entry_) :
         if "~" in self.flags :
             self.half_date   = "1.1.%s" % (self.birth_time.year + 1, )
         self.half_time       = Date (self.half_date)
-        self.desc            = desc_cleaner.sub    (self.desc)
+        self.desc            = desc_cleaner        (self.desc)
         currency_match       = currency_pat.search (self.a_value)
         a_value              = self.a_value
         source_currency      = anlagenverzeichnis.source_currency
