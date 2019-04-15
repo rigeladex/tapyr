@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -73,6 +73,7 @@
 #    10-May-2017 (CT) Add system-specific fonts to `font_family_normal`
 #    28-May-2017 (CT) Add missing `"` in `font_family_normal`
 #    29-Mar-2018 (CT) Add `system-ui` to `font_family_normal`
+#    15-Apr-2019 (CT) Add `nord colors`
 #    ««revision-date»»···
 #--
 
@@ -140,6 +141,25 @@ class Media_Defaults (Definition) :
         m_teal                 = RGB_X     ("#33CCCC")
         m_white                = RGB_X     ("#EEEEEE")
         m_yellow               = RGB_X     ("#FFF00F")
+
+        ### nord colors
+        ### https://www.nordtheme.com/docs/colors-and-palettes
+        nord0  = n_polar_light_0   = RGB_X     ("#2e3440")
+        nord1  = n_polar_light_1   = RGB_X     ("#3b4252")
+        nord2  = n_polar_light_2   = RGB_X     ("#434c5e")
+        nord3  = n_polar_light_3   = RGB_X     ("#4c566a")
+        nord4  = n_snow_storm_0    = RGB_X     ("#d8dee9")
+        nord5  = n_snow_storm_1    = RGB_X     ("#e5e9f0")
+        nord6  = n_snow_storm_2    = RGB_X     ("#eceff4")
+        nord7  = n_frost_0         = RGB_X     ("#8fbcbb")
+        nord8  = n_frost_1         = RGB_X     ("#88c0d0")
+        nord9  = n_frost_2         = RGB_X     ("#81a1c1")
+        nord10 = n_frost_3         = RGB_X     ("#5e81ac")
+        nord11 = n_aurora_0        = RGB_X     ("#bf616a")
+        nord12 = n_aurora_1        = RGB_X     ("#d08770")
+        nord13 = n_aurora_2        = RGB_X     ("#ebcb8b")
+        nord14 = n_aurora_3        = RGB_X     ("#a3be8c")
+        nord15 = n_aurora_4        = RGB_X     ("#b48ead")
 
         ### pure colors
         p_black                = SVG_Color ("black")
