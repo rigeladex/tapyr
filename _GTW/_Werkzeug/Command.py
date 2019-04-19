@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -89,6 +89,7 @@
 #    11-Oct-2016 (CT) Use `CHJ.Media`, not `GTW.Media`
 #    17-Jan-2017 (CT) Add `css_nav_side`, `css_nav_type`
 #    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
+#    19-Apr-2019 (CT) Move `static_root` defaults to `Command`
 #    ««revision-date»»···
 #--
 
@@ -198,6 +199,7 @@ class GT2W_Command (GTW.OMP.Command) :
         , load_I18N         = "yes"
         , log_level         = 1
         , port              = 8090
+        , static_root       = "../static"
         )
 
     _template_prefixes      = {}
@@ -267,7 +269,7 @@ class GT2W_Command (GTW.OMP.Command) :
 
         _defaults               = dict \
             ( Setup_Cache       = True
-            , static_root       = "../static"
+            ,
             )
         _args                   = \
             ( "url:S"
