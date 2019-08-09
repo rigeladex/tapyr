@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -22,6 +22,7 @@
 #                     not `Lib.message_from_string` because Python 3
 #    18-Sep-2017 (CT) Add `use_file__mime` to `guess_type`, `Part`
 #                     + Add `guess_type_file__mime`
+#     9-Aug-2019 (CT) Add `pyk.decoded` to `guess_type_file__mime` (Py-3)
 #    ««revision-date»»···
 #--
 
@@ -146,8 +147,10 @@ def guess_type (name, use_file__mime = False) :
 
 def guess_type_file__mime (name) :
     try :
-        file__mime = subprocess.check_output \
-            (["file", "--mime", name], stderr=subprocess.STDOUT)
+        file__mime = pyk.decoded \
+            ( subprocess.check_output
+                (["file", "--mime", name], stderr=subprocess.STDOUT)
+            )
     except Exception :
         pass
     else :
