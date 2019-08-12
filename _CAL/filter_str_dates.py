@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -15,6 +15,11 @@
 #
 # Revision Dates
 #    28-Mar-2016 (CT) Creation
+#    13-Aug-2019 (CT) Add option `-changes_of_unit`
+#                     + remove `-month_change`, `-quarter_change`, and
+#                       `-year_change`
+#                     + add guard against simultaneous use of
+#                       `-changes_of_unit` and `week_days`
 #    ««revision-date»»···
 #--
 
@@ -180,6 +185,13 @@ def year_changes (after, before, str_dates, offset = 0, limit = 39) :
     return unit_changes (after, before, str_dates, "year", offset, limit)
 # end def year_changes
 
+changes_of_unit = dict \
+    ( month       = month_changes
+    , quarter     = quarter_changes
+    , week        = week_changes
+    , year        = year_changes
+    )
+
 def _main (cmd) :
     after = before = None
     if cmd.after :
@@ -192,14 +204,16 @@ def _main (cmd) :
         sep = cmd.separator
     args  = (after, before, cmd.argv)
     dates = set (by_range (* args))
-    if cmd.month_change :
-        result = month_changes (* args)
-    elif cmd.quarter_change :
-        result = quarter_changes (* args)
+    if cmd.changes_of_unit :
+        if cmd.week_days :
+            print \
+                ( "Specify at most one of `-changes_of_unit`, `-week_days`"
+                  "at the same time; not both!"
+                )
+            raise SystemExit (1)
+        result = cmd.changes_of_unit (* args)
     elif cmd.week_days :
         result = weekdays (after, before, cmd.week_days, cmd.argv)
-    elif cmd.year_change :
-        result = year_changes (* args)
     else :
         result = sorted (dates)
     if cmd.invert :
@@ -220,13 +234,15 @@ _Command = TFL.CAO.Cmd \
             ( name        = "before"
             , description = "Keep all dates before the one specified"
             )
+        , TFL.CAO.Opt.Key
+            ( dct         = changes_of_unit
+            , name        = "changes_of_unit"
+            , description = "Keep dates closest to change of unit specified"
+            )
         , "-invert:B?Keep dates that don't match the specified filter"
-        , "-month_change:B?Keep dates closest to change of month"
         , "-newlines:B?print new lines between dates"
-        , "-quarter_change:B?Keep dates closest to change of quarter"
         , "-separator:S= ?Separator between dates"
         , "-week_days:I,?Keep all dates with weekdays specified"
-        , "-year_change:B?Keep dates closest to change of year"
         )
     )
 
