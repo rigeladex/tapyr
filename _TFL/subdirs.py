@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -25,6 +25,8 @@
 #     6-Oct-2004 (CT) `-basenames` and `-lstrip` added
 #    14-Feb-2006 (CT) Moved into package `TFL`
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#    12-Aug-2019 (CT) Add options `-Basedir`, "-Relative"
+#                     + correct help string for option `-lstrip`
 #    ««revision-date»»···
 #--
 
@@ -60,7 +62,9 @@ def subdirs_transitive (of_dir = None) :
 
 def _main (cmd) :
     import sys
-    dirs = cmd.argv or (".", )
+    dirs    = cmd.argv or (".", )
+    if cmd.Basedir :
+        sos.chdir (cmd.Basedir)
     if cmd.newlines :
         sep = "\n"
     else :
@@ -71,9 +75,14 @@ def _main (cmd) :
         fct = subdir_names
     else :
         fct = subdirs
-    result = []
+    rel_p   = cmd.Relative
+    result  = []
     for d in dirs :
-        result.extend (fct (d))
+        sdirs = fct (d)
+        if rel_p :
+            off   = len (d)
+            sdirs = (sd [off:] for sd in sdirs)
+        result.extend (sdirs)
     for exc in cmd.exclude :
         result = [r for r in result if r != exc]
     if cmd.re_exclude :
@@ -90,13 +99,16 @@ def _main (cmd) :
 _Command = TFL.CAO.Cmd \
     ( handler       = _main
     , opts          =
-        ( "-basenames:B"
+        ( "-Basedir:P?Base directory to change into before running"
+        , "-basenames:B"
               "?Print basenames of directories instead of full pathes "
               "(beware: doesn't work if -transitive is also specified)"
         , "-exclude:S #100?List of directories to exclude (space separated)"
-        , "-lstrip:S?String to strip from front of directories"
+        , "-lstrip:S?Characters to strip from front of directories"
         , "-newlines:B?print new lines between subdirs"
         , "-re_exclude:S?Exclude all directories matching regular expression"
+        , "-Relative:B"
+            "?Print subdirectory names relative to base directory given"
         , "-separator:S= ?Separator between subdirs"
         , "-transitive:B?Print closure of subdirs"
         )
