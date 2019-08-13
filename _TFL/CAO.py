@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -157,6 +157,7 @@
 #                       corresponding option or arg instance
 #                     + After the `_Spec_.raw_default` change [4-Sep], values
 #                       read from config files were ignored
+#    13-Aug-2019 (CT) Change `Cmd.cao` to `raise SystemExit` if error
 #    ««revision-date»»···
 #--
 
@@ -1834,7 +1835,7 @@ class Cmd (TFL.Meta.Object) :
                     pyk.fprint ("Usage :")
                     self.help  (CAO (self), indent = 4)
                     pyk.fprint ("", exc, sep = "\n")
-                    return
+                    raise SystemExit (1)
                 else :
                     raise
         return result
