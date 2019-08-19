@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
@@ -21,6 +21,7 @@
 #    11-Jul-2018 (CT) Quote `[`, `]` inside character groups of regexpes
 #                     + Python 3.7 gives `FutureWarning: Possible nested set`
 #                       otherwise (https://bugs.python.org/issue30349)
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -30,7 +31,7 @@ from   _TFL                import TFL
 from   _CAL                import CAL
 
 from   _TFL.Regexp         import Regexp, Multi_Re_Replacer, Re_Replacer, re
-from   _TFL.portable_repr  import portable_repr
+from   _TFL.portable_repr  import print_prepr
 from   _TFL.pyk            import pyk
 
 import _CAL.Date_Time
@@ -59,11 +60,11 @@ def date_time_localizer \
         (s, format = "%Y-%m-%d %H:%M", pattern = None, count = 0) :
     """Convert date-times in `s` into local time without tzoffset.
 
-    >>> print (portable_repr (date_time_localizer ("09d82ac 2012-03-29 21:06:26 +0200 martin@mangari.org")))
+    >>> print_prepr (date_time_localizer ("09d82ac 2012-03-29 21:06:26 +0200 martin@mangari.org"))
     '09d82ac 2012-03-29 21:06 martin@mangari.org'
-    >>> print (portable_repr (date_time_localizer ("f6baffa [2012-03-29 10:06:46 -0400] martin@mangari.org")))
+    >>> print_prepr (date_time_localizer ("f6baffa [2012-03-29 10:06:46 -0400] martin@mangari.org"))
     'f6baffa [2012-03-29 16:06] martin@mangari.org'
-    >>> print (portable_repr (date_time_localizer ("f99a29d (2005-03-22 09:34:40 +0000) tanzer@swing.co.at")))
+    >>> print_prepr (date_time_localizer ("f99a29d (2005-03-22 09:34:40 +0000) tanzer@swing.co.at"))
     'f99a29d (2005-03-22 10:34) tanzer@swing.co.at'
 
     """

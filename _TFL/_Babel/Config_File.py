@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2019 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -21,6 +21,7 @@
 #    15-Apr-2012 (CT) Fix doctests
 #     7-Oct-2014 (CT) Make Python-3 compatible
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,7 @@ from    babel.util             import odict
 class Config_File (TFL.Meta.Object) :
     """A extractor config file.
 
-    >>> from   _TFL.portable_repr import portable_repr
+    >>> from   _TFL.portable_repr import print_prepr
 
     >>> source = '''[defaults]
     ... load_translations = _MOM, _GTW
@@ -58,7 +59,7 @@ class Config_File (TFL.Meta.Object) :
     >>> file = pyk.StringIO (source)
     >>> cfg  = Config_File (file)
 
-    >>> print (portable_repr (cfg.defaults))
+    >>> print_prepr (cfg.defaults)
     {'load_translations' : '_MOM, _GTW', 'loaded_translations' : <PO_File MOM/GTW/JNJ>}
 
     >>> sorted (pyk.iteritems (cfg.extractors))# doctest:+ELLIPSIS

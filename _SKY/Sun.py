@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -40,6 +40,7 @@
 #     9-Aug-2017 (CT) Remove redundant `h0` argument from doctests
 #     9-Aug-2017 (CT) Use one argument `loc`, not two arguments `lat` and `lon`
 #                     + Use `loc.longitude_meuss`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,7 @@ from   _TFL                       import TFL
 
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.Angle                 import Angle, Angle_D, Angle_R
-from   _TFL.portable_repr         import portable_repr
+from   _TFL.portable_repr         import print_prepr
 
 import _SKY.Earth
 import _SKY.Location
@@ -66,13 +67,13 @@ class Sun (TFL.Meta.Object) :
        ### Example 25.a of J. Meeus, p.165
        >>> import _CAL.Date
        >>> s = Sun (CAL.Date (1992, 10, 13))
-       >>> print (portable_repr (s.time.t))
+       >>> print_prepr (s.time.t)
        -0.0721834360027
        >>> s.time.geometric_mean_longitude_sun
        Angle_D (201.807196507)
        >>> s.time.geometric_mean_anomaly_sun
        Angle_D (278.993966432)
-       >>> print (portable_repr (s.time.eccentriticy_earth_orbit))
+       >>> print_prepr (s.time.eccentriticy_earth_orbit)
        0.0167116677149
        >>> s.equation_of_center
        Angle_D (-1.89732384337)
@@ -80,7 +81,7 @@ class Sun (TFL.Meta.Object) :
        Angle_D (199.909872663)
        >>> print (s.true_longitude)
        199°54'35.54''
-       >>> print (portable_repr (s.radius_vector))
+       >>> print_prepr (s.radius_vector)
        0.997661950006
        >>> s.omega
        Angle_D (264.657131805)
@@ -92,15 +93,15 @@ class Sun (TFL.Meta.Object) :
        Angle_D (23.4402297955)
        >>> print (s.time.mean_obliquity_ecliptic)
        023°26'24.83''
-       >>> print (portable_repr (s.time.mean_obliquity_ecliptic.seconds))
+       >>> print_prepr (s.time.mean_obliquity_ecliptic.seconds)
        24.8272638004
        >>> s.time.obliquity_corrected
        Angle_D (23.4399914197)
-       >>> print (portable_repr (s.ra.degrees))
+       >>> print_prepr (s.ra.degrees)
        198.380825219
-       >>> print (portable_repr (s.decl.degrees))
+       >>> print_prepr (s.decl.degrees)
        -7.78506987319
-       >>> print (portable_repr (s.equation_of_time))
+       >>> print_prepr (s.equation_of_time)
        13.7110102528
     """
 

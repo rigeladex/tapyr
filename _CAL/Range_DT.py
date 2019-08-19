@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
@@ -19,6 +19,7 @@
 #    26-Jun-2016 (CT) Creation
 #     9-Sep-2016 (CT) Add `FO`
 #    11-Oct-2016 (CT) Move from `TFL` to `CAL`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -36,7 +37,7 @@ from   _CAL.Time                  import Time
 from   _TFL                       import TFL
 from   _TFL.pyk                   import pyk
 
-from   _TFL.portable_repr         import portable_repr
+from   _TFL.portable_repr         import portable_repr, print_prepr
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -215,7 +216,7 @@ _test_date_range = r"""
     (True, True, True)
     >>> infinite in infinite_l, infinite in infinite_u, infinite_l in infinite_u
     (False, False, False)
-    >>> print (portable_repr ((infinite.duration, infinite_l.duration, infinite_u.duration)))
+    >>> print_prepr ((infinite.duration, infinite_l.duration, infinite_u.duration))
     (3652058, 736116, 2915942)
 
     >>> empty = R (d2, d2)
@@ -720,7 +721,7 @@ _test_time_range = r"""
     (True, True, True)
     >>> infinite in infinite_l, infinite in infinite_u, infinite_l in infinite_u
     (False, False, False)
-    >>> print (portable_repr ((infinite.duration, infinite_l.duration, infinite_u.duration)))
+    >>> print_prepr ((infinite.duration, infinite_l.duration, infinite_u.duration))
     (86399999999, 28800000000, 57599999999)
 
     >>> empty = R (dtt (8), dtt (8))
@@ -1182,7 +1183,7 @@ _test_time_range_h = r"""
     (True, True, True)
     >>> infinite in infinite_l, infinite in infinite_u, infinite_l in infinite_u
     (False, False, False)
-    >>> print (portable_repr ((infinite.duration, infinite_l.duration, infinite_u.duration)))
+    >>> print_prepr ((infinite.duration, infinite_l.duration, infinite_u.duration))
     (24, 8, 16)
 
     >>> empty = R (dtt (8), dtt (8))

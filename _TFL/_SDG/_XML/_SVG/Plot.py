@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.SDG.XML.SVG.
@@ -37,6 +37,7 @@
 #                     + Add arguments `lines`, `sides` to `x_ticks`, `y_ticks`
 #    28-Aug-2018 (CT) Add `Parameters.major_ticks.color`
 #                     + Ditto for `.medium_ticks`, `.minor_ticks`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,7 @@ from   _TFL                       import TFL
 from   _TFL.Color                 import RGB_X
 from   _TFL.formatted_repr        import formatted_repr
 from   _TFL.Parameters            import Definition, P, P_dict
-from   _TFL.portable_repr         import portable_repr
+from   _TFL.portable_repr         import portable_repr, print_prepr
 from   _TFL.pyk                   import pyk
 from   _TFL._D2                   import Transform as T
 from   _TFL._Meta.Once_Property   import Once_Property
@@ -770,7 +771,7 @@ class Plot (_Plot_Element_) :
     (0.0, 40.0, 40.0)
 
     >>> for x in range (2, 13) :
-    ...     print (portable_repr ((x, WC.X (x).as_pos (vp))))
+    ...     print_prepr ((x, WC.X (x).as_pos (vp)))
     (2, 5)
     (3, 10)
     (4, 15)
@@ -785,7 +786,7 @@ class Plot (_Plot_Element_) :
 
     >>> for v in range (2, 10, 2) :
     ...     y = v / 10.
-    ...     print (portable_repr ((y, WC.Y (y).as_pos (vp))))
+    ...     print_prepr ((y, WC.Y (y).as_pos (vp)))
     (0.2, 32)
     (0.4, 24)
     (0.6, 16)

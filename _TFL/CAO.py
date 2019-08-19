@@ -158,6 +158,7 @@
 #                     + After the `_Spec_.raw_default` change [4-Sep], values
 #                       read from config files were ignored
 #    13-Aug-2019 (CT) Change `Cmd.cao` to `raise SystemExit` if error
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -168,7 +169,7 @@ from   _TFL                import TFL
 from   _TFL.Decorator      import getattr_safe
 from   _TFL.formatted_repr import formatted_repr
 from   _TFL.I18N           import _, _T, _Tn
-from   _TFL.portable_repr  import portable_repr
+from   _TFL.portable_repr  import portable_repr, print_prepr
 from   _TFL.Regexp         import Regexp, Re_Replacer, Multi_Re_Replacer, re
 from   _TFL.Trie           import Word_Trie as Trie
 from   _TFL.pyk            import pyk
@@ -2444,7 +2445,7 @@ A typical use of :class:`Cmd` looks like::
     >>> cmd.indent
     'indent:I=4#1?Number of spaces to use for indentation'
 
-    >>> print (portable_repr ((cmd.indent.name, cmd.indent.default, cmd.indent.description, cmd.indent.auto_split, cmd.indent.max_number)))
+    >>> print_prepr ((cmd.indent.name, cmd.indent.default, cmd.indent.description, cmd.indent.auto_split, cmd.indent.max_number))
     ('indent', [4], 'Number of spaces to use for indentation', '', 1)
 
     >>> type (cmd.verbose)
@@ -2475,10 +2476,10 @@ specified. ::
     >>> cao.argn
     2
 
-    >>> print (portable_repr (cao.argv))
+    >>> print_prepr (cao.argv)
     ['path1', 'path2']
 
-    >>> print (portable_repr (cao.file))
+    >>> print_prepr (cao.file)
     'path1'
 
     >>> cao ()
@@ -2522,9 +2523,9 @@ specified. ::
     >>> print (cao_p.period, type (cao_p.period).__name__)
     [1, 2, 3, 4] list
 
-    >>> print (portable_repr (cao_p ["period"]))
+    >>> print_prepr (cao_p ["period"])
     [1, 2, 3, 4]
-    >>> print (portable_repr (cao_p ["period:raw"]))
+    >>> print_prepr (cao_p ["period:raw"])
     ['1,2,3', '4']
 
     >>> cmd.help (cao_p, spec = ["vals"])
@@ -2587,11 +2588,11 @@ values passed to it::
     [2000, 1999]
     >>> cao.verbose
     False
-    >>> print (portable_repr (cao.adam))
+    >>> print_prepr (cao.adam)
     '/tmp/tmp'
     >>> cao.bert
     42
-    >>> print (portable_repr (cao.argv))
+    >>> print_prepr (cao.argv)
     ['/tmp/tmp', 42]
 
     >>> cmd (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
@@ -2607,7 +2608,7 @@ values passed to it::
     >>> cap = cmd.parse (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
     >>> cap.verbose
     True
-    >>> print (portable_repr (cap.argv))
+    >>> print_prepr (cap.argv)
     ['/tmp/tmp', 137]
     >>> caq = cmd.parse (["/tmp/tmp", "137"])
     >>> caq.verbose

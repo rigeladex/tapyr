@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.E164.
@@ -27,6 +27,7 @@
 #    15-Sep-2015 (CT) Change `Country.split` to allow `regexp` without `ndc`
 #    15-Sep-2015 (CT) Change `M_Country.__call__` to raise `ValueError`,
 #                     not KeyError, for non-existing country codes
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,7 @@ from   _TFL                     import TFL
 
 from   _TFL.formatted_repr      import formatted_repr
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.portable_repr       import portable_repr
+from   _TFL.portable_repr       import portable_repr, print_prepr
 from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import \
     (Regexp, Multi_Regexp, Re_Replacer, Multi_Re_Replacer, re)
@@ -485,7 +486,7 @@ _test_country_match = r"""
     >>> m.country
     Country (43)
 
-    >>> print (portable_repr (m.ndc_sn))
+    >>> print_prepr (m.ndc_sn)
     '664 123 45 67'
 
     >>> print (m.ndc_info)
@@ -506,11 +507,11 @@ _test_country_match = r"""
     >>> print (Country.match_strict ("0043 664 123 45 67"))
     Match for Country (43) [Austria]: 664 123 45 67
 
-    >>> print (portable_repr ((m.ndc, m.sn)))
+    >>> print_prepr ((m.ndc, m.sn))
     ('664', '1234567')
 
     >>> m = Country.match ("436641234567")
-    >>> print (portable_repr ((m.ndc, m.sn)))
+    >>> print_prepr ((m.ndc, m.sn))
     ('664', '1234567')
 
     >>> m = Country.match ("439101234567")
@@ -525,7 +526,7 @@ _test_country_match = r"""
     >>> print (m.ndc_info)
     Zurich
 
-    >>> print (portable_repr ((m.ndc, m.sn)))
+    >>> print_prepr ((m.ndc, m.sn))
     ('43', '1234567')
 
     >>> m = Country.match ("3861 123 45 67")
@@ -535,11 +536,11 @@ _test_country_match = r"""
     >>> print (m.ndc_info)
     Ljubljana
 
-    >>> print (portable_repr ((m.ndc, m.sn)))
+    >>> print_prepr ((m.ndc, m.sn))
     ('1', '1234567')
 
     >>> m = Country.match ("38651 123 456")
-    >>> print (portable_repr ((m.ndc, m.sn)))
+    >>> print_prepr ((m.ndc, m.sn))
     ('51', '123456')
 
     >>> print (m.ndc_info)
@@ -557,7 +558,7 @@ _test_country_match = r"""
     >>> print (m.ndc_info)
     None
 
-    >>> print (portable_repr ((m.ndc, m.sn)))
+    >>> print_prepr ((m.ndc, m.sn))
     ('89', '1234567')
 
     >>> m = Country.match ("+49891234567")
@@ -565,24 +566,24 @@ _test_country_match = r"""
     Country (49) [Germany (Federal Republic of)]
 
     >>> with expect_except (ValueError) :
-    ...     print (portable_repr ((m.ndc, m.sn)))
+    ...     print_prepr ((m.ndc, m.sn))
     ValueError: Not a proper phone number for Country (49) [Germany (Federal Republic of)]: 891234567
         Network destination code and subscriber number need to be separated by a space or dash.
 
     >>> m = Country.match ("+39 045 1234567")
     >>> print (m.ndc_info)
     Province of Verona
-    >>> print (portable_repr ((m.ndc, m.sn)))
+    >>> print_prepr ((m.ndc, m.sn))
     ('045', '1234567')
 
     >>> m = Country.match ("+39 045 123456789")
     >>> with expect_except (ValueError) :
-    ...     print (portable_repr ((m.ndc, m.sn)))
+    ...     print_prepr ((m.ndc, m.sn))
     SN_Too_Long: Not a proper phone number for Country (39) [Italy, Vatican]: 045-123456789; subscriber number must have at most 8 digits; got 9 digits instead
 
     >>> m = Country.match ("+39 045 12345")
     >>> with expect_except (ValueError) :
-    ...     print (portable_repr ((m.ndc, m.sn)))
+    ...     print_prepr ((m.ndc, m.sn))
     SN_Too_Short: Not a proper phone number for Country (39) [Italy, Vatican]: 045-12345; subscriber number must have at least 6 digits; got 5 digits instead
 
 """

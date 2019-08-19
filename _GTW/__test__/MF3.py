@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -26,6 +26,7 @@
 #    22-Apr-2016 (CT) Adapt to change of `Date_Interval.start.completer`
 #    26-Apr-2016 (CT) Adapt to `buddies` in `as_json_cargo`
 #    17-Oct-2016 (CT) Add test `cls_structure`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -684,7 +685,7 @@ _test_element = """
 
     >>> proto = f_p_z ["Z-26:phones"].proto
 
-    >>> print (portable_repr (sorted (proto._Element_Map)))
+    >>> print_prepr (sorted (proto._Element_Map))
     ['Z-26:phones::desc', 'Z-26:phones::extension', 'Z-26:phones::left', 'Z-26:phones::left.first_name', 'Z-26:phones::left.last_name', 'Z-26:phones::left.middle_name', 'Z-26:phones::left.title', 'Z-26:phones::right', 'Z-26:phones::right.cc', 'Z-26:phones::right.ndc', 'Z-26:phones::right.sn', 'desc', 'extension', 'left', 'left.first_name', 'left.last_name', 'left.middle_name', 'left.title', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.cc', 'phones.right.ndc', 'phones.right.sn', 'right', 'right.cc', 'right.ndc', 'right.sn']
 
     >>> print (proto, proto.__class__, list (proto.elements_transitive ()))
@@ -842,10 +843,10 @@ _test_element = """
         ]
     }
 
-    >>> print (portable_repr (sorted (f_p._Element_Map)))
+    >>> print_prepr (sorted (f_p._Element_Map))
     ['X-26:first_name', 'X-26:last_name', 'X-26:lifetime', 'X-26:lifetime.finish', 'X-26:lifetime.start', 'X-26:middle_name', 'X-26:sex', 'X-26:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'sex', 'title']
 
-    >>> print (portable_repr (sorted (f_p_z._Element_Map)))
+    >>> print_prepr (sorted (f_p_z._Element_Map))
     ['Z-26:first_name', 'Z-26:last_name', 'Z-26:lifetime', 'Z-26:lifetime.finish', 'Z-26:lifetime.start', 'Z-26:middle_name', 'Z-26:phones', 'Z-26:phones::desc@3', 'Z-26:phones::extension@3', 'Z-26:phones::left.first_name@3', 'Z-26:phones::left.last_name@3', 'Z-26:phones::left.middle_name@3', 'Z-26:phones::left.title@3', 'Z-26:phones::left@3', 'Z-26:phones::right.cc@3', 'Z-26:phones::right.ndc@3', 'Z-26:phones::right.sn@3', 'Z-26:phones::right@3', 'Z-26:phones@3', 'Z-26:sex', 'Z-26:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.cc', 'phones.right.ndc', 'phones.right.sn', 'sex', 'title']
 
     >>> show_elements (f_p_z2, "Entity")

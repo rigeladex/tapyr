@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -21,6 +21,7 @@
 #    14-Oct-2015 (CT) Change `b64digest` to return `pyk.text_type`
 #    27-Feb-2017 (CT) Make doctest Python 3.6 compatible
 #                     * Remove enumeration of `.algorithms`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -29,7 +30,7 @@ from   __future__          import absolute_import, unicode_literals
 
 from   _TFL                import TFL
 
-from   _TFL.portable_repr  import portable_repr
+from   _TFL.portable_repr  import portable_repr, print_prepr
 from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
@@ -318,32 +319,32 @@ care of this difference. You can also feed arbitrary Python objects to
     >>> sh_1 = Secure_Hash.sha1 ("foo")
     >>> sh_1.update ("bar")
     >>> sh_1.update ((1, 2, 3, 4))
-    >>> print (portable_repr (sh_1.hexdigest ()))
+    >>> print_prepr (sh_1.hexdigest ())
     '7d3d6632e1916e4fd08f1fd8e07c4363a2265be1'
 
     >>> byte_foo = b"foo"
     >>> text_foo = "foo"
     >>> intl_foo = list (ord (x) for x in text_foo)
 
-    >>> print (portable_repr (Secure_Hash.sha1 (text_foo).hexdigest ()))
+    >>> print_prepr (Secure_Hash.sha1 (text_foo).hexdigest ())
     '0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33'
 
-    >>> print (portable_repr (Secure_Hash.sha1 (byte_foo).hexdigest ()))
+    >>> print_prepr (Secure_Hash.sha1 (byte_foo).hexdigest ())
     '0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33'
 
-    >>> print (portable_repr (Secure_Hash.sha1 (intl_foo).hexdigest ()))
+    >>> print_prepr (Secure_Hash.sha1 (intl_foo).hexdigest ())
     'd1896add0af72017e4c5a74d55b904887e790a7a'
 
-    >>> print (portable_repr (Secure_Hash.sha1 (text_foo).b64digest ()))
+    >>> print_prepr (Secure_Hash.sha1 (text_foo).b64digest ())
     'C_7Hteo-D9vJXQ3UfzxbwnXaijM='
 
-    >>> print (portable_repr (Secure_Hash.sha1 (byte_foo).b64digest ()))
+    >>> print_prepr (Secure_Hash.sha1 (byte_foo).b64digest ())
     'C_7Hteo-D9vJXQ3UfzxbwnXaijM='
 
-    >>> print (portable_repr (Secure_Hash.sha1 (byte_foo).b64digest (None)))
+    >>> print_prepr (Secure_Hash.sha1 (byte_foo).b64digest (None))
     'C+7Hteo/D9vJXQ3UfzxbwnXaijM='
 
-    >>> print (portable_repr (Secure_Hash.sha1 (intl_foo).b64digest ()))
+    >>> print_prepr (Secure_Hash.sha1 (intl_foo).b64digest ())
     '0Ylq3Qr3IBfkxadNVbkEiH55Cno='
 
     >>> s384 = Secure_Hash.sha384
@@ -364,24 +365,24 @@ care of this difference. You can also feed arbitrary Python objects to
     >>> import binascii
     >>> sha_256 = Secure_Hash.sha256
 
-    >>> print (portable_repr (sha_256 (text_foo).hexdigest ()))
+    >>> print_prepr (sha_256 (text_foo).hexdigest ())
     '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae'
 
     >>> dk2 = binascii.hexlify (sha_256.pbkdf2_hmac (b'password', b'salt', 100))
-    >>> print (portable_repr (dk2))
+    >>> print_prepr (dk2)
     '07e6997180cf7f12904f04100d405d34888fdf62af6d506a0ecc23b196fe99d8'
 
     >>> dk5 = binascii.hexlify (sha_256.pbkdf2_hmac (b'password', b'salt', 100000))
-    >>> print (portable_repr (dk5))
+    >>> print_prepr (dk5)
     '0394a2ede332c9a13eb82e9b24631604c31df978b4e2f0fbd2c549944f9d79a5'
 
     >>> hmac = sha_256.hmac ("key", "message")
-    >>> print (portable_repr (hmac.hexdigest ())) ### freshly minted
+    >>> print_prepr (hmac.hexdigest ()) ### freshly minted
     '6e9ef29b75fffc5b7abae527d58fdadb2fe42e7219011976917343065f58ed4a'
 
     >>> hmac.update ("another message")
     >>> hmac.update ([1, 2, 3])
-    >>> print (portable_repr (hmac.hexdigest ())) ### after update
+    >>> print_prepr (hmac.hexdigest ()) ### after update
     'bc02ee3ca85743ac30c928baed2989c05024a23d5e19c37c5260807ae784d83f'
 
 """

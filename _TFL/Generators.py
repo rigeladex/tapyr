@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2018 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -42,6 +42,7 @@
 #    16-May-2017 (CT) Add property `succ` to `Look_Ahead_Gen`
 #    11-Jul-2018 (CT) Add guards for `StopIteration`, `RuntimeError`
 #                     + Python 3.7 breakage due to PEP 479
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -396,8 +397,8 @@ def window_wise (seq, size) :
 # end def window_wise
 
 def _show (it) :
-    from _TFL.portable_repr import portable_repr
-    print (portable_repr (list (it)))
+    from _TFL.portable_repr import print_prepr
+    print_prepr (list (it))
 # end def _show
 
 if __name__ != "__main__" :

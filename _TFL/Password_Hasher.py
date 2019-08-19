@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -31,6 +31,7 @@
 #                     not `passlib.hash.bcrypt`
 #    23-Sep-2016 (CT) Add `filterwarnings` for cffi warnings triggered by bcrypt
 #    26-Sep-2016 (CT) Guard against old bcrypt version without `__version__`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,7 @@ from   _TFL                import TFL
 
 from   _TFL._Meta          import Meta
 from   _TFL.Decorator      import subclass_responsibility
-from   _TFL.portable_repr  import portable_repr
+from   _TFL.portable_repr  import print_prepr
 from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
@@ -179,7 +180,7 @@ class sha224 (_Password_Hasher_SHA_) :
 
     >>> pr = "Ao9ug9wahWae"
     >>> ph = Password_Hasher.sha224.hashed (pr, "salt")
-    >>> print (portable_repr (ph))
+    >>> print_prepr (ph)
     'salt::373ea460b8c323c468673a3702d7f0a90214dd48414bfa6cb7a639c4'
 
     >>> Password_Hasher.sha224.verify (pr, ph)

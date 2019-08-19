@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -38,6 +38,7 @@
 #     1-Jun-2016 (CT) Add `fake_request`
 #     3-Jun-2016 (CT) Add `esf_completer`, `show_esf_form`
 #    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Class_Property
 from   _TFL.formatted_repr      import formatted_repr as formatted
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.portable_repr       import portable_repr
+from   _TFL.portable_repr       import portable_repr, print_prepr
 from   _TFL.pyk                 import pyk
 from   _TFL.Record              import Record
 from   _TFL.Sorted_By           import Sorted_By
@@ -90,9 +91,7 @@ def fake_request (** kw) :
         )
 # end def fake_request
 
-def prepr (* args) :
-    print (* (portable_repr (a) for a in args))
-# end def prepr
+prepr = print_prepr
 
 def show_esf_form (nav_root, etn, attr_name) :
     adm = nav_root.ET_Map [etn].admin

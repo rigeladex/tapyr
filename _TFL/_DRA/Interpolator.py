@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -16,12 +16,13 @@
 # Revision Dates
 #    11-Nov-2007 (CT) Creation
 #     9-Oct-2016 (CT) Move to Package_Namespace `TFL`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
 from   _TFL                   import TFL
 
-from   _TFL.portable_repr     import portable_repr
+from   _TFL.portable_repr     import print_prepr
 
 import _TFL._Meta.Object
 import _TFL._DRA
@@ -32,7 +33,7 @@ class Interpolator_3 (TFL.Meta.Object) :
     """Interpolate from three data values.
 
        >>> calcer = Interpolator_3 ((7, 0.884226), (8, 0.877366), (9, 0.870531))
-       >>> print (portable_repr (calcer (8.18125)))
+       >>> print_prepr (calcer (8.18125))
        0.87612530127
     """
 

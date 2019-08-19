@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CHJ.CSS.
@@ -19,6 +19,7 @@
 #    12-Jan-2017 (CT) Creation
 #    17-Jan-2017 (CT) Add attribute `args` to `Calc`
 #                     + Allow later resolution of symbolic parameters
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -28,9 +29,7 @@ Model CSS calc expressions with support for CSS.Length operands::
     >>> from _CHJ._CSS.Length   import *
     >>> from _CHJ._CSS.Property import *
 
-    >>> from _TFL.portable_repr import portable_repr
-    >>> def show (p) :
-    ...     print (portable_repr (p))
+    >>> from _TFL.portable_repr import print_prepr as show
 
     >>> show (Calc (Px (100), "+ 3em"))
     'calc(100px + 3em)'

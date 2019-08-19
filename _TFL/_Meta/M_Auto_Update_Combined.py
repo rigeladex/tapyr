@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.Meta.
@@ -20,6 +20,7 @@
 #    26-Jan-2015 (CT) Creation
 #     6-Mar-2015 (CT) Add `except` to `_m_update_combine`
 #     5-Aug-2015 (CT) Improve `__doc__`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -34,7 +35,7 @@ their names in either :attr:`_attrs_to_update_combine` or
 
 ::
 
-    >>> from   _TFL.portable_repr import portable_repr
+    >>> from   _TFL.portable_repr import print_prepr
 
     >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Update_Combined)) :
     ...     _attrs_to_update_combine      = ("foo", "bar", "qux")
@@ -52,11 +53,11 @@ their names in either :attr:`_attrs_to_update_combine` or
     ...     bar                           = set ("xyz")
     ...     qux = quux                    = [(0, 1, ), (3, )]
 
-    >>> print (portable_repr (A.foo), portable_repr (A.bar), portable_repr (A.qux), portable_repr (A.quux))
+    >>> print_prepr (A.foo, A.bar, A.qux, A.quux)
     {1, 2, 3} <Undef/value> [(0,), (1,)] [(0,), (1,)]
-    >>> print (portable_repr (B.foo), portable_repr (B.bar), portable_repr (B.qux), portable_repr (B.quux), portable_repr (B.baz))
+    >>> print_prepr (B.foo, B.bar, B.qux, B.quux, B.baz)
     {1, 2, 3, 4, 5} {'a', 'b'} [(0,), (1,), (2,), (0,)] [(0,), (1,), (2,)] <Undef/value>
-    >>> print (portable_repr (C.foo), portable_repr (C.bar), portable_repr (C.qux), portable_repr (C.quux), portable_repr (C.baz))
+    >>> print_prepr (C.foo, C.bar, C.qux, C.quux, C.baz)
     {1, 2, 3, 4, 5} {'a', 'b', 'x', 'y', 'z'} [(0,), (1,), (2,), (0,), (0, 1), (3,)] [(0,), (1,), (2,), (0, 1), (3,)] <Undef/value>
 
     >>> class P (TFL.Meta.BaM (object, metaclass = M_Auto_Update_Combined)) :
@@ -74,13 +75,13 @@ their names in either :attr:`_attrs_to_update_combine` or
     ...     bar                           = dict (x = "z", z = -42)
     ...     baz                           = dict (c = 137)
 
-    >>> print (portable_repr (P.foo),  portable_repr (P.bar))
+    >>> print_prepr (P.foo, P.bar)
     <Undef/value> {'x' : 1, 'y' : 2}
-    >>> print (portable_repr (R.foo),  portable_repr (R.bar), portable_repr (R.baz))
+    >>> print_prepr (R.foo,  R.bar, R.baz)
     {'u' : 1, 'v' : 'a'} {'y' : 3, 'z' : 42} {'a' : 0}
-    >>> print (portable_repr (PR.foo), portable_repr (PR.bar), portable_repr (PR.baz))
+    >>> print_prepr (PR.foo, PR.bar, PR.baz)
     {'u' : 1, 'v' : 'a'} {'x' : 1, 'y' : 2, 'z' : 42} {'a' : 0, 'b' : 42}
-    >>> print (portable_repr (RP.foo), portable_repr (RP.bar), portable_repr (RP.baz))
+    >>> print_prepr (RP.foo, RP.bar, RP.baz)
     {'u' : 1, 'v' : 'b', 'w' : 'a'} {'x' : 'z', 'y' : 3, 'z' : -42} {'c' : 137}
 
 """

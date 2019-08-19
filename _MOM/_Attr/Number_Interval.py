@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -31,6 +31,7 @@
 #    24-Jun-2014 (CT) Force attribute names to `str`
 #     4-Sep-2014 (RS) Fix interval limit: `lower` <= `upper` not '<'
 #    11-Dec-2015 (CT) Use `attr_types_of_module`, not home-grown code
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,7 @@ from   __future__            import unicode_literals
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_, _A_Number_
 
-from   _TFL.portable_repr    import portable_repr
+from   _TFL.portable_repr    import print_prepr
 from   _TFL.pyk              import pyk
 
 import _TFL.Caller
@@ -117,17 +118,17 @@ def make (bounds_type, name = None) :
     <class 'MOM.Int_Interval' [Spec Essence]>
     >>> Int_Interval._Attributes.lower.__mro__ [:2]
     (<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Int'>)
-    >>> print (portable_repr (Int_Interval._Attributes.lower.P_Type))
+    >>> print_prepr (Int_Interval._Attributes.lower.P_Type)
     <class 'builtins.int'>
 
     >>> Float_Interval._Attributes.lower.__mro__ [:2]
     (<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Float'>)
-    >>> print (portable_repr (Float_Interval._Attributes.lower.P_Type))
+    >>> print_prepr (Float_Interval._Attributes.lower.P_Type)
     <class 'builtins.float'>
 
     >>> Frequency_Interval._Attributes.lower.__mro__ [:2]
     (<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Frequency'>)
-    >>> print (portable_repr (Frequency_Interval._Attributes.lower.P_Type))
+    >>> print_prepr (Frequency_Interval._Attributes.lower.P_Type)
     <class 'builtins.float'>
 
     """

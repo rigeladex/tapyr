@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -21,6 +21,7 @@
 #     1-Apr-2015 (CT) Apply `pyk.decoded` to `line.head`, `line.body`, and
 #                     `line.tail` in `formatted_repr` to avoid
 #                     `UnicodeDecodeError` for 8-bit strings
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -32,7 +33,7 @@ from   _TFL                       import TFL
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch
 from   _TFL.Decorator             import Attributed, Decorator, dict_from_class
 from   _TFL.Generators            import Look_Ahead_Gen
-from   _TFL.portable_repr         import portable_repr
+from   _TFL.portable_repr         import portable_repr, print_prepr
 from   _TFL.pyk                   import pyk
 from   _TFL.Record                import Record
 from   _TFL.Sorted_By             import Sorted_By
@@ -333,7 +334,7 @@ Examples::
       ]
     ]
 
-    >>> print (portable_repr (l3))
+    >>> print_prepr (l3)
     ['x', 'y', [1, 2, [], 3, ['a', ['b'], 'c', [...]]], ['a', ['b'], 'c', [1, 2, [], 3, [...]]], 'z']
 
     >>> print (formatted_repr (l3))

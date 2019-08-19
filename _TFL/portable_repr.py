@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -24,6 +24,7 @@
 #                     `_portable_repr_properties` by `dict_from_class`
 #    22-Oct-2015 (CT) Add `logging.exception` to `generic_portable_repr`
 #    13-Feb-2017 (CT) Add `_float_epsilon`
+#    19-Aug-2019 (CT) Add and use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -48,42 +49,42 @@ For most object types, ``eval (portable_repr (object)) == object``.
 
 Examples::
 
-    >>> print (portable_repr ([1,2,3, "a", u"b", "c", b"bytes"]))
+    >>> print_prepr ([1,2,3, "a", u"b", "c", b"bytes"])
     [1, 2, 3, 'a', 'b', 'c', 'bytes']
 
-    >>> print (portable_repr ({ 1: u"a", 2: "b", "c" : 23, u"d" : 42 }))
+    >>> print_prepr ({ 1: u"a", 2: "b", "c" : 23, u"d" : 42 })
     {'c' : 23, 'd' : 42, 1 : 'a', 2 : 'b'}
 
-    >>> print (portable_repr (set ([1, "a", "2", 3])))
+    >>> print_prepr (set ([1, "a", "2", 3]))
     {'2', 'a', 1, 3}
 
-    >>> print (portable_repr (1 << 65))
+    >>> print_prepr (1 << 65)
     36893488147419103232
 
     >>> import math
-    >>> print (portable_repr (math.pi))
+    >>> print_prepr (math.pi)
     3.14159265359
 
     >>> class C (object) :
     ...     class D (object) :
     ...         pass
 
-    >>> print (portable_repr (C))
+    >>> print_prepr (C)
     <class 'portable_repr.C'>
 
-    >>> print (portable_repr (C.D))
+    >>> print_prepr (C.D)
     <class 'portable_repr.D'>
 
-    >>> print (portable_repr (dict))
+    >>> print_prepr (dict)
     <class 'builtins.dict'>
 
-    >>> print (portable_repr (type (u"")))
+    >>> print_prepr (type (u""))
     <class 'builtins.text-string'>
 
-    >>> print (portable_repr (type (b"")))
+    >>> print_prepr (type (b""))
     <class 'builtins.byte-string'>
 
-    >>> print (portable_repr (type (1 << 65)))
+    >>> print_prepr (type (1 << 65))
     <class 'builtins.int'>
 
     >>> dd = TFL.defaultdict(int,{1: 2, "a": 42})
@@ -97,10 +98,10 @@ Examples::
     >>> t = ("a", l)
     >>> l.append (t)
 
-    >>> print (portable_repr (l))
+    >>> print_prepr (l)
     [1, 2, 3, ('a', [...])]
 
-    >>> print (portable_repr (t))
+    >>> print_prepr (t)
     ('a', [1, 2, 3, (...)])
 
 """
@@ -288,7 +289,12 @@ def portable_repr (obj) :
     return portable_repr.call (obj, seen = set ())
 # end def portable_repr
 
-__all__ = ("portable_repr", )
+def print_prepr (* args) :
+    """Print `portable_repr` of all `args`"""
+    print (* (portable_repr (a) for a in args))
+# end def print_prepr
+
+__all__ = ("portable_repr", "print_prepr")
 
 if __name__ != "__main__" :
     TFL._Export (* __all__)

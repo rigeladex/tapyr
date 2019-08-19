@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -19,6 +19,7 @@
 #    20-Jul-2016 (CT) Creation
 #     7-Sep-2016 (CT) Add `_test_structured`
 #     9-Sep-2016 (CT) Add `_test_MF3`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -258,7 +259,7 @@ _test_main = r"""
     >>> print (b.ui_display) # before commit
     Tanzer Christian, 2016-07-21, [08:30, 09:00)
 
-    >>> print (portable_repr (tak.get_pickle_cargo (a))) # before commit
+    >>> print_prepr (tak.get_pickle_cargo (a)) # before commit
     (((datetime.time(14, 0),), (datetime.time(16, 0),)),)
 
     >>> scope.commit ()
@@ -342,7 +343,7 @@ _test_main = r"""
     [Time `lower`, Time `upper`]
 
     >>> pc = tak.get_pickle_cargo (a)
-    >>> print (portable_repr (pc))
+    >>> print_prepr (pc)
     (((datetime.time(14, 0),), (datetime.time(16, 0),)),)
 
     >>> tr = tak.from_pickle_cargo (scope, pc)
@@ -1112,14 +1113,14 @@ _test_structured = r"""
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
     >>> ET       = apt ["PAP.Appointment"]
 
-    >>> print (portable_repr (ET.date.attr.E_Type.edit_attr))
+    >>> print_prepr (ET.date.attr.E_Type.edit_attr)
     ()
-    >>> print (portable_repr (ET.date.attr.E_Type.q_able_no_edit))
+    >>> print_prepr (ET.date.attr.E_Type.q_able_no_edit)
     (Int `day`, Int `month`, Int `year`)
 
-    >>> print (portable_repr (ET.time.attr.E_Type.edit_attr))
+    >>> print_prepr (ET.time.attr.E_Type.edit_attr)
     (Time `lower`, Time `upper`)
-    >>> print (portable_repr (ET.time.attr.E_Type.q_able_no_edit))
+    >>> print_prepr (ET.time.attr.E_Type.q_able_no_edit)
     ()
 
     >>> S = MOM.Attr.Selector.editable

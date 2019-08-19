@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -20,6 +20,7 @@
 #    15-Sep-2015 (CT) Adapt to bug fixes in `E164.Country`
 #    27-Apr-2016 (CT) Add test for `sn.polisher`
 #    22-May-2016 (CT) Add test for `ndc_length_valid`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,7 @@ _test_code = """
     >>> print (dk.ui_display)
     +45-12 34 56 78
 
-    >>> print (portable_repr ([dk.cc, dk.ndc, dk.sn]))
+    >>> print_prepr ([dk.cc, dk.ndc, dk.sn])
     ['45', '', '12345678']
 
     >>> print (dk.country)

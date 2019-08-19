@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -26,7 +26,7 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 from   _GTW._RST.Resource       import *
 
 from   _TFL.formatted_repr      import formatted_repr
-from   _TFL.portable_repr       import portable_repr
+from   _TFL.portable_repr       import portable_repr, print_prepr
 
 def show_1 (resource, level) :
     p = resource.parent.abs_href if resource.parent else "-"
@@ -111,9 +111,9 @@ __doc__ = """
     >>> ets
     (<Leaf about: /about>, <Dir v1: /v1>, <Dir Meta: /v1/Meta>, <Dir PAP-Company: /v1/PAP-Company>, <Leaf 1: /v1/PAP-Company/1>, <Dir PAP-Person: /v1/PAP-Person>, <Dir v2: /v2>)
 
-    >>> print (portable_repr ([e.name for e in ets]))
+    >>> print_prepr ([e.name for e in ets])
     ['about', 'v1', 'Meta', 'PAP-Company', '1', 'PAP-Person', 'v2']
-    >>> print (portable_repr ([e.href for e in ets]))
+    >>> print_prepr ([e.href for e in ets])
     ['about', 'v1', 'v1/Meta', 'v1/PAP-Company', 'v1/PAP-Company/1', 'v1/PAP-Person', 'v2']
 
     >>> print (root.href_pat_frag)
@@ -151,20 +151,20 @@ __doc__ = """
         <Dir PAP-Person: /v1/PAP-Person> parent = /v1, top = /
       <Dir v2: /v2> parent = /, top = /
 
-    >>> print (portable_repr (root.GET.render_man.by_extension))
+    >>> print_prepr (root.GET.render_man.by_extension)
     mm_list(<class 'builtins.list'>, {'json' : [<class '_GTW._RST.Mime_Type.JSON'>]})
-    >>> print (portable_repr (root.GET.render_man.by_mime_type))
+    >>> print_prepr (root.GET.render_man.by_mime_type)
     mm_list(<class 'builtins.list'>, {'application/json' : [<class '_GTW._RST.Mime_Type.JSON'>]})
 
-    >>> print (portable_repr (GTW.RST.Mime_Type.JSON))
+    >>> print_prepr (GTW.RST.Mime_Type.JSON)
     <class '_GTW._RST.Mime_Type.JSON'>
-    >>> print (portable_repr (GTW.RST.Mime_Type.JSON.extensions))
+    >>> print_prepr (GTW.RST.Mime_Type.JSON.extensions)
     ('json',)
-    >>> print (portable_repr (GTW.RST.Mime_Type.JSON.mime_types))
+    >>> print_prepr (GTW.RST.Mime_Type.JSON.mime_types)
     ('application/json',)
 
     >>> for n, r in sorted (pyk.iteritems (GTW.RST.Mime_Type.JSON.Table)) :
-    ...     print (portable_repr ((r.name, r.extensions, r.mime_types)))
+    ...     print_prepr ((r.name, r.extensions, r.mime_types))
     ('ATOM', ('atom',), ('application/atom+xml',))
     ('CSV', ('csv',), ('text/csv',))
     ('HTML', ('html', 'htm'), ('text/html',))
@@ -205,9 +205,9 @@ __doc__ = """
     >>> ets2
     (<Leaf about: /about>, <Dir v1: /v1>, <Dir Meta: /v1/Meta>, <Dir PAP-Company: /v1/PAP-Company>, <Leaf 1: /v1/PAP-Company/1>, <Dir PAP-Person: /v1/PAP-Person>, <Dir v2: /v2>, <Dir PAP-Company: /v2/PAP-Company>, <Leaf 1: /v2/PAP-Company/1>, <Dir PAP-Person: /v2/PAP-Person>)
 
-    >>> print (portable_repr ([e.name for e in ets2]))
+    >>> print_prepr ([e.name for e in ets2])
     ['about', 'v1', 'Meta', 'PAP-Company', '1', 'PAP-Person', 'v2', 'PAP-Company', '1', 'PAP-Person']
-    >>> print (portable_repr ([e.href for e in ets2]))
+    >>> print_prepr ([e.href for e in ets2])
     ['about', 'v1', 'v1/Meta', 'v1/PAP-Company', 'v1/PAP-Company/1', 'v1/PAP-Person', 'v2', 'v2/PAP-Company', 'v2/PAP-Company/1', 'v2/PAP-Person']
 
     >>> print (root2.href_pat_frag)

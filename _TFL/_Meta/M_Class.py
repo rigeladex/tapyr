@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -58,6 +58,7 @@
 #    16-Jul-2015 (CT)  Use auto-numbered footnotes in docstring
 #    10-Dec-2015 (CT) Change `_m_combine_nested_class` to set `__outer__`
 #     8-Sep-2016 (CT) Change `M_Autorename.__new__` to fix `__qualname__`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 

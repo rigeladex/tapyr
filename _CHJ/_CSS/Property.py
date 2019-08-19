@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CHJ.CSS.
@@ -30,6 +30,7 @@
 #                     * add `as_text`
 #    12-Jan-2017 (CT) Remove `Calc`
 #    18-Jan-2017 (CT) Remove `-webkit` prefix from `Box`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -37,9 +38,7 @@
 Specification of CSS properties with automatically generated
 vendor prefixes::
 
-    >>> from   _TFL.portable_repr import portable_repr
-    >>> def show (p) :
-    ...     print (portable_repr (p))
+    >>> from   _TFL.portable_repr import print_prepr as show
 
     >>> Border    = Property ("border")
 

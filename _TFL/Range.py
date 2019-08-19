@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -32,6 +32,7 @@
 #     9-Mar-2017 (CT) Add `epsilon` to `_Range_Discrete_.__iter__`
 #                     and `Float_Range_Discrete`
 #     4-Apr-2017 (CT) Add guard for `eps` and `last` to `__iter__`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ from   _TFL                       import TFL
 from   _TFL.pyk                   import pyk
 
 from   _TFL._Meta.totally_ordered import totally_ordered
-from   _TFL.portable_repr         import portable_repr
+from   _TFL.portable_repr         import portable_repr, print_prepr
 from   _TFL.Regexp                import Regexp
 
 import _TFL._Meta.Object
@@ -1527,11 +1528,11 @@ _test_float_range = r"""
     >>> Rd = Float_Range_Discrete
 
     >>> r1 = Rd (0.0, 1.0, "[]", delta = 0.2)
-    >>> print (portable_repr (list (r1)))
+    >>> print_prepr (list (r1))
     [0, 0.2, 0.4, 0.6, 0.8, 1]
 
     >>> r2 = Rd (0.0, 1.0, "()", delta = 0.2)
-    >>> print (portable_repr (list (r2)))
+    >>> print_prepr (list (r2))
     [0.2, 0.4, 0.6, 0.8]
 
 """ ### _test_float_range
@@ -1553,7 +1554,7 @@ _test_int_range = r"""
     (True, True, True)
     >>> infinite in infinite_l, infinite in infinite_u, infinite_l in infinite_u
     (False, False, False)
-    >>> print (portable_repr ((infinite.length, infinite_l.length, infinite_u.length)))
+    >>> print_prepr ((infinite.length, infinite_l.length, infinite_u.length))
     (Infinity, Infinity, Infinity)
 
     >>> empty = R (1, 1)

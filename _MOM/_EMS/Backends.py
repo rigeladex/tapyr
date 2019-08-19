@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.EMS.
@@ -21,17 +21,18 @@
 #    21-Jun-2013 (CT) Fix `SAW` entries of `Map` (DB-specific packages)
 #     7-Jul-2013 (CT) Add `EMS.SAW`
 #    23-Aug-2013 (CT) Remove `SAS` backends
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
 """
-    >>> print (portable_repr (MOM.EMS.Backends.get ("hps:")))
+    >>> print_prepr (MOM.EMS.Backends.get ("hps:"))
     (<class '_MOM._EMS.Hash.Manager'>, <class '_MOM._DBW._HPS.Manager.Manager'>, <class '_MOM._DBW._HPS.DBS.HPS'>)
 
-    >>> print (portable_repr (MOM.EMS.Backends.get ("postgresql:")))
+    >>> print_prepr (MOM.EMS.Backends.get ("postgresql:"))
     (<class '_MOM._EMS.SAW.Manager'>, <class '_MOM._DBW._SAW._PG.Manager.Manager'>, <class '_MOM._DBW._SAW._PG.DBS.DBS'>)
 
-    >>> print (portable_repr (MOM.EMS.Backends.get ("sqlite:")))
+    >>> print_prepr (MOM.EMS.Backends.get ("sqlite:"))
     (<class '_MOM._EMS.SAW.Manager'>, <class '_MOM._DBW._SAW._SQ.Manager.Manager'>, <class '_MOM._DBW._SAW._SQ.DBS.DBS'>)
 
 """
@@ -44,7 +45,7 @@ from   __future__  import unicode_literals
 from   _MOM                   import MOM
 import _MOM._EMS
 
-from   _TFL.portable_repr     import portable_repr
+from   _TFL.portable_repr     import print_prepr
 
 _hps = ("Hash", "_HPS.Manager")
 

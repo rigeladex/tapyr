@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -19,6 +19,7 @@
 #    11-Oct-2016 (CT) Creation (factor from GTW.Parameters)
 #    17-Jan-2017 (CT) Factor `M_Definition._setup_prop`
 #     1-Mar-2017 (CT) Add `Definition.__call__`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -115,7 +116,7 @@ class M_Definition (TFL.Meta.Object.__class__) :
 class Definition (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Definition)) :
     """Definition of parameters for media, i.e., CSS and JS, fragments.
 
-    >>> from _TFL.portable_repr  import portable_repr
+    >>> from _TFL.portable_repr  import print_prepr
 
     >>> class Defaults (Definition) :
     ...   foo = 1
@@ -147,7 +148,7 @@ class Definition (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Definition)) :
     (4, 8, 46)
     >>> D.nav_col.own_links.quz, E.nav_col.own_links.quz, F.nav_col.own_links.quz
     (0.5, 1.0, 1.5)
-    >>> print (portable_repr (D.nav_col.spec), portable_repr (E.nav_col.spec))
+    >>> print_prepr (D.nav_col.spec, E.nav_col.spec)
     {'a' : 42, 'border' : 'solid'} {'a' : 137, 'border' : 'solid'}
 
     """

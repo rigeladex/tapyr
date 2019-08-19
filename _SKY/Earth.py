@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -23,6 +23,7 @@
 #     9-Aug-2017 (CT) Use one argument `loc`, not two arguments `lat` and `lon`
 #                     + Use `loc.longitude_meuss`
 #    11-Aug-2017 (CT) Rename `solar_intensity` to `solar_irradiance`
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -42,7 +43,7 @@ import _SKY.Location
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.Angle                 import Angle_D, Angle_R
 from   _TFL.Decorator             import Attributed
-from   _TFL.portable_repr         import portable_repr
+from   _TFL.portable_repr         import portable_repr, print_prepr
 
 import _TFL._Meta.Object
 
@@ -216,7 +217,7 @@ class Time (TFL.Meta.Object) :
     ### Example 12.a of J. Meeus, p. 88
     >>> date = CAL.Date (1987, 4, 10)
     >>> xa   = Time (date)
-    >>> print (portable_repr (xa.t))
+    >>> print_prepr (xa.t)
     -0.127296372348
 
     >>> print (xa.mean_sidereal_time)
@@ -227,7 +228,7 @@ class Time (TFL.Meta.Object) :
     ### Example 12.b of J. Meeus, p. 89
     >>> dt  = CAL.Date_Time (1987, 4, 10, 19, 21, 0)
     >>> xb  = Time (dt)
-    >>> print (portable_repr (xb.t))
+    >>> print_prepr (xb.t)
     -0.127274298426
 
     >>> print (xb.mean_sidereal_time)
@@ -431,7 +432,7 @@ Example 22.a of J. Meeus, p.148
     >>> d     = CAL.Date_Time (1987, 4, 10)
     >>> time  = Time (d)
 
-    >>> print (portable_repr (time.t))
+    >>> print_prepr (time.t)
     -0.127296372348
 
     >>> time.geometric_mean_anomaly_sun

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
@@ -31,6 +31,7 @@
 #     1-Dec-2016 (CT) Factor `Units_Abs`, `Units_Abs_Abbr`, `Units_Delta`,
 #                     `Units_YD`
 #    11-Jul-2018 (CT) Adapt doctest to Python 3.7
+#    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ G8R provides globalizer objects for the names of months and weekdays and for
 calendary units. The globalizers translate strings in the currently selected
 language to the primary language (which often is english).
 
-    >>> from _TFL.portable_repr import portable_repr
+    >>> from _TFL.portable_repr import print_prepr
     >>> import _CAL.G8R
 
     >>> mr1 = "März-Mai"
@@ -110,15 +111,15 @@ language to the primary language (which often is english).
     de : Jan, März, Mai, Dez; Mo-Mi, Do, SO; 2t 30m --> jan, march, may, dec; mo-we, th, su; 2d 30m --> jän, märz, mai, dez; mo-mi, do, so; 2t 30m
 
     >>> with TFL.I18N.test_language ("de") :
-    ...    print (portable_repr (sorted (CAL.G8R.Months.keys)))
+    ...    print_prepr (sorted (CAL.G8R.Months.keys))
     ['Apr', 'April', 'Aug', 'August', 'Dec', 'December', 'Feb', 'February', 'Jan', 'January', 'Jul', 'July', 'Jun', 'June', 'Mar', 'March', 'May', 'Nov', 'November', 'Oct', 'October', 'Sep', 'September']
 
     >>> with TFL.I18N.test_language ("de") :
-    ...    print (portable_repr (sorted (CAL.G8R.Months.map.items ())))
+    ...    print_prepr (sorted (CAL.G8R.Months.map.items ()))
     [('Dez', 'Dec'), ('Dezember', 'December'), ('Feber', 'February'), ('Juli', 'July'), ('Juni', 'June'), ('J\xe4n', 'Jan'), ('J\xe4nner', 'January'), ('Mai', 'May'), ('M\xe4r', 'Mar'), ('M\xe4rz', 'March'), ('Okt', 'Oct'), ('Oktober', 'October')]
 
     >>> with TFL.I18N.test_language ("de") :
-    ...    print (portable_repr (sorted (CAL.G8R.Months.LC.map.items ())))
+    ...    print_prepr (sorted (CAL.G8R.Months.LC.map.items ()))
     [('dez', 'dec'), ('dezember', 'december'), ('feber', 'february'), ('juli', 'july'), ('juni', 'june'), ('j\xe4n', 'jan'), ('j\xe4nner', 'january'), ('mai', 'may'), ('m\xe4r', 'mar'), ('m\xe4rz', 'march'), ('okt', 'oct'), ('oktober', 'october')]
 
     >>> with TFL.I18N.test_language ("de") :
@@ -126,15 +127,15 @@ language to the primary language (which often is english).
     (?:\b|(?<=\d))(mikrosekunden|mikrosekunde|schalttage|wochentag|sekunden|jahrtag|minuten|quartal|sekunde|stunden|monate|stunde|wochen|jahre|monat|woche|jahr|tage|sek|tag|kw|j|t)(?:\b|(?=\d))
 
     >>> with TFL.I18N.test_language ("de") :
-    ...    print (portable_repr (sorted (CAL.G8R.Week_Days.keys)))
+    ...    print_prepr (sorted (CAL.G8R.Week_Days.keys))
     ['Fr', 'Fri', 'Friday', 'Mo', 'Mon', 'Monday', 'Sa', 'Sat', 'Saturday', 'Su', 'Sun', 'Sunday', 'Th', 'Thu', 'Thursday', 'Tu', 'Tue', 'Tuesday', 'We', 'Wed', 'Wednesday']
 
     >>> with TFL.I18N.test_language ("de") :
-    ...    print (portable_repr (sorted (CAL.G8R.Week_Days.map.items ())))
+    ...    print_prepr (sorted (CAL.G8R.Week_Days.map.items ()))
     [('Di', 'Tu'), ('Dienstag', 'Tuesday'), ('Do', 'Th'), ('Donnerstag', 'Thursday'), ('Fr', 'Fri'), ('Freitag', 'Friday'), ('Mi', 'We'), ('Mittwoch', 'Wednesday'), ('Mo', 'Mo'), ('Montag', 'Monday'), ('Sa', 'Sa'), ('Samstag', 'Saturday'), ('So', 'Su'), ('Sonntag', 'Sunday'), ('fr', 'Fr')]
 
     >>> with TFL.I18N.test_language ("de") :
-    ...    print (portable_repr (sorted (CAL.G8R.Week_Days.LC.map.items ())))
+    ...    print_prepr (sorted (CAL.G8R.Week_Days.LC.map.items ()))
     [('di', 'tu'), ('dienstag', 'tuesday'), ('do', 'th'), ('donnerstag', 'thursday'), ('fr', 'fr'), ('freitag', 'friday'), ('mi', 'we'), ('mittwoch', 'wednesday'), ('mo', 'mo'), ('montag', 'monday'), ('sa', 'sa'), ('samstag', 'saturday'), ('so', 'su'), ('sonntag', 'sunday')]
 
     >>> with TFL.I18N.test_language ("de") :
@@ -155,11 +156,11 @@ language to the primary language (which often is english).
     de : Wöchentlich --> weekly
 
     >>> with TFL.I18N.test_language ("de") :
-    ...     print (portable_repr (sorted (CAL.G8R.Recurrence_Units.map.items ())))
+    ...     print_prepr (sorted (CAL.G8R.Recurrence_Units.map.items ()))
     [('J\xe4hrlich', 'Yearly'), ('Monatlich', 'Monthly'), ('T\xe4glich', 'Daily'), ('W\xf6chentlich', 'Weekly')]
 
     >>> with TFL.I18N.test_language ("de") :
-    ...     print (portable_repr (sorted (CAL.G8R.Recurrence_Units.LC.map.items ())))
+    ...     print_prepr (sorted (CAL.G8R.Recurrence_Units.LC.map.items ()))
     [('j\xe4hrlich', 'yearly'), ('monatlich', 'monthly'), ('t\xe4glich', 'daily'), ('w\xf6chentlich', 'weekly')]
 
 """
