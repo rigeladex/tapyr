@@ -179,6 +179,7 @@
 #    19-Aug-2019 (CT) Make `_Msg_Part_._temp_body` Python 3 compatible
 #                     + Don't `encode` argument to `Filename`
 #                     + Open temp-file as binary, not text
+#    19-Aug-2019 (CT) Add `main_type`, `sub_type`
 #    ««revision-date»»···
 #--
 
@@ -459,6 +460,11 @@ class _Msg_Part_ (TFL.Meta.Object) :
     # end def filename
 
     @TFL.Meta.Once_Property
+    def main_type (self) :
+        return self.email.get_content_maintype ().lower ()
+    # end def main_type
+
+    @TFL.Meta.Once_Property
     def scope (self) :
         return Msg_Scope (self)
     # end def scope
@@ -467,6 +473,11 @@ class _Msg_Part_ (TFL.Meta.Object) :
     def subject (self) :
         return decoded_header (self.email ["subject"])
     # end def subject
+
+    @TFL.Meta.Once_Property
+    def sub_type (self) :
+        return self.email.get_content_subtype ().lower ()
+    # end def sub_type
 
     @TFL.Meta.Once_Property
     def type (self) :
@@ -1014,7 +1025,9 @@ def message_from_file (filename, parser = None) :
     with open (filename, "r") as fp :
         email = parser.parse (fp)
         email._pma_parsed_body = True
-    return PMA.Message (email, sos.path.split (filename) [-1])
+    result = PMA.Message (email, sos.path.split (filename) [-1])
+    result.path = filename
+    return result
 # end def message_from_file
 
 def messages_from_args (args, base_dirs) :
@@ -1079,7 +1092,7 @@ def _main (cmd) :
 _Command = TFL.CAO.Cmd \
     ( handler       = _main
     , args          =
-        ( "message:S?Message to print"
+        ( "message:S?Message(s) to print"
         ,
         )
     , opts          =
