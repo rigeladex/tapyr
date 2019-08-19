@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -78,6 +78,7 @@
 #    16-May-2012 (CT) Fix `abs_name`, `real_name`, `relative_to` for `Directory`
 #                     (result must NOT contain `base_ext`)
 #    10-Oct-2016 (CT) Fix doctest of `Dirname (__file__)`
+#    19-Aug-2019 (CT) Import `unicode_literals`, fix doctest accordingly
 #    ««revision-date»»···
 #--
 
@@ -87,9 +88,11 @@
 
 from   __future__                 import absolute_import, division
 from   __future__                 import print_function
+from   __future__                 import unicode_literals
 
 from   _TFL                       import TFL
 
+from   _TFL.portable_repr         import print_prepr
 from   _TFL.predicate             import *
 from   _TFL.pyk                   import pyk
 from   _TFL                       import sos
@@ -115,44 +118,44 @@ class Filename (TFL.Meta.Object) :
        For example:
 
        >>> f=Filename ("/a/b/c/d/e.f")
-       >>> f.name
+       >>> print_prepr (f.name)
        '/a/b/c/d/e.f'
-       >>> f.base
+       >>> print_prepr (f.base)
        'e'
-       >>> f.ext
+       >>> print_prepr (f.ext)
        '.f'
-       >>> f.directory
+       >>> print_prepr (f.directory)
        '/a/b/c/d'
-       >>> f.base_ext
+       >>> print_prepr (f.base_ext)
        'e.f'
        >>>
 
        >>> f=Filename ("spam.py")
-       >>> f.name
+       >>> print_prepr (f.name)
        'spam.py'
        >>> f=Filename ("spam", ".py")
-       >>> f.name
+       >>> print_prepr (f.name)
        'spam.py'
        >>> f=Filename ("spam.py", ".pyo")
-       >>> f.name
+       >>> print_prepr (f.name)
        'spam.py'
        >>> f=Filename (".pyo", "spam.py")
-       >>> f.name
+       >>> print_prepr (f.name)
        'spam.pyo'
        >>> f=Filename ("spam.py", "/usr/local/src")
-       >>> f.name
+       >>> print_prepr (f.name)
        '/usr/local/spam.py'
        >>> f=Filename ("spam.py", "/usr/local/src/")
-       >>> f.name
+       >>> print_prepr (f.name)
        '/usr/local/src/spam.py'
        >>> f=Filename (".pyo", "spam.py", "/usr/local/src/")
-       >>> f.name
+       >>> print_prepr (f.name)
        '/usr/local/src/spam.pyo'
        >>> f=Filename ("../spam.py", "/usr/local/src/")
-       >>> f.name
+       >>> print_prepr (f.name)
        '../spam.py'
        >>> f=Filename ("spam.py", default_dir = "/usr/local/src")
-       >>> f.name
+       >>> print_prepr (f.name)
        '/usr/local/src/spam.py'
        >>> f=Filename ("spam.py")
        >>> f.directory == sos.getcwd ()
@@ -161,7 +164,7 @@ class Filename (TFL.Meta.Object) :
        >>> f.directory == sos.getcwd ()
        1
        >>> f=Filename ("../spam.py", "/usr/local/src/", default_rel=1)
-       >>> f.name
+       >>> print_prepr (f.name)
        '/usr/local/spam.py'
     """
 
@@ -305,9 +308,9 @@ class Filename (TFL.Meta.Object) :
 
            >>> f=Filename ("/a/b/c/xxx.x")
            >>> g=Filename ("/a/b/d/yyy.y")
-           >>> f.relative_to (g)
+           >>> print_prepr (f.relative_to (g))
            '../c/xxx.x'
-           >>> g.relative_to (f)
+           >>> print_prepr (g.relative_to (f))
            '../d/yyy.y'
         """
         if not other :
@@ -410,11 +413,11 @@ class Dirname (Filename) :
         >>> g=Dirname ('p/xyz.ddb')
         >>> g
         Dirname (p/xyz.ddb/)
-        >>> g.base_ext
+        >>> print_prepr (g.base_ext)
         'xyz.ddb'
-        >>> g.base
+        >>> print_prepr (g.base)
         'xyz.ddb'
-        >>> g.ext
+        >>> print_prepr (g.ext)
         ''
         >>> g = Dirname (__file__)
         >>> g.name.endswith ('/_TFL/') or g.name == "./"

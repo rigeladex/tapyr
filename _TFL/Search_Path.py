@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,11 +17,13 @@
 # Revision Dates
 #    10-Sep-2009 (CT) Creation
 #    11-Sep-2009 (CT) `expand_iter` factored
+#    19-Aug-2019 (CT) Fix doctest (`Filename` import unicode_literals)
 #    ««revision-date»»···
 #--
 
-from   _TFL           import TFL
-from   _TFL           import sos
+from   _TFL                       import TFL
+from   _TFL                       import sos
+from   _TFL.portable_repr         import print_prepr
 
 import _TFL._Meta.Object
 import _TFL.Filename
@@ -39,26 +41,26 @@ class Search_Path (TFL.Meta.Object) :
        ...         print (exc)
 
        >>> sp = Search_Path ("/a", "/b", "/c")
-       >>> sp.find ("x", lambda z : z.startswith ("/a"))
+       >>> print_prepr (sp.find ("x", lambda z : z.startswith ("/a")))
        '/a/x'
-       >>> sp.find ("x", lambda z : z.startswith ("/b"))
+       >>> print_prepr (sp.find ("x", lambda z : z.startswith ("/b")))
        '/b/x'
-       >>> sp.find ("x", lambda z : z.startswith ("/c"))
+       >>> print_prepr (sp.find ("x", lambda z : z.startswith ("/c")))
        '/c/x'
-       >>> sp.find ("x/y", lambda z : z.startswith ("/c"))
+       >>> print_prepr (sp.find ("x/y", lambda z : z.startswith ("/c")))
        '/c/x/y'
        >>> with expect_except (IOError) :
        ...     sp.find ("/x/y", lambda z : z.startswith ("/c"))
        [Errno 2] No such file '/x/y' in search path '/a/:/b/:/c/'
-       >>> sp.find ("x/y", lambda z : True)
+       >>> print_prepr (sp.find ("x/y", lambda z : True))
        '/a/x/y'
-       >>> list (sp.find_iter ("x/y", lambda z : True))
+       >>> print_prepr (list (sp.find_iter ("x/y", lambda z : True)))
        ['/a/x/y', '/b/x/y', '/c/x/y']
-       >>> list (sp.find_iter ("x/y", lambda z : z.startswith ("/a")))
+       >>> print_prepr (list (sp.find_iter ("x/y", lambda z : z.startswith ("/a"))))
        ['/a/x/y']
-       >>> list (sp.find_iter ("x/y", lambda z : z.startswith ("/b")))
+       >>> print_prepr (list (sp.find_iter ("x/y", lambda z : z.startswith ("/b"))))
        ['/b/x/y']
-       >>> list (sp.find_iter ("x/y", lambda z : z.startswith ("/c")))
+       >>> print_prepr (list (sp.find_iter ("x/y", lambda z : z.startswith ("/c"))))
        ['/c/x/y']
     """
 
