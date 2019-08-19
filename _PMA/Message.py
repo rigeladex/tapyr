@@ -180,6 +180,7 @@
 #                     + Don't `encode` argument to `Filename`
 #                     + Open temp-file as binary, not text
 #    19-Aug-2019 (CT) Add `main_type`, `sub_type`
+#    19-Aug-2019 (CT) Add `PMA.msg_base_dirs`
 #    ««revision-date»»···
 #--
 
@@ -1066,7 +1067,8 @@ def formatted (msg, encoding = "utf-8", body_only = False) :
 def _main (cmd) :
     PMA.default_encoding = encoding = \
         "iso8859-1" if cmd.Print else pyk.user_config.output_encoding
-    for msg in messages_from_args (cmd.argv, cmd.msg_base_dirs) :
+    msg_base_dirs = cmd.msg_base_dirs or PMA.msg_base_dirs
+    for msg in messages_from_args (cmd.argv, msg_base_dirs) :
         txt = formatted (msg, encoding = encoding)
         if cmd.Print :
             from plumbum  import local as pbl

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,6 +34,7 @@
 #    15-Aug-2015 (CT) Use `@eval_function_body` for scoped setup code
 #    29-Oct-2015 (CT) Use `utf-8`, not `ascii`, as default `default_encoding`
 #     9-Oct-2016 (CT) Remove dependency on `TGL`
+#    19-Aug-2019 (CT) Add `msg_base_dirs`
 #    ««revision-date»»···
 #--
 
@@ -61,5 +62,6 @@ def _setup_PMA_properties () :
     PMA.file_system_encoding = sys.getfilesystemencoding ()
     PMA.text_output_width    = 75
     PMA.load_user_config     = load_user_config
+    PMA.msg_base_dirs        = []
 
 ### __END__ PMA.__init__
