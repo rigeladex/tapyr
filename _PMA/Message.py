@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2018 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -176,6 +176,9 @@
 #    17-Jul-2018 (CT) Fix Python 3 encoding issues
 #                     + Open files in text, not binary mode
 #                     + Use `pyk.fprint`, not `print`, for `text`, not `bytes`
+#    19-Aug-2019 (CT) Make `_Msg_Part_._temp_body` Python 3 compatible
+#                     + Don't `encode` argument to `Filename`
+#                     + Open temp-file as binary, not text
 #    ««revision-date»»···
 #--
 
@@ -530,11 +533,8 @@ class _Msg_Part_ (TFL.Meta.Object) :
 
     def _temp_body (self) :
         if self._tfn is None or not sos.path.isfile (self._tfn) :
-            dir = TFL.Filename \
-                ( (self.filename or "").encode
-                    (PMA.file_system_encoding, "ignore")
-                ).directory
-            with TFL.open_tempfile (dir = dir, auto_remove = False) as \
+            dir = TFL.Filename (self.filename or "").directory
+            with TFL.open_tempfile ("wb", dir = dir, auto_remove = False) as \
                      (f, result) :
                 f.write (self.body)
                 self._tfn = result
