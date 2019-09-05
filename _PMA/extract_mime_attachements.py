@@ -15,6 +15,7 @@
 #
 # Revision Dates
 #    19-Aug-2019 (CT) Creation
+#     5-Sep-2019 (CT) Don't change `part_indices` in `extract_mime_attachements`
 #    ««revision-date»»···
 #--
 
@@ -47,9 +48,8 @@ def extract_mime_attachements \
         ) :
     if def_ext and not def_ext.startswith (".") :
         def_ext    = "." + def_ext
-    if not part_indices :
-        part_indices   = pyk.range (len (msg.parts))
-    for i in part_indices :
+    pis = part_indices if part_indices else pyk.range (len (msg.parts))
+    for i in pis :
         p          = msg.parts [i]
         specified  = (not ignore (p.content_type)) and \
             (  main_type (p.main_type)
