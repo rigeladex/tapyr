@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -41,6 +41,8 @@
 #                     * Use pyk.email_message_from_bytes
 #                     * Call `encoders.encode_7or8bit` to ensure a proper
 #                       setting of "Content-Transfer-Encoding"
+#    17-Sep-2019 (CT) Work around more Python-3 bugs
+#                     * Factor `_addresses_from_header`
 #    ««revision-date»»···
 #--
 
@@ -184,11 +186,11 @@ class SMTP (TFL.Meta.Object) :
         if envelope is None :
             envelope = email
         to_addrs = envelope ["To"]
-        to       = set (t.strip () for t in to_addrs.split (","))
+        to       = set (self._addresses_from_header (to_addrs))
         for k in "cc", "bcc", "dcc" :
             for h in envelope.get_all (k, []) :
                 if h :
-                    to.update (t.strip () for t in h.split (","))
+                    to.update (self._addresses_from_header (h))
             if k != "cc" :
                 del email [k]
         if "Date" not in email :
@@ -215,6 +217,35 @@ class SMTP (TFL.Meta.Object) :
             , mail_opts, rcpt_opts
             )
     # end def send_message
+
+    def _addresses_from_header (self, addrs) :
+        ### Unfortunately, the `email` package is a fucking mess of
+        ### incompatibilities between various Python versions and
+        ### **badly documented** on top
+        ###
+        ### * Python 2 returns strings for address headers, e.g., `To`, `cc`
+        ### * Python 3 returns objects for address headers, but which type of
+        ###   object isn't documented, except for
+        ###       `the returned value is an instance of a subclass of
+        ###       email.headerregistry.BaseHeader.`
+        ###   - I'd have guessed, the returned object type to be
+        ###       `email.headerregistry.AddressHeader` or
+        ###       `.SingleAddressHeader`
+        ###     but python3.6 then died with::
+        ###       'Header' object has no attribute 'addresses'
+        try :
+            splitter = addrs.split
+        except AttributeError :
+            try :
+                results = addrs.addresses
+            except AttributeError :
+                results = [pyk.as_str (addrs)]
+            else :
+                results = list (pyk.as_str (r) for r in addrs.addresses)
+        else :
+            results = list (r.strip ()     for r in splitter (","))
+        return results
+    # end def _addresses_from_header
 
 # end class SMTP
 
