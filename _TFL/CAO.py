@@ -159,6 +159,10 @@
 #                       read from config files were ignored
 #    13-Aug-2019 (CT) Change `Cmd.cao` to `raise SystemExit` if error
 #    19-Aug-2019 (CT) Use `print_prepr`
+#    24-Nov-2019 (CT) Improve Python-3 compatibility
+#                     + Compare `raw`, not `e_raw`, to `""` to avoid
+#                       `UnicodeWarning` from `_help_value`
+#                     + Use `==` not `is` in `_resolve_range_1` (Py 3.8 warning)
 #    ««revision-date»»···
 #--
 
@@ -1208,7 +1212,7 @@ class Help (_Spec_O_) :
         if raw is None or raw == [] :
             raw = ao.raw_default (cao)
         e_raw   = pyk.encoded    (raw)
-        if e_raw == "" :
+        if raw == "" :
             raw = None
         try :
             cooked = cao [ao.name]
@@ -1388,7 +1392,7 @@ class Abs_Path (Path) :
     # end def cook
 
     def _resolve_range_1 (self, value, cao) :
-        yield value if value is "-" else sos.path.abspath (value)
+        yield value if value == "-" else sos.path.abspath (value)
     # end def _resolve_range_1
 
 # end class Abs_Path
