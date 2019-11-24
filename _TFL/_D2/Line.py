@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -25,6 +25,8 @@
 #    20-Aug-2012 (CT) Sort methods alphabetically
 #    21-Aug-2012 (CT) Add `__iter__`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    24-Nov-2019 (CT) Fix typo in `Normal_Form.__repr__` (Py 3.8 warning)
+#                     + `%` operator was missing between format string and tuple
 #    ««revision-date»»···
 #--
 
@@ -63,7 +65,7 @@ class Normal_Form (TFL.Meta.Object) :
     # end def intersection
 
     def __repr__ (self) :
-        return "%s %r" (self.__class__.__name__, self.line)
+        return "%s %r" % (self.__class__.__name__, self.line)
     # end def __repr__
 
     def __str__ (self) :
