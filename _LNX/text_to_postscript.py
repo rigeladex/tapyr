@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -23,6 +23,8 @@
 #     5-Nov-2018 (CT) Add option `-PDF`
 #                     + Factor `_check_print`, `_output_option`
 #                     + Improve Python-3 compatibility
+#    24-Nov-2019 (CT) Add `_header_encode_map` with german Umlaute
+#                     + Apply `_header_encode_rep` to `header`
 #    ««revision-date»»···
 #--
 
@@ -50,7 +52,7 @@ from   plumbum                 import local as pbl
 import sys
 import time
 
-_encode_map = \
+_encode_map        = \
     { "€"   : "EUR"
     , "­"   : "-"
     , "–"   : "--"
@@ -58,8 +60,27 @@ _encode_map = \
     , "×"   : "*"
     , "÷"   : "/"
     , "±"   :"+/-"
+    , "Ä"   : "Ae"
+    , "Ö"   : "Oe"
+    , "Ü"   : "Ue"
+    , "ä"   : "ae"
+    , "ö"   : "oe"
+    , "ü"   : "ue"
+    , "ß"   : "ss"
     }
-_encode_rep = Dict_Replacer (_encode_map)
+_header_encode_map = dict \
+    ( _encode_map
+    , ** { "Ä"   : "Ae"
+         , "Ö"   : "Oe"
+         , "Ü"   : "Ue"
+         , "ä"   : "ae"
+         , "ö"   : "oe"
+         , "ü"   : "ue"
+         , "ß"   : "ss"
+         }
+    )
+_encode_rep        = Dict_Replacer (_encode_map)
+_header_encode_rep = Dict_Replacer (_header_encode_map)
 
 class _TTP_Sub_Command_ (TFL.Command.Sub_Command) :
 
@@ -90,6 +111,8 @@ class _TTP_Sub_Command_ (TFL.Command.Sub_Command) :
                     x = file_name
                 elif x == "$t" :
                     x = now
+                elif x != ":" :
+                    x = _header_encode_rep (x)
                 yield x
         l, m, r = tuple (_gen (l, m, r, file_name, file_time))
         return \
