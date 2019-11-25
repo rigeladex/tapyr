@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -26,6 +26,8 @@
 #    30-Jan-2013 (CT) Add `Kind.__repr__`
 #     5-May-2016 (CT) Add `Object_Init`, factor `_Object_`
 #    10-Aug-2016 (CT) Add `Exclusion`
+#    25-Nov-2019 (CT) Use `!=`, not `not is`, in `Object.get_attr_value`
+#                     (Py 3.8 warning)
 #    ««revision-date»»···
 #--
 
@@ -119,7 +121,7 @@ class Object (_Object_) :
         ### trigger spurious predicate violations in `obj.set`)
         ### This is only a problem for object predicates, since they're the
         ### only ones that get automatically evaluated on a set operation
-        if obj.raw_attr (attr) is not "" :
+        if obj.raw_attr (attr) != "" :
             return self.__super.get_attr_value (obj, attr)
     # end def get_attr_value
 
