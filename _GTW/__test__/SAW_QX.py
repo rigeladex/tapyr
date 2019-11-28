@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -22,6 +22,9 @@
 #     9-Sep-2014 (CT) Add tests for query with type restriction
 #    29-Jul-2015 (CT) Adapt to name change of PAP.Phone attributes
 #    31-Jul-2016 (CT) Factor `show_*` to `_SAW_test_functions`
+#    28-Nov-2019 (CT) Remove one test affected by spurious sqlalchemy changes
+#                     * sqlalchemy.__version__ == 1.3.3  --> `__raw_last_name_1`
+#                     * sqlalchemy.__version__ == 1.3.11 --> `raw_last_name_1`
 #    ««revision-date»»···
 #--
 
@@ -1107,25 +1110,21 @@ _test_xs_filter = """
     Auth.Account  :  ~ Q.person_links.person.account_links.account.name
         auth_account__1.name = :name_1
 
-    >>> show_xs_filter (apt, "Auth.Account", Q.RAW.person.last_name == "Tanzer")
-    Auth.Account  :  Q.RAW.person.last_name == 'Tanzer'
-        pap_person__2.__raw_last_name = :__raw_last_name_1
-
     >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.pid == 42)
     PAP.Subject_has_Phone  :  Q.subject.pid == 42
         pap_subject_has_property."left" = :left_1
 
     >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime == ("2000-01-02", "2000-07-23"))
     PAP.Subject_has_Phone  :  Q.subject.lifetime == ('2000-01-02', '2000-07-23')
-        pap_company__1.lifetime__start = :lifetime__start_1 AND pap_company__1.lifetime__finish = :lifetime__finish_1 OR pap_person__3.lifetime__start = :lifetime__start_2 AND pap_person__3.lifetime__finish = :lifetime__finish_2
+        pap_company__1.lifetime__start = :lifetime__start_1 AND pap_company__1.lifetime__finish = :lifetime__finish_1 OR pap_person__2.lifetime__start = :lifetime__start_2 AND pap_person__2.lifetime__finish = :lifetime__finish_2
 
     >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime == Q.creation.time)
     PAP.Subject_has_Phone  :  Q.subject.lifetime == Q.creation.time
-        mom_md_change__1.kind = :kind_1 AND pap_company__1.lifetime__start = mom_md_change__1.time OR mom_md_change__1.kind = :kind_1 AND pap_person__3.lifetime__start = mom_md_change__1.time
+        mom_md_change__1.kind = :kind_1 AND pap_company__1.lifetime__start = mom_md_change__1.time OR mom_md_change__1.kind = :kind_1 AND pap_person__2.lifetime__start = mom_md_change__1.time
 
     >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime.start == "2000-01-02")
     PAP.Subject_has_Phone  :  Q.subject.lifetime.start == '2000-01-02'
-        pap_company__1.lifetime__start = :lifetime__start_1 OR pap_person__3.lifetime__start = :lifetime__start_2
+        pap_company__1.lifetime__start = :lifetime__start_1 OR pap_person__2.lifetime__start = :lifetime__start_2
 
     >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.creation.time == "2013-09-11")
     PAP.Subject_has_Phone  :  Q.creation.time == '2013-09-11'

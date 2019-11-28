@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -47,6 +47,7 @@
 #    19-Mar-2018 (CT) Use `show_query`, not `print` (sqlalchemy changes)
 #    20-Mar-2018 (CT) Use `show_query_xqpi` (sqlalchemy changes)
 #    17-Apr-2018 (CT) Remove spurious `strftime_1` parameter from `show_query`
+#    28-Nov-2019 (CT) Use `show_query_xqpi` in more places (sqlalchemy changes)
 #    ««revision-date»»···
 #--
 
@@ -4984,7 +4985,7 @@ _test_q_result = """
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
          ORDER BY pap_person.last_name, pap_person.first_name, pap_person.middle_name, pap_person.title
 
-    >>> show_query (qrt.filter (Q.RAW.last_name == "Tanzer")) ### PAP.Person
+    >>> show_query_xqpi (qrt.filter (Q.RAW.last_name == "Tanzer")) ### PAP.Person
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5005,11 +5006,9 @@ _test_q_result = """
            pap_person.title AS pap_person_title
          FROM mom_id_entity
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
-          WHERE pap_person.__raw_last_name = :__raw_last_name_1
-    Parameters:
-         __raw_last_name_1    : 'Tanzer'
+          WHERE pap_person.__raw_last_name = <$QP: 'Tanzer'>
 
-    >>> show_query (qrt.filter ((Q.RAW.title.STARTSWITH ("D")))) ### PAP.Person
+    >>> show_query_xqpi (qrt.filter ((Q.RAW.title.STARTSWITH ("D")))) ### PAP.Person
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5030,9 +5029,7 @@ _test_q_result = """
            pap_person.title AS pap_person_title
          FROM mom_id_entity
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
-         WHERE (pap_person.__raw_title LIKE :__raw_title_1 || '%%%%')
-    Parameters:
-         __raw_title_1        : 'D'
+         WHERE (pap_person.__raw_title LIKE <$QP: 'D'> || '%%%%')
 
     >>> show_query_xqpi (qrt.filter (Q.RAW.title.STARTSWITH ("D")).attrs (Q.title, Q.SUM (1))) ### PAP.Person
     SQL: SELECT DISTINCT
@@ -6409,7 +6406,7 @@ _test_q_result = """
     >>> str (qrt.filter (Q.RAW.person.lifetime == ("2013-07-15", ))) == str (qrt.filter (Q.person.lifetime == ("2013-07-15", ))) ### Auth.Account
     True
 
-    >>> show_query (qrt.filter (Q.RAW.person.last_name == "Tanzer")) ### Auth.Account # doctest:+ELLIPSIS
+    >>> show_query_xqpi (qrt.filter (Q.RAW.person.last_name == "Tanzer")) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
            auth_account.enabled AS auth_account_enabled,
            auth_account.name AS auth_account_name,
@@ -6427,9 +6424,7 @@ _test_q_result = """
            JOIN auth_account ON mom_id_entity.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
-         WHERE pap_person__3.__raw_last_name = :__raw_last_name_1
-    Parameters:
-         __raw_last_name_1    : 'Tanzer'
+         WHERE pap_person__3.__raw_last_name = <$QP: 'Tanzer'>
 
     >>> show_query (qrt.filter (Q.person.last_name == "tanzer")) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
@@ -7362,7 +7357,7 @@ _test_q_result = """
     Parameters:
          last_name_1          : ''
 
-    >>> show_query (qrs.filter (Q.left["PAP.Person"].last_name.RAW == "Duck")) ### PAP.Subject_has_Property
+    >>> show_query_xqpi (qrs.filter (Q.left["PAP.Person"].last_name.RAW == "Duck")) ### PAP.Subject_has_Property
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -7379,9 +7374,7 @@ _test_q_result = """
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
            LEFT OUTER JOIN pap_person ON pap_person.pid = pap_subject_has_property."left"
-         WHERE pap_person.__raw_last_name = :__raw_last_name_1
-    Parameters:
-         __raw_last_name_1    : 'Duck'
+         WHERE pap_person.__raw_last_name = <$QP: 'Duck'>
 
     >>> show_query (qrs.filter (Q.left["PAP.Legal_Entity"])) ### PAP.Subject_has_Property
     SQL: SELECT
