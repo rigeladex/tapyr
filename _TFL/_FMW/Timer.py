@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,14 +17,18 @@
 #
 # Revision Dates
 #    22-Sep-2004 (CT) Creation
+#     4-Dec-2019 (CT) Use `timeit.default_timer`, not `time.clock`
+#                     * Py3.8 compatibility
 #    ««revision-date»»···
 #--
 
-from   _TFL                   import TFL
+from   _TFL                       import TFL
+
 import _TFL._FMW.Recorder
 import _TFL._FMW.Wrapper
 
 import time
+import timeit
 
 class Time_Recorder_F (TFL.FMW.File_Recorder) :
     """Record execution time measurements into a file"""
@@ -44,10 +48,11 @@ class Time_Measurer (TFL.FMW.Wrapped_Recorder) :
     Default_Recorder = Time_Recorder_F
 
     def __call__ (self, * args, ** kw) :
-        start_clock = time.clock ()
+        clock       = timeit.default_timer
+        start_clock = clock      ()
         start_time  = time.time  ()
         result      = self.fct   (* args, ** kw)
-        end_clock   = time.clock ()
+        end_clock   = clock      ()
         end_time    = time.time  ()
         self.recorder.record \
             ( wrapper = self
