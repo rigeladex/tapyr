@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -49,6 +49,8 @@
 #    31-Mar-2014 (CT) Use `print` in doctest of `context` (3-compatibility)
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    11-Feb-2016 (CT) Add `test_language`
+#     9-Dec-2019 (CT) Change `decode` to use `pyk.decoded`, not home-grown code
+#                     * Python 3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -158,10 +160,9 @@ def context (* lang) :
         Config.current, Config.choice = old
 # end def context
 
-def decode (s, errors = "replace") :
+def decode (s) :
     """Decode `s` using `TFL.user_config.input_encoding`."""
-    if isinstance (s, str) :
-        s = pyk.text_type (s, TFL.user_config.input_encoding, errors)
+    s = pyk.decoded (s, TFL.user_config.input_encoding)
     return s
 # end def decode
 
