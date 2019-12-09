@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -23,6 +23,7 @@
 #    16-Sep-2015 (CT) Factor and DRY `render` (use `graph.render_to`)
 #    16-Sep-2015 (CT) Factor `import_default`
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
+#     9-Dec-2019 (CT) Use `"w"`, not `"wb"`, for `open` (Py3 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -122,7 +123,7 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
     @TFL.Contextmanager
     def open (self, cao, ext) :
         fn = self.file_name (cao, ext)
-        with open (fn, "wb") as f :
+        with open (fn, "w") as f :
             yield f
     # end def open
 
