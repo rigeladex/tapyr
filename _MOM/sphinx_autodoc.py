@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2019 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -22,6 +22,10 @@
 #    13-Nov-2015 (CT) Pass explicit `key` to `sorted`
 #    10-Dec-2015 (CT) Redefine `MOM_Attr_Type_Documenter._extra_doc`
 #    11-Dec-2015 (CT) Add `Choices` to `_e_type_attr`
+#     9-Dec-2019 (CT) Adapt to Sphinx 2.0
+#                     + Use `sphinx.locale._`, not `...l_`
+#                     + Use `add_autodoc_attrgetter`, not
+#                       `AutoDirective._special_attrgetters`
 #    ««revision-date»»···
 #--
 
@@ -42,7 +46,7 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL.sphinx_autodoc
 
-import sphinx.ext.autodoc
+import sphinx.locale
 from   sphinx.ext               import autodoc
 
 @eval_function_body
@@ -50,7 +54,8 @@ def _add_to_python_domain () :
     from sphinx.domains import python
     D = python.PythonDomain
     D.object_types.update \
-        ( predicate = python.ObjType (python.l_('predicate'), 'pred', 'obj')
+        ( predicate = python.ObjType
+            (sphinx.locale._ ('predicate'), 'pred', 'obj')
         )
     D.directives.update \
         ( predicate = python.PyClassmember
@@ -649,8 +654,8 @@ class MOM_Attr_Type_Documenter (TFL.sphinx_autodoc.Class_Documenter) :
 # end class MOM_Attr_Type_Documenter
 
 def setup (app):
-    autodoc.AutoDirective._special_attrgetters \
-        [MOM.Meta.M_E_Mixin] = E_Type_Mapper.autodoc_special_attr_getter
+    app.add_autodoc_attrgetter \
+        (MOM.Meta.M_E_Mixin, E_Type_Mapper.autodoc_special_attr_getter)
     return {'version': "0.7", 'parallel_read_safe': True}
 # end def setup
 
