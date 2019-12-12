@@ -181,6 +181,7 @@
 #                     + Open temp-file as binary, not text
 #    19-Aug-2019 (CT) Add `main_type`, `sub_type`
 #    19-Aug-2019 (CT) Add `PMA.msg_base_dirs`
+#    12-Dec-2019 (CT) Use mode `wb` for `open_tempfile` (Py3 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -1075,7 +1076,7 @@ def _main (cmd) :
             from _TFL.FCM import open_tempfile
             subject = msg.scope.subject
             pbl.env ["LC_ALL"] = "en_US.%s" % encoding.replace ("-", "")
-            with open_tempfile () as (file, temp_name) :
+            with open_tempfile ("wb") as (file, temp_name) :
                 file.write (txt)
                 file.close ()
                 a2ps = pbl ["a2ps"] \
