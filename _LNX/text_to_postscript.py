@@ -25,6 +25,7 @@
 #                     + Improve Python-3 compatibility
 #    24-Nov-2019 (CT) Add `_header_encode_map` with german Umlaute
 #                     + Apply `_header_encode_rep` to `header`
+#    13-Dec-2019 (CT) Fix typo
 #    ««revision-date»»···
 #--
 
@@ -364,7 +365,7 @@ class TTP_Command (TFL.Command.Root_Command) :
 Command = TTP_Command # end class
 
 if __name__ != "__main__" :
-    GTW._Export_Module ()
+    LNX._Export_Module ()
 if __name__ == "__main__" :
     Command () ()
-### __END__ text_to_postscript
+### __END__ LNX.text_to_postscript
