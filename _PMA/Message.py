@@ -182,6 +182,8 @@
 #    19-Aug-2019 (CT) Add `main_type`, `sub_type`
 #    19-Aug-2019 (CT) Add `PMA.msg_base_dirs`
 #    12-Dec-2019 (CT) Use mode `wb` for `open_tempfile` (Py3 compatibility)
+#    13-Dec-2019 (CT) Use `LNX.text_to_postscript._header_encode_rep`
+#                     * `a2ps` coughs on Unicode
 #    ««revision-date»»···
 #--
 
@@ -193,6 +195,9 @@ from   __future__  import unicode_literals
 from   _TFL                    import TFL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
+from   _LNX                    import LNX
+
+import _LNX.text_to_postscript
 
 import _PMA.Mailcap
 import _PMA.Msg_Status
@@ -1075,13 +1080,14 @@ def _main (cmd) :
             from plumbum  import local as pbl
             from _TFL.FCM import open_tempfile
             subject = msg.scope.subject
+            sh      = LNX.text_to_postscript._header_encode_rep (subject)
             pbl.env ["LC_ALL"] = "en_US.%s" % encoding.replace ("-", "")
             with open_tempfile ("wb") as (file, temp_name) :
                 file.write (txt)
                 file.close ()
                 a2ps = pbl ["a2ps"] \
                     [ "-s", "-8", "-nL", "-nu", "-nS"
-                    , pyk.encoded ("-H%s" % (subject, ), encoding)
+                    , "-H%s" % (sh, )
                     , "-P%s" % (cmd.printer_name, )
                     , temp_name
                     ]
