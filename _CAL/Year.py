@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2019 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -74,6 +74,7 @@
 #                     definitions
 #    16-Dec-2016 (CT) Add property `Day.Week`
 #     5-Jan-2017 (CT) Fix doctest of `Quarter` (explicit `Year (2016)`!)
+#    22-Dec-2019 (CT) Use list comprehension, not `map` (Python 3 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -205,7 +206,7 @@ class Day (_Ordinal_) :
                 , holi
                 )
               ]
-            + (map (str, self.appointments) or [""])
+            + [str (a) for a in self.appointments or [""]]
             )
     # end def as_plan
 
