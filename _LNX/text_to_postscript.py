@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -26,6 +26,7 @@
 #    24-Nov-2019 (CT) Add `_header_encode_map` with german Umlaute
 #                     + Apply `_header_encode_rep` to `header`
 #    13-Dec-2019 (CT) Fix typo
+#     5-Jan-2020 (CT) Use `pyk.decoded`, not `str.decode` (Py-3 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -315,9 +316,9 @@ class TTP_Command (TFL.Command.Root_Command) :
                 fn        = Filename (arg).relative_to ("~/")
                 with open (arg, "rb") as fi :
                     txt_in = fi.read ()
-            txt     = txt_in.decode       (i_enc).lstrip ("\n").rstrip ()
-            ft      = time.strftime       (time_format, file_time)
-            txt_out = self._encoded       (txt, o_enc)
+            txt     = pyk.decoded    (txt_in, i_enc).lstrip ("\n").rstrip ()
+            ft      = time.strftime  (time_format, file_time)
+            txt_out = self._encoded  (txt, o_enc)
             out_opt = self._output_option (cmd)
             options = self._pbl_options   (* sub.options (cmd, fn, ft, out_opt))
             pbl_cmd = sub.pbl_cmd.__getitem__ (options)
