@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2018 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -177,6 +177,7 @@
 #     7-Jun-2017 (CT)  Adapt `rounded_down` to `0 < granularity < 1`
 #                      + ditto for `rounded_up`
 #    30-Nov-2018 (CT) Add `is_int`
+#     9-Feb-2020 (CT) Add `a5m`
 #    ««revision-date»»···
 #--
 
@@ -195,6 +196,16 @@ dict_from_list   = dict.fromkeys
 enumerate_slice  = TFL.enumerate_slice
 pairwise         = TFL.pairwise
 window_wise      = TFL.window_wise
+
+def a5m (s) :
+    """Returns acronym built from first and last letters and number of chars between.
+
+    >>> print (a5m ("acronym"))
+    a5m
+    """
+    l = len (s)
+    return "%s%s%s" % (s [0], l - 2, s [-1]) if l > 3 else s
+# end def a5m
 
 def all_true (seq) :
     """Returns True if all elements of `seq` are true,
