@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2016-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria.
 # Web: http://www.c-tanzer.at/en/ Email: tanzer@swing.co.at
 # All rights reserved
@@ -21,6 +21,7 @@
 #    13-Oct-2016 (CT) Use `find_packages`, `_TFL.fs_find`, not home-grown code
 #    22-Feb-2017 (CT) Use `TFL_STP`, not home-grown code
 #    27-Feb-2017 (CT) Add Python 3.6 to `classifiers`
+#    25-Mar-2020 (CT) Restrict versions to Python-2 compatibility
 #    ««revision-date»»···
 #--
 
@@ -61,17 +62,13 @@ if __name__ == "__main__" :
         , "License :: OSI Approved :: " + license
         , "Operating System :: OS Independent"
         , "Programming Language :: Python"
-        , "Programming Language :: Python :: 2"
-        , "Programming Language :: Python :: 2.7"
-        , "Programming Language :: Python :: 3"
-        , "Programming Language :: Python :: 3.5"
-        , "Programming Language :: Python :: 3.6"
         , "Intended Audience :: Developers"
         , "Topic :: Software Development :: Libraries :: Python Modules"
         ]
-    , setup_requires       = ["TFL_STP"]
+    , python_requires      = "<3"
+    , setup_requires       = ["TFL_STP<3"]
     , install_requires     =
-        ["TFL", "CAL", "babel", "python-dateutil", "sqlalchemy"]
+        ["TFL<3", "CAL<3", "babel", "python-dateutil", "sqlalchemy"]
     , extras_require       = dict
         ( bcrypt               = ["bcrypt"]
         , deploy               = ["plumbum"]

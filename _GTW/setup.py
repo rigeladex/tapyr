@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2016-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria.
 # Web: http://www.c-tanzer.at/en/ Email: tanzer@swing.co.at
 # All rights reserved
@@ -22,6 +22,7 @@
 #    22-Feb-2017 (CT) Use `TFL_STP`, not home-grown code
 #    25-Feb-2017 (CT) Pass `data_dirs` to `packages_plus_data_files`
 #    27-Feb-2017 (CT) Add Python 3.6 to `classifiers`
+#    25-Mar-2020 (CT) Restrict versions to Python-2 compatibility
 #    ««revision-date»»···
 #--
 
@@ -64,20 +65,16 @@ if __name__ == "__main__" :
         , "License :: OSI Approved :: " + license
         , "Operating System :: OS Independent"
         , "Programming Language :: Python"
-        , "Programming Language :: Python :: 2"
-        , "Programming Language :: Python :: 2.7"
-        , "Programming Language :: Python :: 3"
-        , "Programming Language :: Python :: 3.5"
-        , "Programming Language :: Python :: 3.6"
         , "Intended Audience :: Developers"
         , "Topic :: Internet :: WWW/HTTP :: Dynamic Content"
         , "Topic :: Software Development :: Libraries :: Python Modules"
         , "Topic :: Text Processing :: Markup :: HTML"
         ]
-    , setup_requires       = ["TFL_STP"]
+    , python_requires      = "<3"
+    , setup_requires       = ["TFL_STP<3"]
     , install_requires     =
-        [ "CAL", "CHJ", "JNJ", "MOM-Tapyr", "ReST-Tapyr", "TFL"
-        , "python-dateutil", "pillow", "werkzeug"
+        [ "CAL<3", "CHJ<3", "JNJ<3", "MOM-Tapyr<3", "ReST-Tapyr<3", "TFL<3"
+        , "python-dateutil", "pillow", "werkzeug<1"
         ]
     , extras_require       = dict
         ( client_certificate   = ["M2Crypto", "pyspkac"]

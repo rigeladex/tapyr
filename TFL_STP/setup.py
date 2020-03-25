@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL_STP.
@@ -18,6 +18,7 @@
 # Revision Dates
 #    23-Feb-2017 (CT) Creation
 #    27-Feb-2017 (CT) Add Python 3.6 to `classifiers`
+#    25-Mar-2020 (CT) Restrict versions to Python-2 compatibility
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,7 @@ data_files       = ["LICENSE", "README.rst", "setup.py", "setup.cfg"]
 if __name__ == "__main__" :
     setup \
     ( name                 = name
-    , version              = "0.9.8"
+    , version              = "2.0"
     , description          = "Setup helper functions for TFL-based packages"
     , long_description     = long_description
     , license              = license
@@ -63,14 +64,10 @@ if __name__ == "__main__" :
         , "License :: OSI Approved :: " + license
         , "Operating System :: OS Independent"
         , "Programming Language :: Python"
-        , "Programming Language :: Python :: 2"
-        , "Programming Language :: Python :: 2.7"
-        , "Programming Language :: Python :: 3"
-        , "Programming Language :: Python :: 3.5"
-        , "Programming Language :: Python :: 3.6"
         , "Intended Audience :: Developers"
         , "Topic :: Software Development :: Libraries :: Python Modules"
         ]
+    , python_requires      = "<3"
     , setup_requires       = []
     , install_requires     = []
     , zip_safe             = False ### no eggs, please
