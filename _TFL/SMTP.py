@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -43,6 +43,15 @@
 #                       setting of "Content-Transfer-Encoding"
 #    17-Sep-2019 (CT) Work around more Python-3 bugs
 #                     * Factor `_addresses_from_header`
+#    25-Mar-2020 (CT) Use `policy.default`
+#                     * with the default policy (`policy.compat32`),
+#                       unicode headers are broken
+#    25-Mar-2020 (CT) Add `content_transfer_encoding`
+#    25-Mar-2020 (CT) Change `header` to `.encode` the result of `Header`
+#                     * Otherwise, assigning the header to an `email` objects
+#                       dies with an exception
+#                         TypeError: 'Header' object is not subscriptable
+#                     * Although such a usage is officially documented
 #    ««revision-date»»···
 #--
 
@@ -57,7 +66,7 @@ from   _TFL.portable_repr      import portable_repr
 import _TFL._Meta.Object
 import _TFL.Context
 
-from   email                   import encoders, message
+from   email                   import encoders, message, policy
 from   email.header            import Header, decode_header, make_header
 from   email.utils             import formatdate
 
@@ -69,23 +78,25 @@ import sys
 class SMTP (TFL.Meta.Object) :
     """Send emails via SMTP"""
 
-    charset        = "utf-8"
-    local_hostname = None
-    mail_host      = "localhost"
-    mail_port      = None
-    password       = None
-    user           = None
-    use_tls        = False
+    charset                             = "utf-8"
+    content_transfer_encoding           = None
+    local_hostname                      = None
+    mail_host                           = "localhost"
+    mail_port                           = None
+    password                            = None
+    user                                = None
+    use_tls                             = False
 
     def __init__ \
             ( self
-            , mail_host      = None
-            , mail_port      = None
-            , local_hostname = None
-            , user           = None
-            , password       = None
-            , use_tls        = None
-            , charset        = None
+            , mail_host                 = None
+            , mail_port                 = None
+            , local_hostname            = None
+            , user                      = None
+            , password                  = None
+            , use_tls                   = None
+            , charset                   = None
+            , content_transfer_encoding = None
             ) :
         if mail_host is not None :
             self.mail_host = mail_host
@@ -101,11 +112,14 @@ class SMTP (TFL.Meta.Object) :
             self.use_tls = use_tls
         if charset is not None :
             self.charset = charset
+        if content_transfer_encoding is not None :
+            self.content_transfer_encoding = content_transfer_encoding
         self.server = None
     # end def __init__
 
     def __call__ (self, text, mail_opts = (), rcpt_opts = None) :
-        email = pyk.email_message_from_bytes (pyk.encoded (text, self.charset))
+        email = pyk.email_message_from_bytes \
+            (pyk.encoded (text, self.charset), policy = policy.default)
         self.send_message (email, mail_opts = mail_opts, rcpt_opts = rcpt_opts)
     # end def __call__
 
@@ -138,6 +152,8 @@ class SMTP (TFL.Meta.Object) :
         >>> smtp = SMTP ()
         >>> print (smtp.header ("christian.tanzer@swing.co.at"))
         christian.tanzer@swing.co.at
+        >>> print (smtp.header ("Umlautbehaftet äöüß", header_name="Subject").encode ())
+        b'=?utf-8?b?VW1sYXV0YmVoYWZ0ZXQgw6TDtsO8w58=?='
 
         """
         if charset is None :
@@ -158,7 +174,7 @@ class SMTP (TFL.Meta.Object) :
             try :
                 result.encode ("ascii")
             except UnicodeError :
-                result = Header (s, charset = charset, ** kw)
+                result = Header (s, charset = charset, ** kw).encode ()
         return result
     # end def header
 
@@ -201,14 +217,20 @@ class SMTP (TFL.Meta.Object) :
                 """text/plain; charset="%s" """ % (charset, )
         else :
             charset = email.get_charset ()
-        if not email.is_multipart () :
+        if self.content_transfer_encoding :
+            if "Content-transfer-encoding" in email :
+                del email ["Content-transfer-encoding"]
+            email ["Content-transfer-encoding"] = self.content_transfer_encoding
+        elif "Content-transfer-encoding" not in email \
+                and not email.is_multipart () :
             encoders.encode_7or8bit (email)
         for k in "Subject", "To", "From", "CC", "BCC" :
             vs = email.get_all (k)
             if vs :
                 del email [k]
                 for v in vs :
-                    email [k] = self.header (v, charset, header_name = k)
+                    vh = self.header (v, charset, header_name = k)
+                    email [k] = vh
         ### In Python 3, `email.as_string` is useless because it returns a
         ### base64 encoded body if there are any non-ASCII characters
         ### (setting Content-Transfer-Encoding to "8bit" does *not* help)
@@ -296,7 +318,7 @@ class SMTP_Tester (SMTP) :
        Date: Tue, 20 Oct 2015 14:42:23 -0000
        Content-Type: text/plain; charset="utf-8"
        Content-Transfer-Encoding: 8bit
-       Subject: Test email with some diacritics
+       Subject: Test email with some =?utf-8?b?w6TDtsO8w58=?= diacritics
        To: receiver@example.com
        From: sender@example.com
        <BLANKLINE>
@@ -318,7 +340,7 @@ class SMTP_Tester (SMTP) :
 _test_email = """\
 From: sender@example.com
 To: receiver@example.com
-Subject: Test email with some diacritics
+Subject: Test email with some äöüß diacritics
 Date: Tue, 20 Oct 2015 14:42:23 -0000
 
 Test email containing diacritics like ö, ä, ü, and ß.
