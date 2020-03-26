@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -18,6 +18,7 @@
 #    24-Feb-2017 (CT) Use `twine` for upload
 #    24-Feb-2017 (CT) Update `__doc__` doctest output
 #    16-Apr-2018 (CT) Adapt to New `PyPI`
+#    26-Mar-2020 (CT) Add `sys.executable` and `dist/*` to `_do_twine`
 #    ««revision-date»»···
 #--
 
@@ -261,13 +262,15 @@ class STP_Command (TFL.Command.Root_Command) :
 
     def _do_twine (self, cao, cmd, args, packages) :
         r_args   = ["--repository", "testpypi"] if cao.test else []
-        twc_head = ["twine", cmd] + r_args
+        twc_head = [sys.executable, "-m", "twine", cmd] + r_args
         for pn, pp in packages :
             with sos.changed_dir (pp) :
                 twc_tail = args
                 if cmd == "register" :
                     dist     = sos.expanded_glob (args [-1])
                     twc_tail = args [:-1] + dist
+                elif cmd == "upload" :
+                    twc_tail = ["dist/*"]
                 twc = twc_head + twc_tail
                 if cao.verbose :
                     print ("Starting twine upload for", pn, "...")
