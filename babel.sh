@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This script is part of the Christian Tanzer's python package set.
@@ -27,6 +27,7 @@
 #     2-Feb-2016 (CT) Add `_CAL`
 #     2-Feb-2016 (CT) Change `charset` from `iso-8859-15` to `utf-8`
 #    19-May-2016 (CT) Add command `compile-all`
+#    27-Mar-2020 (CT) Make Python-3 compatible (`print()`)
 #    ««revision-date»»···
 #--
 
@@ -34,7 +35,7 @@ cmd=${1:?"Specify a command: extract | language | compile"}; shift
 
 default_langs="en,de"
 default_dirs="_CAL _MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_PAP/_E164 _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _GTW/_MF3 _GTW/_RST _GTW/_RST/_MOM _GTW/_RST/_TOP _GTW/_RST/_TOP/_MOM _JNJ _ReST"
-lib=$(dirname $(python -c 'from _TFL import sos; print sos.path.dirname (sos.__file__)'))
+lib=$(dirname $(python -c 'from _TFL import sos; print (sos.path.dirname (sos.__file__))'))
 
 ### `python -m _TFL.Babel` won't add `.../_TFL` to `sys.path`
 
