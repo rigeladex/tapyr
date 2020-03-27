@@ -19,6 +19,7 @@
 #    24-Feb-2017 (CT) Update `__doc__` doctest output
 #    16-Apr-2018 (CT) Adapt to New `PyPI`
 #    26-Mar-2020 (CT) Add `sys.executable` and `dist/*` to `_do_twine`
+#    27-Mar-2020 (CT) Fix doctest (spurious differences)
 #    ««revision-date»»···
 #--
 
@@ -33,14 +34,14 @@ The output of::
 looks like::
 
     >>> _ = Command () (["-help=cmds"]) # doctest:+ELLIPSIS
-    Sub commands of .../STP_command.py
-        clean   : Clean everything created by setup.py
-        list    : List packages selected by `-package`, `-all`, `-py-path`
-        release : Use setup.py to package and upload the packages selected
-        setup   : Apply the specified setup.py commands to the packages selected
-        tag     : Tag repository version
-        twine   : Apply the specified twine commands to the packages selected
-        version : Show version of packages
+    Sub commands of ...
+        clean              : Clean everything created by setup.py
+        list               : List packages selected by `-package`, `-all`, `-py-path`
+        release            : Use setup.py to package and upload the packages selected
+        setup              : Apply the specified setup.py commands to the packages selected
+        tag                : Tag repository version
+        twine              : Apply the specified twine commands to the packages selected
+        version            : Show version of packages
 
 `STP_command clean` cleans **all** files created by `setup.py`::
 
