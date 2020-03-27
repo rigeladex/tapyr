@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -22,6 +22,7 @@
 #                     of `gettext.GNUTranslations._parse`
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    22-May-2016 (CT) Disable `unicode_literals` to avoid exception from 2.7.3
+#    27-Mar-2020 (CT) Use `gettext.c2py`, not `c2py`
 #    ««revision-date»»···
 #--
 
@@ -99,9 +100,9 @@ class Translations (babel.support.Translations) :
                     if k == "content-type" :
                         self._charset = v.split ("charset=") [1]
                     elif k == "plural-forms" :
-                        v           = v.split     (";")
-                        plural      = v [1].split ("plural=") [1]
-                        self.plural = c2py        (plural)
+                        v           = v.split      (";")
+                        plural      = v [1].split  ("plural=") [1]
+                        self.plural = gettext.c2py (plural)
             # Note: we unconditionally convert both msgids and msgstrs to
             # Unicode using the character encoding specified in the charset
             # parameter of the Content-Type header.  The gettext documentation
