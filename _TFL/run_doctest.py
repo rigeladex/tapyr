@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2018 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -59,6 +59,8 @@
 #    10-Oct-2016 (CT) Use `__file__`, not `TFL.Environment.script_name`
 #    17-Apr-2018 (CT) Add option `-DxO` to test `__debug__` and `-O`
 #                     + Fix `format_x`
+#    27-Mar-2020 (CT) Use `subprocess.run`, not `subprocess.Popen`
+#                     + Add `py_version` to summary output
 #    ««revision-date»»···
 #--
 
@@ -104,9 +106,10 @@ format_x = """%s  %s raises exception `%r` during doc-tests%s"""
 sum_pat  = Regexp \
     ( "(?P<module>.+?) (?:fails (?P<failed>\d+)|passes all) of "
       "(?P<total>\d+) doc-tests (?:in (?P<cases>\d+) test-cases)?"
+      "[^<]+(?P<py_version>[^>]+>)"
     )
 exc_pat  = Regexp \
-    ("(?P<module>.*?) raises exception `(?P<exc>[^`]+)` during doc-tests")
+    ("(?P<module>.*?) +[^<]+(?P<py_version>[^>]+>) raises exception `(?P<exc>[^`]+)` during doc-tests")
 
 def has_doctest (fn) :
     with open (fn, "rb") as f :
@@ -115,47 +118,40 @@ def has_doctest (fn) :
 # end def has_doctest
 
 def run_command (cmd) :
-    subp = subprocess.Popen (cmd, shell = True, env = dict (sos.environ))
-    subp.wait ()
+    subprocess.run (cmd, shell = True, env = dict (sos.environ))
 # end def run_command
 
-def _subp_step (subp) :
-    try :
-        out, err = subp.communicate ()
-    except ValueError :
-        pass
-    else :
-        err = err.decode ("utf-8")
-        out = out.decode ("utf-8")
-        sys.stdout.write (out)
-        sys.stderr.write (err)
-        if err :
-            for l in err.split ("\n") :
-                if sum_pat.match (l) :
-                    summary.total += int (sum_pat.total)
-                    summary.cases += int (sum_pat.cases or 1)
-                    f = int (sum_pat.failed or 0)
-                    if f :
-                        summary.failed += f
-                        summary.failures.append ((sum_pat.module, f))
-                elif exc_pat.match (l) :
-                    summary.failed += 1
-                    summary.total  += 1
-                    summary.failures.append \
-                        ((exc_pat.module, "Exception %s" % (exc_pat.exc, )))
-# end def _subp_step
-
 def run_command_with_summary (cmd) :
-    subp = subprocess.Popen \
+    subp = subprocess.run \
         ( cmd
-        , shell   = True
-        , env     = dict (sos.environ)
-        , stderr  = subprocess.PIPE
-        , stdout  = subprocess.PIPE
+        , encoding = "utf-8"
+        , env      = dict (sos.environ)
+        , shell    = True
+        , stderr   = subprocess.PIPE
+        , stdout   = subprocess.PIPE
         )
-    while subp.poll () is None :
-        _subp_step (subp)
-    _subp_step (subp)
+    out = subp.stdout
+    err = subp.stderr
+    sys.stdout.write (out)
+    sys.stderr.write (err)
+    if err :
+        for l in err.split ("\n") :
+            if sum_pat.match (l) :
+                summary.total += int (sum_pat.total)
+                summary.cases += int (sum_pat.cases or 1)
+                f = int (sum_pat.failed or 0)
+                if f :
+                    summary.failed += f
+                    summary.failures.append \
+                        ((sum_pat.module, sum_pat.py_version, f))
+            elif exc_pat.match (l) :
+                summary.failed += 1
+                summary.total  += 1
+                summary.failures.append \
+                    ( ( exc_pat.module, exc_pat.py_version
+                      , "Exception %s" % (exc_pat.exc, )
+                      )
+                    )
 # end def run_command_with_summary
 
 def _main (cmd) :
@@ -167,7 +163,7 @@ def _main (cmd) :
     if one_arg_p and not cmd.Extra_Interpreters :
         f              = Filename (a)
         m              = f.base
-        py_version     = " [py %s%s]" % \
+        py_version     = " <py %s%s>" % \
             ( ".".join (str (v) for v in sys.version_info [:3])
             , " -O" if "-O" in sos.python_options () else ""
             )
@@ -278,7 +274,7 @@ def _main (cmd) :
                 )
             print \
                 ( "    %s"
-                % ("\n    ".join ("%-68s : %s" % f for f in summary.failures))
+                % ("\n    ".join ("%s %s : %s" % f for f in summary.failures))
                 , file = sys.stderr
                 )
             if summary.excluded :
