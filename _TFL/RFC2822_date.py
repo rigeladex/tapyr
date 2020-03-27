@@ -21,8 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _TFL        import TFL
 
 from   email.utils import parsedate_tz

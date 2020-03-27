@@ -77,8 +77,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__             import print_function
-
 from   _MOM.import_MOM        import *
 
 import _MOM.DB_Man

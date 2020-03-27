@@ -35,8 +35,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__          import print_function, unicode_literals
-
 from   _TFL                import TFL
 from   _TFL.pyk            import pyk
 

@@ -21,8 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from    _GTW                       import GTW
 import  _GTW._RST._TOP._elFinder.Error
 from    _MOM                       import MOM

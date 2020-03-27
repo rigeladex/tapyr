@@ -152,8 +152,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 from   _TFL.pyk    import pyk
 
 import logging

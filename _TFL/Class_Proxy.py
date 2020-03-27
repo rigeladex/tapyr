@@ -27,8 +27,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
-
 class Class_Proxy :
     """Transparent proxy for a class."""
 

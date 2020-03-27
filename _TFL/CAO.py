@@ -166,8 +166,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__          import print_function, unicode_literals
-
 from   _TFL                import TFL
 
 from   _TFL.Decorator      import getattr_safe

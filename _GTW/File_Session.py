@@ -39,8 +39,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
-
 from   _GTW                     import GTW
 from   _TFL.pyk                 import pyk
 from   _TFL._Meta.Once_Property import Once_Property

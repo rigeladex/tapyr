@@ -31,8 +31,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                    import print_function, unicode_literals
-
 from   _GTW.__test__.model           import *
 from   _GTW.__test__.Boat_in_Regatta import clean_change, show_change
 

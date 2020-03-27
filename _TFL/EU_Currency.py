@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -59,11 +59,6 @@
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-### importing `unicode_literals` from `__future__` wrecks 2.7 doctest
 
 from   _TFL              import TFL
 

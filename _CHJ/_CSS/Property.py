@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CHJ.CSS.
@@ -76,9 +76,6 @@ vendor prefixes::
     {'width' : ['min-content', '-moz-min-content', '-webkit-min-content']}
 
 """
-
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
 
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL

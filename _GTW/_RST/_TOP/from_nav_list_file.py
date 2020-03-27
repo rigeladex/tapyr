@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -23,11 +23,6 @@
 #     2-Dec-2015 (CT) Add `logging.exception` to `from_nav_list_file`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _ReST                    import ReST
@@ -59,10 +54,6 @@ import _TFL.Sorted_By
 from   posixpath import join as pjoin
 
 import textwrap
-
-_code_header = """\
-from __future__  import unicode_literals
-"""
 
 _globs = None
 
@@ -98,7 +89,7 @@ def _entries (parent, src_dir, list_of_dicts) :
 # end def _entries
 
 def _exec (text) :
-    code   = "\n".join (( _code_header, text))
+    code   = text
     result = dict (__builtins__ = {})
     exec (code, _globs, result)
     result.pop ("__builtins__")

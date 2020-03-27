@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -29,6 +29,7 @@
 #    10-Jun-2015 (CT) Add `Notification` arg `css_class`, property `datetime`
 #    ««revision-date»»···
 #--
+
 """
 Short test for the notification framework
     >>> from _GTW.File_Session import File_Session
@@ -56,8 +57,6 @@ Short test for the notification framework
     <BLANKLINE>
     >>> session.remove ()
 """
-
-from   __future__          import print_function
 
 from   _GTW                import GTW
 from   _TFL                import TFL

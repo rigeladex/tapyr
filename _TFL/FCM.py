@@ -21,8 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__          import with_statement
-
 from   _TFL                import TFL
 from   _TFL                import sos
 

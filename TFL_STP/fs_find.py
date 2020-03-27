@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL_STP.
@@ -21,12 +21,6 @@
 #    12-May-2017 (CT) Add `Filter.startswith`
 #    ««revision-date»»···
 #--
-
-from   __future__  import print_function
-
-### `unicode_literals` break `distutils`
-### https://bugs.python.org/issue13943 (Created on 2012-02-04 20:41)
-### from   __future__  import unicode_literals
 
 import os
 import re

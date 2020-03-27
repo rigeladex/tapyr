@@ -32,8 +32,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 def show_errors (resp) :
     errors = sorted (resp.PQ (".Error-Message"), key = TFL.Getter.sourceline)
     print ("".join (e.string for e in errors))

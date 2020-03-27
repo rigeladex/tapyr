@@ -79,8 +79,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__              import print_function
-
 from   _TFL                    import TFL
 from   _TFL.Error              import *
 from   _TFL.Filename           import Filename

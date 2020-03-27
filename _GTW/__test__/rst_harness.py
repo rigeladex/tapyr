@@ -39,8 +39,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from   _GTW.__test__.Test_Command import *
 
 from   _TFL.Regexp                import Multi_Re_Replacer, Re_Replacer, re

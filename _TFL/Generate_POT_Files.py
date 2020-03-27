@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2020 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -24,9 +24,6 @@
 """This is the module doc string which, as a test is long enough to span at
    least two lines in the source file.
 """
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
 
 from   _TFL                  import TFL
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -88,8 +88,6 @@ In addition, this module provides
     [(1, 42), (2, 137), (3, 0), (4, 1), (100, 10)]
 
 """
-
-from   __future__  import print_function
 
 from   _TFL import TFL
 from   _TFL.pyk import pyk

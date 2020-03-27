@@ -95,8 +95,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals, print_function
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 

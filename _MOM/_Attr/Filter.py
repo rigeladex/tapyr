@@ -65,8 +65,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 

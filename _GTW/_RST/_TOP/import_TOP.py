@@ -21,8 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from   _GTW._RST._TOP.Base import *
 from   _GTW._RST._TOP.Dir  import *
 from   _GTW._RST._TOP.Page import *

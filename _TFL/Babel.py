@@ -31,10 +31,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
 

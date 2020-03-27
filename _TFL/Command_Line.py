@@ -160,7 +160,6 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    ««revision-date»»···
 #--
-
 """
 Provides easy access to command line arguments and options in sys.argv
 
@@ -173,7 +172,6 @@ Features provided:
     - Help
 """
 
-from   __future__                 import print_function
 
 from   _TFL                       import TFL
 from   _TFL.predicate             import *

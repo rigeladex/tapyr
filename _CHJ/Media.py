@@ -60,8 +60,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                         import print_function
-
 from   _TFL                               import TFL
 from   _CHJ                               import CHJ
 

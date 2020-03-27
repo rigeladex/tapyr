@@ -20,11 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _GTW.__test__.model               import *
 from   _GTW.__test__._SAW_test_functions import show_esf_query, show_query
 from   _GTW.__test__.Test_Command        import esf_completer

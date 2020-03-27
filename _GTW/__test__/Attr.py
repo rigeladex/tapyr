@@ -24,9 +24,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 ### enforce import order
 import _GTW._OMP._Auth.import_Auth
 import _GTW._OMP._PAP.import_PAP

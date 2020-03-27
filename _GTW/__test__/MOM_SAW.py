@@ -24,8 +24,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function, unicode_literals
-
 from   _GTW.__test__.MOM import \
     ( dt_form, MOM, BMT, show, NL, sos, last_change
     , portable_repr, print_prepr, prepr, pyk

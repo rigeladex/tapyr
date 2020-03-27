@@ -30,8 +30,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
-
 from   _GTW                   import GTW
 from   _ReST                  import ReST as RST
 from   _TFL                   import TFL

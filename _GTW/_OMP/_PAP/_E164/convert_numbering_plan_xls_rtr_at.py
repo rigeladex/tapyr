@@ -20,9 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__          import division, print_function
-from   __future__          import absolute_import, unicode_literals
-
 from   _TFL                import TFL
 from   _TFL                import sos
 from   _TFL.defaultdict    import defaultdict
@@ -57,7 +54,6 @@ _module_format = r"""
 # *** DO NOT edit it manually !
 #
 
-from   __future__               import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL

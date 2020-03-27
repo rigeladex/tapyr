@@ -92,8 +92,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
-
 from   _JNJ               import JNJ
 from   _TFL               import TFL
 from   _TFL.pyk           import pyk

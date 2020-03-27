@@ -20,8 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 import _GTW._RST.HTTP_Method
 import _GTW._RST.HTTP_Status
 import _GTW._RST.Mime_Type

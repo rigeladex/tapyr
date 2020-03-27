@@ -28,8 +28,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                 import print_function, unicode_literals
-
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 

@@ -31,8 +31,6 @@
 #    ««revision-date»»···
 #--
 
-from __future__ import print_function, unicode_literals
-
 _q_result = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...

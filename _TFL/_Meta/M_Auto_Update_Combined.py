@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.Meta.
@@ -85,9 +85,6 @@ their names in either :attr:`_attrs_to_update_combine` or
     {'u' : 1, 'v' : 'b', 'w' : 'a'} {'x' : 'z', 'y' : 3, 'z' : -42} {'c' : 137}
 
 """
-
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
 
 from   _TFL                           import TFL
 from   _TFL.pyk                       import pyk

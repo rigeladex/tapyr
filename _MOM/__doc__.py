@@ -70,8 +70,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals, print_function
-
 from   _MOM.import_MOM            import *
 from   _MOM._Attr.Date_Interval   import *
 from   _MOM._Attr.Number_Interval import A_Float_Interval

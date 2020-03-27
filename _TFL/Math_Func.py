@@ -52,8 +52,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import division
-
 from   _TFL import TFL
 
 from   math import *

@@ -25,8 +25,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
-
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_
 

@@ -28,8 +28,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import unicode_literals, absolute_import
-
 from   _TFL                     import TFL
 
 from   _TFL._Meta.Once_Property import Once_Property

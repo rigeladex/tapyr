@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -48,8 +48,6 @@
 #                     + Import `print_function` from `__future__`
 #    ««revision-date»»···
 #--
-
-from   __future__  import print_function ### Python2 compatibility
 
 import functools
 

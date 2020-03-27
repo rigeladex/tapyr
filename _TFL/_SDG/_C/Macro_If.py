@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2004-2020 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -25,9 +25,6 @@
 #    ««revision-date»»···
 #--
 
-
-
-from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL                import TFL
 import _TFL._SDG._C.Conditional
 import _TFL._SDG._C.If_Stmt

@@ -40,8 +40,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__          import print_function
-
 from   _TFL                import TFL
 from   _TFL                import sos
 from   _TFL.pyk            import pyk

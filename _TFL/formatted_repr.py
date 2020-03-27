@@ -25,9 +25,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _TFL                       import TFL
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch

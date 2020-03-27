@@ -26,18 +26,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-
-### 22-May-2016 08:29
-### Debian 7.10 uses Python 2.7.3, which fails with::
-        #   File ".../_TFL/_Babel/Translations.py", line 54, in _parse
-        #     magic = unpack ("<I", buf [:4]) [0]
-        # TypeError: Struct() argument 1 must be string, not unicode
-### if `unicode_literals` is imported from the __future__
-#from   __future__  import unicode_literals
-
 from   _TFL                    import TFL
 from   _TFL.pyk                import pyk
 

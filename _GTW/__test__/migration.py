@@ -34,8 +34,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__        import print_function
-
 from _GTW.__test__.model import *
 
 class _Migration_Scaffold_ (Scaffold.__class__) :

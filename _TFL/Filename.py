@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2019 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -85,10 +85,6 @@
 """Provides a class that represents a filename with its parts: path, base
    name, and file extension.
 """
-
-from   __future__                 import absolute_import, division
-from   __future__                 import print_function
-from   __future__                 import unicode_literals
 
 from   _TFL                       import TFL
 

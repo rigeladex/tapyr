@@ -25,8 +25,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _MOM.import_MOM             import *
 from   _MOM._Attr.Date_Interval    import *
 

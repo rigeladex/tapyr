@@ -36,8 +36,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
-
 from   _TFL                     import TFL
 
 from   _TFL.I18N                import _, _T, _Tn

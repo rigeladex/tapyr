@@ -28,9 +28,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _GTW.__test__.model               import *
 from   _GTW.__test__._SAW_test_functions import *
 

@@ -50,9 +50,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__       import division, print_function
-from   __future__       import absolute_import, unicode_literals
-
 from   _ATAX.accounting import *
 from   _ATAX.accounting import _Base_, _Entry_
 

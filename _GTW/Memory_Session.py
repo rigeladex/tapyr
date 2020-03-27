@@ -22,8 +22,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
-
 from   _GTW                     import GTW
 import _GTW.Session
 

@@ -25,9 +25,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__          import division, print_function
-from   __future__          import absolute_import, unicode_literals
-
 from   _TFL                import TFL
 
 from   _TFL.portable_repr  import portable_repr, print_prepr

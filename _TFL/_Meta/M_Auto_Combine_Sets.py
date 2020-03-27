@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -48,11 +48,6 @@ Meta class for auto-combining the set-valued attributes mentioned in
     ('{1, 2, 3, 4, 5}', "{'a', 'b', 'x', 'y', 'z'}", '{}')
 
 """
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL                import TFL
 import _TFL._Meta.M_Class

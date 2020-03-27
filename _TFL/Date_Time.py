@@ -68,8 +68,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                  import print_function
-
 ### Note: this module is obsolete and shouldn't be used for new code
 
 from   _TFL                       import TFL

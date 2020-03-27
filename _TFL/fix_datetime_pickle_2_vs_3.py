@@ -20,9 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 """
 Provide a workaround for http://bugs.python.org/issue22005: datetime
 pickles created by Python 2 cannot be unpickled by Python 3 (up to and
