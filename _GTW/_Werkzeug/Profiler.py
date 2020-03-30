@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -17,6 +17,9 @@
 #
 # Revision Dates
 #    20-Jun-2012 (CT) Factor from `GTW.Werkzeug.Application`
+#    30-Mar-2020 (CT) Adapt to werkzeug 1.0
+#                     - no werkzeug.contrib.profiler
+#                     - no werkzeug.middleware.profiler.MergeStream
 #    ««revision-date»»···
 #--
 
@@ -27,38 +30,23 @@ import _GTW._Werkzeug
 
 import _TFL._Meta.Object
 
-from   werkzeug.contrib.profiler import ProfilerMiddleware, MergeStream
+from   werkzeug.middleware.profiler import ProfilerMiddleware
 
-import os, sys
+import sys
 
 class Profiler (TFL.Meta.Object) :
     """Profiler for werkzeug-based WSGI applications."""
 
     def __init__ \
             ( self
-            , delete_logs  = False
-            , log_files    = ()
             , restrictions = ()
             , sort_by      = ('time', 'calls')
             ) :
-        self.delete_logs   = delete_logs
-        self.log_files     = log_files
         self.restrictions  = restrictions
         self.sort_by       = sort_by
     # end def __init__
 
-    def __call__ (self, app) :
-        file_handles = []
-        for fn in self.log_files :
-            if hasattr (fn, "write") :
-                file_handles.append (fn)
-            elif fn == "stderr" :
-                file_handles.append (sys.stderr)
-            else :
-                if self.delete_logs and os.path.isfile (fn) :
-                    os.unlink (fn)
-                file_handles.append (open (fn, "w"))
-        stream = MergeStream (* file_handles) if file_handles else None
+    def __call__ (self, app, stream = sys.stdout) :
         return ProfilerMiddleware (app, stream, self.sort_by, self.restrictions)
     # end def __call__
 

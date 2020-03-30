@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -30,6 +30,8 @@
 #                       and simplejson isn't available; without giving a
 #                       sensible explanation !!!
 #    21-Oct-2015 (CT) Change `body` to run `.data` through `pyk.decoded`
+#    30-Mar-2020 (CT) Adapt to werkzeug 1.0
+#                     - no werkzeug.contrib.wrappers.DynamicCharsetRequestMixin
 #    ««revision-date»»···
 #--
 
@@ -44,7 +46,6 @@ from   _TFL._Meta.Once_Property   import Once_Property
 
 import _TFL._Meta.M_Class
 
-from   werkzeug.contrib.wrappers     import DynamicCharsetRequestMixin
 from   werkzeug.exceptions           import HTTPException as HTTP_Exception
 from   werkzeug.security             import safe_str_cmp as _wz_safe_str_cmp
 from   werkzeug.wrappers             import Request
@@ -58,12 +59,7 @@ def safe_str_cmp (lhs, rhs) :
     return _wz_safe_str_cmp (l, r)
 # end def safe_str_cmp
 
-class _WZG_Request_ \
-          ( TFL.Meta.BaM
-              ( DynamicCharsetRequestMixin, Request
-              , metaclass = TFL.Meta.M_Class
-              )
-          ) :
+class _WZG_Request_ (TFL.Meta.BaM (Request, metaclass = TFL.Meta.M_Class)) :
     """Extend werkzeug's Request class."""
 
     _real_name           = "Request"
