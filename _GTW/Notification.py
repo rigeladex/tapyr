@@ -84,7 +84,6 @@ class M_Notification_Collection (TFL.Meta.Object.__class__) :
 
 # end class M_Notification_Collection
 
-@pyk.adapt__bool__
 class Notification_Collection \
           ( TFL.Meta.BaM
               (TFL.Meta.Object, metaclass = M_Notification_Collection)

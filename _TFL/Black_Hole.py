@@ -24,7 +24,6 @@
 from   _TFL                import TFL
 from   _TFL.pyk            import pyk
 
-@pyk.adapt__bool__
 class _Black_Hole_ :
     """Takes all function calls and attribute accesses thrown at it and
        ignores them.

@@ -51,7 +51,6 @@ from   _GTW               import GTW
 
 import  logging
 
-@pyk.adapt__bool__
 class _GTW_Request_Data_ (TFL.Meta.Object) :
     """Convert the list values into no lists during access."""
 

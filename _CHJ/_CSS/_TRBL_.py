@@ -28,7 +28,6 @@ from   _TFL.pyk                   import pyk
 import _CHJ._CSS
 import _TFL._Meta.Object
 
-@pyk.adapt__bool__
 class _TRBL0_ (TFL.Meta.Object) :
     """Base class for top/right/bottom/left spec."""
 

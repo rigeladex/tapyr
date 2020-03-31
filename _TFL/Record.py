@@ -54,7 +54,6 @@ from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
 
-@pyk.adapt__bool__
 class Record (TFL.Meta.Object) :
     """Class emulating a struct/record (but dynamically).
 

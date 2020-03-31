@@ -75,7 +75,6 @@ class M_Length (TFL.Meta.Object.__class__) :
 
 # end class M_Length
 
-@pyk.adapt__bool__
 @pyk.adapt__div__
 @pyk.adapt__str__
 class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
@@ -495,7 +494,6 @@ class TRBL (CHJ.CSS._TRBL_, TRBL0) :
 
 # end class TRBL
 
-@pyk.adapt__bool__
 class HV (TFL.Meta.Object) :
     """Horizontal/vertical pair of `Length` of `TRBL`.
 

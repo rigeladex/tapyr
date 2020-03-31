@@ -73,7 +73,6 @@ import _TFL._Meta.Property
 from   itertools                import chain as ichain
 
 @TFL.Add_To_Class ("MF3", MOM.Attr.Completer)
-@pyk.adapt__bool__
 class _MF3_Completer_ (TFL.Meta.Object) :
 
     _real_name = "Completer"

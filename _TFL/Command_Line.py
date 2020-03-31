@@ -674,7 +674,6 @@ class _Help_ (TFL.Meta.Object) :
 
 # end class _Help_
 
-@pyk.adapt__bool__
 class Command_Spec (TFL.Meta.Object) :
     """Define syntax for command-line options and arguments.
 

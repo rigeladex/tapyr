@@ -124,7 +124,6 @@ class _Start_Polisher_ (_Date_Interval_Date_Polisher_) :
 
 _Ancestor_Essence = MOM.An_Entity
 
-@pyk.adapt__bool__
 class Date_Interval (_Ancestor_Essence) :
     """Model a date interval (start, finish)."""
 

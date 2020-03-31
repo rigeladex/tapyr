@@ -50,7 +50,6 @@ import _TFL._Meta.Object
 
 import math
 
-@pyk.adapt__bool__
 class _Point_ (TFL.Meta.Object) :
     """Base class for points in 2D space."""
 

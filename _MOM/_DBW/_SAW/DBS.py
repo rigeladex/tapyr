@@ -44,7 +44,6 @@ import _TFL._Meta.Property
 
 import contextlib
 
-@pyk.adapt__bool__
 class Save_Point (TFL.Meta.Object) :
 
     def __init__ (self, con_man) :

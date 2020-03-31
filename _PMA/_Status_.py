@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -26,6 +26,7 @@
 #    10-Nov-2009 (CT) Use `pickle` instead of `cPickle` to silence `-3`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
 #     9-Oct-2016 (CT) Move back to `PMA`
+#    31-Mar-2020 (CT) Def `__bool__`, not `__nonzero__` (Py-3)
 #    ««revision-date»»···
 #--
 
@@ -72,9 +73,9 @@ class _Status_ (TFL.Meta.Object) :
         return self._attr
     # end def __getstate__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self._attr)
-    # end def __nonzero__
+    # end def __bool__
 
     def __setattr__ (self, name, value) :
         p = self.__class__.__dict__.get (name, None)

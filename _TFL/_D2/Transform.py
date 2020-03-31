@@ -178,7 +178,6 @@ from   itertools                  import chain as ichain
 
 import math
 
-@pyk.adapt__bool__
 @pyk.adapt__str__
 class MT (TFL.Meta.Object) :
     """Matrix type.

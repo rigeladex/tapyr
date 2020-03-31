@@ -912,7 +912,6 @@ class Message (_Message_) :
 
 # end class Message
 
-@pyk.adapt__bool__
 @pyk.adapt__str__
 class _Pending_Action_ (TFL.Meta.Object) :
 

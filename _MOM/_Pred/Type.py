@@ -86,7 +86,6 @@ import _TFL.d_dict
 
 import traceback
 
-@pyk.adapt__bool__
 class _Condition_ \
           ( TFL.Meta.BaM
               ( MOM.Prop.Type

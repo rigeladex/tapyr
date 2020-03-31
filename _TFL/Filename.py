@@ -97,7 +97,6 @@ from   _TFL._Meta.totally_ordered import totally_ordered
 import _TFL._Meta.Object
 import _TFL.Environment
 
-@pyk.adapt__bool__
 @totally_ordered
 class Filename (TFL.Meta.Object) :
     """Represents a filename with its parts: path, base name and file

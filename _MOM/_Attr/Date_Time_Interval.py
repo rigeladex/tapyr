@@ -32,7 +32,6 @@ from   _TFL.pyk              import pyk
 
 _Ancestor_Essence = MOM.An_Entity
 
-@pyk.adapt__bool__
 class Date_Time_Interval (_Ancestor_Essence) :
     """Model a date interval (start, finish)."""
 

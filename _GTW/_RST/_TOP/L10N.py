@@ -84,7 +84,6 @@ class _Language_ (_Ancestor) :
 
 # end class _Language_
 
-@pyk.adapt__bool__
 class L10N (GTW.RST.TOP.Dir) :
     """Navigation directory supporting language selection."""
 

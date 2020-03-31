@@ -254,7 +254,6 @@ class JS_On_Ready \
 
 # end class JS_On_Ready
 
-@pyk.adapt__bool__
 class Media_List (TFL.Meta.Object) :
     """Model a list of media objects"""
 

@@ -103,7 +103,6 @@ def bool_split_iters (seq, predicate = bool) :
     return f_it, t_it
 # end def bool_split_iters
 
-@pyk.adapt__bool__
 class Look_Ahead_Gen (object) :
     """Wrap a generator/iterator to provide look ahead
 

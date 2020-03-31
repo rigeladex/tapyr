@@ -75,7 +75,6 @@ import random
 import time
 import uuid
 
-@pyk.adapt__bool__
 class User (TFL.Meta.Object) :
     """Encapsulate user information for session."""
 
@@ -125,7 +124,6 @@ class M_Session (TFL.Meta.M_Auto_Update_Combined) :
 
 # end class M_Session
 
-@pyk.adapt__bool__
 class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
     """Base class for sessions
 

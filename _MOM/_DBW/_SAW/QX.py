@@ -1042,7 +1042,6 @@ class Una (_Op_) :
 
 # end class Una
 
-@pyk.adapt__bool__
 class _Attr_ (_RAW_, _Base_) :
     """Map one attribute expression to column(s) expressions of SQLAlchemy"""
 

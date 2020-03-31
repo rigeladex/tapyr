@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -312,6 +312,7 @@
 #    19-Oct-2016 (CT) Change `attr_prop` to handle dotted names
 #                     + I.e., access to nested attribute properties of
 #                       composite/structured attributes
+#    31-Mar-2020 (CT) Remove `__nonzero__` (Py-3)
 #    ««revision-date»»···
 #--
 
@@ -1030,7 +1031,6 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 
 # end class Entity
 
-@pyk.adapt__bool__
 @pyk.adapt__str__
 class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
     """Root class for anonymous entities without identity."""
@@ -2036,12 +2036,11 @@ class _Id_Entity_Reload_Mixin_ (_Id_Entity_Mixin_) :
 
 # end class _Id_Entity_Reload_Mixin_
 
-@pyk.adapt__bool__
 class _Id_Entity_Destroyed_Mixin_ (_Id_Entity_Mixin_) :
     """Mixin indicating an entity that was already destroyed."""
 
     def __getattribute__ (self, name) :
-        if name in ("E_Type", "__bool__", "__class__", "__nonzero__", "__repr__") :
+        if name in ("E_Type", "__bool__", "__class__", "__repr__") :
             return object.__getattribute__ (self, name)
         elif name in ("last_cid", "pid", "type_name") :
             try :

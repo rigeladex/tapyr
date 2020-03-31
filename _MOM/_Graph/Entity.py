@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -62,7 +62,6 @@ _word_sep = Regexp("([^A-Za-z0-9])")
 class Rel_Placer (TFL.Meta.Object) :
     """Place attachement points of all relations of an Entity."""
 
-    @pyk.adapt__bool__
     @pyk.adapt__str__
     class Dir_Placer (TFL.Meta.Object) :
         """Placer for relations in one cardinal direction"""
@@ -348,7 +347,6 @@ class Rel_Placer (TFL.Meta.Object) :
 
 # end class Rel_Placer
 
-@pyk.adapt__bool__
 class Entity (TFL.Meta.Object) :
 
     attr            = None

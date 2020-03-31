@@ -170,7 +170,6 @@ class TL_Section_Mod_P (TL_Section) :
 
 # end class TL_Section_Mod_P
 
-@pyk.adapt__bool__
 class TLS_Periodic (TFL.Meta.Object) :
     """Set of periodic TL_Sections from Timeline"""
 

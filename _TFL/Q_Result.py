@@ -199,7 +199,6 @@ def _comparison_operator (op) :
     return _
 # end def _comparison_operator
 
-@pyk.adapt__bool__
 @pyk.adapt__str__
 class _Attr_ (object) :
     """Wrapper for result of `.attr` method."""
@@ -325,7 +324,6 @@ class _Q_Filter_Distinct_ (TFL.Meta.Object) :
 
 # end class _Q_Filter_Distinct_
 
-@pyk.adapt__bool__
 class _Q_Result_ (TFL.Meta.Object) :
     """Base class for :class:`Q_Result` and :class:`Q_Result_Composite`."""
 
@@ -661,7 +659,6 @@ class Q_Result (_Q_Result_) :
 
 # end class Q_Result
 
-@pyk.adapt__bool__
 class Q_Result_Composite (_Q_Result_) :
     """Lazy query result for composite query. The elements of the composite
        query result are only materialized when `all`, `count`, `first`, or

@@ -40,7 +40,6 @@ import logging
 import sys
 import subprocess
 
-@pyk.adapt__bool__
 class _Result_ (TFL.Meta.Object) :
     """Expected result of application test."""
 
@@ -136,7 +135,6 @@ class Result_String (_Result_) :
 
 # end class Result_String
 
-@pyk.adapt__bool__
 class Run (TFL.Meta.Object) :
     """Run one application test and check expected error and output."""
 

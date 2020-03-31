@@ -74,7 +74,6 @@ class _Mixin_ (TFL.Meta.Object) :
 
 # end class _Mixin_
 
-@pyk.adapt__bool__
 class _IFB_ (TFL.Meta.Object) :
     """Base class for FBiG and IFB."""
 

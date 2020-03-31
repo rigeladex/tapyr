@@ -484,7 +484,6 @@ def _pts_prop (f) :
     return _
 # end def _pts_prop
 
-@pyk.adapt__bool__
 class Pickled_Type_Spec (TFL.Meta.Object) :
 
     def __init__ (self, p_type, attr_type, Pickler_Type = None) :

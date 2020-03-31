@@ -100,7 +100,6 @@ def normalized_op_name (name) :
     return name.strip ("_")
 # end def normalized_op_name
 
-@pyk.adapt__bool__
 class Base (TFL.Meta.Object) :
     """Query generator.
 
@@ -298,7 +297,6 @@ class _Aggr_ (Q_Root) :
 # end class _Aggr_
 
 @TFL.Add_New_Method (Base)
-@pyk.adapt__bool__
 @pyk.adapt__div__
 class _Bin_ (Q_Root) :
     """Binary query expression"""
@@ -384,7 +382,6 @@ class _Bin_ (Q_Root) :
 # end class _Bin_
 
 @TFL.Add_New_Method (Base)
-@pyk.adapt__bool__
 class _Una_ (Q_Root) :
     """Unary query expression"""
 
@@ -444,7 +441,6 @@ class _Una_ (Q_Root) :
 # end class _Una_
 
 @TFL.Add_New_Method (Base)
-@pyk.adapt__bool__
 class _Call_ (Q_Root) :
     """Query expression calling a method."""
 
@@ -664,7 +660,6 @@ class _Distributive_ (Q_Root) :
 
 # end class _Distributive_
 
-@pyk.adapt__bool__
 class _Exp_Base_ (Q_Root) :
 
     ### Equality queries
@@ -1095,7 +1090,6 @@ class BVAR (_Exp_) :
 # end class BVAR
 
 @TFL.Add_New_Method (Base)
-@pyk.adapt__bool__
 class BVAR_Man (TFL.Meta.Object) :
     # """Manager for bound variables"""
 

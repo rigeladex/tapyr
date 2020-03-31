@@ -242,7 +242,6 @@ class Wrapper (TFL.Meta.Object) :
 
 # end class Wrapper
 
-@pyk.adapt__bool__
 @pyk.adapt__str__
 class List (TFL.Meta.Object) :
     """Manage a list of errors for a specific MF3 entity element."""

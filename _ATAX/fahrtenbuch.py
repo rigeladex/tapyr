@@ -49,7 +49,6 @@ import _TFL._Meta.Object
 import _TFL.CAO
 import _TFL.Environment
 
-@pyk.adapt__bool__
 @pyk.adapt__str__
 class FB_Entry (TFL.Meta.Object) :
     """Model one entry of a Fahrtenbuch"""

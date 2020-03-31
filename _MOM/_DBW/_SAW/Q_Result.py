@@ -87,7 +87,6 @@ import _TFL.Regexp
 import itertools
 import operator
 
-@pyk.adapt__bool__
 class _Base_ (TFL.Meta.Object) :
     """Base class for SAW Q_Result classes"""
 

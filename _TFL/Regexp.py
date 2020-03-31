@@ -60,7 +60,6 @@ else :
     ### `sre` returns a type
     re_RegexObject = type (re.compile (""))
 
-@pyk.adapt__bool__
 class Regexp (TFL.Meta.Object) :
     """Wrap a regular expression pattern and the last match, if any.
 

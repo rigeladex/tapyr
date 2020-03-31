@@ -42,7 +42,6 @@ import _TFL.DL_List
 import _TFL.predicate
 import _TFL._Meta.Object
 
-@pyk.adapt__bool__
 @totally_ordered
 class Numeric_Interval (TFL.Meta.Object) :
     """Class for modelling a numeric interval.

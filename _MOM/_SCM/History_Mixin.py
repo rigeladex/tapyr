@@ -31,7 +31,6 @@ import _MOM._SCM
 
 import _TFL._Meta.Object
 
-@pyk.adapt__bool__
 class History_Mixin (TFL.Meta.Object) :
 
     change_count = 0

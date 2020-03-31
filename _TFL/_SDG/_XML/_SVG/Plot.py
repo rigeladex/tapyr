@@ -215,7 +215,6 @@ class _Coordinate_Op_ (TFL.Meta.Object) :
 
 # end class _Coordinate_Op_
 
-@pyk.adapt__bool__
 @pyk.adapt__div__
 class _Coordinate_ (TFL.Meta.Object) :
     """Base class for classes that model a single coordinate (x or y)."""

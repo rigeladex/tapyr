@@ -164,7 +164,6 @@ class Work (_Hour_Entry_) :
 
 # end class Work
 
-@pyk.adapt__bool__
 class Period (TFL.Meta.Object) :
     """Collect entries for a period of work."""
 

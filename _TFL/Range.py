@@ -63,7 +63,6 @@ class _M_Base_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Base_
 
-@pyk.adapt__bool__
 @pyk.adapt__str__
 class _Range_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Base_)) :
     """Base class for type-specific range classes."""

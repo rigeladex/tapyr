@@ -151,7 +151,6 @@ class M_Country (TFL.Meta.Object.__class__) :
 
 # end class M_Country
 
-@pyk.adapt__bool__
 @pyk.adapt__str__
 class Country (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Country)) :
     """Provide phone number mapping for a specific country."""
@@ -282,7 +281,6 @@ class Country (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Country)) :
 
 # end class Country
 
-@pyk.adapt__bool__
 class Country_0 (Country) :
     """Country without further information about ndc and sn."""
 

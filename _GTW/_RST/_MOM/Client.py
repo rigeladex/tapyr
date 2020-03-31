@@ -43,7 +43,6 @@ from   posixpath                import join as pp_join
 import json
 import requests
 
-@pyk.adapt__bool__
 class _Entity_ (TFL.Meta.Object) :
     """Base class for Object and Resource"""
 

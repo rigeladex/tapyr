@@ -251,7 +251,6 @@ class Day (_Ordinal_) :
 
 # end class Day
 
-@pyk.adapt__bool__
 class Week (_Ordinal_) :
     """Model a single week in a calendar
 

@@ -46,6 +46,7 @@
 #                     + Define `fprint` as a function that calls `print`
 #                       - `staticmethod (print)` triggers a syntax error
 #                     + Import `print_function` from `__future__`
+#    31-Mar-2020 (CT) Remove `adapt__bool__`
 #    ««revision-date»»···
 #--
 
@@ -68,14 +69,6 @@ class _Pyk_ (object) :
 
        Use a class instead of module-level definitions to allow lazy imports.
     """
-
-    @staticmethod
-    def adapt__bool__ (cls) :
-        dct = cls.__dict__
-        if "__bool__" not in dct and "__nonzero__" in dct :
-            setattr (cls, "__bool__", dct ["__nonzero__"])
-        return cls
-    # end def adapt__bool__
 
     @staticmethod
     def adapt__div__ (cls) :

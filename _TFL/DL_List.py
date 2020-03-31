@@ -53,7 +53,6 @@ import _TFL.Accessor
 import _TFL.predicate
 import _TFL._Meta.Object
 
-@pyk.adapt__bool__
 @pyk.adapt__str__
 class DL_Item (TFL.Meta.Object) :
     """Item in a doubly linked list"""
@@ -258,7 +257,6 @@ class _DL_Counted_ (TFL.Meta.Object) :
 
 # end class _DL_Counted_
 
-@pyk.adapt__bool__
 class DL_List (_DL_Chain_) :
     """Doubly linked list.
 
@@ -358,7 +356,6 @@ class DL_List_Counted (_DL_Counted_, DL_List) :
 
 ### XXX please make an own module for DL_Ring classes
 
-@pyk.adapt__bool__
 class DL_Ring (_DL_Chain_) :
     """Doubly linked ring.
 
