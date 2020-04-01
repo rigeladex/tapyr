@@ -35,7 +35,7 @@ import _TFL._Meta.Object
 
 import itertools
 
-class Node (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Autosuper)) :
+class Node (object, metaclass = TFL.Meta.M_Autosuper) :
     """Node of a trie."""
 
     __slots__     = ("children", "value")

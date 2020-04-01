@@ -132,7 +132,7 @@ class M_SA_Type (TFL.Meta.Object.__class__) :
 
 # end class M_SA_Type
 
-class SA_Type (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_SA_Type)) :
+class SA_Type (TFL.Meta.Object, metaclass = M_SA_Type) :
     """Encapsulate SQLalchemy types"""
 
     _Time_X_    = _Time_X_

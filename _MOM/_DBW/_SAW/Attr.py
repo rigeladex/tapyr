@@ -207,7 +207,7 @@ class _M_Kind_Wrapper_ (TFL.Meta.Object.__class__) :
 # end class _M_Kind_Wrapper_
 
 class _Kind_Wrapper_ \
-          (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Kind_Wrapper_)) :
+          (TFL.Meta.Object, metaclass = _M_Kind_Wrapper_) :
 
     columns         = ()
     db_attrs_o      = db_attrs     = {}

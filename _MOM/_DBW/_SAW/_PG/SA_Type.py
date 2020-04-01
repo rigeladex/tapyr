@@ -50,7 +50,7 @@ class M_SA_Type_PG (MOM.DBW.SAW.SA_Type.__class__) :
 M_SA_Type = M_SA_Type_PG # end class
 
 class _PG_SA_Type_ \
-        (TFL.Meta.BaM (MOM.DBW.SAW.SA_Type, metaclass = M_SA_Type_PG)) :
+        (MOM.DBW.SAW.SA_Type, metaclass = M_SA_Type_PG) :
     """Encapsulate SQLalchemy types for PostgreSQL"""
 
     _real_name   = "SA_Type"

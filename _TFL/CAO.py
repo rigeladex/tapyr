@@ -332,7 +332,7 @@ class Opt (Arg) :
 
 # end class Opt
 
-class _Spec_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
+class _Spec_Base_ (TFL.Meta.Object, metaclass = Arg) :
 
     auto_split    = None
     choices       = None
@@ -551,7 +551,7 @@ class _Spec_ (_Spec_Base_) :
 
 # end class _Spec_
 
-class _Spec_O_ (TFL.Meta.BaM (_Spec_, metaclass = Opt)) :
+class _Spec_O_ (_Spec_, metaclass = Opt) :
     """Base class for option types"""
 
     kind          = "option"

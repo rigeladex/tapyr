@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2019 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -59,6 +59,7 @@
 #    10-Dec-2015 (CT) Change `_m_combine_nested_class` to set `__outer__`
 #     8-Sep-2016 (CT) Change `M_Autorename.__new__` to fix `__qualname__`
 #    19-Aug-2019 (CT) Use `print_prepr`
+#     1-Apr-2020 (CT) Remove Py-2 compatibility crutch `BaM`
 #    ««revision-date»»···
 #--
 
@@ -66,97 +67,6 @@ from   _TFL             import TFL
 from   _TFL.pyk         import pyk
 
 import _TFL._Meta
-
-def BaM (* bases, ** kw) :
-    """Specify `bases` and `metaclass` in syntax compatible to Python 2 & 3.
-
-       Use BaM in class statements like this ::
-
-           class A_Class (BaM (A_Base_1, A_Base_2, metaclass = A_Metaclass)) :
-               pass
-
-       BaM returns a temporary class with a temporary metaclass derived
-       from `metaclass`. The temporary class is seen by Python as the single
-       base of a new class to be defined. According to the standard Python
-       rules, the metaclass is inherited from the base class. The temporary
-       metaclass instantiates the new class with the `metaclass` and the
-       `bases` passed to `BaM`, ignoring the temporary base and meta classes.
-
-       I stole the idea for `BaM` from Armin Ronacher's `with_metaclass` [#]_,
-       but defined BaM's signature to be compatible with the inheritance
-       signature of class statements in Python 3.
-
-       Beware: it's tempting to define a class decorator
-       `with_metaclass` [#]_ to assign a metaclass in syntax compatible to
-       Python 2 & 3. The syntax would look like this::
-
-           @with_metaclass (A_Metaclass)
-           class A_Class (A_Base_1, A_Base_2) :
-               pass
-
-       This looks much nicer than the syntax using `BaM` but leads to
-       problems when `A_Metaclass` is derived from the metaclass of one of
-       the bases, which is then run twice: once before the decorator runs and
-       once when `A_Metaclass` chains up to it. `six.add_metaclass` [#]_
-       contains special code to work around `__slots__`, but this would need
-       to be extended to whatever another parent metaclass does which mustn't
-       be done twice.
-
-       .. [#]   http://lucumr.pocoo.org/2013/5/21/porting-to-python-3-redux/
-       .. [#]  http://www.zopatista.com/python/2014/03/14/cross-python-metaclasses/
-       .. [#] http://pythonhosted.org/six/#six.add_metaclass
-
-    >>> class M (type) :
-    ...    pass
-    >>> class N (M) :
-    ...    pass
-    >>> class A (BaM (metaclass = M)) :
-    ...    pass
-    >>> class B (A) :
-    ...    pass
-    >>> class C (A) :
-    ...    pass
-    >>> class D (BaM (B, C, metaclass = N)) :
-    ...    pass
-
-    >>> def show (cls) :
-    ...     mro = cls.__mro__
-    ...     return \\
-    ...         ( cls.__class__.__name__
-    ...         , tuple (b.__name__ for b in cls.__bases__)
-    ...         , tuple (c.__name__ for c in mro)
-    ...         )
-
-    >>> show (M)
-    ('type', ('type',), ('M', 'type', 'object'))
-    >>> show (N)
-    ('type', ('M',), ('N', 'M', 'type', 'object'))
-
-    >>> show (A)
-    ('M', ('object',), ('A', 'object'))
-    >>> show (B)
-    ('M', ('A',), ('B', 'A', 'object'))
-    >>> show (C)
-    ('M', ('A',), ('C', 'A', 'object'))
-    >>> show (D)
-    ('N', ('B', 'C'), ('D', 'B', 'C', 'A', 'object'))
-
-    """
-    meta = kw.pop ("metaclass")
-    assert not kw
-    class metaclass (meta) :
-        __call__ = type.__call__
-        __init__ = type.__init__
-        def __new__ (cls, name, this_bases, d):
-            if this_bases is None :
-                ### return temporary class
-                return type.__new__ (cls, str (name), (), d)
-            ### return instance of `meta`, derived from `bases`
-            ### * add `__metaclass__` to `d` to please
-            ###   `M_M_Class._most_specific_meta`
-            return meta (name, bases, dict (d, __metaclass__ = meta))
-    return metaclass ("BaM_temporary_class", None, {})
-# end def BaM
 
 def _m_mangled_attr_name (name, cls_name) :
     """Returns `name` as mangled by Python for occurences of `__%s` % name
@@ -243,7 +153,7 @@ class M_M_Class (type) :
 
 # end class M_M_Class
 
-class M_Base (BaM (type, metaclass = M_M_Class)) :
+class M_Base (type, metaclass = M_M_Class) :
     """Base class of TFL metaclasses.
 
        It provides a `__m_super` attribute for the meta-classes (for

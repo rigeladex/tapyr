@@ -108,7 +108,7 @@ class M_Definition (TFL.Meta.Object.__class__) :
 
 # end class M_Definition
 
-class Definition (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Definition)) :
+class Definition (TFL.Meta.Object, metaclass = M_Definition) :
     """Definition of parameters for media, i.e., CSS and JS, fragments.
 
     >>> from _TFL.portable_repr  import print_prepr

@@ -151,7 +151,7 @@ class _M_Selector_Base_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Selector_Base_
 
-class _Selector_Base_ (TFL.Meta.BaM (_Base_, metaclass = _M_Selector_Base_)) :
+class _Selector_Base_ (_Base_, metaclass = _M_Selector_Base_) :
     """Base class for atom and entity selectors."""
 
     id               = TFL.Meta.Alias_Property ("name")

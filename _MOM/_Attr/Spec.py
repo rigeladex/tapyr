@@ -92,7 +92,7 @@ import _TFL.Sorted_By
 
 from   _TFL.predicate        import callable, first, uniq
 
-class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec)) :
+class Spec (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec) :
     """Attribute specification for MOM entities (objects and links).
 
        A :class:`~_MOM.Entity.Entity` class contains a descendent of `Spec`

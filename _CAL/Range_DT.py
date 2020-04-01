@@ -54,7 +54,7 @@ class _M_Range_DT_ (TFL._Range_Discrete_.__class__) :
 # end class _M_Range_DT_
 
 class _Range_DT_ \
-        (TFL.Meta.BaM (TFL._Range_Discrete_, metaclass = _M_Range_DT_)) :
+        (TFL._Range_Discrete_, metaclass = _M_Range_DT_) :
     """Base class for ranges of datetime-based values."""
 
     @property

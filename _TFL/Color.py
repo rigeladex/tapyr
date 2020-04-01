@@ -291,7 +291,7 @@ class M_Color (TFL.Meta.Object.__class__) :
 
 # end class M_Color
 
-class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
+class _Color_ (TFL.Meta.Object, metaclass = M_Color) :
     """Base class modelling a mutable color."""
 
     alpha         = None

@@ -32,7 +32,7 @@ Meta class for auto-combining the dict-valued attributes mentioned in
 ::
 
     >>> from _TFL.portable_repr import portable_repr
-    >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Combine_Dicts)) :
+    >>> class A (object, metaclass = M_Auto_Combine_Dicts) :
     ...     _dicts_to_combine = ("foo", "bar")
     ...     bar               = dict (x = 1, y = 2)
     ...

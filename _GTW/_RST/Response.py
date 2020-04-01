@@ -60,7 +60,7 @@ class _M_Response_ (TFL.Meta.M_Auto_Update_Combined) :
 # end class _M_Response_
 
 class _RST_Response_ \
-          (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Response_)) :
+          (TFL.Meta.Object, metaclass = _M_Response_) :
     """Wrap and extend wsgi-specific Response class."""
 
     _auto_headers            = \

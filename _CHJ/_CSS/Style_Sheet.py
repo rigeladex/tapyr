@@ -52,7 +52,7 @@ class M_Style_Sheet (TFL.Meta.Object.__class__) :
 # end class M_Style_Sheet
 
 class _Style_Sheet_ \
-        (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Style_Sheet)) :
+        (TFL.Meta.Object, metaclass = M_Style_Sheet) :
 
     name          = None
     rank          = 0

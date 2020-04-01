@@ -113,7 +113,7 @@ class _M_Option_ (_Meta_Base_) :
 
 # end class _M_Option_
 
-class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
+class TFL_Option (TFL.Meta.Object, metaclass = _M_Option_) :
     ### Base class for options of interactive commands.
 
     _real_name              = "Option"
@@ -324,7 +324,7 @@ class _M_Command_ (_Meta_Base_) :
 
 # end class _M_Command_
 
-class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
+class TFL_Command (TFL.Meta.Object, metaclass = _M_Command_) :
     ### Base class for interactive commands.
 
     _rn_prefix                    = "TFL_"

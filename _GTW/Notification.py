@@ -85,9 +85,7 @@ class M_Notification_Collection (TFL.Meta.Object.__class__) :
 # end class M_Notification_Collection
 
 class Notification_Collection \
-          ( TFL.Meta.BaM
-              (TFL.Meta.Object, metaclass = M_Notification_Collection)
-          ) :
+          (TFL.Meta.Object, metaclass = M_Notification_Collection) :
     """Collection of all notifications for a session."""
 
     def __init__ (self) :

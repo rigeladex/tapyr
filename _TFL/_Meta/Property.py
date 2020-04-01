@@ -66,7 +66,7 @@ import _TFL._Meta.M_Class
 
 import operator
 
-class Data_Descriptor (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
+class Data_Descriptor (property, metaclass = TFL.Meta.M_Class) :
     """Data descriptor for an attribute.
 
        This is just an example how to define a data descriptor for an
@@ -103,10 +103,10 @@ class Data_Descriptor (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
 
 # end class Data_Descriptor
 
-class Method_Descriptor (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
+class Method_Descriptor (object, metaclass = TFL.Meta.M_Class) :
     """Descriptor for special method types."""
 
-    class Bound_Method (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
+    class Bound_Method (object, metaclass = TFL.Meta.M_Class) :
 
         def __init__ (self, method, target, cls) :
             self.method  = self.__func__ = method
@@ -363,7 +363,7 @@ class Class_and_Instance_Method (Method_Descriptor) :
 
 # end class Class_and_Instance_Method
 
-class Alias_Property (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
+class Alias_Property (object, metaclass = TFL.Meta.M_Class) :
     """Property defining an alias name for another attribute.
 
        ::
@@ -442,7 +442,7 @@ class Alias_Class_and_Instance_Method (Class_Method) :
          >>> class Meta_T (TFL.Meta.M_Class) :
          ...   def foo (cls) :
          ...     print ("Class method foo <%s.%s>" % (cls.__name__, cls.__class__.__name__))
-         >>> class T (TFL.Meta.BaM (object, metaclass = Meta_T)) :
+         >>> class T (object, metaclass = Meta_T) :
          ...   chameleon = Alias_Class_and_Instance_Method ("foo")
          ...   def foo (self) :
          ...     print ("Instance method foo <%s>" % (self.__class__.__name__, ))
@@ -722,7 +722,7 @@ def Optional_Computed_Once_Property (f) :
     return _Optional_Computed_Property_ (f.__name__, f, True, f.__doc__)
 # end def Optional_Computed_Once_Property
 
-class Property (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
+class Property (property, metaclass = TFL.Meta.M_Class) :
     """A property that can be applied to the instance and possibly to the
        class as well.
 
@@ -751,7 +751,7 @@ class Property (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
          ...     def bar (cls, value) :
          ...         cls._bar = value
 
-         >>> class T (TFL.Meta.BaM (object, metaclass = Meta_T)) :
+         >>> class T (object, metaclass = Meta_T) :
          ...     @Property
          ...     def foo (self) :
          ...         return getattr (self, "_foo", 137)
@@ -869,7 +869,7 @@ class Alias_Meta_and_Class_Attribute (Class_Method) :
 
          >>> class Meta_T (TFL.Meta.M_Class) :
          ...   foo = 42
-         >>> class T (TFL.Meta.BaM (object, metaclass = Meta_T)) :
+         >>> class T (object, metaclass = Meta_T) :
          ...   chameleon = Alias_Meta_and_Class_Attribute ("foo")
          ...   foo = 137
          ...

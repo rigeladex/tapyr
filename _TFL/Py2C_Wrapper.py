@@ -65,7 +65,7 @@ class Meta_Py_Object (TFL.Meta.M_Class) :
 
 # end class Meta_Py_Object
 
-class _Py_Object_ (TFL.Meta.BaM (object, metaclass = Meta_Py_Object)) :
+class _Py_Object_ (object, metaclass = Meta_Py_Object) :
 
     format_code     = None
     c_types         = None

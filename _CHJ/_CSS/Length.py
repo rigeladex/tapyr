@@ -75,7 +75,7 @@ class M_Length (TFL.Meta.Object.__class__) :
 
 # end class M_Length
 
-class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
+class _Length_ (TFL.Meta.Object, metaclass = M_Length) :
     """Model a CSS length value.
 
     >>> print (Px (3))

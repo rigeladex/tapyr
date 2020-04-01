@@ -49,7 +49,7 @@ import _TFL._Meta.Property
 import _TFL._Meta.Once_Property
 import _TFL.defaultdict
 
-class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Pred_Spec)) :
+class Spec (MOM.Prop.Spec, metaclass = MOM.Meta.M_Pred_Spec) :
     """Predicate specification for MOM entities (objects and links).
 
        A :class:`~_MOM.Entity.Entity` class contains a descendent of `Spec`

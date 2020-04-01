@@ -54,7 +54,7 @@ class M_Entry (TFL.Meta.Object.__class__) :
 
 # end class M_Entry
 
-class _Entry_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Entry)) :
+class _Entry_ (TFL.Meta.Object, metaclass = M_Entry) :
     """Base class for entries"""
 
     free    = 0.0

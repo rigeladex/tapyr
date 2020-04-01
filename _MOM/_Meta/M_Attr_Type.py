@@ -389,7 +389,7 @@ class Typed_Collection (Root) :
     """Meta class for MOM.Attr._A_Typed_Collection_ classes."""
 
     class _Pickler_ \
-              (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Bin_Pickler_)) :
+              (TFL.Meta.Object, metaclass = _M_Bin_Pickler_) :
 
         @classmethod
         def as_cargo (cls, attr_kind, attr_type, value) :

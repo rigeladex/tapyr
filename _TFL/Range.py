@@ -63,7 +63,7 @@ class _M_Base_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Base_
 
-class _Range_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Base_)) :
+class _Range_ (TFL.Meta.Object, metaclass = _M_Base_) :
     """Base class for type-specific range classes."""
 
     S_Type               = None
@@ -664,7 +664,7 @@ class _M_Bounds_ (_M_Base_) :
 # end class _M_Bounds_
 
 @totally_ordered
-class _Bounds_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Bounds_)) :
+class _Bounds_ (TFL.Meta.Object, metaclass = _M_Bounds_) :
     """Base class for bounds types"""
 
     btype     = None

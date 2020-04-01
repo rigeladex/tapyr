@@ -50,7 +50,7 @@ class _M_Renderer_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Renderer_
 
-class _Renderer_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Renderer_)) :
+class _Renderer_ (TFL.Meta.Object, metaclass = _M_Renderer_) :
     """Base class for renderer classes."""
 
     css_classes         = ()

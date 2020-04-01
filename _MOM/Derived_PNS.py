@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -132,9 +132,7 @@ class _Lazy_Resolver_ (TFL.Meta.Object) :
 # end class _Lazy_Resolver_
 
 class Derived_PNS \
-          ( TFL.Meta.BaM
-              (Derived_Package_Namespace, metaclass = TFL.Meta.M_Class)
-          ) :
+          (Derived_Package_Namespace, metaclass = TFL.Meta.M_Class) :
     """Package_Namespace derived from the :mod:`MOM<_MOM>` package namespace
        with a lazy resolver for derived base classes like `Entity`,
        `Id_Entity`, `Object`, `Link1`, etc.
@@ -164,7 +162,7 @@ class Derived_PNS \
 # end class Derived_PNS
 
 class Underived_PNS \
-          (TFL.Meta.BaM (Package_Namespace, metaclass = TFL.Meta.M_Class)) :
+          (Package_Namespace, metaclass = TFL.Meta.M_Class) :
     """Package_Namespace based on, but not derived from, from the
        :mod:`MOM<_MOM>` package namespace with a lazy resolver for derived base
        classes like `Entity`, `Id_Entity`, `Object`, `Link1`, etc.

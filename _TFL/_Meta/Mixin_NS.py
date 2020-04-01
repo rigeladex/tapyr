@@ -53,7 +53,7 @@ class M_Mixin_NS (TFL.Meta.M_Class) :
 
 # end class M_Mixin_NS
 
-class Mixin_NS (TFL.Meta.BaM (object, metaclass = M_Mixin_NS)) :
+class Mixin_NS (object, metaclass = M_Mixin_NS) :
     """Mixin namespace: provides access to mixin functionality via a single
        object.
 

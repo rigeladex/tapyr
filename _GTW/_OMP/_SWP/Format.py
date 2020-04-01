@@ -69,7 +69,7 @@ class M_Format (TFL.Meta.Object.__class__) :
 
 # end class M_Format
 
-class _Format_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Format)) :
+class _Format_ (TFL.Meta.Object, metaclass = M_Format) :
 
     pass
 

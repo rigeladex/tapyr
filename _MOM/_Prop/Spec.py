@@ -55,7 +55,7 @@ import _TFL.Sorted_By
 import itertools
 
 class _Prop_Spec_ \
-          (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Prop_Spec)) :
+          (TFL.Meta.Object, metaclass = MOM.Meta.M_Prop_Spec) :
     """Base class for attribute and predicate specification."""
 
     _real_name               = "Spec"

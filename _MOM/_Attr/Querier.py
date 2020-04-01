@@ -444,7 +444,7 @@ class _M_Type_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Type_
 
-class _Type_ (TFL.Meta.BaM (_Base_, metaclass = _M_Type_)) :
+class _Type_ (_Base_, metaclass = _M_Type_) :
     """Base class for Type classes.
 
        A Type class provides all filters for a set of Attr.Type classes.

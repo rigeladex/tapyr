@@ -38,7 +38,7 @@ import  _TFL.import_module
 import  _TFL.sos             as     os
 
 class _MOM_Legacy_Lifter_ \
-          (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Auto_Update_Combined)) :
+          (object, metaclass = TFL.Meta.M_Auto_Update_Combined) :
     """Base class for project specific legacy lifters"""
 
     _real_name               = "Legacy_Lifter"

@@ -60,7 +60,7 @@ class M_Rule (TFL.Meta.Object.__class__) :
 
 # end class M_Rule
 
-class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
+class Rule (TFL.Meta.Object, metaclass = M_Rule) :
     r"""Model a CSS rule.
 
     >>> tr = Rule_Pseudo ("target", background_color = "yellow", color = "red")

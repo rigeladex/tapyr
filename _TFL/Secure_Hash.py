@@ -217,7 +217,7 @@ class _Wrapper_ (TFL.Meta.Object) :
 
 # end class _Wrapper_
 
-class HMAC (TFL.Meta.BaM (_Wrapper_, metaclass = _M_Secure_Hash_)) :
+class HMAC (_Wrapper_, metaclass = _M_Secure_Hash_) :
     """Wrapper around an HMAC algorithm with portable interface."""
 
     class _Mixin_ (_Wrapper_._Wrapper_Mixin_) :
@@ -236,7 +236,7 @@ class HMAC (TFL.Meta.BaM (_Wrapper_, metaclass = _M_Secure_Hash_)) :
 
 # end class HMAC
 
-class Secure_Hash (TFL.Meta.BaM (_Wrapper_, metaclass = _M_Secure_Hash_)) :
+class Secure_Hash (_Wrapper_, metaclass = _M_Secure_Hash_) :
     """Wrapper around a secure hash algorithm with portable interface."""
 
     _rounds_map      = dict \

@@ -96,7 +96,7 @@ import _TFL._Meta.M_Class
 
 from   collections import defaultdict
 
-class _defaultdict_ (TFL.Meta.BaM (defaultdict, metaclass = TFL.Meta.M_Class)) :
+class _defaultdict_ (defaultdict, metaclass = TFL.Meta.M_Class) :
 
     pass
 

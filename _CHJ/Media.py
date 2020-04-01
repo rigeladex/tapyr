@@ -110,7 +110,7 @@ class Media_Base (TFL.Meta.Object) :
 # end class Media_Base
 
 class CSS_Link \
-        (TFL.Meta.BaM (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named)) :
+        (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named) :
     """Model a CSS link object."""
 
     condition     = ""
@@ -171,7 +171,7 @@ class Rel_Link (Media_Base) :
 # end class Rel_Link
 
 class Script \
-        (TFL.Meta.BaM (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named)) :
+        (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named) :
     """Model a script element"""
 
     href          = Alias_Property ("src")
@@ -226,7 +226,7 @@ class Script \
 # end class Script
 
 class JS_On_Ready \
-        (TFL.Meta.BaM (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named)) :
+        (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named) :
     """A javascript code which should be executed once the document is loaded"""
 
     default_rank  = TFL.Undef ("rank")

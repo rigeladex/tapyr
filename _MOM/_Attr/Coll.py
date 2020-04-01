@@ -67,7 +67,7 @@ class M_Coll (TFL.Meta.M_Class) :
 
 # end class M_Coll
 
-class _Mixin_ (TFL.Meta.BaM (object, metaclass = M_Coll)) :
+class _Mixin_ (object, metaclass = M_Coll) :
 
     P_Type          = None
 

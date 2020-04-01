@@ -66,7 +66,7 @@ class _M_SAW_PG_Manager_ (MOM.DBW.SAW.Manager.__class__) :
 # end class _M_SAW_PG_Manager_
 
 class _SAW_PG_Manager_ \
-          (TFL.Meta.BaM (MOM.DBW.SAW.Manager, metaclass = _M_SAW_PG_Manager_)) :
+          (MOM.DBW.SAW.Manager, metaclass = _M_SAW_PG_Manager_) :
     """Database wrapper for SAW-wrapped sqlalchemy-PostgreSQL"""
 
     _real_name    = "Manager"

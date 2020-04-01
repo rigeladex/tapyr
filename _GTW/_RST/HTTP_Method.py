@@ -72,7 +72,7 @@ class _Meta_ (TFL.Meta.M_Class) :
 
 # end class _Meta_
 
-class HTTP_Method (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _Meta_)) :
+class HTTP_Method (TFL.Meta.Object, metaclass = _Meta_) :
     """Base class for HTTP methods."""
 
     needs_body                 = True

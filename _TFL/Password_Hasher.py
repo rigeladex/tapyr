@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -102,7 +102,7 @@ class M_Password_Hasher_SHA (M_Password_Hasher) :
 
 # end class M_Password_Hasher_SHA
 
-class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
+class Password_Hasher (Meta.Object, metaclass = M_Password_Hasher) :
     """Base class for password hashers
 
     >>> pr = "Ao9ug9wahWae"
@@ -142,7 +142,7 @@ class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
 # end class Password_Hasher
 
 class _Password_Hasher_SHA_ \
-          (Meta.BaM (Password_Hasher, metaclass = M_Password_Hasher_SHA)) :
+          (Password_Hasher, metaclass = M_Password_Hasher_SHA) :
     """Password Hasher based on secure hash algorithm"""
 
     sep           = b"::"

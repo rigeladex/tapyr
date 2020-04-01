@@ -259,7 +259,7 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
 
 # end class _RST_Meta_
 
-class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
+class _RST_Base_ (TFL.Meta.Object, metaclass = _RST_Meta_) :
     """Base class for RESTful resources."""
 
     _real_name                 = "_Base_"

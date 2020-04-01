@@ -59,7 +59,7 @@ def safe_str_cmp (lhs, rhs) :
     return _wz_safe_str_cmp (l, r)
 # end def safe_str_cmp
 
-class _WZG_Request_ (TFL.Meta.BaM (Request, metaclass = TFL.Meta.M_Class)) :
+class _WZG_Request_ (Request, metaclass = TFL.Meta.M_Class) :
     """Extend werkzeug's Request class."""
 
     _real_name           = "Request"

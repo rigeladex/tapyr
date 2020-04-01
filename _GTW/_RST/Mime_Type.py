@@ -70,7 +70,7 @@ class _Meta_ (TFL.Meta.M_Class) :
 
 # end class _Meta_
 
-class _Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _Meta_)) :
+class _Base_ (TFL.Meta.Object, metaclass = _Meta_) :
     """Base class for mime type renderers.
 
        http://tools.ietf.org/html/rfc4287

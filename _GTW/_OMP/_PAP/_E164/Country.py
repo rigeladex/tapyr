@@ -151,7 +151,7 @@ class M_Country (TFL.Meta.Object.__class__) :
 
 # end class M_Country
 
-class Country (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Country)) :
+class Country (TFL.Meta.Object, metaclass = M_Country) :
     """Provide phone number mapping for a specific country."""
 
     Table              = {}

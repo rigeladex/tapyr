@@ -124,7 +124,7 @@ class M_Session (TFL.Meta.M_Auto_Update_Combined) :
 
 # end class M_Session
 
-class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
+class Session (TFL.Meta.Object, metaclass = M_Session) :
     """Base class for sessions
 
        >>> from _GTW.Memory_Session import Memory_Session

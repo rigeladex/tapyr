@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -156,10 +156,7 @@ def as_json_cargo (* excs) :
     return list (_gen (excs))
 # end def as_json_cargo
 
-class _MOM_Error_ \
-          ( TFL.Meta.BaM
-              (Exception, metaclass = TFL.Meta.Object.__class__)
-          ) :
+class _MOM_Error_ (Exception, metaclass = TFL.Meta.Object.__class__) :
     """Root class of MOM exceptions"""
 
     _real_name       = "Error"

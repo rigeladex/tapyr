@@ -72,7 +72,7 @@ class _DTW_Meta_ (TFL.Meta.Object.__class__) :
 # end class _DTW_Meta_
 
 @totally_ordered
-class _DTW_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _DTW_Meta_)) :
+class _DTW_ (TFL.Meta.Object, metaclass = _DTW_Meta_) :
     """Root for `datetime` wrappers"""
 
     _Type            = None

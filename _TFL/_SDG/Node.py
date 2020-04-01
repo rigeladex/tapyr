@@ -405,7 +405,7 @@ class _Node_NO_List_ (TFL.NO_List) :
 
 NO_List = _Node_NO_List_ # end def _Node_NO_List_
 
-class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
+class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
     """Node of a structured document."""
 
     children             = property (lambda s : s._children_iter ())

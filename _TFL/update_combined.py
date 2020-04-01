@@ -62,7 +62,7 @@ class tuple_dont_combine (Dont_Combine, tuple) :
     """Tuple that doesn't combine, but replaces, under `update_combined`"""
 # end class tuple_dont_combine
 
-class list_filtered (TFL.Meta.BaM (list, metaclass = TFL.Meta.M_Class)) :
+class list_filtered (list, metaclass = TFL.Meta.M_Class) :
     """List that filters elements from ``lhs`` when `update_combined` as
        ``rhs``.
     """

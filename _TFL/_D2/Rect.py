@@ -63,7 +63,7 @@ class M_Rect (TFL.Meta.Object.__class__) :
 
 # end class M_Rect
 
-class Rect (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rect)) :
+class Rect (TFL.Meta.Object, metaclass = M_Rect) :
     """Model an axes-parallel rectangle in 2D space.
 
     >>> def rect_points (r) :

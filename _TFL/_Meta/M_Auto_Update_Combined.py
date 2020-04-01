@@ -37,7 +37,7 @@ their names in either :attr:`_attrs_to_update_combine` or
 
     >>> from   _TFL.portable_repr import print_prepr
 
-    >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Update_Combined)) :
+    >>> class A (object, metaclass = M_Auto_Update_Combined) :
     ...     _attrs_to_update_combine      = ("foo", "bar", "qux")
     ...     _attrs_uniq_to_update_combine = ("quux", )
     ...     foo                           = set ([1, 2, 3])
@@ -60,7 +60,7 @@ their names in either :attr:`_attrs_to_update_combine` or
     >>> print_prepr (C.foo, C.bar, C.qux, C.quux, C.baz)
     {1, 2, 3, 4, 5} {'a', 'b', 'x', 'y', 'z'} [(0,), (1,), (2,), (0,), (0, 1), (3,)] [(0,), (1,), (2,), (0, 1), (3,)] <Undef/value>
 
-    >>> class P (TFL.Meta.BaM (object, metaclass = M_Auto_Update_Combined)) :
+    >>> class P (object, metaclass = M_Auto_Update_Combined) :
     ...     _attrs_to_update_combine      = ("foo", "bar")
     ...     bar                           = dict (x = 1, y = 2)
     >>> class R (object) :

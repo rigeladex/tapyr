@@ -74,7 +74,7 @@ class M_DPN_Importer (type) :
 
 # end class M_DPN_Importer
 
-class DPN_Importer (TFL.Meta.BaM (object, metaclass = M_DPN_Importer)) :
+class DPN_Importer (object, metaclass = M_DPN_Importer) :
     """Implements an import hook for derived package namesapces,
        according to PEP 302. For the derived and all parent namespaces,
        try to find the module.

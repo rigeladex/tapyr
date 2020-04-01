@@ -40,7 +40,7 @@ import _TFL._Meta.Property
 import _TFL.Caller
 
 class _Prop_Type_ \
-          (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Prop_Type)) :
+          (TFL.Meta.Object, metaclass = MOM.Meta.M_Prop_Type) :
     """Base class for attribute and predicate types"""
 
     _real_name               = "Type"
@@ -52,7 +52,7 @@ class _Prop_Type_ \
     DET = DET_Base = DET_Root = None
 
     class _Doc_Map_ \
-            (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta._M_Doc_Map_)) :
+            (TFL.Meta.Object, metaclass = MOM.Meta._M_Doc_Map_) :
         """Documentation map: contains documentation for various class variables."""
 
         name = """

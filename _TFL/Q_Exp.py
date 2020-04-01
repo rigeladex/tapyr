@@ -233,7 +233,7 @@ class M_Q_Root (TFL.Meta.Object.__class__) :
 
 # end class M_Q_Root
 
-class Q_Root (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Q_Root)) :
+class Q_Root (TFL.Meta.Object, metaclass = M_Q_Root) :
     """Base class for all classes modelling query operators and functions."""
 
     op_map               = dict \

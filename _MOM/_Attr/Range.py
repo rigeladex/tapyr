@@ -77,7 +77,7 @@ class _M_Range_ (_A_Structured_.__class__) :
 
 # end class _M_Range_
 
-class _A_Range_ (TFL.Meta.BaM (_A_Structured_, metaclass = _M_Range_)) :
+class _A_Range_ (_A_Structured_, metaclass = _M_Range_) :
     """Base class for range-types attributes of an object."""
 
     Kind_Mixins         = (MOM.Attr._Range_Mixin_, )

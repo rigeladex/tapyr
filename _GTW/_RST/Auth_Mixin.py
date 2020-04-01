@@ -35,7 +35,7 @@ import _TFL._Meta.Object
 import collections
 
 class Errors \
-        (TFL.Meta.BaM (collections.defaultdict, metaclass = TFL.Meta.M_Class)) :
+        (collections.defaultdict, metaclass = TFL.Meta.M_Class) :
 
     def __init__ (self) :
         self.__super.__init__ (list)

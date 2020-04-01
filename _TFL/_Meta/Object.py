@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2018 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -86,7 +86,7 @@ class _TFL_Meta_Object_Root_ (object) :
 
 _Object_Root_ = _TFL_Meta_Object_Root_
 
-class _TFL_Meta_Object_ (Meta.BaM (_Object_Root_, metaclass = Meta.M_Class)) :
+class _TFL_Meta_Object_ (_Object_Root_, metaclass = Meta.M_Class) :
     """Instead of `object`, `TFL.Meta.Object` should be used as baseclass to
        define top-level classes. Classes derived (directly or indirectly)
        from `Object` gain the benefits:

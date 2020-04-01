@@ -264,7 +264,7 @@ import logging
 
 pickle = pyk.pickle
 
-class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
+class Kind (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind) :
     """Root class of attribute kinds to be used as properties for essential
        attributes of the MOM meta object model.
     """

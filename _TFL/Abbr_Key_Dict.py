@@ -41,7 +41,7 @@ class Ambiguous_Key (KeyError) :
     pass
 # end class Ambiguous_Key
 
-class Abbr_Key_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
+class Abbr_Key_Dict (dict, metaclass = TFL.Meta.M_Class) :
     """Dictionary supporting unique abbreviations of a key to be used as
        arguments for `__getitem__`.
     """

@@ -139,7 +139,7 @@ class M_Change (_Ancestor.__class__) :
 
 # end class M_Change
 
-class _Change_ (TFL.Meta.BaM (_Ancestor, metaclass = M_Change)) :
+class _Change_ (_Ancestor, metaclass = M_Change) :
     """Model a change of a MOM Scope"""
 
     kind               = "Composite"

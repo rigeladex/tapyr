@@ -67,7 +67,7 @@ class M_Plugin (TFL.Meta.M_Class) :
 
 # end class M_Plugin
 
-class _TFL_Plugin_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Plugin)) :
+class _TFL_Plugin_ (TFL.Meta.Object, metaclass = M_Plugin) :
     """Model a plugin of an application."""
 
     _real_name           = "Plugin"

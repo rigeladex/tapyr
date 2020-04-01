@@ -82,7 +82,7 @@ class _M_Manager_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Manager_
 
-class _Manager_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Manager_)) :
+class _Manager_ (TFL.Meta.Object, metaclass = _M_Manager_) :
     """Base class for database backend specific _Manager_ classes"""
 
     Pid_Manager      = MOM.DBW.Pid_Manager

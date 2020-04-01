@@ -82,7 +82,7 @@ class _Meta_ (TFL.Meta.M_Class) :
 
 # end class _Meta_
 
-class Status (TFL.Meta.BaM (Exception, TFL.Meta.Object, metaclass = _Meta_)) :
+class Status (Exception, TFL.Meta.Object, metaclass = _Meta_) :
     """Base class for HTTP status exceptions"""
 
     ### http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html

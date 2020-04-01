@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Pred.
@@ -87,11 +87,7 @@ import _TFL.d_dict
 import traceback
 
 class _Condition_ \
-          ( TFL.Meta.BaM
-              ( MOM.Prop.Type
-              , metaclass = MOM.Meta.M_Pred_Type._Condition_
-              )
-          ) :
+        (MOM.Prop.Type, metaclass = MOM.Meta.M_Pred_Type._Condition_) :
     ### Base class for all predicates (atomic and quantifiers).
 
     assertion       = ""
@@ -289,12 +285,7 @@ class _Condition_ \
 
 # end class _Condition_
 
-class Condition \
-          ( TFL.Meta.BaM
-              ( _Condition_
-              , metaclass = MOM.Meta.M_Pred_Type.Condition
-              )
-          ) :
+class Condition (_Condition_, metaclass = MOM.Meta.M_Pred_Type.Condition) :
     """A predicate defined by a simple assertion."""
 
     Error_Type    = MOM.Error.Invariant
@@ -355,12 +346,7 @@ class Condition \
 
 # end class Condition
 
-class _Quantifier_ \
-          ( TFL.Meta.BaM
-              ( _Condition_
-              , metaclass = MOM.Meta.M_Pred_Type.Quantifier
-              )
-          ) :
+class _Quantifier_ (_Condition_, metaclass = MOM.Meta.M_Pred_Type.Quantifier) :
     ### Base class for quantifier predicates of the MOM object model.
 
     Error_Type      = MOM.Error.Quant
@@ -460,12 +446,7 @@ class E_Quant (_Quantifier_) :
 
 # end class E_Quant
 
-class N_Quant \
-          ( TFL.Meta.BaM
-              ( _Quantifier_
-              , metaclass = MOM.Meta.M_Pred_Type.N_Quantifier
-              )
-          ) :
+class N_Quant (_Quantifier_, metaclass = MOM.Meta.M_Pred_Type.N_Quantifier) :
     """A predicate defined by a numeric quantifier over a set of
        values or objects.
     """
@@ -486,12 +467,7 @@ class N_Quant \
 
 # end class N_Quant
 
-class U_Quant \
-          ( TFL.Meta.BaM
-              ( _Quantifier_
-              , metaclass = MOM.Meta.M_Pred_Type.U_Quantifier
-              )
-          ) :
+class U_Quant (_Quantifier_, metaclass = MOM.Meta.M_Pred_Type.U_Quantifier) :
     """A predicate defined by an universal quantifier over a set of
        values or objects.
     """
@@ -585,8 +561,7 @@ class _Unique_ (_Condition_) :
 
 # end class _Unique_
 
-class Unique \
-        (TFL.Meta.BaM (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Unique)) :
+class Unique (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Unique) :
     """A predicate defining a uniqueness constraint over a set of attributes.
 
     For Unique predicates, the predicate is evaluated even if some
@@ -616,8 +591,7 @@ class Unique \
 
 # end class Unique
 
-class Exclude \
-        (TFL.Meta.BaM (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Exclude)) :
+class Exclude (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Exclude) :
     """A predicate defining an exclusion constraint over a set of attributes.
 
     For Exclude predicates, the predicate is evaluated even if some

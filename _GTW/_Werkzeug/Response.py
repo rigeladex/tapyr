@@ -41,7 +41,7 @@ import _TFL.json_dump
 from   werkzeug.wrappers          import Response
 from   werkzeug.urls              import Href
 
-class _WZG_Response_ ( TFL.Meta.BaM (Response, metaclass = TFL.Meta.M_Class)) :
+class _WZG_Response_ ( Response, metaclass = TFL.Meta.M_Class) :
     """Extend werkzeug's Response class."""
 
     _real_name           = "Response"

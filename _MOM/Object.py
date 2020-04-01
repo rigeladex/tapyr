@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -48,7 +48,7 @@ import _MOM.Entity
 import itertools
 
 class _MOM_Object_ \
-          (TFL.Meta.BaM (MOM.Id_Entity, metaclass = MOM.Meta.M_Object)) :
+          (MOM.Id_Entity, metaclass = MOM.Meta.M_Object) :
     """Common base class for essential objects of MOM.
 
        `MOM.Object` provides the framework for defining essential classes.
@@ -81,10 +81,8 @@ Object = _MOM_Object_ # end class
 
 @TFL.Add_To_Class ("_Destroyed_Mixin_", Object)
 class _Object_Destroyed_Mixin_ \
-          ( TFL.Meta.BaM
-              ( MOM._Id_Entity_Destroyed_Mixin_
-              , metaclass = MOM.Meta.M_E_Type_Object_Destroyed
-              )
+          ( MOM._Id_Entity_Destroyed_Mixin_
+          , metaclass = MOM.Meta.M_E_Type_Object_Destroyed
           ) :
     """Mixin triggering an exception on any attribute access to a
        destroyed object.
@@ -94,10 +92,8 @@ class _Object_Destroyed_Mixin_ \
 
 @TFL.Add_To_Class ("_Reload_Mixin_", Object)
 class _Object_Reload_Mixin_ \
-          ( TFL.Meta.BaM
-              ( MOM._Id_Entity_Reload_Mixin_
-              , metaclass = MOM.Meta.M_E_Type_Object_Reload
-              )
+          ( MOM._Id_Entity_Reload_Mixin_
+          , metaclass = MOM.Meta.M_E_Type_Object_Reload
           ) :
     """Mixin triggering a reload from the database on any attribute access."""
 

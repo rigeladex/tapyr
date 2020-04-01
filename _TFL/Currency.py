@@ -92,7 +92,7 @@ class _M_Currency_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Currency_
 
-class _Currency_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Currency_)) :
+class _Currency_ (TFL.Meta.Object, metaclass = _M_Currency_) :
 
     name            = "EUR"
     sloppy_name     = "EUR"

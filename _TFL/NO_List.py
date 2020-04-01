@@ -72,7 +72,7 @@ class M_Name_Dict (TFL.Meta.M_Class) :
 
 # end class M_Name_Dict
 
-class Name_Dict (TFL.Meta.BaM (dict, metaclass = M_Name_Dict)) :
+class Name_Dict (dict, metaclass = M_Name_Dict) :
 
     key_attr_name    = "name"
     _convert_methods = \

@@ -45,7 +45,7 @@ import _TFL._Meta.M_Class
 
 class Duplicate_Key_Error (KeyError) : pass
 
-class Ordered_Set (TFL.Meta.BaM (list, metaclass = TFL.Meta.M_Class)) :
+class Ordered_Set (list, metaclass = TFL.Meta.M_Class) :
     """Ordered set of objects. The objects are stored in a python list but
        additionally kept in a dictionary to allow fast access to the position
        in the list.

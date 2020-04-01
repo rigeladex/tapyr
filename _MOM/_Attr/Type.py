@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -535,12 +535,7 @@ class Pickled_Type_Spec (TFL.Meta.Object) :
 
 # end class Pickled_Type_Spec
 
-class A_Attr_Type \
-          ( TFL.Meta.BaM
-              ( MOM.Prop.Type
-              , metaclass = MOM.Meta.M_Attr_Type.Root
-              )
-          ) :
+class A_Attr_Type (MOM.Prop.Type, metaclass = MOM.Meta.M_Attr_Type.Root) :
     """Root class for attribute types for the MOM meta object model."""
 
     _attrs_to_update_combine      = ("check", )
@@ -1256,10 +1251,7 @@ class _A_Entity_ (A_Attr_Type) :
 
 # end class _A_Entity_
 
-class _A_Composite_ \
-          ( TFL.Meta.BaM
-              (_A_Entity_, metaclass = MOM.Meta.M_Attr_Type.Composite)
-          ) :
+class _A_Composite_ (_A_Entity_, metaclass = MOM.Meta.M_Attr_Type.Composite) :
     """Common base class for composite attributes of an object."""
 
     Kind_Mixins         = (MOM.Attr._Composite_Mixin_, )
@@ -1406,9 +1398,7 @@ class _A_Composite_ \
 # end class _A_Composite_
 
 class _A_Named_Value_ \
-          ( TFL.Meta.BaM
-              (A_Attr_Type, metaclass = MOM.Meta.M_Attr_Type.Named_Value)
-          ) :
+          (A_Attr_Type, metaclass = MOM.Meta.M_Attr_Type.Named_Value) :
     """Common base class for attributes holding named values."""
 
     C_Type            = None ### Attribute type applicable to cooked values
@@ -2221,10 +2211,8 @@ class _A_Filename_ (_A_String_Base_) :
 # end class _A_Filename_
 
 class _A_String_ \
-          ( TFL.Meta.BaM
-              ( Atomic_Json_Mixin, _A_String_Base_
-              , metaclass = MOM.Meta.M_Attr_Type.String
-              )
+          ( Atomic_Json_Mixin, _A_String_Base_
+          , metaclass = MOM.Meta.M_Attr_Type.String
           ) :
     """Base class for string-valued attributes of an object."""
 
@@ -2288,9 +2276,7 @@ class _A_String_Ascii_ (_A_String_) :
 # end class _A_String_Ascii_
 
 class _A_Named_Object_ \
-          ( TFL.Meta.BaM
-              (_A_Named_Value_, metaclass = MOM.Meta.M_Attr_Type.Named_Object)
-          ) :
+          (_A_Named_Value_, metaclass = MOM.Meta.M_Attr_Type.Named_Object) :
     """Common base class for attributes holding named objects (that cannot be
        directly put into a database).
     """
@@ -2336,11 +2322,7 @@ class _A_Named_Object_ \
 # end class _A_Named_Object_
 
 class _A_Typed_Collection_ \
-          ( TFL.Meta.BaM
-              ( _A_Collection_
-              , metaclass = MOM.Meta.M_Attr_Type.Typed_Collection
-              )
-          ) :
+          (_A_Collection_, metaclass = MOM.Meta.M_Attr_Type.Typed_Collection) :
     """Base class for attributes that hold a collection of strictly typed
        values.
     """
@@ -2409,11 +2391,7 @@ class _A_Typed_Collection_ \
 # end class _A_Typed_Collection_
 
 class _A_Typed_List_ \
-          ( TFL.Meta.BaM
-              ( _A_Typed_Collection_
-              , metaclass = MOM.Meta.M_Attr_Type.Typed_List
-              )
-          ) :
+          (_A_Typed_Collection_, metaclass = MOM.Meta.M_Attr_Type.Typed_List) :
     """Base class for list-valued attributes with strict type."""
 
     C_range_sep      = Regexp (r"(?: - | ?(?:–|\.\.) ?)")
@@ -2543,8 +2521,7 @@ class _A_Id_Entity_Set_ (_A_Typed_Set_, _A_Id_Entity_Collection_) :
 
 # end class _A_Id_Entity_Set_
 
-class _A_Unit_ \
-          (TFL.Meta.BaM (A_Attr_Type, metaclass = MOM.Meta.M_Attr_Type.Unit)) :
+class _A_Unit_ (A_Attr_Type, metaclass = MOM.Meta.M_Attr_Type.Unit) :
     """Mixin for attributes describing physical quantities with optional
        units.
     """
@@ -2822,10 +2799,7 @@ class A_Date_Slug (_A_String_) :
 
 # end class A_Date_Slug
 
-class A_Decimal \
-          ( TFL.Meta.BaM
-              (_A_Decimal_, metaclass = MOM.Meta.M_Attr_Type.Decimal)
-          ) :
+class A_Decimal (_A_Decimal_, metaclass = MOM.Meta.M_Attr_Type.Decimal) :
     """Decimal number."""
 
     rounding       = decimal.ROUND_HALF_UP
@@ -2910,8 +2884,7 @@ class A_Email (Syntax_Re_Mixin, _A_String_) :
 
 # end class A_Email
 
-class A_Enum \
-          (TFL.Meta.BaM (A_Attr_Type, metaclass = MOM.Meta.M_Attr_Type.Enum)) :
+class A_Enum (A_Attr_Type, metaclass = MOM.Meta.M_Attr_Type.Enum) :
     """Base class for enumeration attributes. An enumeration is defined by a
        `Table` mapping the keys (used as raw and cooked values) to their
        description.
@@ -3126,10 +3099,7 @@ class A_Link_Ref_List (_A_Link_Ref_, _A_Id_Entity_List_) :
 
 # end class A_Link_Ref_List
 
-class A_Link_Role \
-          ( TFL.Meta.BaM
-              (_A_Id_Entity_, metaclass = MOM.Meta.M_Attr_Type.Link_Role)
-          ) :
+class A_Link_Role (_A_Id_Entity_, metaclass = MOM.Meta.M_Attr_Type.Link_Role) :
     """Link-role."""
 
     auto_rev_ref        = False
@@ -3375,8 +3345,7 @@ class A_String (_A_String_) :
 
 # end class A_String
 
-class A_Surrogate \
-          (TFL.Meta.BaM (_A_Int_, metaclass = MOM.Meta.M_Attr_Type.Surrogate)) :
+class A_Surrogate (_A_Int_, metaclass = MOM.Meta.M_Attr_Type.Surrogate) :
     """A surrogate key. There can be only one per class."""
 
     typ            = _ ("Surrogate")

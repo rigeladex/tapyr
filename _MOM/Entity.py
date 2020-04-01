@@ -355,7 +355,7 @@ import itertools
 import logging
 import traceback
 
-class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
+class Entity (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity) :
     """Internal root class for MOM entities with and without identity."""
 
     PNS                   = MOM
@@ -1030,7 +1030,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 
 # end class Entity
 
-class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
+class An_Entity (Entity, metaclass = MOM.Meta.M_An_Entity) :
     """Root class for anonymous entities without identity."""
 
     is_partial            = True
@@ -1186,7 +1186,7 @@ _Ancestor_Essence = Entity
 @TFL.Add_To_Class ("P_Type",   _A_Id_Entity_)
 @TFL.Add_To_Class ("P_Type_S", _A_Id_Entity_)
 class Id_Entity \
-          (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Id_Entity)) :
+          (_Ancestor_Essence, metaclass = MOM.Meta.M_Id_Entity) :
     """Root class for MOM entities with identity, i.e.,
        objects and links.
     """
@@ -2085,7 +2085,7 @@ class _Id_Entity_Destroyed_Mixin_ (_Id_Entity_Mixin_) :
 
 # end class _Id_Entity_Destroyed_Mixin_
 
-class MD_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_MD_Entity)) :
+class MD_Entity (Entity, metaclass = MOM.Meta.M_MD_Entity) :
     """Root class for meta-data entities, e.g., entities recording changes to
        the object model.
     """

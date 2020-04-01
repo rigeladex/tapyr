@@ -33,7 +33,7 @@ Meta class for auto-combining the list-valued attributes mentioned in
 
 ::
 
-    >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Combine_Lists)) :
+    >>> class A (object, metaclass = M_Auto_Combine_Lists) :
     ...     _lists_to_combine = ("foo", "bar", "qux")
     ...     bar               = [1, 3]
     ...     qux               = [(0, ), (1, )]

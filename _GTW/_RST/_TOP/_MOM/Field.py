@@ -76,7 +76,7 @@ class M_Field (TFL.Meta.Object.__class__) :
 
 # end class M_Field
 
-class Base (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Field)) :
+class Base (TFL.Meta.Object, metaclass = M_Field) :
 
     aq            = None
     attr_name     = None
@@ -475,7 +475,7 @@ class M_HTML_Link (AQ.__class__) :
 
 # end class M_HTML_Link
 
-class HTML_Link (TFL.Meta.BaM (AQ, metaclass = M_HTML_Link)) :
+class HTML_Link (AQ, metaclass = M_HTML_Link) :
     """Field that is displayed as HTML link"""
 
     protocol = None

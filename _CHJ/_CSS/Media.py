@@ -52,7 +52,7 @@ class M_Media (TFL.Meta.Object.__class__) :
 
 # end class M_Media
 
-class _Media_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Media)) :
+class _Media_ (TFL.Meta.Object, metaclass = M_Media) :
     """Base class for media types and queries."""
 
     nick            = None
