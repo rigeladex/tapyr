@@ -32,11 +32,9 @@ import _TFL._Meta.Object
 import _TFL._Units
 
 @totally_ordered
-@pyk.adapt__div__
 class Unit (TFL.Meta.Object) :
     """Model a unit kind"""
 
-    @pyk.adapt__div__
     class Bound_Unit (TFL.Meta.Object) :
 
         def __init__ (self, unit_kind_cls, unit) :

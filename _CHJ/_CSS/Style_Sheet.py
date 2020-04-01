@@ -64,7 +64,6 @@ class _Style_Sheet_ \
 
 # end class _Style_Sheet_
 
-@pyk.adapt__str__
 class Style_Sheet (_Style_Sheet_) :
     """Model a CSS style sheet"""
 
@@ -104,7 +103,6 @@ class Style_Sheet (_Style_Sheet_) :
 
 # end class Style_Sheet
 
-@pyk.adapt__str__
 class Style_File (_Style_Sheet_) :
     """Model a style file containing plain old CSS."""
 

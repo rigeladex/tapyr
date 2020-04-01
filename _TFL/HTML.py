@@ -93,7 +93,6 @@ def _obfuscator (scheme = "mailto") :
 
 obfuscator = dict ((s, _obfuscator (s)) for s in scheme_map)
 
-@pyk.adapt__str__
 class Cleaner (TFL.Meta.Object) :
     """Clean up HTML using BeautifulSoup."""
 

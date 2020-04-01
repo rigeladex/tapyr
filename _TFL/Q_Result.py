@@ -199,7 +199,6 @@ def _comparison_operator (op) :
     return _
 # end def _comparison_operator
 
-@pyk.adapt__str__
 class _Attr_ (object) :
     """Wrapper for result of `.attr` method."""
 

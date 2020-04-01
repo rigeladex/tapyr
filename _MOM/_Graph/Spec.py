@@ -51,7 +51,6 @@ def _Instance (cls) :
     return cls ()
 # end def _Instance
 
-@pyk.adapt__str__
 class _Spec_Item_ (TFL.Meta.Object) :
     """Base class for specs of entity, attribute, role, is_a"""
 

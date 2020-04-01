@@ -72,8 +72,6 @@ import _TFL._Meta.Object
 from   _TFL.pyk                   import pyk
 from   _TFL.Regexp                import Regexp, re
 
-@pyk.adapt__div__
-@pyk.adapt__str__
 class Calc (TFL.Meta.Object) :
     """Model a CSS calc expression."""
 

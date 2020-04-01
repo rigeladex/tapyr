@@ -53,7 +53,6 @@ import _TFL.Accessor
 import _TFL.predicate
 import _TFL._Meta.Object
 
-@pyk.adapt__str__
 class DL_Item (TFL.Meta.Object) :
     """Item in a doubly linked list"""
 

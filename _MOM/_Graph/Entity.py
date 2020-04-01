@@ -62,7 +62,6 @@ _word_sep = Regexp("([^A-Za-z0-9])")
 class Rel_Placer (TFL.Meta.Object) :
     """Place attachement points of all relations of an Entity."""
 
-    @pyk.adapt__str__
     class Dir_Placer (TFL.Meta.Object) :
         """Placer for relations in one cardinal direction"""
 

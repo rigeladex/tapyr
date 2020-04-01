@@ -47,6 +47,7 @@
 #                       - `staticmethod (print)` triggers a syntax error
 #                     + Import `print_function` from `__future__`
 #    31-Mar-2020 (CT) Remove `adapt__bool__`
+#     1-Apr-2020 (CT) Remove `adapt__div__`, `adapt__str__`
 #    ««revision-date»»···
 #--
 
@@ -69,18 +70,6 @@ class _Pyk_ (object) :
 
        Use a class instead of module-level definitions to allow lazy imports.
     """
-
-    @staticmethod
-    def adapt__div__ (cls) :
-        """Nothing to be done here"""
-        return cls
-    # end def adapt__div__
-
-    @staticmethod
-    def adapt__str__ (cls) :
-        """Nothing to be done here"""
-        return cls
-    # end def adapt__str__
 
     @lazy_property
     def builtins (self) :

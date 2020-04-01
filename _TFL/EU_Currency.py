@@ -68,7 +68,6 @@ from   _TFL.Currency     import Currency, _Currency_
 
 import _TFL.CAO
 
-@pyk.adapt__str__
 class _EU_Currency_ (_Currency_) :
 
     Table           = {}

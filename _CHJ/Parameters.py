@@ -204,7 +204,6 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
     # end class _MOB_
 
-    @pyk.adapt__str__
     class _Script_File_ (TFL.Meta.Object) :
         """Wrapper for a javascript `Script_File` referenced in a media fragment."""
 

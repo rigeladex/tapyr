@@ -75,8 +75,6 @@ class M_Length (TFL.Meta.Object.__class__) :
 
 # end class M_Length
 
-@pyk.adapt__div__
-@pyk.adapt__str__
 class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
     """Model a CSS length value.
 
@@ -361,7 +359,6 @@ class Vw (_Length_) :
 
 # end class Vw
 
-@pyk.adapt__div__
 class TRBL0 (CHJ.CSS._TRBL0_) :
     """Top/right/bottom/left spec, undefined values are 0.
 

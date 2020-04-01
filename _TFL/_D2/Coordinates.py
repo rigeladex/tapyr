@@ -33,7 +33,6 @@ import _TFL._Meta.Object
 
 import math
 
-@pyk.adapt__str__
 class Coordinates (TFL.Meta.Object) :
     """Model coordinates in 2D space.
 

@@ -34,8 +34,6 @@ import _TFL._Meta.Object
 import _TFL._Units.M_Kind
 
 @totally_ordered
-@pyk.adapt__div__
-@pyk.adapt__str__
 class Kind (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.Units.M_Kind)) :
     """Model a unit kind"""
 

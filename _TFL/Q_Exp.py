@@ -297,7 +297,6 @@ class _Aggr_ (Q_Root) :
 # end class _Aggr_
 
 @TFL.Add_New_Method (Base)
-@pyk.adapt__div__
 class _Bin_ (Q_Root) :
     """Binary query expression"""
 
@@ -686,7 +685,6 @@ class _Exp_Base_ (Q_Root) :
 
 # end class _Exp_Base_
 
-@pyk.adapt__div__
 class _Exp_ (_Exp_Base_) :
     """Query expression"""
 
@@ -809,7 +807,6 @@ class _Exp_ (_Exp_Base_) :
 
 # end class _Exp_
 
-@pyk.adapt__div__
 class _Exp_B_ (_Exp_Base_) :
     """Query expression for query result of type Boolean"""
 

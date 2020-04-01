@@ -107,7 +107,6 @@ class _Point_ (TFL.Meta.Object) :
 
 # end class _Point_
 
-@pyk.adapt__div__
 class Point (_Point_) :
     """Model a point in rectangular, 2-dimensional space."""
 
@@ -195,7 +194,6 @@ class Point (_Point_) :
 
 # end class Point
 
-@pyk.adapt__div__
 class _R_Point_ (_Point_) :
     """Base class for Points positioned relative to another point."""
 

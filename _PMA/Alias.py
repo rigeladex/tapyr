@@ -39,7 +39,6 @@ from   _PMA                    import Lib
 
 import _TFL._Meta.Object
 
-@pyk.adapt__str__
 class Alias (TFL.Meta.Object) :
     """Model a single alias"""
 

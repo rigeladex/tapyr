@@ -34,7 +34,6 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 import _TFL.CAO
 
-@pyk.adapt__str__
 class FB_Entry_P (FB_Entry) :
     """One entry of Fahrtenbuch_P"""
 

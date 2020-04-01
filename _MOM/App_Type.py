@@ -55,7 +55,6 @@ import _TFL.User_Config
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
-@pyk.adapt__str__
 class _App_Type_ (TFL.Meta.Object) :
     """Encapsulate information about a specific application type."""
 

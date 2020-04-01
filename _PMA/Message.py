@@ -387,7 +387,6 @@ class Msg_Scope (TFL.Caller.Scope) :
 
 # end class Msg_Scope
 
-@pyk.adapt__str__
 class _Msg_Part_ (TFL.Meta.Object) :
 
     label_width         = 8
@@ -912,7 +911,6 @@ class Message (_Message_) :
 
 # end class Message
 
-@pyk.adapt__str__
 class _Pending_Action_ (TFL.Meta.Object) :
 
     msg     = property (TFL.Getter._msg)

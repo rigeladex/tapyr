@@ -37,7 +37,6 @@ import _TFL.Q_Result
 
 from   _MOM._Attr.Filter     import Q
 
-@pyk.adapt__str__
 class _SQ_ (TFL.Meta.Object) :
     """Symbolic query generator.
 
@@ -74,7 +73,6 @@ class _SQ_ (TFL.Meta.Object) :
 # end class _SQ_
 
 @TFL.Add_New_Method (_SQ_)
-@pyk.adapt__str__
 class _E_Type_ (TFL.Meta.Object) :
     """Symbolic query for a specific E_Type.
 

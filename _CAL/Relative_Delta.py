@@ -48,7 +48,6 @@ import _TFL._Meta.Once_Property
 import datetime
 import operator
 
-@pyk.adapt__str__
 class Relative_Delta (CAL._Delta_Mixin_) :
     """Relative delta based on `dateutil.relativedelta`
 

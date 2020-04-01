@@ -45,8 +45,6 @@ import _TFL._Meta.Object
 import math
 
 @totally_ordered
-@pyk.adapt__div__
-@pyk.adapt__str__
 class _Angle_ (TFL.Meta.Object) :
     """Model an angle"""
 

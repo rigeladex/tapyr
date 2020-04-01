@@ -178,7 +178,6 @@ from   itertools                  import chain as ichain
 
 import math
 
-@pyk.adapt__str__
 class MT (TFL.Meta.Object) :
     """Matrix type.
 
@@ -322,7 +321,6 @@ class MT (TFL.Meta.Object) :
 
 # end class MT
 
-@pyk.adapt__str__
 class _Affine_Transform_ (TFL.Meta.Object) :
     """Base class of affine transforms."""
 
@@ -430,7 +428,6 @@ class Rotate (_Affine_Transform_) :
 
 # end class Rotate
 
-@pyk.adapt__str__
 class Scale (_Affine_Transform_) :
     """Transform specifying a scale operation."""
 

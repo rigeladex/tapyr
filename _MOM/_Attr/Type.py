@@ -535,7 +535,6 @@ class Pickled_Type_Spec (TFL.Meta.Object) :
 
 # end class Pickled_Type_Spec
 
-@pyk.adapt__str__
 class A_Attr_Type \
           ( TFL.Meta.BaM
               ( MOM.Prop.Type

@@ -200,7 +200,6 @@ class _Example_ (TFL.Meta.Object) :
 
 # end class _Example_
 
-@pyk.adapt__str__
 class Scope (TFL.Meta.Object) :
 
     active                 = None

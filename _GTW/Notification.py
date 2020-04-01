@@ -141,7 +141,6 @@ class Notification_Collection \
 
 # end class Notification_Collection
 
-@pyk.adapt__str__
 class Notification (TFL.Meta.Object) :
     """A notification based on plain text."""
 

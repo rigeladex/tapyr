@@ -60,7 +60,6 @@ class _Result_ (TFL.Meta.Object) :
 
 # end class _Result_
 
-@pyk.adapt__str__
 class Result_File (_Result_) :
     """Expected result of application test specified as file_name."""
 
@@ -99,7 +98,6 @@ class Result_File (_Result_) :
 
 # end class Result_File
 
-@pyk.adapt__str__
 class Result_String (_Result_) :
     """Expected result of application test specified as string."""
 

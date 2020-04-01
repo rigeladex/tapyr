@@ -27,7 +27,6 @@ from   _TFL.I18N                  import _
 
 import _TFL._Meta.Object
 
-@pyk.adapt__str__
 class _Infinity_ (TFL.Meta.Object) :
     r"""Instance that is larger than any number.
 

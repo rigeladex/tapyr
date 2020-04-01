@@ -32,7 +32,6 @@ from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.predicate             import cartesian
 from   _TFL.pyk                   import pyk
 
-@pyk.adapt__str__
 class _Child_Selector_ (TFL.Meta.Object) :
     """Base class for child selector classes"""
 

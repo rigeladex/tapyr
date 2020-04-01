@@ -76,7 +76,6 @@ class M_Field (TFL.Meta.Object.__class__) :
 
 # end class M_Field
 
-@pyk.adapt__str__
 class Base (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Field)) :
 
     aq            = None

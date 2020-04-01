@@ -26,7 +26,6 @@ from   _TFL.pyk    import pyk
 import _TFL._Meta.Object
 import _TFL.Accessor
 
-@pyk.adapt__str__
 class FO (TFL.Meta.Object) :
     """Formatter for objects and their attributes."""
 

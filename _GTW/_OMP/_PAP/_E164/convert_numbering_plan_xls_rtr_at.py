@@ -99,7 +99,6 @@ def _str_int (x) :
 # end def _str_int
 
 
-@pyk.adapt__str__
 class NDC (TFL.Meta.Object) :
 
     ### Want three integer columns, two string columns

@@ -44,7 +44,6 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _TFL.CAO
 import _TFL._Meta.Object
 
-@pyk.adapt__str__
 class Location (TFL.Meta.Object) :
     """Model terrestrial location of observer.
 

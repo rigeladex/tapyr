@@ -446,7 +446,6 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         pass
     # end class _Predicates
 
-    @pyk.adapt__str__
     class _FO_ (TFL.Meta.Object) :
         """Formatter for attributes of object."""
 
@@ -1031,7 +1030,6 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 
 # end class Entity
 
-@pyk.adapt__str__
 class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
     """Root class for anonymous entities without identity."""
 
@@ -1187,7 +1185,6 @@ _Ancestor_Essence = Entity
 
 @TFL.Add_To_Class ("P_Type",   _A_Id_Entity_)
 @TFL.Add_To_Class ("P_Type_S", _A_Id_Entity_)
-@pyk.adapt__str__
 class Id_Entity \
           (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Id_Entity)) :
     """Root class for MOM entities with identity, i.e.,

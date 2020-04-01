@@ -156,7 +156,6 @@ def as_json_cargo (* excs) :
     return list (_gen (excs))
 # end def as_json_cargo
 
-@pyk.adapt__str__
 class _MOM_Error_ \
           ( TFL.Meta.BaM
               (Exception, metaclass = TFL.Meta.Object.__class__)

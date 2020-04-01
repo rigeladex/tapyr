@@ -46,7 +46,6 @@ import datetime
 import logging
 import time
 
-@pyk.adapt__str__
 class _Base_ (TFL.Meta.Object) :
     """Signed token as used for secure cookies or CSRF tokens"""
 

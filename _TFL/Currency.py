@@ -92,8 +92,6 @@ class _M_Currency_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Currency_
 
-@pyk.adapt__div__
-@pyk.adapt__str__
 class _Currency_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Currency_)) :
 
     name            = "EUR"
