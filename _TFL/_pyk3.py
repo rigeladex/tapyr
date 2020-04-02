@@ -53,6 +53,7 @@
 #     2-Apr-2020 (CT) Remove `Classic_Class_Type`
 #     2-Apr-2020 (CT) Remove `copyreg`
 #     2-Apr-2020 (CT) Add `number_types_x`
+#     2-Apr-2020 (CT) Increase `pickle_protocol` to 4
 #    ««revision-date»»···
 #--
 
@@ -200,7 +201,7 @@ class _Pyk_ (object) :
         return pickle
     # end def pickle
 
-    pickle_protocol = 2
+    pickle_protocol = 4 ### `5` needs Python 3.8+, still need to support 3.7
 
     @staticmethod
     def reprify (r) :
