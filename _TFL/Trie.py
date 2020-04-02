@@ -414,7 +414,7 @@ class Word_Trie (TFL.Meta.Object) :
         """Generate all words with a Levenshtein-distance <= max_edits to word."""
         ### http://en.wikipedia.org/wiki/Levenshtein_distance
         ### http://stevehanov.ca/blog/index.php?id=114
-        row_1 = pyk.range (len (word) + 1)
+        row_1 = list (range (len (word) + 1))
         for char, node in pyk.iteritems (self.root.children) :
             for m in self._match_iter_inner \
                     (col_iter, word, max_edits, char, node, row_1) :

@@ -465,13 +465,13 @@ class DL_Ring (_DL_Chain_) :
 
     def rotate_next (self, n) :
         """Move `self.mark` forward (i.e., following `next`) `n` times."""
-        for i in pyk.xrange (n) :
+        for i in range (n) :
             self.mark = self.mark.next
     # end def rotate_next
 
     def rotate_prev (self, n) :
         """Move `self.mark` backward (i.e., following `prev`) `n` times."""
-        for i in pyk.xrange (n) :
+        for i in range (n) :
             self.mark = self.mark.prev
     # end def rotate_prev
 

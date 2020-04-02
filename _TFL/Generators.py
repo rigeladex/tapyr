@@ -86,7 +86,7 @@ def bool_split_iters (seq, predicate = bool) :
     """Return an iterator pair yielding the false, respectively true,
        elements of `seq`, as determined by `predicate`
 
-    >>> seq = list (pyk.xrange (10))
+    >>> seq = list (range (10))
     >>> _show (list (x) for x in bool_split_iters (seq))
     [[0], [1, 2, 3, 4, 5, 6, 7, 8, 9]]
     >>> _show (list (x) for x in bool_split_iters (seq, lambda i : i % 2))

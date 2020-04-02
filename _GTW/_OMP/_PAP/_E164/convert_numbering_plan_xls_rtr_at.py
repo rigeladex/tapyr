@@ -183,7 +183,7 @@ def _convert_row (row) :
 def gen_records (xls_name) :
     book    = xlrd.open_workbook  (xls_name, encoding_override = "iso-8859-1")
     sheet   = book.sheet_by_index (0)
-    for i in pyk.xrange (0, sheet.nrows) :
+    for i in range (0, sheet.nrows) :
         for ndc in _convert_row (sheet.row (i)) :
             yield ndc
 # end def gen_records

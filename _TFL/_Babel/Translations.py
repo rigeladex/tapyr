@@ -59,7 +59,7 @@ class Translations (babel.support.Translations) :
             raise IOError (0, "Bad magic number", filename)
         # Now put all messages from the .mo file buffer into the catalog
         # dictionary.
-        for i in pyk.xrange (0, msgcount) :
+        for i in range (0, msgcount) :
             mlen, moff = unpack (ii, buf [masteridx : masteridx + 8])
             tlen, toff = unpack (ii, buf [transidx  : transidx  + 8])
             mend       = moff + mlen

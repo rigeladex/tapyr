@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2018 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -24,6 +24,7 @@
 #    27-Nov-2011 (CT)  Modernize
 #    11-Oct-2016 (CT)  Import `Command_Line` from `_TFL.Command_Line`
 #     3-Dec-2018 (CT)  Correct typo in exception message
+#     2-Apr-2020 (CT)  Remove `__main__` code
 #    ««revision-date»»···
 #--
 
@@ -178,50 +179,4 @@ class _Divisor_Dag_ :
 
 if __name__ != "__main__" :
     TFL._Export ("*", "_Divisor_Dag_")
-else :
-    from time import time
-    from _TFL.Command_Line import Command_Line
-    cmd = Command_Line \
-        ( option_spec =
-            ( "-iterations:I=50?Number of iterations per number looked at"
-            , "-limit:I=1000?Largest number to look at"
-            )
-        )
-    iterations = cmd.iterations
-    limit      = cmd.limit
-    def test_time (number, iterations) :
-        d                   = Divisor_Dag (number)
-        table               = _Divisor_Dag_.Table.copy ()
-        _Divisor_Dag_.Table = {}
-        t1                  = time ()
-        table               = {}
-        t2                  = time ()
-        ignore              = float (t2 - t1) * iterations
-        t1                  = time ()
-        for i in range (iterations) :
-            d = Divisor_Dag (number)
-            _Divisor_Dag_.Table = {}
-        t2                 = time ()
-        duration           = float (t2 - t1 - ignore) / iterations
-        result             = duration / len (d.divisors)
-        return (len (d.divisors), duration, result, number)
-    cases   = ( ( 2, pyk.range (1, 16))
-              , (10, [10] * 16)
-              , ( 2, map (lambda i, p = primes : p [i], pyk.range (16)))
-              )
-    numbers = []
-    for number, factors in cases :
-        i = 1
-        while number <= limit :
-            numbers.append (number)
-            number = number * factors [i]
-            i      = i      + 1
-    results = []
-    for number in sorted (numbers) :
-        results.append (test_time (number, iterations))
-    for (divisors, duration, d, number) in sorted (results) :
-        print \
-            ( "Divisor_Dag (%8d) : %3d divisors %.6fs (%.6fs / divisor)"
-            % (number, divisors, duration, d)
-            )
 ### __END__ TFL.Divisor_Dag

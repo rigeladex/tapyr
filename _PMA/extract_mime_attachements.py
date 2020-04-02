@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2019-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -43,7 +43,7 @@ def extract_mime_attachements \
         ) :
     if def_ext and not def_ext.startswith (".") :
         def_ext    = "." + def_ext
-    pis = part_indices if part_indices else pyk.range (len (msg.parts))
+    pis = part_indices if part_indices else range (len (msg.parts))
     for i in pis :
         p          = msg.parts [i]
         specified  = (not ignore (p.content_type)) and \

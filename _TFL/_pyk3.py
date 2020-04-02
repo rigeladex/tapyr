@@ -48,6 +48,7 @@
 #                     + Import `print_function` from `__future__`
 #    31-Mar-2020 (CT) Remove `adapt__bool__`
 #     1-Apr-2020 (CT) Remove `adapt__div__`, `adapt__str__`
+#     2-Apr-2020 (CT) Remove `range`, `xrange`
 #    ««revision-date»»···
 #--
 
@@ -204,12 +205,6 @@ class _Pyk_ (object) :
     # end def pickle
 
     pickle_protocol = 2
-    xrange          = staticmethod (range)
-
-    @staticmethod
-    def range (* args, ** kw) :
-        return list (range (* args, ** kw))
-    # end def range
 
     @staticmethod
     def reprify (r) :

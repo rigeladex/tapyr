@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -90,7 +90,7 @@ def dict_let (dct, ** kw) :
 def list_push (list, item, index = None) :
     """Context manager for temporarily pushing `item` onto `list`.
 
-    >>> l = pyk.range (0, 5)
+    >>> l = list (range (0, 5))
     >>> l
     [0, 1, 2, 3, 4]
 

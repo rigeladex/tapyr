@@ -204,7 +204,7 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
             self._entry_map = {}
             self._entries   = []
             def _years (self, year) :
-                for y in pyk.xrange \
+                for y in range \
                         (year + 1, self.top.copyright_start - 1, -1) :
                     yp  = self.Year \
                         ( name      = str (y)

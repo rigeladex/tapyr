@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -71,7 +71,7 @@ class _C_Node_ (TFL.SDG.Node) :
         , Else
         , Case
         , Default
-        )                = pyk.range (9)
+        )                = range (9)
     body_children        = property (lambda s : s.children_groups [s.Body])
     decl_children        = property (lambda s : s.children_groups [s.Decl])
     head_children        = property (lambda s : s.children_groups [s.Head])

@@ -409,7 +409,7 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
     """Node of a structured document."""
 
     children             = property (lambda s : s._children_iter ())
-    children_group_names = (Body, ) = pyk.range (1)
+    children_group_names = (Body, ) = range (1)
     default_cgi          = Body
     body_children        = property (lambda s : s.children_groups [s.Body])
 

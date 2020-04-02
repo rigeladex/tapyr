@@ -133,7 +133,7 @@ class _Int_Partition_ (TFL.Meta.Object) :
         if l == 0 :
             yield (n, )
         else :
-            for a in pyk.xrange (n - l, 0 , -1) :
+            for a in range (n - l, 0 , -1) :
                 for ps in self [(n - a, l - 1)] :
                     if a >= ps [0] :
                         yield (a, ) + ps
