@@ -55,6 +55,7 @@
 #    10-Feb-2016 (CT) Adapt `_handle_babel_compile` to changed `TFL.Babel`
 #    10-Feb-2016 (CT) Change `_P` to apply `normpath` to `app_dir`
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
+#     2-Apr-2020 (CT) Remove `skip_modules = "_pyk3.py"` (all in on Py3 now)
 #    ««revision-date»»···
 #--
 
@@ -109,7 +110,6 @@ class GTWD_Command (TFL.Command.Root_Command) :
         , passive_name      = "passive"
         , py_path           = sys.executable
         , root_path         = "./"
-        , skip_modules      = "_pyk3.py"
         , vcs               = "git"
         )
 
