@@ -79,7 +79,7 @@ class _Event_Wrapper_ (TFL.Meta.Object) :
 
     @Once_Property
     def date (self) :
-        return pyk.text_type (self._instance.FO.date)
+        return str (self._instance.FO.date)
     # end def date
 
     @Once_Property
@@ -115,7 +115,7 @@ class _Event_Wrapper_ (TFL.Meta.Object) :
 
     @Once_Property
     def time (self) :
-        return pyk.text_type (self._instance.FO.time)
+        return str (self._instance.FO.time)
     # end def time
 
     @Once_Property

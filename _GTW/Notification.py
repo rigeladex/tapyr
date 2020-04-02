@@ -103,7 +103,7 @@ class Notification_Collection \
             result.append (head)
             result.append \
                 ( joiner.join
-                    (  pyk.text_type (s)
+                    (  str (s)
                     for s in sorted (items, key = TFL.Getter.time)
                     )
                 )

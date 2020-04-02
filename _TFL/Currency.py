@@ -357,12 +357,12 @@ class Currency (_Currency_) :
 def _import_cb_json_dump (module) :
     @module.default.add_type (_Currency_)
     def json_encode_range (o) :
-        return pyk.text_type (o)
+        return str (o)
 # end def _import_cb_json_dump
 
 @TFL.ui_display.add_type (_Currency_)
 def _ui_display_date (obj) :
-    return pyk.text_type (obj)
+    return str (obj)
 # end def _ui_display_date
 
 if __name__ != "__main__" :

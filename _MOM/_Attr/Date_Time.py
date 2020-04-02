@@ -58,7 +58,7 @@ class _A_DT_ (_A_Structured_) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return pyk.text_type (value.strftime (soc._output_format ()))
+            return str (value.strftime (soc._output_format ()))
         return ""
     # end def as_string
 
@@ -259,7 +259,7 @@ class _A_Time_ (_A_DT_) :
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
         value = self.kind.get_value (obj)
         if value is not None :
-            return pyk.text_type (value.strftime ("%H:%M:%S"))
+            return str (value.strftime ("%H:%M:%S"))
     # end def as_rest_cargo_ckd
 
     @TFL.Meta.Class_and_Instance_Method
@@ -341,7 +341,7 @@ class A_Date (_A_Date_) :
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
         value = self.kind.get_value (obj)
         if value is not None :
-            return pyk.text_type (value.strftime ("%Y-%m-%d"))
+            return str (value.strftime ("%Y-%m-%d"))
     # end def as_rest_cargo_ckd
 
     @TFL.Meta.Class_and_Instance_Method

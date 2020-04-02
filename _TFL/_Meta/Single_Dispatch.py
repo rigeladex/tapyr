@@ -257,7 +257,7 @@ argument::
     >>> foo ("42")
     foo got generic argument 42
 
-    >>> @foo.add_type (pyk.text_type)
+    >>> @foo.add_type (str)
     ... def foo_str (x) :
     ...     print ("foo_str got string argument '%s'" % (x, ))
 
@@ -360,7 +360,7 @@ single, normally the second, argument of an instance method::
     >>> baz.qux ('1', 2)
     qux got generic argument 1 2
 
-    >>> @Qux.qux.add_type (pyk.text_type)
+    >>> @Qux.qux.add_type (str)
     ... def qux_str (self, x, y) :
     ...     print ("qux_str got string argument", x, y)
 

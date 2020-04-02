@@ -126,7 +126,7 @@ class Cleaner (TFL.Meta.Object) :
     # end def _remove
 
     def __str__ (self) :
-        return pyk.text_type (self.soup)
+        return str (self.soup)
     # end def __str__
 
 # end class Cleaner

@@ -35,7 +35,7 @@ def ui_display (obj) :
 
 @ui_display.add_type (decimal.Decimal, * pyk.int_types)
 def _ui_display_int (obj) :
-    return pyk.text_type (obj)
+    return str (obj)
 # end def _ui_display_int
 
 @ui_display.add_type (float)
@@ -94,7 +94,7 @@ Adding an implementation for a specific type is easy enough, though::
 
     >>> @ui_display.add_type (datetime.date)
     ... def _ui_display_date (obj) :
-    ...     return pyk.text_type (obj)
+    ...     return str (obj)
 
     >>> print (ui_display (d))
     2014-02-06

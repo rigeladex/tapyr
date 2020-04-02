@@ -80,7 +80,7 @@ class Calc (TFL.Meta.Object) :
     _sub_pat     = Regexp (r" - ")
 
     def __init__ (self, * args) :
-        as_text    = pyk.text_type
+        as_text    = str
         self.args  = args
         self.value = " ".join (as_text (a) for a in args)
     # end def __init__

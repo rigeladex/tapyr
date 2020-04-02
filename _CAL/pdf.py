@@ -199,7 +199,7 @@ class PDF_Plan (PDF_P) :
     # end def seq_generator
 
     def _cooked (self, text) :
-        return pyk.text_type (text, "utf-8", "replace")
+        return str (text, "utf-8", "replace")
     # end def _cooked
 
 # end class PDF_Plan

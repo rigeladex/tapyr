@@ -83,7 +83,7 @@ class Connector (_Ancestor) :
             try :
                 r.initialize (self.scope, "r%02d" % (i, ))
             except Exception as e :
-                self.mount_errors.append (pyk.text_type (e))
+                self.mount_errors.append (str (e))
             else :
                 if r.default :
                     default         = r

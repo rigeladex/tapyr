@@ -95,7 +95,7 @@ def _decoded (x) :
 # end def _decoded
 
 def _str_int (x) :
-    return pyk.text_type (int (x))
+    return str (int (x))
 # end def _str_int
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package CHJ.CSS.
@@ -98,7 +98,7 @@ class Style_Sheet (_Style_Sheet_) :
     # end def __iter__
 
     def __str__ (self) :
-        return "\n\n".join (pyk.text_type (r) for r in self)
+        return "\n\n".join (str (r) for r in self)
     # end def __str__
 
 # end class Style_Sheet

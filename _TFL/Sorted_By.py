@@ -278,7 +278,7 @@ class Sorted_By (TFL.Meta.Object) :
         r = cls.type_name_map.get (n, n)
         if r == "byte-string" and v.isalnum :
             r = "text-string"
-            v = pyk.text_type (v, "latin1")
+            v = str (v, "latin1")
         return r, v
     # end def type_name
 

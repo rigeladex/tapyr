@@ -833,14 +833,14 @@ class Inclusive_Upper_Bound (_Inclusive_Bounds_, _Upper_Bounds_) :
 def _import_cb_json_dump (module) :
     @module.default.add_type (_Range_)
     def json_encode_range (o) :
-        return pyk.text_type (o)
+        return str (o)
 # end def _import_cb_json_dump
 
 @TFL._Add_Import_Callback ("_TFL.ui_display")
 def _import_ui_display (module) :
     @module.ui_display.add_type (_Range_)
     def _ui_display_range (obj) :
-        return pyk.text_type (obj)
+        return str (obj)
 # end def _import_ui_display
 
 ### «text» ### start of documentation
@@ -1045,7 +1045,7 @@ _test_float_range = r"""
     >>> xx_25 = R (2.0, 5.0, "()")
 
     >>> for r in (ii_24, ix_24, xi_24, xx_24) :
-    ...     print (r, portable_repr (r.range_pattern.match (pyk.text_type (r)).groupdict ()))
+    ...     print (r, portable_repr (r.range_pattern.match (str (r)).groupdict ()))
     [2.0, 4.0] {'LB' : '[', 'UB' : ']', 'lower' : '2.0', 'upper' : '4.0'}
     [2.0, 4.0) {'LB' : '[', 'UB' : ')', 'lower' : '2.0', 'upper' : '4.0'}
     (2.0, 4.0] {'LB' : '(', 'UB' : ']', 'lower' : '2.0', 'upper' : '4.0'}
@@ -1640,7 +1640,7 @@ _test_int_range = r"""
     AttributeError: can't set attribute
 
     >>> for r in (ii_24, ix_24, xi_24, xx_24) :
-    ...     print (r, portable_repr (r.range_pattern.match (pyk.text_type (r)).groupdict ()))
+    ...     print (r, portable_repr (r.range_pattern.match (str (r)).groupdict ()))
     [2, 4] {'LB' : '[', 'UB' : ']', 'lower' : '2', 'upper' : '4'}
     [2, 4) {'LB' : '[', 'UB' : ')', 'lower' : '2', 'upper' : '4'}
     (2, 4] {'LB' : '(', 'UB' : ']', 'lower' : '2', 'upper' : '4'}

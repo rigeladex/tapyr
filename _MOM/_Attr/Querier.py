@@ -1105,7 +1105,7 @@ class Raw (String) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def _string_cooker (self) :
-        return pyk.text_type
+        return str
     # end def _string_cooker
 
     @TFL.Meta.Once_Property

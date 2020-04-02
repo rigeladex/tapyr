@@ -508,7 +508,7 @@ class MOM_Command (TFL.Command.Root_Command) :
                     exec (f.read (), globs, local)
             except Exception as exc :
                 head = _T ("Script %s triggered exception" % (script_path, ))
-                tail = "    \n".join (pyk.text_type (exc).split ("\n"))
+                tail = "    \n".join (str (exc).split ("\n"))
                 print (head)
                 print ("   ", tail)
                 raise SystemExit (1)

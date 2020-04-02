@@ -74,7 +74,7 @@ class TOP_MOM_Entity (GTW.RST.TOP.MOM.Entity_Mixin, _Ancestor) :
     def changer (self) :
         admin = self.admin
         if admin :
-            return admin._get_child ("change", pyk.text_type (self.obj.pid))
+            return admin._get_child ("change", str (self.obj.pid))
     # end def changer
 
     def href_change (self) :

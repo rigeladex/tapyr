@@ -161,7 +161,7 @@ class _RST_Response_ \
     def set_cookie (self, name, value = "", ** kw) :
         _request  = self._request
         _request.cookies_to_delete.discard (name)
-        if isinstance (value, pyk.text_type) :
+        if isinstance (value, str) :
             value = value.encode (_request.cookie_encoding)
         return self._response.set_cookie (name, value, ** kw)
     # end def set_cookie

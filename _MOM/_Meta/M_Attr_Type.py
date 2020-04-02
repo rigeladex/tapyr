@@ -296,15 +296,15 @@ class Named_Object (Named_Value) :
 # end class Named_Object
 
 def _text_lower (s) :
-    return pyk.text_type (s).lower ()
+    return str (s).lower ()
 # end def _text_lower
 
 def _text_upper (s) :
-    return pyk.text_type (s).upper ()
+    return str (s).upper ()
 # end def _text_upper
 
 _text_ignore_case = dict \
-    ( { False        : pyk.text_type
+    ( { False        : str
       , True         : _text_lower
       }
     , lower          = _text_lower

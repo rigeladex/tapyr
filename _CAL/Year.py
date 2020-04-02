@@ -728,7 +728,7 @@ class Year (TFL.Meta.Object) :
 def _import_cb_json_dump (module) :
     @module.default.add_type (_Ordinal_, Year)
     def json_encode_ordinal_or_year (o) :
-        return pyk.text_type (o)
+        return str (o)
 # end def _import_cb_json_dump
 
 def create_diary (Y, path) :

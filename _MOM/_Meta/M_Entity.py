@@ -268,7 +268,7 @@ import _MOM.E_Type_Manager
 
 import sys
 
-class Type_Name_Type (pyk.text_type) :
+class Type_Name_Type (str) :
     """Type used for `type_name`."""
 
     def __repr__ (self) :
@@ -472,7 +472,7 @@ class M_E_Mixin \
             result = ".".join ((pn, name))
         else :
             result = name
-        return pyk.text_type (result)
+        return str (result)
     # end def pns_qualified_f
 
     def pns_qualified (cls, name) :
@@ -482,7 +482,7 @@ class M_E_Mixin \
             result = ".".join ((pn, name))
         else :
             result = name
-        return pyk.text_type (result)
+        return str (result)
     # end def pns_qualified
 
     def set_default_child (cls, child) :
@@ -497,7 +497,7 @@ class M_E_Mixin \
         else :
             ui_name = cls._m_default_ui_name (base_name)
         if not cls.show_package_prefix :
-            cls.ui_name = pyk.text_type      (ui_name)
+            cls.ui_name = str      (ui_name)
         else :
             cls.ui_name = cls.pns_qualified  (ui_name)
     # end def set_ui_name

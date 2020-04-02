@@ -105,7 +105,7 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
 
     def _normalized (self, value) :
         if isinstance (value, pyk.byte_types) :
-            return pyk.text_type (value, "utf8", "replace")
+            return str (value, "utf8", "replace")
         return value
     # end def _normalized
 

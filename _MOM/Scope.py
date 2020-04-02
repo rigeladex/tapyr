@@ -901,7 +901,7 @@ class Scope (TFL.Meta.Object) :
     # end def __iter__
 
     def __str__ (self) :
-        url = self._cleaned_url (pyk.text_type (self.db_url))
+        url = self._cleaned_url (str (self.db_url))
         return "%s %s<%s>" % (self.__class__.__name__, self.bname, url)
     # end def __str__
 

@@ -348,7 +348,7 @@ class TTP_Command (TFL.Command.Root_Command) :
     # end def _handler
 
     def _pbl_options (self, * opts) :
-        return tuple (pyk.text_type (o) for o in opts)
+        return tuple (str (o) for o in opts)
     # end def _pbl_options
 
     def _output_option (self, cmd) :

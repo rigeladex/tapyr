@@ -530,7 +530,7 @@ class Entity (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity) :
 
     @TFL.json_dump.default.add_type (_FO_)
     def __json_encode_FO_ (fo) :
-        return pyk.text_type (fo)
+        return str (fo)
     # end def __json_encode_FO_
 
     @property
@@ -1121,7 +1121,7 @@ class An_Entity (Entity, metaclass = MOM.Meta.M_An_Entity) :
 
     @staticmethod
     def _json_encode (o) :
-        return pyk.text_type (o)
+        return str (o)
     # end def _json_encode
 
     def _main__init__ (self, * args, ** kw) :

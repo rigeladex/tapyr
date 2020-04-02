@@ -212,11 +212,11 @@ def _load_languages (locale_dir, languages, domains, log_level) :
 
 def mark (text):
     """Mark `text` for translation."""
-    return pyk.text_type (text)
+    return str (text)
 # end def mark
 
 def safe_eval (value, encoding = None) :
-    if encoding and not isinstance (value, pyk.text_type) :
+    if encoding and not isinstance (value, str) :
         try :
             value = value.decode (encoding)
         except Exception as exc :

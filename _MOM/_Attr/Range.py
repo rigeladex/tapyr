@@ -194,7 +194,7 @@ class _A_Range_ (_A_Structured_, metaclass = _M_Range_) :
             return soc.set_defaults (lower, upper, btype, result)
         except ValueError as exc :
             raise MOM.Error.Attribute_Syntax \
-                (None, soc, result, pyk.text_type (exc))
+                (None, soc, result, str (exc))
     # end def from_attr_tuple
 
     @TFL.Meta.Class_and_Instance_Method

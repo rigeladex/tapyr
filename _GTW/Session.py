@@ -242,7 +242,7 @@ class Session (TFL.Meta.Object, metaclass = M_Session) :
         while True :
             id = hash_fct ("%s%s" % (uuid.uuid4 ().hex, salt)).hexdigest ()
             if check is None or not check (id) :
-                return pyk.text_type (id)
+                return str (id)
     # end def New_ID
 
     def pop (self, name, default = None) :

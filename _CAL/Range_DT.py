@@ -291,7 +291,7 @@ _test_date_range = r"""
     (2016-06-02, 2016-06-04) 1 (datetime.date(2016, 6, 3),)
 
     >>> for r in (ii_24, ix_24, xi_24, xx_24) :
-    ...     print (r, portable_repr (r.range_pattern.match (pyk.text_type (r)).groupdict ()))
+    ...     print (r, portable_repr (r.range_pattern.match (str (r)).groupdict ()))
     [2016-06-02, 2016-06-04] {'LB' : '[', 'UB' : ']', 'lower' : '2016-06-02', 'upper' : '2016-06-04'}
     [2016-06-02, 2016-06-04) {'LB' : '[', 'UB' : ')', 'lower' : '2016-06-02', 'upper' : '2016-06-04'}
     (2016-06-02, 2016-06-04] {'LB' : '(', 'UB' : ']', 'lower' : '2016-06-02', 'upper' : '2016-06-04'}
@@ -1246,7 +1246,7 @@ _test_time_range_h = r"""
     (02:00, 04:00) 1 (datetime.time(3, 0),)
 
     >>> for r in (ii_24, ix_24, xi_24, xx_24) :
-    ...     print (r, portable_repr (r.range_pattern.match (pyk.text_type (r)).groupdict ()))
+    ...     print (r, portable_repr (r.range_pattern.match (str (r)).groupdict ()))
     [02:00, 04:00] {'LB' : '[', 'UB' : ']', 'lower' : '02:00', 'upper' : '04:00'}
     [02:00, 04:00) {'LB' : '[', 'UB' : ')', 'lower' : '02:00', 'upper' : '04:00'}
     (02:00, 04:00] {'LB' : '(', 'UB' : ']', 'lower' : '02:00', 'upper' : '04:00'}

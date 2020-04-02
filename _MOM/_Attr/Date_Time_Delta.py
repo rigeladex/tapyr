@@ -93,7 +93,7 @@ class A_Date_Time_Delta (_Ancestor_Essence) :
                     r.append (".%06d" % value.microseconds)
                 return "".join (r)
             else :
-                return pyk.text_type (value)
+                return str (value)
         return ""
     # end def as_string
 

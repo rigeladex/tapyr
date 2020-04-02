@@ -56,7 +56,7 @@ pred   = lambda ETW : ETW.e_type.PNS is not None
 
 def fixed_booleans (qf) :
     if not isinstance (qf, pyk.string_types) :
-        qf = pyk.text_type (qf)
+        qf = str (qf)
     result = \
         ( qf.replace ("WHERE 0 = 1", "WHERE false")
             .replace ("WHERE 1 = 1", "WHERE true")

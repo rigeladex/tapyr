@@ -89,7 +89,7 @@ class _XML_Node_ (TFL.SDG.Node) :
             for a, v in attr_values :
                 if v is not None :
                     k = translate (a)
-                    v = pyk.text_type (v).replace ("'", "&quot;")
+                    v = str (v).replace ("'", "&quot;")
                     yield u'''%s="%s"''' % (k, v)
     # end def _attr_iter
 

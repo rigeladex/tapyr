@@ -57,6 +57,7 @@
 #     2-Apr-2020 (CT) Remove `fprint`
 #     2-Apr-2020 (CT) Remove `ifilter`
 #     2-Apr-2020 (CT) Remove `long_types`
+#     2-Apr-2020 (CT) Remove `text_type`
 #    ««revision-date»»···
 #--
 
@@ -201,7 +202,6 @@ class _Pyk_ (object) :
     # end def StringIO
 
     string_types       = (str, )
-    text_type          = str
     unichr             = chr
 
     @lazy_property

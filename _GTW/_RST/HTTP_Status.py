@@ -127,7 +127,7 @@ class Status (Exception, TFL.Meta.Object, metaclass = _Meta_) :
             if self.message :
                 ### Backwards compatibility with old-style Jinja templates
                 try :
-                    request.Error = pyk.text_type (self.message)
+                    request.Error = str (self.message)
                 except Exception :
                     request.Error = str (self.message)
         response.status_code  = self.status_code
@@ -171,7 +171,7 @@ class Status (Exception, TFL.Meta.Object, metaclass = _Meta_) :
             else :
                 desc = _T (self.description)
                 body = \
-                    (  ("%s: %s" % (desc, pyk.text_type (self.message)))
+                    (  ("%s: %s" % (desc, str (self.message)))
                     if self.message else desc
                     )
         else :
@@ -180,7 +180,7 @@ class Status (Exception, TFL.Meta.Object, metaclass = _Meta_) :
                 , description = self.description
                 )
             if self.message :
-                body ["message"] = pyk.text_type (self.message)
+                body ["message"] = str (self.message)
         render (request, response, body)
     # end def _add_response_body
 

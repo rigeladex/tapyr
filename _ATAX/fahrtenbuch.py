@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -255,7 +255,7 @@ class Fahrtenbuch (TFL.Meta.Object) :
     # end def _read_lines
 
     def __str__ (self) :
-        return "\n".join (pyk.text_type (e) for e in self.entries)
+        return "\n".join (str (e) for e in self.entries)
     # end def __str__
 
 # end class Fahrtenbuch

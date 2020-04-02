@@ -156,7 +156,7 @@ class _formatted_repr_properties (object) :
 
     def _record_iter (obj, level, compact, seen) :
         for k, v in sorted (pyk.iteritems (obj._kw), key = SK) :
-            rk = pyk.text_type (k)
+            rk = str (k)
             it = formatted_repr.iter (v, level + 1, compact, seen)
             for x in formatted_repr._structure_iter \
                     (it, level, rk + " = ", "", "", nl_after_open = True) :

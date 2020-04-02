@@ -117,7 +117,7 @@ class DL_Item (TFL.Meta.Object) :
 
     def __str__ (self) :
         if bool (self) :
-            return pyk.text_type (self.value)
+            return str (self.value)
         else :
             return "<%s at %s: %s, %s, %s>" % \
                 ( self.__class__, id (self)

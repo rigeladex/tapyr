@@ -258,7 +258,7 @@ class _Attr_ (object) :
     # end def __repr__
 
     def __str__ (self) :
-        return pyk.text_type (self._VALUE)
+        return str (self._VALUE)
     # end def __str__
 
 # end class _Attr_

@@ -152,12 +152,12 @@ class _Wrapper_ (TFL.Meta.Object) :
     # end def hexdigest_size
 
     def b64digest (self, altchars = "_-", strip = False) :
-        if isinstance (altchars, pyk.text_type) :
+        if isinstance (altchars, str) :
             altchars = pyk.encoded (altchars)
         result = base64.b64encode (self.digest (), altchars)
         if strip :
             result = result.rstrip (b"=")
-        return pyk.text_type (result, "ASCII")
+        return str (result, "ASCII")
     # end def b64digest
 
     @classmethod

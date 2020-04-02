@@ -63,7 +63,7 @@ _test_code = r"""
 
     >>> reg.set_raw (result = dict (date = "26.5.2009 10:20", software = "calculated with REGATTA.yellow8.com", status = "final", raw = True))
     1
-    >>> prepr ((pyk.text_type (reg.FO.result)))
+    >>> prepr ((str (reg.FO.result)))
     '2009-05-26 10:20, calculated with REGATTA.yellow8.com, final'
     >>> scope.commit ()
 
@@ -619,7 +619,7 @@ _test_delayed  = r"""
 
     >>> reg.set_raw (result = dict (date = "26.5.2009 10:20", software = "calculated with REGATTA.yellow8.com", status = "final", raw = True))
     1
-    >>> prepr ((pyk.text_type (reg.FO.result)))
+    >>> prepr ((str (reg.FO.result)))
     '2009-05-26 10:20, calculated with REGATTA.yellow8.com, final'
 
     >>> show_ora (bir)  ### before scope.add

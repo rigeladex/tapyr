@@ -562,7 +562,7 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
         for k, v in sorted (pyk.iteritems (self.init_arg_defaults)) :
             a = getattr (self, k)
             if a != v :
-                if pyk.text_type != str and isinstance (a, pyk.text_type) :
+                if str != str and isinstance (a, str) :
                     ### Python2: encode unicode to avoid `u`-prefix
                     a = TFL.I18N.encode_o (a)
                 yield "%s = %r" % (k, a)

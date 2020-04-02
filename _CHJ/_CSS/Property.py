@@ -113,7 +113,7 @@ class Property (_Prop_) :
         name      = self.name
         prefixes  = self.prefixes
         vp_map    = self.vp_map
-        as_text   = pyk.text_type
+        as_text   = str
         if args :
             v = result [name] = " ".join (as_text (a) for a in args)
             for p in prefixes :
@@ -152,7 +152,7 @@ class Value (_Prop_) :
 
     def __call__ (self, value) :
         name   = self.name.replace       ("_", "-")
-        v      = pyk.text_type (value).replace ("_", "-")
+        v      = str (value).replace ("_", "-")
         prefs  = self.vp_map.get (value, ())
         if prefs :
             values = [v]

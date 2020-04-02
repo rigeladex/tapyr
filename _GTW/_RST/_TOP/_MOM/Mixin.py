@@ -312,7 +312,7 @@ class TOP_MOM_Entity_Mixin_Base \
     def __init__ (self, ** kw) :
         obj = kw ["obj"]
         if "name" not in kw :
-            name = pyk.text_type (getattr (obj, "perma_name", None))
+            name = str (getattr (obj, "perma_name", None))
             if name is None :
                 name = getattr (obj, "name", obj.pid)
             kw ["name"] = TFL.Ascii.sanitized_filename (name)
@@ -407,7 +407,7 @@ class TOP_MOM_E_Type_Mixin_Base \
             or self._default_title (E_Type, name, short_title)
         self.__super.__init__ \
             ( name          = TFL.Ascii.sanitized_filename
-                (pyk.text_type (name))
+                (str (name))
             , short_title   = short_title
             , title         = title
             , ** kw

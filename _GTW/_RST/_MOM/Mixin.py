@@ -444,7 +444,7 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
                 else :
                     if user.person :
                         user = user.person
-                    user = pyk.text_type (user.FO)
+                    user = str (user.FO)
             error = \
                 (  _T ("%s `%s` doesn't exist anymore!")
                 % (_T (E_Type.ui_name), pid)

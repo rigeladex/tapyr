@@ -800,7 +800,7 @@ class Completer (_JSON_Action_PO_) :
                 except ValueError :
                     pass
                 except Exception as exc :
-                    logging.exception (pyk.text_type (exc))
+                    logging.exception (str (exc))
             eor    = self.eligible_object_restriction (completer.etn)
             result = completer.choices (scope, json, eor, self.max_completions)
         return result
@@ -896,7 +896,7 @@ class Polisher (_JSON_Action_PO_) :
                 result = self._polished \
                     (request, response, form, field, json, values)
             except ValueError as exc :
-                result ["feedback"] = pyk.text_type (exc)
+                result ["feedback"] = str (exc)
         else :
             result ["error"] = _T ("Field %s doesn't have a polisher") \
                 % (field.label, )

@@ -170,7 +170,7 @@ class Document (TFL.SDG.XML.Node) :
 
     def formatted (self, format_name, * args, ** kw) :
         for r in self.__super.formatted (format_name, * args, ** kw) :
-            if pyk.text_type != str and isinstance (r, pyk.text_type) :
+            if str != str and isinstance (r, str) :
                 ### Only do this for Python2
                 r = r.encode (self.encoding, "xmlcharrefreplace")
             yield r

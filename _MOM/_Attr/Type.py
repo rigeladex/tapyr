@@ -827,7 +827,7 @@ class A_Attr_Type (MOM.Prop.Type, metaclass = MOM.Meta.M_Attr_Type.Root) :
     @TFL.Meta.Once_Property
     def Pickled_Type_Raw (self) :
         if self.needs_raw_value :
-            return Pickled_Type_Spec (pyk.text_type, self)
+            return Pickled_Type_Spec (str, self)
     # end def Pickled_Type_Raw
 
     @TFL.Meta.Once_Property
@@ -1707,7 +1707,7 @@ class _A_SPK_Entity_ (_A_Entity_) :
         E_Type = self.E_Type
         if not isinstance (value, E_Type.Essence) :
             typ       = _T (getattr (value, "ui_name", value.__class__))
-            v_display = getattr (value, "ui_display", pyk.text_type (value))
+            v_display = getattr (value, "ui_display", str (value))
             raise MOM.Error.Wrong_Type \
                 ( _T
                     ( "%s '%s' not eligible for attribute %s,"
@@ -2218,7 +2218,7 @@ class _A_String_ \
 
     ignore_case       = False
     needs_raw_value   = False
-    P_Type            = pyk.text_type
+    P_Type            = str
 
     class _Doc_Map_ (_A_String_Base_._Doc_Map_) :
 
@@ -2502,7 +2502,7 @@ class _A_Id_Entity_Collection_ (_A_Typed_Collection_) :
             def _gen (values, names, default) :
                 for v in values :
                     if isinstance (v, MOM.Entity) :
-                        v = pyk.text_type (v.FO)
+                        v = str (v.FO)
                     yield v
         return None, None, portable_repr (tuple (_gen (values, names, default)))
     # end def FO_nested
@@ -3252,7 +3252,7 @@ class A_Numeric_String (_A_String_Base_) :
     example           = "42"
     typ               = _ ("Numeric_String")
 
-    P_Type            = pyk.text_type
+    P_Type            = str
     as_number         = int
 
     @TFL.Meta.Class_and_Instance_Method

@@ -145,7 +145,7 @@ def as_json_cargo (* excs) :
                 cargo = exc.as_json_cargo
             except AttributeError :
                 cargo = dict \
-                    ( description = pyk.text_type (exc)
+                    ( description = str (exc)
                     , head        = exc.__class__.__name__
                     )
             if isinstance (cargo, (list, tuple)) :
@@ -231,7 +231,7 @@ class _MOM_Error_ (Exception, metaclass = TFL.Meta.Object.__class__) :
     # end def __hash__
 
     def __repr__ (self) :
-        return pyk.reprify (pyk.text_type (self))
+        return pyk.reprify (str (self))
     # end def __repr__
 
     def __str__ (self) :
@@ -755,7 +755,7 @@ class Invariants (Error) :
         try :
             return err.inv.name
         except AttributeError :
-            return pyk.text_type (err)
+            return str (err)
     # end def _sort_key
 
     def __repr__ (self) :
@@ -972,7 +972,7 @@ class Permission (_Invariant_, ValueError) :
 
     @Once_Property
     def head (self) :
-        return pyk.text_type (self)
+        return str (self)
     # end def head
 
 # end class Permission
@@ -1006,7 +1006,7 @@ class Quant (Invariant) :
             elif isinstance (v, (list, tuple)) :
                 yield \
                     ( pyk.decoded (inv.bvar, "utf-8")
-                    , "[%s]" % (", ".join (map (pyk.text_type, v)), )
+                    , "[%s]" % (", ".join (map (str, v)), )
                     )
             else :
                 yield (pyk.decoded (inv.bvar, "utf-8"), ui_display (v))
@@ -1147,7 +1147,7 @@ class Wrong_Type (Error) :
 @TFL.json_dump.default.add_type (Exception)
 def json_encode_exception (exc) :
     return dict \
-        ( description = pyk.text_type (exc)
+        ( description = str (exc)
         , head        = exc.__class__.__name__
         )
 # end def json_encode_exception

@@ -198,7 +198,7 @@ class _Condition_ \
                     )
         if result is not None :
             if tail :
-                self.val_disp [c_attr] = pyk.text_type (obj.FO (c_attr, result))
+                self.val_disp [c_attr] = str (obj.FO (c_attr, result))
         return result
     # end def set_c_attr_value
 
@@ -226,7 +226,7 @@ class _Condition_ \
                 % (self.name, name, obj, self.assertion)
                 )
         val_dict [name] = result
-        self.val_disp [name] = pyk.text_type (obj.FO (name, result))
+        self.val_disp [name] = str (obj.FO (name, result))
         return result
     # end def set_s_attr_value
 

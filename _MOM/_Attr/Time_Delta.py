@@ -72,7 +72,7 @@ class A_Time_Delta (A_Attr_Type) :
     def as_string (soc, value) :
         result = ""
         if value is not None :
-            result = pyk.text_type (value)
+            result = str (value)
             if result.endswith (":00") :
                 result = result [:-3]
         return result

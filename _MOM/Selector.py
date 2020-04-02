@@ -496,7 +496,7 @@ class Completer (TFL.Meta.Object) :
         if self._filters_q_map is None :
             self._split_values ()
         return sorted \
-            (pyk.itervalues (self._filters_q_map), key = pyk.text_type)
+            (pyk.itervalues (self._filters_q_map), key = str)
     # end def filters_q
 
     @Once_Property

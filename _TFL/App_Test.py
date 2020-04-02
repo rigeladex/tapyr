@@ -76,7 +76,7 @@ class Result_File (_Result_) :
 
     def diff (self, new_content) :
         if self != new_content :
-            old     = pyk.text_type (self)
+            old     = str (self)
             new     = pyk.decoded   (new_content, * self.encodings)
             diffs   = self._diffs \
                 (old, new, fromfile = self.file_name, tofile = "Result of test")

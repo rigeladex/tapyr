@@ -37,7 +37,7 @@ class A_Sex (_A_Named_Object_) :
 
     example   = "F"
     typ       = "Sex"
-    P_Type    = pyk.text_type
+    P_Type    = str
     Table     = \
         { "F"  : _("Female")
         , "M"  : _("Male")

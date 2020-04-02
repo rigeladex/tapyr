@@ -69,7 +69,7 @@ import _TFL.Decorator
 
 from   itertools                import chain as iter_chain
 
-as_text = pyk.text_type
+as_text = str
 
 class M_Field (TFL.Meta.Object.__class__) :
     """Metaclass for field classes"""

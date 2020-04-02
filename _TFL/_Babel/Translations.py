@@ -106,9 +106,9 @@ class Translations (babel.support.Translations) :
                 # Plural forms
                 msgid1, msgid2 = msg.split  (sep)
                 tmsg           = tmsg.split (sep)
-                msgid1 = pyk.text_type (msgid1, charset)
-                msgid2 = pyk.text_type (msgid2, charset)
-                tmsg   = [pyk.text_type (x, charset) for x in tmsg]
+                msgid1 = str (msgid1, charset)
+                msgid2 = str (msgid2, charset)
+                tmsg   = [str (x, charset) for x in tmsg]
                 for i, msg in enumerate (tmsg) :
                     catalog [(msgid1, i)] = msg
                 ### In addtion to the two keys to the catalog as well to be
@@ -117,8 +117,8 @@ class Translations (babel.support.Translations) :
                 catalog [msgid1] = tmsg [ 0]
                 catalog [msgid2] = tmsg [-1]
             else:
-                msg  = pyk.text_type (msg,  charset)
-                tmsg = pyk.text_type (tmsg, charset)
+                msg  = str (msg,  charset)
+                tmsg = str (tmsg, charset)
                 catalog [msg] = tmsg
             # advance to next entry in the seek tables
             masteridx += 8

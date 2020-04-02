@@ -68,7 +68,7 @@ class M_Password_Hasher (Meta.Object.__class__) :
     # end def default
 
     def _m_add (cls, name, Table) :
-        name = pyk.text_type (name)
+        name = str (name)
         assert name not in Table, "Name clash: `%s` <-> `%s`" % \
             (name, Table [name].__class__)
         Table [name] = cls

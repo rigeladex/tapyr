@@ -61,7 +61,7 @@ class M_Format (TFL.Meta.Object.__class__) :
     # end def __str__
 
     def _m_add (cls, name, Table) :
-        name = pyk.text_type (name)
+        name = str (name)
         assert name not in Table, "Name clash: `%s` <-> `%s`" % \
             (name, Table [name].__class__)
         Table [name] = cls
@@ -98,7 +98,7 @@ class HTML (_Format_) :
                 ( _T ("HTML must not contain any of the tags:\n%s")
                 % ("    ".join (forbidden), )
                 )
-        return pyk.text_type (cleaner)
+        return str (cleaner)
     # end def convert
 
 # end class HTML

@@ -72,7 +72,7 @@ def r_eval (source, ** kw) :
     Traceback (most recent call last):
     ValueError: Cannot safely evaluate '((). __class__)'
     """
-    if isinstance (source, pyk.text_type) :
+    if isinstance (source, str) :
         src     = source
     else :
         c_match = _coding_pat.search (source)
