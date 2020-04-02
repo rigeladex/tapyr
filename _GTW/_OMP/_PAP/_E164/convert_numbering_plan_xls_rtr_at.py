@@ -213,7 +213,7 @@ def _main (cmd) :
     now     = datetime.datetime.now ()
     f_repr  = formatted_repr
     p_repr  = portable_repr
-    pyk.fprint \
+    print \
         ( ( _module_format
           % dict
               ( generated_by      = sos.path.basename (__file__)

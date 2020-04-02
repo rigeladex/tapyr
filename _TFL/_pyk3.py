@@ -54,6 +54,7 @@
 #     2-Apr-2020 (CT) Remove `copyreg`
 #     2-Apr-2020 (CT) Add `number_types_x`
 #     2-Apr-2020 (CT) Increase `pickle_protocol` to 4
+#     2-Apr-2020 (CT) Remove `fprint`
 #    ««revision-date»»···
 #--
 
@@ -129,19 +130,6 @@ class _Pyk_ (object) :
             v = v.encode (encoding, "replace")
         return v
     # end def encoded
-
-    @staticmethod
-    def fprint (* values, ** kw) :
-        """print(value, ..., sep=' ', end='\\n', file=sys.stdout)
-
-           Prints the values to a stream, or to sys.stdout by default.
-           Optional keyword arguments:
-           file: a file-like object (stream); defaults to the current sys.stdout.
-           sep:  string inserted between values, default a space.
-           end:  string appended after the last value, default a newline.
-        """
-        print (* values, ** kw)
-    # end def fprint
 
     int_types          = (int, )
 

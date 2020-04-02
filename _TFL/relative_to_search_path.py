@@ -77,7 +77,7 @@ relative_to_python_path = Relative_To_Search_Path \
 
 def _main (cmd) :
     rtsp = Relative_To_Search_Path (cmd.search_path)
-    pyk.fprint (* (rtsp (p) for p in cmd.argv), sep = cmd.Sep)
+    print (* (rtsp (p) for p in cmd.argv), sep = cmd.Sep)
 # end def _main
 
 _Command = TFL.CAO.Cmd \

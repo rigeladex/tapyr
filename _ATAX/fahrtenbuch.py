@@ -163,7 +163,7 @@ class Fahrtenbuch (TFL.Meta.Object) :
                 try :
                     last = Entry.from_line (l, last)
                 except ValueError as exc :
-                    pyk.fprint (exc)
+                    print (exc)
                 else :
                     add (last)
         return result
@@ -264,9 +264,9 @@ def _main (cmd) :
     ATAX.Command.load_config (cmd)
     fb = Fahrtenbuch.from_file (cmd.user, cmd.fahrtenbuch)
     if not cmd.km_geld :
-        pyk.fprint (fb.tex ())
+        print (fb.tex ())
     else :
-        pyk.fprint (fb.km_geld ())
+        print (fb.km_geld ())
 # end def _main
 
 _Command = TFL.CAO.Cmd \

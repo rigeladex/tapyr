@@ -484,12 +484,12 @@ class Package_Namespace (object) :
             modules = self.MODULES
         try :
             self.__reload = 1
-            pyk.fprint ("Reloading", self.__bname, end = " ")
+            print ("Reloading", self.__bname, end = " ")
             for m in modules :
-                pyk.fprint (m.__name__, end = " ")
+                print (m.__name__, end = " ")
                 m         = reload (m)
                 m.__PNS__ = self
-            pyk.fprint ("finished")
+            print ("finished")
         finally :
             self.__reload = old_reload
         import linecache

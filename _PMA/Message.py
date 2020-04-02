@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2019 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -1087,7 +1087,7 @@ def _main (cmd) :
                     print (a2ps)
                 a2ps ()
         else :
-            pyk.fprint (pyk.decoded (txt, encoding))
+            print (pyk.decoded (txt, encoding))
 # end def _main
 
 _Command = TFL.CAO.Cmd \

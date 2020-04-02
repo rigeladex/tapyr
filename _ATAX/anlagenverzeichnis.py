@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2018 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -367,22 +367,22 @@ class Anlagenverzeichnis (_Mixin_, _Base_) :
     # end def evaluate
 
     def write (self) :
-        pyk.fprint \
+        print \
             ( self.header_format
             % ( "", "", "Anschaff/", "Buchwert", " Afa ", "Afa", "Buchwert")
             )
-        pyk.fprint \
+        print \
             ( self.header_format
             % ( "Text", "Datum", "Teil-Wert", "1.1.", "  %  "
               , "IFB/Abgang", "31.12."
               )
             )
-        pyk.fprint ("\n%s\n" % ("=" * 116, ))
+        print ("\n%s\n" % ("=" * 116, ))
         for e in self.entries :
             if e.active :
                 self._write_entry (e)
-        pyk.fprint ("\n%s\n" % ("=" * 116, ))
-        pyk.fprint \
+        print ("\n%s\n" % ("=" * 116, ))
+        print \
             ( self.footer_format
             % ( "Summe", ""
               , self.total_birth_value
@@ -394,15 +394,15 @@ class Anlagenverzeichnis (_Mixin_, _Base_) :
             )
         if len (self.total_per_cat) > 1 :
             for k, v in sorted (pyk.iteritems (self.total_per_cat)) :
-                pyk.fprint ((self.out_format % ("", "", "", "", k, v)))
-        pyk.fprint \
+                print ((self.out_format % ("", "", "", "", k, v)))
+        print \
             (self.new_format % ("Neuzugänge", "", "", self.total_new_value))
-        pyk.fprint \
+        print \
             ( self.out_format
             % ("Abgänge", "", "", "", "", self.total_out_value)
             )
         if self.total_ifb_value :
-            pyk.fprint \
+            print \
                 ( self.out_format
                 % ( self.ifb_type.name, "", "", "", self.ifb_type.abbr
                   , self.total_ifb_value
@@ -414,7 +414,7 @@ class Anlagenverzeichnis (_Mixin_, _Base_) :
         ifb_indicator = ""
         if e.ifb :
             ifb_indicator = e.ifb.abbr
-        pyk.fprint \
+        print \
             ( self.entry1_format
             % ( e.desc
               , ifb_indicator
@@ -428,19 +428,19 @@ class Anlagenverzeichnis (_Mixin_, _Base_) :
             )
         if e.alive :
             if e.ifb and e.ifb.is_new :
-                pyk.fprint \
+                print \
                     ( self.newifb_format
                     % ( e.supplier, "", "", "", e.ifb.abbr, e.ifb.value, "")
                     )
             elif e.ifb :
-                pyk.fprint ("  %-36s%10.2f" % (e.supplier, e.ifb.value))
+                print ("  %-36s%10.2f" % (e.supplier, e.ifb.value))
             else :
-                pyk.fprint \
+                print \
                     ( self.alive_format
                     % (e.supplier, "", "", "", ("", "ewig") ["=" in e.flags])
                     )
         else :
-            pyk.fprint \
+            print \
                 ( self.dying_format
                 % ( e.supplier
                   , "Abgang"

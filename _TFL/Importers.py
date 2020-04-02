@@ -272,13 +272,13 @@ class Plugin_Importer (object) :
             zim = zipimport.zipimporter (fname)
         except ImportError :
             if __debug__ :
-                pyk.fprint ("Could not import from %s" % fname)
+                print ("Could not import from %s" % fname)
             return
         sname     = "_setup"
         setup_mod = zim.find_module (sname)
         if not setup_mod :
             if __debug__ :
-                pyk.fprint ("Could not find '%s' in %s" % (sname, fname))
+                print ("Could not find '%s' in %s" % (sname, fname))
             return
         zim.load_module (sname)
     # end def _run_setup

@@ -509,8 +509,8 @@ class MOM_Command (TFL.Command.Root_Command) :
             except Exception as exc :
                 head = _T ("Script %s triggered exception" % (script_path, ))
                 tail = "    \n".join (pyk.text_type (exc).split ("\n"))
-                pyk.fprint (head)
-                pyk.fprint ("   ", tail)
+                print (head)
+                print ("   ", tail)
                 raise SystemExit (1)
         if cao.commit :
             scope.commit      ()

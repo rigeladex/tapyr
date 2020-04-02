@@ -99,7 +99,7 @@ def _main (cmd) :
     ATAX.Command.load_config (cmd)
     Fahrtenbuch_P.km_geld = cmd.km_geld
     fb = Fahrtenbuch_P.from_file (cmd.user, cmd.fahrtenbuch)
-    pyk.fprint (fb.tex ())
+    print (fb.tex ())
 # end def _main
 
 _Command = TFL.CAO.Cmd \

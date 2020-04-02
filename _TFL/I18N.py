@@ -196,14 +196,14 @@ def _load_languages (locale_dir, languages, domains, log_level) :
         Config.Languages [lang] = lang_trans = Translations.load \
             (locale_dir, lang, first_dom)
         if not isinstance (lang_trans, Translations) and log_level >= 5 :
-            pyk.fprint \
+            print \
                 ( "*** Warning, language %s for domain %s not found!"
                 % (lang, first_dom)
                 )
         for d in domains :
             new_domain = Translations.load (locale_dir, lang, d)
             if not isinstance (new_domain, Translations) and log_level >= 5 :
-                pyk.fprint \
+                print \
                     ( "*** Warning, language %s for domain %s not found!"
                     % (lang, d)
                     )

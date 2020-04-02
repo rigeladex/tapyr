@@ -943,7 +943,7 @@ class Help (_Spec_O_) :
             v = cao ["%s:raw" % name]
         except KeyError :
             v = ""
-        pyk.fprint \
+        print \
             ( "%s%s%-*s  : %s%s%s"
             % ( head, prefix, max_l, name, ao.__class__.__name__
               , "" if ao.max_number == 1
@@ -958,40 +958,40 @@ class Help (_Spec_O_) :
             hx      = h1
             hanging = ":" in item [:w2]
             for l in textwrap.wrap (item, w2) :
-                pyk.fprint (hx, l, sep = "")
+                print (hx, l, sep = "")
                 hx = h2 if hanging else h1
     # end def _help_ao
 
     def _help_args (self, cao, indent = 0, heading = False) :
         if heading :
-            pyk.fprint ("%sArguments of %s" % (" " * indent, cao._name))
+            print ("%sArguments of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
         max_l   = cao._max_name_length
         for arg in cao._arg_list :
             self._help_ao (arg, cao, head, max_l)
         if cao.argv :
-            pyk.fprint ()
-            pyk.fprint \
+            print ()
+            print \
                 ( "%s%-*s  : %s"
                 % (head, max_l, "argv", portable_repr (cao.argv))
                 )
     # end def _help_args
 
     def _help_bun (self, bun, cao, head, indent) :
-        pyk.fprint ("%s@%s" % (head, bun._name))
+        print ("%s@%s" % (head, bun._name))
         desc    = bun._description
         if desc :
-            pyk.fprint (head, desc, sep = "    ")
+            print (head, desc, sep = "    ")
         indent += 4
         head    = " " * indent
         max_l   = cao._max_name_length
         for k, v in sorted (pyk.iteritems (bun._kw)) :
-            pyk.fprint ("%s%-*s : %s" % (head, max_l, k, v))
+            print ("%s%-*s : %s" % (head, max_l, k, v))
     # end def _help_bun
 
     def _help_buns (self, cao, indent = 0) :
-        pyk.fprint \
+        print \
             ("%sArgument/option bundles of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
@@ -1003,7 +1003,7 @@ class Help (_Spec_O_) :
         cmd = cao._cmd
         if cmd._sub_cmd_choice :
             if heading :
-                pyk.fprint ("%sSub commands of %s" % (" " * indent, cao._name))
+                print ("%sSub commands of %s" % (" " * indent, cao._name))
             indent += 4
             head    = " " * indent
             max_l   = cao._max_name_length
@@ -1012,10 +1012,10 @@ class Help (_Spec_O_) :
                 , key = TFL.Getter [0]
                 )
             for name, sc in scs :
-                pyk.fprint \
+                print \
                     ("%s%-*s : %s" % (head, max_l, name, sc._description))
         else :
-            pyk.fprint \
+            print \
                 ("%s%s doesn't have sub commands" % (" " * indent, cao._name))
     # end def _help_cmds
 
@@ -1067,7 +1067,7 @@ class Help (_Spec_O_) :
         h2       = h1 + (" " * 4)
         w1       = self.line_length - len (h1) - len (format % (l, "", ""))
         w2       = w1 - 4
-        pyk.fprint (h0, "Possible help topics:", sep = "")
+        print (h0, "Possible help topics:", sep = "")
         for topic, desc in sorted (pyk.iteritems (map)) :
             hx     = h1
             ps     = desc.split ("\n")
@@ -1075,7 +1075,7 @@ class Help (_Spec_O_) :
             width  = w1
             for p in ps :
                 for v in textwrap.wrap (p, width) :
-                    pyk.fprint (hx, format % (l, t, v), sep = "")
+                    print (hx, format % (l, t, v), sep = "")
                     t  = ""
                 hx     = h2
                 width  = w2
@@ -1083,7 +1083,7 @@ class Help (_Spec_O_) :
 
     def _help_opts (self, cao, indent = 0, heading = False) :
         if heading :
-            pyk.fprint ("%sOptions   of %s" % (" " * indent, cao._name))
+            print ("%sOptions   of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
         max_l   = cao._max_name_length - 1
@@ -1094,15 +1094,15 @@ class Help (_Spec_O_) :
     def _help_summary (self, cao, indent) :
         head = " " * indent
         desc = cao._cmd._description
-        pyk.fprint \
+        print \
             ( "%s%s %s"
             % (head, cao._name, " ".join (self._help_summary_args (cao)))
             )
         if desc :
-            pyk.fprint (head, desc, sep = "    ")
+            print (head, desc, sep = "    ")
         if cao._bun_dict :
             next (self.nl)
-            pyk.fprint \
+            print \
                 ( "%sPossible bundles: %s"
                 % ( " " * (indent + 4)
                   , ", ".join ("@%s" % b for b in sorted (cao._bun_dict))
@@ -1188,8 +1188,8 @@ class Help (_Spec_O_) :
             , Re_Replacer (Regexp (" :: *$",   re.MULTILINE), "")
             , Re_Replacer (Regexp (":: *$",    re.MULTILINE), ":")
             )
-        pyk.fprint (h0, heading, sep = "")
-        pyk.fprint \
+        print (h0, heading, sep = "")
+        print \
             ( h1
             , sep0.join
                 (   sep1.join (textwrap.wrap (clean (p), width))
@@ -1224,20 +1224,20 @@ class Help (_Spec_O_) :
         ao_head    = "%s%s%-*s  =" % (head, prefix, max_l, name)
         ao_tail    = raw if not isinstance (raw, (list, dict)) else \
             formatted_repr (raw, level = (len (ao_head) // 2 + 1)).lstrip ()
-        pyk.fprint (ao_head, ao_tail)
+        print (ao_head, ao_tail)
         if e_cooked != e_raw :
             if isinstance (cooked, (list, dict)) :
-                pyk.fprint \
+                print \
                     (formatted_repr (cooked, level = (len (head) // 4 + 1) * 2))
             else :
-                pyk.fprint (head, cooked, sep = "    ")
+                print (head, cooked, sep = "    ")
     # end def _help_value
 
     def _help_values (self, cao, indent) :
         h0      = " " * indent
         h1      = h0  + "    "
         max_l   = cao._max_name_length
-        pyk.fprint \
+        print \
             ( "%sActual option and argument values of %s"
             % (h0, cao._name)
             )
@@ -1251,7 +1251,7 @@ class Help (_Spec_O_) :
     def _nl_gen (self) :
         yield
         while True :
-            pyk.fprint ()
+            print ()
             yield
     # end def _nl_gen
 
@@ -1835,9 +1835,9 @@ class Cmd (TFL.Meta.Object) :
                 result = self.parse (_argv)
             except Exception as exc :
                 if help :
-                    pyk.fprint ("Usage :")
+                    print ("Usage :")
                     self.help  (CAO (self), indent = 4)
-                    pyk.fprint ("", exc, sep = "\n")
+                    print ("", exc, sep = "\n")
                     raise SystemExit (1)
                 else :
                     raise
@@ -2054,7 +2054,7 @@ class CAO (TFL.Meta.Object) :
                 def info (type, value, tb) :
                     import traceback, pdb
                     traceback.print_exception (type, value, tb)
-                    pyk.fprint ()
+                    print ()
                     pdb.pm     () # post-mortem mode
                 sys.excepthook = info
         if self.help :
@@ -2065,7 +2065,7 @@ class CAO (TFL.Meta.Object) :
     # end def __call__
 
     def ABORT (self, reason, err_no = 42) :
-        pyk.fprint ("*** Error:", reason)
+        print ("*** Error:", reason)
         raise SystemExit (err_no)
     # end def ABORT
 
@@ -2368,19 +2368,19 @@ def expect_except (* Xs, ** kw) :
 # end def expect_except
 
 def show (cao) :
-    pyk.fprint (cao._name)
-    pyk.fprint \
+    print (cao._name)
+    print \
         ( "    Arguments  :"
         , portable_repr (sorted (a.name for a in cao._arg_list))
         )
     for o in sorted (cao._opt_dict) :
-        pyk.fprint ("    -%-9s : %s" % (o, portable_repr (getattr (cao, o))))
+        print ("    -%-9s : %s" % (o, portable_repr (getattr (cao, o))))
     for a in cao._arg_list :
-        pyk.fprint \
+        print \
             ( "    %-10s : %s"
             % (a.name, portable_repr (getattr (cao, a.name)))
             )
-    pyk.fprint ("    argv       : %s" % (portable_repr (cao.argv), ))
+    print ("    argv       : %s" % (portable_repr (cao.argv), ))
 # end def show
 
 ### «text» ### start of documentation

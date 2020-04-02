@@ -324,11 +324,11 @@ class SMTP_Tester (SMTP) :
     """
 
     def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
-        pyk.fprint \
+        print \
             ( "Email via", self.mail_host, "from", from_addr, "to"
             , portable_repr (to_addrs), "\n"
             )
-        pyk.fprint (pyk.decoded (msg, self.charset))
+        print (pyk.decoded (msg, self.charset))
     # end def send
 
 # end class SMTP_Tester

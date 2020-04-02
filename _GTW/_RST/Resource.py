@@ -812,12 +812,12 @@ class _RST_Base_ (TFL.Meta.Object, metaclass = _RST_Meta_) :
                     ((message, pyk.decoded (xtra, enc)))
             message = _error_email_cleaner (message)
             if not self.Templateer :
-                pyk.fprint ("Exception:", exc)
-                pyk.fprint ("Request path", request.path)
-                pyk.fprint ("Email", email)
-                pyk.fprint (message)
-                pyk.fprint (request.body)
-                pyk.fprint (request.environ)
+                print ("Exception:", exc)
+                print ("Request path", request.path)
+                print ("Email", email)
+                print (message)
+                print (request.body)
+                print (request.environ)
             else :
                 kw = {}
                 if self.DEBUG :

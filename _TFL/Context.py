@@ -160,7 +160,7 @@ def time_block (fmt = "Execution time: %s", out = None, cb = None) :
             msg = fmt % (delta, )
         except (TypeError, ValueError) as exc :
             msg = "%s: %s" % (fmt, delta)
-        pyk.fprint (msg, file = out)
+        print (msg, file = out)
 # end def time_block
 
 __doc__ = """

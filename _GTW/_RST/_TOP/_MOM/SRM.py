@@ -863,12 +863,12 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
                 , request       = request
                 )
         except Exception as exc :
-            pyk.fprint \
+            print \
                 ( "Sending regatta registration email to %r failed "
                   "with exception %s"
                 % (email, exc)
                 )
-            pyk.fprint (message)
+            print (message)
     # end def _send_registration_email
 
 # end class _Regatta_Mixin_

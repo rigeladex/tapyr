@@ -98,7 +98,7 @@ def _sanitized_unicode (s, translate_table = None) :
 def _show (s) :
     from _TFL.portable_repr import portable_repr
     result = portable_repr (s)
-    pyk.fprint (result)
+    print (result)
 # end def _show
 
 def is_non_ascii (x) :
@@ -171,9 +171,9 @@ def _main (cmd) :
             if f_b != sf_b and sos.path.exists (f_b) :
                 sos.rename (f_b, sf_b)
                 if cmd.verbose :
-                    pyk.fprint ("Renamed", f, "to", sf)
+                    print ("Renamed", f, "to", sf)
         else :
-            pyk.fprint (sf, end = cmd.separator)
+            print (sf, end = cmd.separator)
 # end def _main
 
 _Command = TFL.CAO.Cmd \
