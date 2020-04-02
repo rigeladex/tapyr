@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -32,6 +32,7 @@
 #    13-Oct-2015 (CT) Add `import` for `_TFL.fix_datetime_pickle_2_vs_3`
 #    29-May-2016 (CT) Add `MOM.Selector`
 #    19-Jul-2016 (CT) Add `MOM.Attr.Date_Time`, `MOM.Attr.Structured`
+#     2-Apr-2020 (CT) Remove `import` for `_TFL.fix_datetime_pickle_2_vs_3`
 #    ««revision-date»»···
 #--
 
@@ -56,8 +57,6 @@ from   _MOM._Attr.Date_Time  import *
 from   _MOM._Attr.Structured import *
 
 import _MOM.Derived_PNS
-
-import _TFL.fix_datetime_pickle_2_vs_3
 
 def import_full_model () :
     """Import all essential classes defined by MOM."""

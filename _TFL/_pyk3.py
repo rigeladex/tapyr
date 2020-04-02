@@ -51,6 +51,7 @@
 #     2-Apr-2020 (CT) Remove `range`, `xrange`
 #     2-Apr-2020 (CT) Remove `builtins`
 #     2-Apr-2020 (CT) Remove `Classic_Class_Type`
+#     2-Apr-2020 (CT) Remove `copyreg`
 #    ««revision-date»»···
 #--
 
@@ -82,12 +83,6 @@ class _Pyk_ (object) :
         import configparser
         return configparser
     # end def config_parser
-
-    @lazy_property
-    def copyreg (self) :
-        import copyreg
-        return copyreg
-    # end def copyreg
 
     @staticmethod
     def decoded (v, * encodings) :
