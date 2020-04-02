@@ -49,6 +49,7 @@
 #    31-Mar-2020 (CT) Remove `adapt__bool__`
 #     1-Apr-2020 (CT) Remove `adapt__div__`, `adapt__str__`
 #     2-Apr-2020 (CT) Remove `range`, `xrange`
+#     2-Apr-2020 (CT) Remove `builtins`
 #    ««revision-date»»···
 #--
 
@@ -71,12 +72,6 @@ class _Pyk_ (object) :
 
        Use a class instead of module-level definitions to allow lazy imports.
     """
-
-    @lazy_property
-    def builtins (self) :
-        import builtins
-        return builtins
-    # end def builtins
 
     byte_type  = bytes
     byte_types = (bytes, )
