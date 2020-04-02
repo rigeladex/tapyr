@@ -60,6 +60,7 @@
 #     8-Sep-2016 (CT) Change `M_Autorename.__new__` to fix `__qualname__`
 #    19-Aug-2019 (CT) Use `print_prepr`
 #     1-Apr-2020 (CT) Remove Py-2 compatibility crutch `BaM`
+#     2-Apr-2020 (CT) Remove `pyk.Classic_Class_Type`
 #    ««revision-date»»···
 #--
 
@@ -136,10 +137,9 @@ class M_M_Class (type) :
         if result is None :
             result = meta
             if bases is not None :
-                Classic = pyk.Classic_Class_Type
                 for b in bases :
                     b_meta = type (b)
-                    if issubclass (result, b_meta) or b_meta is Classic :
+                    if issubclass (result, b_meta) :
                         pass
                     elif issubclass (b_meta, result) :
                         result = b_meta

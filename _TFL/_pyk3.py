@@ -50,6 +50,7 @@
 #     1-Apr-2020 (CT) Remove `adapt__div__`, `adapt__str__`
 #     2-Apr-2020 (CT) Remove `range`, `xrange`
 #     2-Apr-2020 (CT) Remove `builtins`
+#     2-Apr-2020 (CT) Remove `Classic_Class_Type`
 #    ««revision-date»»···
 #--
 
@@ -81,8 +82,6 @@ class _Pyk_ (object) :
         import configparser
         return configparser
     # end def config_parser
-
-    Classic_Class_Type = None
 
     @lazy_property
     def copyreg (self) :
