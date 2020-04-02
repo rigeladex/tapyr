@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.D2.
@@ -125,7 +125,7 @@ class Coordinates (TFL.Meta.Object) :
     def _rhs_x_y (self, rhs) :
         if isinstance (rhs, Coordinates) :
             rhs_x, rhs_y = rhs.x, rhs.y
-        elif isinstance (rhs, pyk.int_types + (float, )) :
+        elif isinstance (rhs, pyk.number_types) :
             rhs_x, rhs_y = rhs, rhs
         else :
             rhs_x, rhs_y = rhs

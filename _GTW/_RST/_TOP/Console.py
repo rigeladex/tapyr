@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -24,6 +24,7 @@
 #                     + Use `pyk.decoded`
 #                     + Use `portable_repr`, not `repr`
 #                     + Remove `u''` prefixes and hacks
+#     2-Apr-2020 (CT) Use `pyk.number_types`
 #    ««revision-date»»···
 #--
 
@@ -50,8 +51,8 @@ import code
 import re
 import sys
 
-_paragraph_re = re.compile(r"(?:\r\n|\r|\n){2,}")
-RegexType     = type(_paragraph_re)
+_paragraph_re = re.compile (r"(?:\r\n|\r|\n){2,}")
+RegexType     = type (_paragraph_re)
 
 def _add_subclass_info (inner, obj, base) :
     if isinstance (base, tuple) :
@@ -152,7 +153,7 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
     # end def object_repr
 
     def dispatch_repr (self, obj, recursive) :
-        if isinstance (obj, pyk.int_types + (float, complex)) :
+        if isinstance (obj, pyk.number_types_x) :
             return '<span class="number">%r</span>' % (obj, )
         if isinstance (obj, pyk.string_types) :
             return self.string_repr    (obj)

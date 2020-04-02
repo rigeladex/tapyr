@@ -52,6 +52,7 @@
 #     2-Apr-2020 (CT) Remove `builtins`
 #     2-Apr-2020 (CT) Remove `Classic_Class_Type`
 #     2-Apr-2020 (CT) Remove `copyreg`
+#     2-Apr-2020 (CT) Add `number_types_x`
 #    ««revision-date»»···
 #--
 
@@ -186,6 +187,12 @@ class _Pyk_ (object) :
     # end def new_instancemethod
 
     number_types = (int, float)
+
+    @lazy_property
+    def number_types_x (self) :
+        import decimal
+        return self.number_types + (decimal.Decimal, )
+    # end def number_types_x
 
     @lazy_property
     def pickle (self) :

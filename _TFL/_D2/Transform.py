@@ -232,8 +232,6 @@ class MT (TFL.Meta.Object) :
 
     ### https://en.wikipedia.org/wiki/Matrix_(mathematics)
 
-    numeric_types = pyk.int_types + (float, )
-
     def __init__ (self, * rows) :
         self.rows = rows
     # end def __init__
@@ -263,7 +261,7 @@ class MT (TFL.Meta.Object) :
     # end def T
 
     def __add__ (self, rhs) :
-        if isinstance (rhs, self.numeric_types) :
+        if isinstance (rhs, pyk.number_types) :
             result = \
                 (   tuple (tuple (x + rhs for x in row))
                 for row in self.rows
@@ -286,7 +284,7 @@ class MT (TFL.Meta.Object) :
     # end def __bool__
 
     def __mul__ (self, rhs) :
-        if isinstance (rhs, self.numeric_types) :
+        if isinstance (rhs, pyk.number_types) :
             result = \
                 (   tuple (tuple (x * rhs for x in row))
                 for row in self.rows

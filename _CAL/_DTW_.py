@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -149,7 +149,7 @@ class _DTW_ (TFL.Meta.Object, metaclass = _DTW_Meta_) :
 
     def _delta (self, delta) :
         result = delta
-        if isinstance (delta, pyk.int_types + (float, )) :
+        if isinstance (delta, pyk.number_types) :
             result = self.Delta (delta)
         elif isinstance (delta, self.Delta._Type) :
             result = _DTW_.new_dtw (delta)
