@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -210,7 +210,7 @@ class _Wrapper_ (TFL.Meta.Object) :
         @classmethod
         def _fixed_time_compare (cls, lhs, rhs) :
             s = 0
-            for l, r in pyk.izip (lhs, rhs) :
+            for l, r in zip (lhs, rhs) :
                 s |= ord (l) ^ ord (r)
             return s == 0
         # end def _fixed_time_compare

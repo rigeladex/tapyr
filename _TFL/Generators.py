@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2019 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -281,7 +281,7 @@ def paired_map (s1, s2) :
             yield x, True
         while True :
             yield None, False
-    for (l, next_l), (r, next_r) in pyk.izip (_gen (s1), _gen (s2)) :
+    for (l, next_l), (r, next_r) in zip (_gen (s1), _gen (s2)) :
         if not (next_l or next_r) :
             break
         yield l, r

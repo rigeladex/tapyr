@@ -161,7 +161,6 @@ class _Pyk_ (object) :
         return iter (values ())
     # end def itervalues
 
-    izip       = staticmethod (zip)
     long_types = (type ("no_longin_in_Py3", (object, ), {}), )
 
     @staticmethod
