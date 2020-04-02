@@ -55,6 +55,7 @@
 #     2-Apr-2020 (CT) Add `number_types_x`
 #     2-Apr-2020 (CT) Increase `pickle_protocol` to 4
 #     2-Apr-2020 (CT) Remove `fprint`
+#     2-Apr-2020 (CT) Remove `ifilter`
 #    ««revision-date»»···
 #--
 
@@ -160,7 +161,6 @@ class _Pyk_ (object) :
         return iter (values ())
     # end def itervalues
 
-    ifilter    = staticmethod (filter)
     izip       = staticmethod (zip)
     long_types = (type ("no_longin_in_Py3", (object, ), {}), )
 
