@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -47,6 +47,7 @@ import _TFL._Meta.Object
 import _TFL.Caller
 
 from   random                   import randrange
+from   urllib.parse             import urlencode
 
 _obfuscator_format = """\
 <a class="nospam" title="%(need)s">%(text)s</a>\
@@ -195,7 +196,7 @@ class Video (TFL.Meta.Object) :
         height      = kw.pop ("height", self.height)
         width       = kw.pop ("width",  self.width)
         desc        = kw.pop ("desc",   None) or self.watcher_url + video_id
-        query       = "?" + pyk.urlencode \
+        query       = "?" + urlencode \
             (sorted (pyk.iteritems (dict (self.q_parameters, ** kw))))
         result      = self.format % TFL.Caller.Object_Scope (self)
         result      = self.ws_replacer (result)

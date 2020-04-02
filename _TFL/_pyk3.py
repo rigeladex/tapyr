@@ -59,6 +59,7 @@
 #     2-Apr-2020 (CT) Remove `long_types`
 #     2-Apr-2020 (CT) Remove `text_type`
 #     2-Apr-2020 (CT) Remove `unichr`
+#     2-Apr-2020 (CT) Remove `urlencode`, `urlparse`
 #    ««revision-date»»···
 #--
 
@@ -203,18 +204,6 @@ class _Pyk_ (object) :
     # end def StringIO
 
     string_types       = (str, )
-
-    @lazy_property
-    def urlencode (self) :
-        from urllib.parse import urlencode
-        return urlencode
-    # end def urlencode
-
-    @lazy_property
-    def urlparse (self) :
-        from urllib import parse
-        return parse
-    # end def urlparse
 
     @lazy_property
     def user_config (self) :
