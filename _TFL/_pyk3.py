@@ -56,6 +56,7 @@
 #     2-Apr-2020 (CT) Increase `pickle_protocol` to 4
 #     2-Apr-2020 (CT) Remove `fprint`
 #     2-Apr-2020 (CT) Remove `ifilter`
+#     2-Apr-2020 (CT) Remove `long_types`
 #    ««revision-date»»···
 #--
 
@@ -160,8 +161,6 @@ class _Pyk_ (object) :
             values = dct.itervalues
         return iter (values ())
     # end def itervalues
-
-    long_types = (type ("no_longin_in_Py3", (object, ), {}), )
 
     @staticmethod
     def new_instancemethod (function, instance, cls) :

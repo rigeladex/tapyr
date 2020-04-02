@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -458,8 +458,6 @@ class _Attr_Base_ (_Base_) :
             kind   = getattr (col, "MOM_Kind", None)
             if kind is not None :
                 result = kind.from_pickle_cargo (scope, (result, ))
-        if isinstance (result, pyk.long_types) :
-            result = int (result)
         return result
     # end def _col_value_from_row
 
