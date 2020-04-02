@@ -44,7 +44,7 @@ import _TFL._SDG._XML.Node
 class Document (TFL.SDG.XML.Node) :
     """Model a XML document (i.e., the root element)
 
-       >>> nl = pyk.unichr (10)
+       >>> nl = chr (10)
 
        >>> d = Document ( "Memo", "First line of text"
        ...              , "& a second line of %text"

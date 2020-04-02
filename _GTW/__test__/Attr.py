@@ -52,7 +52,7 @@ _test_DET = """
     Creating new scope MOMT__...
 
     >>> MOM   = scope.MOM
-    >>> nl    = pyk.unichr (10)
+    >>> nl    = chr (10)
     >>> a_map = _attr_map (MOM.Id_Entity)
 
     >>> for (name, DT), xs in sorted (pyk.iteritems (a_map)) :
@@ -1151,7 +1151,7 @@ _test_pickled_types = """
     Creating new scope MOMT__...
 
     >>> MOM   = scope.MOM
-    >>> nl    = pyk.unichr (10)
+    >>> nl    = chr (10)
     >>> a_map = _attr_map (MOM.Id_Entity)
 
     >>> p_types = set ()

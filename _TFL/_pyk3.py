@@ -58,6 +58,7 @@
 #     2-Apr-2020 (CT) Remove `ifilter`
 #     2-Apr-2020 (CT) Remove `long_types`
 #     2-Apr-2020 (CT) Remove `text_type`
+#     2-Apr-2020 (CT) Remove `unichr`
 #    ««revision-date»»···
 #--
 
@@ -202,7 +203,6 @@ class _Pyk_ (object) :
     # end def StringIO
 
     string_types       = (str, )
-    unichr             = chr
 
     @lazy_property
     def urlencode (self) :
