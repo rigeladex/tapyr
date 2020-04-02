@@ -60,6 +60,7 @@
 #     2-Apr-2020 (CT) Remove `text_type`
 #     2-Apr-2020 (CT) Remove `unichr`
 #     2-Apr-2020 (CT) Remove `urlencode`, `urlparse`
+#     2-Apr-2020 (CT) Remove `zip`
 #    ««revision-date»»···
 #--
 
@@ -210,10 +211,6 @@ class _Pyk_ (object) :
         from   _TFL.User_Config import user_config
         return user_config
     # end def user_config
-
-    def zip (self, * args) :
-        return list (self.izip (* args))
-    # end def zip
 
 # end class _Pyk_
 
