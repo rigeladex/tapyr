@@ -207,8 +207,7 @@ class _Entity_ (_Selector_Base_) :
     def atoms (self) :
         def _gen (self) :
             for e in self.elements :
-                for a in e.atoms :
-                    yield a
+                yield from e.atoms 
         return tuple (_gen (self))
     # end def atoms
 

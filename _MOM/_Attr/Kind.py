@@ -473,8 +473,7 @@ class Kind (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind) :
     # end def to_save
 
     def _checkers (self, e_type) :
-        for c in self.attr._checkers (e_type, self) :
-            yield c
+        yield from self.attr._checkers (e_type, self) 
     # end def _checkers
 
     def _check_sanity (self, attr_type, e_type) :
@@ -714,8 +713,7 @@ class _Required_Mixin_ (Kind) :
             , kind       = MOM.Pred.Object
             , Error_Type = MOM.Error.Required_Empty
             )
-        for c in self.__super._checkers (e_type) :
-            yield c
+        yield from self.__super._checkers (e_type) 
     # end def _checkers
 
     def has_substance (self, obj) :

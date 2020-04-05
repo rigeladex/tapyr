@@ -471,8 +471,7 @@ class _Base_ (TFL.Meta.Object) :
         if not soc.skip :
             yield soc
             for e in soc.elements :
-                for et in e.elements_transitive () :
-                    yield et
+                yield from e.elements_transitive () 
     # end def elements_transitive
 
     def reset_once_properties (self) :
@@ -579,8 +578,7 @@ class _Element_ (_Base_, metaclass = _M_Element_) :
         def _gen (self) :
             for e in self.elements :
                 if isinstance (e, _Field_Composite_) and not e.skip :
-                    for f in e.field_elements :
-                        yield f
+                    yield from e.field_elements 
                 elif isinstance (e, _Field_) :
                     yield e
         return tuple (e for e in _gen (self) if not e.skip)
@@ -1851,10 +1849,8 @@ class Field_Rev_Ref (_Field_Base_, metaclass = M_Field_Rev_Ref) :
 
     @classmethod
     def template_module_iter (cls) :
-        for tm in cls.__c_super.template_module_iter () :
-            yield tm
-        for tm in cls.proto.template_module_iter () :
-            yield tm
+        yield from cls.__c_super.template_module_iter () 
+        yield from cls.proto.template_module_iter () 
     # end def template_module_iter
 
     @TFL.Meta.Once_Property

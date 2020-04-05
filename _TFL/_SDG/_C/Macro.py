@@ -149,8 +149,7 @@ class Define (Macro) :
         yield "\\item \\textbf{Description:} \\\\"
         format_prec = max (int (kw ["format_prec"]), 4)
         wrapper     = textwrap.TextWrapper (width = format_prec)
-        for l in wrapper.wrap (TFL.tex_quoted (self.explanation)) :
-            yield l
+        yield from wrapper.wrap (TFL.tex_quoted (self.explanation)) 
     # end def _explanation
 
 # end class Define

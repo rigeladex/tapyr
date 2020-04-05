@@ -277,8 +277,7 @@ class Rule (_Media_) :
 
     def rules_iter (self) :
         for r in self.rules :
-            for x in r :
-                yield x
+            yield from r 
     # end def rules_iter
 
     def _pop_rules (self, kw) :

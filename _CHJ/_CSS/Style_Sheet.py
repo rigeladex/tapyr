@@ -90,11 +90,9 @@ class Style_Sheet (_Style_Sheet_) :
 
     def __iter__ (self) :
         for i in self.imports :
-            for r in i :
-                yield r
+            yield from i 
         for r in self.rules :
-            for x in r :
-                yield x
+            yield from r 
     # end def __iter__
 
     def __str__ (self) :

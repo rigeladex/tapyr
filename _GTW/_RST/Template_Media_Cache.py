@@ -165,11 +165,9 @@ class Template_Media_Cache (TFL.Meta.Object) :
     def _get_etag (self, root, css_map, js_map, t_set) :
         def _gen (css_map, js_map, t_set) :
             yield "CSS"
-            for c in sorted (css_map) :
-                yield c
+            yield from sorted (css_map) 
             yield "JS"
-            for j in sorted (js_map) :
-                yield j
+            yield from sorted (js_map) 
             yield "JNJ"
             for t in sorted (t_set, key = TFL.Getter.path) :
                 s = t.source

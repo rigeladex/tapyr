@@ -170,8 +170,7 @@ def expanded_path (pathname) :
 def expanded_globs (* pathnames) :
     """Generate all file names to which the `pathnames` expand"""
     for p in pathnames :
-        for r in expanded_glob (p) :
-            yield r
+        yield from expanded_glob (p) 
 # end def expanded_globs
 
 def filesize (path) :

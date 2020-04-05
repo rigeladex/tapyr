@@ -152,8 +152,7 @@ class _A_Date_ (_A_DT_) :
     # end class _Doc_Map_
 
     def _checkers (self, e_type, kind) :
-        for c in self.__super._checkers (e_type, kind) :
-            yield c
+        yield from self.__super._checkers (e_type, kind) 
         if self.not_in_future :
             name   = self.name
             p_name = "%s__not_in_future" % name

@@ -342,8 +342,7 @@ class _Container_ (_Base_) :
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
-                for ct in c._atoms (ETC (seen_etypes)):
-                    yield ct
+                yield from c._atoms (ETC (seen_etypes))
     # end def _atoms
 
     def _attrs_transitive (self, seen_etypes) :
@@ -351,8 +350,7 @@ class _Container_ (_Base_) :
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
-                for ct in c._attrs_transitive (ETC (seen_etypes)):
-                    yield ct
+                yield from c._attrs_transitive (ETC (seen_etypes))
             else :
                 yield c
     # end def _attrs_transitive
@@ -421,8 +419,7 @@ class _Container_ (_Base_) :
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
-                for ct in c.Unwrapped.Atoms :
-                    yield ct
+                yield from c.Unwrapped.Atoms 
     # end def _unwrapped_atoms
 
 # end class _Container_
@@ -701,8 +698,7 @@ class _Co_Mixin_ (_Container_, _Type_) :
 
     def _attrs_transitive (self, seen_etypes) :
         yield self
-        for c in self.__super._attrs_transitive (seen_etypes) :
-            yield c
+        yield from self.__super._attrs_transitive (seen_etypes) 
     # end def _attrs_transitive
 
     def __getattr__ (self, name) :
@@ -729,8 +725,7 @@ class _Structured_ (_Co_Mixin_) :
 
     def _atoms (self, seen_etypes) :
         if self.E_Type.edit_attr :
-            for x in self.__super._atoms (seen_etypes) :
-                yield x
+            yield from self.__super._atoms (seen_etypes) 
         else :
             yield self
     # end def _atoms

@@ -548,8 +548,7 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
 
     def _children_iter (self) :
         for group in pyk.itervalues (self.children_groups) :
-            for c in group :
-                yield c
+            yield from group 
     # end def _children_iter
 
     def _convert (self, value, Class, * args, ** kw) :
@@ -624,8 +623,7 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
     def __iter__ (self) :
         yield self
         for c in self.children :
-            for n in iter (c) :
-                yield n
+            yield from iter (c) 
     # end def __iter__
 
     def __repr__ (self) :

@@ -126,8 +126,7 @@ class _Gallery_ (_Ancestor) :
     @property
     @getattr_safe
     def entries_transitive (self) :
-        for e in self.entries :
-            yield e
+        yield from self.entries 
     # end def entries_transitive
 
     @Once_Property

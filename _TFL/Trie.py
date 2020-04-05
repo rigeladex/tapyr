@@ -416,9 +416,8 @@ class Word_Trie (TFL.Meta.Object) :
         ### http://stevehanov.ca/blog/index.php?id=114
         row_1 = list (range (len (word) + 1))
         for char, node in pyk.iteritems (self.root.children) :
-            for m in self._match_iter_inner \
-                    (col_iter, word, max_edits, char, node, row_1) :
-                yield m
+            yield from self._match_iter_inner \
+                    (col_iter, word, max_edits, char, node, row_1) 
     # end def _match_iter
 
     def _match_iter_inner (self, col_iter, word, max_edits, char, node, row_1, row_2 = None, char_1 = None) :
@@ -434,11 +433,10 @@ class Word_Trie (TFL.Meta.Object) :
         if any (c <= max_edits for c in row_c) :
             char_1 = char
             for char, node in pyk.iteritems (node.children) :
-                for m in self._match_iter_inner \
+                yield from self._match_iter_inner \
                         ( col_iter, word, max_edits
                         , char, node, row_c, row_1, char_1
-                        ) :
-                    yield m
+                        ) 
     # end def _match_iter_inner
 
     def __iter__ (self) :

@@ -149,8 +149,7 @@ def as_json_cargo (* excs) :
                     , head        = exc.__class__.__name__
                     )
             if isinstance (cargo, (list, tuple)) :
-                for c in cargo :
-                    yield c
+                yield from cargo 
             else :
                 yield cargo
     return list (_gen (excs))
@@ -745,8 +744,7 @@ class Invariants (Error) :
             if ee is not None :
                 e = tuple (ee)
             if isinstance (e, (list, tuple)) :
-                for x in self._flattened (e) :
-                    yield x
+                yield from self._flattened (e) 
             else :
                 yield e
     # end def _flattened

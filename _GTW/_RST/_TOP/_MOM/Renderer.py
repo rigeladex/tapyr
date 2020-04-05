@@ -154,8 +154,7 @@ class E_Type (_Renderer_) :
     def td_cols (self) :
         def _gen (fields) :
             for f in fields :
-                for td in f.td_cols :
-                    yield td
+                yield from f.td_cols 
         return tuple (_gen (self.fields))
     # end def td_cols
 
@@ -164,8 +163,7 @@ class E_Type (_Renderer_) :
     def th_cols (self) :
         def _gen (fields) :
             for f in fields :
-                for th in f.th_cols :
-                    yield th
+                yield from f.th_cols 
         return tuple (_gen (self.fields))
     # end def th_cols
 

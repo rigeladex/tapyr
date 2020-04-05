@@ -301,8 +301,7 @@ def show_q_able_names (apt, pred = pred) :
                 ### filter attribute-aliases
                 yield "%s%-30s: %s" % ("    " * level, k, ", ".join (q.q_able_names))
                 if q.q_able_attrs :
-                    for x in _gen (q.q_able_attrs, level + 1) :
-                        yield x
+                    yield from _gen (q.q_able_attrs, level + 1) 
     sk = lambda x : (x.e_type.i_rank, )
     for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk):
         if not pred (ETW) :

@@ -513,8 +513,7 @@ class _Spec_ (_Spec_Base_) :
         pat = self.range_pat
         for value in values :
             if value and pat.match (value) :
-                for v in self._resolve_range_1 (value, cao, pat) :
-                    yield v
+                yield from self._resolve_range_1 (value, cao, pat) 
             else :
                 yield value
     # end def _resolve_range
@@ -642,8 +641,7 @@ class _Number_ (_Spec_) :
         head     = cook (r_head, cao)
         tail     = cook (r_tail, cao) + 1
         delta    = cook (r_delta or self.range_delta, cao)
-        for v in self._resolved_range (head, tail, delta) :
-            yield v
+        yield from self._resolved_range (head, tail, delta) 
     # end def _resolve_range_1
 
     def _resolved_range (self, head, tail, delta) :
@@ -1369,10 +1367,8 @@ class Path (_Spec_) :
     def _resolve_range (self, values, cao) :
         def _gen (values, cao) :
             for value in sos.expanded_globs (* values) :
-                for v in self._resolve_range_1 (sos.expanded_path (value), cao):
-                    yield v
-        for v in TFL.uniq (_gen (values, cao)) :
-            yield v
+                yield from self._resolve_range_1 (sos.expanded_path (value), cao)
+        yield from TFL.uniq (_gen (values, cao)) 
     # end def _resolve_range
 
 # end class Path
@@ -1485,8 +1481,7 @@ class Rel_Path (Path) :
     # end def explain_resolution
 
     def _help_items (self) :
-        for i in self.__super._help_items () :
-            yield i
+        yield from self.__super._help_items () 
         explain_resolution = self.explain_resolution
         if explain_resolution :
             yield explain_resolution

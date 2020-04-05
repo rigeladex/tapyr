@@ -1166,8 +1166,7 @@ class _Attr_ (_RAW_, _Base_) :
     def _columns_ob_epk_iter (self, ET) :
         for k in ET.epk_sig :
             qx = getattr (self, k)
-            for c in qx._columns_ob :
-                yield c
+            yield from qx._columns_ob 
     # end def _columns_ob_epk_iter
 
     def _etw_alias (self, ETW, col_name) :
@@ -1374,8 +1373,7 @@ class Kind_Composite (_Attr_CS_) :
             ET = self._akw.attr.E_Type
             for k in ET.usr_sig :
                 qx = getattr (self, k)
-                for c in qx._columns_ob :
-                    yield c
+                yield from qx._columns_ob 
         return list (_gen (self))
     # end def _columns_ob
 
@@ -1631,8 +1629,7 @@ class Kind_Partial (_Attr_) :
     def _columns (self) :
         def _gen (self) :
             for c in self._children :
-                for col in c._columns :
-                    yield col
+                yield from c._columns 
         with self.X.LET (_polymorphic = True) :
             return list (_gen (self))
     # end def _columns
@@ -1642,8 +1639,7 @@ class Kind_Partial (_Attr_) :
     def _columns_ob (self) :
         def _gen (self) :
             for c in self._children :
-                for col in c._columns_ob :
-                    yield col
+                yield from c._columns_ob 
         with self.X.LET (_polymorphic = True) :
             return list (_gen (self))
     # end def _columns_ob
@@ -2274,8 +2270,7 @@ def fixed_order_by (x) :
 @fixed_order_by.add_type (TFL.Sorted_By)
 def _fixed_order_by_sorted_by_ (x) :
     for c in x.criteria :
-        for r in fixed_order_by (c) :
-            yield r
+        yield from fixed_order_by (c) 
 # end def _fixed_order_by_sorted_by_
 
 @fixed_order_by.add_type (_Base_, TFL.Q_Exp.Q_Root, SA.Operators)
@@ -2296,8 +2291,7 @@ def _fixed_order_by_str_ (x) :
 @fixed_order_by.add_type (tuple)
 def _fixed_order_by_tuple (xs) :
     for x in xs :
-        for r in fixed_order_by (x) :
-            yield r
+        yield from fixed_order_by (x) 
 # end def _fixed_order_by_tuple
 
 __doc__ = """

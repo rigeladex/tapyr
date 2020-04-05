@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -74,8 +74,7 @@ class Sitemap (_Ancestor) :
         for r in self.resources (resource) :
             yield r
             if r.own_links :
-                for s in self.all_resources (r) :
-                    yield s
+                yield from self.all_resources (r)
     # end def all_resources
 
     def resources (self, resource = None, user = None) :

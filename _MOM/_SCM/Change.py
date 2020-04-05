@@ -267,8 +267,7 @@ class _Change_ (_Ancestor, metaclass = M_Change) :
 
     def __iter__ (self) :
         yield self
-        for c in self.children :
-            yield c
+        yield from self.children 
     # end def __iter__
 
     def __repr__ (self) :

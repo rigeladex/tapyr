@@ -70,8 +70,7 @@ class _formatted_repr_properties (object) :
                 if compact_frit is not None :
                     yield compact_frit
                 else :
-                    for x in f (obj, level, compact, seen) :
-                        yield x
+                    yield from f (obj, level, compact, seen) 
         return _
     # end def recurses
 
@@ -80,9 +79,8 @@ class _formatted_repr_properties (object) :
     def dict (obj, level, compact, seen) :
         if obj :
             it = formatted_repr._items_iter (obj, level + 1, compact, seen)
-            for x in formatted_repr._structure_iter \
-                    (it, level, "{ ", ", ", " }") :
-                yield x
+            yield from formatted_repr._structure_iter \
+                    (it, level, "{ ", ", ", " }") 
         else :
             yield FRIT (level, True, "", "{}", "")
     # end def dict
@@ -92,9 +90,8 @@ class _formatted_repr_properties (object) :
     def list (obj, level, compact, seen) :
         if obj :
             it = formatted_repr._values_iter (obj, level + 1, compact, seen)
-            for x in formatted_repr._structure_iter \
-                    (it, level, "[ ", ", ", " ]") :
-                yield x
+            yield from formatted_repr._structure_iter \
+                    (it, level, "[ ", ", ", " ]") 
         else :
             yield FRIT (level, True, "", "[]", "")
     # end def list
@@ -104,13 +101,11 @@ class _formatted_repr_properties (object) :
     def record (obj, level, compact, seen) :
         def _iter (obj, level, compact, seen) :
             it = formatted_repr._record_iter (obj, level, compact, seen)
-            for x in formatted_repr._structure_iter \
-                    (it, level, "( ", ", ", " )") :
-                yield x
+            yield from formatted_repr._structure_iter \
+                    (it, level, "( ", ", ", " )") 
         it = _iter (obj, level + 1, compact, seen)
-        for x in formatted_repr._structure_iter \
-                (it, level, "Record ", "", "", nl_after_open = True) :
-            yield x
+        yield from formatted_repr._structure_iter \
+                (it, level, "Record ", "", "", nl_after_open = True) 
     # end def record
 
     @generic_formatted_repr_iter.add_type (set)
@@ -118,9 +113,8 @@ class _formatted_repr_properties (object) :
         if obj :
             it = formatted_repr._values_iter \
                 (sorted (obj, key = SK), level, compact, seen)
-            for x in formatted_repr._structure_iter \
-                    (it, level, "{ ", ", ", " }") :
-                yield x
+            yield from formatted_repr._structure_iter \
+                    (it, level, "{ ", ", ", " }") 
         else :
             yield FRIT (level, True, "", "set()", "")
     # end def set
@@ -131,9 +125,8 @@ class _formatted_repr_properties (object) :
         if obj :
             it = formatted_repr._values_iter (obj, level + 1, compact, seen)
             clos = (",", " )") if len (obj) == 1 else " )"
-            for x in formatted_repr._structure_iter \
-                    (it, level, "( ", ", ", clos) :
-                yield x
+            yield from formatted_repr._structure_iter \
+                    (it, level, "( ", ", ", clos) 
         else :
             yield FRIT (level, True, "", "()", "")
     # end def tuple
@@ -158,9 +151,8 @@ class _formatted_repr_properties (object) :
         for k, v in sorted (pyk.iteritems (obj._kw), key = SK) :
             rk = str (k)
             it = formatted_repr.iter (v, level + 1, compact, seen)
-            for x in formatted_repr._structure_iter \
-                    (it, level, rk + " = ", "", "", nl_after_open = True) :
-                yield x
+            yield from formatted_repr._structure_iter \
+                    (it, level, rk + " = ", "", "", nl_after_open = True) 
     # end def _record_iter
 
     def _structure_iter (it, level, open, sep, clos, nl_after_open = False) :
@@ -196,8 +188,7 @@ class _formatted_repr_properties (object) :
 
     def _values_iter (obj, level, compact, seen) :
         for v in obj :
-            for x in formatted_repr.iter (v, level, compact, seen) :
-                yield x
+            yield from formatted_repr.iter (v, level, compact, seen) 
     # end def _values_iter
 
 # end class _formatted_repr_properties

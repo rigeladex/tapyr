@@ -113,8 +113,7 @@ class _Int_Partition_ (TFL.Meta.Object) :
            sums of positive integers adding up to `n`.
         """
         for l in range (n) :
-            for p in self [(n, l)] :
-                yield p
+            yield from self [(n, l)] 
     # end def __call__
 
     def __getitem__ (self, key) :

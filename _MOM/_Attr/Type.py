@@ -1063,8 +1063,7 @@ class A_Attr_Type (MOM.Prop.Type, metaclass = MOM.Meta.M_Attr_Type.Root) :
     # end def _call_eval
 
     def _checkers (self, e_type, kind) :
-        for c in sorted (self.check) :
-            yield c
+        yield from sorted (self.check) 
     # end def _checkers
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1363,8 +1362,7 @@ class _A_Composite_ (_A_Entity_, metaclass = MOM.Meta.M_Attr_Type.Composite) :
     # end def from_string
 
     def _checkers (self, e_type, kind) :
-        for c in self.__super._checkers (e_type, kind) :
-            yield c
+        yield from self.__super._checkers (e_type, kind) 
         if not kind.electric :
             ### Electric composite attribute:
             ### - cannot check object predicates of nested attributes because
@@ -1523,8 +1521,7 @@ class _A_Number_ (A_Attr_Type) :
                 yield "%s <= value" % (self.min_value, )
         elif self.max_value :
             yield "value <= %s" % (self.max_value, )
-        for c in self.__super._checkers (e_type, kind) :
-            yield c
+        yield from self.__super._checkers (e_type, kind) 
     # end def _checkers
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1932,8 +1929,7 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
         for ret in e_types :
             ET = apt.etypes.get (ret)
             if ET :
-                for c in ET.children_np_transitive :
-                    yield c
+                yield from ET.children_np_transitive 
     # end def _gen_etypes_transitive
 
     @TFL.Meta.Class_and_Instance_Method
@@ -2119,8 +2115,7 @@ class _A_String_Base_ (A_Attr_Type) :
     # end def as_string
 
     def _checkers (self, e_type, kind) :
-        for c in self.__super._checkers (e_type, kind) :
-            yield c
+        yield from self.__super._checkers (e_type, kind) 
         name    = self.name
         max_len = self.max_length
         min_len = self.min_length
@@ -2417,14 +2412,12 @@ class _A_Typed_List_ \
                 if r is None :
                     yield C_fs (c, obj)
                 else :
-                    for d in self.value_range (attr, r, obj, C_Type, C_fs) :
-                        yield d
+                    yield from self.value_range (attr, r, obj, C_Type, C_fs) 
         # end def __call__
 
         def value_range (self, attr, range, obj, C_Type, C_fs) :
             h, t = tuple (C_fs (x, obj) for x in range)
-            for d in C_Type.value_range (h, t, obj) :
-                yield d
+            yield from C_Type.value_range (h, t, obj) 
         # end def value_range
 
     # end class _Range_Splitter_

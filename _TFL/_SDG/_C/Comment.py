@@ -105,8 +105,7 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
         format_prec = max (int (kw ["format_prec"]), 4)
         wrapper     = textwrap.TextWrapper (width = format_prec)
         for desc in self.description :
-            for l in wrapper.wrap (desc) :
-                yield l
+            yield from wrapper.wrap (desc) 
     # end def _description
 
     def _tex_description (self, ** kw) :

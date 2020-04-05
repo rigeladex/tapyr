@@ -176,16 +176,14 @@ class NDC (TFL.Meta.Object) :
 
 def _convert_row (row) :
     if len (row) == 5 :
-        for ndc in NDC.from_xls_row (row) :
-            yield ndc
+        yield from NDC.from_xls_row (row) 
 # end def _convert_row
 
 def gen_records (xls_name) :
     book    = xlrd.open_workbook  (xls_name, encoding_override = "iso-8859-1")
     sheet   = book.sheet_by_index (0)
     for i in range (0, sheet.nrows) :
-        for ndc in _convert_row (sheet.row (i)) :
-            yield ndc
+        yield from _convert_row (sheet.row (i)) 
 # end def gen_records
 
 def _main (cmd) :

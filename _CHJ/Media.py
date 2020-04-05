@@ -91,8 +91,7 @@ class Media_Base (TFL.Meta.Object) :
     def objects (self) :
         def _gen (s) :
             for r in s.requires :
-                for o in r.objects :
-                    yield o
+                yield from r.objects 
             yield s
         return tuple (_gen (self))
     # end def objects
@@ -274,17 +273,14 @@ class Media_List (TFL.Meta.Object) :
 
     def _gen_all (self) :
         for mob in self._gen_own () :
-            for o in mob.objects :
-                yield o
+            yield from mob.objects 
         name = self.name
         for child in self.media.children :
-            for mob in getattr (child, name) :
-                yield mob
+            yield from getattr (child, name) 
     # end def _gen_all
 
     def _gen_own (self) :
-        for mob in self.mobs :
-            yield mob
+        yield from self.mobs 
     # end def _gen_own
 
     def __len__ (self) :

@@ -354,8 +354,7 @@ class Interval_Set (TFL.Meta.Object) :
                     if l.lower < r.upper < l.upper :
                         l = l.__class__ (r.upper, l.upper)
         yield l
-        for l in lit :
-            yield l
+        yield from lit 
     # end def _difference_iter
 
     def _intersection_iter (self, other) :

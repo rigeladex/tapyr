@@ -404,8 +404,7 @@ class M_E_Mixin \
                 def _gen_children (cls) :
                     yield cls
                     for c in pyk.itervalues (cls.children) :
-                        for x in _gen_children (c) :
-                            yield x
+                        yield from _gen_children (c) 
                 for c in _gen_children (cls) :
                     yield c.type_name, c
             result = cls._children_transitive = dict (_gen (cls))

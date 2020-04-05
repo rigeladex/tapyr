@@ -106,8 +106,7 @@ class NO_List (TFL.Ordered_Set):
     # end def iteritems
 
     def itervalues (self) :
-        for i in self :
-            yield i
+        yield from self 
     # end def iter
 
     def items  (self) : return list (self.iteritems  ())

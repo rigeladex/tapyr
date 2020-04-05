@@ -350,8 +350,7 @@ class PDF_Plan_Year (PDF_Plan_Month) :
     head_fmt = "%b %Y"
 
     def seq_generator (self, first, last, wpp) :
-        for w in range (first, last) :
-            yield w
+        yield from range (first, last) 
     # end def seq_generator
 
 # end class PDF_Plan_Year

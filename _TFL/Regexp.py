@@ -238,8 +238,7 @@ class Multi_Regexp (TFL.Meta.Object) :
 
     def search_iter (self, string, pos = 0, endpos = None) :
         for p in self.patterns :
-            for m in p.search_iter (string, pos, endpos) :
-                yield m
+            yield from p.search_iter (string, pos, endpos) 
     # end def search_iter
 
     def sub (self, * args, ** kw) :

@@ -349,8 +349,7 @@ class Store_PC (Store) :
                 file_name = TFL.Filename (name, x_uri).name
                 with open (file_name, "rb") as file :
                     changes = pickle.load (file)
-                    for cargo in changes :
-                        yield cargo
+                    yield from changes 
     # end def produce_changes
 
     def produce_entities (self) :
@@ -361,8 +360,7 @@ class Store_PC (Store) :
         with TFL.lock_file (x_uri.name) :
             for s in info.stores :
                 with open (TFL.Filename (s, x_uri).name, "rb") as file :
-                    for epc in pickle.load (file) :
-                        yield epc
+                    yield from pickle.load (file) 
     # end def produce_entities
 
     def _new_info (self) :

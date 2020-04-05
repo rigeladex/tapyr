@@ -232,8 +232,7 @@ class Rule (TFL.Meta.Object, metaclass = M_Rule) :
         if self.declarations :
             yield self
         for c in self.children :
-            for r in c :
-                yield r
+            yield from c 
     # end def __iter__
 
     def __str__ (self) :

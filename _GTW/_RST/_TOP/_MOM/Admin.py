@@ -1636,11 +1636,9 @@ class Group (_Ancestor) :
     # end def entries
 
     def template_iter (self) :
-        for t in self.__super.template_iter () :
-            yield t
+        yield from self.__super.template_iter () 
         for e in self.entries :
-            for t in e.template_iter () :
-                yield t
+            yield from e.template_iter () 
     # end def template_iter
 
     def _add_index (self, l) :

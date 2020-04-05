@@ -458,8 +458,7 @@ class DL_Ring (_DL_Chain_) :
 
     def reverse_iter (self) :
         if self.mark is not self._NIL :
-            for p in self._T.predecessors () :
-                yield p
+            yield from self._T.predecessors () 
             yield self._T
     # end def reverse_iter
 
@@ -477,8 +476,7 @@ class DL_Ring (_DL_Chain_) :
 
     def __iter__ (self) :
         if self.mark is not self._NIL :
-            for s in self._H.successors () :
-                yield s
+            yield from self._H.successors () 
             yield self._H
     # end def __iter__
 

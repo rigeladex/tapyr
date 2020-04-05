@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -533,8 +533,7 @@ class _RST_Base_ (TFL.Meta.Object, metaclass = _RST_Meta_) :
         for e in self.own_links :
             yield e
             if isinstance (e, _Dir_) :
-                for ee in e.own_links_transitive :
-                    yield ee
+                yield from e.own_links_transitive
     # end def own_links_transitive
 
     @property
@@ -584,13 +583,10 @@ class _RST_Base_ (TFL.Meta.Object, metaclass = _RST_Meta_) :
     @getattr_safe
     def postconditions (self) :
         def _gen (self) :
-            for p in self.cls_postconditions :
-                yield p
-            for p in self._postconditions :
-                yield p
+            yield from self.cls_postconditions
+            yield from self._postconditions
             if self.parent :
-                for p in self.parent.postconditions :
-                    yield p
+                yield from self.parent.postconditions
         return list (uniq (_gen (self)))
     # end def postconditions
 
@@ -907,8 +903,7 @@ class _RST_Base_ (TFL.Meta.Object, metaclass = _RST_Meta_) :
                 yield getattr (p, "instance", p)
             if self.parent :
                 pps = getattr (self.parent, name + "s", ())
-                for p in pps or () :
-                    yield p
+                yield from pps or ()
         return uniq (_gen (self, name))
     # end def _get_permissions
 
@@ -1261,8 +1256,7 @@ class _RST_Dir_Base_ (_Ancestor) :
 
     def template_iter (self) :
         if self.top.dynamic_p or self.static_p :
-            for t in self.__super.template_iter () :
-                yield t
+            yield from self.__super.template_iter ()
             t = self.dir_template
             if t :
                 yield t
@@ -1327,8 +1321,7 @@ class _RST_Dir_ (_Ancestor) :
     def entries_transitive (self) :
         for e in self.entries :
             yield e
-            for d in e.entries_transitive :
-                yield d
+            yield from e.entries_transitive
     # end def entries_transitive
 
     @property
@@ -1352,15 +1345,12 @@ class _RST_Dir_ (_Ancestor) :
 
     def template_iter (self) :
         if self.top.dynamic_p or self.static_p :
-            for t in self.__super.template_iter () :
-                yield t
+            yield from self.__super.template_iter ()
             eff = self._effective
             if eff is not self :
-                for t in eff.template_iter () :
-                    yield t
+                yield from eff.template_iter ()
             for d in self.sub_dir_iter () :
-                for t in d.template_iter () :
-                    yield t
+                yield from d.template_iter ()
     # end def template_iter
 
     def _add_href_pat_frag_tail \
@@ -1417,12 +1407,10 @@ class RST_Dir_V (_Ancestor) :
 
     def template_iter (self) :
         if self.top.dynamic_p or self.static_p :
-            for t in self.__super.template_iter () :
-                yield t
+            yield from self.__super.template_iter ()
             if self._entry_type_map :
                 for e in pyk.itervalues (self._entry_type_map) :
-                    for t in e.template_iter () :
-                        yield t
+                    yield from e.template_iter ()
     # end def template_iter
 
     def _add_href_pat_frag_tail (self, head, getter = None) :
@@ -1752,8 +1740,7 @@ class RST_Root (_Ancestor) :
             if self.Templateer :
                 for tn in self.Templateer.error_template_names :
                     yield gett (tn, [])
-            for t in self.__super.template_iter () :
-                yield t
+            yield from self.__super.template_iter ()
         for t in _gen () :
             if t.id not in seen :
                 yield t

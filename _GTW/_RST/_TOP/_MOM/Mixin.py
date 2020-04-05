@@ -178,10 +178,8 @@ class Renderer_Mixin (_TOP_MOM_Mixin_Base_) :
     # end def add_field_classes
 
     def template_iter (self) :
-        for t in self.__super.template_iter () :
-            yield t
-        for t in self._renderer_template_iter () :
-            yield t
+        yield from self.__super.template_iter () 
+        yield from self._renderer_template_iter () 
     # end def template_iter
 
     def _field (self, name, E_Type, map = None) :
@@ -498,11 +496,9 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
     # end def page_from_obj
 
     def template_iter (self) :
-        for t in self.__super.template_iter () :
-            yield t
+        yield from self.__super.template_iter () 
         if self.admin :
-            for t in self.admin.template_iter () :
-                yield t
+            yield from self.admin.template_iter () 
     # end def template_iter
 
     def _add_other_entries (self) :
