@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -163,6 +163,7 @@
 #                     + Compare `raw`, not `e_raw`, to `""` to avoid
 #                       `UnicodeWarning` from `_help_value`
 #                     + Use `==` not `is` in `_resolve_range_1` (Py 3.8 warning)
+#     5-Apr-2020 (CT) Add `Regexp`, `Re_Replacer` argument/option
 #    ««revision-date»»···
 #--
 
@@ -172,7 +173,9 @@ from   _TFL.Decorator      import getattr_safe
 from   _TFL.formatted_repr import formatted_repr
 from   _TFL.I18N           import _, _T, _Tn
 from   _TFL.portable_repr  import portable_repr, print_prepr
-from   _TFL.Regexp         import Regexp, Re_Replacer, Multi_Re_Replacer, re
+from   _TFL.predicate import split_hst, rsplit_hst
+from   _TFL.Regexp         import \
+    Regexp, Multi_Regexp, Re_Replacer, Multi_Re_Replacer, re
 from   _TFL.Trie           import Word_Trie as Trie
 from   _TFL.pyk            import pyk
 from   _TFL                import sos
@@ -185,7 +188,6 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
-import _TFL.predicate
 import _TFL.r_eval
 import _TFL.Undef
 
@@ -1500,27 +1502,6 @@ class Rel_Path (Path) :
 
 # end class Rel_Path
 
-class Percent (Float) :
-    """Argument or option with a percentage value,
-       specified as integer or float value between 0 and 100.
-
-       Cooked value is float between 0.0 and 1.0.
-    """
-
-    type_abbr     = "%"
-
-    def _cook (self, value) :
-        if isinstance (value, pyk.string_types) :
-            value = int (value, 0)
-        if isinstance (value, (int, float)) :
-            value = value / 100.
-        if not (0.0 <= value <= 1.0) :
-            raise (ValueError ("Invalid percentage value %s" % value))
-        return value
-    # end def _cook
-
-# end class Percent
-
 class Config (_Config_, Rel_Path) :
     """Option specifying a config-file"""
 
@@ -1544,6 +1525,27 @@ class Config (_Config_, Rel_Path) :
     # end def cook
 
 # end class Config
+
+class Percent (Float) :
+    """Argument or option with a percentage value,
+       specified as integer or float value between 0 and 100.
+
+       Cooked value is float between 0.0 and 1.0.
+    """
+
+    type_abbr     = "%"
+
+    def _cook (self, value) :
+        if isinstance (value, pyk.string_types) :
+            value = int (value, 0)
+        if isinstance (value, (int, float)) :
+            value = value / 100.
+        if not (0.0 <= value <= 1.0) :
+            raise (ValueError ("Invalid percentage value %s" % value))
+        return value
+    # end def _cook
+
+# end class Percent
 
 class Set (_Spec_) :
     """Argument or option that specifies one element of a set of choices"""
@@ -1580,9 +1582,14 @@ class Str (_Spec_) :
 
     type_abbr     = "S"
 
+    def cook (self, value, cao = None) :
+        result = pyk.decoded (value, self.user_config.input_encoding)
+        return result
+    # end def cook
+
 # end class Str
 
-class Str_AS (_Spec_) :
+class Str_AS (Str) :
     """Argument or option with a string value, auto-splitting"""
 
     auto_split    = ","
@@ -1590,17 +1597,106 @@ class Str_AS (_Spec_) :
 
 # end class Str
 
-class Unicode (_Spec_) :
+class Unicode (Str) :
     """Argument or option with a string value"""
 
     type_abbr     = "U"
 
-    def cook (self, value, cao = None) :
-        result = pyk.decoded (value, self.user_config.input_encoding)
+# end class Unicode
+
+class _Regexp_Arg_Mixin_ (TFL.Meta.Object) :
+
+    R_Type_combined = Multi_Regexp
+
+    re_flags        = dict \
+        ( A         = re.ASCII
+        , I         = re.IGNORECASE
+        , M         = re.MULTILINE
+        , S         = re.DOTALL
+        , X         = re.VERBOSE
+        )
+
+    def combine (self, values) :
+        if len (values) > 1 :
+            return self.R_Type_combined (* values)
+        elif values :
+            return values [0]
+    # end def combine
+
+    def _re_flags (self, fs) :
+        result = 0
+        for f in fs :
+            try :
+                v = self.re_flags [f.upper ()]
+            except KeyError :
+                raise \
+                    ( TFL.CAO.Err
+                        ( "Invalid flag `%s`; use one of: %s"
+                        % (f, ", ".join (sorted (self.re_flags.keys ())))
+                        )
+                    )
+            else :
+                result |= v
         return result
+    # end def _re_flags
+
+# end class _Regexp_Arg_Mixin_
+
+class _Regexp_Arg_ (_Regexp_Arg_Mixin_, Str) :
+    """Argument or option specifying a Regexp."""
+
+    _real_name    = "Regexp"
+
+    auto_split    = "\n"
+    type_abbr     = "~"
+
+    def cook (self, value, cao = None) :
+        if value :
+            result = self.__super.cook (value, cao)
+            return Regexp (result)
     # end def cook
 
-# end class Unicode
+# end class _Regexp_Arg_
+
+class _Regexp_Arg_D_ (_Regexp_Arg_Mixin_, Str) :
+    """Argument or option specifying a delimited Regexp."""
+
+    _real_name = "Regexp_D"
+
+    auto_split    = "\n"
+
+    def cook (self, value, cao = None) :
+        if value :
+            value    = self.__super.cook (value, cao)
+            delim    = value [0]
+            p, s, fs = rsplit_hst (value [1:], delim)
+            flags    = self._re_flags (fs)
+            return Regexp (p, flags)
+    # end def cook
+
+# end class _Regexp_Arg_D_
+
+class _Re_Replacer_Arg_ (_Regexp_Arg_Mixin_, Str) :
+    """Argument or option specifying a regexp replacement."""
+
+    _real_name      = "Re_Replacer"
+
+    R_Type_combined = Multi_Re_Replacer
+
+    auto_split    = "\n"
+    type_abbr     = "/"
+
+    def cook (self, value, cao = None) :
+        if value :
+            value    = self.__super.cook (value, cao)
+            delim    = value [0]
+            p, s, x  = split_hst (value [1:], delim)
+            r, s, fs = split_hst (x,          delim)
+            flags    = self._re_flags (fs)
+            return Re_Replacer (p, r, flags)
+    # end def cook
+
+# end class _Re_Replacer_Arg_
 
 class Time_Zone (_User_Config_Entry_) :
     """Time zone to use."""
