@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -52,6 +52,7 @@
 #    24-May-2013 (CT) Improve Python-3.3 compatibility
 #    24-May-2013 (CT) Don't inclode magic `os` properties
 #    31-Jan-2014 (CT) Add `python_options`
+#     6-Apr-2020 (CT) Make `rename` an alias for `os.replace` for Win32
 #    ««revision-date»»···
 #--
 
@@ -124,12 +125,7 @@ if (name == "nt") or (name == "win32") :
     # end def _hacked_isdir
     path.isdir = _hacked_isdir
 
-    _os_rename = rename
-    def rename (src, dst) :
-        if path.exists (dst) :
-            remove (dst)
-        _os_rename (src, dst)
-    # end def rename
+    rename = replace
 
     if not hasattr (path, "samefile") :
         def __samefile (p, q) :
@@ -170,7 +166,7 @@ def expanded_path (pathname) :
 def expanded_globs (* pathnames) :
     """Generate all file names to which the `pathnames` expand"""
     for p in pathnames :
-        yield from expanded_glob (p) 
+        yield from expanded_glob (p)
 # end def expanded_globs
 
 def filesize (path) :
