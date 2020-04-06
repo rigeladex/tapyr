@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Martin Glueck All rights reserved
+# Copyright (C) 2010-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -28,6 +28,7 @@
 #    26-Feb-2010 (CT) `process_count` forced to `1`
 #    10-Feb-2016 (CT) Add `root_dir` to `from_sys_modules`; put it in front
 #    10-Oct-2016 (CT) Make Python-3 compatible
+#     6-Apr-2020 (CT) Use `os.replace`, not `os.rename`
 #    ««revision-date»»···
 #--
 
@@ -135,16 +136,10 @@ class Language_File_Collection (object) :
             os.remove (tmpname)
             raise
         try :
-            os.rename (tmpname, po_file_n)
+            os.replace (tmpname, po_file_n)
         except OSError:
-            # We're probably on Windows, which doesn't support atomic
-            # renames, at least not through Python
-            # If the error is in fact due to a permissions problem, that
-            # same error is going to be raised from one of the following
-            # operations
-            os.remove   (po_file_n)
-            shutil.copy (tmpname, po_file_n)
-            os.remove   (tmpname)
+            os.remove  (tmpname)
+            raise
     # end def _update
 
     def _output_file_name (self, cmd, lang, po_file_n = None, suffix = "") :

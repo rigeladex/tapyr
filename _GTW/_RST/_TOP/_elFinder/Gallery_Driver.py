@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Martin Glueck All rights reserved
+# Copyright (C) 2013-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.elFinder.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -19,6 +19,7 @@
 #
 # Revision Dates
 #    29-Jan-2013 (MG) Creation
+#     6-Apr-2020 (CT) Use `os.replace`, not `os.rename`
 #    ««revision-date»»···
 #--
 
@@ -296,7 +297,7 @@ class Gallery_Driver_elFinder (elFinder._Filesystem_Driver_) :
             file_name = self.abs_path (file)
             root_dir  = file_name [:-len (file.path)]
             new_name  = os.path.join (os.path.dirname (file_name), new_name)
-            os.rename    (file_name, new_name)
+            os.replace   (file_name, new_name)
             file.set_raw (path = new_name [len (root_dir):])
             return self.file_entry (dir, file)
         else :
