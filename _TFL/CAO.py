@@ -164,6 +164,7 @@
 #                       `UnicodeWarning` from `_help_value`
 #                     + Use `==` not `is` in `_resolve_range_1` (Py 3.8 warning)
 #     5-Apr-2020 (CT) Add `Regexp`, `Re_Replacer` argument/option
+#     6-Apr-2020 (CT) Don't use `Decimal.from_float` (Py 3.2+ doesn't need it)
 #    ««revision-date»»···
 #--
 
@@ -513,7 +514,7 @@ class _Spec_ (_Spec_Base_) :
         pat = self.range_pat
         for value in values :
             if value and pat.match (value) :
-                yield from self._resolve_range_1 (value, cao, pat) 
+                yield from self._resolve_range_1 (value, cao, pat)
             else :
                 yield value
     # end def _resolve_range
@@ -641,7 +642,7 @@ class _Number_ (_Spec_) :
         head     = cook (r_head, cao)
         tail     = cook (r_tail, cao) + 1
         delta    = cook (r_delta or self.range_delta, cao)
-        yield from self._resolved_range (head, tail, delta) 
+        yield from self._resolved_range (head, tail, delta)
     # end def _resolve_range_1
 
     def _resolved_range (self, head, tail, delta) :
@@ -789,10 +790,8 @@ class Decimal (_Number_) :
     type_abbr     = "D"
 
     def _cook (self, value) :
-        cooker = decimal.Decimal.from_float if isinstance (value, float) \
-            else decimal.Decimal
         if value is not None :
-            return cooker (value)
+            return decimal.Decimal (value)
     # end def _cook
 
 # end class Decimal
@@ -1368,7 +1367,7 @@ class Path (_Spec_) :
         def _gen (values, cao) :
             for value in sos.expanded_globs (* values) :
                 yield from self._resolve_range_1 (sos.expanded_path (value), cao)
-        yield from TFL.uniq (_gen (values, cao)) 
+        yield from TFL.uniq (_gen (values, cao))
     # end def _resolve_range
 
 # end class Path
@@ -1481,7 +1480,7 @@ class Rel_Path (Path) :
     # end def explain_resolution
 
     def _help_items (self) :
-        yield from self.__super._help_items () 
+        yield from self.__super._help_items ()
         explain_resolution = self.explain_resolution
         if explain_resolution :
             yield explain_resolution
