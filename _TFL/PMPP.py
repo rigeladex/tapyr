@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -75,7 +75,7 @@ class PMPP (TFL.Meta.Object) :
     # end def __init__
 
     def rewrite (self, fname, target_dir) :
-        target = Filename (target_dir, fname).name
+        target = Filename (target_dir, fname)
         f      = open     (fname,  "r")
         o      = open     (target, "w")
         print ("Processing %s" % (target, ))

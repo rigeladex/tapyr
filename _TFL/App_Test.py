@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -81,7 +81,7 @@ class Result_File (_Result_) :
             diffs   = self._diffs \
                 (old, new, fromfile = self.file_name, tofile = "Result of test")
             diff_no = len (diffs)
-            d_name  = Filename (".diff", self.file_name).name
+            d_name  = Filename (".diff", self.file_name)
             with open (d_name, "wb") as f :
                 f.write (pyk.encoded ("\n".join (diffs)))
             return "%d difference%s (see %s)" % \

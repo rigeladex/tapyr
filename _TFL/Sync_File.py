@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -181,8 +181,8 @@ class _Sync_File_ :
             fname = Filename (fn + ".lock", absolute = 1)
             self._can_lock = sos.access (fname.directory, sos.W_OK)
             if self._can_lock :
-                self._lfile_name = name = fname.name
-                self._lock_file  = sos.open (name, sos.O_CREAT | sos.O_EXCL)
+                self._lfile_name = fname.name
+                self._lock_file  = sos.open (fname, sos.O_CREAT | sos.O_EXCL)
         except sos.error as exc :
             if exc.args [0] != errno.EEXIST :
                 raise
@@ -258,7 +258,7 @@ class Sync_File (_Sync_File_) :
             if curr_key == self.last_key :
                 if curr_key :
                     if backup_name :
-                        bak_name = Filename (backup_name, self.file_name).name
+                        bak_name = Filename (backup_name, self.file_name)
                         self.backup_name = bak_name
                         sos.rename (tmp_name, bak_name)
                     else :
@@ -314,8 +314,7 @@ class _Open_Sync_Dir_ :
         self.last_file       = None
         self.files           = TFL.Ordered_Set ()
         if backup_name :
-            self.backup_name = Filename \
-                (backup_name, self.sync_dir.file_name).name
+            self.backup_name = Filename (backup_name, self.sync_dir.file_name)
         else :
             self.backup_name = None
     # end def __init__

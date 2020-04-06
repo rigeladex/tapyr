@@ -164,8 +164,7 @@ def _main (cmd) :
             )
         sys.path [0:0] = cmd_path
         mod_path       = f.directory if f.directory else "./"
-        if sos.path.exists \
-               (Filename ("__init__.py", default_dir = mod_path).name) :
+        if sos.path.exists (Filename ("__init__.py", default_dir = mod_path)) :
             sys.path [0:0] = [sos.path.join (mod_path, "..")]
         sys.path [0:0] = [mod_path]
         flags = doctest.NORMALIZE_WHITESPACE

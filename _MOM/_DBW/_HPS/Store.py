@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -62,6 +62,7 @@
 #     7-Jun-2013 (CT) Add/use argument `db_meta_data` to/in `consume`
 #    12-Oct-2015 (CT) Add Python-3 future imports
 #    25-Oct-2015 (CT) Use `pyk.pickle_protocol`
+#     6-Apr-2020 (CT) Pass `Filename` instance directory to `open`...
 #    ««revision-date»»···
 #--
 
@@ -175,13 +176,13 @@ class Store (TFL.Meta.Object) :
         self.app_type = app_type
         self.Version  = app_type.ANS.Version
         self.db_uri   = db_uri
-        self.x_uri    = self.X_Uri (db_uri.name)
+        self.x_uri    = self.X_Uri (db_uri)
         self.info_uri = TFL.Filename ("info", self.x_uri)
         self.cm       = MOM.DBW.HPS.Change_Manager ()
     # end def __init__
 
     def change_readonly (self, state) :
-        with TFL.lock_file (self.x_uri.name) :
+        with TFL.lock_file (self.x_uri) :
             info = self.info
             self._check_sync     (info)
             info.readonly = bool (state)
@@ -189,20 +190,20 @@ class Store (TFL.Meta.Object) :
     # end def change_readonly
 
     def close (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert sos.path.exists (self.x_uri), self.x_uri.name
         db_uri = self.db_uri
-        x_name = self.x_uri.name
-        bak    = TFL.Filename (".bak", db_uri).name
-        with TFL.lock_file (x_name) :
+        x_uri  = self.x_uri
+        bak    = TFL.Filename (".bak", db_uri)
+        with TFL.lock_file (x_uri) :
             info = self.info
             self._check_sync (info)
             with TFL.open_to_replace \
-                     (db_uri.name, mode = "wb", backup_name = bak) as file:
+                     (db_uri, mode = "wb", backup_name = bak) as file:
                 sos.fchmod (file.fileno (), stat.S_IRUSR | stat.S_IWUSR)
                 with contextlib.closing (self.ZF.ZipFile (file, "w")) as zf :
                     for abs, rel in info.FILES (self.x_uri, self.info_uri) :
                         zf.write (abs, rel)
-        sos.rmdir (x_name, deletefiles = True)
+        sos.rmdir (x_uri, deletefiles = True)
     # end def close
 
     def compact (self) :
@@ -210,37 +211,37 @@ class Store (TFL.Meta.Object) :
     # end def compact
 
     def create (self) :
-        assert not sos.path.exists (self.db_uri.name), self.db_uri.name
-        assert not sos.path.exists (self.x_uri.name), self.x_uri.name
-        x_name = self.x_uri.name
-        with TFL.lock_file (x_name) :
-            sos.mkdir  (x_name)
-            sos.system ("chmod go= %s" % x_name)
+        assert not sos.path.exists (self.db_uri), self.db_uri.name
+        assert not sos.path.exists (self.x_uri), self.x_uri.name
+        x_uri = self.x_uri
+        with TFL.lock_file (x_uri) :
+            sos.mkdir  (x_uri)
+            sos.system ("chmod go= %s" % x_uri.name)
             self._create_info ()
     # end def create
 
     def load_changes (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert sos.path.exists (self.x_uri), self.x_uri.name
         info  = self.info
         x_uri = self.x_uri
-        with TFL.lock_file (x_uri.name) :
+        with TFL.lock_file (x_uri) :
             for (cid, name) in info.commits :
-                file_name = TFL.Filename (name, x_uri).name
+                file_name = TFL.Filename (name, x_uri)
                 for c in self._loaded_changes (file_name) :
                     pass ### `_loaded_changes` adds the changes to `self.cm`
         self.cm.to_load = []
     # end def load_changes
 
     def load_info (self) :
-        assert sos.path.exists (self.db_uri.name), self.db_uri.name
-        x_name = self.x_uri.name
-        with TFL.lock_file (x_name) :
-            if not sos.path.exists (x_name) :
-                sos.mkdir (x_name)
-                sos.system ("chmod go= %s" % x_name)
+        assert sos.path.exists (self.db_uri), self.db_uri.name
+        x_uri = self.x_uri
+        with TFL.lock_file (x_uri) :
+            if not sos.path.exists (x_uri) :
+                sos.mkdir (x_uri)
+                sos.system ("chmod go= %s" % x_uri.name)
                 with contextlib.closing \
-                         (self.ZF.ZipFile (self.db_uri.name, "r")) as zf :
-                    zf.extractall (x_name)
+                         (self.ZF.ZipFile (self.db_uri, "r")) as zf :
+                    zf.extractall (x_uri)
             self.info = self._load_info ()
     # end def load_info
 
@@ -266,7 +267,7 @@ class Store (TFL.Meta.Object) :
     # end def _check_sync_ro
 
     def _create_info (self) :
-        assert not sos.path.exists (self.info_uri.name)
+        assert not sos.path.exists (self.info_uri)
         info = self.info = self._new_info ()
         self._save_info (info)
     # end def _create_info
@@ -284,14 +285,14 @@ class Store (TFL.Meta.Object) :
     # end def _loaded_changes
 
     def _load_info (self) :
-        with open (self.info_uri.name, "rb") as file :
+        with open (self.info_uri, "rb") as file :
             result = pickle.load (file)
         ### XXX Check result.dbv_hash vs. self.app_type.db_version_hash
         return result
     # end def _load_info
 
     def _save_info (self, info) :
-        with open (self.info_uri.name, "wb") as file :
+        with open (self.info_uri, "wb") as file :
             pickle.dump (info, file, pyk.pickle_protocol)
         self.info = info
     # end def _save_info
@@ -313,25 +314,25 @@ class Store_PC (Store) :
     # end def commit
 
     def consume (self, e_iter, c_iter, chunk_size, db_meta_data) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert sos.path.exists (self.x_uri), self.x_uri.name
         assert not self.info.commits
         assert not self.info.pending
         assert not self.info.stores
         db_uri  = self.db_uri
-        x_name  = self.x_uri.name
-        with TFL.lock_file (x_name) :
+        x_uri   = self.x_uri
+        with TFL.lock_file (x_uri) :
             info    = self.info
             stores  = info.stores  = []
             commits = info.commits = []
             for i, cargo in enumerate (sliced (e_iter, chunk_size)) :
-                s_name  = TFL.Filename ("by_pid_%d" % i, self.x_uri)
-                with open (s_name.name, "wb") as file :
+                s_name  = TFL.Filename ("by_pid_%d" % i, x_uri)
+                with open (s_name, "wb") as file :
                     pickle.dump (cargo, file, pyk.pickle_protocol)
                 stores.append   (s_name.base_ext)
             for cargo in sliced (c_iter, chunk_size) :
                 max_cid = cargo [-1] [1] ["cid"]
-                c_name  = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
-                with open (c_name.name, "wb") as file :
+                c_name  = TFL.Filename ("%d.commit" % max_cid, x_uri)
+                with open (c_name, "wb") as file :
                     pickle.dump (cargo, file, pyk.pickle_protocol)
                 commits.append ((max_cid, c_name.base_ext))
             info.max_cid = db_meta_data.max_cid
@@ -340,27 +341,27 @@ class Store_PC (Store) :
     # end def consume
 
     def produce_changes (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert sos.path.exists (self.x_uri), self.x_uri.name
         assert not self.info.pending
         info  = self.info
         x_uri = self.x_uri
-        with TFL.lock_file (x_uri.name) :
+        with TFL.lock_file (x_uri) :
             for (cid, name) in info.commits + info.pending :
-                file_name = TFL.Filename (name, x_uri).name
+                file_name = TFL.Filename (name, x_uri)
                 with open (file_name, "rb") as file :
                     changes = pickle.load (file)
-                    yield from changes 
+                    yield from changes
     # end def produce_changes
 
     def produce_entities (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert sos.path.exists (self.x_uri), self.x_uri.name
         assert not self.info.pending
         info  = self.info
         x_uri = self.x_uri
-        with TFL.lock_file (x_uri.name) :
+        with TFL.lock_file (x_uri) :
             for s in info.stores :
-                with open (TFL.Filename (s, x_uri).name, "rb") as file :
-                    yield from pickle.load (file) 
+                with open (TFL.Filename (s, x_uri), "rb") as file :
+                    yield from pickle.load (file)
     # end def produce_entities
 
     def _new_info (self) :
@@ -389,17 +390,17 @@ class Store_S (Store) :
     # end def close
 
     def commit (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert sos.path.exists (self.x_uri), self.x_uri.name
         info  = self.info
         scope = self.scope
         ucc   = scope.ems.uncommitted_changes
         if ucc :
             cargo   = [c.as_pickle_cargo (transitive = True) for c in ucc]
             max_cid = scope.ems.max_cid
-            x_name  = self.x_uri.name
-            with self._save_context (x_name, scope, info) :
-                c_name = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
-                with open (c_name.name, "wb") as file :
+            x_uri  = self.x_uri
+            with self._save_context (x_uri, scope, info) :
+                c_name = TFL.Filename ("%d.commit" % max_cid, x_uri)
+                with open (c_name, "wb") as file :
                     pickle.dump (cargo, file, pyk.pickle_protocol)
                 info.pending.append ((max_cid, c_name.base_ext))
     # end def commit
@@ -410,15 +411,15 @@ class Store_S (Store) :
     # end def compact
 
     def load_objects (self) :
-        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        assert sos.path.exists (self.x_uri), self.x_uri.name
         info  = self.info
         x_uri = self.x_uri
-        with TFL.lock_file (x_uri.name) :
+        with TFL.lock_file (x_uri) :
             self.scope.db_errors = []
             for s in info.stores :
-                self._load_store   (TFL.Filename (s, x_uri).name)
+                self._load_store   (TFL.Filename (s, x_uri))
             for (cid, name) in info.pending :
-                self._load_pending (TFL.Filename (name, x_uri).name)
+                self._load_pending (TFL.Filename (name, x_uri))
         self.cm.to_load  = [name for (cid, name) in info.commits]
     # end def load_objects
 
@@ -446,9 +447,9 @@ class Store_S (Store) :
     # end def _rollback
 
     @TFL.Contextmanager
-    def _save_context (self, x_name, scope, info) :
+    def _save_context (self, x_uri, scope, info) :
         Version = self.Version
-        with TFL.lock_file (x_name) :
+        with TFL.lock_file (x_uri) :
             self._check_sync_ro (info)
             yield info
             ems            = scope.ems
@@ -462,14 +463,14 @@ class Store_S (Store) :
         info    = self.info
         scope   = self.scope
         stores  = info.stores = []
-        x_name  = self.x_uri.name
-        with self._save_context (x_name, scope, info) :
+        x_uri  = self.x_uri
+        with self._save_context (x_uri, scope, info) :
             s_name = TFL.Filename ("by_pid", self.x_uri)
             cargo  = \
                 [   e.as_pickle_cargo ()
                 for pid, e in sorted (pyk.iteritems (scope.ems.pm.table))
                 ]
-            with open (s_name.name, "wb") as file :
+            with open (s_name, "wb") as file :
                 pickle.dump (cargo, file, pyk.pickle_protocol)
             stores.append   (s_name.base_ext)
             info.commits.extend (info.pending)

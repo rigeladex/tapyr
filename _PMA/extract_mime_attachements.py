@@ -53,9 +53,9 @@ def extract_mime_attachements \
             )
         if specified :
             name   = p.filename or ("%s_%s" % (msg.name, i))
-            fn     = Filename (directory, name).name
+            fn     = Filename (directory, name)
             if def_ext :
-                fn = Filename (def_ext, fn).name
+                fn = Filename (def_ext, fn)
             print ("    Saving", name)
             PMA.save (fn, p.body)
         elif p.main_type in ("multipart", "message") :
