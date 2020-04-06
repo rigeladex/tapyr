@@ -45,11 +45,13 @@
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    10-Feb-2016 (CT) Add `__head` and `__tail` args to `Dict_Replacer`
 #     5-Apr-2020 (CT) Add `__main__` script
+#     6-Apr-2020 (CT) Skip sym-links in `__main__` script; print totals
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
 from   _TFL.pyk       import pyk
+from   _TFL           import sos
 
 import _TFL._Meta.Object
 
@@ -238,7 +240,7 @@ class Multi_Regexp (TFL.Meta.Object) :
 
     def search_iter (self, string, pos = 0, endpos = None) :
         for p in self.patterns :
-            yield from p.search_iter (string, pos, endpos) 
+            yield from p.search_iter (string, pos, endpos)
     # end def search_iter
 
     def sub (self, * args, ** kw) :
@@ -394,15 +396,25 @@ def _main (cmd) :
     files = cmd.argv [1:]
     if cmd.additional_replace != () :
         rerep = Multi_Re_Replacer (rerep, * cmd.additional_replace.rereps)
+    t_f = t_n = 0
     for fn in files :
+        if sos.path.islink (fn) :
+            continue
         with open (fn, encoding = cmd.input_encoding) as sf :
             source = sf.read ()
         target, n  = rerep.subn (source, count)
         if n :
             with open (fn, "w", encoding = cmd.output_encoding) as tf :
                 tf.write (target)
+            t_f += 1
+            t_n += n
         if (n or cmd.verbose) and not cmd.quiet :
             print ("%-40s: %d pattern occurrences replaced" % (fn, n))
+    if not cmd.quiet :
+        print \
+            ( "%-40s: %d pattern occurrences replaced in %d files"
+            % ("Total", t_n, t_f)
+            )
 # end def _main
 
 __doc__ = """
