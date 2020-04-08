@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -23,6 +23,7 @@
 #     1-Jul-2016 (CT) Add `:special-members` to `_stub_mod_template`
 #     9-Oct-2016 (CT) Adapt to move of Package_Namespaces `DRA`, `SKY`
 #    27-Feb-2017 (CT) Remove some entries from `pns_skip`
+#     8-Apr-2020 (CT) Remove obsolete `TFL` modules (not more Py-2)
 #    ««revision-date»»···
 #--
 
@@ -52,13 +53,13 @@ class TFL_SAG_Command (TFL.Command.Root_Command) :
     min_args                = 1
 
     mod_skip                = \
-        { "_MOM.Babel" # module not yet documented (low priority)
+        { # not yet documented (low priority)
+          "_MOM.Babel"
+        , "_TFL.NO_List"
+        , "_TFL.object_globals"
         # ### obsolete
-        , "_TFL.Assertion", "_TFL.B64", "_TFL.Class_Proxy", "_TFL.Command_Line"
-        , "_TFL.Date_Time", "_TFL.Filesystem"
-        , "_TFL.Latex_Stream", "_TFL.NO_List", "_TFL.object_globals"
-        , "_TFL.Plugin", "_TFL.Plugin_Packager"
-        , "_TFL.PL_Dict", "_TFL.PL_List", "_TFL.Sync_File"
+        , "_TFL.B64"
+        , "_TFL.Date_Time"
         }
 
     mod_skip_pat            = Regexp \
