@@ -44,8 +44,8 @@ extensions = [
     'sphinx.ext.mathjax',
 ]
 
-autodoc_member_order = "bysource"
-autodoc_default_flags = ["show-inheritance"]
+autodoc_member_order    = "bysource"
+autodoc_default_options = { "show-inheritance" : True }
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
