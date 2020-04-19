@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,6 +46,7 @@
 #    24-Aug-2008 (CT) Factored from `TOM.Product_Version`
 #    18-Dec-2009 (CT) `author`, `copyright_start`, and `tuple` added
 #    30-Jun-2010 (CT) `id` added
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -145,8 +146,8 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
     # end def product_info
 
     def print_infos (self, cmd) :
-        """Provide information requested by `cmd' (which must be an object
-           returned by `command_spec').
+        """Provide information requested by `cmd` (which must be an object
+           returned by `command_spec`).
         """
         if cmd.all or cmd.c_macro :
             print (self.as_c_macros   ())
@@ -274,7 +275,7 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __setattr__ (self, name, value) :
-        """Prevent the changing of attributes other than entries of `ivn'.
+        """Prevent the changing of attributes other than entries of `ivn`.
 
            Once an attribute is set, it cannot be changed to another value.
         """

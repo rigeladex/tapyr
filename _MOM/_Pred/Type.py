@@ -61,6 +61,7 @@
 #                     not `portable_repr`
 #    10-Aug-2016 (CT) Add `Exclude`, factor `_Unique_`
 #                     + factor `_auto_doc`, `_query_filters_xs`
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -141,11 +142,11 @@ class _Condition_ \
     # end def extra_links
 
     def satisfied (self, obj, attr_dict = {}) :
-        """Checks if `obj' satisfies the predicate.
-           `attr_dict' can provide values for `self.attributes'.
+        """Checks if `obj` satisfies the predicate.
+           `attr_dict` can provide values for `self.attributes`.
 
-           If there is a `self.guard' the predicate is checked only if
-           `self.guard' evaluates to true.
+           If there is a `self.guard` the predicate is checked only if
+           `self.guard` evaluates to true.
         """
         glob_dict = obj.globals ()
         if not self._guard_open (obj, attr_dict, glob_dict) :
@@ -326,8 +327,8 @@ class Condition (_Condition_, metaclass = MOM.Meta.M_Pred_Type.Condition) :
     # end def eval_condition_assert_code_as_function
 
     def _satisfied (self, obj, glob_dict, val_dict) :
-        """Checks if `obj' satisfies the predicate.
-           `attr_dict' can provide values for `self.attributes'.
+        """Checks if `obj` satisfies the predicate.
+           `attr_dict` can provide values for `self.attributes`.
         """
         try    :
             if self.eval_condition (obj, glob_dict, val_dict) :

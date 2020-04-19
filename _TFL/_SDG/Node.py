@@ -66,6 +66,7 @@
 #    23-May-2013 (CT)  Use `TFL.Meta.BaM` for Python-3 compatibility
 #    10-Oct-2014 (CT)  Use `pyk.encoded` in `_write_to_stream`,
 #                      unless `stream is sys.stdout`
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -460,7 +461,7 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
     # end def __init__
 
     def add (self, * children) :
-        """Append all `children' to `self.children'"""
+        """Append all `children` to `self.children`"""
         for c in un_nested (children) :
             self.insert (c)
     # end def add
@@ -514,7 +515,7 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
 
     def has_child (self, child_name, transitive = True) :
         """Checks if this node or one of this childs has a node named
-           `child_name'.
+           `child_name`.
         """
         child_name = self._child_name (child_name)
         for children in pyk.itervalues (self.children_groups) :
@@ -528,7 +529,7 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
     # end def has_child
 
     def insert (self, child, index = None, delta = 0) :
-        """Insert `child' to `self.children' at position `index'
+        """Insert `child` to `self.children` at position `index`
            (None means append).
         """
         if child is not None :
@@ -548,7 +549,7 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
 
     def _children_iter (self) :
         for group in pyk.itervalues (self.children_groups) :
-            yield from group 
+            yield from group
     # end def _children_iter
 
     def _convert (self, value, Class, * args, ** kw) :
@@ -623,7 +624,7 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
     def __iter__ (self) :
         yield self
         for c in self.children :
-            yield from iter (c) 
+            yield from iter (c)
     # end def __iter__
 
     def __repr__ (self) :

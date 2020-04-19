@@ -34,6 +34,7 @@
 #     7-Oct-2004 (CED) `apidoc_tex_format` and friends added
 #    31-Oct-2011 (MG)  imports corrected
 #    26-Feb-2012 (MG) `__future__` imports added
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -132,7 +133,7 @@ class _C_Node_ (TFL.SDG.Node) :
     # end def formatted
 
     def write_to_c_stream (self, cstream = None, gauge = None) :
-        """Write `self' and all elements in `self.children' to `cstream'.
+        """Write `self` and all elements in `self.children` to `cstream`.
         """
         self._write_to_stream (self.as_c_code (), cstream, gauge)
     # end def write_to_c_stream
@@ -187,7 +188,7 @@ class _C_Node_ (TFL.SDG.Node) :
     # end def _convert_c_stmt
 
     def _force (self, value, Class, * args, ** kw) :
-        """Converts `value' to an instance of `Class'."""
+        """Converts `value` to an instance of `Class`."""
         value = self._convert (value, Class, * args, ** kw)
         if not isinstance (value, Class) :
             value = Class (value, * args, ** kw)

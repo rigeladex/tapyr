@@ -57,6 +57,7 @@
 #    17-Jun-2010 (CT) `__unicode__` introduced
 #    29-Jan-2013 (CT) Adapt doctest to new option `Pdb_on_Exception`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,7 @@ class _EU_Currency_ (_Currency_) :
     Table           = {}
     extension       = []
 
-    ### if `target_currency' is not set, output is done in Euro
+    ### if `target_currency` is not set, output is done in Euro
     target_currency = None
 
     to_euro_factor  = 1.0
@@ -84,8 +85,8 @@ class _EU_Currency_ (_Currency_) :
     # end def set_target_currency
 
     def __str__ (self) :
-        """Return `self.amount' as string representation of
-           `self.target_currency'.
+        """Return `self.amount` as string representation of
+           `self.target_currency`.
         """
         (amount, cent, target_currency) = self.as_target ()
         return u"%d%s%02d %s" % \
@@ -172,7 +173,7 @@ class EU_Currency (_EU_Currency_) :
     # end def __init__
 
     def to_euro (self, amount) :
-        """Converts `amount' into Euro."""
+        """Converts `amount` into Euro."""
         return float (amount) / self.to_euro_factor
     # end def to_euro
 
@@ -190,8 +191,8 @@ class EU_Currency (_EU_Currency_) :
     # end def as_source_s
 
     def as_string (self, round = False) :
-        """Return `self.amount' as string representation of
-           `self.target_currency' (without currency name).
+        """Return `self.amount` as string representation of
+           `self.target_currency` (without currency name).
         """
         (amount, cent, target_currency) = self.as_target (round)
         return self._formatted \
@@ -214,12 +215,12 @@ class EU_Currency (_EU_Currency_) :
     # end def normalized_amount
 
     def rounded (self, amount, round = False) :
-        """Return `amount' rounded to (euro, cent)."""
+        """Return `amount` rounded to (euro, cent)."""
         euro = int (amount)
         cent = abs (int (((amount - euro) + 0.005) * 100))
         if cent == 100 :
             ### for some reason sometimes `cent == 100' results
-            ### `amount' and `euro' differ by 1 in this case ???
+            ### `amount` and `euro` differ by 1 in this case ???
             ### print "%f, %d, %f, %d" % (amount, euro, (amount - euro), cent)
             euro += 1
             cent  = 0

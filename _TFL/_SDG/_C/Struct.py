@@ -28,6 +28,7 @@
 #    25-Apr-2008 (MG)  `_setup_initializers`: handling for nested structs
 #                      extended
 #    26-Feb-2012 (MG) `__future__` imports added
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -92,8 +93,8 @@ class Struct (TFL.SDG.C._Decl_) :
     # end def __init__
 
     def insert (self, child, index = None, delta = 0, cgi = None) :
-        """Insert `child' to `self.children' at position `index'
-           (`index is None' means append)
+        """Insert `child` to `self.children` at position `index`
+           (`index is None` means append)
            (None means append).
         """
         for c in self._convert_field (child) :

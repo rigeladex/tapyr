@@ -167,6 +167,7 @@
 #    13-Sep-2017 (CT) Add `13%` to `V_Account._ust_cat` and `._ige_cat`
 #     4-Jun-2018 (CT) Apply `vst_korrektur` for (`erloes`) `minderung`, too
 #    19-Dec-2018 (CT) Replace `desc_strip_pat` by `desc_cleaner`, add `–`
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -477,7 +478,7 @@ class Account (_Base_):
     # end def add_file
 
     def add_lines (self, lines, categ_interest, source_currency) :
-        """Add entries given by `lines' to account `self'."""
+        """Add entries given by `lines` to account `self`."""
         self.source_currency = source_currency
         entries = []
         for line in lines :
@@ -505,11 +506,11 @@ class Account (_Base_):
         if perl_dict_pat.search (line) :
             line = perl_dict_pat.sub ("""["\\1"]""", line)
         ### use temporary dict for exec
-        ### (`locals ()' cannot be changed by `exec')
+        ### (`locals ()` cannot be changed by `exec`)
         tmp  = { "privat" : {}, "vat_privat" : {}, "ignore" : {}}
         try :
-            ### `tmp' must be passed to the local-dict argument because
-            ### Python adds some junk to the global-dict argument of `exec'
+            ### `tmp` must be passed to the local-dict argument because
+            ### Python adds some junk to the global-dict argument of `exec`
             exec (line, {}, tmp)
             if "source_currency" in tmp :
                 self.source_currency = EUC.Table [tmp ["source_currency"]]
@@ -581,7 +582,7 @@ class V_Account (Account) :
     # end def __init__
 
     def add (self, entry) :
-        """Add `entry' to U_Account."""
+        """Add `entry` to U_Account."""
         assert (isinstance (entry, Account_Entry))
         vst_korrektur = entry.vst_korrektur
         netto         = entry.netto
@@ -726,13 +727,13 @@ class V_Account (Account) :
     # end def header_string
 
     def print_entries (self, trailer = None) :
-        """Print `self.entries' followed by trailer"""
+        """Print `self.entries` followed by trailer"""
         self.print_entries_ (self.entries, self.header_string (), trailer)
     # end def print_entries
 
     def print_entries_by_group (self, trailer = None) :
-        """Print `self.vorsteuer_entries', `self.vorsteuer_entries_igE', and
-           `self.umsatzsteuer_entries' followed by trailer.
+        """Print `self.vorsteuer_entries`, `self.vorsteuer_entries_igE`, and
+           `self.umsatzsteuer_entries` followed by trailer.
         """
         if  (  self.vorsteuer_entries
             or self.vorsteuer_entries_EUst
@@ -1145,7 +1146,7 @@ class T_Account (Account) :
     # end def __init__
 
     def add (self, entry) :
-        """Add `entry' to account `self'."""
+        """Add `entry` to account `self`."""
         assert (isinstance (entry, Account_Entry))
         self.buchung_zahl [entry.konto]       += 1
         self.buchung_zahl [entry.gegen_konto] += 1

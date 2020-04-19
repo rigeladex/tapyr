@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -28,6 +28,7 @@
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #     9-Aug-2006 (CT) `Script.__hash__` changed to return
 #                     `hash (self.name)` instead of `id (self)`
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -93,13 +94,13 @@ class Script (TFL.Meta.Object) :
     # end def __call__
 
     def add_to_python_path (self, path, index = -1) :
-        """Add `path' to `sys.path'"""
+        """Add `path` to `sys.path`"""
         sys.path      [index+1 : index+1] = [path]
         self.old_path [index   : index] = [path]
     # end def add_to_python_path
 
     def reset_python_path (self) :
-        """Reset `sys.path' to original value."""
+        """Reset `sys.path` to original value."""
         self.old_path = self._sys_pth [:]
         sys.path      = self._sys_pth [:]
     # end def reset_python_path

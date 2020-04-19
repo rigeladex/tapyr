@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -25,6 +25,7 @@
 #    17-Sep-2007 (CT) `main` refactored
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -35,7 +36,7 @@ from _ATAX.accounting    import *
 par_sub_pat = re.compile ("\(([^)]+)\)")
 
 def kassabuch (account, file) :
-    """Write entries in `account' to kassabuch `file'"""
+    """Write entries in `account` to kassabuch `file`"""
     for e in account.entries :
         if not isinstance (e, Account_Entry) :
             continue
