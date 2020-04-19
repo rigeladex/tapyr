@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -52,8 +52,9 @@
 #                      remove thunder properties from its result
 #     5-Feb-2015 (CT)  Add `default` to `getattr_safe`; factor `_update_wrapper`
 #    16-Jul-2015 (CT)  Use `expect_except` in doc-tests
-#    15-Aug-2015 (CT) Add `eval_function_body`
-#    16-Oct-2015 (CT) Add `__future__` imports
+#    15-Aug-2015 (CT)  Add `eval_function_body`
+#    16-Oct-2015 (CT)  Add `__future__` imports
+#    19-Apr-2020 (CT)  Use `functools.update_wrapper`
 #    ««revision-date»»···
 #--
 
@@ -62,17 +63,12 @@ from   _TFL.pyk     import pyk
 
 import _TFL.Undef
 
+import functools
 import logging
 
 def _update_wrapper (wrapper, wrapped) :
-    try :
-        wrapper.__name__   = wrapped.__name__
-    except AttributeError :
-        pass ### Python 2.6 doesn't support `__name__` for classmethod
-    wrapper.__module__ = getattr (wrapped, "__module__", "<builtin>")
-    wrapper.__doc__    = wrapped.__doc__
-    wrapper.__dict__.update (getattr (wrapped, "__dict__", {}))
-    wrapper._globals   = getattr \
+    functools.update_wrapper (wrapper, wrapped)
+    wrapper._globals = getattr \
         (wrapped, "_globals", getattr (wrapped, "__globals__", {}))
 # end def _update_wrapper
 
