@@ -19,6 +19,7 @@
 #    24-Feb-2017 (CT) Update `__doc__` doctest output
 #    16-Apr-2018 (CT) Adapt to New `PyPI`
 #    26-Mar-2020 (CT) Add `sys.executable` and `dist/*` to `_do_twine`
+#    20-Apr-2020 (CT) Add option `-skip`
 #    ««revision-date»»···
 #--
 
@@ -114,6 +115,7 @@ class STP_Command (TFL.Command.Root_Command) :
         , "-dry_run:B?Display setup commands instead of applying them"
         , "-package:P:?Package(s) to process"
         , "-PY_Path:P:?Search path for packages"
+        , "-skip:P:?Don't include specified packages"
         , "-verbose:B?Verbose output"
         )
 
@@ -391,8 +393,11 @@ class STP_Command (TFL.Command.Root_Command) :
         else :
             p_specs = cao.package or ()
         py_path = cao.PY_Path or [self.app_dir]
+        skip    = set (cao.skip or ())
         result  = tuple \
-            (x for x in (self._package_path (p, py_path) for p in p_specs) if x)
+            ( x for x in (self._package_path (p, py_path) for p in p_specs)
+                if  x and not x [0] in skip
+            )
         def sk (x) :
             b, r = x
             return self.pkg_priority.get (b, 1 << 32)
