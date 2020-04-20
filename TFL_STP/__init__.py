@@ -18,6 +18,7 @@
 # Revision Dates
 #    23-Feb-2017 (CT) Creation
 #    25-Feb-2017 (CT) Add `kwds` with `data_dirs` to `packages_plus_data_files`
+#    20-Apr-2020 (CT) Remove Py-2 compatibility
 #    ««revision-date»»···
 #--
 
@@ -33,22 +34,14 @@ import re
 import subprocess
 import sys
 
-if sys.version_info < (3,) :
-    def as_str (x) :
-        try :
-            encode = x.encode
-        except AttributeError :
-            return str (x)
-        else :
-            return encode ("utf-8", "replace")
-else :
-    def as_str (x) :
-        try :
-            decode = x.decode
-        except AttributeError :
-            return str (x)
-        else :
-            return decode ("utf-8", "replace")
+def as_str (x) :
+    try :
+        decode = x.decode
+    except AttributeError :
+        return str (x)
+    else :
+        return decode ("utf-8", "replace")
+# end def as_str
 
 version_py_fmt  = """\
 __date__    = "%(date)s"
