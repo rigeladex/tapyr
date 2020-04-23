@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -24,6 +24,7 @@
 #    16-Sep-2015 (CT) Factor `import_default`
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #     9-Dec-2019 (CT) Use `"w"`, not `"wb"`, for `open` (Py3 compatibility)
+#    23-Apr-2020 (CT) Fix `plumbum` call of `inkscape`
 #    ««revision-date»»···
 #--
 
@@ -97,12 +98,11 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
             self.render (cao, g, SVG_Renderer)
         if cao.png :
             import plumbum
-            inkscape = plumbum.local [b"inkscape"]
-            png_fn   = self.file_name (cao, "png")
+            inkscape = plumbum.local ["inkscape"]
             svg_fn   = self.file_name (cao, "svg")
-            inkscape ["-y", "1", "-e", png_fn, svg_fn] ()
+            inkscape ["-y", "1", "--export-type=png", svg_fn] ()
             if cao.verbose :
-                print ("Rendered ", png_fn)
+                print ("Rendered ", self.file_name (cao, "png"))
         if cao.txt :
             from _MOM._Graph.Ascii import Renderer as Ascii_Renderer
             self.render (cao, g, Ascii_Renderer)
