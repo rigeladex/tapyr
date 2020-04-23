@@ -29,6 +29,7 @@
 #    10-Feb-2016 (CT) Add `root_dir` to `from_sys_modules`; put it in front
 #    10-Oct-2016 (CT) Make Python-3 compatible
 #     6-Apr-2020 (CT) Use `os.replace`, not `os.rename`
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
 #    ««revision-date»»···
 #--
 
@@ -40,11 +41,12 @@ import _TFL._Babel.Config_File
 import _TFL.CAO
 import _TFL.defaultdict
 
-import  glob
-import  os
-import  shutil
-import  sys
-import  tempfile
+import glob
+import importlib
+import os
+import shutil
+import sys
+import tempfile
 
 try :
     from multiprocessing import Process, JoinableQueue
@@ -320,7 +322,7 @@ def compile (cmd) :
         d, p = os.path.split    (cmd.import_file)
         f, e = os.path.splitext (p)
         with TFL.Context.list_push (sys.path, d) :
-            m = __import__ (f)
+            m = importlib.import_module (f)
         lang_coll = Language_File_Collection.from_sys_modules \
             (cmd.languages, cmd.file_suffix, d or "./")
     else :

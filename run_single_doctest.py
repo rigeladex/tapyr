@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2016 Martin Glueck All rights reserved
+# Copyright (C) 2011-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This program is licensed under the terms of the BSD 3-Clause License
@@ -20,17 +20,20 @@
 #    21-Oct-2015 (CT) Add `py_version`, adapt to Python 3
 #    21-Jun-2016 (CT) Add `expect_except` to `module` before testing
 #    17-Oct-2016 (CT) Add message if no test is found
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
 #    ««revision-date»»···
 #--
 
-from   _TFL         import TFL
-import _TFL.CAO
-from   _TFL.Regexp  import *
-import _TFL.sos     as     os
-from    run_doctest import format_x, format_f, format_s
+from   _TFL             import TFL
+from   _TFL.Regexp      import *
+from   _TFL.run_doctest import format_x, format_f, format_s
 
-import  sys
-import  doctest
+import _TFL.CAO
+import _TFL.sos         as     os
+
+import sys
+import importlib
+import doctest
 
 def _main (cmd) :
     cmd_path              = list (cmd.path or [])
@@ -53,7 +56,7 @@ def _main (cmd) :
     else :
         flags             = doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
     try :
-        module            = __import__ (m)
+        module            = importlib.import_module (m)
         module.expect_except = TFL.CAO.expect_except
         tests             = cmd.argv [1:]
         test_set          = set  (tests)
@@ -63,7 +66,7 @@ def _main (cmd) :
                 del module.__test__ [tn]
         if not module.__test__ :
             print \
-                ( "Test not found: %s\n    Choose one of: %s" 
+                ( "Test not found: %s\n    Choose one of: %s"
                 % (", ".join (tests), ", ".join (sorted (m_tests)))
                 )
             raise SystemExit (23)

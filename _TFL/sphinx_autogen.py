@@ -24,6 +24,7 @@
 #     9-Oct-2016 (CT) Adapt to move of Package_Namespaces `DRA`, `SKY`
 #    27-Feb-2017 (CT) Remove some entries from `pns_skip`
 #     8-Apr-2020 (CT) Remove obsolete `TFL` modules (not more Py-2)
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,7 @@ import _TFL.Package_Namespace
 
 from   collections              import defaultdict
 
+import importlib
 import logging
 
 class TFL_SAG_Command (TFL.Command.Root_Command) :
@@ -198,7 +200,7 @@ Package-NS `%(b_name)s`
     # end def handler
 
     def _handle_package (self, pn, doc_base) :
-        pkg = __import__ (pn)
+        pkg = importlib.import_module (pn)
         try :
             pns = pkg.__PNS__
         except AttributeError :
@@ -266,7 +268,7 @@ Package-NS `%(b_name)s`
 
     def _make_graph (self, inner, graph_mod, q_name, doc_base) :
         import plumbum
-        py    = plumbum.local [b"python"]
+        py    = plumbum.local ["python"]
         m_nam = graph_mod.__name__
         if "." not in m_nam :
             m_nam = ".".join ((graph_mod.__PNS__.__PKG__.__name__, m_nam))

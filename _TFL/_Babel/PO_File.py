@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Martin Glueck All rights reserved
+# Copyright (C) 2010-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -29,6 +29,7 @@
 #    10-Feb-2016 (CT) Fix guard for missing `catalog` in `__init__`
 #    10-Feb-2016 (CT) Change merge not to overwrite `Project-Id-Version`...
 #    10-Feb-2016 (CT) Add `guard` to `load`, adapt callers of `load`
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
 #    ««revision-date»»···
 #--
 
@@ -38,13 +39,14 @@ import _TFL._Babel
 import _TFL._Meta.Object
 from   _TFL._Meta.Property     import Alias_Property
 
-from    babel.messages.pofile  import write_po, read_po
-from    babel.messages.mofile  import write_mo
-from    babel.messages.catalog import Catalog
+from   babel.messages.pofile  import write_po, read_po
+from   babel.messages.mofile  import write_mo
+from   babel.messages.catalog import Catalog
 
-import  os
-import  sys
-import  json
+import importlib
+import json
+import os
+import sys
 
 class PO_File (TFL.Meta.Object) :
     """A object to handle PO/POT files."""
@@ -104,7 +106,7 @@ class PO_File (TFL.Meta.Object) :
         files = []
         for pkg in (p.strip () for p in packages) :
             try :
-                __import__ (pkg)
+                importlib.import_module (pkg)
             except ImportError as exc :
                 print (exc, repr (pkg))
                 raise

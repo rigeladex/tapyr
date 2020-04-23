@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Martin Glueck All rights reserved
+# Copyright (C) 2010-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -26,18 +26,22 @@
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    16-Feb-2016 (CT) Use `os.path.relpath`, not `babel.util.relpath`
 #                     (broke in Babel 2.2)
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
 #    ««revision-date»»···
 #--
 
 from   _TFL                          import TFL
 from   _TFL.predicate                import any_true
+
 import _TFL.relative_to_search_path
 import _TFL._Babel.PO_File
-import  os
-import  sys
 
-from    babel.util             import pathmatch
-from    babel.messages.extract import empty_msgid_warning
+import importlib
+import os
+import sys
+
+from   babel.util             import pathmatch
+from   babel.messages.extract import empty_msgid_warning
 
 class Existing_Translations (object) :
     """Read multiple POT files and checks whether a certain message is
@@ -48,7 +52,7 @@ class Existing_Translations (object) :
         self.pot_file
         if packages :
             for pkg in (p.strip () for p in packages.split (",")) :
-                module   = __import__ (pkg)
+                module   = importlib.import_module (pkg)
                 base_dir = os.path.dirname (module.__file__)
                 pot_file = os.path.join (base_dir, "-I18N", "template.pot")
                 self.pot_files.append (read_po (open (pot_file)))

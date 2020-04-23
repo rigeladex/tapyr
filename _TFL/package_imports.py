@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    11-Oct-2016 (CT) Creation
+#    23-Apr-2020 (CT) Use `importlib.util.find_spec`, not `__import__`
 #    ««revision-date»»···
 #--
 
@@ -28,6 +29,8 @@ from   _TFL                import sos
 from   _TFL.subdirs        import subdirs_transitive
 
 import _TFL.CAO
+
+import importlib.util
 
 ignore_imports = set (("__builtin__", "__future__"))
 import_pat     = Regexp \
@@ -70,15 +73,9 @@ def site_package_imports (imports) :
     """Return elements of `imports` that are installed in site-packages"""
     def gen (imports) :
         for i in imports :
-            try :
-                m = __import__ (i)
-            except Exception :
-                pass
-            else :
-                mp = getattr (m, "__file__", None)
-                if mp is not None :
-                    if "/site-packages/" in mp :
-                        yield i
+            spec = importlib.util.find_spec (i)
+            if spec and spec.origin and "/site-packages/" in spec.origin :
+                yield i
     return set (gen (imports))
 # end def site_package_imports
 
@@ -92,7 +89,7 @@ def _main (cmd) :
         _, pkg_name = sos.path.split   (pkg_path)
     else :
         try :
-            pkg = __import__ (nop)
+            pkg = importlib.import_module (nop)
         except Exception as exc :
             print \
                 ( "%s is not the name or path of a proper python package\n  %s"

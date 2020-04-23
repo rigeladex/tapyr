@@ -61,6 +61,7 @@
 #                     + Fix `format_x`
 #    27-Mar-2020 (CT) Use `subprocess.run`, not `subprocess.Popen`
 #                     + Add `py_version` to summary output
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,7 @@ import _TFL.Package_Namespace
 from   timeit     import default_timer as _timer
 
 import doctest
+import importlib
 import logging
 import sys
 import subprocess
@@ -173,7 +175,7 @@ def _main (cmd) :
         try :
             logging.disable (logging.WARNING)
             start  = _timer ()
-            module = __import__ (m)
+            module = importlib.import_module (m)
             module.expect_except = TFL.CAO.expect_except
             cases  = len (getattr (module, "__test__", ())) or 1
             f, t   = doctest.testmod \
