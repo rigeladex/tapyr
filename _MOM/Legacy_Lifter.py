@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Martin Glueck All rights reserved
+# Copyright (C) 2013-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -26,6 +26,7 @@
 #     8-Jan-2014 (CT) Refactor classes, add cache for `E_Type_Lifter`
 #    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine`,
 #                     as metaclass
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `TFL.import_module`
 #    ««revision-date»»···
 #--
 
@@ -34,8 +35,9 @@ from    _TFL                 import TFL
 from   _TFL.pyk              import pyk
 
 import  _TFL._Meta.Object
-import  _TFL.import_module
 import  _TFL.sos             as     os
+
+from    importlib            import import_module
 
 class _MOM_Legacy_Lifter_ \
           (object, metaclass = TFL.Meta.M_Auto_Update_Combined) :
@@ -121,7 +123,7 @@ class Legacy_Lifter_Wrapper (TFL.Meta.Object) :
     """Wrapper around a `db_man` and a project specific legacy lifter"""
 
     def __init__ (self, db_man, module_name) :
-        LL_Class           = TFL.import_module (module_name).Legacy_Lifter
+        LL_Class           = import_module (module_name).Legacy_Lifter
         self.legacy_lifter = LL_Class (db_man)
     # end def __init__
 

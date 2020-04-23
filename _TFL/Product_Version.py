@@ -47,16 +47,18 @@
 #    18-Dec-2009 (CT) `author`, `copyright_start`, and `tuple` added
 #    30-Jun-2010 (CT) `id` added
 #    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
+#    23-Apr-2020 (CT)  Use `importlib.import_module`, not `TFL.import_module`
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
 
 import _TFL._Meta.Object
-import _TFL.import_module
 
 from   _TFL.IV_Number        import *
 from   _TFL.pyk              import pyk
+
+from   importlib              import import_module
 
 import sys
 import time
@@ -233,7 +235,7 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
         if pkg :
             pns  = getattr (pkg, pns_name)
             try :
-                lp_module = TFL.import_module ("%s.Lic_Comps" % pkg_name)
+                lp_module = import_module ("%s.Lic_Comps" % pkg_name)
             except ImportError :
                 pass
             else :

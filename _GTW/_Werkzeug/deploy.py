@@ -72,6 +72,7 @@
 #                     * Python 3 needs `pyk.decoded (app_dir)`,
 #                       not `pyk.encoded (app_dir)`
 #    22-Mar-2018 (CT) Add `plugin` to `uwsgi_config`
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `TFL.import_module`
 #    ««revision-date»»···
 #--
 
@@ -82,10 +83,11 @@ import _GTW._OMP.deploy
 
 from   _TFL                   import sos
 from   _TFL.Filename          import Filename
-from   _TFL.import_module     import import_module
 from   _TFL.predicate         import uniq
 from   _TFL.pyk               import pyk
 from   _TFL.Regexp            import Re_Replacer, re
+
+from   importlib              import import_module
 
 import sys
 

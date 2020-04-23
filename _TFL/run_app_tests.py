@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -18,6 +18,7 @@
 # Revision Dates
 #     8-May-2017 (CT) Creation
 #     5-Jun-2017 (CT) Fix Py-3 compatibility of `py_version`
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `TFL.import_module`
 #    ««revision-date»»···
 #--
 
@@ -33,7 +34,6 @@ import _TFL.Caller
 import _TFL.CAO
 import _TFL.Context
 import _TFL.Decorator
-import _TFL.import_module
 import _TFL.Package_Namespace
 import _TFL.Record
 
@@ -41,6 +41,7 @@ from   timeit                     import default_timer as _timer
 from   fnmatch                    import fnmatch
 
 import doctest
+import importlib
 import logging
 import sys
 import subprocess
@@ -61,7 +62,7 @@ def import_module (path) :
     mn = fn.base
     md = fn.directory or "./"
     with TFL.Context.list_push (sys.path, md, 0) :
-        result = TFL.import_module (mn)
+        result = importlib.import_module (mn)
         result.__App_Tests_Dir__ = md
         return result
 # end def import_module
