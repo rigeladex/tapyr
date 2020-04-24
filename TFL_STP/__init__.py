@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL_STP.
@@ -18,16 +18,9 @@
 # Revision Dates
 #    23-Feb-2017 (CT) Creation
 #    25-Feb-2017 (CT) Add `kwds` with `data_dirs` to `packages_plus_data_files`
+#    20-Apr-2020 (CT) Remove Py-2 compatibility
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-
-### `unicode_literals` break `distutils`
-### https://bugs.python.org/issue13943 (Created on 2012-02-04 20:41)
-### from   __future__  import unicode_literals
 
 from   .           import fs_find
 
@@ -41,22 +34,14 @@ import re
 import subprocess
 import sys
 
-if sys.version_info < (3,) :
-    def as_str (x) :
-        try :
-            encode = x.encode
-        except AttributeError :
-            return str (x)
-        else :
-            return encode ("utf-8", "replace")
-else :
-    def as_str (x) :
-        try :
-            decode = x.decode
-        except AttributeError :
-            return str (x)
-        else :
-            return decode ("utf-8", "replace")
+def as_str (x) :
+    try :
+        decode = x.decode
+    except AttributeError :
+        return str (x)
+    else :
+        return decode ("utf-8", "replace")
+# end def as_str
 
 version_py_fmt  = """\
 __date__    = "%(date)s"

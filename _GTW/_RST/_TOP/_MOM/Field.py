@@ -45,9 +45,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _GTW                     import GTW
 from   _MOM                     import MOM
 from   _TFL                     import TFL
@@ -72,15 +69,14 @@ import _TFL.Decorator
 
 from   itertools                import chain as iter_chain
 
-as_text = pyk.text_type
+as_text = str
 
 class M_Field (TFL.Meta.Object.__class__) :
     """Metaclass for field classes"""
 
 # end class M_Field
 
-@pyk.adapt__str__
-class Base (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Field)) :
+class Base (TFL.Meta.Object, metaclass = M_Field) :
 
     aq            = None
     attr_name     = None
@@ -479,7 +475,7 @@ class M_HTML_Link (AQ.__class__) :
 
 # end class M_HTML_Link
 
-class HTML_Link (TFL.Meta.BaM (AQ, metaclass = M_HTML_Link)) :
+class HTML_Link (AQ, metaclass = M_HTML_Link) :
     """Field that is displayed as HTML link"""
 
     protocol = None

@@ -21,11 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _MOM.import_MOM       import *
 from   _MOM._Attr.Structured import _A_Structured_
 
@@ -82,7 +77,7 @@ class _M_Range_ (_A_Structured_.__class__) :
 
 # end class _M_Range_
 
-class _A_Range_ (TFL.Meta.BaM (_A_Structured_, metaclass = _M_Range_)) :
+class _A_Range_ (_A_Structured_, metaclass = _M_Range_) :
     """Base class for range-types attributes of an object."""
 
     Kind_Mixins         = (MOM.Attr._Range_Mixin_, )
@@ -199,7 +194,7 @@ class _A_Range_ (TFL.Meta.BaM (_A_Structured_, metaclass = _M_Range_)) :
             return soc.set_defaults (lower, upper, btype, result)
         except ValueError as exc :
             raise MOM.Error.Attribute_Syntax \
-                (None, soc, result, pyk.text_type (exc))
+                (None, soc, result, str (exc))
     # end def from_attr_tuple
 
     @TFL.Meta.Class_and_Instance_Method

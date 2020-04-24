@@ -53,8 +53,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _GTW.__test__.rst_harness  import *
 from   _GTW.__test__              import rst_harness
 

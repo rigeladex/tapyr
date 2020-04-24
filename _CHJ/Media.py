@@ -60,8 +60,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                         import print_function
-
 from   _TFL                               import TFL
 from   _CHJ                               import CHJ
 
@@ -93,8 +91,7 @@ class Media_Base (TFL.Meta.Object) :
     def objects (self) :
         def _gen (s) :
             for r in s.requires :
-                for o in r.objects :
-                    yield o
+                yield from r.objects 
             yield s
         return tuple (_gen (self))
     # end def objects
@@ -112,7 +109,7 @@ class Media_Base (TFL.Meta.Object) :
 # end class Media_Base
 
 class CSS_Link \
-        (TFL.Meta.BaM (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named)) :
+        (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named) :
     """Model a CSS link object."""
 
     condition     = ""
@@ -173,7 +170,7 @@ class Rel_Link (Media_Base) :
 # end class Rel_Link
 
 class Script \
-        (TFL.Meta.BaM (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named)) :
+        (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named) :
     """Model a script element"""
 
     href          = Alias_Property ("src")
@@ -228,7 +225,7 @@ class Script \
 # end class Script
 
 class JS_On_Ready \
-        (TFL.Meta.BaM (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named)) :
+        (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named) :
     """A javascript code which should be executed once the document is loaded"""
 
     default_rank  = TFL.Undef ("rank")
@@ -256,7 +253,6 @@ class JS_On_Ready \
 
 # end class JS_On_Ready
 
-@pyk.adapt__bool__
 class Media_List (TFL.Meta.Object) :
     """Model a list of media objects"""
 
@@ -277,17 +273,14 @@ class Media_List (TFL.Meta.Object) :
 
     def _gen_all (self) :
         for mob in self._gen_own () :
-            for o in mob.objects :
-                yield o
+            yield from mob.objects 
         name = self.name
         for child in self.media.children :
-            for mob in getattr (child, name) :
-                yield mob
+            yield from getattr (child, name) 
     # end def _gen_all
 
     def _gen_own (self) :
-        for mob in self.mobs :
-            yield mob
+        yield from self.mobs 
     # end def _gen_own
 
     def __len__ (self) :

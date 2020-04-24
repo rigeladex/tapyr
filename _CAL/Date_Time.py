@@ -41,8 +41,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
-
 from   _TFL                     import TFL
 from   _CAL                     import CAL
 

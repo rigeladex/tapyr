@@ -96,7 +96,7 @@ class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
 
 # end class _M_HPS_Manager_
 
-class Manager (TFL.Meta.BaM (MOM.DBW._Manager_, metaclass = _M_HPS_Manager_)) :
+class Manager (MOM.DBW._Manager_, metaclass = _M_HPS_Manager_) :
     """Database wrapper for Hash-Pickle-Store."""
 
     Pid_Manager   = MOM.DBW.HPS.Pid_Manager

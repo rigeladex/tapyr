@@ -24,8 +24,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 from   _TFL import TFL
 from   _TFL.pyk import pyk
 
@@ -115,8 +113,7 @@ class _Int_Partition_ (TFL.Meta.Object) :
            sums of positive integers adding up to `n`.
         """
         for l in range (n) :
-            for p in self [(n, l)] :
-                yield p
+            yield from self [(n, l)] 
     # end def __call__
 
     def __getitem__ (self, key) :
@@ -135,7 +132,7 @@ class _Int_Partition_ (TFL.Meta.Object) :
         if l == 0 :
             yield (n, )
         else :
-            for a in pyk.xrange (n - l, 0 , -1) :
+            for a in range (n - l, 0 , -1) :
                 for ps in self [(n - a, l - 1)] :
                     if a >= ps [0] :
                         yield (a, ) + ps

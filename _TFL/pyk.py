@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -13,17 +13,31 @@
 #    TFL.pyk
 #
 # Purpose
-#    Hide incompatibilities between Python2 and Python3
+#    Hide incompatibilities between Python versions
 #
 # Revision Dates
 #    16-Jun-2010 (CT) Creation
+#     2-Apr-2020 (CT) Remove Python-2 compatibility
 #    ««revision-date»»···
 #--
+
+"""
+This module hides incompatibilities between different Python versions.
+
+Originally, differences between Python-2 and Python-3 were covered.
+
+After removing Python-2, the module doesn't much except allow keeping uses of
+`pyk` in place.
+
+Should a future Python version introduce gratuitous incompatibilities again,
+`pyk` is here to cover that.
+"""
 
 import sys
 
 if sys.version_info < (3,) :
-    from _TFL._pyk2 import pyk
+    raise NotImplementedError \
+        ("Python 2 is no longer supported; use branch `Python_2` if you must")
 else :
     from _TFL._pyk3 import pyk
 ### __END__ TFL.pyk

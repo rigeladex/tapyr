@@ -23,8 +23,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 from   _MOM.import_MOM          import _A_Composite_, _A_Named_Value_

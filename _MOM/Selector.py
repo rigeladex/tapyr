@@ -33,11 +33,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _MOM                     import MOM
 from   _TFL                     import TFL
 
@@ -156,7 +151,7 @@ class _M_Selector_Base_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Selector_Base_
 
-class _Selector_Base_ (TFL.Meta.BaM (_Base_, metaclass = _M_Selector_Base_)) :
+class _Selector_Base_ (_Base_, metaclass = _M_Selector_Base_) :
     """Base class for atom and entity selectors."""
 
     id               = TFL.Meta.Alias_Property ("name")
@@ -212,8 +207,7 @@ class _Entity_ (_Selector_Base_) :
     def atoms (self) :
         def _gen (self) :
             for e in self.elements :
-                for a in e.atoms :
-                    yield a
+                yield from e.atoms 
         return tuple (_gen (self))
     # end def atoms
 
@@ -501,7 +495,7 @@ class Completer (TFL.Meta.Object) :
         if self._filters_q_map is None :
             self._split_values ()
         return sorted \
-            (pyk.itervalues (self._filters_q_map), key = pyk.text_type)
+            (pyk.itervalues (self._filters_q_map), key = str)
     # end def filters_q
 
     @Once_Property

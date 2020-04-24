@@ -41,11 +41,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL                       import TFL
 
 from   _TFL.Color                 import RGB_X
@@ -220,8 +215,6 @@ class _Coordinate_Op_ (TFL.Meta.Object) :
 
 # end class _Coordinate_Op_
 
-@pyk.adapt__bool__
-@pyk.adapt__div__
 class _Coordinate_ (TFL.Meta.Object) :
     """Base class for classes that model a single coordinate (x or y)."""
 

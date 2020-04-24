@@ -46,11 +46,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
@@ -97,7 +92,7 @@ class _CHJ_M_Definition_ (M_Definition) :
 # end class _CHJ_M_Definition_
 
 class _CHJ_Definition_ \
-        (TFL.Meta.BaM (Definition, metaclass = _CHJ_M_Definition_)) :
+        (Definition, metaclass = _CHJ_M_Definition_) :
 
     def _resolved_calc (self, c, Calc) :
         Q_Root = TFL.Q_Exp.Q_Root
@@ -209,7 +204,6 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
     # end class _MOB_
 
-    @pyk.adapt__str__
     class _Script_File_ (TFL.Meta.Object) :
         """Wrapper for a javascript `Script_File` referenced in a media fragment."""
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -19,11 +19,6 @@
 #     8-May-2017 (CT) Creation
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL                       import TFL
 
@@ -45,7 +40,6 @@ import logging
 import sys
 import subprocess
 
-@pyk.adapt__bool__
 class _Result_ (TFL.Meta.Object) :
     """Expected result of application test."""
 
@@ -66,7 +60,6 @@ class _Result_ (TFL.Meta.Object) :
 
 # end class _Result_
 
-@pyk.adapt__str__
 class Result_File (_Result_) :
     """Expected result of application test specified as file_name."""
 
@@ -83,12 +76,12 @@ class Result_File (_Result_) :
 
     def diff (self, new_content) :
         if self != new_content :
-            old     = pyk.text_type (self)
+            old     = str (self)
             new     = pyk.decoded   (new_content, * self.encodings)
             diffs   = self._diffs \
                 (old, new, fromfile = self.file_name, tofile = "Result of test")
             diff_no = len (diffs)
-            d_name  = Filename (".diff", self.file_name).name
+            d_name  = Filename (".diff", self.file_name)
             with open (d_name, "wb") as f :
                 f.write (pyk.encoded ("\n".join (diffs)))
             return "%d difference%s (see %s)" % \
@@ -105,7 +98,6 @@ class Result_File (_Result_) :
 
 # end class Result_File
 
-@pyk.adapt__str__
 class Result_String (_Result_) :
     """Expected result of application test specified as string."""
 
@@ -141,7 +133,6 @@ class Result_String (_Result_) :
 
 # end class Result_String
 
-@pyk.adapt__bool__
 class Run (TFL.Meta.Object) :
     """Run one application test and check expected error and output."""
 

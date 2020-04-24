@@ -37,7 +37,6 @@ import _TFL._Meta.Object
 import _TFL.Record
 import _MOM.Legacy_Lifter
 
-@pyk.adapt__str__
 class DB_Man (TFL.Meta.Object) :
     """Manager for data bases of MOM."""
 

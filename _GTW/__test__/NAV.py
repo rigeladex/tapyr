@@ -35,8 +35,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function, unicode_literals
-
 _test_nav = """
     >>> nav_root = create_app () # doctest:+ELLIPSIS
     Cache ...

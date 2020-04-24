@@ -20,9 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__          import division, print_function
-from   __future__          import absolute_import, unicode_literals
-
 from   _TFL                import TFL
 from   _TFL                import sos
 from   _TFL.defaultdict    import defaultdict
@@ -57,7 +54,6 @@ _module_format = r"""
 # *** DO NOT edit it manually !
 #
 
-from   __future__               import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -99,11 +95,10 @@ def _decoded (x) :
 # end def _decoded
 
 def _str_int (x) :
-    return pyk.text_type (int (x))
+    return str (int (x))
 # end def _str_int
 
 
-@pyk.adapt__str__
 class NDC (TFL.Meta.Object) :
 
     ### Want three integer columns, two string columns
@@ -181,16 +176,14 @@ class NDC (TFL.Meta.Object) :
 
 def _convert_row (row) :
     if len (row) == 5 :
-        for ndc in NDC.from_xls_row (row) :
-            yield ndc
+        yield from NDC.from_xls_row (row) 
 # end def _convert_row
 
 def gen_records (xls_name) :
     book    = xlrd.open_workbook  (xls_name, encoding_override = "iso-8859-1")
     sheet   = book.sheet_by_index (0)
-    for i in pyk.xrange (0, sheet.nrows) :
-        for ndc in _convert_row (sheet.row (i)) :
-            yield ndc
+    for i in range (0, sheet.nrows) :
+        yield from _convert_row (sheet.row (i)) 
 # end def gen_records
 
 def _main (cmd) :
@@ -218,7 +211,7 @@ def _main (cmd) :
     now     = datetime.datetime.now ()
     f_repr  = formatted_repr
     p_repr  = portable_repr
-    pyk.fprint \
+    print \
         ( ( _module_format
           % dict
               ( generated_by      = sos.path.basename (__file__)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -46,10 +46,23 @@
 #                     + Define `fprint` as a function that calls `print`
 #                       - `staticmethod (print)` triggers a syntax error
 #                     + Import `print_function` from `__future__`
+#    31-Mar-2020 (CT) Remove `adapt__bool__`
+#     1-Apr-2020 (CT) Remove `adapt__div__`, `adapt__str__`
+#     2-Apr-2020 (CT) Remove `range`, `xrange`
+#     2-Apr-2020 (CT) Remove `builtins`
+#     2-Apr-2020 (CT) Remove `Classic_Class_Type`
+#     2-Apr-2020 (CT) Remove `copyreg`
+#     2-Apr-2020 (CT) Add `number_types_x`
+#     2-Apr-2020 (CT) Increase `pickle_protocol` to 4
+#     2-Apr-2020 (CT) Remove `fprint`
+#     2-Apr-2020 (CT) Remove `ifilter`
+#     2-Apr-2020 (CT) Remove `long_types`
+#     2-Apr-2020 (CT) Remove `text_type`
+#     2-Apr-2020 (CT) Remove `unichr`
+#     2-Apr-2020 (CT) Remove `urlencode`, `urlparse`
+#     2-Apr-2020 (CT) Remove `zip`
 #    ««revision-date»»···
 #--
-
-from   __future__  import print_function ### Python2 compatibility
 
 import functools
 
@@ -71,32 +84,6 @@ class _Pyk_ (object) :
        Use a class instead of module-level definitions to allow lazy imports.
     """
 
-    @staticmethod
-    def adapt__bool__ (cls) :
-        dct = cls.__dict__
-        if "__bool__" not in dct and "__nonzero__" in dct :
-            setattr (cls, "__bool__", dct ["__nonzero__"])
-        return cls
-    # end def adapt__bool__
-
-    @staticmethod
-    def adapt__div__ (cls) :
-        """Nothing to be done here"""
-        return cls
-    # end def adapt__div__
-
-    @staticmethod
-    def adapt__str__ (cls) :
-        """Nothing to be done here"""
-        return cls
-    # end def adapt__str__
-
-    @lazy_property
-    def builtins (self) :
-        import builtins
-        return builtins
-    # end def builtins
-
     byte_type  = bytes
     byte_types = (bytes, )
 
@@ -105,14 +92,6 @@ class _Pyk_ (object) :
         import configparser
         return configparser
     # end def config_parser
-
-    Classic_Class_Type = None
-
-    @lazy_property
-    def copyreg (self) :
-        import copyreg
-        return copyreg
-    # end def copyreg
 
     @staticmethod
     def decoded (v, * encodings) :
@@ -158,19 +137,6 @@ class _Pyk_ (object) :
         return v
     # end def encoded
 
-    @staticmethod
-    def fprint (* values, ** kw) :
-        """print(value, ..., sep=' ', end='\\n', file=sys.stdout)
-
-           Prints the values to a stream, or to sys.stdout by default.
-           Optional keyword arguments:
-           file: a file-like object (stream); defaults to the current sys.stdout.
-           sep:  string inserted between values, default a space.
-           end:  string appended after the last value, default a newline.
-        """
-        print (* values, ** kw)
-    # end def fprint
-
     int_types          = (int, )
 
     @staticmethod
@@ -200,10 +166,6 @@ class _Pyk_ (object) :
         return iter (values ())
     # end def itervalues
 
-    ifilter    = staticmethod (filter)
-    izip       = staticmethod (zip)
-    long_types = (type ("no_longin_in_Py3", (object, ), {}), )
-
     @staticmethod
     def new_instancemethod (function, instance, cls) :
         if instance is None :
@@ -218,18 +180,18 @@ class _Pyk_ (object) :
     number_types = (int, float)
 
     @lazy_property
+    def number_types_x (self) :
+        import decimal
+        return self.number_types + (decimal.Decimal, )
+    # end def number_types_x
+
+    @lazy_property
     def pickle (self) :
         import pickle
         return pickle
     # end def pickle
 
-    pickle_protocol = 2
-    xrange          = staticmethod (range)
-
-    @staticmethod
-    def range (* args, ** kw) :
-        return list (range (* args, ** kw))
-    # end def range
+    pickle_protocol = 4 ### `5` needs Python 3.8+, still need to support 3.7
 
     @staticmethod
     def reprify (r) :
@@ -243,30 +205,12 @@ class _Pyk_ (object) :
     # end def StringIO
 
     string_types       = (str, )
-    text_type          = str
-    unichr             = chr
-
-    @lazy_property
-    def urlencode (self) :
-        from urllib.parse import urlencode
-        return urlencode
-    # end def urlencode
-
-    @lazy_property
-    def urlparse (self) :
-        from urllib import parse
-        return parse
-    # end def urlparse
 
     @lazy_property
     def user_config (self) :
         from   _TFL.User_Config import user_config
         return user_config
     # end def user_config
-
-    def zip (self, * args) :
-        return list (self.izip (* args))
-    # end def zip
 
 # end class _Pyk_
 

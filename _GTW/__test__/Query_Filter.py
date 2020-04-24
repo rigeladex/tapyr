@@ -32,8 +32,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
-
 def show (q) :
     return sorted (str (x) for x in q)
 

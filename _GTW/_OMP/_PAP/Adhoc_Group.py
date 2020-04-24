@@ -20,8 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
-
 from   _MOM.import_MOM             import *
 
 from   _GTW._OMP._PAP.Attr_Type    import *

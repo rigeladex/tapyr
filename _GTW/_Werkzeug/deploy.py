@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -72,10 +72,9 @@
 #                     * Python 3 needs `pyk.decoded (app_dir)`,
 #                       not `pyk.encoded (app_dir)`
 #    22-Mar-2018 (CT) Add `plugin` to `uwsgi_config`
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `TFL.import_module`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import, division, print_function #, unicode_literals
 
 from   _GTW                   import GTW
 from   _TFL                   import TFL
@@ -84,10 +83,11 @@ import _GTW._OMP.deploy
 
 from   _TFL                   import sos
 from   _TFL.Filename          import Filename
-from   _TFL.import_module     import import_module
 from   _TFL.predicate         import uniq
 from   _TFL.pyk               import pyk
 from   _TFL.Regexp            import Re_Replacer, re
+
+from   importlib              import import_module
 
 import sys
 

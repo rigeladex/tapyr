@@ -20,11 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -131,8 +126,7 @@ class _Gallery_ (_Ancestor) :
     @property
     @getattr_safe
     def entries_transitive (self) :
-        for e in self.entries :
-            yield e
+        yield from self.entries 
     # end def entries_transitive
 
     @Once_Property

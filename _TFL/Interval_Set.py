@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2018 Dr. Ralf Schlatterbeck Open Source Consulting.
+# Copyright (C) 2004-2020 Dr. Ralf Schlatterbeck Open Source Consulting.
 # Reichergasse 131, A-3411 Weidling.
 # Web: http://www.runtux.com Email: office@runtux.com
 # All rights reserved
@@ -62,7 +62,6 @@ import _TFL._Meta.Object
 
 import itertools
 
-@pyk.adapt__bool__
 class Interval_Set (TFL.Meta.Object) :
     """Class for modelling a sorted set of intervals.
 
@@ -355,8 +354,7 @@ class Interval_Set (TFL.Meta.Object) :
                     if l.lower < r.upper < l.upper :
                         l = l.__class__ (r.upper, l.upper)
         yield l
-        for l in lit :
-            yield l
+        yield from lit 
     # end def _difference_iter
 
     def _intersection_iter (self, other) :
@@ -412,7 +410,6 @@ class Interval_Set (TFL.Meta.Object) :
 
     # end class _IVS_Iter_
 
-    @pyk.adapt__bool__
     class _IVS_Iter_X_ (_IVS_Iter_) :
 
         def advance (self) :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -34,10 +34,6 @@
 #    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
-from   __future__            import unicode_literals
 
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_, _A_Number_

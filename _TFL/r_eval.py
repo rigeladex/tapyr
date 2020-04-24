@@ -24,8 +24,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__         import absolute_import, division, print_function
-
 from   _TFL               import TFL
 from   _TFL.portable_repr import portable_repr
 from   _TFL.pyk           import pyk
@@ -74,7 +72,7 @@ def r_eval (source, ** kw) :
     Traceback (most recent call last):
     ValueError: Cannot safely evaluate '((). __class__)'
     """
-    if isinstance (source, pyk.text_type) :
+    if isinstance (source, str) :
         src     = source
     else :
         c_match = _coding_pat.search (source)

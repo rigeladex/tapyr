@@ -33,11 +33,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _SKY                     import SKY
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
@@ -49,7 +44,6 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _TFL.CAO
 import _TFL._Meta.Object
 
-@pyk.adapt__str__
 class Location (TFL.Meta.Object) :
     """Model terrestrial location of observer.
 

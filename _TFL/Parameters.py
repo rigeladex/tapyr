@@ -23,11 +23,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL                       import TFL
 
 from   _TFL._Meta.Property        import Lazy_Property
@@ -113,7 +108,7 @@ class M_Definition (TFL.Meta.Object.__class__) :
 
 # end class M_Definition
 
-class Definition (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Definition)) :
+class Definition (TFL.Meta.Object, metaclass = M_Definition) :
     """Definition of parameters for media, i.e., CSS and JS, fragments.
 
     >>> from _TFL.portable_repr  import print_prepr

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CHJ.CSS.
@@ -62,11 +62,6 @@ Model CSS calc expressions with support for CSS.Length operands::
 
 """
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
@@ -77,8 +72,6 @@ import _TFL._Meta.Object
 from   _TFL.pyk                   import pyk
 from   _TFL.Regexp                import Regexp, re
 
-@pyk.adapt__div__
-@pyk.adapt__str__
 class Calc (TFL.Meta.Object) :
     """Model a CSS calc expression."""
 
@@ -87,7 +80,7 @@ class Calc (TFL.Meta.Object) :
     _sub_pat     = Regexp (r" - ")
 
     def __init__ (self, * args) :
-        as_text    = pyk.text_type
+        as_text    = str
         self.args  = args
         self.value = " ".join (as_text (a) for a in args)
     # end def __init__

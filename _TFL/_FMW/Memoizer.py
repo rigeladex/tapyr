@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -71,8 +71,6 @@ Caveats:
         16
 
 """
-
-from   __future__       import print_function
 
 from   _TFL             import TFL
 from   _TFL.pyk         import pyk

@@ -46,7 +46,7 @@ class _M_DBS_ (TFL.Meta.Object.__class__) :
 
 # end class _M_DBS_
 
-class _DBS_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_DBS_)) :
+class _DBS_ (TFL.Meta.Object, metaclass = _M_DBS_) :
     """Base class for DBS classes."""
 
     Fatal_Exceptions = ()

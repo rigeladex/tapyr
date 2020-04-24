@@ -26,9 +26,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division
-from   __future__  import print_function, unicode_literals
-
 from   _ReST                      import ReST
 from   _TFL.I18N                  import _, _T
 from   _TFL.Regexp                import *

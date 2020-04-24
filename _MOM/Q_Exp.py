@@ -38,8 +38,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import unicode_literals
-
 from   _MOM                     import MOM
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
@@ -302,7 +300,7 @@ class _Get_Raw_ (TFL.Q_Exp._Get_) :
             getter = getattr (TFL.Getter, key)
             result = getter  (obj)
             if isinstance (obj, MOM.Entity) :
-                result = pyk.text_type (result)
+                result = str (result)
             return result
     # end def _getter
 

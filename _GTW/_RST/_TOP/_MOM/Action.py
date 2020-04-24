@@ -22,9 +22,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _GTW                     import GTW
 from   _MOM                     import MOM
 from   _TFL                     import TFL
@@ -49,7 +46,7 @@ class M_Action (TFL.Meta.Object.__class__) :
 
 # end class M_Action
 
-class _Action_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Action)) :
+class _Action_ (TFL.Meta.Object, metaclass = M_Action) :
     """Action that can be applied to an E_Type or its instance."""
 
     ### define in descendent classes

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,12 +28,10 @@
 #    25-Apr-2008 (MG)  `_setup_initializers`: handling for nested structs
 #                      extended
 #    26-Feb-2012 (MG) `__future__` imports added
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
-
-
-from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Expression
@@ -95,8 +93,8 @@ class Struct (TFL.SDG.C._Decl_) :
     # end def __init__
 
     def insert (self, child, index = None, delta = 0, cgi = None) :
-        """Insert `child' to `self.children' at position `index'
-           (`index is None' means append)
+        """Insert `child` to `self.children` at position `index`
+           (`index is None` means append)
            (None means append).
         """
         for c in self._convert_field (child) :

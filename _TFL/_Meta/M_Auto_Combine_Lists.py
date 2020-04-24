@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,7 +33,7 @@ Meta class for auto-combining the list-valued attributes mentioned in
 
 ::
 
-    >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Combine_Lists)) :
+    >>> class A (object, metaclass = M_Auto_Combine_Lists) :
     ...     _lists_to_combine = ("foo", "bar", "qux")
     ...     bar               = [1, 3]
     ...     qux               = [(0, ), (1, )]
@@ -51,11 +51,6 @@ Meta class for auto-combining the list-valued attributes mentioned in
     >>> id (B.qux [0]) == id (A.qux [0])
     True
 """
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL                import TFL
 import _TFL._Meta.M_Class

@@ -21,10 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-
 from   _TFL.I18N import _, _T, _Tn, Translations, Config
 import  os
 

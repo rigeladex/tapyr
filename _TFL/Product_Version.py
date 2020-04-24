@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,18 +46,19 @@
 #    24-Aug-2008 (CT) Factored from `TOM.Product_Version`
 #    18-Dec-2009 (CT) `author`, `copyright_start`, and `tuple` added
 #    30-Jun-2010 (CT) `id` added
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
+#    23-Apr-2020 (CT)  Use `importlib.import_module`, not `TFL.import_module`
 #    ««revision-date»»···
 #--
-
-from   __future__            import print_function, unicode_literals
 
 from   _TFL                  import TFL
 
 import _TFL._Meta.Object
-import _TFL.import_module
 
 from   _TFL.IV_Number        import *
 from   _TFL.pyk              import pyk
+
+from   importlib              import import_module
 
 import sys
 import time
@@ -147,8 +148,8 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
     # end def product_info
 
     def print_infos (self, cmd) :
-        """Provide information requested by `cmd' (which must be an object
-           returned by `command_spec').
+        """Provide information requested by `cmd` (which must be an object
+           returned by `command_spec`).
         """
         if cmd.all or cmd.c_macro :
             print (self.as_c_macros   ())
@@ -234,7 +235,7 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
         if pkg :
             pns  = getattr (pkg, pns_name)
             try :
-                lp_module = TFL.import_module ("%s.Lic_Comps" % pkg_name)
+                lp_module = import_module ("%s.Lic_Comps" % pkg_name)
             except ImportError :
                 pass
             else :
@@ -276,7 +277,7 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __setattr__ (self, name, value) :
-        """Prevent the changing of attributes other than entries of `ivn'.
+        """Prevent the changing of attributes other than entries of `ivn`.
 
            Once an attribute is set, it cannot be changed to another value.
         """

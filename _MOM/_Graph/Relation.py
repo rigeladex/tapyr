@@ -36,8 +36,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _MOM                   import MOM
 from   _TFL                   import TFL
 
@@ -52,7 +50,6 @@ import _TFL.Decorator
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
-@pyk.adapt__str__
 class Connector (TFL.Meta.Object) :
     """Connector of a relation to a node."""
 

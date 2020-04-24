@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.MF3.
@@ -53,9 +53,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _GTW                     import GTW
 from   _MOM                     import MOM
 from   _TFL                     import TFL
@@ -64,7 +61,6 @@ from   _MOM.import_MOM          import Q
 
 import _MOM._Attr.Completer
 
-from   _TFL._Meta.M_Class       import BaM
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import uniq
 from   _TFL.pyk                 import pyk
@@ -76,7 +72,6 @@ import _TFL._Meta.Property
 from   itertools                import chain as ichain
 
 @TFL.Add_To_Class ("MF3", MOM.Attr.Completer)
-@pyk.adapt__bool__
 class _MF3_Completer_ (TFL.Meta.Object) :
 
     _real_name = "Completer"

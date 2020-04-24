@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -92,10 +92,9 @@
 #    25-Aug-2013 (CT) Change `_add` to check `hpk in table` (optimization)
 #    28-Aug-2013 (CT) Change `instance` to use `relevant_roots`, not `query`
 #    22-Feb-2016 (CT) Change `load_root` do not call `scope._setup_root`
+#     2-Apr-2020 (CT) Use generator comprehension, not `filter`
 #    ««revision-date»»···
 #--
-
-from   __future__            import unicode_literals, print_function
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -326,7 +325,7 @@ class Manager (MOM.EMS._Manager_) :
         result = pyk.itervalues (tables [root.type_name])
         if root is not Type :
             ### filter siblings derived from same `relevant_root`
-            result = pyk.ifilter (lambda x : isinstance (x, Type), result)
+            result = (r for r in result if isinstance (r, Type))
         return self.Q_Result (result)
     # end def _query_single_root
 

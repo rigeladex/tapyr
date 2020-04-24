@@ -33,9 +33,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division
-from   __future__  import print_function, unicode_literals
-
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
@@ -78,10 +75,7 @@ class M_Length (TFL.Meta.Object.__class__) :
 
 # end class M_Length
 
-@pyk.adapt__bool__
-@pyk.adapt__div__
-@pyk.adapt__str__
-class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
+class _Length_ (TFL.Meta.Object, metaclass = M_Length) :
     """Model a CSS length value.
 
     >>> print (Px (3))
@@ -365,7 +359,6 @@ class Vw (_Length_) :
 
 # end class Vw
 
-@pyk.adapt__div__
 class TRBL0 (CHJ.CSS._TRBL0_) :
     """Top/right/bottom/left spec, undefined values are 0.
 
@@ -498,7 +491,6 @@ class TRBL (CHJ.CSS._TRBL_, TRBL0) :
 
 # end class TRBL
 
-@pyk.adapt__bool__
 class HV (TFL.Meta.Object) :
     """Horizontal/vertical pair of `Length` of `TRBL`.
 

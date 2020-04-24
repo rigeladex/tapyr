@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -29,6 +29,7 @@
 #    10-Jun-2015 (CT) Add `Notification` arg `css_class`, property `datetime`
 #    ««revision-date»»···
 #--
+
 """
 Short test for the notification framework
     >>> from _GTW.File_Session import File_Session
@@ -57,8 +58,6 @@ Short test for the notification framework
     >>> session.remove ()
 """
 
-from   __future__          import print_function
-
 from   _GTW                import GTW
 from   _TFL                import TFL
 
@@ -85,11 +84,8 @@ class M_Notification_Collection (TFL.Meta.Object.__class__) :
 
 # end class M_Notification_Collection
 
-@pyk.adapt__bool__
 class Notification_Collection \
-          ( TFL.Meta.BaM
-              (TFL.Meta.Object, metaclass = M_Notification_Collection)
-          ) :
+          (TFL.Meta.Object, metaclass = M_Notification_Collection) :
     """Collection of all notifications for a session."""
 
     def __init__ (self) :
@@ -107,7 +103,7 @@ class Notification_Collection \
             result.append (head)
             result.append \
                 ( joiner.join
-                    (  pyk.text_type (s)
+                    (  str (s)
                     for s in sorted (items, key = TFL.Getter.time)
                     )
                 )
@@ -143,7 +139,6 @@ class Notification_Collection \
 
 # end class Notification_Collection
 
-@pyk.adapt__str__
 class Notification (TFL.Meta.Object) :
     """A notification based on plain text."""
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CHJ.CSS.
@@ -77,9 +77,6 @@ vendor prefixes::
 
 """
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
@@ -116,7 +113,7 @@ class Property (_Prop_) :
         name      = self.name
         prefixes  = self.prefixes
         vp_map    = self.vp_map
-        as_text   = pyk.text_type
+        as_text   = str
         if args :
             v = result [name] = " ".join (as_text (a) for a in args)
             for p in prefixes :
@@ -155,7 +152,7 @@ class Value (_Prop_) :
 
     def __call__ (self, value) :
         name   = self.name.replace       ("_", "-")
-        v      = pyk.text_type (value).replace ("_", "-")
+        v      = str (value).replace ("_", "-")
         prefs  = self.vp_map.get (value, ())
         if prefs :
             values = [v]

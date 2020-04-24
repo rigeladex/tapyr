@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,11 +33,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-### importing `unicode_literals` from `__future__` wrecks 2.7 doctest
-
 from   _TFL                       import TFL
 
 from   _TFL.portable_repr         import portable_repr
@@ -50,8 +45,6 @@ import _TFL._Meta.Object
 import math
 
 @totally_ordered
-@pyk.adapt__div__
-@pyk.adapt__str__
 class _Angle_ (TFL.Meta.Object) :
     """Model an angle"""
 

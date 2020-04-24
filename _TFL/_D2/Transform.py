@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.D2.
@@ -162,11 +162,6 @@ Model 2-dimensional affine coordinate transformations::
 
 """
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL                       import TFL
 
 from   _TFL.Angle                 import Angle, Angle_D, Angle_R
@@ -183,8 +178,6 @@ from   itertools                  import chain as ichain
 
 import math
 
-@pyk.adapt__bool__
-@pyk.adapt__str__
 class MT (TFL.Meta.Object) :
     """Matrix type.
 
@@ -239,8 +232,6 @@ class MT (TFL.Meta.Object) :
 
     ### https://en.wikipedia.org/wiki/Matrix_(mathematics)
 
-    numeric_types = pyk.int_types + (float, )
-
     def __init__ (self, * rows) :
         self.rows = rows
     # end def __init__
@@ -270,7 +261,7 @@ class MT (TFL.Meta.Object) :
     # end def T
 
     def __add__ (self, rhs) :
-        if isinstance (rhs, self.numeric_types) :
+        if isinstance (rhs, pyk.number_types) :
             result = \
                 (   tuple (tuple (x + rhs for x in row))
                 for row in self.rows
@@ -293,7 +284,7 @@ class MT (TFL.Meta.Object) :
     # end def __bool__
 
     def __mul__ (self, rhs) :
-        if isinstance (rhs, self.numeric_types) :
+        if isinstance (rhs, pyk.number_types) :
             result = \
                 (   tuple (tuple (x * rhs for x in row))
                 for row in self.rows
@@ -328,7 +319,6 @@ class MT (TFL.Meta.Object) :
 
 # end class MT
 
-@pyk.adapt__str__
 class _Affine_Transform_ (TFL.Meta.Object) :
     """Base class of affine transforms."""
 
@@ -436,7 +426,6 @@ class Rotate (_Affine_Transform_) :
 
 # end class Rotate
 
-@pyk.adapt__str__
 class Scale (_Affine_Transform_) :
     """Transform specifying a scale operation."""
 

@@ -146,11 +146,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _CAL                     import CAL
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -805,7 +800,7 @@ class Completer (_JSON_Action_PO_) :
                 except ValueError :
                     pass
                 except Exception as exc :
-                    logging.exception (pyk.text_type (exc))
+                    logging.exception (str (exc))
             eor    = self.eligible_object_restriction (completer.etn)
             result = completer.choices (scope, json, eor, self.max_completions)
         return result
@@ -901,7 +896,7 @@ class Polisher (_JSON_Action_PO_) :
                 result = self._polished \
                     (request, response, form, field, json, values)
             except ValueError as exc :
-                result ["feedback"] = pyk.text_type (exc)
+                result ["feedback"] = str (exc)
         else :
             result ["error"] = _T ("Field %s doesn't have a polisher") \
                 % (field.label, )
@@ -1641,11 +1636,9 @@ class Group (_Ancestor) :
     # end def entries
 
     def template_iter (self) :
-        for t in self.__super.template_iter () :
-            yield t
+        yield from self.__super.template_iter () 
         for e in self.entries :
-            for t in e.template_iter () :
-                yield t
+            yield from e.template_iter () 
     # end def template_iter
 
     def _add_index (self, l) :

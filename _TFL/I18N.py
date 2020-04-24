@@ -54,8 +54,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 from   _TFL            import TFL
 from   _TFL.pyk        import pyk
 from   _TFL.Record     import Record
@@ -198,14 +196,14 @@ def _load_languages (locale_dir, languages, domains, log_level) :
         Config.Languages [lang] = lang_trans = Translations.load \
             (locale_dir, lang, first_dom)
         if not isinstance (lang_trans, Translations) and log_level >= 5 :
-            pyk.fprint \
+            print \
                 ( "*** Warning, language %s for domain %s not found!"
                 % (lang, first_dom)
                 )
         for d in domains :
             new_domain = Translations.load (locale_dir, lang, d)
             if not isinstance (new_domain, Translations) and log_level >= 5 :
-                pyk.fprint \
+                print \
                     ( "*** Warning, language %s for domain %s not found!"
                     % (lang, d)
                     )
@@ -214,11 +212,11 @@ def _load_languages (locale_dir, languages, domains, log_level) :
 
 def mark (text):
     """Mark `text` for translation."""
-    return pyk.text_type (text)
+    return str (text)
 # end def mark
 
 def safe_eval (value, encoding = None) :
-    if encoding and not isinstance (value, pyk.text_type) :
+    if encoding and not isinstance (value, str) :
         try :
             value = value.decode (encoding)
         except Exception as exc :

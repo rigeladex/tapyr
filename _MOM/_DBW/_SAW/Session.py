@@ -54,9 +54,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__      import division, print_function
-from   __future__      import absolute_import, unicode_literals
-
 from   _MOM.import_MOM import MOM, Q
 from   _TFL            import TFL
 from   _TFL.pyk        import pyk
@@ -107,8 +104,7 @@ class _SAW_DB_Meta_Data_ (MOM.DB_Meta_Data) :
     # end def __getitem__
 
     def __iter__ (self) :
-        for x in self.__super.__iter__ () :
-            yield x
+        yield from self.__super.__iter__ () 
         for x in self._max_props :
             try :
                 getattr (self, x)

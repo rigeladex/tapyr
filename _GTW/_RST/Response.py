@@ -37,8 +37,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _GTW                      import GTW
 from   _TFL                      import TFL
 from   _TFL.pyk                  import pyk
@@ -62,7 +60,7 @@ class _M_Response_ (TFL.Meta.M_Auto_Update_Combined) :
 # end class _M_Response_
 
 class _RST_Response_ \
-          (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Response_)) :
+          (TFL.Meta.Object, metaclass = _M_Response_) :
     """Wrap and extend wsgi-specific Response class."""
 
     _auto_headers            = \
@@ -163,7 +161,7 @@ class _RST_Response_ \
     def set_cookie (self, name, value = "", ** kw) :
         _request  = self._request
         _request.cookies_to_delete.discard (name)
-        if isinstance (value, pyk.text_type) :
+        if isinstance (value, str) :
             value = value.encode (_request.cookie_encoding)
         return self._response.set_cookie (name, value, ** kw)
     # end def set_cookie

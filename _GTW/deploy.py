@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.
@@ -55,10 +55,9 @@
 #    10-Feb-2016 (CT) Adapt `_handle_babel_compile` to changed `TFL.Babel`
 #    10-Feb-2016 (CT) Change `_P` to apply `normpath` to `app_dir`
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
+#     2-Apr-2020 (CT) Remove `skip_modules = "_pyk3.py"` (all in on Py3 now)
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import, division, print_function #, unicode_literals
 
 from   _TFL                   import TFL
 from   _GTW                   import GTW
@@ -111,7 +110,6 @@ class GTWD_Command (TFL.Command.Root_Command) :
         , passive_name      = "passive"
         , py_path           = sys.executable
         , root_path         = "./"
-        , skip_modules      = "_pyk3.py"
         , vcs               = "git"
         )
 

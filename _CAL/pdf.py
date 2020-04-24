@@ -199,7 +199,7 @@ class PDF_Plan (PDF_P) :
     # end def seq_generator
 
     def _cooked (self, text) :
-        return pyk.text_type (text, "utf-8", "replace")
+        return str (text, "utf-8", "replace")
     # end def _cooked
 
 # end class PDF_Plan
@@ -350,8 +350,7 @@ class PDF_Plan_Year (PDF_Plan_Month) :
     head_fmt = "%b %Y"
 
     def seq_generator (self, first, last, wpp) :
-        for w in range (first, last) :
-            yield w
+        yield from range (first, last) 
     # end def seq_generator
 
 # end class PDF_Plan_Year

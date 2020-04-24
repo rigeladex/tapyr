@@ -74,8 +74,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__          import unicode_literals, print_function
-
 from   _MOM                import MOM
 from   _TFL                import TFL
 from   _TFL.pyk            import pyk
@@ -298,15 +296,15 @@ class Named_Object (Named_Value) :
 # end class Named_Object
 
 def _text_lower (s) :
-    return pyk.text_type (s).lower ()
+    return str (s).lower ()
 # end def _text_lower
 
 def _text_upper (s) :
-    return pyk.text_type (s).upper ()
+    return str (s).upper ()
 # end def _text_upper
 
 _text_ignore_case = dict \
-    ( { False        : pyk.text_type
+    ( { False        : str
       , True         : _text_lower
       }
     , lower          = _text_lower
@@ -391,7 +389,7 @@ class Typed_Collection (Root) :
     """Meta class for MOM.Attr._A_Typed_Collection_ classes."""
 
     class _Pickler_ \
-              (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Bin_Pickler_)) :
+              (TFL.Meta.Object, metaclass = _M_Bin_Pickler_) :
 
         @classmethod
         def as_cargo (cls, attr_kind, attr_type, value) :

@@ -27,8 +27,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                 import print_function
-
 from   _TFL                       import TFL
 
 from   _TFL                       import Math_Func
@@ -36,7 +34,6 @@ from   _TFL.pyk                   import pyk
 from   _TFL.Regexp                import Regexp, re
 from   _TFL._Meta.totally_ordered import totally_ordered
 
-@pyk.adapt__div__
 @totally_ordered
 class Ratio :
     """Model ratio of two integer numbers.

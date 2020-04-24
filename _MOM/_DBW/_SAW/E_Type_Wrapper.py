@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -85,9 +85,6 @@
 #    24-Oct-2016 (CT) Add `iea_type_restriction_map` to `sa_joins_strict`
 #    ««revision-date»»···
 #--
-
-from   __future__                 import division, print_function
-from   __future__                 import absolute_import, unicode_literals
 
 from   _TFL                       import TFL
 from   _TFL.pyk                   import pyk
@@ -382,8 +379,7 @@ class _E_Type_Wrapper_ (_E_Type_Wrapper_Base_) :
             if p :
                 if p.sa_table is not None :
                     yield p
-                for a in p.ancestors :
-                    yield a
+                yield from p.ancestors
         return tuple (uniq (_gen (self)))
     # end def ancestors
 
@@ -409,8 +405,7 @@ class _E_Type_Wrapper_ (_E_Type_Wrapper_Base_) :
         def _gen (self) :
             for c in self.children :
                 yield c
-                for d in c.descendents :
-                    yield d
+                yield from c.descendents
         return tuple (uniq (_gen (self)))
     # end def descendents
 

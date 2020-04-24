@@ -24,9 +24,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 ### enforce import order
 import _GTW._OMP._Auth.import_Auth
 import _GTW._OMP._PAP.import_PAP
@@ -55,7 +52,7 @@ _test_DET = """
     Creating new scope MOMT__...
 
     >>> MOM   = scope.MOM
-    >>> nl    = pyk.unichr (10)
+    >>> nl    = chr (10)
     >>> a_map = _attr_map (MOM.Id_Entity)
 
     >>> for (name, DT), xs in sorted (pyk.iteritems (a_map)) :
@@ -1154,7 +1151,7 @@ _test_pickled_types = """
     Creating new scope MOMT__...
 
     >>> MOM   = scope.MOM
-    >>> nl    = pyk.unichr (10)
+    >>> nl    = chr (10)
     >>> a_map = _attr_map (MOM.Id_Entity)
 
     >>> p_types = set ()

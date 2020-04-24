@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.MF3.
@@ -115,9 +115,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import division, print_function
-from   __future__               import absolute_import, unicode_literals
-
 from   _GTW                     import GTW
 from   _MOM                     import MOM
 from   _TFL                     import TFL
@@ -132,7 +129,6 @@ from   _MOM.import_MOM          import Q
 import _MOM._Attr.Selector
 import _MOM._Attr.Type
 
-from   _TFL._Meta.M_Class       import BaM
 from   _TFL.portable_repr       import portable_repr
 from   _TFL.predicate           import filtered_join, rsplit_hst
 from   _TFL.pyk                 import pyk
@@ -475,8 +471,7 @@ class _Base_ (TFL.Meta.Object) :
         if not soc.skip :
             yield soc
             for e in soc.elements :
-                for et in e.elements_transitive () :
-                    yield et
+                yield from e.elements_transitive () 
     # end def elements_transitive
 
     def reset_once_properties (self) :
@@ -562,7 +557,7 @@ class _Base_ (TFL.Meta.Object) :
 
 # end class _Base_
 
-class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
+class _Element_ (_Base_, metaclass = _M_Element_) :
     """Base class for MF3 element classes."""
 
     id_essence          = TFL.Meta.Alias_Property ("essence")
@@ -583,8 +578,7 @@ class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
         def _gen (self) :
             for e in self.elements :
                 if isinstance (e, _Field_Composite_) and not e.skip :
-                    for f in e.field_elements :
-                        yield f
+                    yield from e.field_elements 
                 elif isinstance (e, _Field_) :
                     yield e
         return tuple (e for e in _gen (self) if not e.skip)
@@ -861,7 +855,7 @@ class _Entity_Mixin_ (_Base_) :
 
 # end class _Entity_Mixin_
 
-class _Entity_ (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
+class _Entity_ (_Entity_Mixin_, _Element_, metaclass = M_Entity) :
 
     attr_selector       = MOM.Attr.Selector.editable
 
@@ -931,7 +925,7 @@ class _Entity_ (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
 
 # end class _Entity_
 
-class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
+class _Field_Base_ (_Element_, metaclass = M_Field) :
 
     collapsed               = False
     default                 = _Base_.undef
@@ -1463,7 +1457,8 @@ class Entity (_Entity_) :
 
 # end class Entity
 
-class Entity_Rev_Ref (BaM (_Field_Entity_Mixin_, _Entity_, metaclass = M_Entity_Rev_Ref)) :
+class Entity_Rev_Ref \
+        (_Field_Entity_Mixin_, _Entity_, metaclass = M_Entity_Rev_Ref) :
     """Subform comprising an entity with a reverse reference to the enclosing
        entity.
     """
@@ -1799,7 +1794,7 @@ class Field_Ref_Hidden (Field_Entity) :
 # end class Field_Ref_Hidden
 
 @TFL.Add_To_Class ("MF3_Element", MAT._A_Rev_Ref_)
-class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
+class Field_Rev_Ref (_Field_Base_, metaclass = M_Field_Rev_Ref) :
     """Rev_Ref field: encapsulates any number of Entity_Rev_Ref referring to
        `parent.essence`.
     """
@@ -1854,10 +1849,8 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
 
     @classmethod
     def template_module_iter (cls) :
-        for tm in cls.__c_super.template_module_iter () :
-            yield tm
-        for tm in cls.proto.template_module_iter () :
-            yield tm
+        yield from cls.__c_super.template_module_iter () 
+        yield from cls.proto.template_module_iter () 
     # end def template_module_iter
 
     @TFL.Meta.Once_Property

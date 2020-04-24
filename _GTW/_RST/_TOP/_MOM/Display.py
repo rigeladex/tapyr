@@ -38,8 +38,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -76,7 +74,7 @@ class TOP_MOM_Entity (GTW.RST.TOP.MOM.Entity_Mixin, _Ancestor) :
     def changer (self) :
         admin = self.admin
         if admin :
-            return admin._get_child ("change", pyk.text_type (self.obj.pid))
+            return admin._get_child ("change", str (self.obj.pid))
     # end def changer
 
     def href_change (self) :
@@ -206,7 +204,7 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
             self._entry_map = {}
             self._entries   = []
             def _years (self, year) :
-                for y in pyk.xrange \
+                for y in range \
                         (year + 1, self.top.copyright_start - 1, -1) :
                     yp  = self.Year \
                         ( name      = str (y)

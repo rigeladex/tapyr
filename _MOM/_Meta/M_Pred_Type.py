@@ -77,7 +77,6 @@ class _Condition_ (MOM.Meta.M_Prop_Type) :
 
 # end class _Condition_
 
-@pyk.adapt__str__
 class Condition (_Condition_) :
     """Meta class for :class:`~_MOM._Pred.Type.Condition`
 
@@ -114,7 +113,6 @@ class Condition (_Condition_) :
 
 # end class Condition
 
-@pyk.adapt__str__
 class Quantifier (_Condition_) :
     """Meta class for quantifier predicates.
 
@@ -205,7 +203,6 @@ class U_Quantifier (Quantifier) :
 
 # end class U_Quantifier
 
-@pyk.adapt__str__
 class Unique (_Condition_) :
     """Meta class for :class:`~_MOM._Pred.Type.Unique`"""
 

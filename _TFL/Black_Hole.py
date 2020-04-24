@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -18,21 +18,21 @@
 # Revision Dates
 #    16-Aug-2000 (CT) Creation
 #    11-Feb-2006 (CT) Moved into package `TFL`
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
 from   _TFL                import TFL
 from   _TFL.pyk            import pyk
 
-@pyk.adapt__bool__
 class _Black_Hole_ :
     """Takes all function calls and attribute accesses thrown at it and
        ignores them.
 
-       Don't try too apply `dir' to `black_hole' -- it will die slowly.
+       Don't try too apply `dir` to `black_hole` -- it will die slowly.
 
-       `__coerce__' is needed to allow comparisons and the use of
-       `black_hole' with unary and binary operators.
+       `__coerce__` is needed to allow comparisons and the use of
+       `black_hole` with unary and binary operators.
 
     """
 

@@ -131,8 +131,7 @@ def moving_average (s, n) :
     [1.29]
     """
     if n == 1 :
-        for x in s :
-            yield x
+        yield from s 
     else :
         m  = float   (n)
         s  = iter    (s)

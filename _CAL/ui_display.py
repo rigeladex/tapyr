@@ -20,9 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _CAL                       import CAL
 
 import _CAL._DTW_
@@ -33,7 +30,7 @@ import datetime
 
 @ui_display.add_type (CAL._DTW_, datetime.date, datetime.time, datetime.timedelta)
 def _ui_display_date (obj) :
-    return pyk.text_type (obj)
+    return str (obj)
 # end def _ui_display_date
 
 if __name__ != "__main__" :

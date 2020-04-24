@@ -31,9 +31,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                import division, print_function
-from   __future__                import absolute_import, unicode_literals
-
 from   _MOM                      import MOM
 from   _TFL                      import TFL
 from   _TFL.pyk                  import pyk
@@ -47,7 +44,6 @@ import _TFL._Meta.Property
 
 import contextlib
 
-@pyk.adapt__bool__
 class Save_Point (TFL.Meta.Object) :
 
     def __init__ (self, con_man) :

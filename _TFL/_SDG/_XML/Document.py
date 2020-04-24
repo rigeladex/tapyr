@@ -31,8 +31,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _TFL                   import TFL
 from   _TFL.pyk               import pyk
 
@@ -46,7 +44,7 @@ import _TFL._SDG._XML.Node
 class Document (TFL.SDG.XML.Node) :
     """Model a XML document (i.e., the root element)
 
-       >>> nl = pyk.unichr (10)
+       >>> nl = chr (10)
 
        >>> d = Document ( "Memo", "First line of text"
        ...              , "& a second line of %text"
@@ -172,7 +170,7 @@ class Document (TFL.SDG.XML.Node) :
 
     def formatted (self, format_name, * args, ** kw) :
         for r in self.__super.formatted (format_name, * args, ** kw) :
-            if pyk.text_type != str and isinstance (r, pyk.text_type) :
+            if str != str and isinstance (r, str) :
                 ### Only do this for Python2
                 r = r.encode (self.encoding, "xmlcharrefreplace")
             yield r

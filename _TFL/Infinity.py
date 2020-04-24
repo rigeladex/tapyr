@@ -20,11 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL                       import TFL
 from   _TFL.pyk                   import pyk
 
@@ -32,7 +27,6 @@ from   _TFL.I18N                  import _
 
 import _TFL._Meta.Object
 
-@pyk.adapt__str__
 class _Infinity_ (TFL.Meta.Object) :
     r"""Instance that is larger than any number.
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,11 +31,6 @@
 #    23-Sep-2016 (CT) Add `json_dump.default.add_type`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-### importing `unicode_literals` from `__future__` wrecks 2.7 doctest
 
 from   _TFL        import TFL
 from   _TFL.pyk    import pyk
@@ -97,10 +92,7 @@ class _M_Currency_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Currency_
 
-@pyk.adapt__bool__
-@pyk.adapt__div__
-@pyk.adapt__str__
-class _Currency_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Currency_)) :
+class _Currency_ (TFL.Meta.Object, metaclass = _M_Currency_) :
 
     name            = "EUR"
     sloppy_name     = "EUR"
@@ -365,12 +357,12 @@ class Currency (_Currency_) :
 def _import_cb_json_dump (module) :
     @module.default.add_type (_Currency_)
     def json_encode_range (o) :
-        return pyk.text_type (o)
+        return str (o)
 # end def _import_cb_json_dump
 
 @TFL.ui_display.add_type (_Currency_)
 def _ui_display_date (obj) :
-    return pyk.text_type (obj)
+    return str (obj)
 # end def _ui_display_date
 
 if __name__ != "__main__" :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -22,13 +22,10 @@
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #     6-May-2015 (CT) Use `TFL.json_dump.to_string`
 #    21-Oct-2015 (CT) Use `as_str`, node `encoded`, for header `key`
+#    30-Mar-2020 (CT) Adapt to werkzeug 1.0
+#                     - no werkzeug.contrib.wrappers.DynamicCharsetResponseMixin
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _GTW                       import GTW
 from   _TFL                       import TFL
@@ -42,15 +39,9 @@ import _TFL._Meta.M_Class
 import _TFL.json_dump
 
 from   werkzeug.wrappers          import Response
-from   werkzeug.contrib.wrappers  import DynamicCharsetResponseMixin
 from   werkzeug.urls              import Href
 
-class _WZG_Response_ \
-          ( TFL.Meta.BaM
-              ( DynamicCharsetResponseMixin, Response
-              , metaclass = TFL.Meta.M_Class
-              )
-          ) :
+class _WZG_Response_ ( Response, metaclass = TFL.Meta.M_Class) :
     """Extend werkzeug's Response class."""
 
     _real_name           = "Response"

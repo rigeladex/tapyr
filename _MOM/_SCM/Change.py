@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.SCM.
@@ -91,8 +91,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import print_function
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
@@ -104,7 +102,6 @@ from   _TFL.portable_repr    import portable_repr
 
 import _TFL._Meta.Property
 import _TFL._Meta.Once_Property
-import _TFL.import_module
 import _TFL.json_dump
 
 import datetime
@@ -141,7 +138,7 @@ class M_Change (_Ancestor.__class__) :
 
 # end class M_Change
 
-class _Change_ (TFL.Meta.BaM (_Ancestor, metaclass = M_Change)) :
+class _Change_ (_Ancestor, metaclass = M_Change) :
     """Model a change of a MOM Scope"""
 
     kind               = "Composite"
@@ -269,8 +266,7 @@ class _Change_ (TFL.Meta.BaM (_Ancestor, metaclass = M_Change)) :
 
     def __iter__ (self) :
         yield self
-        for c in self.children :
-            yield c
+        yield from self.children
     # end def __iter__
 
     def __repr__ (self) :

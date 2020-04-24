@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -163,10 +163,10 @@
 #                     + Compare `raw`, not `e_raw`, to `""` to avoid
 #                       `UnicodeWarning` from `_help_value`
 #                     + Use `==` not `is` in `_resolve_range_1` (Py 3.8 warning)
+#     5-Apr-2020 (CT) Add `Regexp`, `Re_Replacer` argument/option
+#     6-Apr-2020 (CT) Don't use `Decimal.from_float` (Py 3.2+ doesn't need it)
 #    ««revision-date»»···
 #--
-
-from   __future__          import print_function, unicode_literals
 
 from   _TFL                import TFL
 
@@ -174,7 +174,9 @@ from   _TFL.Decorator      import getattr_safe
 from   _TFL.formatted_repr import formatted_repr
 from   _TFL.I18N           import _, _T, _Tn
 from   _TFL.portable_repr  import portable_repr, print_prepr
-from   _TFL.Regexp         import Regexp, Re_Replacer, Multi_Re_Replacer, re
+from   _TFL.predicate import split_hst, rsplit_hst
+from   _TFL.Regexp         import \
+    Regexp, Multi_Regexp, Re_Replacer, Multi_Re_Replacer, re
 from   _TFL.Trie           import Word_Trie as Trie
 from   _TFL.pyk            import pyk
 from   _TFL                import sos
@@ -187,7 +189,6 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
-import _TFL.predicate
 import _TFL.r_eval
 import _TFL.Undef
 
@@ -334,7 +335,7 @@ class Opt (Arg) :
 
 # end class Opt
 
-class _Spec_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
+class _Spec_Base_ (TFL.Meta.Object, metaclass = Arg) :
 
     auto_split    = None
     choices       = None
@@ -513,8 +514,7 @@ class _Spec_ (_Spec_Base_) :
         pat = self.range_pat
         for value in values :
             if value and pat.match (value) :
-                for v in self._resolve_range_1 (value, cao, pat) :
-                    yield v
+                yield from self._resolve_range_1 (value, cao, pat)
             else :
                 yield value
     # end def _resolve_range
@@ -553,7 +553,7 @@ class _Spec_ (_Spec_Base_) :
 
 # end class _Spec_
 
-class _Spec_O_ (TFL.Meta.BaM (_Spec_, metaclass = Opt)) :
+class _Spec_O_ (_Spec_, metaclass = Opt) :
     """Base class for option types"""
 
     kind          = "option"
@@ -642,8 +642,7 @@ class _Number_ (_Spec_) :
         head     = cook (r_head, cao)
         tail     = cook (r_tail, cao) + 1
         delta    = cook (r_delta or self.range_delta, cao)
-        for v in self._resolved_range (head, tail, delta) :
-            yield v
+        yield from self._resolved_range (head, tail, delta)
     # end def _resolve_range_1
 
     def _resolved_range (self, head, tail, delta) :
@@ -791,10 +790,8 @@ class Decimal (_Number_) :
     type_abbr     = "D"
 
     def _cook (self, value) :
-        cooker = decimal.Decimal.from_float if isinstance (value, float) \
-            else decimal.Decimal
         if value is not None :
-            return cooker (value)
+            return decimal.Decimal (value)
     # end def _cook
 
 # end class Decimal
@@ -945,7 +942,7 @@ class Help (_Spec_O_) :
             v = cao ["%s:raw" % name]
         except KeyError :
             v = ""
-        pyk.fprint \
+        print \
             ( "%s%s%-*s  : %s%s%s"
             % ( head, prefix, max_l, name, ao.__class__.__name__
               , "" if ao.max_number == 1
@@ -960,40 +957,40 @@ class Help (_Spec_O_) :
             hx      = h1
             hanging = ":" in item [:w2]
             for l in textwrap.wrap (item, w2) :
-                pyk.fprint (hx, l, sep = "")
+                print (hx, l, sep = "")
                 hx = h2 if hanging else h1
     # end def _help_ao
 
     def _help_args (self, cao, indent = 0, heading = False) :
         if heading :
-            pyk.fprint ("%sArguments of %s" % (" " * indent, cao._name))
+            print ("%sArguments of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
         max_l   = cao._max_name_length
         for arg in cao._arg_list :
             self._help_ao (arg, cao, head, max_l)
         if cao.argv :
-            pyk.fprint ()
-            pyk.fprint \
+            print ()
+            print \
                 ( "%s%-*s  : %s"
                 % (head, max_l, "argv", portable_repr (cao.argv))
                 )
     # end def _help_args
 
     def _help_bun (self, bun, cao, head, indent) :
-        pyk.fprint ("%s@%s" % (head, bun._name))
+        print ("%s@%s" % (head, bun._name))
         desc    = bun._description
         if desc :
-            pyk.fprint (head, desc, sep = "    ")
+            print (head, desc, sep = "    ")
         indent += 4
         head    = " " * indent
         max_l   = cao._max_name_length
         for k, v in sorted (pyk.iteritems (bun._kw)) :
-            pyk.fprint ("%s%-*s : %s" % (head, max_l, k, v))
+            print ("%s%-*s : %s" % (head, max_l, k, v))
     # end def _help_bun
 
     def _help_buns (self, cao, indent = 0) :
-        pyk.fprint \
+        print \
             ("%sArgument/option bundles of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
@@ -1005,7 +1002,7 @@ class Help (_Spec_O_) :
         cmd = cao._cmd
         if cmd._sub_cmd_choice :
             if heading :
-                pyk.fprint ("%sSub commands of %s" % (" " * indent, cao._name))
+                print ("%sSub commands of %s" % (" " * indent, cao._name))
             indent += 4
             head    = " " * indent
             max_l   = cao._max_name_length
@@ -1014,10 +1011,10 @@ class Help (_Spec_O_) :
                 , key = TFL.Getter [0]
                 )
             for name, sc in scs :
-                pyk.fprint \
+                print \
                     ("%s%-*s : %s" % (head, max_l, name, sc._description))
         else :
-            pyk.fprint \
+            print \
                 ("%s%s doesn't have sub commands" % (" " * indent, cao._name))
     # end def _help_cmds
 
@@ -1069,7 +1066,7 @@ class Help (_Spec_O_) :
         h2       = h1 + (" " * 4)
         w1       = self.line_length - len (h1) - len (format % (l, "", ""))
         w2       = w1 - 4
-        pyk.fprint (h0, "Possible help topics:", sep = "")
+        print (h0, "Possible help topics:", sep = "")
         for topic, desc in sorted (pyk.iteritems (map)) :
             hx     = h1
             ps     = desc.split ("\n")
@@ -1077,7 +1074,7 @@ class Help (_Spec_O_) :
             width  = w1
             for p in ps :
                 for v in textwrap.wrap (p, width) :
-                    pyk.fprint (hx, format % (l, t, v), sep = "")
+                    print (hx, format % (l, t, v), sep = "")
                     t  = ""
                 hx     = h2
                 width  = w2
@@ -1085,7 +1082,7 @@ class Help (_Spec_O_) :
 
     def _help_opts (self, cao, indent = 0, heading = False) :
         if heading :
-            pyk.fprint ("%sOptions   of %s" % (" " * indent, cao._name))
+            print ("%sOptions   of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
         max_l   = cao._max_name_length - 1
@@ -1096,15 +1093,15 @@ class Help (_Spec_O_) :
     def _help_summary (self, cao, indent) :
         head = " " * indent
         desc = cao._cmd._description
-        pyk.fprint \
+        print \
             ( "%s%s %s"
             % (head, cao._name, " ".join (self._help_summary_args (cao)))
             )
         if desc :
-            pyk.fprint (head, desc, sep = "    ")
+            print (head, desc, sep = "    ")
         if cao._bun_dict :
             next (self.nl)
-            pyk.fprint \
+            print \
                 ( "%sPossible bundles: %s"
                 % ( " " * (indent + 4)
                   , ", ".join ("@%s" % b for b in sorted (cao._bun_dict))
@@ -1190,8 +1187,8 @@ class Help (_Spec_O_) :
             , Re_Replacer (Regexp (" :: *$",   re.MULTILINE), "")
             , Re_Replacer (Regexp (":: *$",    re.MULTILINE), ":")
             )
-        pyk.fprint (h0, heading, sep = "")
-        pyk.fprint \
+        print (h0, heading, sep = "")
+        print \
             ( h1
             , sep0.join
                 (   sep1.join (textwrap.wrap (clean (p), width))
@@ -1226,20 +1223,20 @@ class Help (_Spec_O_) :
         ao_head    = "%s%s%-*s  =" % (head, prefix, max_l, name)
         ao_tail    = raw if not isinstance (raw, (list, dict)) else \
             formatted_repr (raw, level = (len (ao_head) // 2 + 1)).lstrip ()
-        pyk.fprint (ao_head, ao_tail)
+        print (ao_head, ao_tail)
         if e_cooked != e_raw :
             if isinstance (cooked, (list, dict)) :
-                pyk.fprint \
+                print \
                     (formatted_repr (cooked, level = (len (head) // 4 + 1) * 2))
             else :
-                pyk.fprint (head, cooked, sep = "    ")
+                print (head, cooked, sep = "    ")
     # end def _help_value
 
     def _help_values (self, cao, indent) :
         h0      = " " * indent
         h1      = h0  + "    "
         max_l   = cao._max_name_length
-        pyk.fprint \
+        print \
             ( "%sActual option and argument values of %s"
             % (h0, cao._name)
             )
@@ -1253,7 +1250,7 @@ class Help (_Spec_O_) :
     def _nl_gen (self) :
         yield
         while True :
-            pyk.fprint ()
+            print ()
             yield
     # end def _nl_gen
 
@@ -1369,10 +1366,8 @@ class Path (_Spec_) :
     def _resolve_range (self, values, cao) :
         def _gen (values, cao) :
             for value in sos.expanded_globs (* values) :
-                for v in self._resolve_range_1 (sos.expanded_path (value), cao):
-                    yield v
-        for v in TFL.uniq (_gen (values, cao)) :
-            yield v
+                yield from self._resolve_range_1 (sos.expanded_path (value), cao)
+        yield from TFL.uniq (_gen (values, cao))
     # end def _resolve_range
 
 # end class Path
@@ -1485,8 +1480,7 @@ class Rel_Path (Path) :
     # end def explain_resolution
 
     def _help_items (self) :
-        for i in self.__super._help_items () :
-            yield i
+        yield from self.__super._help_items ()
         explain_resolution = self.explain_resolution
         if explain_resolution :
             yield explain_resolution
@@ -1501,27 +1495,6 @@ class Rel_Path (Path) :
     # end def _resolve_range_1
 
 # end class Rel_Path
-
-class Percent (Float) :
-    """Argument or option with a percentage value,
-       specified as integer or float value between 0 and 100.
-
-       Cooked value is float between 0.0 and 1.0.
-    """
-
-    type_abbr     = "%"
-
-    def _cook (self, value) :
-        if isinstance (value, pyk.string_types) :
-            value = int (value, 0)
-        if isinstance (value, (int, float)) :
-            value = value / 100.
-        if not (0.0 <= value <= 1.0) :
-            raise (ValueError ("Invalid percentage value %s" % value))
-        return value
-    # end def _cook
-
-# end class Percent
 
 class Config (_Config_, Rel_Path) :
     """Option specifying a config-file"""
@@ -1546,6 +1519,27 @@ class Config (_Config_, Rel_Path) :
     # end def cook
 
 # end class Config
+
+class Percent (Float) :
+    """Argument or option with a percentage value,
+       specified as integer or float value between 0 and 100.
+
+       Cooked value is float between 0.0 and 1.0.
+    """
+
+    type_abbr     = "%"
+
+    def _cook (self, value) :
+        if isinstance (value, pyk.string_types) :
+            value = int (value, 0)
+        if isinstance (value, (int, float)) :
+            value = value / 100.
+        if not (0.0 <= value <= 1.0) :
+            raise (ValueError ("Invalid percentage value %s" % value))
+        return value
+    # end def _cook
+
+# end class Percent
 
 class Set (_Spec_) :
     """Argument or option that specifies one element of a set of choices"""
@@ -1582,9 +1576,14 @@ class Str (_Spec_) :
 
     type_abbr     = "S"
 
+    def cook (self, value, cao = None) :
+        result = pyk.decoded (value, self.user_config.input_encoding)
+        return result
+    # end def cook
+
 # end class Str
 
-class Str_AS (_Spec_) :
+class Str_AS (Str) :
     """Argument or option with a string value, auto-splitting"""
 
     auto_split    = ","
@@ -1592,17 +1591,106 @@ class Str_AS (_Spec_) :
 
 # end class Str
 
-class Unicode (_Spec_) :
+class Unicode (Str) :
     """Argument or option with a string value"""
 
     type_abbr     = "U"
 
-    def cook (self, value, cao = None) :
-        result = pyk.decoded (value, self.user_config.input_encoding)
+# end class Unicode
+
+class _Regexp_Arg_Mixin_ (TFL.Meta.Object) :
+
+    R_Type_combined = Multi_Regexp
+
+    re_flags        = dict \
+        ( A         = re.ASCII
+        , I         = re.IGNORECASE
+        , M         = re.MULTILINE
+        , S         = re.DOTALL
+        , X         = re.VERBOSE
+        )
+
+    def combine (self, values) :
+        if len (values) > 1 :
+            return self.R_Type_combined (* values)
+        elif values :
+            return values [0]
+    # end def combine
+
+    def _re_flags (self, fs) :
+        result = 0
+        for f in fs :
+            try :
+                v = self.re_flags [f.upper ()]
+            except KeyError :
+                raise \
+                    ( TFL.CAO.Err
+                        ( "Invalid flag `%s`; use one of: %s"
+                        % (f, ", ".join (sorted (self.re_flags.keys ())))
+                        )
+                    )
+            else :
+                result |= v
         return result
+    # end def _re_flags
+
+# end class _Regexp_Arg_Mixin_
+
+class _Regexp_Arg_ (_Regexp_Arg_Mixin_, Str) :
+    """Argument or option specifying a Regexp."""
+
+    _real_name    = "Regexp"
+
+    auto_split    = "\n"
+    type_abbr     = "~"
+
+    def cook (self, value, cao = None) :
+        if value :
+            result = self.__super.cook (value, cao)
+            return Regexp (result)
     # end def cook
 
-# end class Unicode
+# end class _Regexp_Arg_
+
+class _Regexp_Arg_D_ (_Regexp_Arg_Mixin_, Str) :
+    """Argument or option specifying a delimited Regexp."""
+
+    _real_name = "Regexp_D"
+
+    auto_split    = "\n"
+
+    def cook (self, value, cao = None) :
+        if value :
+            value    = self.__super.cook (value, cao)
+            delim    = value [0]
+            p, s, fs = rsplit_hst (value [1:], delim)
+            flags    = self._re_flags (fs)
+            return Regexp (p, flags)
+    # end def cook
+
+# end class _Regexp_Arg_D_
+
+class _Re_Replacer_Arg_ (_Regexp_Arg_Mixin_, Str) :
+    """Argument or option specifying a regexp replacement."""
+
+    _real_name      = "Re_Replacer"
+
+    R_Type_combined = Multi_Re_Replacer
+
+    auto_split    = "\n"
+    type_abbr     = "/"
+
+    def cook (self, value, cao = None) :
+        if value :
+            value    = self.__super.cook (value, cao)
+            delim    = value [0]
+            p, s, x  = split_hst (value [1:], delim)
+            r, s, fs = split_hst (x,          delim)
+            flags    = self._re_flags (fs)
+            return Re_Replacer (p, r, flags)
+    # end def cook
+
+# end class _Re_Replacer_Arg_
 
 class Time_Zone (_User_Config_Entry_) :
     """Time zone to use."""
@@ -1837,9 +1925,9 @@ class Cmd (TFL.Meta.Object) :
                 result = self.parse (_argv)
             except Exception as exc :
                 if help :
-                    pyk.fprint ("Usage :")
+                    print ("Usage :")
                     self.help  (CAO (self), indent = 4)
-                    pyk.fprint ("", exc, sep = "\n")
+                    print ("", exc, sep = "\n")
                     raise SystemExit (1)
                 else :
                     raise
@@ -2056,7 +2144,7 @@ class CAO (TFL.Meta.Object) :
                 def info (type, value, tb) :
                     import traceback, pdb
                     traceback.print_exception (type, value, tb)
-                    pyk.fprint ()
+                    print ()
                     pdb.pm     () # post-mortem mode
                 sys.excepthook = info
         if self.help :
@@ -2067,7 +2155,7 @@ class CAO (TFL.Meta.Object) :
     # end def __call__
 
     def ABORT (self, reason, err_no = 42) :
-        pyk.fprint ("*** Error:", reason)
+        print ("*** Error:", reason)
         raise SystemExit (err_no)
     # end def ABORT
 
@@ -2370,19 +2458,19 @@ def expect_except (* Xs, ** kw) :
 # end def expect_except
 
 def show (cao) :
-    pyk.fprint (cao._name)
-    pyk.fprint \
+    print (cao._name)
+    print \
         ( "    Arguments  :"
         , portable_repr (sorted (a.name for a in cao._arg_list))
         )
     for o in sorted (cao._opt_dict) :
-        pyk.fprint ("    -%-9s : %s" % (o, portable_repr (getattr (cao, o))))
+        print ("    -%-9s : %s" % (o, portable_repr (getattr (cao, o))))
     for a in cao._arg_list :
-        pyk.fprint \
+        print \
             ( "    %-10s : %s"
             % (a.name, portable_repr (getattr (cao, a.name)))
             )
-    pyk.fprint ("    argv       : %s" % (portable_repr (cao.argv), ))
+    print ("    argv       : %s" % (portable_repr (cao.argv), ))
 # end def show
 
 ### «text» ### start of documentation

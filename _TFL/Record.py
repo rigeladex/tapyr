@@ -46,11 +46,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL                import TFL
 
 from   _TFL.portable_repr  import portable_repr
@@ -59,7 +54,6 @@ from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
 
-@pyk.adapt__bool__
 class Record (TFL.Meta.Object) :
     """Class emulating a struct/record (but dynamically).
 

@@ -43,8 +43,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
@@ -74,7 +72,7 @@ class _Meta_ (TFL.Meta.M_Class) :
 
 # end class _Meta_
 
-class HTTP_Method (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _Meta_)) :
+class HTTP_Method (TFL.Meta.Object, metaclass = _Meta_) :
     """Base class for HTTP methods."""
 
     needs_body                 = True

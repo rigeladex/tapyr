@@ -21,9 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import division, print_function
-from   __future__            import absolute_import, unicode_literals
-
 from   _MOM                  import MOM
 
 import _MOM._DBW._SAW

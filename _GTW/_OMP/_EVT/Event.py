@@ -46,8 +46,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                 import print_function, unicode_literals
-
 from   _MOM.import_MOM            import *
 from   _MOM._Attr.Type            import *
 from   _MOM._Attr.Date_Interval   import *

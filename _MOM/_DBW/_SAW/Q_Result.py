@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -65,9 +65,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                import division, print_function
-from   __future__                import absolute_import, unicode_literals
-
 from   _TFL                      import TFL
 
 from   _MOM.import_MOM           import MOM, Q
@@ -90,7 +87,6 @@ import _TFL.Regexp
 import itertools
 import operator
 
-@pyk.adapt__bool__
 class _Base_ (TFL.Meta.Object) :
     """Base class for SAW Q_Result classes"""
 
@@ -287,8 +283,7 @@ class _Base_ (TFL.Meta.Object) :
     def row_iter (self, session, ** kw) :
         result = self._execute (session, self.sa_query, ** kw)
         try :
-            for row in result :
-                yield row
+            yield from result 
         finally :
             result.close ()
     # end def row_iter
@@ -346,8 +341,7 @@ class _Base_ (TFL.Meta.Object) :
     def _get_group_by (self, columns) :
         ETW = getattr (self, "ETW", None)
         if ETW is None :
-            for c in columns :
-                yield c
+            yield from columns 
         else :
             ETW_Q = ETW.QC
             for c in columns :
@@ -400,8 +394,7 @@ class _Base_ (TFL.Meta.Object) :
                 yield element
             session.q_cache [self] = result
         else :
-            for element in result :
-                yield element
+            yield from result 
     # end def __iter__
 
     _fix_by     = TFL.Re_Replacer ("\s+((?:GROUP|ORDER) BY)", "\n     \\1")
@@ -462,8 +455,6 @@ class _Attr_Base_ (_Base_) :
             kind   = getattr (col, "MOM_Kind", None)
             if kind is not None :
                 result = kind.from_pickle_cargo (scope, (result, ))
-        if isinstance (result, pyk.long_types) :
-            result = int (result)
         return result
     # end def _col_value_from_row
 
@@ -471,8 +462,7 @@ class _Attr_Base_ (_Base_) :
         def _gen (cols) :
             for c in cols :
                 if isinstance (c, MOM.DBW.SAW.Attr._Kind_Wrapper_C_) :
-                    for cc in c.columns :
-                        yield cc
+                    yield from c.columns 
                 else :
                     yield c
         sa_query = self._sa_query

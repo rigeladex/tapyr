@@ -32,9 +32,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division
-from   __future__  import print_function, unicode_literals
-
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
@@ -63,7 +60,7 @@ class M_Rule (TFL.Meta.Object.__class__) :
 
 # end class M_Rule
 
-class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
+class Rule (TFL.Meta.Object, metaclass = M_Rule) :
     r"""Model a CSS rule.
 
     >>> tr = Rule_Pseudo ("target", background_color = "yellow", color = "red")
@@ -235,8 +232,7 @@ class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
         if self.declarations :
             yield self
         for c in self.children :
-            for r in c :
-                yield r
+            yield from c 
     # end def __iter__
 
     def __str__ (self) :

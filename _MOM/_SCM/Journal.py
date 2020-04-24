@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.SCM.
@@ -18,11 +18,9 @@
 # Revision Dates
 #     6-May-2015 (CT) Creation
 #     8-May-2015 (CT) Put journal files in date-specific directories
+#     6-Apr-2020 (CT) Pass `Filename` instance directly to `open`
 #    ««revision-date»»···
 #--
-
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -80,7 +78,7 @@ class Journal (TFL.Meta.Object) :
 
     def load (self, file_name) :
         fn = TFL.Filename (file_name, default__dir = self.directory)
-        with open (fn.name, "rb") as file :
+        with open (fn, "rb") as file :
             cargo = json.load (file)
         result = MOM.SCM.Summary.from_json_cargo (cargo)
         return result

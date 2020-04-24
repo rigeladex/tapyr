@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -68,8 +68,6 @@
 #     4-Jan-2017 (CT) Add `bir_admin` guard to `Regatta._get_child`
 #    ««revision-date»»···
 #--
-
-from   __future__ import absolute_import, division, print_function, unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -865,12 +863,12 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
                 , request       = request
                 )
         except Exception as exc :
-            pyk.fprint \
+            print \
                 ( "Sending regatta registration email to %r failed "
                   "with exception %s"
                 % (email, exc)
                 )
-            pyk.fprint (message)
+            print (message)
     # end def _send_registration_email
 
 # end class _Regatta_Mixin_

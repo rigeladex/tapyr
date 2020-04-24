@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,11 +28,6 @@
 #     8-May-2017 (CT) Add optional argument `index` to `list_push`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL                  import TFL
 from   _TFL.pyk              import pyk
@@ -95,7 +90,7 @@ def dict_let (dct, ** kw) :
 def list_push (list, item, index = None) :
     """Context manager for temporarily pushing `item` onto `list`.
 
-    >>> l = pyk.range (0, 5)
+    >>> l = list (range (0, 5))
     >>> l
     [0, 1, 2, 3, 4]
 
@@ -165,7 +160,7 @@ def time_block (fmt = "Execution time: %s", out = None, cb = None) :
             msg = fmt % (delta, )
         except (TypeError, ValueError) as exc :
             msg = "%s: %s" % (fmt, delta)
-        pyk.fprint (msg, file = out)
+        print (msg, file = out)
 # end def time_block
 
 __doc__ = """

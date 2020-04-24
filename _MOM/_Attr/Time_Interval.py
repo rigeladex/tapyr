@@ -24,8 +24,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
-
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_
 
@@ -34,7 +32,6 @@ from   _TFL.pyk              import pyk
 
 _Ancestor_Essence = MOM.An_Entity
 
-@pyk.adapt__bool__
 class Time_Interval (_Ancestor_Essence) :
     """Model a time interval (start, finish)"""
 

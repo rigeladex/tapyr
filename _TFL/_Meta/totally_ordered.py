@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -114,11 +114,6 @@ old-style `__cmp__` is defined::
     TypeError: Totally ordered class `T` must define at least one of: __lt__, __gt__, __le__, __ge__, or __cmp__
 
 """
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL              import TFL
 from   _TFL.pyk          import pyk

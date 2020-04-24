@@ -28,10 +28,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-
 from   _TFL                       import TFL
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch

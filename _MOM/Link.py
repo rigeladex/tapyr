@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -81,7 +81,7 @@ import _MOM.Entity
 _Ancestor_Essence = MOM.Id_Entity
 
 class _MOM_Link_ \
-          (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link)) :
+          (_Ancestor_Essence, metaclass = MOM.Meta.M_Link) :
     """Root class for link-types of MOM meta object model."""
 
     _real_name            = "Link"
@@ -127,7 +127,7 @@ Link = _MOM_Link_ # end class
 
 _Ancestor_Essence = Link
 
-class Link1 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link1)) :
+class Link1 (_Ancestor_Essence, metaclass = MOM.Meta.M_Link1) :
     """Common base class for essential unary links of MOM"""
 
     is_partial            = True
@@ -153,7 +153,7 @@ class Link1 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link1)) :
 _Ancestor_Essence = Link
 
 class _MOM_Link_n_ \
-          (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link_n)) :
+          (_Ancestor_Essence, metaclass = MOM.Meta.M_Link_n) :
     """Root class for link-types of MOM meta object model with more than 1 role."""
 
     is_partial            = True
@@ -172,7 +172,7 @@ _Link_n_ = _MOM_Link_n_ # end class
 
 _Ancestor_Essence = _Link_n_
 
-class Link2 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link2)) :
+class Link2 (_Ancestor_Essence, metaclass = MOM.Meta.M_Link2) :
     """Common base class for essential binary links of MOM."""
 
     is_partial            = True
@@ -181,7 +181,7 @@ class Link2 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link2)) :
 
 _Ancestor_Essence = _Link_n_
 
-class Link3 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link3)) :
+class Link3 (_Ancestor_Essence, metaclass = MOM.Meta.M_Link3) :
     """Common base class for essential ternary links of MOM."""
 
     is_partial            = True
@@ -199,10 +199,8 @@ class Link3 (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Link3)) :
 
 @TFL.Add_To_Class ("_Destroyed_Mixin_", Link1)
 class _Link1_Destroyed_Mixin_ \
-          ( TFL.Meta.BaM
-              ( MOM._Id_Entity_Destroyed_Mixin_
-              , metaclass = MOM.Meta.M_E_Type_Link1_Destroyed
-              )
+          ( MOM._Id_Entity_Destroyed_Mixin_
+          , metaclass = MOM.Meta.M_E_Type_Link1_Destroyed
           ) :
     """Mixin triggering an exception on any attribute access to a
        destroyed Link1.
@@ -212,10 +210,8 @@ class _Link1_Destroyed_Mixin_ \
 
 @TFL.Add_To_Class ("_Destroyed_Mixin_", Link2)
 class _Link2_Destroyed_Mixin_ \
-          ( TFL.Meta.BaM
-              ( MOM._Id_Entity_Destroyed_Mixin_
-              , metaclass = MOM.Meta.M_E_Type_Link2_Destroyed
-              )
+          ( MOM._Id_Entity_Destroyed_Mixin_
+          , metaclass = MOM.Meta.M_E_Type_Link2_Destroyed
           ) :
     """Mixin triggering an exception on any attribute access to a
        destroyed Link2.
@@ -225,10 +221,8 @@ class _Link2_Destroyed_Mixin_ \
 
 @TFL.Add_To_Class ("_Destroyed_Mixin_", Link3)
 class _Link3_Destroyed_Mixin_ \
-          ( TFL.Meta.BaM
-              ( MOM._Id_Entity_Destroyed_Mixin_
-              , metaclass = MOM.Meta.M_E_Type_Link3_Destroyed
-              )
+          ( MOM._Id_Entity_Destroyed_Mixin_
+          , metaclass = MOM.Meta.M_E_Type_Link3_Destroyed
           ) :
     """Mixin triggering an exception on any attribute access to a
        destroyed Link3.
@@ -238,10 +232,8 @@ class _Link3_Destroyed_Mixin_ \
 
 @TFL.Add_To_Class ("_Reload_Mixin_", Link1)
 class _Link1_Reload_Mixin_ \
-          ( TFL.Meta.BaM
-              ( MOM._Id_Entity_Reload_Mixin_
-              , metaclass = MOM.Meta.M_E_Type_Link1_Reload
-              )
+          ( MOM._Id_Entity_Reload_Mixin_
+          , metaclass = MOM.Meta.M_E_Type_Link1_Reload
           ) :
     """Mixin triggering a reload from the database on any attribute access."""
 
@@ -249,10 +241,8 @@ class _Link1_Reload_Mixin_ \
 
 @TFL.Add_To_Class ("_Reload_Mixin_", Link2)
 class _Link2_Reload_Mixin_ \
-          ( TFL.Meta.BaM
-              ( MOM._Id_Entity_Reload_Mixin_
-              , metaclass = MOM.Meta.M_E_Type_Link2_Reload
-              )
+          ( MOM._Id_Entity_Reload_Mixin_
+          , metaclass = MOM.Meta.M_E_Type_Link2_Reload
           ) :
     """Mixin triggering a reload from the database on any attribute access."""
 
@@ -260,10 +250,8 @@ class _Link2_Reload_Mixin_ \
 
 @TFL.Add_To_Class ("_Reload_Mixin_", Link3)
 class _Link3_Reload_Mixin_ \
-          ( TFL.Meta.BaM
-              ( MOM._Id_Entity_Reload_Mixin_
-              , metaclass = MOM.Meta.M_E_Type_Link3_Reload
-              )
+          ( MOM._Id_Entity_Reload_Mixin_
+          , metaclass = MOM.Meta.M_E_Type_Link3_Reload
           ) :
     """Mixin triggering a reload from the database on any attribute access."""
 

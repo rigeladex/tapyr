@@ -22,16 +22,11 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL                  import TFL
 from   _TFL.pyk              import pyk
 import _TFL._Meta.M_Class
 
-class Alias_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
+class Alias_Dict (dict, metaclass = TFL.Meta.M_Class) :
     """A dictionary with support for aliases for the keys.
 
        >>> ad = Alias_Dict (a = 1, b = 42, z = 137)

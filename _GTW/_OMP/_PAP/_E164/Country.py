@@ -31,9 +31,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import division, print_function
-from   __future__               import absolute_import, unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -154,9 +151,7 @@ class M_Country (TFL.Meta.Object.__class__) :
 
 # end class M_Country
 
-@pyk.adapt__bool__
-@pyk.adapt__str__
-class Country (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Country)) :
+class Country (TFL.Meta.Object, metaclass = M_Country) :
     """Provide phone number mapping for a specific country."""
 
     Table              = {}
@@ -285,7 +280,6 @@ class Country (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Country)) :
 
 # end class Country
 
-@pyk.adapt__bool__
 class Country_0 (Country) :
     """Country without further information about ndc and sn."""
 

@@ -21,11 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 from   _TFL.pyk              import pyk
@@ -91,7 +86,7 @@ class _M_Structured_ (MOM.Meta.M_Attr_Type.Root) :
 
 # end class _M_Structured_
 
-class _A_Structured_ (TFL.Meta.BaM (A_Attr_Type, metaclass = _M_Structured_)) :
+class _A_Structured_ (A_Attr_Type, metaclass = _M_Structured_) :
     """Common base class for attributes with internal structure."""
 
     Kind_Mixins         = (MOM.Attr._Structured_Mixin_, )

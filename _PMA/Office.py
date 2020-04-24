@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -84,8 +84,7 @@ class Office (TFL.Meta.Object) :
         for b in self.delivery_boxes + self.storage_boxes :
             yield b
             if transitive :
-                for sb in self.sub_boxes (b, transitive) :
-                    yield sb
+                yield from self.sub_boxes (b, transitive)
     # end def msg_boxes
 
     def save_status (self) :
@@ -99,8 +98,7 @@ class Office (TFL.Meta.Object) :
         for sb in box.sub_boxes :
             yield sb
             if transitive :
-                for ssb in self.sub_boxes (sb, transitive) :
-                    yield ssb
+                yield from self.sub_boxes (sb, transitive)
     # end def sub_boxes
 
     def _delivery_boxes (self, da) :

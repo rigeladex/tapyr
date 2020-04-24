@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -24,9 +24,6 @@
 #    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
-
-from   __future__          import division, print_function
-from   __future__          import absolute_import, unicode_literals
 
 from   _TFL                import TFL
 
@@ -155,12 +152,12 @@ class _Wrapper_ (TFL.Meta.Object) :
     # end def hexdigest_size
 
     def b64digest (self, altchars = "_-", strip = False) :
-        if isinstance (altchars, pyk.text_type) :
+        if isinstance (altchars, str) :
             altchars = pyk.encoded (altchars)
         result = base64.b64encode (self.digest (), altchars)
         if strip :
             result = result.rstrip (b"=")
-        return pyk.text_type (result, "ASCII")
+        return str (result, "ASCII")
     # end def b64digest
 
     @classmethod
@@ -213,14 +210,14 @@ class _Wrapper_ (TFL.Meta.Object) :
         @classmethod
         def _fixed_time_compare (cls, lhs, rhs) :
             s = 0
-            for l, r in pyk.izip (lhs, rhs) :
+            for l, r in zip (lhs, rhs) :
                 s |= ord (l) ^ ord (r)
             return s == 0
         # end def _fixed_time_compare
 
 # end class _Wrapper_
 
-class HMAC (TFL.Meta.BaM (_Wrapper_, metaclass = _M_Secure_Hash_)) :
+class HMAC (_Wrapper_, metaclass = _M_Secure_Hash_) :
     """Wrapper around an HMAC algorithm with portable interface."""
 
     class _Mixin_ (_Wrapper_._Wrapper_Mixin_) :
@@ -239,7 +236,7 @@ class HMAC (TFL.Meta.BaM (_Wrapper_, metaclass = _M_Secure_Hash_)) :
 
 # end class HMAC
 
-class Secure_Hash (TFL.Meta.BaM (_Wrapper_, metaclass = _M_Secure_Hash_)) :
+class Secure_Hash (_Wrapper_, metaclass = _M_Secure_Hash_) :
     """Wrapper around a secure hash algorithm with portable interface."""
 
     _rounds_map      = dict \

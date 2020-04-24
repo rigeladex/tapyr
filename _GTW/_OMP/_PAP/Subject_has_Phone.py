@@ -29,8 +29,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__             import unicode_literals
-
 from   _MOM.import_MOM        import *
 
 from   _GTW._OMP._PAP.Subject_has_Property   import Subject_has_Property

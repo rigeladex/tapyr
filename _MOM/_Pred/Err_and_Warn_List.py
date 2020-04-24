@@ -28,7 +28,6 @@ import _MOM._Pred
 
 import _TFL._Meta.Object
 
-@pyk.adapt__bool__
 class Err_and_Warn_List (TFL.Meta.Object) :
 
     def __init__ (self, errors, warnings) :

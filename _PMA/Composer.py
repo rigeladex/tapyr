@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -62,13 +62,12 @@
 #    14-Mar-2016 (CT) Change option types from `S` to `U` for `-subject`...
 #    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
 #    18-Sep-2017 (CT) Pass `use_file__mime` to `Mime.Part`
+#    25-Mar-2020 (CT) Use `Lib.policy.default`
+#                     * with the default policy (`Lib.policy.compat32`),
+#                       unicode headers are broken
+#    25-Mar-2020 (CT) Add option `-content_transfer_encoding`, default `8bit`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -348,6 +347,7 @@ class Composer (TFL.Meta.Object) :
                 ( buffer.replace (self.body_marker, bm_rep)
                 , PMA.default_encoding
                 )
+            , policy = Lib.policy.default
             )
         if self.rst2html or self._rest2html_header in buffer :
             plain    = result
@@ -392,10 +392,9 @@ class Composer (TFL.Meta.Object) :
         if buffer :
             email = self._as_message (buffer)
             self._add_header_maybe (email, "Date", Lib.formatdate)
-            subject = email.get ("Subject")
-            email   = self._process_attachement_headers (email)
-        if email and self.smtp :
-            self._finish__send (email, send_cb = self.send_cb)
+            email = self._process_attachement_headers (email)
+            if email and self.smtp :
+                self._finish__send (email, send_cb = self.send_cb)
         if bfn is not None :
             TFL.sos.unlink (bfn)
     # end def _finish_edit
@@ -505,12 +504,13 @@ class Composer (TFL.Meta.Object) :
 def _main (cmd) :
     Sender = PMA.Sender_Tester if cmd.Debug else PMA.Sender
     smtp   = Sender \
-        ( local_hostname = cmd.mail_local_hostname
-        , mail_host      = cmd.mail_host
-        , mail_port      = cmd.mail_port
-        , password       = cmd.mail_word
-        , user           = cmd.mail_user
-        , use_tls        = cmd.tls
+        ( local_hostname            = cmd.mail_local_hostname
+        , mail_host                 = cmd.mail_host
+        , mail_port                 = cmd.mail_port
+        , password                  = cmd.mail_word
+        , user                      = cmd.mail_user
+        , use_tls                   = cmd.tls
+        , content_transfer_encoding = cmd.content_transfer_encoding
         )
     attach = sorted \
         ( ichain
@@ -575,6 +575,8 @@ _Command = TFL.CAO.Cmd \
             "?Email(s) to be put on blind carbon copy (default: sender's email)"
         , "-bounce:S?Message to resend"
         , "-config:C?File specifying defaults for options"
+        , "-content_transfer_encoding:S=8bit"
+            "?Possible values: 7bit, 8bit, quoted-printable, base64"
         , "-Debug:B?Use SMTP_Tester for debugging"
         , "-domain:S?Domain of sender"
         , "-editor:S?Command used to start editor"

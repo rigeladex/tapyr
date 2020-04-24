@@ -242,9 +242,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import absolute_import, division
-from   __future__            import print_function, unicode_literals
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
@@ -267,7 +264,7 @@ import logging
 
 pickle = pyk.pickle
 
-class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
+class Kind (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind) :
     """Root class of attribute kinds to be used as properties for essential
        attributes of the MOM meta object model.
     """
@@ -476,8 +473,7 @@ class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
     # end def to_save
 
     def _checkers (self, e_type) :
-        for c in self.attr._checkers (e_type, self) :
-            yield c
+        yield from self.attr._checkers (e_type, self) 
     # end def _checkers
 
     def _check_sanity (self, attr_type, e_type) :
@@ -717,8 +713,7 @@ class _Required_Mixin_ (Kind) :
             , kind       = MOM.Pred.Object
             , Error_Type = MOM.Error.Required_Empty
             )
-        for c in self.__super._checkers (e_type) :
-            yield c
+        yield from self.__super._checkers (e_type) 
     # end def _checkers
 
     def has_substance (self, obj) :

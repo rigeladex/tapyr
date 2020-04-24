@@ -22,11 +22,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL             import TFL
 import _TFL._Meta.M_Class
 
@@ -58,7 +53,7 @@ class M_Mixin_NS (TFL.Meta.M_Class) :
 
 # end class M_Mixin_NS
 
-class Mixin_NS (TFL.Meta.BaM (object, metaclass = M_Mixin_NS)) :
+class Mixin_NS (object, metaclass = M_Mixin_NS) :
     """Mixin namespace: provides access to mixin functionality via a single
        object.
 

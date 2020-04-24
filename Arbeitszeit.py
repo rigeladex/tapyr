@@ -28,8 +28,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
-
 from   _TFL                     import TFL
 from   _CAL                     import CAL
 
@@ -56,7 +54,7 @@ class M_Entry (TFL.Meta.Object.__class__) :
 
 # end class M_Entry
 
-class _Entry_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Entry)) :
+class _Entry_ (TFL.Meta.Object, metaclass = M_Entry) :
     """Base class for entries"""
 
     free    = 0.0
@@ -166,7 +164,6 @@ class Work (_Hour_Entry_) :
 
 # end class Work
 
-@pyk.adapt__bool__
 class Period (TFL.Meta.Object) :
     """Collect entries for a period of work."""
 

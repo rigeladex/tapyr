@@ -21,11 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _ATAX                    import ATAX
 from   _CAL                     import CAL
 from   _TFL                     import TFL
@@ -39,7 +34,6 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 import _TFL.CAO
 
-@pyk.adapt__str__
 class FB_Entry_P (FB_Entry) :
     """One entry of Fahrtenbuch_P"""
 
@@ -105,7 +99,7 @@ def _main (cmd) :
     ATAX.Command.load_config (cmd)
     Fahrtenbuch_P.km_geld = cmd.km_geld
     fb = Fahrtenbuch_P.from_file (cmd.user, cmd.fahrtenbuch)
-    pyk.fprint (fb.tex ())
+    print (fb.tex ())
 # end def _main
 
 _Command = TFL.CAO.Cmd \

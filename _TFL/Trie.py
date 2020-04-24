@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -27,11 +27,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-### importing `unicode_literals` from `__future__` wrecks 2.7 doctest
-
 from   _TFL        import TFL
 from   _TFL.pyk    import pyk
 
@@ -40,7 +35,7 @@ import _TFL._Meta.Object
 
 import itertools
 
-class Node (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Autosuper)) :
+class Node (object, metaclass = TFL.Meta.M_Autosuper) :
     """Node of a trie."""
 
     __slots__     = ("children", "value")
@@ -419,11 +414,10 @@ class Word_Trie (TFL.Meta.Object) :
         """Generate all words with a Levenshtein-distance <= max_edits to word."""
         ### http://en.wikipedia.org/wiki/Levenshtein_distance
         ### http://stevehanov.ca/blog/index.php?id=114
-        row_1 = pyk.range (len (word) + 1)
+        row_1 = list (range (len (word) + 1))
         for char, node in pyk.iteritems (self.root.children) :
-            for m in self._match_iter_inner \
-                    (col_iter, word, max_edits, char, node, row_1) :
-                yield m
+            yield from self._match_iter_inner \
+                    (col_iter, word, max_edits, char, node, row_1) 
     # end def _match_iter
 
     def _match_iter_inner (self, col_iter, word, max_edits, char, node, row_1, row_2 = None, char_1 = None) :
@@ -439,11 +433,10 @@ class Word_Trie (TFL.Meta.Object) :
         if any (c <= max_edits for c in row_c) :
             char_1 = char
             for char, node in pyk.iteritems (node.children) :
-                for m in self._match_iter_inner \
+                yield from self._match_iter_inner \
                         ( col_iter, word, max_edits
                         , char, node, row_c, row_1, char_1
-                        ) :
-                    yield m
+                        ) 
     # end def _match_iter_inner
 
     def __iter__ (self) :

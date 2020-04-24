@@ -87,7 +87,6 @@ class _Entity_Summary_ (TFL.Meta.Object) :
 
 # end class _Entity_Summary_
 
-@pyk.adapt__bool__
 class Attr_Summary (TFL.Meta.Object) :
     """Change summary for a single attribute of a single `pid`."""
 
@@ -132,7 +131,6 @@ class Attr_Summary (TFL.Meta.Object) :
 
 # end class Attr_Summary
 
-@pyk.adapt__bool__
 class Attr_C_Summary (_Entity_Summary_) :
     """Change summary for a composite attribute of a single `pid`."""
 
@@ -247,7 +245,6 @@ class Attr_C_Summary (_Entity_Summary_) :
 
 # end class Attr_C_Summary
 
-@pyk.adapt__bool__
 class Pid (_Entity_Summary_) :
     """Change summary for a single `pid`."""
 
@@ -367,7 +364,6 @@ class Pid (_Entity_Summary_) :
 
 # end class Pid
 
-@pyk.adapt__bool__
 class Summary (TFL.Meta.Object) :
     """Summary of changes per `pid`"""
 

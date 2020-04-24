@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -149,46 +149,23 @@
 #    10-Oct-2016 (CT) Add `__version__`
 #    11-Oct-2016 (CT) Hide `import` behind `#` in `__doc__`
 #    12-Oct-2016 (CT) Change `_Import_All` to skip `setup.py`
+#    22-Apr-2020 (CT) Add and use `DPN_Import_Finder`, `importlib`
+#                     + Add `DPN_Loader`
+#                     + Use `_add_module_getattr`, remove `_Derived_Module_`
+#                     + Factor `_Finish_Module`
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
-from   _TFL.pyk    import pyk
+from   collections import defaultdict
+from   importlib   import abc, import_module, machinery, reload, util
 
 import logging
 import re
 import sys
 
-from   collections import defaultdict
-
 def _caller_globals (depth = 1) :
     return sys._getframe (depth).f_back.f_globals
 # end def _caller_globals
-
-class _Derived_Module_ (object) :
-    """Wrapper around module exported by Derived_Package_Namespace"""
-
-    def __init__ (self, name, module, parent) :
-        self.__name__   = name
-        self.__module   = module
-        self.__parent   = parent
-    # end def __init__
-
-    def __getattr__ (self, name) :
-        if name == "__wrapped__" :
-            ### Placate inspect.unwrap of Python 3.5,
-            ### which accesses `__wrapped__` and eventually throws `ValueError`
-            raise AttributeError (name)
-        try :
-            result = getattr (self.__module, name)
-        except AttributeError :
-            result = getattr (self.__parent, name)
-        setattr (self, name, result)
-        return result
-    # end def __getattr__
-
-# end class _Derived_Module_
 
 class _Module_Space_ :
 
@@ -205,6 +182,102 @@ class _Module_Space_ :
     # end def _load
 
 # end class _Module_Space_
+
+class _DPN_Import_Finder_ (abc.MetaPathFinder) :
+    """Meta path finder for inherited modules of Derived_Package_Namespace.
+
+    For documentation, see:
+
+    https://docs.python.org/3/reference/import.html
+    https://docs.python.org/3/library/importlib.html
+    https://www.python.org/dev/peps/pep-0302/
+    https://www.python.org/dev/peps/pep-0451/
+    """
+
+    def __init__ (self) :
+        self._dpn_map = {}
+    # end def __init__
+
+    def find_spec (self, fullname, path, target = None) :
+        """Find the `ModuleSpec` for module `fullname` in `path`."""
+        result  = None
+        if path :
+            try :
+                m_name, dpn, pns_chain = self._dpn_map [path [0]]
+            except KeyError :
+                pass
+            else :
+                for pns in pns_chain :
+                    cand    = fullname.replace (m_name, pns, 1)
+                    p_spec  = util.find_spec   (cand)
+                    if p_spec is not None :
+                        break
+                if p_spec is not None :
+                    result = machinery.ModuleSpec \
+                        ( fullname, _DPN_Loader_ ()
+                        , origin        = p_spec.origin
+                        , loader_state  = dict
+                            (dpn = dpn, m_name = m_name, p_spec = p_spec)
+                        , is_package    =
+                            p_spec.submodule_search_locations is not None
+                        )
+                    result.cached       = None
+                    result.has_location = False
+                    result.submodule_search_locations \
+                                        = p_spec.submodule_search_locations
+        return result
+    # end def find_spec
+
+    def register (self, dpn, parent) :
+        """Register Derived_Package_Namespace `dpn`."""
+        m_name     = dpn._._module_name
+        dpn_module = sys.modules [m_name]
+        if not hasattr (dpn_module, "__path__") :
+            return ### nothing to do: non-package Derived_Package_Namespace
+        def _parent_names (p) :
+            while p :
+                yield p._._module_name
+                p = getattr (parent, "_parent", None)
+        path    = dpn_module.__path__ [0]
+        parents = tuple (_parent_names (parent))
+        self._dpn_map [path] = (m_name, dpn, parents)
+    # end def register
+
+DPN_Import_Finder = _DPN_Import_Finder_ () # end class _DPN_Import_Finder_
+
+class _DPN_Loader_ (abc.Loader) :
+    """Loader for inherited modules of Derived_Package_Namespace."""
+
+    def create_module (self, spec) :
+        """Return the module object to use for importing."""
+        dpn     = spec.loader_state ["dpn"]
+        p_spec  = spec.loader_state ["p_spec"]
+        parent  = import_module (p_spec.name)
+        q_name  = spec.name
+        result  = self._new_module (spec, parent.__doc__, p_spec.origin)
+        sys.modules [q_name]    = result
+        dpn._add_module_getattr (result, parent)
+        dpn._Finish_Module      (q_name, result)
+        dpn._._load             (q_name, q_name.split (".") [-1])
+        return result
+    # end def create_module
+
+    def exec_module (self, module) :
+        """Execute the module in its own namespace when imported or reloaded."""
+        pass ### nothing to do here
+    # end def exec_module
+
+    def _new_module (self, spec, doc, origin) :
+        result              = type (sys) (spec.name, doc)
+        result.__file__     = origin
+        result.__loader__   = self
+        result.__package__  = spec.parent
+        result.__path__     = spec.submodule_search_locations
+        result.__spec__     = spec
+        return result
+    # end def _new_module
+
+# end class _DPN_Loader_
 
 class Package_Namespace (object) :
     """Namespace that provides direct access to classes and
@@ -263,8 +336,8 @@ class Package_Namespace (object) :
 
     @classmethod
     def GET (cls, name) :
-        """Return Package_Namespace the module, package, or package namespace
-           with `name` belongs to, if any.
+        """Return the Package_Namespace instance that the module, package, or
+           package namespace with `name` belongs to, if any.
         """
         return cls.__Table.get (name)
     # end def GET
@@ -272,7 +345,7 @@ class Package_Namespace (object) :
     @property
     def MODULES (self) :
         """List of all modules in Package_Namespace, in sequence of import"""
-        mps = sorted (pyk.itervalues (self.__modules), key = lambda x : x [1])
+        mps = sorted (self.__modules.values (), key = lambda x : x [1])
         return [m for (m, p) in mps]
     # end def MODULES
 
@@ -339,7 +412,8 @@ class Package_Namespace (object) :
         """
         result         = {}
         caller_globals = _caller_globals ()
-        mod            = kw.get ("mod")
+        mod            = kw.pop ("mod", None)
+        assert not kw
         if mod is None :
             module_name, mod = self._Load_Module (caller_globals)
         else :
@@ -348,16 +422,13 @@ class Package_Namespace (object) :
         check_clashes  = self._check_clashes and not self.__reload
         if primary is not None :
             result [module_name] = primary
-        self._Cache_Module    (module_name, mod)
-        self._Register_Module (mod)
         if symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
             if all_symbols :
                 self._import_names (mod, all_symbols, result, check_clashes)
             else :
-                from   _TFL import TFL
-                import _TFL.Module
-                for s in TFL.Module.names_of (mod) :
+                from _TFL import Module
+                for s in Module.names_of (mod) :
                     if not s.startswith ("_") :
                         p = getattr (mod, s)
                         self._import_1 (mod, s, s, p, result, check_clashes)
@@ -366,7 +437,7 @@ class Package_Namespace (object) :
             self._import_names (mod, symbols, result, check_clashes)
         mod.__PNS_Export__ = sorted (result)
         self.__dict__.update        (result)
-        self._run_import_callback   (mod)
+        self._Finish_Module         (module_name, mod)
     # end def _Export
 
     def _Export_Module (self) :
@@ -383,21 +454,23 @@ class Package_Namespace (object) :
                     % (module_name, mod, old)
                     )
         self.__dict__  [module_name] = self._exported_module (module_name, mod)
+        self._Finish_Module (module_name, mod)
+    # end def _Export_Module
+
+    def _Finish_Module (self, module_name, mod) :
         self._Cache_Module        (module_name, mod)
         self._Register_Module     (mod)
         self._run_import_callback (mod)
-    # end def _Export_Module
+    # end def _Finish_Module
 
     def _Import_Module (self, name) :
         """Import module `name` from this package namespace"""
-        from _TFL.import_module import import_module ### avoid circular imports
         return import_module (".".join ((self.__module_name, name)))
     # end def _Import_Module
 
     def _Import_All (self, mod_skip_pat = None) :
         """Import all modules of this package namespace"""
-        from _TFL.import_module import import_module ### avoid circular imports
-        from _TFL               import sos
+        from _TFL import sos
         dir = sos.path.dirname  (self.__file__)
         pns = self.__module_name
         for f in sos.listdir (dir) :
@@ -433,7 +506,7 @@ class Package_Namespace (object) :
 
     def _import_names (self, mod, names, result, check_clashes) :
         for name in names :
-            if isinstance (name, pyk.string_types) :
+            if isinstance (name, str) :
                 name, as_name = name, name
             else :
                 name, as_name = name
@@ -486,12 +559,12 @@ class Package_Namespace (object) :
             modules = self.MODULES
         try :
             self.__reload = 1
-            pyk.fprint ("Reloading", self.__bname, end = " ")
+            print ("Reloading", self.__bname, end = " ")
             for m in modules :
-                pyk.fprint (m.__name__, end = " ")
+                print (m.__name__, end = " ")
                 m         = reload (m)
                 m.__PNS__ = self
-            pyk.fprint ("finished")
+            print ("finished")
         finally :
             self.__reload = old_reload
         import linecache
@@ -534,7 +607,7 @@ class Package_Namespace (object) :
 
 class Derived_Package_Namespace (Package_Namespace) :
     """Implements a derived Package_Namespace, which adds to classes and
-       functions an existing Package_Namespace.
+       functions of an existing Package_Namespace.
 
        Derivation of Package_Namespaces is similar to inheritance between
        classes -- the derived Package_Namespace
@@ -577,30 +650,43 @@ class Derived_Package_Namespace (Package_Namespace) :
             )
         self._parent  = parent
         self.__cached = {}
-        mod           = sys.modules [module_name]
-        from _TFL.Importers import DPN_Importer
-        DPN_Importer.register (mod, module_name, parent)
+        DPN_Import_Finder.register (self, parent)
     # end def __init__
 
     def _Reload (self, * modules) :
-        for c in pyk.iterkeys (self.__cached) :
+        for c in self.__cached :
             delattr (self, c)
         self.__cached = {}
         self._parent._Reload ()
         Package_Namespace._Reload (self, * modules)
     # end def _Reload
 
+    def _add_module_getattr (self, mod, parent_module) :
+        def _getattr (name) :
+            ### Placate inspect.unwrap of Python 3.5,
+            ### which accesses `__wrapped__` and eventually throws `ValueError`
+            if name != "__wrapped__" :
+                return getattr (parent_module, name)
+            raise AttributeError (name)
+        def _dir () :
+            return dir (parent_module)
+        mod.__dir__     = _dir
+        mod.__getattr__ = _getattr
+    # end def _add_module_getattr
+
     def _exported_module (self, module_name, mod) :
         try :
             parent_module = getattr (self._parent, module_name)
         except AttributeError :
-            return mod
+            pass
         else :
-            return _Derived_Module_ (module_name, mod, parent_module)
+            self._add_module_getattr (mod, parent_module)
+        return mod
     # end def _exported_module
 
     def __getattr__ (self, name) :
         try :
+            ### `Package_Namespace.__getattr__` checks `__lazy_resolvers`
             return Package_Namespace.__getattr__ (self, name)
         except AttributeError :
             result  = getattr (self._parent, name)
@@ -611,7 +697,8 @@ class Derived_Package_Namespace (Package_Namespace) :
 
 # end class Derived_Package_Namespace
 
-__all__ = ("Package_Namespace", "Derived_Package_Namespace")
+__all__ = \
+    ("Package_Namespace", "Derived_Package_Namespace", "DPN_Import_Finder")
 
 __doc__ = """
 This module implements a namespace that provides direct access to classes and
@@ -729,4 +816,7 @@ So, the canonical use of Package_Namespaces looks like::
 
 """
 
+if __name__ != "__main__" :
+    if DPN_Import_Finder not in sys.meta_path :
+        sys.meta_path.append (DPN_Import_Finder)
 ### __END__ TFL.Package_Namespace

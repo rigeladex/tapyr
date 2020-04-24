@@ -77,8 +77,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__             import print_function
-
 from   _MOM.import_MOM        import *
 
 import _MOM.DB_Man
@@ -510,9 +508,9 @@ class MOM_Command (TFL.Command.Root_Command) :
                     exec (f.read (), globs, local)
             except Exception as exc :
                 head = _T ("Script %s triggered exception" % (script_path, ))
-                tail = "    \n".join (pyk.text_type (exc).split ("\n"))
-                pyk.fprint (head)
-                pyk.fprint ("   ", tail)
+                tail = "    \n".join (str (exc).split ("\n"))
+                print (head)
+                print ("   ", tail)
                 raise SystemExit (1)
         if cao.commit :
             scope.commit      ()

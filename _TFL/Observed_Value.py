@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -17,13 +17,9 @@
 #     5-Jan-2006 (CT) Creation
 #    21-Jan-2006 (MG) Support for `kw` added
 #     9-Oct-2016 (CT) Move to Package_Namespace `TFL`
+#    31-Mar-2020 (CT) Def `__bool__`, not `__nonzero__` (Py-3)
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL        import TFL
 
@@ -93,9 +89,9 @@ class Observed_Value (TFL.Meta.Object) :
         return long (self._value)
     # end def __long__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self._value)
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         return repr (self._value)

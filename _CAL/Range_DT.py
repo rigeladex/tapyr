@@ -23,11 +23,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _CAL                       import CAL
 
 from   _CAL.Date                  import Date
@@ -59,7 +54,7 @@ class _M_Range_DT_ (TFL._Range_Discrete_.__class__) :
 # end class _M_Range_DT_
 
 class _Range_DT_ \
-        (TFL.Meta.BaM (TFL._Range_Discrete_, metaclass = _M_Range_DT_)) :
+        (TFL._Range_Discrete_, metaclass = _M_Range_DT_) :
     """Base class for ranges of datetime-based values."""
 
     @property
@@ -296,7 +291,7 @@ _test_date_range = r"""
     (2016-06-02, 2016-06-04) 1 (datetime.date(2016, 6, 3),)
 
     >>> for r in (ii_24, ix_24, xi_24, xx_24) :
-    ...     print (r, portable_repr (r.range_pattern.match (pyk.text_type (r)).groupdict ()))
+    ...     print (r, portable_repr (r.range_pattern.match (str (r)).groupdict ()))
     [2016-06-02, 2016-06-04] {'LB' : '[', 'UB' : ']', 'lower' : '2016-06-02', 'upper' : '2016-06-04'}
     [2016-06-02, 2016-06-04) {'LB' : '[', 'UB' : ')', 'lower' : '2016-06-02', 'upper' : '2016-06-04'}
     (2016-06-02, 2016-06-04] {'LB' : '(', 'UB' : ']', 'lower' : '2016-06-02', 'upper' : '2016-06-04'}
@@ -1251,7 +1246,7 @@ _test_time_range_h = r"""
     (02:00, 04:00) 1 (datetime.time(3, 0),)
 
     >>> for r in (ii_24, ix_24, xi_24, xx_24) :
-    ...     print (r, portable_repr (r.range_pattern.match (pyk.text_type (r)).groupdict ()))
+    ...     print (r, portable_repr (r.range_pattern.match (str (r)).groupdict ()))
     [02:00, 04:00] {'LB' : '[', 'UB' : ']', 'lower' : '02:00', 'upper' : '04:00'}
     [02:00, 04:00) {'LB' : '[', 'UB' : ')', 'lower' : '02:00', 'upper' : '04:00'}
     (02:00, 04:00] {'LB' : '(', 'UB' : ']', 'lower' : '02:00', 'upper' : '04:00'}

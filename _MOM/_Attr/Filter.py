@@ -65,8 +65,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
@@ -112,7 +110,7 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Filter_
 
-class _Filter_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Filter_)) :
+class _Filter_ (TFL.Meta.Object, metaclass = _M_Filter_) :
     """Base class for attribute filters."""
 
     op_fct        = None ### Must be redefined for subclasses or instances

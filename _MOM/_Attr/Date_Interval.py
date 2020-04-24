@@ -43,8 +43,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
-
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_
 
@@ -92,13 +90,13 @@ class _Finish_Polisher_ (_Date_Interval_Date_Polisher_) :
                 d = CAL.Date.from_string (start)
                 P = getattr (CAL.Period, unit_pat.unit.capitalize ())
                 p = P.from_date (d)
-                result [self.start_attr] = pyk.text_type (p.start)
-                result [name]            = pyk.text_type (p.finis)
+                result [self.start_attr] = str (p.start)
+                result [name]            = str (p.finis)
         else :
             p = CAL.Period.from_string \
                 (value, add_year = self.add_year, future_p = self.future_p)
             if p is not None :
-                result [name] = pyk.text_type (p.finis)
+                result [name] = str (p.finis)
         return result
     # end def _polished
 
@@ -116,9 +114,9 @@ class _Start_Polisher_ (_Date_Interval_Date_Polisher_) :
         if p is not None :
             finish = self._attr_value \
                 (attr, self.finish_attr, None, value_dict, essence)
-            result [name] = pyk.text_type (p.start)
+            result [name] = str (p.start)
             if p.days > 1 and not finish :
-                result [self.finish_attr] = pyk.text_type (p.finis)
+                result [self.finish_attr] = str (p.finis)
         return result
     # end def _polished
 
@@ -126,7 +124,6 @@ class _Start_Polisher_ (_Date_Interval_Date_Polisher_) :
 
 _Ancestor_Essence = MOM.An_Entity
 
-@pyk.adapt__bool__
 class Date_Interval (_Ancestor_Essence) :
     """Model a date interval (start, finish)."""
 

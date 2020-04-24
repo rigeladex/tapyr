@@ -21,8 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
@@ -59,7 +57,7 @@ class _M_R_Map_ (TFL.Meta.Object.__class__) :
 
 # end class _M_R_Map_
 
-class R_Map (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_R_Map_)) :
+class R_Map (TFL.Meta.Object, metaclass = _M_R_Map_) :
     """Resource map"""
 
     _find_missing = None

@@ -26,9 +26,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _GTW                     import GTW
 from   _MOM                     import MOM
 from   _TFL                     import TFL
@@ -53,7 +50,7 @@ class _M_Renderer_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Renderer_
 
-class _Renderer_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Renderer_)) :
+class _Renderer_ (TFL.Meta.Object, metaclass = _M_Renderer_) :
     """Base class for renderer classes."""
 
     css_classes         = ()
@@ -157,8 +154,7 @@ class E_Type (_Renderer_) :
     def td_cols (self) :
         def _gen (fields) :
             for f in fields :
-                for td in f.td_cols :
-                    yield td
+                yield from f.td_cols 
         return tuple (_gen (self.fields))
     # end def td_cols
 
@@ -167,8 +163,7 @@ class E_Type (_Renderer_) :
     def th_cols (self) :
         def _gen (fields) :
             for f in fields :
-                for th in f.th_cols :
-                    yield th
+                yield from f.th_cols 
         return tuple (_gen (self.fields))
     # end def th_cols
 

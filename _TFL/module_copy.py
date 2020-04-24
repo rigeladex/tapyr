@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,26 +16,37 @@
 #
 # Revision Dates
 #    17-Dec-2003 (CT) Creation
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
 #    ««revision-date»»···
 #--
 
+from   _TFL       import TFL
+
+from   contextlib import contextmanager
+
+import importlib
 import sys
+
+@contextmanager
+def _save_sys_modules (name) :
+    if name in sys.modules :
+        original = sys.modules [name]
+        del sys.modules [name]
+        try :
+            yield
+        finally :
+            sys.modules [name] = original
+    else :
+        yield
+        del sys.modules [name]
+# end def _save_sys_modules
 
 def module_copy (name, ** kw) :
     """Return an independent copy of the module with `name` and assign all
        elements of `kw` to the result.
     """
-    original = None
-    if name in sys.modules :
-        original = sys.modules [name]
-        del sys.modules [name]
-        try :
-            result = __import__ (name, {}, {})
-        finally :
-            sys.modules [name] = original
-    else :
-        result = __import__ (name, {}, {})
-        del sys.modules [name]
+    with _save_sys_modules (name) :
+        result = importlib.import_module (name)
     for k, v in kw.items () :
         setattr (result, k, v)
     return result
@@ -48,6 +59,5 @@ def import_module_copy (name, as_name, ** kw) :
 # end def import_module_copy
 
 if __name__ != "__main__" :
-    from _TFL import TFL
     TFL._Export ("*")
 ### __END__ module_copy

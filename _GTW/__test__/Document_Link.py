@@ -34,8 +34,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function, unicode_literals
-
 from   _TFL.Regexp import Re_Replacer, re
 
 date_cleaner = Re_Replacer \

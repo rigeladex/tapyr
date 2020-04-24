@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -312,11 +312,9 @@
 #    19-Oct-2016 (CT) Change `attr_prop` to handle dotted names
 #                     + I.e., access to nested attribute properties of
 #                       composite/structured attributes
+#    31-Mar-2020 (CT) Remove `__nonzero__` (Py-3)
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import, division
-from   __future__  import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -357,7 +355,7 @@ import itertools
 import logging
 import traceback
 
-class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
+class Entity (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity) :
     """Internal root class for MOM entities with and without identity."""
 
     PNS                   = MOM
@@ -448,7 +446,6 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         pass
     # end class _Predicates
 
-    @pyk.adapt__str__
     class _FO_ (TFL.Meta.Object) :
         """Formatter for attributes of object."""
 
@@ -533,7 +530,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 
     @TFL.json_dump.default.add_type (_FO_)
     def __json_encode_FO_ (fo) :
-        return pyk.text_type (fo)
+        return str (fo)
     # end def __json_encode_FO_
 
     @property
@@ -1033,9 +1030,7 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
 
 # end class Entity
 
-@pyk.adapt__bool__
-@pyk.adapt__str__
-class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
+class An_Entity (Entity, metaclass = MOM.Meta.M_An_Entity) :
     """Root class for anonymous entities without identity."""
 
     is_partial            = True
@@ -1126,7 +1121,7 @@ class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
 
     @staticmethod
     def _json_encode (o) :
-        return pyk.text_type (o)
+        return str (o)
     # end def _json_encode
 
     def _main__init__ (self, * args, ** kw) :
@@ -1190,9 +1185,8 @@ _Ancestor_Essence = Entity
 
 @TFL.Add_To_Class ("P_Type",   _A_Id_Entity_)
 @TFL.Add_To_Class ("P_Type_S", _A_Id_Entity_)
-@pyk.adapt__str__
 class Id_Entity \
-          (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Id_Entity)) :
+          (_Ancestor_Essence, metaclass = MOM.Meta.M_Id_Entity) :
     """Root class for MOM entities with identity, i.e.,
        objects and links.
     """
@@ -2039,12 +2033,11 @@ class _Id_Entity_Reload_Mixin_ (_Id_Entity_Mixin_) :
 
 # end class _Id_Entity_Reload_Mixin_
 
-@pyk.adapt__bool__
 class _Id_Entity_Destroyed_Mixin_ (_Id_Entity_Mixin_) :
     """Mixin indicating an entity that was already destroyed."""
 
     def __getattribute__ (self, name) :
-        if name in ("E_Type", "__bool__", "__class__", "__nonzero__", "__repr__") :
+        if name in ("E_Type", "__bool__", "__class__", "__repr__") :
             return object.__getattribute__ (self, name)
         elif name in ("last_cid", "pid", "type_name") :
             try :
@@ -2092,7 +2085,7 @@ class _Id_Entity_Destroyed_Mixin_ (_Id_Entity_Mixin_) :
 
 # end class _Id_Entity_Destroyed_Mixin_
 
-class MD_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_MD_Entity)) :
+class MD_Entity (Entity, metaclass = MOM.Meta.M_MD_Entity) :
     """Root class for meta-data entities, e.g., entities recording changes to
        the object model.
     """

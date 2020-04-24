@@ -22,7 +22,6 @@
 #                       `-changes_of_unit` and `week_days`
 #    ««revision-date»»···
 #--
-
 r"""
     This module provides functions for filtering a set of dates in string
     representation according to `month`, `quarter`, `year`, or `weekdays`.
@@ -116,10 +115,6 @@ r"""
 
 """
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL

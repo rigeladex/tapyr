@@ -21,8 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from   _TFL.HTML                        import Styler_Safe
 
 from   _GTW._RST._MOM.Query_Restriction import *

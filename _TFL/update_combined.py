@@ -29,9 +29,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _TFL                       import TFL
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch, Single_Dispatch_2nd
@@ -65,7 +62,7 @@ class tuple_dont_combine (Dont_Combine, tuple) :
     """Tuple that doesn't combine, but replaces, under `update_combined`"""
 # end class tuple_dont_combine
 
-class list_filtered (TFL.Meta.BaM (list, metaclass = TFL.Meta.M_Class)) :
+class list_filtered (list, metaclass = TFL.Meta.M_Class) :
     """List that filters elements from ``lhs`` when `update_combined` as
        ``rhs``.
     """

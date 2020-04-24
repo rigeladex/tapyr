@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2019 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,11 +46,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL             import TFL
 from   _TFL.pyk         import pyk
 
@@ -91,7 +86,7 @@ def bool_split_iters (seq, predicate = bool) :
     """Return an iterator pair yielding the false, respectively true,
        elements of `seq`, as determined by `predicate`
 
-    >>> seq = list (pyk.xrange (10))
+    >>> seq = list (range (10))
     >>> _show (list (x) for x in bool_split_iters (seq))
     [[0], [1, 2, 3, 4, 5, 6, 7, 8, 9]]
     >>> _show (list (x) for x in bool_split_iters (seq, lambda i : i % 2))
@@ -108,7 +103,6 @@ def bool_split_iters (seq, predicate = bool) :
     return f_it, t_it
 # end def bool_split_iters
 
-@pyk.adapt__bool__
 class Look_Ahead_Gen (object) :
     """Wrap a generator/iterator to provide look ahead
 
@@ -287,7 +281,7 @@ def paired_map (s1, s2) :
             yield x, True
         while True :
             yield None, False
-    for (l, next_l), (r, next_r) in pyk.izip (_gen (s1), _gen (s2)) :
+    for (l, next_l), (r, next_r) in zip (_gen (s1), _gen (s2)) :
         if not (next_l or next_r) :
             break
         yield l, r

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -22,20 +22,9 @@
 #                     of `gettext.GNUTranslations._parse`
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    22-May-2016 (CT) Disable `unicode_literals` to avoid exception from 2.7.3
+#    27-Mar-2020 (CT) Use `gettext.c2py`, not `c2py`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-
-### 22-May-2016 08:29
-### Debian 7.10 uses Python 2.7.3, which fails with::
-        #   File ".../_TFL/_Babel/Translations.py", line 54, in _parse
-        #     magic = unpack ("<I", buf [:4]) [0]
-        # TypeError: Struct() argument 1 must be string, not unicode
-### if `unicode_literals` is imported from the __future__
-#from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _TFL.pyk                import pyk
@@ -70,7 +59,7 @@ class Translations (babel.support.Translations) :
             raise IOError (0, "Bad magic number", filename)
         # Now put all messages from the .mo file buffer into the catalog
         # dictionary.
-        for i in pyk.xrange (0, msgcount) :
+        for i in range (0, msgcount) :
             mlen, moff = unpack (ii, buf [masteridx : masteridx + 8])
             tlen, toff = unpack (ii, buf [transidx  : transidx  + 8])
             mend       = moff + mlen
@@ -99,9 +88,9 @@ class Translations (babel.support.Translations) :
                     if k == "content-type" :
                         self._charset = v.split ("charset=") [1]
                     elif k == "plural-forms" :
-                        v           = v.split     (";")
-                        plural      = v [1].split ("plural=") [1]
-                        self.plural = c2py        (plural)
+                        v           = v.split      (";")
+                        plural      = v [1].split  ("plural=") [1]
+                        self.plural = gettext.c2py (plural)
             # Note: we unconditionally convert both msgids and msgstrs to
             # Unicode using the character encoding specified in the charset
             # parameter of the Content-Type header.  The gettext documentation
@@ -117,9 +106,9 @@ class Translations (babel.support.Translations) :
                 # Plural forms
                 msgid1, msgid2 = msg.split  (sep)
                 tmsg           = tmsg.split (sep)
-                msgid1 = pyk.text_type (msgid1, charset)
-                msgid2 = pyk.text_type (msgid2, charset)
-                tmsg   = [pyk.text_type (x, charset) for x in tmsg]
+                msgid1 = str (msgid1, charset)
+                msgid2 = str (msgid2, charset)
+                tmsg   = [str (x, charset) for x in tmsg]
                 for i, msg in enumerate (tmsg) :
                     catalog [(msgid1, i)] = msg
                 ### In addtion to the two keys to the catalog as well to be
@@ -128,8 +117,8 @@ class Translations (babel.support.Translations) :
                 catalog [msgid1] = tmsg [ 0]
                 catalog [msgid2] = tmsg [-1]
             else:
-                msg  = pyk.text_type (msg,  charset)
-                tmsg = pyk.text_type (tmsg, charset)
+                msg  = str (msg,  charset)
+                tmsg = str (tmsg, charset)
                 catalog [msg] = tmsg
             # advance to next entry in the seek tables
             masteridx += 8

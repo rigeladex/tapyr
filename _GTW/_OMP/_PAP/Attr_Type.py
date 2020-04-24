@@ -23,11 +23,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 from   _MOM.import_MOM          import _A_Named_Object_
@@ -42,7 +37,7 @@ class A_Sex (_A_Named_Object_) :
 
     example   = "F"
     typ       = "Sex"
-    P_Type    = pyk.text_type
+    P_Type    = str
     Table     = \
         { "F"  : _("Female")
         , "M"  : _("Male")

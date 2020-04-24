@@ -20,9 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -33,7 +30,7 @@ from   _TFL.I18N                import _, _T, _Tn
 import _TFL._Meta.Object
 
 class _E164_Value_Error_ \
-        (TFL.Meta.BaM (ValueError, metaclass = TFL.Meta.Object.__class__)) :
+        (ValueError, metaclass = TFL.Meta.Object.__class__) :
 
     _real_name = "ValueError"
 

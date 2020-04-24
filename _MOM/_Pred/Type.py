@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Pred.
@@ -61,10 +61,9 @@
 #                     not `portable_repr`
 #    10-Aug-2016 (CT) Add `Exclude`, factor `_Unique_`
 #                     + factor `_auto_doc`, `_query_filters_xs`
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
-
-from   __future__            import unicode_literals, print_function
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -88,13 +87,8 @@ import _TFL.d_dict
 
 import traceback
 
-@pyk.adapt__bool__
 class _Condition_ \
-          ( TFL.Meta.BaM
-              ( MOM.Prop.Type
-              , metaclass = MOM.Meta.M_Pred_Type._Condition_
-              )
-          ) :
+        (MOM.Prop.Type, metaclass = MOM.Meta.M_Pred_Type._Condition_) :
     ### Base class for all predicates (atomic and quantifiers).
 
     assertion       = ""
@@ -148,11 +142,11 @@ class _Condition_ \
     # end def extra_links
 
     def satisfied (self, obj, attr_dict = {}) :
-        """Checks if `obj' satisfies the predicate.
-           `attr_dict' can provide values for `self.attributes'.
+        """Checks if `obj` satisfies the predicate.
+           `attr_dict` can provide values for `self.attributes`.
 
-           If there is a `self.guard' the predicate is checked only if
-           `self.guard' evaluates to true.
+           If there is a `self.guard` the predicate is checked only if
+           `self.guard` evaluates to true.
         """
         glob_dict = obj.globals ()
         if not self._guard_open (obj, attr_dict, glob_dict) :
@@ -205,7 +199,7 @@ class _Condition_ \
                     )
         if result is not None :
             if tail :
-                self.val_disp [c_attr] = pyk.text_type (obj.FO (c_attr, result))
+                self.val_disp [c_attr] = str (obj.FO (c_attr, result))
         return result
     # end def set_c_attr_value
 
@@ -233,7 +227,7 @@ class _Condition_ \
                 % (self.name, name, obj, self.assertion)
                 )
         val_dict [name] = result
-        self.val_disp [name] = pyk.text_type (obj.FO (name, result))
+        self.val_disp [name] = str (obj.FO (name, result))
         return result
     # end def set_s_attr_value
 
@@ -292,12 +286,7 @@ class _Condition_ \
 
 # end class _Condition_
 
-class Condition \
-          ( TFL.Meta.BaM
-              ( _Condition_
-              , metaclass = MOM.Meta.M_Pred_Type.Condition
-              )
-          ) :
+class Condition (_Condition_, metaclass = MOM.Meta.M_Pred_Type.Condition) :
     """A predicate defined by a simple assertion."""
 
     Error_Type    = MOM.Error.Invariant
@@ -338,8 +327,8 @@ class Condition \
     # end def eval_condition_assert_code_as_function
 
     def _satisfied (self, obj, glob_dict, val_dict) :
-        """Checks if `obj' satisfies the predicate.
-           `attr_dict' can provide values for `self.attributes'.
+        """Checks if `obj` satisfies the predicate.
+           `attr_dict` can provide values for `self.attributes`.
         """
         try    :
             if self.eval_condition (obj, glob_dict, val_dict) :
@@ -358,12 +347,7 @@ class Condition \
 
 # end class Condition
 
-class _Quantifier_ \
-          ( TFL.Meta.BaM
-              ( _Condition_
-              , metaclass = MOM.Meta.M_Pred_Type.Quantifier
-              )
-          ) :
+class _Quantifier_ (_Condition_, metaclass = MOM.Meta.M_Pred_Type.Quantifier) :
     ### Base class for quantifier predicates of the MOM object model.
 
     Error_Type      = MOM.Error.Quant
@@ -463,12 +447,7 @@ class E_Quant (_Quantifier_) :
 
 # end class E_Quant
 
-class N_Quant \
-          ( TFL.Meta.BaM
-              ( _Quantifier_
-              , metaclass = MOM.Meta.M_Pred_Type.N_Quantifier
-              )
-          ) :
+class N_Quant (_Quantifier_, metaclass = MOM.Meta.M_Pred_Type.N_Quantifier) :
     """A predicate defined by a numeric quantifier over a set of
        values or objects.
     """
@@ -489,12 +468,7 @@ class N_Quant \
 
 # end class N_Quant
 
-class U_Quant \
-          ( TFL.Meta.BaM
-              ( _Quantifier_
-              , metaclass = MOM.Meta.M_Pred_Type.U_Quantifier
-              )
-          ) :
+class U_Quant (_Quantifier_, metaclass = MOM.Meta.M_Pred_Type.U_Quantifier) :
     """A predicate defined by an universal quantifier over a set of
        values or objects.
     """
@@ -588,8 +562,7 @@ class _Unique_ (_Condition_) :
 
 # end class _Unique_
 
-class Unique \
-        (TFL.Meta.BaM (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Unique)) :
+class Unique (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Unique) :
     """A predicate defining a uniqueness constraint over a set of attributes.
 
     For Unique predicates, the predicate is evaluated even if some
@@ -619,8 +592,7 @@ class Unique \
 
 # end class Unique
 
-class Exclude \
-        (TFL.Meta.BaM (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Exclude)) :
+class Exclude (_Unique_, metaclass = MOM.Meta.M_Pred_Type.Exclude) :
     """A predicate defining an exclusion constraint over a set of attributes.
 
     For Exclude predicates, the predicate is evaluated even if some

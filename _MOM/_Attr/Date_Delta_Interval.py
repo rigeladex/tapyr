@@ -27,9 +27,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                  import division, print_function
-from   __future__                  import absolute_import, unicode_literals
-
 from   _CAL                        import CAL
 
 from   _MOM.import_MOM             import *
@@ -70,7 +67,7 @@ class A_Date_or_Delta (A_Attr_Type) :
             if isinstance (value, datetime.date) :
                 return A_Date.as_string (value)
             else :
-                return pyk.text_type (value)
+                return str (value)
         return ""
     # end def as_string
 

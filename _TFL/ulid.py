@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2016-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -19,6 +19,7 @@
 #     7-Dec-2016 (CT) Creation
 #    ««revision-date»»···
 #--
+
 """
 This module provides functions computing universally unique
 lexicographically sortable identifiers.
@@ -75,11 +76,6 @@ results::
     1139161307381642365
 
 """
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL        import TFL
 from   _TFL        import dc_base32

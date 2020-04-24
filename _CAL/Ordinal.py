@@ -22,8 +22,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                 import print_function
-
 """
 >>> from _CAL.Date import *
 >>> d1 = Date (1958,  1, 30)

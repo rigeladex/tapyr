@@ -28,8 +28,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import unicode_literals, absolute_import
-
 from   _TFL                     import TFL
 
 from   _TFL._Meta.Once_Property import Once_Property
@@ -72,7 +70,7 @@ class User_Config (threading.local) :
         result = self._sha
         if result is None :
             result = self._sha = TFL.Secure_Hash.sha224
-        elif isinstance (result, pyk.text_type) :
+        elif isinstance (result, str) :
             result = self._sha = getattr (TFL.Secure_Hash, result)
         return result
     # end def sha

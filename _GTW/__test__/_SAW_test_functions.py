@@ -35,9 +35,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                   import division, print_function
-from   __future__                   import absolute_import, unicode_literals
-
 from   _GTW.__test__.Test_Command   import esf_completer
 
 from   _MOM.import_MOM              import MOM, Q
@@ -59,7 +56,7 @@ pred   = lambda ETW : ETW.e_type.PNS is not None
 
 def fixed_booleans (qf) :
     if not isinstance (qf, pyk.string_types) :
-        qf = pyk.text_type (qf)
+        qf = str (qf)
     result = \
         ( qf.replace ("WHERE 0 = 1", "WHERE false")
             .replace ("WHERE 1 = 1", "WHERE true")
@@ -304,8 +301,7 @@ def show_q_able_names (apt, pred = pred) :
                 ### filter attribute-aliases
                 yield "%s%-30s: %s" % ("    " * level, k, ", ".join (q.q_able_names))
                 if q.q_able_attrs :
-                    for x in _gen (q.q_able_attrs, level + 1) :
-                        yield x
+                    yield from _gen (q.q_able_attrs, level + 1) 
     sk = lambda x : (x.e_type.i_rank, )
     for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk):
         if not pred (ETW) :

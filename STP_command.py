@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -18,6 +18,8 @@
 #    24-Feb-2017 (CT) Use `twine` for upload
 #    24-Feb-2017 (CT) Update `__doc__` doctest output
 #    16-Apr-2018 (CT) Adapt to New `PyPI`
+#    26-Mar-2020 (CT) Add `sys.executable` and `dist/*` to `_do_twine`
+#    20-Apr-2020 (CT) Add option `-skip`
 #    ««revision-date»»···
 #--
 
@@ -68,11 +70,6 @@ https://test.pypi.org instead of the real thing.
 
 """
 
-from   __future__                 import absolute_import
-from   __future__                 import division
-from   __future__                 import print_function
-from   __future__                 import unicode_literals
-
 from   _TFL                       import TFL
 
 from   _TFL.Filename              import Dirname
@@ -118,6 +115,7 @@ class STP_Command (TFL.Command.Root_Command) :
         , "-dry_run:B?Display setup commands instead of applying them"
         , "-package:P:?Package(s) to process"
         , "-PY_Path:P:?Search path for packages"
+        , "-skip:P:?Don't include specified packages"
         , "-verbose:B?Verbose output"
         )
 
@@ -261,13 +259,15 @@ class STP_Command (TFL.Command.Root_Command) :
 
     def _do_twine (self, cao, cmd, args, packages) :
         r_args   = ["--repository", "testpypi"] if cao.test else []
-        twc_head = ["twine", cmd] + r_args
+        twc_head = [sys.executable, "-m", "twine", cmd] + r_args
         for pn, pp in packages :
             with sos.changed_dir (pp) :
                 twc_tail = args
                 if cmd == "register" :
                     dist     = sos.expanded_glob (args [-1])
                     twc_tail = args [:-1] + dist
+                elif cmd == "upload" :
+                    twc_tail = ["dist/*"]
                 twc = twc_head + twc_tail
                 if cao.verbose :
                     print ("Starting twine upload for", pn, "...")
@@ -393,8 +393,11 @@ class STP_Command (TFL.Command.Root_Command) :
         else :
             p_specs = cao.package or ()
         py_path = cao.PY_Path or [self.app_dir]
+        skip    = set (cao.skip or ())
         result  = tuple \
-            (x for x in (self._package_path (p, py_path) for p in p_specs) if x)
+            ( x for x in (self._package_path (p, py_path) for p in p_specs)
+                if  x and not x [0] in skip
+            )
         def sk (x) :
             b, r = x
             return self.pkg_priority.get (b, 1 << 32)

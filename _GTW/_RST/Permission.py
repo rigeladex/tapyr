@@ -57,7 +57,7 @@ class _M_Permission_ (TFL._.Filter._Filter_S_.__class__) :
 # end class _M_Permission_
 
 class _Permission_ \
-        (TFL.Meta.BaM (TFL._.Filter._Filter_S_, metaclass = _M_Permission_)) :
+        (TFL._.Filter._Filter_S_, metaclass = _M_Permission_) :
 
     _rank         = 0
     auth_required = True

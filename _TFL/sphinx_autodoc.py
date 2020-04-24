@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2015-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -19,9 +19,6 @@
 #    22-Sep-2015 (CT) Creation
 #    ««revision-date»»···
 #--
-
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
 
 from   _TFL                     import TFL
 
@@ -50,9 +47,7 @@ class M_Class_Documenter (TFL.Meta.M_Class) :
 # end class M_Class_Documenter
 
 class TFL_Class_Documenter \
-        ( TFL.Meta.BaM
-            (autodoc.ClassDocumenter, metaclass = M_Class_Documenter)
-        ) :
+        (autodoc.ClassDocumenter, metaclass = M_Class_Documenter) :
     """Base class for specialized documenter classes for TFL and
        Package_Namespaces based on it.
     """

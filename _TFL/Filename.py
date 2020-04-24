@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2019 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -79,16 +79,14 @@
 #                     (result must NOT contain `base_ext`)
 #    10-Oct-2016 (CT) Fix doctest of `Dirname (__file__)`
 #    19-Aug-2019 (CT) Import `unicode_literals`, fix doctest accordingly
+#     6-Apr-2020 (CT) Add `__fspath__`
+#     8-Apr-2020 (CT) Change `__str__` to return `.name`
 #    ««revision-date»»···
 #--
 
 """Provides a class that represents a filename with its parts: path, base
    name, and file extension.
 """
-
-from   __future__                 import absolute_import, division
-from   __future__                 import print_function
-from   __future__                 import unicode_literals
 
 from   _TFL                       import TFL
 
@@ -101,7 +99,6 @@ from   _TFL._Meta.totally_ordered import totally_ordered
 import _TFL._Meta.Object
 import _TFL.Environment
 
-@pyk.adapt__bool__
 @totally_ordered
 class Filename (TFL.Meta.Object) :
     """Represents a filename with its parts: path, base name and file
@@ -128,7 +125,6 @@ class Filename (TFL.Meta.Object) :
        '/a/b/c/d'
        >>> print_prepr (f.base_ext)
        'e.f'
-       >>>
 
        >>> f=Filename ("spam.py")
        >>> print_prepr (f.name)
@@ -166,6 +162,18 @@ class Filename (TFL.Meta.Object) :
        >>> f=Filename ("../spam.py", "/usr/local/src/", default_rel=1)
        >>> print_prepr (f.name)
        '/usr/local/spam.py'
+
+       >>> fn = Filename ("/tmp/filename_test.test")
+       >>> f  = open     (fn, "w").close ()
+       >>> sos.remove    (fn)
+
+       >>> print_prepr (fn.name)
+       '/tmp/filename_test.test'
+       >>> print_prepr (fn + ".1")
+       '/tmp/filename_test.test.1'
+       >>> print_prepr ("~" + fn)
+       '~/tmp/filename_test.test'
+
     """
 
     as_dir    = property (lambda s : s._as_dir  (s.name))
@@ -347,6 +355,10 @@ class Filename (TFL.Meta.Object) :
         return base, ext
     # end def split_ext
 
+    def __add__ (self, rhs) :
+        return self.name + rhs
+    # end def __add__
+
     def __bool__ (self) :
         return bool (self.base)
     # end def __bool__
@@ -357,6 +369,10 @@ class Filename (TFL.Meta.Object) :
         else :
             return self.name == other
     # end def __eq__
+
+    def __fspath__ (self) :
+        return self.name
+    # end def __fspath__
 
     def __hash__ (self) :
         return hash (self.name)
@@ -369,15 +385,18 @@ class Filename (TFL.Meta.Object) :
             return self.name < other
     # end def __lt__
 
+    def __radd__ (self, lhs) :
+        return lhs + self.name
+    # end def __radd__
+
     def __repr__ (self) :
         """Returns a string representation of the Filename object"""
         return "%s (%s)" % (self.__class__.__name__, self.name)
     # end def __repr__
 
     def __str__ (self) :
-        """Returns the filename as string representation of the filename"""
-        return "%s (%s, %s, %s)" % \
-               (self.name, self.directory, self.base, self.ext)
+        """Returns the string representation of the filename"""
+        return self.name
     # end def __str__
 
     normalized = staticmethod (identity)

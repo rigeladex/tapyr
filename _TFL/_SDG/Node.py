@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -66,6 +66,7 @@
 #    23-May-2013 (CT)  Use `TFL.Meta.BaM` for Python-3 compatibility
 #    10-Oct-2014 (CT)  Use `pyk.encoded` in `_write_to_stream`,
 #                      unless `stream is sys.stdout`
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
@@ -372,9 +373,6 @@ T_Node
     )
 """
 
-from   __future__        import absolute_import, division
-from   __future__        import print_function, unicode_literals
-
 from   _TFL              import TFL
 from   _TFL.pyk          import pyk
 
@@ -408,11 +406,11 @@ class _Node_NO_List_ (TFL.NO_List) :
 
 NO_List = _Node_NO_List_ # end def _Node_NO_List_
 
-class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
+class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
     """Node of a structured document."""
 
     children             = property (lambda s : s._children_iter ())
-    children_group_names = (Body, ) = pyk.range (1)
+    children_group_names = (Body, ) = range (1)
     default_cgi          = Body
     body_children        = property (lambda s : s.children_groups [s.Body])
 
@@ -463,7 +461,7 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
     # end def __init__
 
     def add (self, * children) :
-        """Append all `children' to `self.children'"""
+        """Append all `children` to `self.children`"""
         for c in un_nested (children) :
             self.insert (c)
     # end def add
@@ -517,7 +515,7 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
 
     def has_child (self, child_name, transitive = True) :
         """Checks if this node or one of this childs has a node named
-           `child_name'.
+           `child_name`.
         """
         child_name = self._child_name (child_name)
         for children in pyk.itervalues (self.children_groups) :
@@ -531,7 +529,7 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
     # end def has_child
 
     def insert (self, child, index = None, delta = 0) :
-        """Insert `child' to `self.children' at position `index'
+        """Insert `child` to `self.children` at position `index`
            (None means append).
         """
         if child is not None :
@@ -551,8 +549,7 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
 
     def _children_iter (self) :
         for group in pyk.itervalues (self.children_groups) :
-            for c in group :
-                yield c
+            yield from group
     # end def _children_iter
 
     def _convert (self, value, Class, * args, ** kw) :
@@ -565,7 +562,7 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
         for k, v in sorted (pyk.iteritems (self.init_arg_defaults)) :
             a = getattr (self, k)
             if a != v :
-                if pyk.text_type != str and isinstance (a, pyk.text_type) :
+                if str != str and isinstance (a, str) :
                     ### Python2: encode unicode to avoid `u`-prefix
                     a = TFL.I18N.encode_o (a)
                 yield "%s = %r" % (k, a)
@@ -627,8 +624,7 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
     def __iter__ (self) :
         yield self
         for c in self.children :
-            for n in iter (c) :
-                yield n
+            yield from iter (c)
     # end def __iter__
 
     def __repr__ (self) :

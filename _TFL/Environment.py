@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2018 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,13 +43,13 @@
 #    28-May-2013 (CT) Use `in`, not `has_key`
 #    12-Oct-2014 (CT) Change `exec_python_startup` to `open` with flags `rb`
 #    10-Sep-2018 (CT) Add optional argument `depth` to `py_shell`
+#    20-Apr-2020 (CT) Remove `module_path`
 #    ««revision-date»»···
 #--
 
 from   _TFL      import TFL
 from   _TFL      import sos
 
-import imp
 import re
 import sys
 
@@ -186,42 +186,6 @@ def frozen () :
     import sys
     return hasattr (sys, "frozen")
 # end def frozen
-
-_module_pathes = {}
-
-# AGO:2001-09-13 Workaround due to inconsistency between imp.find_module
-# and Gordon McMillan's installer. The latter puts object references into
-# sys.path which imp.find_module does not understand. Remove workaround
-# when either one is fixed.
-def module_path (module) :
-    """Returns path where `module` resides"""
-    # print ">>> sys.path = %s" % sys.path #AGO
-    # print ">>> dir () = %s" % dir () #AGO
-    if module not in _module_pathes :
-        if frozen () :
-            _path = script_path ()
-        elif (   module in sys.modules
-             and hasattr (sys.modules [module], "__file__")
-             ) :
-            p     = sys.modules [module].__file__
-            _path = sos.path.dirname (p) or sos.getcwd ()
-        else :
-            try: #AGO
-                (f, p, d) = imp.find_module (module)
-            except ImportError:
-                # Should check here if there is a reference in sys.path to an
-                # archive, and then if the module is really in this archive ...
-                # But which path should then be returned?
-                # Maybe the files looked for are also
-                # compressed/packed/frozen.
-                _path = script_path ()
-            else: #AGO
-                _path = sos.path.dirname (p) or sos.getcwd ()
-        if _path == sos.curdir :
-            _path = sos.getcwd ()
-        _module_pathes [module] = _path
-    return _module_pathes [module]
-# end def module_path
 
 practically_infinite = int ((1 << 31) - 1)
 

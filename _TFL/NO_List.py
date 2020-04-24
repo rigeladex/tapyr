@@ -72,7 +72,7 @@ class M_Name_Dict (TFL.Meta.M_Class) :
 
 # end class M_Name_Dict
 
-class Name_Dict (TFL.Meta.BaM (dict, metaclass = M_Name_Dict)) :
+class Name_Dict (dict, metaclass = M_Name_Dict) :
 
     key_attr_name    = "name"
     _convert_methods = \
@@ -106,8 +106,7 @@ class NO_List (TFL.Ordered_Set):
     # end def iteritems
 
     def itervalues (self) :
-        for i in self :
-            yield i
+        yield from self 
     # end def iter
 
     def items  (self) : return list (self.iteritems  ())

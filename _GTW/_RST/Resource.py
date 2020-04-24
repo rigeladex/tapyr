@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -157,13 +157,10 @@
 #     8-Feb-2017 (CT) Change `show_in_nav` to check `short_title`
 #    21-Mar-2018 (CT) Add `_password_elider_2`
 #    27-Mar-2018 (CT) Change `_password_elider_*` to match all password fields
+#    24-Apr-2020 (CT) Add guard for `domain` to `webmaster`
+#                     - `"webmaster@"` triggers an exception in Py-3 `email`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -264,7 +261,7 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
 
 # end class _RST_Meta_
 
-class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
+class _RST_Base_ (TFL.Meta.Object, metaclass = _RST_Meta_) :
     """Base class for RESTful resources."""
 
     _real_name                 = "_Base_"
@@ -538,8 +535,7 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         for e in self.own_links :
             yield e
             if isinstance (e, _Dir_) :
-                for ee in e.own_links_transitive :
-                    yield ee
+                yield from e.own_links_transitive
     # end def own_links_transitive
 
     @property
@@ -589,13 +585,10 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
     @getattr_safe
     def postconditions (self) :
         def _gen (self) :
-            for p in self.cls_postconditions :
-                yield p
-            for p in self._postconditions :
-                yield p
+            yield from self.cls_postconditions
+            yield from self._postconditions
             if self.parent :
-                for p in self.parent.postconditions :
-                    yield p
+                yield from self.parent.postconditions
         return list (uniq (_gen (self)))
     # end def postconditions
 
@@ -817,12 +810,12 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
                     ((message, pyk.decoded (xtra, enc)))
             message = _error_email_cleaner (message)
             if not self.Templateer :
-                pyk.fprint ("Exception:", exc)
-                pyk.fprint ("Request path", request.path)
-                pyk.fprint ("Email", email)
-                pyk.fprint (message)
-                pyk.fprint (request.body)
-                pyk.fprint (request.environ)
+                print ("Exception:", exc)
+                print ("Request path", request.path)
+                print ("Email", email)
+                print (message)
+                print (request.body)
+                print (request.environ)
             else :
                 kw = {}
                 if self.DEBUG :
@@ -912,8 +905,7 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
                 yield getattr (p, "instance", p)
             if self.parent :
                 pps = getattr (self.parent, name + "s", ())
-                for p in pps or () :
-                    yield p
+                yield from pps or ()
         return uniq (_gen (self, name))
     # end def _get_permissions
 
@@ -1266,8 +1258,7 @@ class _RST_Dir_Base_ (_Ancestor) :
 
     def template_iter (self) :
         if self.top.dynamic_p or self.static_p :
-            for t in self.__super.template_iter () :
-                yield t
+            yield from self.__super.template_iter ()
             t = self.dir_template
             if t :
                 yield t
@@ -1332,8 +1323,7 @@ class _RST_Dir_ (_Ancestor) :
     def entries_transitive (self) :
         for e in self.entries :
             yield e
-            for d in e.entries_transitive :
-                yield d
+            yield from e.entries_transitive
     # end def entries_transitive
 
     @property
@@ -1357,15 +1347,12 @@ class _RST_Dir_ (_Ancestor) :
 
     def template_iter (self) :
         if self.top.dynamic_p or self.static_p :
-            for t in self.__super.template_iter () :
-                yield t
+            yield from self.__super.template_iter ()
             eff = self._effective
             if eff is not self :
-                for t in eff.template_iter () :
-                    yield t
+                yield from eff.template_iter ()
             for d in self.sub_dir_iter () :
-                for t in d.template_iter () :
-                    yield t
+                yield from d.template_iter ()
     # end def template_iter
 
     def _add_href_pat_frag_tail \
@@ -1422,12 +1409,10 @@ class RST_Dir_V (_Ancestor) :
 
     def template_iter (self) :
         if self.top.dynamic_p or self.static_p :
-            for t in self.__super.template_iter () :
-                yield t
+            yield from self.__super.template_iter ()
             if self._entry_type_map :
                 for e in pyk.itervalues (self._entry_type_map) :
-                    for t in e.template_iter () :
-                        yield t
+                    yield from e.template_iter ()
     # end def template_iter
 
     def _add_href_pat_frag_tail (self, head, getter = None) :
@@ -1708,7 +1693,8 @@ class RST_Root (_Ancestor) :
             domain = self.domain or self.site_url
             if domain.startswith ("www.") :
                 domain = domain [4:]
-            result = self._webmaster = "webmaster@%s" % (domain, )
+            result = self._webmaster = \
+                "webmaster@%s" % (domain, ) if domain else "webmaster"
         return result
     # end def webmaster
 
@@ -1757,8 +1743,7 @@ class RST_Root (_Ancestor) :
             if self.Templateer :
                 for tn in self.Templateer.error_template_names :
                     yield gett (tn, [])
-            for t in self.__super.template_iter () :
-                yield t
+            yield from self.__super.template_iter ()
         for t in _gen () :
             if t.id not in seen :
                 yield t

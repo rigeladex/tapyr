@@ -27,8 +27,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -86,7 +84,6 @@ class _Language_ (_Ancestor) :
 
 # end class _Language_
 
-@pyk.adapt__bool__
 class L10N (GTW.RST.TOP.Dir) :
     """Navigation directory supporting language selection."""
 

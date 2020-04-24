@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -18,6 +18,7 @@
 # Revision Dates
 #     3-Apr-2008 (CT) Creation (based on code in `TFL.Sync_File`)
 #    16-Oct-2015 (CT) Add `__future__` imports
+#     6-Apr-2020 (CT) Pass `Filename` directly to `sos.open`, `.remove`
 #    ««revision-date»»···
 #--
 
@@ -46,10 +47,6 @@
 
 """
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-
 from   _TFL                import TFL
 
 from   _TFL.Error          import Sync_Conflict
@@ -68,7 +65,7 @@ def lock_file (file_name) :
         ### need a lock there anyway!)
         can_lock = sos.access (ln.directory, sos.W_OK)
         if can_lock :
-            lf = sos.open (ln.name, sos.O_CREAT | sos.O_EXCL)
+            lf = sos.open (ln, sos.O_CREAT | sos.O_EXCL)
     except sos.error as exc :
         if exc.args [0] != errno.EEXIST :
             raise
@@ -81,7 +78,7 @@ def lock_file (file_name) :
                 try :
                     sos.close  (lf)
                 finally :
-                    sos.remove (ln.name)
+                    sos.remove (ln)
 # end def lock_file
 
 @TFL.Contextmanager

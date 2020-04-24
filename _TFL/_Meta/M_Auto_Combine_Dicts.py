@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,7 +32,7 @@ Meta class for auto-combining the dict-valued attributes mentioned in
 ::
 
     >>> from _TFL.portable_repr import portable_repr
-    >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Combine_Dicts)) :
+    >>> class A (object, metaclass = M_Auto_Combine_Dicts) :
     ...     _dicts_to_combine = ("foo", "bar")
     ...     bar               = dict (x = 1, y = 2)
     ...
@@ -56,11 +56,6 @@ Meta class for auto-combining the dict-valued attributes mentioned in
     ("{'u' : 1, 'v' : 'b', 'w' : 'a'}", "{'x' : 'z', 'y' : 2, 'z' : -42}")
 
 """
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL                import TFL
 from   _TFL.pyk            import pyk

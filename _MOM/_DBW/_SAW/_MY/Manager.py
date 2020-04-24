@@ -20,9 +20,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                 import division, print_function
-from   __future__                 import absolute_import, unicode_literals
-
 from   _MOM                       import MOM
 from   _TFL                       import TFL
 from   _TFL.pyk                   import pyk
@@ -39,7 +36,7 @@ class _M_SAW_MY_Manager_ (MOM.DBW.SAW.Manager.__class__) :
 # end class _M_SAW_MY_Manager_
 
 class _SAW_MY_Manager_ \
-          (TFL.Meta.BaM (MOM.DBW.SAW.Manager, metaclass = _M_SAW_MY_Manager_)) :
+          (MOM.DBW.SAW.Manager, metaclass = _M_SAW_MY_Manager_) :
     """Database wrapper for SAW-wrapped sqlalchemy-mySQL"""
 
     _real_name    = "Manager"

@@ -116,9 +116,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                 import division, print_function
-from   __future__                 import absolute_import, unicode_literals
-
 from   _MOM                       import MOM
 from   _TFL                       import TFL
 from   _TFL.pyk                   import pyk
@@ -210,7 +207,7 @@ class _M_Kind_Wrapper_ (TFL.Meta.Object.__class__) :
 # end class _M_Kind_Wrapper_
 
 class _Kind_Wrapper_ \
-          (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Kind_Wrapper_)) :
+          (TFL.Meta.Object, metaclass = _M_Kind_Wrapper_) :
 
     columns         = ()
     db_attrs_o      = db_attrs     = {}
@@ -877,7 +874,7 @@ def _saw_column_type (self, DBW, wrapper, pts) :
               "a `P_Type` definition"
             % (wrapper.kind.e_type.type_name, wrapper.kind, )
             )
-    elif p_type is pyk.text_type :
+    elif p_type is str :
         result = DBW.PNS.Attr._saw_column_type_string (self, DBW, wrapper, pts)
     else :
         if pts._Pickler_Type is not None :
@@ -935,7 +932,7 @@ def _saw_column_type_time_x (self, DBW, wrapper, pts) :
 @TFL.Add_To_Class ("_saw_column_type", MOM.Attr._A_String_Base_)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_column_type_string (self, DBW, wrapper, pts) :
-    kw     = dict (convert_unicode = pts.p_type is pyk.text_type)
+    kw     = dict (convert_unicode = pts.p_type is str)
     length = pts.length
     if length :
         kw.update (length = length)

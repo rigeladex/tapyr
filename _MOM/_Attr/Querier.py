@@ -108,8 +108,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
@@ -344,8 +342,7 @@ class _Container_ (_Base_) :
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
-                for ct in c._atoms (ETC (seen_etypes)):
-                    yield ct
+                yield from c._atoms (ETC (seen_etypes))
     # end def _atoms
 
     def _attrs_transitive (self, seen_etypes) :
@@ -353,8 +350,7 @@ class _Container_ (_Base_) :
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
-                for ct in c._attrs_transitive (ETC (seen_etypes)):
-                    yield ct
+                yield from c._attrs_transitive (ETC (seen_etypes))
             else :
                 yield c
     # end def _attrs_transitive
@@ -423,8 +419,7 @@ class _Container_ (_Base_) :
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
-                for ct in c.Unwrapped.Atoms :
-                    yield ct
+                yield from c.Unwrapped.Atoms 
     # end def _unwrapped_atoms
 
 # end class _Container_
@@ -446,7 +441,7 @@ class _M_Type_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Type_
 
-class _Type_ (TFL.Meta.BaM (_Base_, metaclass = _M_Type_)) :
+class _Type_ (_Base_, metaclass = _M_Type_) :
     """Base class for Type classes.
 
        A Type class provides all filters for a set of Attr.Type classes.
@@ -703,8 +698,7 @@ class _Co_Mixin_ (_Container_, _Type_) :
 
     def _attrs_transitive (self, seen_etypes) :
         yield self
-        for c in self.__super._attrs_transitive (seen_etypes) :
-            yield c
+        yield from self.__super._attrs_transitive (seen_etypes) 
     # end def _attrs_transitive
 
     def __getattr__ (self, name) :
@@ -731,8 +725,7 @@ class _Structured_ (_Co_Mixin_) :
 
     def _atoms (self, seen_etypes) :
         if self.E_Type.edit_attr :
-            for x in self.__super._atoms (seen_etypes) :
-                yield x
+            yield from self.__super._atoms (seen_etypes) 
         else :
             yield self
     # end def _atoms
@@ -1107,7 +1100,7 @@ class Raw (String) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def _string_cooker (self) :
-        return pyk.text_type
+        return str
     # end def _string_cooker
 
     @TFL.Meta.Once_Property

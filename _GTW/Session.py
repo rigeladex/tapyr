@@ -75,7 +75,6 @@ import random
 import time
 import uuid
 
-@pyk.adapt__bool__
 class User (TFL.Meta.Object) :
     """Encapsulate user information for session."""
 
@@ -125,8 +124,7 @@ class M_Session (TFL.Meta.M_Auto_Update_Combined) :
 
 # end class M_Session
 
-@pyk.adapt__bool__
-class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
+class Session (TFL.Meta.Object, metaclass = M_Session) :
     """Base class for sessions
 
        >>> from _GTW.Memory_Session import Memory_Session
@@ -244,7 +242,7 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
         while True :
             id = hash_fct ("%s%s" % (uuid.uuid4 ().hex, salt)).hexdigest ()
             if check is None or not check (id) :
-                return pyk.text_type (id)
+                return str (id)
     # end def New_ID
 
     def pop (self, name, default = None) :

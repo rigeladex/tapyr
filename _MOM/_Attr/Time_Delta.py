@@ -26,11 +26,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _CAL                        import CAL
 
 from   _MOM.import_MOM             import *
@@ -77,7 +72,7 @@ class A_Time_Delta (A_Attr_Type) :
     def as_string (soc, value) :
         result = ""
         if value is not None :
-            result = pyk.text_type (value)
+            result = str (value)
             if result.endswith (":00") :
                 result = result [:-3]
         return result

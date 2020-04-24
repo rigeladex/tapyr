@@ -38,8 +38,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function, unicode_literals
-
 from   _MOM.import_MOM          import *
 from   _GTW._OMP._NET.Attr_Type import *
 from   _TFL.Package_Namespace   import Derived_Package_Namespace

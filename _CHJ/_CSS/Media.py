@@ -28,8 +28,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__                 import print_function, unicode_literals
-
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
@@ -54,7 +52,7 @@ class M_Media (TFL.Meta.Object.__class__) :
 
 # end class M_Media
 
-class _Media_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Media)) :
+class _Media_ (TFL.Meta.Object, metaclass = M_Media) :
     """Base class for media types and queries."""
 
     nick            = None
@@ -279,8 +277,7 @@ class Rule (_Media_) :
 
     def rules_iter (self) :
         for r in self.rules :
-            for x in r :
-                yield x
+            yield from r 
     # end def rules_iter
 
     def _pop_rules (self, kw) :

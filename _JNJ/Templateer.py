@@ -92,8 +92,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
-
 from   _JNJ               import JNJ
 from   _TFL               import TFL
 from   _TFL.pyk           import pyk
@@ -397,8 +395,7 @@ class Template_E (_Template_) :
         def _gen () :
             yield self
             if self.extends :
-                for e in self.extends.templates_e :
-                    yield e
+                yield from self.extends.templates_e 
         return tuple (TFL.uniq (_gen ()))
     # end def templates_e
 
@@ -410,14 +407,11 @@ class Template_E (_Template_) :
                 if i not in seen :
                     yield i
                     seen.add (i)
-                    for ii in _gen_i (i.imports) :
-                        yield ii
+                    yield from _gen_i (i.imports) 
         def _gen () :
             for e in reversed (self.templates_e) :
-                for i in _gen_i (e.imports) :
-                    yield i
-            for i in _gen_i (self.injected) :
-                yield i
+                yield from _gen_i (e.imports) 
+            yield from _gen_i (self.injected) 
         return tuple (_gen ())
     # end def templates_i
 

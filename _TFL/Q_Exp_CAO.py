@@ -23,11 +23,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL                       import TFL
 from   _TFL._Meta.Once_Property   import Once_Property
 
@@ -90,8 +85,7 @@ class _Q_Exp_Arg_ (TFL.CAO.Opt.Str) :
                         head  = _convert_1 (pat.head)
                         tail  = _convert_1 (pat.tail) + 1
                         delta = _convert_1 (pat.delta) if pat.delta else 1
-                        for v in range (head, tail, delta) :
-                            yield v
+                        yield from range (head, tail, delta) 
                     else :
                         yield _convert_1 (v)
             vs = _convert (vs)

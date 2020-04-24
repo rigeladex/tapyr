@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,15 +17,11 @@
 # Revision Dates
 #    27-Jul-2004 (CT) Creation
 #    12-Aug-2004 (MG) `default_cgi` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    26-Feb-2012 (MG) `__future__` imports added
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
 
-
-
-from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
 
@@ -48,8 +44,8 @@ class _Scope_ (TFL.SDG.C.Node) :
     explanation_level    = Ancestor.description_level + 2
 
     def insert (self, child, index = None, delta = 0, cgi = None) :
-        """Insert `child' to `self.children' at position `index'
-           (`index is None' means append)
+        """Insert `child` to `self.children` at position `index`
+           (`index is None` means append)
            (None means append).
         """
         for c in self._convert_c_stmt (child) :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -26,12 +26,13 @@
 #                     * Python 2.7 *and* 3.5 use lowercase module names
 #    29-Oct-2015 (CT) Add `UnixMailbox`, `MHMailbox` aliase for Python 3.x
 #     4-Nov-2015 (CT) Add `encode_7or8bit`, remove `message_from_string`
+#    25-Mar-2020 (CT) Add `policy`
 #    ««revision-date»»···
 #--
 
 from   _PMA                    import PMA
 
-from   email                   import message_from_file
+from   email                   import message_from_file, policy
 from   email.encoders          import encode_base64, encode_7or8bit
 from   email.generator         import *
 from   email.header            import *

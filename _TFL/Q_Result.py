@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -163,11 +163,6 @@ Provide filtering and ordering functions over query result::
 
 """
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL                       import TFL
 from   _TFL.pyk                   import pyk
 
@@ -204,8 +199,6 @@ def _comparison_operator (op) :
     return _
 # end def _comparison_operator
 
-@pyk.adapt__bool__
-@pyk.adapt__str__
 class _Attr_ (object) :
     """Wrapper for result of `.attr` method."""
 
@@ -265,7 +258,7 @@ class _Attr_ (object) :
     # end def __repr__
 
     def __str__ (self) :
-        return pyk.text_type (self._VALUE)
+        return str (self._VALUE)
     # end def __str__
 
 # end class _Attr_
@@ -330,7 +323,6 @@ class _Q_Filter_Distinct_ (TFL.Meta.Object) :
 
 # end class _Q_Filter_Distinct_
 
-@pyk.adapt__bool__
 class _Q_Result_ (TFL.Meta.Object) :
     """Base class for :class:`Q_Result` and :class:`Q_Result_Composite`."""
 
@@ -666,7 +658,6 @@ class Q_Result (_Q_Result_) :
 
 # end class Q_Result
 
-@pyk.adapt__bool__
 class Q_Result_Composite (_Q_Result_) :
     """Lazy query result for composite query. The elements of the composite
        query result are only materialized when `all`, `count`, `first`, or

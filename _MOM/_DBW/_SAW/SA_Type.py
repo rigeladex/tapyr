@@ -27,11 +27,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 from   _TFL.pyk              import pyk
@@ -137,7 +132,7 @@ class M_SA_Type (TFL.Meta.Object.__class__) :
 
 # end class M_SA_Type
 
-class SA_Type (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_SA_Type)) :
+class SA_Type (TFL.Meta.Object, metaclass = M_SA_Type) :
     """Encapsulate SQLalchemy types"""
 
     _Time_X_    = _Time_X_

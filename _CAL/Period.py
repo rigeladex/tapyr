@@ -22,11 +22,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _CAL                       import CAL
 from   _TFL                       import TFL
 
@@ -41,7 +36,6 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 from   _TFL._Meta.Property        import Alias_Property, Class_Property
 
-@pyk.adapt__str__
 class _Period_ (_Ordinal_) :
     """Base class for calendary periods."""
 
@@ -158,7 +152,6 @@ class _Period_ (_Ordinal_) :
 
 # end class _Period_
 
-@pyk.adapt__str__
 class Day (_Period_) :
     """Model a calendary day.
 
@@ -231,7 +224,6 @@ class Day (_Period_) :
 
 # end class Day
 
-@pyk.adapt__str__
 class Interval (_Period_) :
     """Model an arbitrary calendary interval.
 
@@ -625,7 +617,6 @@ class Week (_Period_) :
 
 # end class Week
 
-@pyk.adapt__str__
 class Year (_Period_) :
     """Model a calendary year.
 

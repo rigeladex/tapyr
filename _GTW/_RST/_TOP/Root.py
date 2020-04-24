@@ -35,8 +35,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -120,7 +118,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     @property
     @getattr_safe
     def h_title (self) :
-        return pyk.text_type (self.owner or self.name)
+        return str (self.owner or self.name)
     # end def h_title
 
     @Once_Property

@@ -22,8 +22,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from    _GTW._RST._TOP._MOM.Admin import *
 from   _TFL.I18N                  import _, _T, _Tn
 

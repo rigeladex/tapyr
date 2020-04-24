@@ -34,11 +34,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL.Date_Time    import *
 from   _TFL.EU_Currency  import *
 from   _TFL.pyk          import pyk

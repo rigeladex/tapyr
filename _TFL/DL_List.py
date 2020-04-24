@@ -46,8 +46,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 from   _TFL        import TFL
 from   _TFL.pyk    import pyk
 
@@ -55,8 +53,6 @@ import _TFL.Accessor
 import _TFL.predicate
 import _TFL._Meta.Object
 
-@pyk.adapt__bool__
-@pyk.adapt__str__
 class DL_Item (TFL.Meta.Object) :
     """Item in a doubly linked list"""
 
@@ -121,7 +117,7 @@ class DL_Item (TFL.Meta.Object) :
 
     def __str__ (self) :
         if bool (self) :
-            return pyk.text_type (self.value)
+            return str (self.value)
         else :
             return "<%s at %s: %s, %s, %s>" % \
                 ( self.__class__, id (self)
@@ -260,7 +256,6 @@ class _DL_Counted_ (TFL.Meta.Object) :
 
 # end class _DL_Counted_
 
-@pyk.adapt__bool__
 class DL_List (_DL_Chain_) :
     """Doubly linked list.
 
@@ -360,7 +355,6 @@ class DL_List_Counted (_DL_Counted_, DL_List) :
 
 ### XXX please make an own module for DL_Ring classes
 
-@pyk.adapt__bool__
 class DL_Ring (_DL_Chain_) :
     """Doubly linked ring.
 
@@ -464,27 +458,25 @@ class DL_Ring (_DL_Chain_) :
 
     def reverse_iter (self) :
         if self.mark is not self._NIL :
-            for p in self._T.predecessors () :
-                yield p
+            yield from self._T.predecessors () 
             yield self._T
     # end def reverse_iter
 
     def rotate_next (self, n) :
         """Move `self.mark` forward (i.e., following `next`) `n` times."""
-        for i in pyk.xrange (n) :
+        for i in range (n) :
             self.mark = self.mark.next
     # end def rotate_next
 
     def rotate_prev (self, n) :
         """Move `self.mark` backward (i.e., following `prev`) `n` times."""
-        for i in pyk.xrange (n) :
+        for i in range (n) :
             self.mark = self.mark.prev
     # end def rotate_prev
 
     def __iter__ (self) :
         if self.mark is not self._NIL :
-            for s in self._H.successors () :
-                yield s
+            yield from self._H.successors () 
             yield self._H
     # end def __iter__
 

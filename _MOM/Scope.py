@@ -125,8 +125,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import print_function
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
@@ -202,7 +200,6 @@ class _Example_ (TFL.Meta.Object) :
 
 # end class _Example_
 
-@pyk.adapt__str__
 class Scope (TFL.Meta.Object) :
 
     active                 = None
@@ -904,7 +901,7 @@ class Scope (TFL.Meta.Object) :
     # end def __iter__
 
     def __str__ (self) :
-        url = self._cleaned_url (pyk.text_type (self.db_url))
+        url = self._cleaned_url (str (self.db_url))
         return "%s %s<%s>" % (self.__class__.__name__, self.bname, url)
     # end def __str__
 

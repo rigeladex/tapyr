@@ -78,11 +78,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _CAL                       import CAL
 from   _TFL                       import TFL
 
@@ -256,7 +251,6 @@ class Day (_Ordinal_) :
 
 # end class Day
 
-@pyk.adapt__bool__
 class Week (_Ordinal_) :
     """Model a single week in a calendar
 
@@ -734,7 +728,7 @@ class Year (TFL.Meta.Object) :
 def _import_cb_json_dump (module) :
     @module.default.add_type (_Ordinal_, Year)
     def json_encode_ordinal_or_year (o) :
-        return pyk.text_type (o)
+        return str (o)
 # end def _import_cb_json_dump
 
 def create_diary (Y, path) :

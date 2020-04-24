@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,28 +44,23 @@
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    10-Feb-2016 (CT) Add `__head` and `__tail` args to `Dict_Replacer`
+#     5-Apr-2020 (CT) Add `__main__` script
+#     6-Apr-2020 (CT) Skip sym-links in `__main__` script; print totals
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL           import TFL
 from   _TFL.pyk       import pyk
+from   _TFL           import sos
 
 import _TFL._Meta.Object
+
 import _TFL.Environment
+
 import re
 
-if hasattr (re, "RegexObject") :
-    re_RegexObject = re.RegexObject
-else :
-    ### `sre` returns a type
-    re_RegexObject = type (re.compile (""))
+re_RegexObject = type (re.compile (""))
 
-@pyk.adapt__bool__
 class Regexp (TFL.Meta.Object) :
     """Wrap a regular expression pattern and the last match, if any.
 
@@ -245,8 +240,7 @@ class Multi_Regexp (TFL.Meta.Object) :
 
     def search_iter (self, string, pos = 0, endpos = None) :
         for p in self.patterns :
-            for m in p.search_iter (string, pos, endpos) :
-                yield m
+            yield from p.search_iter (string, pos, endpos)
     # end def search_iter
 
     def sub (self, * args, ** kw) :
@@ -305,6 +299,15 @@ class Re_Replacer (TFL.Meta.Object) :
             print (self.regexp.pattern, self.replacement)
             raise
     # end def __call__
+
+    def subn (self, text, count = 0) :
+        """Return a tuple (replaced_text, number_of_subs_made)."""
+        try :
+            return self.regexp.subn (self.replacement, text, count)
+        except TypeError :
+            print (self.regexp.pattern, self.replacement)
+            raise
+    # end def subn
 
     def __getattr__ (self, name) :
         if name.startswith ("__") and name.endswith ("__") :
@@ -365,7 +368,54 @@ class Multi_Re_Replacer (TFL.Meta.Object) :
         self.rereps.extend (rereps)
     # end def add
 
+    def subn (self, text, count = 0) :
+        """Return a tuple (replaced_text, number_of_subs_made)."""
+        n      = 0
+        result = text
+        for rerep in self.rereps :
+            result, nn = rerep.subn (result, count)
+            n += nn
+        return result, n
+    # end def subn
+
 # end class Multi_Re_Replacer
+
+def _main (cmd) :
+    """Replace text specified by regular expression(s).
+
+    Syntax for replace `replace` argument and `-additional_replace` options:
+
+        /pattern/replacement/flags
+
+    The delimiter around `pattern`, `replacement`, and `flags`
+    can be any character that isn't used by `pattern`,
+    `replacement`, or `flags`.
+    """
+    count = cmd.count
+    rerep = cmd.replace
+    files = cmd.argv [1:]
+    if cmd.additional_replace != () :
+        rerep = Multi_Re_Replacer (rerep, * cmd.additional_replace.rereps)
+    t_f = t_n = 0
+    for fn in files :
+        if sos.path.islink (fn) :
+            continue
+        with open (fn, encoding = cmd.input_encoding) as sf :
+            source = sf.read ()
+        target, n  = rerep.subn (source, count)
+        if n :
+            with open (fn, "w", encoding = cmd.output_encoding) as tf :
+                tf.write (target)
+            t_f += 1
+            t_n += n
+        if (n or cmd.verbose) and not cmd.quiet :
+            print ("%-40s: %d pattern occurrences replaced" % (fn, n))
+    if not cmd.quiet :
+        print \
+            ( "%-40s: %d pattern occurrences replaced in %d files"
+            % ("Total", t_n, t_f)
+            )
+# end def _main
 
 __doc__ = """
 
@@ -375,4 +425,31 @@ __doc__ = """
 
 if __name__ != "__main__" :
     TFL._Export ("*", "re")
+else :
+    import _TFL.CAO
+
+    _Command = TFL.CAO.Cmd \
+        ( handler       = _main
+        , args          =
+            ( TFL.CAO.Arg.Re_Replacer
+                ( "replace"
+                , description = "Regular expression to replace"
+                )
+            , "file:P?File(s) to replace regular expression(s) in"
+            )
+        , opts          =
+            ( TFL.CAO.Arg.Re_Replacer
+                ( "additional_replace"
+                , description = "Additional regular expression(s) to replace"
+                )
+            , "-count:I=0?Maximum number of pattern occurrences to be replaced"
+            , TFL.CAO.Input_Encoding  (default = "utf-8")
+            , TFL.CAO.Output_Encoding (default = "utf-8")
+            , "-quiet:B?No output"
+            , "-verbose:B?Verbose output"
+            )
+        , min_args      = 2
+        )
+
+    _Command ()
 ### __END__ TFL.Regexp

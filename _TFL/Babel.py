@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Martin Glueck All rights reserved
+# Copyright (C) 2010-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -28,12 +28,10 @@
 #    26-Feb-2010 (CT) `process_count` forced to `1`
 #    10-Feb-2016 (CT) Add `root_dir` to `from_sys_modules`; put it in front
 #    10-Oct-2016 (CT) Make Python-3 compatible
+#     6-Apr-2020 (CT) Use `os.replace`, not `os.rename`
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
 
 from   _TFL                     import TFL
 from   _TFL.pyk                 import pyk
@@ -43,11 +41,12 @@ import _TFL._Babel.Config_File
 import _TFL.CAO
 import _TFL.defaultdict
 
-import  glob
-import  os
-import  shutil
-import  sys
-import  tempfile
+import glob
+import importlib
+import os
+import shutil
+import sys
+import tempfile
 
 try :
     from multiprocessing import Process, JoinableQueue
@@ -139,16 +138,10 @@ class Language_File_Collection (object) :
             os.remove (tmpname)
             raise
         try :
-            os.rename (tmpname, po_file_n)
+            os.replace (tmpname, po_file_n)
         except OSError:
-            # We're probably on Windows, which doesn't support atomic
-            # renames, at least not through Python
-            # If the error is in fact due to a permissions problem, that
-            # same error is going to be raised from one of the following
-            # operations
-            os.remove   (po_file_n)
-            shutil.copy (tmpname, po_file_n)
-            os.remove   (tmpname)
+            os.remove  (tmpname)
+            raise
     # end def _update
 
     def _output_file_name (self, cmd, lang, po_file_n = None, suffix = "") :
@@ -329,7 +322,7 @@ def compile (cmd) :
         d, p = os.path.split    (cmd.import_file)
         f, e = os.path.splitext (p)
         with TFL.Context.list_push (sys.path, d) :
-            m = __import__ (f)
+            m = importlib.import_module (f)
         lang_coll = Language_File_Collection.from_sys_modules \
             (cmd.languages, cmd.file_suffix, d or "./")
     else :

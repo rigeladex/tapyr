@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2019-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -18,11 +18,6 @@
 #     5-Sep-2019 (CT) Don't change `part_indices` in `extract_mime_attachements`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -48,7 +43,7 @@ def extract_mime_attachements \
         ) :
     if def_ext and not def_ext.startswith (".") :
         def_ext    = "." + def_ext
-    pis = part_indices if part_indices else pyk.range (len (msg.parts))
+    pis = part_indices if part_indices else range (len (msg.parts))
     for i in pis :
         p          = msg.parts [i]
         specified  = (not ignore (p.content_type)) and \
@@ -58,9 +53,9 @@ def extract_mime_attachements \
             )
         if specified :
             name   = p.filename or ("%s_%s" % (msg.name, i))
-            fn     = Filename (directory, name).name
+            fn     = Filename (directory, name)
             if def_ext :
-                fn = Filename (def_ext, fn).name
+                fn = Filename (def_ext, fn)
             print ("    Saving", name)
             PMA.save (fn, p.body)
         elif p.main_type in ("multipart", "message") :

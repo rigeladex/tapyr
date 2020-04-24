@@ -68,8 +68,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
-
 from   _JNJ                     import JNJ
 from   _TFL                     import TFL
 
@@ -318,7 +316,7 @@ class GTW (TFL.Meta.Object) :
         return ""
     # end def update_blackboard
 
-    unichr = staticmethod (pyk.unichr)
+    unichr = staticmethod (chr)
 
     def uri (self, scheme, uri, text = None, ** kw) :
         """Return HTML <a> element as specified by `scheme`, `uri`, `text`, and

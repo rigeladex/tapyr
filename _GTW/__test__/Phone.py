@@ -24,9 +24,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _GTW.__test__.model      import *
 
 _test_code = """

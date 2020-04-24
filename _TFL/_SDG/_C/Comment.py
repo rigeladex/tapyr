@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,9 +37,6 @@
 #    ««revision-date»»···
 #--
 
-
-
-from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
 import _TFL.tex_quoted
@@ -108,8 +105,7 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
         format_prec = max (int (kw ["format_prec"]), 4)
         wrapper     = textwrap.TextWrapper (width = format_prec)
         for desc in self.description :
-            for l in wrapper.wrap (desc) :
-                yield l
+            yield from wrapper.wrap (desc) 
     # end def _description
 
     def _tex_description (self, ** kw) :

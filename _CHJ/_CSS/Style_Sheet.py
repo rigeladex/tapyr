@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package CHJ.CSS.
@@ -33,9 +33,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division
-from   __future__  import print_function, unicode_literals
-
 from   _CHJ                       import CHJ
 from   _TFL                       import TFL
 
@@ -55,7 +52,7 @@ class M_Style_Sheet (TFL.Meta.Object.__class__) :
 # end class M_Style_Sheet
 
 class _Style_Sheet_ \
-        (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Style_Sheet)) :
+        (TFL.Meta.Object, metaclass = M_Style_Sheet) :
 
     name          = None
     rank          = 0
@@ -67,7 +64,6 @@ class _Style_Sheet_ \
 
 # end class _Style_Sheet_
 
-@pyk.adapt__str__
 class Style_Sheet (_Style_Sheet_) :
     """Model a CSS style sheet"""
 
@@ -94,20 +90,17 @@ class Style_Sheet (_Style_Sheet_) :
 
     def __iter__ (self) :
         for i in self.imports :
-            for r in i :
-                yield r
+            yield from i 
         for r in self.rules :
-            for x in r :
-                yield x
+            yield from r 
     # end def __iter__
 
     def __str__ (self) :
-        return "\n\n".join (pyk.text_type (r) for r in self)
+        return "\n\n".join (str (r) for r in self)
     # end def __str__
 
 # end class Style_Sheet
 
-@pyk.adapt__str__
 class Style_File (_Style_Sheet_) :
     """Model a style file containing plain old CSS."""
 

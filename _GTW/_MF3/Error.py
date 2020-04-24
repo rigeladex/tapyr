@@ -31,9 +31,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _GTW                       import GTW
 from   _MOM                       import MOM
 from   _TFL                       import TFL
@@ -121,7 +118,6 @@ class _Attr_Name_Replacer_ (TFL.Meta.Object) :
 
 # end class _Attr_Name_Replacer_
 
-@pyk.adapt__str__
 class Wrapper (TFL.Meta.Object) :
     """Wrapper around a MOM.Error instance for a specific MF3 entity element."""
 
@@ -245,8 +241,6 @@ class Wrapper (TFL.Meta.Object) :
 
 # end class Wrapper
 
-@pyk.adapt__bool__
-@pyk.adapt__str__
 class List (TFL.Meta.Object) :
     """Manage a list of errors for a specific MF3 entity element."""
 

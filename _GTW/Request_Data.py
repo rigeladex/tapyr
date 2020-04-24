@@ -51,7 +51,6 @@ from   _GTW               import GTW
 
 import  logging
 
-@pyk.adapt__bool__
 class _GTW_Request_Data_ (TFL.Meta.Object) :
     """Convert the list values into no lists during access."""
 
@@ -106,7 +105,7 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
 
     def _normalized (self, value) :
         if isinstance (value, pyk.byte_types) :
-            return pyk.text_type (value, "utf8", "replace")
+            return str (value, "utf8", "replace")
         return value
     # end def _normalized
 

@@ -22,11 +22,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 
@@ -206,7 +201,6 @@ _Country_Rule_ ( "CH", _ ("Switzerland"),     r"E\d{9}"
                , checker = _Country_Rule_.ch_checker
                )
 
-@pyk.adapt__str__
 class VAT_IDN (TFL.Meta.Object) :
     """Value added tax identification number"""
 

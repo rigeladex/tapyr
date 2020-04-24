@@ -21,8 +21,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from   _GTW._RST.Resource       import *
 
 from   _TFL.formatted_repr      import formatted_repr

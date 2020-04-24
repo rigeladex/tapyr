@@ -29,11 +29,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -51,8 +46,6 @@ import datetime
 import logging
 import time
 
-@pyk.adapt__bool__
-@pyk.adapt__str__
 class _Base_ (TFL.Meta.Object) :
     """Signed token as used for secure cookies or CSRF tokens"""
 

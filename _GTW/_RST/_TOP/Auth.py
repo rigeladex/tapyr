@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -69,8 +69,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -89,12 +87,12 @@ from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.pyk                 import pyk
 
 from   posixpath                import join  as pp_join
+from   urllib                   import parse as urlparse
+from   urllib.parse             import urlencode
 
 import datetime
 import logging
 import time
-
-urlparse = pyk.urlparse
 
 _Ancestor = GTW.RST.TOP.Page
 
@@ -899,7 +897,7 @@ class Auth (_Ancestor) :
     # end def href_reset_password
 
     def _href_q (self, * args, ** kw) :
-        return "%s?%s" % (pp_join (* args), pyk.urlencode (kw))
+        return "%s?%s" % (pp_join (* args), urlencode (kw))
     # end def _href_q
 
     def _new_child (self, T, child, grandchildren) :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -36,8 +36,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
-
 from   _TFL                     import TFL
 
 from   _TFL.I18N                import _, _T, _Tn
@@ -49,6 +47,7 @@ import _TFL._Meta.Object
 import _TFL.Caller
 
 from   random                   import randrange
+from   urllib.parse             import urlencode
 
 _obfuscator_format = """\
 <a class="nospam" title="%(need)s">%(text)s</a>\
@@ -95,7 +94,6 @@ def _obfuscator (scheme = "mailto") :
 
 obfuscator = dict ((s, _obfuscator (s)) for s in scheme_map)
 
-@pyk.adapt__str__
 class Cleaner (TFL.Meta.Object) :
     """Clean up HTML using BeautifulSoup."""
 
@@ -129,7 +127,7 @@ class Cleaner (TFL.Meta.Object) :
     # end def _remove
 
     def __str__ (self) :
-        return pyk.text_type (self.soup)
+        return str (self.soup)
     # end def __str__
 
 # end class Cleaner
@@ -198,7 +196,7 @@ class Video (TFL.Meta.Object) :
         height      = kw.pop ("height", self.height)
         width       = kw.pop ("width",  self.width)
         desc        = kw.pop ("desc",   None) or self.watcher_url + video_id
-        query       = "?" + pyk.urlencode \
+        query       = "?" + urlencode \
             (sorted (pyk.iteritems (dict (self.q_parameters, ** kw))))
         result      = self.format % TFL.Caller.Object_Scope (self)
         result      = self.ws_replacer (result)

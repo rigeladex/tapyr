@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2018 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -167,13 +167,9 @@
 #    13-Sep-2017 (CT) Add `13%` to `V_Account._ust_cat` and `._ige_cat`
 #     4-Jun-2018 (CT) Apply `vst_korrektur` for (`erloes`) `minderung`, too
 #    19-Dec-2018 (CT) Replace `desc_strip_pat` by `desc_cleaner`, add `–`
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _ATAX             import ATAX
 from   _TFL              import TFL
@@ -277,8 +273,8 @@ class Account_Entry (_Entry_) :
             )               = split_pat.split    (line, 10)
             self.dtuple     = day_to_time_tuple  (self.date)
         except (ValueError, TypeError) as exc :
-            pyk.fprint (exc)
-            pyk.fprint (line)
+            print (exc)
+            print (line)
             raise
         self.desc           = desc_cleaner (desc)
         self.vst_korrektur  = vst_korrektur
@@ -391,7 +387,7 @@ class Account_Entry (_Entry_) :
                 , self._haben_betrag ()
                 )
         except Exception as exc :
-            pyk.fprint \
+            print \
               ( exc
               , type (self.soll_betrag),  self.soll_betrag
               , type (self.haben_betrag), self.haben_betrag
@@ -482,7 +478,7 @@ class Account (_Base_):
     # end def add_file
 
     def add_lines (self, lines, categ_interest, source_currency) :
-        """Add entries given by `lines' to account `self'."""
+        """Add entries given by `lines` to account `self`."""
         self.source_currency = source_currency
         entries = []
         for line in lines :
@@ -510,11 +506,11 @@ class Account (_Base_):
         if perl_dict_pat.search (line) :
             line = perl_dict_pat.sub ("""["\\1"]""", line)
         ### use temporary dict for exec
-        ### (`locals ()' cannot be changed by `exec')
+        ### (`locals ()` cannot be changed by `exec`)
         tmp  = { "privat" : {}, "vat_privat" : {}, "ignore" : {}}
         try :
-            ### `tmp' must be passed to the local-dict argument because
-            ### Python adds some junk to the global-dict argument of `exec'
+            ### `tmp` must be passed to the local-dict argument because
+            ### Python adds some junk to the global-dict argument of `exec`
             exec (line, {}, tmp)
             if "source_currency" in tmp :
                 self.source_currency = EUC.Table [tmp ["source_currency"]]
@@ -530,14 +526,14 @@ class Account (_Base_):
                     if k in self.account_vars :
                         setattr (self, k, v)
                     else :
-                        pyk.fprint ("Invalid assignment `%s'" % line)
+                        print ("Invalid assignment `%s'" % line)
             except Exception as exc :
-                pyk.fprint \
+                print \
                     ( "Exception `%s' during local-dict update `%s'"
                     % (exc, tmp_cmd)
                     )
         except Exception as exc :
-            pyk.fprint \
+            print \
                 ( "Exception `%s' encountered during execution of line"
                   "\n   `%s'"
                 % (exc, line)
@@ -586,7 +582,7 @@ class V_Account (Account) :
     # end def __init__
 
     def add (self, entry) :
-        """Add `entry' to U_Account."""
+        """Add `entry` to U_Account."""
         assert (isinstance (entry, Account_Entry))
         vst_korrektur = entry.vst_korrektur
         netto         = entry.netto
@@ -731,13 +727,13 @@ class V_Account (Account) :
     # end def header_string
 
     def print_entries (self, trailer = None) :
-        """Print `self.entries' followed by trailer"""
+        """Print `self.entries` followed by trailer"""
         self.print_entries_ (self.entries, self.header_string (), trailer)
     # end def print_entries
 
     def print_entries_by_group (self, trailer = None) :
-        """Print `self.vorsteuer_entries', `self.vorsteuer_entries_igE', and
-           `self.umsatzsteuer_entries' followed by trailer.
+        """Print `self.vorsteuer_entries`, `self.vorsteuer_entries_igE`, and
+           `self.umsatzsteuer_entries` followed by trailer.
         """
         if  (  self.vorsteuer_entries
             or self.vorsteuer_entries_EUst
@@ -745,7 +741,7 @@ class V_Account (Account) :
             or self.vorsteuer_entries_revC
             or self.umsatzsteuer_entries
             ) :
-            pyk.fprint (self.header_string ())
+            print (self.header_string ())
         self.print_entries_ (self.vorsteuer_entries,      trailer = "\n")
         self.print_entries_ (self.vorsteuer_entries_EUst, trailer = "\n")
         self.print_entries_ (self.vorsteuer_entries_igE,  trailer = "\n")
@@ -758,17 +754,17 @@ class V_Account (Account) :
             or self.umsatzsteuer_entries
             ) :
             if trailer :
-                pyk.fprint (trailer)
+                print (trailer)
     # end def print_entries_by_group
 
     def print_entries_ (self, entries, header = None, trailer = None) :
         if entries :
             if header :
-                pyk.fprint (header)
+                print (header)
             for e in entries :
-                pyk.fprint (e)
+                print (e)
             if trailer :
-                pyk.fprint (trailer)
+                print (trailer)
     # end def print_entries_
 
     def print_summary_old (self) :
@@ -776,63 +772,63 @@ class V_Account (Account) :
         vat_saldo = self._vat_saldo ()
         meldung   = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign      = (-1.0,         +1.0)            [vat_saldo >= 0]
-        pyk.fprint \
+        print \
             ( "%-16s : %14s"
             % ("Ausgaben brutto", self.ausgaben_b.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-16s : %14s"
             % ("Ausgaben netto",  self.ausgaben_n.as_string_s ())
             )
-        pyk.fprint ("\n%s\n"         % ( "=" * 80, ))
-        pyk.fprint ("%-16s : %14s"   % ( "Umsatz", self.umsatz.as_string_s ()))
-        pyk.fprint \
+        print ("\n%s\n"         % ( "=" * 80, ))
+        print ("%-16s : %14s"   % ( "Umsatz", self.umsatz.as_string_s ()))
+        print \
             ( "%-16s : %14s"
             %  ( "Steuerpflichtig"
                , (self.umsatz - self.umsatz_dict [1.0]).as_string_s ()
                )
             )
         self.print_ust_dict_     ( self.umsatz_dict, self.ust_dict)
-        pyk.fprint \
+        print \
             ( "\n%-16s : %14s"
             % ("Erwerbe igE", self.erwerb_igE.as_string_s ())
             )
         self.print_ust_dict_     ( self.erwerb_igE_dict, self.ust_igE_dict)
-        pyk.fprint \
+        print \
             ( "\n%-16s : %14s"
             % ("Reverse Charge", self.reverse_charge.as_string_s ())
             )
         self.print_ust_dict_     ( self.reverse_charge_dict, self.ust_revC_dict)
-        pyk.fprint \
+        print \
             ( "\n%-16s :                %14s"
             % ( "USt Übertrag"
               , (self.ust + self.ust_igE + self.ust_revCharge).as_string_s ()
               )
             )
-        pyk.fprint ("--------------- ./.. ---------------------------")
-        pyk.fprint \
+        print ("--------------- ./.. ---------------------------")
+        print \
             ( "%-16s :                %14s"
             % ( "USt Übertrag"
               , (self.ust + self.ust_igE + self.ust_revCharge).as_string_s ()
               )
             )
-        pyk.fprint \
+        print \
             ( "%-16s : %14s"
             % ( "Vorsteuer", self.vorsteuer.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-16s : %14s"
             % ( "Umsatzsteuer aus Gutschrift", self.ust_gut.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-16s : %14s"
             % ("Einfuhrumsatzst.", self.vorsteuer_EUst.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-16s : %14s"
             % ( "Vorsteuer igE", self.vorsteuer_igE.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-16s : %14s %14s"
             % ( "Summe Vorsteuer"
               , ( self.vorsteuer     - self.ust_gut + self.vorsteuer_EUst
@@ -845,7 +841,7 @@ class V_Account (Account) :
             )
         if vat_saldo.target_currency.to_euro_factor == 1.0 :
             ### no rounding for Euro
-            pyk.fprint \
+            print \
                 ( "\n%-16s :                %14s %s"
                 % ( meldung
                   , vat_saldo.as_string_s (), vat_saldo.target_currency.name
@@ -853,7 +849,7 @@ class V_Account (Account) :
                 )
         else :
             ### rounding is necessary
-            pyk.fprint \
+            print \
                 ( "\n%-16s :             %14s%s00 %s     (%s)"
                 % ( meldung
                   , vat_saldo.as_string_s (round = 1)
@@ -870,78 +866,78 @@ class V_Account (Account) :
         meldung      = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign         = (-1.0,         +1.0)            [vat_saldo >= 0]
         umsatz_vat   = self.umsatz - self.umsatz_frei
-        pyk.fprint \
+        print \
             ( "%-30s     : %29s"
             % ("Ausgaben brutto", self.ausgaben_b.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-30s     : %29s"
             % ("Ausgaben netto", self.ausgaben_n.as_string_s ())
             )
-        pyk.fprint ("\n%s\n"           % ( "=" * 80, ))
-        pyk.fprint \
+        print ("\n%s\n"           % ( "=" * 80, ))
+        print \
             ( "%-30s %3s : %29s"
             % ("Nichtsteuerbar Ausland", "005", self.umsatz_frei.as_string_s())
             )
-        pyk.fprint \
+        print \
             ( "%-30s %3s : %29s"
             % ("Lieferungen, sonstige", "000", umsatz_vat.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-30s     : %29s"
             % ("Summe Bemessungsgrundlage", umsatz_vat.as_string_s ())
             )
-        pyk.fprint ()
-        pyk.fprint \
+        print ()
+        print \
             ( "%-30s     : %29s"
             % ("Gesamt steuerpflichtig", umsatz_vat.as_string_s ())
             )
         self.print_ust_dict_  (self.umsatz_dict, self.ust_dict, self._ust_cat)
-        pyk.fprint \
+        print \
             ( "%-30s %3s : %29s"
             % ( "Reverse Charge §19", "057"
               , self.vorsteuer_revCh.as_string_s ()
               )
             )
-        pyk.fprint ()
-        pyk.fprint \
+        print ()
+        print \
             ("%-30s     : %29s" % ( "USt Übertrag", self.ust.as_string_s ()))
-        pyk.fprint ("-"*33, "./..", "-" * 27)
-        pyk.fprint \
+        print ("-"*33, "./..", "-" * 27)
+        print \
             ("%-30s     : %29s" % ( "USt Übertrag", self.ust.as_string_s ()))
-        pyk.fprint \
+        print \
             ( "%-30s %3s : %14s"
             % ("Erwerbe igE", "070", self.erwerb_igE.as_string_s ())
             )
         self.print_ust_dict_ \
             (self.erwerb_igE_dict, self.ust_igE_dict, self._ige_cat)
-        pyk.fprint \
+        print \
             ( "%-30s %3s : %29s"
             % ("Vorsteuer", "060", self.vorsteuer.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-30s %3s : %29s"
             % ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-30s %3s : %29s"
             % ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
             )
-        pyk.fprint \
+        print \
             ( "%-30s %3s : %29s"
             % ( "Reverse Charge §19", "066"
               , self.vorsteuer_revCh.as_string_s ()
               )
             )
         for (k, d), vst in sorted (pyk.iteritems (self.vorsteuer_kzs)) :
-            pyk.fprint ("%-30.30s %3s : %29s" % (d, k, vst.as_string_s ()))
-        pyk.fprint \
+            print ("%-30.30s %3s : %29s" % (d, k, vst.as_string_s ()))
+        print \
             ( "%-30s %3s : %29s"
             % ( "Umsatzsteuer aus Gutschrift", "090"
               , self.ust_gut.as_string_s ()
               )
             )
-        pyk.fprint \
+        print \
             ( "%-30s     : %29s"
             % ( "Gesamtbetrag Vorsteuer"
               , ( self.vorsteuer     - self.ust_gut + self.vorsteuer_EUst
@@ -949,10 +945,10 @@ class V_Account (Account) :
                 ).as_string_s ()
               )
             )
-        pyk.fprint ()
+        print ()
         if vat_saldo.target_currency.to_euro_factor == 1.0 :
             ### no rounding for Euro
-            pyk.fprint \
+            print \
                 ( "%-30s %3s : %29s %s"
                 % ( meldung, "095"
                   , vat_saldo.as_string_s (), vat_saldo.target_currency.name
@@ -960,7 +956,7 @@ class V_Account (Account) :
                 )
         else :
             ### rounding is necessary
-            pyk.fprint \
+            print \
                 ( "%-30s %3s : %29s%s00 %s     (%s)"
                 % ( meldung, "095"
                   , vat_saldo.as_string_s (round = 1)
@@ -977,85 +973,85 @@ class V_Account (Account) :
         meldung      = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign         = (-1.0,         +1.0)            [vat_saldo >= 0]
         umsatz_vat   = self.umsatz - self.umsatz_frei
-        pyk.fprint \
+        print \
             ("*** Lieferungen, sonstige Leistungen und Eigenverbrauch ***")
-        pyk.fprint ("=" * 67)
+        print ("=" * 67)
         if umsatz_vat :
-            pyk.fprint \
+            print \
                 ( "%-50s %3s : %10s"
                 % ("Lieferungen, sonstige", "000", umsatz_vat.as_string_s ())
                 )
         if self.umsatz_frei :
-            pyk.fprint \
+            print \
                 ( "%-50s %3s : %10s"
                 % ( "Nichtsteuerbar Ausland", "005"
                   , self.umsatz_frei.as_string_s ()
                   )
                 )
         if umsatz_vat :
-            pyk.fprint ()
-            pyk.fprint ("Steuersätze")
-            pyk.fprint ("=" * 67)
+            print ()
+            print ("Steuersätze")
+            print ("=" * 67)
             self.print_ust_dict_online (self.umsatz_dict, self._ust_cat)
         if self.vorsteuer_revCh :
-            pyk.fprint \
+            print \
                 ( "\n%-50s %3s : %10s"
                 % ( "Reverse Charge §19", "057"
                   , self.vorsteuer_revCh.as_string_s ()
                   )
                 )
-        pyk.fprint ("\n\n")
-        pyk.fprint ("*** Innergemeinschaftliche Erwerbe ***")
-        pyk.fprint ("=" * 67)
+        print ("\n\n")
+        print ("*** Innergemeinschaftliche Erwerbe ***")
+        print ("=" * 67)
         if self.erwerb_igE :
-            pyk.fprint \
+            print \
                 ( "%-50s %3s : %10s"
                 % ("Erwerbe igE", "070", self.erwerb_igE.as_string_s ())
                 )
-            pyk.fprint ()
-            pyk.fprint ("Steuersätze")
-            pyk.fprint ("=" * 47)
+            print ()
+            print ("Steuersätze")
+            print ("=" * 47)
             self.print_ust_dict_online (self.erwerb_igE_dict, self._ige_cat)
-        pyk.fprint ("\n\n")
-        pyk.fprint ("*** Vorsteuer ***")
-        pyk.fprint ("=" * 67)
-        pyk.fprint \
+        print ("\n\n")
+        print ("*** Vorsteuer ***")
+        print ("=" * 67)
+        print \
             ( "%-50s %3s : %10s"
             % ("Vorsteuer", "060", self.vorsteuer.as_string_s ())
             )
         if self.vorsteuer_EUst:
-            pyk.fprint \
+            print \
                 ( "%-50s %3s : %10s"
                 % ( "Einfuhrumsatzsteuer", "061"
                   , self.vorsteuer_EUst.as_string_s ()
                   )
                 )
         if self.vorsteuer_igE :
-            pyk.fprint \
+            print \
                 ( "%-50s %3s : %10s"
                 % ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
                 )
         if self.vorsteuer_revCh :
-            pyk.fprint \
+            print \
                 ( "%-50s %3s : %10s"
                 % ( "Reverse Charge §19", "066"
                   , self.vorsteuer_revCh.as_string_s ()
                   )
                 )
         for (k, d), vst in sorted (pyk.iteritems (self.vorsteuer_kzs)) :
-            pyk.fprint ("%-50.50s %3s : %10s" % (d, k, vst.as_string_s ()))
+            print ("%-50.50s %3s : %10s" % (d, k, vst.as_string_s ()))
         if self.ust_gut :
-            pyk.fprint \
+            print \
                 ( "%-50s %3s : %10s"
                 % ( "Umsatzsteuer auf Gutschrift", "090"
                   , self.ust_gut.as_string_s ()
                   )
                 )
-        pyk.fprint ("\n\n")
-        pyk.fprint ("*" * 67)
+        print ("\n\n")
+        print ("*" * 67)
         if vat_saldo.target_currency.to_euro_factor == 1.0 :
             ### no rounding for Euro
-            pyk.fprint \
+            print \
                 ( "%-50s %3s : %10s %s"
                 % ( meldung, "095"
                   , vat_saldo.as_string_s (), vat_saldo.target_currency.name
@@ -1063,7 +1059,7 @@ class V_Account (Account) :
                 )
         else :
             ### rounding is necessary
-            pyk.fprint \
+            print \
                 ( "%-50s %3s : %10s%s00 %s     (%s)"
                 % ( meldung, "095"
                   , vat_saldo.as_string_s (round = 1)
@@ -1080,7 +1076,7 @@ class V_Account (Account) :
     def print_ust_dict_ (self, umsatz_dict, ust_dict, cat) :
         for vat_p in sorted (umsatz_dict, reverse = True) :
             vp = int (((vat_p - 1) * 100) + 0.5)
-            pyk.fprint \
+            print \
                 ( "davon %2d%%                      %3s : %14s %14s"
                 % ( vp, cat [vp]
                   , umsatz_dict [vat_p].as_string_s ()
@@ -1095,7 +1091,7 @@ class V_Account (Account) :
             if ust :
                 vp = int (((vat_p - 1) * 100) + 0.5)
                 hd = "davon %2d%%" % (vp, )
-                pyk.fprint \
+                print \
                     ("%-50s %3s : %10s" % (hd, cat [vp], ust.as_string_s ()))
     # end def print_ust_dict_online
 
@@ -1150,7 +1146,7 @@ class T_Account (Account) :
     # end def __init__
 
     def add (self, entry) :
-        """Add `entry' to account `self'."""
+        """Add `entry` to account `self`."""
         assert (isinstance (entry, Account_Entry))
         self.buchung_zahl [entry.konto]       += 1
         self.buchung_zahl [entry.gegen_konto] += 1
@@ -1211,9 +1207,9 @@ class T_Account (Account) :
                 ust_dict = self.ust_revCharge
             else :
                 if "z" in entry.cat :
-                    pyk.fprint \
+                    print \
                         ("*** Einnahme cannot include Einfuhrumsatzsteuer")
-                    pyk.fprint (entry.line)
+                    print (entry.line)
                 ust_dict = self.ust
             ust_dict       [entry.month] += vat
             self.ust_total               += vat
@@ -1317,22 +1313,22 @@ class T_Account (Account) :
             head  = "%s    %s" % (self.year, self.konto_desc.get (k, "")) [:64]
             tail  = "Konto-Nr. %5s" % k
             belly = " " * (79 - len (head) - len (tail))
-            pyk.fprint ("\n\n%s%s%s" % (head, belly, tail))
+            print ("\n\n%s%s%s" % (head, belly, tail))
             self.print_sep_line ()
-            pyk.fprint \
+            print \
                 ( "%-4s %-6s  %-35s%-3s  %12s  %12s"
                 % ("Tag", "Gegkto", "Text", "Ust", "Soll", "Haben")
                 )
             self.print_sep_line ()
-            pyk.fprint ("\n".join (self.kblatt [k]))
-            pyk.fprint \
+            print ("\n".join (self.kblatt [k]))
+            print \
                 ( "\n%12s %-38s  %12s  %12s"
                 % ( "", "Kontostand neu"
                   , self.soll_saldo  [k].as_string_s ()
                   , self.haben_saldo [k].as_string_s ()
                   )
                 )
-            pyk.fprint \
+            print \
                 ( "\n%12s %-48s  %12s %s"
                 % ( ""
                   , "Saldo      neu"
@@ -1346,15 +1342,15 @@ class T_Account (Account) :
     def print_konto_summary (self) :
         self.finish ()
         tc = EUR.target_currency.name
-        pyk.fprint ("Zusammenfassung Konten %-52s %s" % (self.year, tc))
+        print ("Zusammenfassung Konten %-52s %s" % (self.year, tc))
         self.print_sep_line ()
-        pyk.fprint \
+        print \
             ( "%-5s %12s %12s  %12s %s"
             % ("Konto", "Soll", "Haben", "Saldo", "Text")
             )
         self.print_sep_line ()
         for k in sorted (self.kblatt) :
-            pyk.fprint \
+            print \
                 ( "%-5s%13s%13s %13s %s"
                 % ( k
                   , self.soll_saldo  [k].as_string_s ()
@@ -1366,20 +1362,20 @@ class T_Account (Account) :
     # end def print_konto_summary
 
     def print_sep_line (self) :
-        pyk.fprint ("%s" % ("=" * 79, ))
+        print ("%s" % ("=" * 79, ))
     # end def print_sep_line
 
     def print_ein_aus_rechnung (self) :
         self.finish ()
         tc = EUR.target_currency.name
-        pyk.fprint (self.firma)
-        pyk.fprint \
+        print (self.firma)
+        print \
             ( underlined
                 ("Einnahmen/Ausgabenrechnung %s (%s)" % (self.year, tc))
             )
-        pyk.fprint ("\n")
-        pyk.fprint (underlined ("Betriebseinnahmen"))
-        pyk.fprint ("\n")
+        print ("\n")
+        print (underlined ("Betriebseinnahmen"))
+        print ("\n")
         format  = "%-40s %15s %15s"
         format1 = "%-40s -%14s %15s"
         e_total = EUR (0)
@@ -1388,24 +1384,24 @@ class T_Account (Account) :
             if k [0] not in ("4", "8") : continue
             if einnahmen == 0          : continue
             e_total = e_total + einnahmen
-            pyk.fprint \
+            print \
                 ( format
                 % ( self.konto_desc.get (k, "") [:40], ""
                   , einnahmen.as_string_s ()
                   )
                 )
-        pyk.fprint (format % ("", "", "_" * 15))
-        pyk.fprint (format % ("", "", e_total.as_string_s ()), tc)
-        pyk.fprint ("\n")
-        pyk.fprint (underlined ("Betriebsausgaben"))
-        pyk.fprint ("\n")
+        print (format % ("", "", "_" * 15))
+        print (format % ("", "", e_total.as_string_s ()), tc)
+        print ("\n")
+        print (underlined ("Betriebsausgaben"))
+        print ("\n")
         a_total = EUR (0)
         for k in sorted (self.ausgaben) :
             ausgaben = self.ausgaben [k] - self.einnahmen [k]
             if k [0] not in ("5", "6", "7") : continue
             if ausgaben == 0                : continue
             a_total = a_total + ausgaben
-            pyk.fprint \
+            print \
                 ( format
                 % ( self.konto_desc.get (k, "") [:40]
                   , ausgaben.as_string_s (), ""
@@ -1413,9 +1409,9 @@ class T_Account (Account) :
                 )
         if self.vst_korrektur != 1 :
             p_anteil = a_total * (1 - self.vst_korrektur)
-            pyk.fprint (format  % ( "", "_" * 15, ""))
-            pyk.fprint (format  % ( "", a_total.as_string_s (), ""))
-            pyk.fprint \
+            print (format  % ( "", "_" * 15, ""))
+            print (format  % ( "", a_total.as_string_s (), ""))
+            print \
                 ( format1
                 % ( "Privatanteil  %5.2f%%" % ((1 - self.vst_korrektur) * 100, )
                   , p_anteil.as_string_s (), ""
@@ -1423,7 +1419,7 @@ class T_Account (Account) :
                 )
             if self.gewerbe_anteil :
                 self.g_anteil = g_anteil = a_total * self.gewerbe_anteil
-                pyk.fprint \
+                print \
                     ( format1
                     % ( "Gewerbeanteil %5.2f%%" % (self.gewerbe_anteil * 100, )
                       , g_anteil.as_string_s (), ""
@@ -1432,8 +1428,8 @@ class T_Account (Account) :
             else :
                 g_anteil = 0
             a_total = a_total - p_anteil - g_anteil
-        pyk.fprint (format  % ( "", "_" * 15, "_" * 15))
-        pyk.fprint \
+        print (format  % ( "", "_" * 15, "_" * 15))
+        print \
             ( format1
             % ( ""
               , a_total.as_string_s ()
@@ -1441,7 +1437,7 @@ class T_Account (Account) :
               )
             , tc
             )
-        pyk.fprint ("\n%s." % (self.calculation_method, ))
+        print ("\n%s." % (self.calculation_method, ))
     # end def print_ein_aus_rechnung
 
     g_anteil = EUR (0)
@@ -1467,8 +1463,8 @@ class H_Account_Entry (Account_Entry) :
                 % (self.desc, self.date, self.dir, self.netto.as_string ())
                 )
         except Exception as exc :
-            pyk.fprint (exc)
-            pyk.fprint (sorted (self.__dict__.items ()))
+            print (exc)
+            print (sorted (self.__dict__.items ()))
             raise
     # end def kontenzeile
 

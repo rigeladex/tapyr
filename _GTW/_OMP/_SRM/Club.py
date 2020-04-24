@@ -22,8 +22,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
-
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 
@@ -58,7 +56,7 @@ class Club (_Ancestor_Essence) :
             @TFL.Meta.Class_and_Instance_Method
             def cooked (soc, value) :
                 if value is not None :
-                    return soc._clean (pyk.text_type (value))
+                    return soc._clean (str (value))
                 return value
             # end def cooked
 

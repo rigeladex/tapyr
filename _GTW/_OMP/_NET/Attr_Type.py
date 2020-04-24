@@ -45,8 +45,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, unicode_literals
-
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_, _A_String_
 

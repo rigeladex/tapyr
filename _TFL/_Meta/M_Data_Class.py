@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -75,11 +75,6 @@ inheritance.
     >>> print (r12, r12.foo, r12.bar, r12.baz, r12.quux)
     <Record instance r12> 3 42 137 13
 """
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL             import TFL
 from   _TFL.pyk         import pyk

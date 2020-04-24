@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -32,11 +32,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _ATAX             import ATAX
 from   _CAL              import CAL
 from   _TFL              import TFL
@@ -54,8 +49,6 @@ import _TFL._Meta.Object
 import _TFL.CAO
 import _TFL.Environment
 
-@pyk.adapt__bool__
-@pyk.adapt__str__
 class FB_Entry (TFL.Meta.Object) :
     """Model one entry of a Fahrtenbuch"""
 
@@ -170,7 +163,7 @@ class Fahrtenbuch (TFL.Meta.Object) :
                 try :
                     last = Entry.from_line (l, last)
                 except ValueError as exc :
-                    pyk.fprint (exc)
+                    print (exc)
                 else :
                     add (last)
         return result
@@ -262,7 +255,7 @@ class Fahrtenbuch (TFL.Meta.Object) :
     # end def _read_lines
 
     def __str__ (self) :
-        return "\n".join (pyk.text_type (e) for e in self.entries)
+        return "\n".join (str (e) for e in self.entries)
     # end def __str__
 
 # end class Fahrtenbuch
@@ -271,9 +264,9 @@ def _main (cmd) :
     ATAX.Command.load_config (cmd)
     fb = Fahrtenbuch.from_file (cmd.user, cmd.fahrtenbuch)
     if not cmd.km_geld :
-        pyk.fprint (fb.tex ())
+        print (fb.tex ())
     else :
-        pyk.fprint (fb.km_geld ())
+        print (fb.km_geld ())
 # end def _main
 
 _Command = TFL.CAO.Cmd \

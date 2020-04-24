@@ -33,11 +33,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from    _TFL           import TFL
 
 from    _TFL._D2       import D2
@@ -68,7 +63,7 @@ class M_Rect (TFL.Meta.Object.__class__) :
 
 # end class M_Rect
 
-class Rect (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rect)) :
+class Rect (TFL.Meta.Object, metaclass = M_Rect) :
     """Model an axes-parallel rectangle in 2D space.
 
     >>> def rect_points (r) :

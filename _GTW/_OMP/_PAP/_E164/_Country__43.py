@@ -13,7 +13,6 @@
 # *** DO NOT edit it manually !
 #
 
-from   __future__               import unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL

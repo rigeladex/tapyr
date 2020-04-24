@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
@@ -24,8 +24,6 @@
 #    19-Aug-2019 (CT) Use `print_prepr`
 #    ««revision-date»»···
 #--
-
-from   __future__          import absolute_import, division, unicode_literals
 
 from   _TFL                import TFL
 from   _CAL                import CAL
@@ -92,11 +90,11 @@ def _main (cmd) :
             l = TFL.I18N.decode (l)
         ll = date_time_localizer (l, cmd.format)
         try :
-            pyk.fprint (ll, end = "")
+            print (ll, end = "")
         except IOError :
             import sys
             sys.exit (0)
-    pyk.fprint ()
+    print ()
 # end def _main
 
 _Command = TFL.CAO.Cmd \

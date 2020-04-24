@@ -25,8 +25,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
@@ -45,7 +43,6 @@ from   posixpath                import join as pp_join
 import json
 import requests
 
-@pyk.adapt__bool__
 class _Entity_ (TFL.Meta.Object) :
     """Base class for Object and Resource"""
 

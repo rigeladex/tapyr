@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2019 Martin Glueck All rights reserved
+# Copyright (C) 2010-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -22,13 +22,9 @@
 #     7-Oct-2014 (CT) Make Python-3 compatible
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    19-Aug-2019 (CT) Use `print_prepr`
+#    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _TFL.pyk                import pyk
@@ -37,7 +33,9 @@ import _TFL._Meta.Object
 import _TFL._Babel.Extractor
 import _TFL._Babel.PO_File
 
-from    babel.util             import odict
+from   babel.util             import odict
+
+import importlib
 
 class Config_File (TFL.Meta.Object) :
     """A extractor config file.
@@ -146,9 +144,7 @@ class Config_File (TFL.Meta.Object) :
 
     def _load_function (self, spec) :
         module_spec, fct_name = spec.split (":")
-        module                = __import__ (module_spec)
-        for p in module_spec.split (".") [1:] :
-            module = getattr (module, p)
+        module                = importlib.import_module (module_spec)
         return getattr (module, fct_name)
     # end def _load_function
 

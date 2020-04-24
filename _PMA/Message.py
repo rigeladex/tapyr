@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2019 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -186,11 +186,6 @@
 #                     * `a2ps` coughs on Unicode
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -392,7 +387,6 @@ class Msg_Scope (TFL.Caller.Scope) :
 
 # end class Msg_Scope
 
-@pyk.adapt__str__
 class _Msg_Part_ (TFL.Meta.Object) :
 
     label_width         = 8
@@ -498,8 +492,7 @@ class _Msg_Part_ (TFL.Meta.Object) :
     # end def email_summary
 
     def part_iter (self) :
-        for p in self.parts :
-            yield p
+        yield from self.parts 
     # end def part_iter
 
     def summary (self, summary_format = None) :
@@ -638,16 +631,14 @@ class Message_Body (_Msg_Part_) :
             for line in lines :
                 line = line.rstrip ("\r")
                 if line :
-                    for l in wrapper.wrap (line or "") :
-                        yield l
+                    yield from wrapper.wrap (line or "") 
                 else :
                     ### `wrapper` returns an empty list for an empty string
                     yield line
         else :
             hp = Part_Header (self.email, self.headers_to_show)
             self.lines = lines = list (hp.formatted (sep_length))
-            for l in lines :
-                yield l
+            yield from lines 
     # end def body_lines
 
     formatted = _formatted = body_lines
@@ -662,8 +653,7 @@ class Message_Body (_Msg_Part_) :
             seps = ("", "-" * sep_length, "")
         else :
             seps = self.__super._separators (sep_length)
-        for s in seps :
-            yield s
+        yield from seps 
     # end def _separators
 
     def _setup_body (self, email) :
@@ -749,8 +739,7 @@ class _Message_ (_Msg_Part_) :
 
     def formatted (self, sep_length = 79) :
         for p in self.part_iter () :
-            for l in p.formatted (sep_length) :
-                yield l
+            yield from p.formatted (sep_length) 
     # end def formatted
 
     def save (self, filename) :
@@ -865,10 +854,8 @@ class Message (_Message_) :
     def formatted (self, sep_length = 79) :
         self.status.set_read ()
         for p in self.part_iter () :
-            for s in p._separators (sep_length) :
-                yield s
-            for l in p._formatted  (sep_length) :
-                yield l
+            yield from p._separators (sep_length) 
+            yield from p._formatted  (sep_length) 
     # end def formatted
 
     def part_iter (self) :
@@ -878,8 +865,7 @@ class Message (_Message_) :
             , self.headers_to_show
             , self.summary (self.short_summary_format)
             )
-        for p in self.__super.part_iter () :
-            yield p
+        yield from self.__super.part_iter () 
     # end def part_iter
 
     def summary (self, format = None) :
@@ -917,8 +903,6 @@ class Message (_Message_) :
 
 # end class Message
 
-@pyk.adapt__bool__
-@pyk.adapt__str__
 class _Pending_Action_ (TFL.Meta.Object) :
 
     msg     = property (TFL.Getter._msg)
@@ -1095,7 +1079,7 @@ def _main (cmd) :
                     print (a2ps)
                 a2ps ()
         else :
-            pyk.fprint (pyk.decoded (txt, encoding))
+            print (pyk.decoded (txt, encoding))
 # end def _main
 
 _Command = TFL.CAO.Cmd \

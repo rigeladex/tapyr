@@ -30,8 +30,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
-
 from   _GTW                   import GTW
 from   _ReST                  import ReST as RST
 from   _TFL                   import TFL
@@ -63,7 +61,7 @@ class M_Format (TFL.Meta.Object.__class__) :
     # end def __str__
 
     def _m_add (cls, name, Table) :
-        name = pyk.text_type (name)
+        name = str (name)
         assert name not in Table, "Name clash: `%s` <-> `%s`" % \
             (name, Table [name].__class__)
         Table [name] = cls
@@ -71,7 +69,7 @@ class M_Format (TFL.Meta.Object.__class__) :
 
 # end class M_Format
 
-class _Format_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Format)) :
+class _Format_ (TFL.Meta.Object, metaclass = M_Format) :
 
     pass
 
@@ -100,7 +98,7 @@ class HTML (_Format_) :
                 ( _T ("HTML must not contain any of the tags:\n%s")
                 % ("    ".join (forbidden), )
                 )
-        return pyk.text_type (cleaner)
+        return str (cleaner)
     # end def convert
 
 # end class HTML

@@ -35,8 +35,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _MOM               import MOM
 from   _TFL               import TFL
 from   _TFL.pyk           import pyk
@@ -53,7 +51,6 @@ def _Instance (cls) :
     return cls ()
 # end def _Instance
 
-@pyk.adapt__str__
 class _Spec_Item_ (TFL.Meta.Object) :
     """Base class for specs of entity, attribute, role, is_a"""
 

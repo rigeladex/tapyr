@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Prop.
@@ -32,12 +32,7 @@ import _MOM._Prop
 
 import _TFL._Meta.Object
 
-class _Prop_Kind_ \
-          ( TFL.Meta.BaM
-              ( TFL.Meta.Object
-              , metaclass = MOM.Meta.M_Prop_Kind
-              )
-          ) :
+class _Prop_Kind_ (TFL.Meta.Object, metaclass = MOM.Meta.M_Prop_Kind) :
     """Base class for attribute and predicate kinds."""
 
     _real_name    = "Kind"

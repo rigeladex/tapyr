@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -89,8 +89,6 @@ In addition, this module provides
 
 """
 
-from   __future__  import print_function
-
 from   _TFL import TFL
 from   _TFL.pyk import pyk
 
@@ -98,7 +96,7 @@ import _TFL._Meta.M_Class
 
 from   collections import defaultdict
 
-class _defaultdict_ (TFL.Meta.BaM (defaultdict, metaclass = TFL.Meta.M_Class)) :
+class _defaultdict_ (defaultdict, metaclass = TFL.Meta.M_Class) :
 
     pass
 

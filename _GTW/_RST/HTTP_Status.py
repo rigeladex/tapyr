@@ -37,8 +37,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import absolute_import, division, print_function, unicode_literals
-
 from   _CAL                     import CAL
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -84,7 +82,7 @@ class _Meta_ (TFL.Meta.M_Class) :
 
 # end class _Meta_
 
-class Status (TFL.Meta.BaM (Exception, TFL.Meta.Object, metaclass = _Meta_)) :
+class Status (Exception, TFL.Meta.Object, metaclass = _Meta_) :
     """Base class for HTTP status exceptions"""
 
     ### http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
@@ -129,7 +127,7 @@ class Status (TFL.Meta.BaM (Exception, TFL.Meta.Object, metaclass = _Meta_)) :
             if self.message :
                 ### Backwards compatibility with old-style Jinja templates
                 try :
-                    request.Error = pyk.text_type (self.message)
+                    request.Error = str (self.message)
                 except Exception :
                     request.Error = str (self.message)
         response.status_code  = self.status_code
@@ -173,7 +171,7 @@ class Status (TFL.Meta.BaM (Exception, TFL.Meta.Object, metaclass = _Meta_)) :
             else :
                 desc = _T (self.description)
                 body = \
-                    (  ("%s: %s" % (desc, pyk.text_type (self.message)))
+                    (  ("%s: %s" % (desc, str (self.message)))
                     if self.message else desc
                     )
         else :
@@ -182,7 +180,7 @@ class Status (TFL.Meta.BaM (Exception, TFL.Meta.Object, metaclass = _Meta_)) :
                 , description = self.description
                 )
             if self.message :
-                body ["message"] = pyk.text_type (self.message)
+                body ["message"] = str (self.message)
         render (request, response, body)
     # end def _add_response_body
 

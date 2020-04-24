@@ -25,11 +25,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import
-from   __future__  import division
-from   __future__  import print_function
-from   __future__  import unicode_literals
-
 from   _TFL                       import TFL
 from   _TFL.Divisor_Dag           import Divisor_Dag
 from   _TFL.formatted_repr        import formatted_repr

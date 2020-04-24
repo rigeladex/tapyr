@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,10 +30,9 @@
 #    26-Feb-2012 (MG) `__future__` imports added
 #    27-Aug-2012 (CT) Add and use `attr_name_translate`
 #    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
+#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
 #    ««revision-date»»···
 #--
-
-from   __future__  import absolute_import, division, print_function, unicode_literals
 
 from   _TFL              import TFL
 from   _TFL.pyk          import pyk
@@ -76,7 +75,7 @@ class _XML_Node_ (TFL.SDG.Node) :
     # end def as_xml
 
     def write_to_xml_stream (self, stream = None, gauge = None, ** kw) :
-        """Write `self' and all elements in `self.children' to `stream'.
+        """Write `self` and all elements in `self.children` to `stream`.
         """
         self._write_to_stream (self.as_xml (** kw), stream, gauge)
     # end def write_to_xml_stream
@@ -91,7 +90,7 @@ class _XML_Node_ (TFL.SDG.Node) :
             for a, v in attr_values :
                 if v is not None :
                     k = translate (a)
-                    v = pyk.text_type (v).replace ("'", "&quot;")
+                    v = str (v).replace ("'", "&quot;")
                     yield u'''%s="%s"''' % (k, v)
     # end def _attr_iter
 

@@ -29,9 +29,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
-
 from   _MOM                     import MOM
 from   _TFL                     import TFL
 
@@ -351,8 +348,7 @@ class MOM_Class_Documenter (TFL.sphinx_autodoc.Class_Documenter) :
                             if [a for a in p.q_able_no_edit if a.name in own] :
                                 yield p
                             else :
-                                for mp in _gen_parents (p) :
-                                    yield mp
+                                yield from _gen_parents (p) 
                 parents = list (TFL.uniq (_gen_parents (ET)))
                 if parents :
                     leader  = "For inherited %s see also %s" % \

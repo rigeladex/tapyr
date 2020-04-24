@@ -28,9 +28,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import absolute_import, division
-from   __future__            import print_function, unicode_literals
-
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
@@ -70,7 +67,7 @@ class M_Coll (TFL.Meta.M_Class) :
 
 # end class M_Coll
 
-class _Mixin_ (TFL.Meta.BaM (object, metaclass = M_Coll)) :
+class _Mixin_ (object, metaclass = M_Coll) :
 
     P_Type          = None
 

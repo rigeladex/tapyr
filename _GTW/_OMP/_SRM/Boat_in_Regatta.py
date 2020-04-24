@@ -43,8 +43,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import unicode_literals, division
-
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 

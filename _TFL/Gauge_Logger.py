@@ -35,15 +35,12 @@
 #    ««revision-date»»···
 #--
 
-from   __future__          import print_function, unicode_literals
-
 from   _TFL                import TFL
 from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
 import _TFL.predicate
 
-@pyk.adapt__bool__
 class Gauge_Logger (TFL.Meta.Object) :
     """Provide access to progress gauge without introducing dependencies to
        window system (e.g., instances of Gauge_Logger can be used in
