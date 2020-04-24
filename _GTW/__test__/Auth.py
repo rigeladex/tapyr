@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Martin Glueck All rights reserved
+# Copyright (C) 2012-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -29,6 +29,7 @@
 #    26-Jun-2014 (CT) Factor `show_errors`, apply `sorted`
 #    12-Jun-2015 (CT) Adapt to changes of authentication templates
 #     7-Oct-2015 (CT) Pass `"xxx"`, not `b"xxx"`, to `.PQ`
+#    24-Apr-2020 (CT) Adapt to `webmaster` change in GTW.RST.Resource
 #    ««revision-date»»···
 #--
 
@@ -202,12 +203,12 @@ _register        = r"""
 
     >>> data ["vpassword"] = "new-pass"
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data) # doctest:+ELLIPSIS
-    Email via localhost from webmaster@ to ['new-account@foo.bar']
+    Email via localhost from webmaster to ['new-account@foo.bar']
     Content-type: text/plain; charset=utf-8
     Date: ...
     Subject: Email confirmation for localhost
     To: new-account@foo.bar
-    From: webmaster@
+    From: webmaster
     <BLANKLINE>
     Confirm new email address new-account@foo.bar
     <BLANKLINE>
@@ -277,7 +278,7 @@ _change_email    = r"""
 
     >>> data ["vemail"] = "new-email@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data) # doctest:+ELLIPSIS
-    Email via localhost from webmaster@ to ['new-email@foo.bar']
+    Email via localhost from webmaster to ['new-email@foo.bar']
     ...
     Subject: Confirmation for change of email for account a2@foo.bar to
     ...
@@ -373,12 +374,12 @@ _password_reset  = r"""
 
     >>> data ["username"]= "a2@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/request_reset_password.html", data = data)# doctest:+ELLIPSIS
-    Email via localhost from webmaster@ to ['a2@foo.bar']
+    Email via localhost from webmaster to ['a2@foo.bar']
     Content-type: text/plain; charset=utf-8
     ...
     Subject: Password reset for user a2@foo.bar on website localhost
     To: a2@foo.bar
-    From: webmaster@
+    From: webmaster
     <BLANKLINE>
     Password of a2@foo.bar reset
     <BLANKLINE>

@@ -157,6 +157,8 @@
 #     8-Feb-2017 (CT) Change `show_in_nav` to check `short_title`
 #    21-Mar-2018 (CT) Add `_password_elider_2`
 #    27-Mar-2018 (CT) Change `_password_elider_*` to match all password fields
+#    24-Apr-2020 (CT) Add guard for `domain` to `webmaster`
+#                     - `"webmaster@"` triggers an exception in Py-3 `email`
 #    ««revision-date»»···
 #--
 
@@ -1691,7 +1693,8 @@ class RST_Root (_Ancestor) :
             domain = self.domain or self.site_url
             if domain.startswith ("www.") :
                 domain = domain [4:]
-            result = self._webmaster = "webmaster@%s" % (domain, )
+            result = self._webmaster = \
+                "webmaster@%s" % (domain, ) if domain else "webmaster"
         return result
     # end def webmaster
 
