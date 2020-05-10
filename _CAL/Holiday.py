@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,6 +34,7 @@
 #     2-Feb-2016 (CT) Factor `CAL.Day_Rule`
 #     2-Feb-2016 (CT) Add I18N, german and swiss holidays
 #    11-Feb-2016 (CT) Factor `TFL.I18N.test_language`
+#    10-May-2020 (CT) Add public holidays of Portugal
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,7 @@ class Holidays (CAL.Day_Rule.Set) :
     E = CAL.Day_Rule.Easter_Dependent
 
     ### https://en.wikipedia.org/wiki/List_of_holidays_by_country
+    ### https://en.wikipedia.org/wiki/Public_holidays_in_Portugal
     _rules = \
         ( F (_ ("New Year's Day"),                      1,  1)
         , F (_ ("Epiphany"),                            1,  6, "AT")
@@ -70,7 +72,8 @@ class Holidays (CAL.Day_Rule.Set) :
             , 2, 1, "US", delta = dict (weekday = F.RD.MO (3))
             )
         , F (_ ("Saint Patrick's Day"),                 3, 17, "IE")
-        , F (_ ("Labor Day"),                           5,  1, "AT", "DE")
+        , F (_ ("Freedom Day"),                         4, 25, "PT")
+        , F (_ ("Labor Day"),                           5,  1, "AT", "DE", "PT")
         , F (_ ("May Day Bank Holiday")
             , 5,  1, "UK", delta = dict (weekday = F.RD.MO (1))
             )
@@ -88,12 +91,13 @@ class Holidays (CAL.Day_Rule.Set) :
         , F (_ ("June Holiday")
             , 6,  1, "IE", delta = dict (weekday = F.RD.MO (1))
             )
+        , F (_ ("Portugal Day"),                        6, 10, "PT")
         , F (_ ("Independence Day"),                    7,  4, "US")
         , F (_ ("Swiss National Day"),                  8,  1, "CH")
         , F (_ ("August Holiday")
             , 8,  1, "IE", delta = dict (weekday = F.RD.MO (1))
             )
-        , F (_ ("Assumption Day"),                      8, 15, "AT")
+        , F (_ ("Assumption Day"),                      8, 15, "AT", "PT")
         , F (_ ("Late Summer Bank Holiday")
             , 8,  31, "UK", delta = dict (weekday = F.RD.MO (-1))
             )
@@ -109,27 +113,30 @@ class Holidays (CAL.Day_Rule.Set) :
         , F (_ ("Columbus Day")
             , 10,  1, "US", delta = dict (weekday = F.RD.MO (2))
             )
+        , F (_ ("Republic Day"),                       10,  5, "PT")
         , F (_ ("Austrian National Day"),              10, 26, "AT")
         , F (_ ("October Holiday")
             , 10,  31, "IE", delta = dict (weekday = F.RD.MO (-1))
             )
-        , F (_ ("All Saints' Day"),                    11,  1, "AT")
+        , F (_ ("All Saints' Day"),                    11,  1, "AT", "PT")
         , F (_ ("Veterans Day"),                       11, 11, "US")
         , F (_ ("Thanksgiving")
             , 11,  1, "US", delta = dict (weekday = F.RD.TH (4))
             )
-        , F (_ ("Feast of the Immaculate Conception"), 12,  8, "AT")
-        , F (_ ("Christmas Day"),                      12, 25, "AT", "CH", "DE", "IE", "UK", "US")
+        , F (_ ("Restoration of Independence"),        12,  1, "PT")
+        , F (_ ("Feast of the Immaculate Conception"), 12,  8, "AT", "PT")
+        , F (_ ("Christmas Day"),                      12, 25, "AT", "CH", "DE", "IE", "PT", "UK", "US")
         , F (_ ("St. Stephen's Day"),                  12, 26, "AT", "CH", "DE", "IE")
         , F (_ ("Boxing Day"),                         12, 26, "UK")
         # easter dependent movable holidays
-        , E (_ ("Good Friday"),     -2, "CH", "DE", "UK")
-        , E (_ ("Easter Sunday"),    0, "AT", "CH", "DE", "UK")
+        , E (_ ("Carnival"),       -47, "PT")
+        , E (_ ("Good Friday"),     -2, "CH", "DE", "PT", "UK")
+        , E (_ ("Easter Sunday"),    0, "AT", "CH", "DE", "PT", "UK")
         , E (_ ("Easter Monday"),    1, "AT", "CH", "DE", "IE", "UK")
         , E (_ ("Ascension Day"),   39, "AT", "CH", "DE")
         , E (_ ("Whit Sunday"),     49, "AT", "CH", "DE")
         , E (_ ("Whit Monday"),     50, "AT", "CH", "DE")
-        , E (_ ("Corpus Christi"),  60, "AT")
+        , E (_ ("Corpus Christi"),  60, "AT", "PT")
         )
 
 # end class Holidays
