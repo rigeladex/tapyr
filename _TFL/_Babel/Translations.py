@@ -23,6 +23,7 @@
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    22-May-2016 (CT) Disable `unicode_literals` to avoid exception from 2.7.3
 #    27-Mar-2020 (CT) Use `gettext.c2py`, not `c2py`
+#    10-May-2020 (CT) Add missing import of `gettext`
 #    ««revision-date»»···
 #--
 
@@ -32,6 +33,7 @@ from   _TFL.pyk                import pyk
 import _TFL._Babel
 
 import babel.support
+import gettext
 import struct
 
 class Translations (babel.support.Translations) :

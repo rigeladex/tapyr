@@ -27,6 +27,7 @@
 #    16-Feb-2016 (CT) Use `os.path.relpath`, not `babel.util.relpath`
 #                     (broke in Babel 2.2)
 #    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
+#    10-May-2020 (CT) Adapt to Python-3
 #    ««revision-date»»···
 #--
 
@@ -133,7 +134,7 @@ def Extract (dirname, template_file, config, cmd) :
 
 def _extract_from_file (method_name, file_name, config, cmd, keywords) :
     method = config.extractors [method_name]
-    file   = open (file_name, "U")
+    file   = open (file_name, "rb")
     for lineno, funcname, messages, comments, found_in in method \
         ( file, keywords
         , comment_tags = ()

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -22,6 +22,7 @@
 #    30-Nov-2010 (CT) s/save_eval/safe_eval/ and added `strip`-calls
 #    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
 #    16-Oct-2015 (CT) Add `__future__` imports
+#    10-May-2020 (CT) Adapt to Python-3
 #    ««revision-date»»···
 #--
 
@@ -41,8 +42,12 @@ def Python (fobj, keywords, comment_tags, config, method) :
         ("encoding", method, default = "utf-8")
     add_doc_strings = config.get ("add_doc_strings", method, "") == "True"
 
+    ### `generate_tokens` expects strings, `fobj` is binary
+    def _readline () :
+        result = fobj.readline ()
+        return result.decode   (encoding)
     ### now that we know that we have to parse this file, lets start
-    tokens   = generate_tokens (fobj.readline)
+    tokens   = generate_tokens (_readline)
     in_def   = in_translator_comments  = False
     wait_for_doc_string                = False
     funcname = lineno = message_lineno = None
@@ -67,7 +72,7 @@ def Python (fobj, keywords, comment_tags, config, method) :
             continue
         elif call_stack == -1 and tok == COMMENT :
             # Strip the comment token from the line
-            value = value.decode (encoding) [1:].strip ()
+            value = value [1:].strip ()
             if (   in_translator_comments
                and translator_comments [-1] [0] == lineno - 1
                ) :
@@ -124,7 +129,7 @@ def Python (fobj, keywords, comment_tags, config, method) :
                 # https://sourceforge.net/tracker/?func=detail&atid=355470&
                 # aid=617979&group_id=5470
                 value = TFL.I18N.safe_eval (value, encoding)
-                if isinstance (value, str) :
+                if isinstance (value, bytes) :
                     value = value.decode (encoding)
                 buf.append (value)
             elif tok == OP and value == "," :

@@ -30,6 +30,7 @@
 #    10-Feb-2016 (CT) Change merge not to overwrite `Project-Id-Version`...
 #    10-Feb-2016 (CT) Add `guard` to `load`, adapt callers of `load`
 #    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
+#    10-May-2020 (CT) Adapt to Python-3
 #    ««revision-date»»···
 #--
 
@@ -52,11 +53,11 @@ class PO_File (TFL.Meta.Object) :
     """A object to handle PO/POT files."""
 
     def __init__ ( self
-                 , project            = u"Project"
-                 , version            = u"0.9"
-                 , bugs_address       = u"bugs@domain.unknown"
-                 , copyright_holder   = u"Copyright"
-                 , charset            = u"utf-8"
+                 , project            = "Project"
+                 , version            = "0.9"
+                 , bugs_address       = "bugs@domain.unknown"
+                 , copyright_holder   = "Copyright"
+                 , charset            = "utf-8"
                  , width              = 76
                  , no_location        = False
                  , omit_header        = False
@@ -159,7 +160,7 @@ class PO_File (TFL.Meta.Object) :
     @classmethod
     def load (cls, file_name, locale = None, * args, ** kw) :
         try :
-            f = open (file_name, "U")
+            f = open (file_name)
         except IOError :
             pass
         else :
@@ -193,7 +194,7 @@ class PO_File (TFL.Meta.Object) :
         if fuzzy is not None :
             self.catalog.fuzzy = fuzzy
         write_po \
-            ( open (file_name, "w")
+            ( open (file_name, "wb")
             , catalog      = self.catalog
             , width        = self.width
             , no_location  = self.no_location
