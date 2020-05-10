@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CAL 1.0 [pt]\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at\n"
-"POT-Creation-Date: 2020-05-10 13:11+0200\n"
+"POT-Creation-Date: 2020-05-10 14:29+0200\n"
 "PO-Revision-Date: 2020-05-10 13:25+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language: pt\n"
@@ -593,3 +593,4 @@ msgstr ""
 #: _CAL/G8R.py:211
 msgid "years"
 msgstr ""
+

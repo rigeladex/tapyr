@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0 [de]\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2016-02-05 11:22+0100\n"
+"POT-Creation-Date: 2020-05-10 14:29+0200\n"
 "PO-Revision-Date: 2016-02-05 11:25+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language: de\n"
@@ -17,139 +17,37 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.1.1\n"
+"Generated-By: Babel 2.8.0\n"
 
-#: _GTW/__test__/Test_Command.py:228
+#: _GTW/__test__/Test_Command.py:251
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/Test_Command.py:230
+#: _GTW/__test__/Test_Command.py:253
 msgid "Authorization and Account handling"
 msgstr "Anmeldung und Verwaltung des Benutzerkontos"
 
-#: _GTW/__test__/Test_Command.py:236
+#: _GTW/__test__/Test_Command.py:259
 msgid "Choice of language used for localization"
 msgstr "Auswahl der Sprache für Lokalisierung"
 
-#: _GTW/Session.py:215
+#: _GTW/Session.py:213
 #, python-format
 msgid "Edit session expired since %s"
 msgstr "Die Sitzung ist seit %s abgelaufen."
 
-#: _GTW/__test__/Test_Command.py:234
+#: _GTW/__test__/Test_Command.py:257
 msgid "L10N"
 msgstr ""
-
-#: _GTW/HTML.py:77
-#, python-format
-msgid "Need Javascript for displaying %s"
-msgstr "Für die Darstellung der %s ist Javascript erforderlich"
-
-#: _GTW/HTML.py:59
-msgid "email address"
-msgstr "Emailadresse"
-
-#: _GTW/HTML.py:60
-msgid "phone number"
-msgstr "Telefonnummer"
-
-#~ msgid "%s needs the attribute: %s"
-#~ msgid_plural "%s needs the attributes: %s"
-#~ msgstr[0] "%s benötigt das Attribut: %s"
-#~ msgstr[1] ""
-
-#~ msgid "%s `%s` does not exist!"
-#~ msgstr ""
-
-#~ msgid "%s only works with content-type json"
-#~ msgstr ""
-
-#~ msgid "%s: regatta registration"
-#~ msgstr "%s `%s` existiert nicht"
-
-#~ msgid "A confirmation email has been sent to the new email address."
-#~ msgstr "%s funktioniert nur mit dem Inhaltstyp json"
-
-#~ msgid "A confirmation has been sent to your email address."
-#~ msgstr "%s: Regatta Registrierung"
-
-#~ msgid "A user name is required."
-#~ msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse versendet."
-
-#~ msgid "Activation successful."
-#~ msgstr "Eine Bestätigung wurde an die neue Emailadresse versendet."
-
-#~ msgid "EMail verification successful."
-#~ msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
 #~ msgid ""
 #~ msgstr "Die Kennworte stimmen nicht überein."
 
-#~ msgid "Field `%(field)s` is required"
-#~ msgstr "Die Bestätigung der Email war erfolgreich."
-
-#~ msgid "Form corrupted, unknown element id %s"
-#~ msgstr ""
-
-#~ msgid "Form/element is unknown (unknown id: %s)"
-#~ msgstr "Feld `%(field)s` muss ausgefüllt werden"
-
-#~ msgid "Image Selection"
-#~ msgstr "Fehlerhaftes Formular (unbekanntes Element %s)"
-
-#~ msgid "New email address"
-#~ msgstr "Unbekanntes Formular oder Feld (%s)"
-
-#~ msgid "New password"
-#~ msgstr "Bildauswahl"
-
-#~ msgid "One of the passwords is incorrect"
-#~ msgstr "Emailadresse"
-
-#~ msgid "Password"
-#~ msgstr "Neues Kennwort"
-
-#~ msgid "Passwords don't match."
-#~ msgstr "Benutzername oder Kennwort sind nicht korrekt"
-
-#~ msgid "Please repeat the new password."
-#~ msgstr "Kennwort"
-
-#~ msgid "Repeat new password"
-#~ msgstr "Kennworte stimmen nicht überein."
-
-#~ msgid "The edit session has expired or the form values are corrupted."
-#~ msgstr "Bitte neues Kennwort wiederholen."
-
-#~ msgid "The edit session has expired."
-#~ msgstr "Wiederhole neues Kennwort"
-
-#~ msgid "The new E-Mail address is required."
-#~ msgstr ""
-
-#~ msgid "The new password is required."
-#~ msgstr "Die Sitzung ist abgelaufen."
-
-#~ msgid "The old password is required."
-#~ msgstr "Die neue E-Mail Adresse muss ausgefüllt werden."
-
-#~ msgid "The password is incorrect"
-#~ msgstr "Das neue Kennwort muss ausgefüllt werden."
-
-#~ msgid "The reset password instructions have been sent to your email address."
-#~ msgstr "Das alte Kennwort muss ausgefüllt werden."
-
-#~ msgid "This username is already in use."
-#~ msgstr "Das Kennwort sind nicht korrekt"
-
-#~ msgid "This username is not registered"
-#~ msgstr ""
-
-#~ msgid "Username"
-#~ msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
-
 #~ msgid "%s Password for %s on website %s"
 #~ msgstr "Dieser Benutzername ist nicht bekannt"
+
+#~ msgid "%s `%s` does not exist!"
+#~ msgstr ""
 
 #~ msgid "%s `%s` doesn't exist anymore!"
 #~ msgstr "%s Kennwort für Anwender %s auf Webseite %s"
@@ -160,17 +58,37 @@ msgstr "Telefonnummer"
 #~ msgid "%s doesn't have an attribute named `%s`"
 #~ msgstr "%s `%s` existiert nicht"
 
+#~ msgid "%s needs the attribute: %s"
+#~ msgid_plural "%s needs the attributes: %s"
+#~ msgstr[0] "%s benötigt das Attribut: %s"
+#~ msgstr[1] ""
+
+#~ msgid "%s only works with content-type json"
+#~ msgstr ""
+
+#~ msgid "%s: regatta registration"
+#~ msgstr "%s `%s` existiert nicht"
+
 #~ msgid "%s: regatta registration %s"
 #~ msgstr "%s hat kein Attribute mit Namen `%s`"
 
 #~ msgid "A confirmation email has been sent to the new email address %s."
 #~ msgstr "%s: Regatta Registrierung %s"
 
+#~ msgid "A confirmation email has been sent to the new email address."
+#~ msgstr "%s funktioniert nur mit dem Inhaltstyp json"
+
 #~ msgid "A confirmation has been sent to your email address %s."
 #~ msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse %s versendet."
 
+#~ msgid "A confirmation has been sent to your email address."
+#~ msgstr "%s: Regatta Registrierung"
+
 #~ msgid "A user name is required to login."
 #~ msgstr "Eine Bestätigung wurde an die neue Emailadresse %s versendet."
+
+#~ msgid "A user name is required."
+#~ msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse versendet."
 
 #~ msgid "Account could not be found"
 #~ msgstr ""
@@ -183,6 +101,9 @@ msgstr "Telefonnummer"
 
 #~ msgid "Activation of account %s successful."
 #~ msgstr "Activiere Benutzerkonto für Anwender %s auf Webseite %s"
+
+#~ msgid "Activation successful."
+#~ msgstr "Eine Bestätigung wurde an die neue Emailadresse versendet."
 
 #~ msgid "Admin"
 #~ msgstr "Die Aktivierung des Benutzerkontos %s war erfolgreich."
@@ -253,6 +174,9 @@ msgstr "Telefonnummer"
 #~ msgid "Documentation for package namespace %s"
 #~ msgstr "Zeige Details für %(tn)s %(obj)s"
 
+#~ msgid "EMail verification successful."
+#~ msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
+
 #~ msgid "Email confirmation for %s"
 #~ msgstr "Dokumentation für Packetnamensraum %s"
 
@@ -268,11 +192,23 @@ msgstr "Telefonnummer"
 #~ msgid "Field %s doesn't have a polisher"
 #~ msgstr "Feber"
 
+#~ msgid "Field `%(field)s` is required"
+#~ msgstr "Die Bestätigung der Email war erfolgreich."
+
+#~ msgid "Form corrupted, unknown element id %s"
+#~ msgstr ""
+
+#~ msgid "Form/element is unknown (unknown id: %s)"
+#~ msgstr "Feld `%(field)s` muss ausgefüllt werden"
+
 #~ msgid "Fri"
 #~ msgstr "Feld %s hat keinen Polierer"
 
 #~ msgid "Friday"
 #~ msgstr "FR"
+
+#~ msgid "Image Selection"
+#~ msgstr "Fehlerhaftes Formular (unbekanntes Element %s)"
 
 #~ msgid "Incorrect origin `%s` for request, expected `%r`"
 #~ msgstr "Freitag"
@@ -343,6 +279,15 @@ msgstr "Telefonnummer"
 #~ msgid "More than %s matches"
 #~ msgstr "Montag"
 
+#~ msgid "Need Javascript for displaying %s"
+#~ msgstr "Für die Darstellung der %s ist Javascript erforderlich"
+
+#~ msgid "New email address"
+#~ msgstr "Unbekanntes Formular oder Feld (%s)"
+
+#~ msgid "New password"
+#~ msgstr "Bildauswahl"
+
 #~ msgid "No activation request for this account"
 #~ msgstr "Mehr als %s Treffer"
 
@@ -370,14 +315,23 @@ msgstr "Telefonnummer"
 #~ msgid "October"
 #~ msgstr "Okt"
 
+#~ msgid "One of the passwords is incorrect"
+#~ msgstr "Emailadresse"
+
 #~ msgid "Participants"
 #~ msgstr "Oktober"
+
+#~ msgid "Password"
+#~ msgstr "Neues Kennwort"
 
 #~ msgid "Password change for account %s"
 #~ msgstr "Teilnehmer"
 
 #~ msgid "Password reset for user %s on website %s"
 #~ msgstr "Kennwortänderung für Benutzerkonto %s"
+
+#~ msgid "Passwords don't match."
+#~ msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
 #~ msgid "Please enter a username"
 #~ msgstr "Kennwort für Anwender %s auf Webseite %s zurückgesetzt"
@@ -390,6 +344,9 @@ msgstr "Telefonnummer"
 
 #~ msgid "Please reload the page"
 #~ msgstr "Bitte fehlende Werte eingeben"
+
+#~ msgid "Please repeat the new password."
+#~ msgstr "Kennwort"
 
 #~ msgid "Query for cached role attribute `%s` of %s not yet supported"
 #~ msgstr "Bitte Seite neu laden"
@@ -423,6 +380,9 @@ msgstr "Telefonnummer"
 
 #~ msgid "Registration list"
 #~ msgstr "Melde für %s zu %s an"
+
+#~ msgid "Repeat new password"
+#~ msgstr "Kennworte stimmen nicht überein."
 
 #~ msgid "Repeat the EMail for verification."
 #~ msgstr "Meldeliste"
@@ -481,8 +441,26 @@ msgstr "Telefonnummer"
 #~ msgid "The Email's don't match."
 #~ msgstr "Die Emailadresse muss ausgefüllt werden."
 
+#~ msgid "The edit session has expired or the form values are corrupted."
+#~ msgstr "Bitte neues Kennwort wiederholen."
+
+#~ msgid "The edit session has expired."
+#~ msgstr "Wiederhole neues Kennwort"
+
+#~ msgid "The new E-Mail address is required."
+#~ msgstr ""
+
+#~ msgid "The new password is required."
+#~ msgstr "Die Sitzung ist abgelaufen."
+
+#~ msgid "The old password is required."
+#~ msgstr "Die neue E-Mail Adresse muss ausgefüllt werden."
+
 #~ msgid "The password has been changed."
 #~ msgstr ""
+
+#~ msgid "The password is incorrect"
+#~ msgstr "Das neue Kennwort muss ausgefüllt werden."
 
 #~ msgid "The password is required."
 #~ msgstr "Das Kennwort wurde geändert"
@@ -490,7 +468,16 @@ msgstr "Telefonnummer"
 #~ msgid "The passwords don't match."
 #~ msgstr "Das Kennwort muss ausgefüllt werden."
 
+#~ msgid "The reset password instructions have been sent to your email address."
+#~ msgstr "Das alte Kennwort muss ausgefüllt werden."
+
 #~ msgid "This account is currently inactive"
+#~ msgstr ""
+
+#~ msgid "This username is already in use."
+#~ msgstr "Das Kennwort sind nicht korrekt"
+
+#~ msgid "This username is not registered"
 #~ msgstr ""
 
 #~ msgid "Thu"
@@ -529,6 +516,9 @@ msgstr "Telefonnummer"
 #~ msgid "Unless run in TEST mode, access to %s is only allowed over https!"
 #~ msgstr "Unbekannter Typ %s für Attribut %s.%s"
 
+#~ msgid "Username"
+#~ msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
+
 #~ msgid "Username or password incorrect"
 #~ msgstr "Zugriff auf %s ist nur über HTTPS erlaubt, ausser im TEST-Modus!"
 
@@ -556,5 +546,12 @@ msgstr "Telefonnummer"
 #~ msgid "created by"
 #~ msgstr "anonym"
 
+#~ msgid "email address"
+#~ msgstr "Emailadresse"
+
+#~ msgid "phone number"
+#~ msgstr "Telefonnummer"
+
 #~ msgid "picture"
 #~ msgstr "eingegeben durch"
+
