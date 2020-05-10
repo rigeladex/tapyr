@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2020 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -28,6 +28,7 @@
 #                     environment
 #    26-Nov-2010 (CT) Import for `get_spontaneous_environment` fixed
 #     4-Dec-2013 (CT) Adapt `babel_extract` to jinja2 version 2.7
+#    10-May-2020 (CT) Adapt `babel_extract` to jinja2 version 2.10
 #    ««revision-date»»···
 #--
 
@@ -47,7 +48,8 @@ def Extract (fobj, keywords, comment_tags, config, method) :
         yield lineno, funcname, messages, comments, None
 # end def Extract
 
-if jinja2.__version__ >= "2.7" :
+jinja2_version = tuple (int (v) for v in jinja2.__version__.split (".") [:2])
+if jinja2_version >= (2, 7) :
     def babel_extract (fileobj, keywords, comment_tags, options) :
         """Babel extraction method for Jinja templates.
 
@@ -89,7 +91,8 @@ if jinja2.__version__ >= "2.7" :
             , getbool (options, "trim_blocks",   ext.TRIM_BLOCKS)
             , getbool (options, "lstrip_blocks", ext.LSTRIP_BLOCKS)
             , ext.NEWLINE_SEQUENCE
-            , getbool (options, "keep_trailing_newline", ext.KEEP_TRAILING_NEWLINE)
+            , getbool
+                (options, "keep_trailing_newline", ext.KEEP_TRAILING_NEWLINE)
             , frozenset (extensions)
             , cache_size  = 0
             , auto_reload = False
@@ -102,6 +105,7 @@ if jinja2.__version__ >= "2.7" :
     # end def babel_extract
 else :
     from jinja2.environment import get_spontaneous_environment
+    from jinja2.runtime     import Undefined
     def babel_extract (fileobj, keywords, comment_tags, options) :
         """Babel extraction method for Jinja templates.
 
@@ -145,7 +149,7 @@ else :
             # arguments are optimizer, undefined, finalize, autoescape,
             # loader, cache size, auto reloading setting and the
             # bytecode cache
-            , True, ext.Undefined, None, False, None, 0, False, None
+            , True, Undefined, None, False, None, 0, False, None
             )
 
         source = fileobj.read ().decode (options.get ("encoding", "utf-8"))
