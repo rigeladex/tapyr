@@ -35,6 +35,7 @@
 #     2-Feb-2016 (CT) Add I18N, german and swiss holidays
 #    11-Feb-2016 (CT) Factor `TFL.I18N.test_language`
 #    10-May-2020 (CT) Add public holidays of Portugal
+#    10-May-2020 (CT) Add doctest for portuguese holidays
 #    ««revision-date»»···
 #--
 
@@ -245,6 +246,22 @@ def _show (year, country, lang = "de") :
     315 2017/11/11 Veterans Day
     327 2017/11/23 Thanksgiving
     359 2017/12/25 Christmas Day
+
+    >>> _show (2020, "PT", lang = "pt")
+      1 2020/01/01 Ano Novo
+     56 2020/02/25 Carnaval
+    101 2020/04/10 Sexta-feira Santa
+    103 2020/04/12 Domingo de Pásco
+    116 2020/04/25 Dia da Liberdade
+    122 2020/05/01 Dia do Trabalhador
+    162 2020/06/10 Dia de Portugal
+    163 2020/06/11 Corpus Christi
+    228 2020/08/15 Assunção de Nossa Senhora
+    279 2020/10/05 Implantação da República
+    306 2020/11/01 Dia de Todos-os-Santos
+    336 2020/12/01 Restauração da Independência
+    343 2020/12/08 Imaculada Conceição
+    360 2020/12/25 Natal
 
     >>> _show (2016, "ANY")
       1 2016/01/01 Neujahr
