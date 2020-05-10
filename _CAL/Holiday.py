@@ -36,6 +36,7 @@
 #    11-Feb-2016 (CT) Factor `TFL.I18N.test_language`
 #    10-May-2020 (CT) Add public holidays of Portugal
 #    10-May-2020 (CT) Add doctest for portuguese holidays
+#    10-May-2020 (CT) Adapt to change of `CAL.Day_Rule`
 #    ««revision-date»»···
 #--
 
@@ -147,132 +148,131 @@ holidays = Holidays ()
 def _show (year, country, lang = "de") :
     """
     >>> _show (2016, "AT")
-      1 2016/01/01 Neujahr
-      6 2016/01/06 Hl. Drei Könige
-     87 2016/03/27 Ostersonntag
-     88 2016/03/28 Ostermontag
-    122 2016/05/01 Tag der Arbeit
-    126 2016/05/05 Christi Himmelfahrt
-    136 2016/05/15 Pfingstsonntag
-    137 2016/05/16 Pfingstmontag
-    147 2016/05/26 Fronleichnam
-    228 2016/08/15 Mariä Himmelfahrt
-    300 2016/10/26 Nationalfeiertag
-    306 2016/11/01 Allerheiligen
-    343 2016/12/08 Mariä Empfängnis
-    360 2016/12/25 1. Weihnachtstag
-    361 2016/12/26 2. Weihnachtstag
+      1 2016-01-01 Neujahr
+      6 2016-01-06 Hl. Drei Könige
+     87 2016-03-27 Ostersonntag
+     88 2016-03-28 Ostermontag
+    122 2016-05-01 Tag der Arbeit
+    126 2016-05-05 Christi Himmelfahrt
+    136 2016-05-15 Pfingstsonntag
+    137 2016-05-16 Pfingstmontag
+    147 2016-05-26 Fronleichnam
+    228 2016-08-15 Mariä Himmelfahrt
+    300 2016-10-26 Nationalfeiertag
+    306 2016-11-01 Allerheiligen
+    343 2016-12-08 Mariä Empfängnis
+    360 2016-12-25 1. Weihnachtstag
+    361 2016-12-26 2. Weihnachtstag
 
     >>> _show (2016, "DE")
-      1 2016/01/01 Neujahr
-     85 2016/03/25 Karfreitag
-     87 2016/03/27 Ostersonntag
-     88 2016/03/28 Ostermontag
-    122 2016/05/01 Tag der Arbeit
-    126 2016/05/05 Christi Himmelfahrt
-    136 2016/05/15 Pfingstsonntag
-    137 2016/05/16 Pfingstmontag
-    277 2016/10/03 Tag der Deutschen Einheit
-    360 2016/12/25 1. Weihnachtstag
-    361 2016/12/26 2. Weihnachtstag
+      1 2016-01-01 Neujahr
+     85 2016-03-25 Karfreitag
+     87 2016-03-27 Ostersonntag
+     88 2016-03-28 Ostermontag
+    122 2016-05-01 Tag der Arbeit
+    126 2016-05-05 Christi Himmelfahrt
+    136 2016-05-15 Pfingstsonntag
+    137 2016-05-16 Pfingstmontag
+    277 2016-10-03 Tag der Deutschen Einheit
+    360 2016-12-25 1. Weihnachtstag
+    361 2016-12-26 2. Weihnachtstag
 
     >>> _show (2016, "CH", lang = "en")
-      1 2016/01/01 New Year's Day
-     85 2016/03/25 Good Friday
-     87 2016/03/27 Easter Sunday
-     88 2016/03/28 Easter Monday
-    126 2016/05/05 Ascension Day
-    136 2016/05/15 Whit Sunday
-    137 2016/05/16 Whit Monday
-    214 2016/08/01 Swiss National Day
-    262 2016/09/18 Federal Day of Thanksgiving, Repentance and Prayer
-    360 2016/12/25 Christmas Day
-    361 2016/12/26 St. Stephen's Day
+      1 2016-01-01 New Year's Day
+     85 2016-03-25 Good Friday
+     87 2016-03-27 Easter Sunday
+     88 2016-03-28 Easter Monday
+    126 2016-05-05 Ascension Day
+    136 2016-05-15 Whit Sunday
+    137 2016-05-16 Whit Monday
+    214 2016-08-01 Swiss National Day
+    262 2016-09-18 Federal Day of Thanksgiving, Repentance and Prayer
+    360 2016-12-25 Christmas Day
+    361 2016-12-26 St. Stephen's Day
 
     >>> _show (2016, "IE")
-      1 2016/01/01 Neujahr
-     77 2016/03/17 Saint Patrick's Day
-     88 2016/03/28 Ostermontag
-    123 2016/05/02 Mai-Feiertag
-    158 2016/06/06 Juni-Feiertag
-    214 2016/08/01 August-Feiertag
-    305 2016/10/31 Oktober-Feiertag
-    360 2016/12/25 1. Weihnachtstag
-    361 2016/12/26 2. Weihnachtstag
+      1 2016-01-01 Neujahr
+     77 2016-03-17 Saint Patrick's Day
+     88 2016-03-28 Ostermontag
+    123 2016-05-02 Mai-Feiertag
+    158 2016-06-06 Juni-Feiertag
+    214 2016-08-01 August-Feiertag
+    305 2016-10-31 Oktober-Feiertag
+    360 2016-12-25 1. Weihnachtstag
+    361 2016-12-26 2. Weihnachtstag
 
     >>> _show (2016, "UK")
-      1 2016/01/01 Neujahr
-     85 2016/03/25 Karfreitag
-     87 2016/03/27 Ostersonntag
-     88 2016/03/28 Ostermontag
-    123 2016/05/02 Bankfeiertag
-    151 2016/05/30 Bankfeiertag
-    242 2016/08/29 Bankfeiertag
-    360 2016/12/25 1. Weihnachtstag
-    361 2016/12/26 2. Weihnachtstag
+      1 2016-01-01 Neujahr
+     85 2016-03-25 Karfreitag
+     87 2016-03-27 Ostersonntag
+     88 2016-03-28 Ostermontag
+    123 2016-05-02 Bankfeiertag
+    151 2016-05-30 Bankfeiertag
+    242 2016-08-29 Bankfeiertag
+    360 2016-12-25 1. Weihnachtstag
+    361 2016-12-26 2. Weihnachtstag
 
     >>> _show (2017, "UK", lang = "en")
-      1 2017/01/01 New Year's Day
-    104 2017/04/14 Good Friday
-    106 2017/04/16 Easter Sunday
-    107 2017/04/17 Easter Monday
-    121 2017/05/01 May Day Bank Holiday
-    149 2017/05/29 Spring Bank Holiday
-    240 2017/08/28 Late Summer Bank Holiday
-    359 2017/12/25 Christmas Day
-    360 2017/12/26 Boxing Day
+      1 2017-01-01 New Year's Day
+    104 2017-04-14 Good Friday
+    106 2017-04-16 Easter Sunday
+    107 2017-04-17 Easter Monday
+    121 2017-05-01 May Day Bank Holiday
+    149 2017-05-29 Spring Bank Holiday
+    240 2017-08-28 Late Summer Bank Holiday
+    359 2017-12-25 Christmas Day
+    360 2017-12-26 Boxing Day
 
     >>> _show (2016, "US", lang = "en")
-      1 2016/01/01 New Year's Day
-     18 2016/01/18 Martin Luther King Day
-     46 2016/02/15 Washington's Birthday
-    151 2016/05/30 Memorial Day
-    186 2016/07/04 Independence Day
-    249 2016/09/05 Labor Day
-    284 2016/10/10 Columbus Day
-    316 2016/11/11 Veterans Day
-    329 2016/11/24 Thanksgiving
-    360 2016/12/25 Christmas Day
+      1 2016-01-01 New Year's Day
+     18 2016-01-18 Martin Luther King Day
+     46 2016-02-15 Washington's Birthday
+    151 2016-05-30 Memorial Day
+    186 2016-07-04 Independence Day
+    249 2016-09-05 Labor Day
+    284 2016-10-10 Columbus Day
+    316 2016-11-11 Veterans Day
+    329 2016-11-24 Thanksgiving
+    360 2016-12-25 Christmas Day
 
     >>> _show (2017, "US", lang = "en")
-      1 2017/01/01 New Year's Day
-     16 2017/01/16 Martin Luther King Day
-     20 2017/01/20 Inauguration Day
-     51 2017/02/20 Washington's Birthday
-    149 2017/05/29 Memorial Day
-    185 2017/07/04 Independence Day
-    247 2017/09/04 Labor Day
-    282 2017/10/09 Columbus Day
-    315 2017/11/11 Veterans Day
-    327 2017/11/23 Thanksgiving
-    359 2017/12/25 Christmas Day
+      1 2017-01-01 New Year's Day
+     16 2017-01-16 Martin Luther King Day
+     20 2017-01-20 Inauguration Day
+     51 2017-02-20 Washington's Birthday
+    149 2017-05-29 Memorial Day
+    185 2017-07-04 Independence Day
+    247 2017-09-04 Labor Day
+    282 2017-10-09 Columbus Day
+    315 2017-11-11 Veterans Day
+    327 2017-11-23 Thanksgiving
+    359 2017-12-25 Christmas Day
 
     >>> _show (2020, "PT", lang = "pt")
-      1 2020/01/01 Ano Novo
-     56 2020/02/25 Carnaval
-    101 2020/04/10 Sexta-feira Santa
-    103 2020/04/12 Domingo de Pásco
-    116 2020/04/25 Dia da Liberdade
-    122 2020/05/01 Dia do Trabalhador
-    162 2020/06/10 Dia de Portugal
-    163 2020/06/11 Corpus Christi
-    228 2020/08/15 Assunção de Nossa Senhora
-    279 2020/10/05 Implantação da República
-    306 2020/11/01 Dia de Todos-os-Santos
-    336 2020/12/01 Restauração da Independência
-    343 2020/12/08 Imaculada Conceição
-    360 2020/12/25 Natal
+      1 2020-01-01 Ano Novo
+     56 2020-02-25 Carnaval
+    101 2020-04-10 Sexta-feira Santa
+    103 2020-04-12 Domingo de Pásco
+    116 2020-04-25 Dia da Liberdade
+    122 2020-05-01 Dia do Trabalhador
+    162 2020-06-10 Dia de Portugal
+    163 2020-06-11 Corpus Christi
+    228 2020-08-15 Assunção de Nossa Senhora
+    279 2020-10-05 Implantação da República
+    306 2020-11-01 Dia de Todos-os-Santos
+    336 2020-12-01 Restauração da Independência
+    343 2020-12-08 Imaculada Conceição
+    360 2020-12-25 Natal
 
     >>> _show (2016, "ANY")
-      1 2016/01/01 Neujahr
+      1 2016-01-01 Neujahr
 
     """
     import _CAL.Year
     with TFL.I18N.test_language (lang) :
-        Y = CAL.Year (year)
-        O = Y.head.ordinal - 1
-        for ordinal, name in sorted (pyk.iteritems (holidays (year, country))) :
-            print ("%3d %s %s" % (ordinal - O, Y.cal.day [ordinal], _T (name)))
+        for _, day in sorted (holidays (year, country).items ()) :
+            date = day.date
+            print ("%3d %s %s" % (date.rjd, date, _T (day.name)))
 # end def _show
 
 def _main (cmd) :
