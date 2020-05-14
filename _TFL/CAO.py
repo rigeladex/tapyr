@@ -165,6 +165,7 @@
 #                     + Use `==` not `is` in `_resolve_range_1` (Py 3.8 warning)
 #     5-Apr-2020 (CT) Add `Regexp`, `Re_Replacer` argument/option
 #     6-Apr-2020 (CT) Don't use `Decimal.from_float` (Py 3.2+ doesn't need it)
+#    14-May-2020 (CT) Add `pre_load_cb` to `Config` option
 #    ««revision-date»»···
 #--
 
@@ -1499,11 +1500,14 @@ class Rel_Path (Path) :
 class Config (_Config_, Rel_Path) :
     """Option specifying a config-file"""
 
-    type_abbr     = "C"
-    _help_dn      = "Config"
+    type_abbr           = "C"
+    _help_dn            = "Config"
+    _pre_load_cb        = None
+    _pre_load_cb_run    = False
 
     def __init__ (self, * args, ** kw) :
         self.pathes = []
+        self.pop_to_self (kw, "pre_load_cb", prefix = "_")
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 
@@ -1512,6 +1516,9 @@ class Config (_Config_, Rel_Path) :
         path   = self.__super.cook (value, cao)
         result = {}
         if path :
+            if self._pre_load_cb and not self._pre_load_cb_run :
+                self._pre_load_cb ()
+                self._pre_load_cb_run = True
             self.pathes.append (path)
             context = dict (C = cao._cmd if cao else None)
             load_config_file (path, context, result)
