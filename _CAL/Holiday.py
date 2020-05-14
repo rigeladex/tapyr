@@ -37,6 +37,7 @@
 #    10-May-2020 (CT) Add public holidays of Portugal
 #    10-May-2020 (CT) Add doctest for portuguese holidays
 #    10-May-2020 (CT) Adapt to change of `CAL.Day_Rule`
+#    14-May-2020 (CT) Add `Config` option
 #    ««revision-date»»···
 #--
 
@@ -270,9 +271,11 @@ def _show (year, country, lang = "de") :
     """
     import _CAL.Year
     with TFL.I18N.test_language (lang) :
-        for _, day in sorted (holidays (year, country).items ()) :
+        ### Use `CAL.holidays`, not `holidays`, to pick up changes from
+        ### `Config` file, if any
+        for _, day in sorted (CAL.holidays (year, country).items ()) :
             date = day.date
-            print ("%3d %s %s" % (date.rjd, date, _T (day.name)))
+            print ("%3d %s %s" % (date.rjd, date, _T (day.description)))
 # end def _show
 
 def _main (cmd) :
@@ -290,6 +293,14 @@ _Command = TFL.CAO.Cmd \
     , opts          =
         ( "-country:S=AT?Country for which to show holidays"
         , "-language:S=de?Language to use for holiday names"
+        , TFL.CAO.Opt.Config
+            ( "Config"
+            , auto_split    = ":"
+            , default       = "~/.cal_holiday.config"
+            , description   = "File(s) specifying defaults for options"
+            , pre_load_cb   = CAL._Import_All
+            , x_context     = dict (CAL = CAL)
+            )
         )
     , max_args      = 1
     )
