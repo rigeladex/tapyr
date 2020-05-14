@@ -166,6 +166,7 @@
 #     5-Apr-2020 (CT) Add `Regexp`, `Re_Replacer` argument/option
 #     6-Apr-2020 (CT) Don't use `Decimal.from_float` (Py 3.2+ doesn't need it)
 #    14-May-2020 (CT) Add `pre_load_cb` to `Config` option
+#    14-May-2020 (CT) Add `x_context` to `Config` option
 #    ««revision-date»»···
 #--
 
@@ -1504,10 +1505,11 @@ class Config (_Config_, Rel_Path) :
     _help_dn            = "Config"
     _pre_load_cb        = None
     _pre_load_cb_run    = False
+    _x_context          = {}
 
     def __init__ (self, * args, ** kw) :
         self.pathes = []
-        self.pop_to_self (kw, "pre_load_cb", prefix = "_")
+        self.pop_to_self (kw, "pre_load_cb", "x_context", prefix = "_")
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 
@@ -1520,7 +1522,7 @@ class Config (_Config_, Rel_Path) :
                 self._pre_load_cb ()
                 self._pre_load_cb_run = True
             self.pathes.append (path)
-            context = dict (C = cao._cmd if cao else None)
+            context = dict (C = cao._cmd if cao else None, ** self._x_context)
             load_config_file (path, context, result)
         return result
     # end def cook
