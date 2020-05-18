@@ -38,6 +38,7 @@
 #    10-May-2020 (CT) Add doctest for portuguese holidays
 #    10-May-2020 (CT) Adapt to change of `CAL.Day_Rule`
 #    14-May-2020 (CT) Add `Config` option
+#    18-May-2020 (CT) Add `show_by_event`, factor `show_by_year`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,7 @@ import _CAL.Day_Rule
 import _CAL.Delta
 
 import _TFL.CAO
+import _TFL.predicate
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
@@ -269,25 +271,90 @@ def _show (year, country, lang = "de") :
       1 2016-01-01 Neujahr
 
     """
-    import _CAL.Year
-    with TFL.I18N.test_language (lang) :
-        ### Use `CAL.holidays`, not `holidays`, to pick up changes from
-        ### `Config` file, if any
-        for _, day in sorted (CAL.holidays (year, country).items ()) :
-            date = day.date
-            print ("%3d %s %s" % (date.rjd, date, _T (day.description)))
+    show_by_year (holidays, year, country, lang)
 # end def _show
 
-def _main (cmd) :
-    _show (cmd.year, cmd.country, cmd.language)
-# end def _main
+_year = CAL.Date ().year
 
-today    = CAL.Date ()
-year     = today.year
-_Command = TFL.CAO.Cmd \
-    ( handler       = _main
+def show_by_event (rule, start, decades, country, language = "de") :
+    with TFL.I18N.test_language (language) :
+        head = TFL.rounded_down (start, 10)
+        tail = head + 10 * decades
+        fmt  = "%8s"
+        sep  = " ".join (("=" * 4, * (("=" * 8, ) * 10)))
+        def _gen_decade (d) :
+            for y in range (d, d + 10) :
+                evi = rule (y, country)
+                yield fmt % ("" if evi is None else evi.event_abbr, )
+        print (_T (rule.abbr), getattr (rule, "_start_date", ""))
+        print (sep)
+        print ("year", * (fmt % ("___" + str (i)) for i in range (10)))
+        print (sep)
+        for d in range (head, tail, 10) :
+            label = ("%4d" % d) [:3] + "_"
+            print (label, * _gen_decade (d))
+        print (sep)
+# end def show_by_event
+
+def _main_event (cmd) :
+    ### Use `CAL.holidays`, not `holidays`, to pick up changes from
+    ### `Config` file, if any
+    rs      = getattr (cmd, "rule_set", CAL.holidays)
+    rules   = rs.matching_rules (* cmd.argv)
+    country = cmd.country
+    for rule in rules :
+        if rule.matches (country) :
+            show_by_event (rule, cmd.start, cmd.decades, country, cmd.language)
+            print ()
+# end def _main_event
+
+_Command_Event = TFL.CAO.Cmd \
+    ( handler       = _main_event
+    , name          = "event"
     , args          =
-        ( "year:I=%d?Year for which to show holidays" % (year, )
+        ( "rule:S,?Name of rule(s) of events to show"
+        ,
+        )
+    , opts          =
+        ( "start:I=%d?First year for which to show events" % (_year - 50, )
+        , "decades:I=100?Number of decades for which to show events"
+        )
+    , min_args      = 1
+    )
+
+def show_by_year (rule_set, year, country, language = "de") :
+    """Show events in `rule_set` for `year`, `country` and `language`"""
+    with TFL.I18N.test_language (language) :
+        for _, day in sorted (rule_set (year, country).items ()) :
+            date = day.date
+            print ("%3d %s %s" % (date.rjd, date, _T (day.description)))
+# end def show_by_year
+
+def _main_year (cmd) :
+    """Show holidays for `year`, `country` and `language`"""
+    ### Use `CAL.holidays`, not `holidays`, to pick up changes from
+    ### `Config` file, if any
+    rule_set = getattr (cmd, "rule_set", CAL.holidays)
+    for year in cmd.argv :
+        show_by_year (rule_set, year, cmd.country, cmd.language)
+        print ()
+# end def _main_year
+
+_Command_Year = TFL.CAO.Cmd \
+    ( handler       = _main_year
+    , name          = "year"
+    , args          =
+        ( "year:I,=%d?Year(s) for which to show holidays" % (_year, )
+        ,
+        )
+    , opts          =
+        (
+        )
+    )
+
+_Command = TFL.CAO.Cmd \
+    ( args          =
+        ( TFL.CAO.Cmd_Choice ("command", _Command_Event, _Command_Year)
         ,
         )
     , opts          =
@@ -301,8 +368,10 @@ _Command = TFL.CAO.Cmd \
             , pre_load_cb   = CAL._Import_All
             , x_context     = dict (CAL = CAL)
             )
+        ,
         )
-    , max_args      = 1
+    , do_keywords   = True
+    , min_args      = 1
     )
 
 if __name__ != "__main__" :

@@ -19,6 +19,7 @@
 #     2-Feb-2016 (CT) Creation (partly factored from CAL.Holiday)
 #    10-May-2020 (CT) Change `Set` to return objects, not strings
 #                     - Add `_Ruled_Day_` plus descendents
+#    18-May-2020 (CT) Add `Set.add_rules`, `.matching_rules`
 #    ««revision-date»»···
 #--
 
@@ -31,6 +32,7 @@ import _CAL.Delta
 import _CAL.Relative_Delta
 
 import _TFL.CAO
+import _TFL.predicate
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
@@ -118,14 +120,16 @@ class _Ruled_Day_ (TFL.Meta.Object) :
 class _Easter_Dependent_Day_ (_Ruled_Day_) :
     """Day resulting from applying a `Easter_Dependent` rule to a `year`."""
 
-    day_abbr = TFL.Meta.Alias_Property ("wk_day_abbr")
+    day_abbr    = TFL.Meta.Alias_Property ("wk_day_abbr")
+    event_abbr  = TFL.Meta.Alias_Property ("dd_mm")
 
 # end class _Easter_Dependent_Day_
 
 class _Fixed_Day_ (_Ruled_Day_) :
     """Day resulting from applying a `Fixed` rule to a `year`."""
 
-    day_abbr = TFL.Meta.Alias_Property ("dd_mm")
+    day_abbr    = TFL.Meta.Alias_Property ("dd_mm")
+    event_abbr  = TFL.Meta.Alias_Property ("wk_day_abbr")
 
 # end class _Fixed_Day_
 
@@ -133,6 +137,7 @@ class _Rule_ (TFL.Meta.Object) :
     """Base class for rules."""
 
     RD                 = CAL.Relative_Delta
+    abbr               = TFL.Meta.Alias_Property ("name")
     _delta             = None
     _delta_2           = None
     _y_filter          = None
@@ -273,11 +278,13 @@ class Set (TFL.Meta.Object) :
     _rules = []
 
     def __init__ (self, * rules) :
-        self.years            = {}
-        self.rules_by_country = {}
-        self.dates            = {}
         if rules :
             self._rules = rules
+        self.dates            = {}
+        self.rules_by_country = {}
+        self.years            = {}
+        self._rules_by_name   = {}
+        self._rule_name_trie  = None
     # end def __init__
 
     def __call__ (self, year, country) :
@@ -293,6 +300,74 @@ class Set (TFL.Meta.Object) :
     def countries (self) :
         return set (c for r in self._rules for c in r.countries)
     # end def countries
+
+    @property
+    def rule_name_trie (self) :
+        result = self._rule_name_trie
+        if result is None :
+            from _TFL.Trie import Word_Trie as Trie
+            result = self._rule_name_trie = Trie (self.rules_by_name)
+        return result
+    # end def rule_name_trie
+
+    @property
+    def rules_by_name (self) :
+        result = self._rules_by_name
+        if not result :
+            result.update (** { r.name : r for r in self._rules })
+        return result
+    # end def rules_by_name
+
+    def add_rules (self, * rules) :
+        self._rules += rules
+        self._reset ()
+    # end def add_rules
+
+    def matching_rules (self, * patterns) :
+        """Return all rules matching any of the `patterns`.
+
+        Patterns are strings that are matched as follows:
+
+        - `:<name>` : matches all rules that are instances of class `<name>`
+
+        - `~regexp` : matches all rules which `name` matches `regexp`
+
+        - `pattern` : matches all rules which `name` starts with `pattern`
+
+        - `*`       : matches all rules
+        """
+        def _gen () :
+            for p in patterns :
+                if p == "*" :
+                    yield self._rules
+                elif p.startswith (":") :
+                    for scope in (CAL.Day_Rule, CAL) :
+                        cls = getattr (scope, p [1:], None)
+                        if cls is not None :
+                            break
+                    else :
+                        raise NameError (p)
+                    yield (r for r in self._rules if isinstance (r, cls))
+                elif p.startswith ("~") :
+                    from _TFL.Regexp import Regexp
+                    re  = Regexp (p [1:])
+                    yield (r for r in self._rules if re.search (r.name))
+                else :
+                    rbn = self.rules_by_name
+                    yield \
+                        ( rbn [n]
+                        for n in self.rule_name_trie.completions (p) [0]
+                        )
+        return tuple (TFL.uniq (itertools.chain (* _gen ())))
+    # end def matching_rules
+
+    def _reset (self) :
+        self.dates.clear            ()
+        self.rules_by_country.clear ()
+        self.years.clear            ()
+        self._rules_by_name.clear   ()
+        self._rule_name_trie  = None
+    # end def _reset
 
     def _rules_by_country (self, country) :
         map = self.rules_by_country
