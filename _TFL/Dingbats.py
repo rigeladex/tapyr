@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -26,6 +26,7 @@
 #     4-Jan-2017 (CT) Add some miscellaneous_technical symbols
 #    20-Aug-2017 (CT) Add astronomical symbols (earth, moon, star, sun)
 #    29-Sep-2017 (CT) Add `*cloud*` and `rain`
+#    24-May-2020 (CT) Add `__main__` to display glyphs
 #    ««revision-date»»···
 #--
 
@@ -287,4 +288,10 @@ zero_width_space                                                    = "\u200B"
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
+else :
+    globs = globals ()
+    for name in dir () :
+        x = globs [name]
+        if isinstance (x, str) and not name.startswith ("_") :
+            print ("%-60s : %s" % (name, x))
 ### __END__ TFL.Dingbats
