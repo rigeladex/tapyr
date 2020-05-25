@@ -81,6 +81,9 @@
 #    19-Aug-2019 (CT) Import `unicode_literals`, fix doctest accordingly
 #     6-Apr-2020 (CT) Add `__fspath__`
 #     8-Apr-2020 (CT) Change `__str__` to return `.name`
+#    25-May-2020 (CT) Improve `relative_to`
+#                     + return `self.name`, not empty, if no relation
+#                     + don't add leading `./`
 #    ««revision-date»»···
 #--
 
@@ -309,36 +312,39 @@ class Filename (TFL.Meta.Object) :
     # end def real_name
 
     def relative_to (self, other) :
-        """Returns `self` converted to a path relative to `other` (empty, if
-           that's not possible)
+        """Returns `self` converted to a path relative to `other`
+          (`self.name`, if that's not possible)
 
            For example:
 
            >>> f=Filename ("/a/b/c/xxx.x")
            >>> g=Filename ("/a/b/d/yyy.y")
+           >>> h=Filename ("/xyz/a/b/d/zzz.z")
            >>> print_prepr (f.relative_to (g))
            '../c/xxx.x'
            >>> print_prepr (g.relative_to (f))
            '../d/yyy.y'
+           >>> print_prepr (g.relative_to (h))
+           '/a/b/d/yyy.y'
         """
         if not other :
             return ""
-        self   = self.__class__ (self,  absolute = 1)
-        other  = self.__class__ (other, absolute = 1)
-        pairs  = paired (self.directories (), other.directories ())
+        left   = self.__class__ (self,  absolute = 1)
+        right  = self.__class__ (other, absolute = 1)
+        pairs  = paired (left.directories (), right.directories ())
         i      = 0
-        for (s, o) in pairs :
-            if (  s is None or o is None
-               or self.normalized (s) != self.normalized (o)
+        for (l, r) in pairs :
+            if (  l is None or r is None
+               or self.normalized (l) != self.normalized (r)
                ) :
                 break
             i = i + 1
         if not i :
-            return ""
+            return self.name
         differences = pairs  [i:]
-        up          = [".." for (s, o) in differences if o]
-        down        = [s    for (s, o) in differences if s]
-        return "/".join (((up + down) or ["."]) + [self._base_ext])
+        up          = [".." for (l, r) in differences if r]
+        down        = [l    for (l, r) in differences if l]
+        return "/".join (((up + down)) + [self._base_ext])
     # end def relative_to
 
     @classmethod
