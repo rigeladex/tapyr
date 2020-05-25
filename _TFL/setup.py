@@ -30,6 +30,7 @@
 #    22-Feb-2017 (CT) Factor `TFL_STP`
 #    27-Feb-2017 (CT) Add Python 3.6 to `classifiers`
 #    25-Mar-2020 (CT) Restrict Python versions to >=3.7
+#     3-Jun-2020 (CT) Add `text_to_pdf` to `extras_require`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,7 @@ if __name__ == "__main__" :
         , html_cleaner         = ["bs4"]
         , human_friendly_hsl   = ["husl"]
         , I18N                 = ["babel"]
+        , text_to_pdf          = ["reportlab"]
         , timezone_support     = ["python-dateutil"]
         )
     , cmdclass             = dict (test = Test_Command)
