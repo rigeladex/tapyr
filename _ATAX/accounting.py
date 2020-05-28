@@ -167,7 +167,8 @@
 #    13-Sep-2017 (CT) Add `13%` to `V_Account._ust_cat` and `._ige_cat`
 #     4-Jun-2018 (CT) Apply `vst_korrektur` for (`erloes`) `minderung`, too
 #    19-Dec-2018 (CT) Replace `desc_strip_pat` by `desc_cleaner`, add `–`
-#    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
+#    19-Apr-2020 (CT) Use "``" for doc strings, not "`'"
+#    28-May-2020 (CT) Use `§`, not `Par.`
 #    ««revision-date»»···
 #--
 
@@ -1120,7 +1121,7 @@ class T_Account (Account) :
     t_konto_ignore_pat = Regexp (r"^[01239]\d\d\d\d?", re.X)
     firma              = "<<<Specify in config file, e.g., ATAX.config>>>"
     calculation_method = \
-      "Das Ergebnis wurde gemäß Par.4/3 EStG nach der Nettomethode erstellt"
+      "Das Ergebnis wurde gemäß §4/3 EStG nach der Nettomethode erstellt"
 
     def __init__ (self, name = "", year = 0, konto_desc = None, vst_korrektur = 1.0) :
         Account.__init__ (self, name, vst_korrektur)

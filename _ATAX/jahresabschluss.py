@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2015 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -31,6 +31,7 @@
 #    17-Sep-2007 (CT) `main` refactored
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    29-Oct-2015 (CT) Improve Python 3 compatibility
+#    28-May-2020 (CT) Add `\v` to `\f`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ class Command (Command) :
         if not cmd.summary :
             account.print_konto_summary ()
             account.print_konten        ()
-            print ("\f")
+            print ("\v\f")
         account.print_ein_aus_rechnung  ()
         if cmd.gewerbeanteil and account.g_anteil != 0 :
             with open (cmd.gewerbeanteil, "wb") as gfile :
