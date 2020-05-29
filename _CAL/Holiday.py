@@ -39,6 +39,7 @@
 #    10-May-2020 (CT) Adapt to change of `CAL.Day_Rule`
 #    14-May-2020 (CT) Add `Config` option
 #    18-May-2020 (CT) Add `show_by_event`, factor `show_by_year`
+#    29-May-2020 (CT) Use `"\v"`, not blank line as separator between events
 #    ««revision-date»»···
 #--
 
@@ -305,7 +306,7 @@ def _main_event (cmd) :
     for rule in rules :
         if rule.matches (country) :
             show_by_event (rule, cmd.start, cmd.decades, country, cmd.language)
-            print ()
+            print ("\v")
 # end def _main_event
 
 _Command_Event = TFL.CAO.Cmd \
