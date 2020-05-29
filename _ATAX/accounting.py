@@ -169,6 +169,7 @@
 #    19-Dec-2018 (CT) Replace `desc_strip_pat` by `desc_cleaner`, add `–`
 #    19-Apr-2020 (CT) Use "``" for doc strings, not "`'"
 #    28-May-2020 (CT) Use `§`, not `Par.`
+#    29-May-2020 (CT) Use `"\v"`, not blank line, as konten separator
 #    ««revision-date»»···
 #--
 
@@ -1314,7 +1315,8 @@ class T_Account (Account) :
             head  = "%s    %s" % (self.year, self.konto_desc.get (k, "")) [:64]
             tail  = "Konto-Nr. %5s" % k
             belly = " " * (79 - len (head) - len (tail))
-            print ("\n\n%s%s%s" % (head, belly, tail))
+            print ("\v")
+            print ("%s%s%s" % (head, belly, tail))
             self.print_sep_line ()
             print \
                 ( "%-4s %-6s  %-35s%-3s  %12s  %12s"
