@@ -168,6 +168,8 @@
 #    14-May-2020 (CT) Add `pre_load_cb` to `Config` option
 #    14-May-2020 (CT) Add `x_context` to `Config` option
 #    31-May-2020 (CT) Add `explanation`  to `Cmd`, `details` to `Help`
+#    31-May-2020 (CT) Improve `Rel_Path.explain_resolution`
+#                     * Add `...last value...wins`
 #    ««revision-date»»···
 #--
 
@@ -1489,6 +1491,11 @@ class Rel_Path (Path) :
                       , self._help_dn
                       )
                     )
+            if not self.single_match :
+                yield \
+                    ( "In case of multiple matching config files, the "
+                      "last value specified for an option wins."
+                    )
             if self.skip_missing :
                 yield \
                     ( "Non-existing path values specified for `%s%s` "
@@ -2625,8 +2632,9 @@ specified. ::
             Start python debugger pdb on exception
         -config            : Config [] split on ':::'
             File(s) with configuration options
-            Non-existing path values specified for `-config` will be silently
-            ignored.
+            In case of multiple matching config files, the last value
+            specified for an option wins.  Non-existing path values specified
+            for `-config` will be silently ignored.
         -help              : Help [] split on ','
             Display help about command
         -indent            : Int
