@@ -167,6 +167,7 @@
 #     6-Apr-2020 (CT) Don't use `Decimal.from_float` (Py 3.2+ doesn't need it)
 #    14-May-2020 (CT) Add `pre_load_cb` to `Config` option
 #    14-May-2020 (CT) Add `x_context` to `Config` option
+#    31-May-2020 (CT) Add `explanation`  to `Cmd`, `details` to `Help`
 #    ««revision-date»»···
 #--
 
@@ -849,6 +850,7 @@ class Help (_Spec_O_) :
           , "buns"
           , "cmds"
           , "config"
+          , "details"
           , "opts"
           , "summary"
           , "syntax"
@@ -863,6 +865,7 @@ class Help (_Spec_O_) :
         , buns     = "Show help about the arguments/options bundles, if any."
         , cmds     = "Show help about the sub-commands, if any."
         , config   = "Show help about configuration options, if any."
+        , details  = "Show detailed explanation about command, if any."
         , help     = "Show help about usage of the help option"
         , opts     = "Show help about the options, if any."
         , summary  = "Show summary about the usage of the command."
@@ -925,6 +928,9 @@ class Help (_Spec_O_) :
             if "syntax" in wanted :
                 next (nl)
                 self._help_syntax (cao, indent_most)
+            if "details" in wanted :
+                next (nl)
+                self._help_details (cao, indent_most, heading = most_p)
             if "config" in wanted and cao._opt_conf :
                 next (nl)
                 self._help_config (cao, indent_most)
@@ -1058,6 +1064,17 @@ class Help (_Spec_O_) :
             (cao._name, ", ".join (o.name for o in cao._opt_conf))
         self._help__text (cao, indent, "Configuration options", help)
     # end def _help_config
+
+    def _help_details (self, cao, indent, heading = False) :
+        head = " " * indent
+        expl = cao._cmd._explanation
+        if expl :
+            if heading :
+                print ("%s Detailed explanation" % (head, ))
+                head   += " " * 4
+            details = ("\n" + head).join (expl.split ("\n"))
+            print (head, details)
+    # end def _help_details
 
     def _help_help (self, cao, indent = 0) :
         map      = self.topic_map
@@ -1779,6 +1796,7 @@ class Cmd (TFL.Meta.Object) :
             , opts          = ()
             , buns          = ()
             , description   = ""
+            , explanation   = ""
             , name          = ""
             , min_args      = 0
             , max_args      = -1
@@ -1818,6 +1836,10 @@ class Cmd (TFL.Meta.Object) :
 
              If the `description` argument is undefined,
              :obj:`handler.__doc__` will be used if that is defined.`
+
+           :obj:`explanation`
+
+             A more detailed explanation that can be shown in the `help`.
 
            :obj:`name`
 
@@ -1878,6 +1900,7 @@ class Cmd (TFL.Meta.Object) :
         self._max_args      = max_args
         self._description   = \
             description or getattr (handler, "__doc__", "") or ""
+        self._explanation   = explanation or ""
         self._name          = name or TFL.Environment.script_name ()
         self._do_keywords   = do_keywords or put_keywords
         self._put_keywords  = put_keywords

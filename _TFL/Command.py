@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -58,6 +58,7 @@
 #     4-Sep-2018 (CT) Add `_parent_defaults` to `Command`
 #                     + Don't pass `** defaults` in `sub_commands`
 #    10-Sep-2018 (CT) Add `_do_shell`
+#    31-May-2020 (CT) Add `explanation` to `Command`
 #    ««revision-date»»···
 #--
 
@@ -337,6 +338,7 @@ class TFL_Command (TFL.Meta.Object, metaclass = _M_Command_) :
 
     cmd_choice_name         = _ ("command")
     do_keywords             = False
+    explanation             = ""
     handler                 = None
     handler_name            = "_handle"
     helper                  = None
@@ -368,6 +370,7 @@ class TFL_Command (TFL.Meta.Object, metaclass = _M_Command_) :
             , defaults      = self.defaults
             , description   = self.description
             , do_keywords   = self.do_keywords
+            , explanation   = self.explanation
             , handler       = self._wrapped_handler
             , helper        = self.helper
             , name          = self.name
