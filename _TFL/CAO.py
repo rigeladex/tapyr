@@ -170,6 +170,7 @@
 #    31-May-2020 (CT) Add `explanation`  to `Cmd`, `details` to `Help`
 #    31-May-2020 (CT) Improve `Rel_Path.explain_resolution`
 #                     * Add `...last value...wins`
+#     1-Jun-2020 (CT) Add `KeyboardInterrupt` handler to `CAO.__call__`
 #    ««revision-date»»···
 #--
 
@@ -2189,7 +2190,10 @@ class CAO (TFL.Meta.Object) :
         if self.help :
             self._cmd.help (self)
         elif handler :
-            return handler (self, * args, ** kw)
+            try :
+                return handler (self, * args, ** kw)
+            except KeyboardInterrupt :
+                pass
         return self
     # end def __call__
 
