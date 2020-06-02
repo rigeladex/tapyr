@@ -184,15 +184,14 @@
 #    12-Dec-2019 (CT) Use mode `wb` for `open_tempfile` (Py3 compatibility)
 #    13-Dec-2019 (CT) Use `LNX.text_to_postscript._header_encode_rep`
 #                     * `a2ps` coughs on Unicode
+#     2-Jun-2020 (CT) Use `TFL.text_to_pdf`, not `LNX.text_to_postscript`
+#                     + Add `Msg_Scope.full_date`
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
-from   _LNX                    import LNX
-
-import _LNX.text_to_postscript
 
 import _PMA.Mailcap
 import _PMA.Msg_Status
@@ -212,6 +211,7 @@ import _TFL.Filename
 import _TFL._Meta.M_Class
 import _TFL._Meta.Property
 
+import sys
 import textwrap
 import time
 import weakref
@@ -281,9 +281,9 @@ class Msg_Scope (TFL.Caller.Scope) :
         _pl = self.msg.email
         while _pl.is_multipart () :
             _pl = _pl.get_payload (0)
-        result  = _pl.get_payload (decode = True) or u""
+        result  = _pl.get_payload (decode = True) or ""
         result  = pyk.decoded (result, self.msg.charset)
-        result  = _ws_pat.sub (u" ", result.strip ()) or u"<empty>"
+        result  = _ws_pat.sub (" ", result.strip ()) or "<empty>"
         return result
     # end def _get_body
 
@@ -296,6 +296,12 @@ class Msg_Scope (TFL.Caller.Scope) :
                 format = "%d-%b %H:%M"
             return time.strftime (format, time.localtime (t))
     # end def _get_date
+
+    def _get_full_date (self) :
+        t = self.msg._time ()
+        if t :
+            return time.strftime ("%Y-%m-%d %H:%M", time.localtime (t))
+    # end def _get_full_date
 
     def _get_is_spam (self) :
         msg    = self.msg
@@ -492,7 +498,7 @@ class _Msg_Part_ (TFL.Meta.Object) :
     # end def email_summary
 
     def part_iter (self) :
-        yield from self.parts 
+        yield from self.parts
     # end def part_iter
 
     def summary (self, summary_format = None) :
@@ -631,14 +637,14 @@ class Message_Body (_Msg_Part_) :
             for line in lines :
                 line = line.rstrip ("\r")
                 if line :
-                    yield from wrapper.wrap (line or "") 
+                    yield from wrapper.wrap (line or "")
                 else :
                     ### `wrapper` returns an empty list for an empty string
                     yield line
         else :
             hp = Part_Header (self.email, self.headers_to_show)
             self.lines = lines = list (hp.formatted (sep_length))
-            yield from lines 
+            yield from lines
     # end def body_lines
 
     formatted = _formatted = body_lines
@@ -653,7 +659,7 @@ class Message_Body (_Msg_Part_) :
             seps = ("", "-" * sep_length, "")
         else :
             seps = self.__super._separators (sep_length)
-        yield from seps 
+        yield from seps
     # end def _separators
 
     def _setup_body (self, email) :
@@ -739,7 +745,7 @@ class _Message_ (_Msg_Part_) :
 
     def formatted (self, sep_length = 79) :
         for p in self.part_iter () :
-            yield from p.formatted (sep_length) 
+            yield from p.formatted (sep_length)
     # end def formatted
 
     def save (self, filename) :
@@ -854,8 +860,8 @@ class Message (_Message_) :
     def formatted (self, sep_length = 79) :
         self.status.set_read ()
         for p in self.part_iter () :
-            yield from p._separators (sep_length) 
-            yield from p._formatted  (sep_length) 
+            yield from p._separators (sep_length)
+            yield from p._formatted  (sep_length)
     # end def formatted
 
     def part_iter (self) :
@@ -865,7 +871,7 @@ class Message (_Message_) :
             , self.headers_to_show
             , self.summary (self.short_summary_format)
             )
-        yield from self.__super.part_iter () 
+        yield from self.__super.part_iter ()
     # end def part_iter
 
     def summary (self, format = None) :
@@ -1044,7 +1050,7 @@ def messages_from_args (args, base_dirs) :
 # end def messages_from_args
 
 def formatted (msg, encoding = "utf-8", body_only = False) :
-    fmt_msg = u"\n".join (msg.formatted ())
+    fmt_msg = "\n".join (msg.formatted ())
     if body_only :
         h, _, t = split_hst (fmt_msg, "\n\n")   ### split off headers
         b, _, s = split_hst (t,       "\n--\n") ### split off signature
@@ -1054,32 +1060,49 @@ def formatted (msg, encoding = "utf-8", body_only = False) :
     return fmt_msg
 # end def formatted
 
+_text_to_pdf_options = \
+    [ "-columns=2"
+    , "-Font_Family=Dejavu"
+    , "-font_size=6.8"
+    , "-footer='$p#||$c'"
+    , "-Footer_size_factor=1.0"
+    , "-header='$t|$s'"
+    , "-Header_size_factor=1.2"
+    , "-landscape"
+    , "-Print"
+    , "-purge"
+    , "STDIN"
+    ]
+
 def _main (cmd) :
-    PMA.default_encoding = encoding = \
-        "iso8859-1" if cmd.Print else pyk.user_config.output_encoding
-    msg_base_dirs = cmd.msg_base_dirs or PMA.msg_base_dirs
+    from _TFL.formatted_repr import formatted_repr
+    import subprocess
+    encoding        = PMA.default_encoding = pyk.user_config.output_encoding
+    msg_base_dirs   = cmd.msg_base_dirs or PMA.msg_base_dirs
+    printer_name    = cmd.printer_name
     for msg in messages_from_args (cmd.argv, msg_base_dirs) :
-        txt = formatted (msg, encoding = encoding)
+        txt         = formatted (msg, encoding = None)
         if cmd.Print :
-            from plumbum  import local as pbl
-            from _TFL.FCM import open_tempfile
-            subject = msg.scope.subject
-            sh      = LNX.text_to_postscript._header_encode_rep (subject)
-            pbl.env ["LC_ALL"] = "en_US.%s" % encoding.replace ("-", "")
-            with open_tempfile ("wb") as (file, temp_name) :
-                file.write (txt)
-                file.close ()
-                a2ps = pbl ["a2ps"] \
-                    [ "-s", "-8", "-nL", "-nu", "-nS"
-                    , "-H%s" % (sh, )
-                    , "-P%s" % (cmd.printer_name, )
-                    , temp_name
-                    ]
-                if cmd.verbose :
-                    print (a2ps)
-                a2ps ()
+            scope   = msg.scope
+            date    = scope.full_date
+            sender  = scope.sender_name or msg.sender_addr
+            subject = scope.subject
+            p_cmd   = \
+                [ sys.executable, "-m", "_TFL.text_to_pdf"
+                , "-printer_name='%s'"    % (printer_name, )
+                , "-Subject='%s'"         % sender
+                , "-Title='%s'"           % subject
+                ] + _text_to_pdf_options
+            if cmd.verbose :
+                print (formatted_repr (p_cmd))
+            subprocess.run \
+                ( p_cmd
+                , encoding = encoding
+                , env      = dict (sos.environ)
+                , input    = txt
+                )
         else :
-            print (pyk.decoded (txt, encoding))
+            print (txt)
 # end def _main
 
 _Command = TFL.CAO.Cmd \
