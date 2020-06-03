@@ -46,6 +46,7 @@
 #    10-Feb-2016 (CT) Add `__head` and `__tail` args to `Dict_Replacer`
 #     5-Apr-2020 (CT) Add `__main__` script
 #     6-Apr-2020 (CT) Skip sym-links in `__main__` script; print totals
+#     3-Jun-2020 (CT) Add `Untabified`
 #    ««revision-date»»···
 #--
 
@@ -293,11 +294,8 @@ class Re_Replacer (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, text, count = 0) :
-        try :
-            return self.regexp.sub (self.replacement, text, count)
-        except TypeError :
-            print (self.regexp.pattern, self.replacement)
-            raise
+        result, n = self.subn (text, count)
+        return result
     # end def __call__
 
     def subn (self, text, count = 0) :
@@ -379,6 +377,62 @@ class Multi_Re_Replacer (TFL.Meta.Object) :
     # end def subn
 
 # end class Multi_Re_Replacer
+
+def _untabify_match (match) :
+    matched = match.group    (0)
+    prefix  = matched.rstrip ("\t")
+    pos     = len (prefix)
+    x_tabs  = len (matched) - pos - 1
+    n       = (8 - pos % 8) + 8 * x_tabs
+    return prefix + " " * n
+# end def _untabify_match
+
+_untabified_test_text = """\
+pos.   =  -#num		number of copies to print
+          -1		one page per sheet
+          -Hstr		use str like header title for subsequent files
+                -nL	don't print login ID on top of page
+          -Afile	append  this file to a2ps prologue
+          -i	-ni	INTERPRET (don't interpret) tab, bs and ff chars
+          -Pprinter -nP	SEND (don't send) directly to the printer\
+"""
+
+class _Untabified_ (TFL.Meta.Object) :
+    """Replace tab characters by appropriate number of spaces.
+
+    >>> rep = Untabified
+    >>> print (rep (_untabified_test_text))
+    pos.   =  -#num         number of copies to print
+              -1            one page per sheet
+              -Hstr         use str like header title for subsequent files
+                    -nL     don't print login ID on top of page
+              -Afile        append  this file to a2ps prologue
+              -i    -ni     INTERPRET (don't interpret) tab, bs and ff chars
+              -Pprinter -nP SEND (don't send) directly to the printer
+
+    """
+
+    re_replacer = Re_Replacer \
+        (Regexp ("^.*?\t+", re.MULTILINE), _untabify_match)
+
+    def __call__ (self, text, count = 0) :
+        result, n = self.subn (text, count)
+        return result
+    # end def __call__
+
+    def subn (self, text, count = 0) :
+        """Return a tuple (replaced_text, number_of_subs_made)."""
+        more    = True
+        rere    = self.re_replacer
+        result  = text
+        subs    = 0
+        while more :
+            result, more  = rere.subn (result)
+            subs         += more
+        return result, subs
+    # end def subn
+
+Untabified = _Untabified_ () # end class
 
 def _main (cmd) :
     """Replace text specified by regular expression(s).

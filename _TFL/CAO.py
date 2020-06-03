@@ -171,6 +171,7 @@
 #    31-May-2020 (CT) Improve `Rel_Path.explain_resolution`
 #                     * Add `...last value...wins`
 #     1-Jun-2020 (CT) Add `KeyboardInterrupt` handler to `CAO.__call__`
+#     3-Jun-2020 (CT) Add `Untabified` to `Re_Replacer`
 #    ««revision-date»»···
 #--
 
@@ -182,7 +183,7 @@ from   _TFL.I18N           import _, _T, _Tn
 from   _TFL.portable_repr  import portable_repr, print_prepr
 from   _TFL.predicate import split_hst, rsplit_hst
 from   _TFL.Regexp         import \
-    Regexp, Multi_Regexp, Re_Replacer, Multi_Re_Replacer, re
+    Regexp, Multi_Regexp, Re_Replacer, Multi_Re_Replacer, re, Untabified
 from   _TFL.Trie           import Word_Trie as Trie
 from   _TFL.pyk            import pyk
 from   _TFL                import sos
@@ -1716,12 +1717,16 @@ class _Re_Replacer_Arg_ (_Regexp_Arg_Mixin_, Str) :
 
     def cook (self, value, cao = None) :
         if value :
-            value    = self.__super.cook (value, cao)
-            delim    = value [0]
-            p, s, x  = split_hst (value [1:], delim)
-            r, s, fs = split_hst (x,          delim)
-            flags    = self._re_flags (fs)
-            return Re_Replacer (p, r, flags)
+            value = self.__super.cook (value, cao)
+            if value.lower () == "$untabified" :
+                result      = Untabified
+            else :
+                delim       = value [0]
+                p, s, x     = split_hst (value [1:], delim)
+                r, s, fs    = split_hst (x,          delim)
+                flags       = self._re_flags (fs)
+                result      = Re_Replacer (p, r, flags)
+            return result
     # end def cook
 
 # end class _Re_Replacer_Arg_
