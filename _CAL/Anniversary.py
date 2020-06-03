@@ -99,7 +99,7 @@ class Anniversary (CAL.Day_Rule.Fixed) :
 class Birthday (Anniversary) :
     """Day when a person was born."""
 
-    symbol      = "\u2605" ### star_black
+    symbol      = "\u2605" ### black_star
 
 # end class Birthday
 
