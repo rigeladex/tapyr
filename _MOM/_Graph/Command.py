@@ -25,6 +25,7 @@
 #    15-Jun-2016 (CT) Rename handler argument `cmd` to `cao`
 #     9-Dec-2019 (CT) Use `"w"`, not `"wb"`, for `open` (Py3 compatibility)
 #    23-Apr-2020 (CT) Fix `plumbum` call of `inkscape`
+#     4-Jun-2020 (CT) Use `subprocess.run`, not `plumbum`
 #    ««revision-date»»···
 #--
 
@@ -97,10 +98,10 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
             from _MOM._Graph.SVG import Renderer as SVG_Renderer
             self.render (cao, g, SVG_Renderer)
         if cao.png :
-            import plumbum
-            inkscape = plumbum.local ["inkscape"]
-            svg_fn   = self.file_name (cao, "svg")
-            inkscape ["-y", "1", "--export-type=png", svg_fn] ()
+            import subprocess
+            svg_fn  = self.file_name (cao, "svg")
+            subprocess.run \
+                (["inkscape", "-y", "1", "--export-type=png", svg_fn])
             if cao.verbose :
                 print ("Rendered ", self.file_name (cao, "png"))
         if cao.txt :

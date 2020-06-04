@@ -31,6 +31,7 @@
 #    27-Feb-2017 (CT) Add Python 3.6 to `classifiers`
 #    25-Mar-2020 (CT) Restrict Python versions to >=3.7
 #     3-Jun-2020 (CT) Add `text_to_pdf` to `extras_require`
+#     4-Jun-2020 (CT) Remove `plumbum` from `extras_require` for `doc`
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,7 @@ if __name__ == "__main__" :
     , install_requires     = ["TFL_STP>=3"]
     , extras_require       = dict
         ( bcrypt               = ["bcrypt"]
-        , doc                  = ["plumbum", "sphinx"]
+        , doc                  = ["sphinx"]
         , html_cleaner         = ["bs4"]
         , human_friendly_hsl   = ["husl"]
         , I18N                 = ["babel"]

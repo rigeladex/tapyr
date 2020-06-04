@@ -25,6 +25,7 @@
 #    27-Feb-2017 (CT) Remove some entries from `pns_skip`
 #     8-Apr-2020 (CT) Remove obsolete `TFL` modules (not more Py-2)
 #    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
+#     4-Jun-2020 (CT) Use `subprocess.run`, not `plumbum`
 #    ««revision-date»»···
 #--
 
@@ -267,16 +268,19 @@ Package-NS `%(b_name)s`
     # end def _handle_pns
 
     def _make_graph (self, inner, graph_mod, q_name, doc_base) :
-        import plumbum
-        py    = plumbum.local ["python"]
+        import subprocess, sys
         m_nam = graph_mod.__name__
         if "." not in m_nam :
             m_nam = ".".join ((graph_mod.__PNS__.__PKG__.__name__, m_nam))
         g_dir = "%s/%s" % (doc_base, "graphs")
-        cmd   = py ["-m", m_nam, "-all", "-dir", g_dir, "-name", q_name, "-png"]
+        cmd   = \
+            [ sys.executable, "-m", m_nam
+            , "-all", "-dir", g_dir, "-name", q_name, "-png"
+            ]
         if self.cmd.verbose :
-            print (cmd)
-        cmd ()
+            from _TFL.formatted_repr import formatted_repr_compact
+            print (formatted_repr_compact (cmd))
+        subprocess.run (cmd)
     # end def _make_graph
 
     @TFL.Contextmanager

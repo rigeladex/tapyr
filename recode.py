@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -17,6 +17,7 @@
 #    22-May-2012 (CT) Creation
 #    17-Nov-2013 (CT) Simplify, use `file` to determine `input_encoding`
 #    18-Nov-2013 (CT) Add `coding_map` and option `-force`
+#     4-Jun-2020 (CT) Use `subprocess.run`, not `plumbum`
 #    ««revision-date»»···
 #--
 
@@ -27,7 +28,7 @@ from   _TFL.Regexp import Regexp, re
 
 import _TFL.CAO
 
-from   plumbum     import local as pbl
+import subprocess
 
 coding_map = \
     { "binary"       : "iso-8859-15"
@@ -41,7 +42,6 @@ coding_pat = Regexp \
     , re.VERBOSE
     )
 
-mime_cmd   = pbl ["file"] ["--brief", "--mime"]
 mime_pat   = Regexp \
     ( "(?P<type> [^/]+)/(?P<sub_type> [^;]+);"
       "\s+"
@@ -59,8 +59,12 @@ def file_iter (names, output_encoding, force = False) :
 # end def file_iter
 
 def file_mime_type (name) :
-    result = mime_cmd (name)
-    if mime_pat.match (result) :
+    result  = subprocess.run \
+        ( ["file", "--brief", "--mime", name]
+        , capture_output = True
+        , text           = True
+        )
+    if mime_pat.match (result.stdout) :
         return mime_pat.type, mime_pat.sub_type, mime_pat.encoding
     else :
         return None, None, None
