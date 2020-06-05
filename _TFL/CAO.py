@@ -175,6 +175,7 @@
 #     4-Jun-2020 (CT) Add `load_config` support to `Config`
 #                     + Factor out `Config.Loader`
 #     5-Jun-2020 (CT) Add `Config_Bundle`
+#     5-Jun-2020 (CT) Redefine `Config_Bundle.raw_default`
 #    ««revision-date»»···
 #--
 
@@ -1622,6 +1623,12 @@ class Config_Bundle (_Config_, Bool) :
             return self.config_dct
     # end def cook
 
+    def raw_default (self, cao = None) :
+        if self.__super.raw_default (cao) :
+            return self.config_dct
+        return {}
+    # end def raw_default
+
     def _help_items (self) :
         yield from self.__super._help_items ()
         yield self.config_dct
@@ -2365,13 +2372,14 @@ class CAO (TFL.Meta.Object) :
         for co in self._opt_conf :
             ckds = self._cooked (co)
             for ckd in ckds :
-                if sc and sc.name in ckd :
-                    self._set_arg (sc, ckd.pop (sc.name))
-                for k, v in pyk.iteritems (ckd) :
-                    if k in opt_dict or k in arg_dict :
-                        defaults [k] = v
-                    elif k not in key_vals :
-                        key_vals [k] = v
+                if ckd :
+                    if sc and sc.name in ckd :
+                        self._set_arg (sc, ckd.pop (sc.name))
+                    for k, v in pyk.iteritems (ckd) :
+                        if k in opt_dict or k in arg_dict :
+                            defaults [k] = v
+                        elif k not in key_vals :
+                            key_vals [k] = v
         map = self._map
         pending = self._pending
         for k in opt_dict :
