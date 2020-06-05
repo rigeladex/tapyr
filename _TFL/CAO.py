@@ -172,16 +172,19 @@
 #                     * Add `...last value...wins`
 #     1-Jun-2020 (CT) Add `KeyboardInterrupt` handler to `CAO.__call__`
 #     3-Jun-2020 (CT) Add `Untabified` to `Re_Replacer`
+#     4-Jun-2020 (CT) Add `load_config` support to `Config`
+#                     + Factor out `Config.Loader`
 #    ««revision-date»»···
 #--
 
 from   _TFL                import TFL
 
 from   _TFL.Decorator      import getattr_safe
+from   _TFL.Filename       import Filename
 from   _TFL.formatted_repr import formatted_repr
 from   _TFL.I18N           import _, _T, _Tn
 from   _TFL.portable_repr  import portable_repr, print_prepr
-from   _TFL.predicate import split_hst, rsplit_hst
+from   _TFL.predicate      import split_hst, rsplit_hst
 from   _TFL.Regexp         import \
     Regexp, Multi_Regexp, Re_Replacer, Multi_Re_Replacer, re, Untabified
 from   _TFL.Trie           import Word_Trie as Trie
@@ -1533,6 +1536,45 @@ class Config (_Config_, Rel_Path) :
     _pre_load_cb_run    = False
     _x_context          = {}
 
+    class Loader (TFL.Meta.Object) :
+        """Config file loader for one specific config file."""
+
+        def __init__ (self, config_opt, context, path, result) :
+            self.config_opt = config_opt
+            self.context    = dict (context, load_config = self._load_nested)
+            self.path_dir   = Filename (path).directory
+            self.result     = result
+            self._load (path)
+        # end def __init__
+
+        @TFL.Meta.Once_Property
+        @TFL.getattr_safe
+        def load_config_file (self) :
+            from _TFL.load_config_file import load_config_file
+            return load_config_file
+        # end def load_config_file
+
+        def _load (self, path) :
+            self.config_opt.pathes.append (path)
+            self.load_config_file         (path, self.context, self.result)
+        # end def _load
+
+        def _load_nested (self, config_name) :
+            copt      = self.config_opt
+            resolveds = copt.resolved_paths \
+                ( copt.base_dirs, config_name
+                , copt.single_match, copt.skip_missing
+                )
+            path0 = Filename (config_name, default_dir = self.path_dir).name
+            for path in resolveds :
+                if path != path0 :
+                    self._load (path)
+            if sos.path.exists (path0) :
+                self._load (path0)
+        # end def _load_nested
+
+    # end class Loader
+
     def __init__ (self, * args, ** kw) :
         self.pathes = []
         self.pop_to_self (kw, "pre_load_cb", "x_context", prefix = "_")
@@ -1547,9 +1589,9 @@ class Config (_Config_, Rel_Path) :
             if self._pre_load_cb and not self._pre_load_cb_run :
                 self._pre_load_cb ()
                 self._pre_load_cb_run = True
-            self.pathes.append (path)
-            context = dict (C = cao._cmd if cao else None, ** self._x_context)
-            load_config_file (path, context, result)
+            context = dict \
+                (C = cao._cmd if cao else None, ** self._x_context)
+            self.Loader (self, context, path, result)
         return result
     # end def cook
 
