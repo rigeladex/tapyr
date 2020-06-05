@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,6 +16,7 @@
 #
 # Revision Dates
 #    15-Feb-2006 (CT) Creation
+#     5-Jun-2020 (CT) Add `Command`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,17 @@ class Power (TFL.Units.Kind) :
 
 # end class Power
 
+class _Power_Command (TFL.Units.Kind.Command) :
+    """Convert power values from one unit to another."""
+
+    _rn_prefix              = "_Power_"
+
+    Kind                    = Power
+
+Power.Command = _Power_Command # end class
+
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
+else :
+    Power.Command () ()
 ### __END__ TFL.Units.Power

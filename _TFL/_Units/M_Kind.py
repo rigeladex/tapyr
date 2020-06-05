@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -19,6 +19,7 @@
 #    29-Aug-2008 (CT) s/super(...)/__m_super/
 #    17-Feb-2017 (CT) Add `aliases`
 #    17-Feb-2017 (CT) Add `_Unit_Descriptor_`
+#     5-Jun-2020 (CT) Add guard for `u.abbr` to `M_Kind.__init__`
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,9 @@ class M_Kind (TFL.Meta.M_Class) :
         cls.units = units = {}
         for u in (cls.base_unit, ) + tuple (cls._units) :
             if u :
-                units [u.name] = u_map [u.name] = u_map [u.abbr] = u
+                units [u.name] = u_map [u.name] = u
+                if u.abbr :
+                    u_map [u.abbr] = u
                 for ali in u.aliases :
                     u_map [ali] = u
                 setattr (cls, u.name, _Unit_Descriptor_ (u))

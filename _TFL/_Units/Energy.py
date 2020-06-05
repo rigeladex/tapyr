@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,6 +16,7 @@
 #
 # Revision Dates
 #    15-Feb-2006 (CT) Creation
+#     5-Jun-2020 (CT) Add `Command`
 #    ««revision-date»»···
 #--
 
@@ -45,10 +46,22 @@ class Energy (TFL.Units.Kind) :
         , Unit ("kilocalorie",             4.1868e3,      "kcal")
         , Unit ("horsepower_hour",         2.6845e6,      "hph")
         , Unit ("kilowatt_hour",           3.6e6,         "kWh")
+        , Unit ("watt_hour",               3.6e3,         "Wh")
         )
 
 # end class Energy
 
+class _Energy_Command (TFL.Units.Kind.Command) :
+    """Convert Energy values from one unit to another."""
+
+    _rn_prefix              = "_Energy_"
+
+    Kind                    = Energy
+
+Energy.Command = _Energy_Command # end class
+
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
+else :
+    Energy.Command () ()
 ### __END__ TFL.Units.Energy

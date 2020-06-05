@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,6 +16,7 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
+#     5-Jun-2020 (CT) Add `Command`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,17 @@ class Liquid (TFL.Units.Kind) :
 
 # end class Liquid
 
+class _Liquid_Command (TFL.Units.Kind.Command) :
+    """Convert liquid values from one unit to another."""
+
+    _rn_prefix              = "_Liquid_"
+
+    Kind                    = Liquid
+
+Liquid.Command = _Liquid_Command # end class
+
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
+else :
+    Liquid.Command () ()
 ### __END__ TFL.Units.Liquid

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,6 +17,7 @@
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
 #    19-Feb-2017 (CT) Add `hectopascal`
+#     5-Jun-2020 (CT) Add `Command`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,17 @@ class Pressure (TFL.Units.Kind) :
 
 # end class Pressure
 
+class _Pressure_Command (TFL.Units.Kind.Command) :
+    """Convert pressure values from one unit to another."""
+
+    _rn_prefix              = "_Pressure_"
+
+    Kind                    = Pressure
+
+Pressure.Command = _Pressure_Command # end class
+
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
+else :
+    Pressure.Command () ()
 ### __END__ TFL.Units.Pressure

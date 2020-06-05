@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -23,6 +23,8 @@
 #                      structures)
 #    28-Sep-2014 (CT)  Add `light_second`
 #    26-Nov-2014 (CT)  Correct spelling of `deca` (not `deka`!)
+#     5-Jun-2020 (CT)  Add `point`, `pica`
+#     5-Jun-2020 (CT)  Add `Command`
 #    ««revision-date»»···
 #--
 
@@ -47,12 +49,19 @@ class Length (TFL.Units.Kind) :
        1609.344
        >>> Length (1,"Nm")
        1852
+
+       >>> print ("%.12g" % Length (72, "pt"))
+       0.0254
+       >>> print ("%.12g" % Length (72, "pt").as_in)
+       1
+
     """
 
     Unit              = TFL.Units.Unit
 
     base_unit         = Unit ("meter", 1.0, "m")
     _parsec           = 3.0856775813e16
+    _point            = 0.0003527777777777778 # 72 pt/in (Postscript points)
     _units            = \
         ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
         # SI prefixes
@@ -82,10 +91,24 @@ class Length (TFL.Units.Kind) :
         , Unit ("gigaparsec", TFL.Units.giga * _parsec,     "Gpc")
         , Unit ("parsec",                      _parsec,      "pc")
         , Unit ("angstrom",       TFL.Units.nano / 10,        "A")
+        # typesetting units
+        , Unit ("point",                        _point,      "pt") # Postscript
+        , Unit ("pica",                    12 * _point)
         )
 
 # end class Length
 
+class _Length_Command (TFL.Units.Kind.Command) :
+    """Convert length values from one unit to another."""
+
+    _rn_prefix              = "_Length_"
+
+    Kind                    = Length
+
+Length.Command = _Length_Command # end class
+
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
+else :
+    Length.Command () ()
 ### __END__ TFL.Units.Length

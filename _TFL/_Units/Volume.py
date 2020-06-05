@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,6 +17,7 @@
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
 #    26-Nov-2014 (CT) Correct spelling of `deca` (not `deka`!)
+#     5-Jun-2020 (CT)  Add `Command`
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,17 @@ class Volume (TFL.Units.Kind) :
 
 # end class Volume
 
+class _Volume_Command (TFL.Units.Kind.Command) :
+    """Convert volume values from one unit to another."""
+
+    _rn_prefix              = "_Volume_"
+
+    Kind                    = Volume
+
+Volume.Command = _Volume_Command # end class
+
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
+else :
+    Volume.Command () ()
 ### __END__ TFL.Units.Volume

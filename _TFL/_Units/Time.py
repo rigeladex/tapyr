@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -18,6 +18,7 @@
 #     9-Feb-2005 (CED) Creation
 #    15-Feb-2006 (CT)  Done right
 #     8-Nov-2006 (CED) `microfortnight` added (used in VMS)
+#     5-Jun-2020 (CT)  Add `Command`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,17 @@ class Time (TFL.Units.Kind) :
 
 # end class Time
 
+class _Time_Command (TFL.Units.Kind.Command) :
+    """Convert time values from one unit to another."""
+
+    _rn_prefix              = "_Time_"
+
+    Kind                    = Time
+
+Time.Command = _Time_Command # end class
+
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
+else :
+    Time.Command () ()
 ### __END__ TFL.Units.Time

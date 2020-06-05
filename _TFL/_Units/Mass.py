@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -18,6 +18,7 @@
 #     8-Aug-2004 (CT)  Creation
 #     8-Nov-2006 (CED) `firkin` added (old british unit)
 #    26-Nov-2014 (CT)  Use prefixes, add `decagram`
+#     5-Jun-2020 (CT)  Add `Command`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,17 @@ class Mass (TFL.Units.Kind) :
 
 # end class Mass
 
+class _Mass_Command (TFL.Units.Kind.Command) :
+    """Convert mass values from one unit to another."""
+
+    _rn_prefix              = "_Mass_"
+
+    Kind                    = Mass
+
+Mass.Command = _Mass_Command # end class
+
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
+else :
+    Mass.Command () ()
 ### __END__ TFL.Units.Mass

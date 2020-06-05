@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -22,14 +22,19 @@
 #                     + don't use `unit.factor` directly
 #    17-Feb-2017 (CT) Add `__str__`
 #    19-Feb-2017 (CT) Add `float` conversion to `Kind.__init__`
+#     5-Jun-2020 (CT) Add `Command`
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
-from   _TFL.pyk import pyk
+from   _TFL                       import TFL
 
+from   _TFL.pyk                   import pyk
+from   _TFL.Regexp                import Regexp, re
+
+from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL._Meta.totally_ordered import totally_ordered
 
+import _TFL.Command
 import _TFL._Meta.Object
 import _TFL._Units.M_Kind
 
@@ -124,6 +129,87 @@ class Kind (TFL.Meta.Object, metaclass = TFL.Units.M_Kind) :
     # end def __str__
 
 # end class Kind
+
+class _Kind_Command_ (TFL.Command.Root_Command) :
+    """Base class for commands for classes derived from `TFL.Unit.Kind`."""
+
+    _rn_prefix              = "_Kind_"
+
+    Kind                    = None ### redefine in descendents
+
+    _args                   = \
+        ( "value:S?Value(s) to be converted to `-output_unit`"
+        ,
+        )
+
+    _opts                   = \
+        ( "-format:S=%.12g%s <-> %.12g%s?Format used to print conversions."
+        ,
+        )
+
+    class _Kind_Unit_Base_ (TFL.Command.Key_Option) :
+
+        _rn_prefix              = "_Kind_"
+        is_partial              = True
+
+        @Once_Property
+        def choice_dict (self) :
+            return self.cmd.Kind.u_map
+        # end def choice_dict
+
+    # end class _Kind_Unit_Base_
+
+    class _Kind_Input_Unit (_Kind_Unit_Base_) :
+        """Unit to use for input values without explicit unit."""
+
+    Input_Unit = _Kind_Input_Unit # end class
+
+    class _Kind_Output_Unit (_Kind_Unit_Base_) :
+        """Unit to use for output values."""
+
+        @property
+        def default (self) :
+            return self.cmd.Kind.base_unit.name
+        # end def default
+
+    Output_Unit=  _Kind_Output_Unit # end class
+
+    def handler (self, cmd) :
+        Kind    = self.Kind
+        format  = cmd.format
+        i_unit  = cmd.input_unit
+        o_unit  = cmd.output_unit
+        tu_pat  = self._trailing_unit_pat
+        for i_val in cmd.argv :
+            if tu_pat.search (i_val) :
+                unit    = Kind.u_map [tu_pat.unit]
+                i_val   = i_val [: tu_pat.start (0)]
+            else :
+                unit    = i_unit or Kind.base_unit
+            i_val   = float   (i_val)
+            i_kind  = Kind    (i_val, unit)
+            o_val   = getattr (i_kind, "as_" + o_unit.name)
+            print \
+                ( format
+                % ( i_val,   unit.abbr or   unit.name
+                  , o_val, o_unit.abbr or o_unit.name
+                  )
+                )
+    # end def handler
+
+    @TFL.Meta.Once_Property
+    def _trailing_unit_pat (self) :
+        pat = "(?P<unit>%s)\s*$" % \
+            ( "|".join
+                (   re.escape (u)
+                for u in sorted (self.Kind.u_map, key = lambda x : (len (x), x))
+                )
+            ,
+            )
+        return Regexp (pat)
+    # end def _trailing_unit_pat
+
+Kind.Command = _Kind_Command_ # end class
 
 if __name__ != "__main__" :
     TFL.Units._Export ("Kind")

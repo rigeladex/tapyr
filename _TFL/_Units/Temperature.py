@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2017-2020 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.Units.
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    17-Feb-2017 (CT) Creation
+#     5-Jun-2020 (CT) Add `Command`
 #    ««revision-date»»···
 #--
 
@@ -102,6 +103,17 @@ class Temperature (TFL.Units.Kind) :
 
 # end class Temperature
 
+class _Temperature_Command (TFL.Units.Kind.Command) :
+    """Convert temperature values from one unit to another."""
+
+    _rn_prefix              = "_Temperature_"
+
+    Kind                    = Temperature
+
+Temperature.Command = _Temperature_Command # end class
+
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
+else :
+    Temperature.Command () ()
 ### __END__ TFL.Units.Temperature
