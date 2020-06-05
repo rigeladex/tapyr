@@ -174,6 +174,7 @@
 #     3-Jun-2020 (CT) Add `Untabified` to `Re_Replacer`
 #     4-Jun-2020 (CT) Add `load_config` support to `Config`
 #                     + Factor out `Config.Loader`
+#     5-Jun-2020 (CT) Add `Config_Bundle`
 #    ««revision-date»»···
 #--
 
@@ -969,11 +970,15 @@ class Help (_Spec_O_) :
         h2 = h1   + (" " * 4)
         w2 = self.line_length - len (h2)
         for item in ao._help_items () :
-            hx      = h1
-            hanging = ":" in item [:w2]
-            for l in textwrap.wrap (item, w2) :
-                print (hx, l, sep = "")
-                hx = h2 if hanging else h1
+            if isinstance (item, (list, dict, tuple)) :
+                print \
+                    (formatted_repr (item, level = (len (h1) // 4 + 1) * 2))
+            else :
+                hx      = h1
+                hanging = ":" in item [:w2]
+                for l in textwrap.wrap (item, w2) :
+                    print (hx, l, sep = "")
+                    hx = h2 if hanging else h1
     # end def _help_ao
 
     def _help_args (self, cao, indent = 0, heading = False) :
@@ -1068,7 +1073,10 @@ class Help (_Spec_O_) :
 
         """
         help = help_fmt % \
-            (cao._name, ", ".join (o.name for o in cao._opt_conf))
+            ( cao._name
+            , ", ".join
+                (o.name for o in cao._opt_conf if isinstance (o, Config))
+            )
         self._help__text (cao, indent, "Configuration options", help)
     # end def _help_config
 
@@ -1516,8 +1524,8 @@ class Rel_Path (Path) :
         if explain_resolution :
             yield explain_resolution
         if self.base_dirs :
-            yield "%s directories: %s" % \
-                (self._help_dn, ", ".join (repr (bd) for bd in self.base_dirs))
+            yield "%s directories" % (self._help_dn, )
+            yield self.base_dirs
     # end def _help_items
 
     def _resolve_range_1 (self, value, cao) :
@@ -1596,6 +1604,36 @@ class Config (_Config_, Rel_Path) :
     # end def cook
 
 # end class Config
+
+class Config_Bundle (_Config_, Bool) :
+    """Option specifying a bundle of option values in a static config dict."""
+
+    def __init__ (self, config_dct, ** kw) :
+        self.config_dct         = config_dct
+        if "name" not in kw :
+            kw ["name"]         = self.__class__.__name__.lower ()
+        if "description" not in kw :
+            kw ["description"]  = self.__class__.__doc__
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    def cook (self, value, cao = None) :
+        if self.__super.cook (value, cao) :
+            return self.config_dct
+    # end def cook
+
+    def _help_items (self) :
+        yield from self.__super._help_items ()
+        yield self.config_dct
+    # end def _help_items
+
+    def _set_default (self, default) :
+        if default is None :
+            default = {}
+        return self.__super._set_default (default)
+    # end def _set_default
+
+# end class Config_Bundle
 
 class Percent (Float) :
     """Argument or option with a percentage value,
@@ -2610,6 +2648,11 @@ A typical use of :class:`Cmd` looks like::
     ...             , auto_split  = ":::"
     ...             , description = "File(s) with configuration options"
     ...             )
+    ...         , Opt.Config_Bundle
+    ...             ( name        = "special_config"
+    ...             , description = "Predefined set of configuration options"
+    ...             , config_dct  = dict (indent = 2, period = 8)
+    ...             )
     ...         )
     ...     , min_args      = 2
     ...     , max_args      = 8
@@ -2694,6 +2737,11 @@ specified. ::
             Name of file to receive output (default: standard output)
         -period            : Int [10] split on ','
             Periods to consider
+        -special_config    : Config_Bundle
+            Predefined set of configuration options
+                { 'indent' : 2
+                , 'period' : 8
+                }
         -verbose           : Bool
             Print additional information to standard error
 
@@ -2728,9 +2776,91 @@ specified. ::
             , 3
             , 4
             ]
+        -special_config     = {}
         -verbose            = False
         file                = path1
 
+    >>> cao_s = cmd.parse (["-special_config", "path1", "path2"])
+    >>> cmd.help (cao_s)
+    cao_example file ...
+        Explanation of the purpose of the command
+    <BLANKLINE>
+        file               : Path
+            File(s) to process
+    <BLANKLINE>
+        argv               : ['path1', 'path2']
+    <BLANKLINE>
+        -Pdb_on_Exception  : Bool
+            Start python debugger pdb on exception
+        -config            : Config [] split on ':::'
+            File(s) with configuration options
+            In case of multiple matching config files, the last value
+            specified for an option wins.  Non-existing path values specified
+            for `-config` will be silently ignored.
+        -help              : Help [] split on ','
+            Display help about command
+        -indent            : Int
+            Number of spaces to use for indentation
+        -output            : Path
+            Name of file to receive output (default: standard output)
+        -period            : Int [10] split on ','
+            Periods to consider
+        -special_config    : Config_Bundle
+            Predefined set of configuration options
+                { 'indent' : 2
+                , 'period' : 8
+                }
+        -verbose           : Bool
+            Print additional information to standard error
+
+    >>> cmd.help (cao_s, spec = ["vals"])
+    Actual option and argument values of cao_example
+        -Pdb_on_Exception   = False
+        -config             = None
+            ()
+        -help               = []
+        -indent             = 2
+        -output             = None
+            ()
+        -period             = 8
+            [8]
+        -special_config     = True
+            { 'indent' : 2
+            , 'period' : 8
+            }
+        -verbose            = False
+        file                = path1
+
+    >>> cmd.help (cao_s, spec = ["config"])
+    Configuration options
+        cao_example has the configuration options:
+    <BLANKLINE>
+            config
+    <BLANKLINE>
+        Each of these options can specify any number of configuration files. The
+        config options will be processed in the sequence given above; for each
+        config option, its files will be processed in the sequence they are
+        specified on the command line (or by the default for the option in
+        question). Config files that don't exist are silently ignored.
+    <BLANKLINE>
+        Each config file must contain assignments in python syntax, the assigned
+        values must be python strings, i.e., raw values.
+    <BLANKLINE>
+        Assignments to the name of arguments or options will override the default
+        for the argument/option in question. If one specific argument/option is
+        assigned to in several config files, the last assignment wins.
+    <BLANKLINE>
+        Assignments to names that aren't names of arguments or options will be
+        interpreted as keyword assignments.
+    <BLANKLINE>
+        A typical config file looks like (assuming that all lines start in column
+        1, i.e., without leading whitespace)
+    <BLANKLINE>
+            cookie_salt    = b"1c060bc8-f4d7-459c-86d4-3f2a4ddc05b0"
+    <BLANKLINE>
+            input_encoding = "utf-8"
+    <BLANKLINE>
+            locale_code    = "en"
 
 """
 
