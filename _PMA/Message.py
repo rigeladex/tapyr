@@ -186,6 +186,7 @@
 #                     * `a2ps` coughs on Unicode
 #     2-Jun-2020 (CT) Use `TFL.text_to_pdf`, not `LNX.text_to_postscript`
 #                     + Add `Msg_Scope.full_date`
+#    24-Jun-2020 (CT) Add `-Cutable` to options for `text_to_pdf`
 #    ««revision-date»»···
 #--
 
@@ -1062,6 +1063,7 @@ def formatted (msg, encoding = "utf-8", body_only = False) :
 
 _text_to_pdf_options = \
     [ "-columns=2"
+    , "-Cutable"
     , "-Font_Family=Dejavu"
     , "-font_size=6.8"
     , "-footer='$p#||$c'"
