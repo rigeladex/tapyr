@@ -15,8 +15,55 @@
 #
 # Revision Dates
 #     3-Jun-2020 (CT) Creation
+#    25-Jun-2020 (CT) Add module docstring
 #    ««revision-date»»···
 #--
+
+"""
+`TFL.text_to_pdf` converts plain text files, i.e., text files without
+markup, to files in PDF format and optionally displays them or sends
+them to a printer.
+
+The conversion is similar to what the Unix programs `a2ps` and `enscript`
+do, but supports unicode, provided the specified font supports all tbe
+characters used in the input files.
+
+The command ::
+
+    python -m _TFL.text_to_pdf -help=details
+
+explains the structure of the PDF generated and the options for
+pagination, headers, and footers.
+
+The command ::
+
+    python -m _TFL.text_to_pdf -help=opts
+
+explains the possible command options and their possible values and
+defaults.
+
+The option `-a2ps` results in output very similar to that of `a2ps`.
+
+`TFL.text_to_pdf` assumes a fixed-width font for the body of the PDF
+document; a variable-width font will not look good.
+
+Option values can be specified on the command line or in
+config files. A config file contains lines of the form::
+
+    option = value
+
+without leading white space. `value` must be given in valid Python
+syntax. A config file can also include another config file like this::
+
+    load_config ("<name-of--other-config-file")
+
+The command ::
+
+    python -m _TFL.text_to_pdf -help=config
+
+explains the syntax and semantics of config files.
+
+"""
 
 _doc_page_structure = """
 A PDF document has physical pages; a physical page comprises one or
@@ -60,7 +107,7 @@ columns, e.g, `3/42`.
 
 In case of a cutable multi-column PDF document, each column will have
 its own `header` and `footer`.
-
+
 The `left`, `middle`, and `right` components of `header` and `footer`
 can be specified on the command line as by specifying a pattern of the
 form `<left>|<middle>|<right>` for the options `-header` and `-footer`.
@@ -69,7 +116,7 @@ For example:
 
   -header 'Literal string for left|$t|:'
   -footer 'left footer value|right footer value'
-
+
 Besides literal values, the following special values for `<left>`,
 `<middle>`, and `<right>` are supported:
 
@@ -86,7 +133,7 @@ Besides literal values, the following special values for `<left>`,
     $s        Subject
     $t        Title
   ==========  =========================================================
-
+
 The one-character `$` values can be combined, e.g., `$tsn`; the first
 non-empty values will be used for the component, i.e., `$tsn` is
 equivalent to `$t or $s or $n`.
