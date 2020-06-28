@@ -16,6 +16,7 @@
 # Revision Dates
 #     3-Jun-2020 (CT) Creation
 #    25-Jun-2020 (CT) Add module docstring
+#    28-Jun-2020 (CT) Add support for `rows`
 #    ««revision-date»»···
 #--
 
@@ -67,19 +68,19 @@ explains the syntax and semantics of config files.
 
 _doc_page_structure = """
 A PDF document has physical pages; a physical page comprises one or
-more columns.
+more virtual pages arranged in columns and/or rows.
 
 A text document is a series of lines comprising text without markup.
 Formfeed characters in the text document can indicate page breaks.
 
 `<VT><FF>` in a text document marks a strict page break that will start
 a new physical page in the PDF document. `<FF>` marks a page break that
-will start a new column in the PDF document. `<VT>` marks a conditional
-page break — if there are less than `-vt_limit` lines left on the
-current page.
+will start a new virtual page in the PDF document. `<VT>` marks a
+conditional page break — if there are less than `-vt_limit` lines left
+on the current virtual page.
 
-Pages/columns can be further split into new columns if they contain more
-lines than fit into a single column.
+Virtual pages can be further split into new virtual pages if they
+contain more lines than fit into a single virtual page.
 
 Each physical page of a PDF document comprises three parts: `header`,
 `body`, and `footer`::
@@ -101,12 +102,12 @@ Each physical page of a PDF document comprises three parts: `header`,
   |                                                                   |
   +-------------------------------------------------------------------+
 
-`$l#` is only displayed for non-cutable multi-column PDF documents
-and shows the number of the current column and the total number of
-columns, e.g, `3/42`.
+`$l#` is only displayed for non-cutable multi-column/row PDF documents
+and shows the number of the current virtual page and the total number of
+virtual pages, e.g, `3/42`.
 
-In case of a cutable multi-column PDF document, each column will have
-its own `header` and `footer`.
+In case of a cutable multi-column/row PDF document, each virtual page
+will have its own `header` and `footer`.
 
 The `left`, `middle`, and `right` components of `header` and `footer`
 can be specified on the command line as by specifying a pattern of the
@@ -280,18 +281,19 @@ class Page_Strict (TFL.Meta.Object) :
 
     A strict page always starts in the left-most column of a physical page.
 
-    A strict page exceeding the maximum lines per column `lpc`, will
-    be split into several columns; if the number of resulting columns is
-    larger than the number of columns `cpp` per physical page, the strict
-    page will by split into several physical pages.
+    A strict page exceeding the maximum lines per v_page `lpv`, will
+    be split into several virtual pages; if the number of resulting
+    virtual pages is larger than the number of virtual pages `vpp` per
+    physical page, the strict page will by split into several physical
+    pages.
     """
 
     def __init__ (self, txt) :
         self.txt = txt
     # end def __init__
 
-    def pages (self, cpp, lpc, vt_limit = 5) :
-        def _gen_cols (m_pages, lpc) :
+    def pages (self, vpp, lpv, vt_limit = 5) :
+        def _gen_vps (m_pages, lpv) :
             for mp in m_pages :
                 lines   = mp.lstrip ("\v\n").rstrip ().split ("\n")
                 l       = len (lines)
@@ -302,7 +304,7 @@ class Page_Strict (TFL.Meta.Object) :
                     while h < l :
                         while h < l and not lines [h].strip () :
                             h += 1
-                        t = h + lpc
+                        t = h + lpv
                         try :
                             v = lines.index ("\v", t - vt_limit, t)
                         except ValueError :
@@ -313,15 +315,15 @@ class Page_Strict (TFL.Meta.Object) :
                         if col :
                             yield col
                         h = t
-        def _gen_pages (cols, cpp) :
-            l   = len (cols)
+        def _gen_pages (vps, vpp) :
+            l   = len (vps)
             h   = 0
             while h < l :
-                yield cols [h:h+cpp]
-                h  += cpp
+                yield vps [h:h+vpp]
+                h  += vpp
         m_pages     = self.txt.split ("\f")
-        cols        = list (_gen_cols  (m_pages, lpc))
-        return _gen_pages  (cols, cpp)
+        vps         = list (_gen_vps  (m_pages, lpv))
+        return _gen_pages  (vps, vpp)
     # end def pages
 
 # end class Page_Strict
@@ -373,6 +375,7 @@ class PDF_Doc (TFL.Meta.Object) :
             , margins           = [36] * 4
             , page_compression  = True
             , page_size         = media ["A4"]
+            , rows_per_page     = 1
             , subject           = None
             , title             = None
             , vt_limit          = 5
@@ -399,6 +402,7 @@ class PDF_Doc (TFL.Meta.Object) :
         self.line_height        = line_height
         self.margins            = margins
         self.page_compression   = page_compression
+        self.rows_per_page      = rows_per_page
         self.subject            = subject
         self.title              = title
         self.vt_limit           = vt_limit
@@ -411,8 +415,10 @@ class PDF_Doc (TFL.Meta.Object) :
         self.page_height        = page_height
         self.canvas             = canvas = self._canvas (output, page_size)
         self.char_width         = canvas.stringWidth ("M", self.font, font_size)
-        self._setup_columns \
-            (columns_per_page, page_height, page_width, line_height, margins)
+        self._setup_v_pages \
+            ( columns_per_page, rows_per_page
+            , page_height, page_width, line_height, margins
+            )
         self._generate ()
     # end def __init__
 
@@ -446,14 +452,17 @@ class PDF_Doc (TFL.Meta.Object) :
     # end def _add_header
 
     def _add_line (self, canvas, col, line, txt_obj, cpl) :
-        cw = self.char_width
-        while _underline_pat.search (line) :
+        cw  = self.char_width
+        pat = _underline_pat
+        while pat.search (line) :
             l       = line.replace ("\b_", "")
-            left    = col.left + cw * _underline_pat.start (0)
-            nu      = min ((len (line) - len (l)) // 2, cpl)
+            ps      = min (pat.start (0),                    cpl)
+            pf      = min (ps + (len (line) - len (l)) // 2, cpl)
+            left    = col.left + cw * ps
+            right   = col.left + cw * pf
             y       = txt_obj._y - 2
             with self._underline_context (canvas, 0.25, Color.gray_50) :
-                canvas.line (left, y, left + cw * nu, y)
+                canvas.line (left, y, right, y)
             line    = l
         for rep in self._replacements :
             line    = self._add_line_replaced \
@@ -469,36 +478,38 @@ class PDF_Doc (TFL.Meta.Object) :
         if rep.guard is None or rep.guard.search (line) :
             pat = rep.pat
             lh  = self.line_height
+            y   = txt_obj._y + (lh * rep.lh_off)
             while pat.search (line) :
                 nc      = len (pat.group (0))
-                ncl     = min (nc, cpl)
-                left    = col.left + cw * pat.start (0)
-                y       = txt_obj._y + (lh * rep.lh_off)
+                ps      = min (pat.start (0), cpl)
+                pf      = min (ps + nc,       cpl)
+                left    = col.left + cw * ps
+                right   = col.left + cw * pf
                 with self._underline_context \
                          (canvas, rep.line_width, rep.line_color) :
-                    canvas.line (left, y, left + cw * ncl, y)
+                    canvas.line (left, y, right, y)
                 line    = pat.sub (" " * nc, line, 1)
         return line
     # end def _add_line_replaced
 
     def _add_page (self, canvas, page, np, nop, nc, noc) :
-        columns_p   = len (self.columns) > 1 and noc > 1
-        cutable     = self.cutable
+        vps_p   = len (self.v_pages) > 1 and noc > 1
+        cutable = self.cutable
         if not cutable :
             self._add_header (self, canvas, np, nop)
             self._add_footer (self, canvas, np, nop)
-        for col, lines in zip (self.columns, page) :
+        for vp, lines in zip (self.v_pages, page) :
             if cutable :
-                self._add_header (col, canvas, nc, noc)
-                self._add_footer (col, canvas, nc, noc)
-            cpl     = col.chars_per_line
-            with self._text_context (canvas, col.left, col.top) as txt_obj :
+                self._add_header (vp, canvas, nc, noc)
+                self._add_footer (vp, canvas, nc, noc)
+            cpl = vp.chars_per_line
+            with self._text_context (canvas, vp.left, vp.top) as txt_obj :
                 for line in lines :
-                    self._add_line  (canvas, col, line, txt_obj, cpl)
-            if columns_p and not cutable :
+                    self._add_line  (canvas, vp, line, txt_obj, cpl)
+            if vps_p and not cutable :
                 with self._footer_context (canvas) :
                     nc_total = self._hf_number_total (nc, noc)
-                    canvas.drawString (col.left, self.bottom, nc_total)
+                    canvas.drawString (vp.left, self.bottom, nc_total)
             nc += 1
         canvas.showPage ()
     # end def _add_page
@@ -558,12 +569,12 @@ class PDF_Doc (TFL.Meta.Object) :
     # end def _generate
 
     def _generate_pages (self) :
-        lpc         = self.lines_per_column
-        cpp         = self.columns_per_page
+        lpv         = self.lines_per_v_page
+        vpp         = self.v_pages_per_page
         vt_limit    = self.vt_limit
         s_pages     = (Page_Strict (txt) for txt in self.txt.split ("\v\f"))
         for sp in s_pages :
-            yield from sp.pages (cpp, lpc, vt_limit)
+            yield from sp.pages (vpp, lpv, vt_limit)
     # end def _generate_pages
 
     @TFL.Contextmanager
@@ -618,36 +629,46 @@ class PDF_Doc (TFL.Meta.Object) :
         return result
     # end def _pdf_font
 
-    def _setup_columns (self, cpp, page_ht, page_wd, line_ht, margins) :
-        hf_corr = 2.25 + (line_ht / margins.bottom if self.footer_p else 0)
-        self.lines_per_column = int \
-            ((page_ht - margins.vertical - hf_corr * line_ht) // line_ht)
+    def _setup_v_pages (self, cpp, rpp, page_ht, page_wd, line_ht, margins) :
+        vpp     = self.v_pages_per_page = cpp * rpp
+        hf_corr = (2.5 + line_ht / margins.bottom) if self.footer_p else 0
+        vp_ht   = page_ht / rpp
+        vp_wd   = page_wd / cpp
+        content_width   = vp_wd - margins.horizontal
+        if self.cutable :
+            content_height  = vp_ht     - margins.vertical * 1.5
+        else :
+            if rpp > 1 :
+                vp_ht       = (page_ht  - margins.bottom) / rpp
+            content_height  = vp_ht     - margins.top
+            if cpp > 1 :
+                vp_wd       = (page_wd  - margins.right)  / cpp
+                content_width   = vp_wd - margins.left
+        self.lines_per_v_page   = int \
+            ((vp_ht - margins.vertical - hf_corr * line_ht) / line_ht)
         self.left   = margins.left
         self.right  = page_wd - margins.right
         self.middle = (self.right - self.left) / 2
         self.top    = page_ht - margins.top - 2 * line_ht
         self.bottom = margins.bottom
-        if self.cutable :
-            col_width       = page_wd   / cpp
-            content_width   = col_width - margins.horizontal
-        else :
-            col_width       = (page_wd  - margins.right) / cpp
-            content_width   = col_width - margins.left
         chars_per_line  = int (content_width // self.char_width)
-        self.columns    = tuple \
+        self.v_pages    = tuple \
             ( Record
                 ( chars_per_line = chars_per_line
+                , content_height = content_height
                 , content_width  = content_width
-                , left           = margins.left + col_width * i
-                , top            = self.top
-                , bottom         = self.bottom
+                , left           = margins.left + vp_wd * i
+                , top            =
+                    self.top - vp_ht * j - (line_ht if j else 0)
                 )
             for i in range (cpp)
+              for j in range (rpp)
             )
-        for c in self.columns :
-            c.right  = c.left + content_width
-            c.middle = (c.right - c.left) / 2
-    # end def _setup_columns
+        for vp in self.v_pages :
+            vp.bottom = vp.top  - content_height
+            vp.right  = vp.left + content_width
+            vp.middle = (vp.right - vp.left) / 2
+    # end def _setup_v_pages
 
     @TFL.Contextmanager
     def _text_context (self, canvas, left, top) :
@@ -705,6 +726,7 @@ class TTP_Command (TFL.Command.Root_Command) :
         , medium                = "A4"
         , printer_name          = sos.environ.get ("PRINTER", "lp")
         , print_program         = "lp"
+        , rows                  = 1
         , time_format           = time_fmt
         , vt_limit              = 5
         )
@@ -734,6 +756,7 @@ class TTP_Command (TFL.Command.Root_Command) :
         , "-printer_name:S?Name of printer to print to"
         , "-print_program:S"
         , "-purge_pdf:B?Remove pdf output file after displaying or printing"
+        , "-rows:I?Number of rows per page"
         , "-Output:Q?Write output to specified file"
         , "-show_options:B?Show option values passed to pdf-converter"
         , "-Subject:S?Subject of document"
@@ -975,6 +998,7 @@ class TTP_Command (TFL.Command.Root_Command) :
             , margins           = self._margins (cmd.margins)
             , output            = output
             , page_size         = cmd.medium
+            , rows_per_page     = cmd.rows
             , subject           = subject
             , title             = title
             , vt_limit          = cmd.vt_limit
