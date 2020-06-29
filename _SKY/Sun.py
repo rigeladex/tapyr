@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2019 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -41,6 +41,7 @@
 #     9-Aug-2017 (CT) Use one argument `loc`, not two arguments `lat` and `lon`
 #                     + Use `loc.longitude_meuss`
 #    19-Aug-2019 (CT) Use `print_prepr`
+#    29-Jun-2020 (CT) Change option `-year` to honor `-transit`
 #    ««revision-date»»···
 #--
 
@@ -318,20 +319,34 @@ def _main (cmd) :
             (cmd.latitude, cmd.longitude, cmd.Location or None)
     else :
         location = cmd.Location
-    print (location, "*" * 20)
-    year = cmd.year
-    if year :
+    if cmd.show_location :
+        print (location, "*" * 20)
+    if cmd.year :
         from _CAL.Year import Year
-        Y = Year (year)
+        Y  = Year (cmd.year)
+        lm = None
         for d in Y.days :
             date = d.date
             rts  = RTS_Sun.On_Day (date, location)
+            if lm is not None and lm != date.month :
+                print ("\f")
+            lm = date.month
+            dl = rts.day_length
             print \
-            ( "%s, Sunrise : %s, transit : %s, sunset : %s, day length: %s"
-            % ( date, rts.rise, rts.transit, rts.set
-              , "%02d:%02d" % rts.day_length.hh_mm
-              )
-            )
+                ( "%s, ☀ rise : %s, transit : %s, ☀ set : %s; ☀ hours : %s"
+                % ( date, rts.rise, rts.transit, rts.set
+                  , "%02d:%02d:%02d" % (dl.h, dl.m, dl.s)
+                  )
+                )
+            if cmd.transit :
+                print \
+                    ( "%s     az %6.2f°   height %6.2f°     az %6.2f°"
+                      % ( " " * 12
+                        , rts.rise.azimuth.degrees
+                        , rts.transit.altitude.degrees
+                        , rts.set.azimuth.degrees
+                        )
+                    )
     else :
         for d in cmd.argv :
             date = CAL.Date.from_string (d)
@@ -343,9 +358,18 @@ def _main (cmd) :
             if cmd.day_length :
                 print ("Day length: %02d:%02d" % (rts.day_length).hh_mm)
             if cmd.transit :
-                print ("Rise    azimuth : %6.2f degrees" % rts.rise.azimuth.degrees)
-                print ("Transit height  : %6.2f degrees" % rts.transit.altitude.degrees)
-                print ("Set     azimuth : %6.2f degrees" % rts.set.azimuth.degrees)
+                print \
+                    ( "Rise    azimuth : %6.2f degrees"
+                    % rts.rise.azimuth.degrees
+                    )
+                print \
+                    ( "Transit height  : %6.2f degrees"
+                    % rts.transit.altitude.degrees
+                    )
+                print \
+                    ( "Set     azimuth : %6.2f degrees"
+                    % rts.set.azimuth.degrees
+                    )
             if cmd.civil_twilight :
                 print \
                     ( "Civil  twilight starts %s, ends %s"
@@ -378,6 +402,7 @@ _Command = TFL.CAO.Cmd \
         , "-nautic_twilight:B"
             "?Show time of nautic twilight (sun -12 degrees below horizon)"
         , "-transit:B?Show transit height"
+        , "-show_location:B=yes?Show location at begin of output"
         , "-year:I?Show sunrise/transit/set data for whole year"
         , TFL.CAO.Opt.Location
             ( name        = "Location"
