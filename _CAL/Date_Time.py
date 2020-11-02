@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2016 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2020 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,6 +38,7 @@
 #    21-Apr-2016 (CT) Redefine `from_string` to pass `check_tail=False`
 #    26-Sep-2016 (CT) Add `as_date`, `as_time`
 #    26-Sep-2016 (CT) Move `sidereal_time` to `CAL.Sky.Earth`
+#     1-Nov-2020 (CT) Make space before `time_pattern.tzinfo` optional
 #    ««revision-date»»···
 #--
 
@@ -180,7 +181,7 @@ class Date_Time (CAL.Date, CAL.Time) :
               r"(?P<microsecond> \d+)"
             r")?"
           r")?"
-          r"(?: \s"
+          r"(?: \s?"
             r"(?P<tzinfo> [-+]\d{4,4})"
           r")?"
         , flags = re.VERBOSE | re.IGNORECASE
