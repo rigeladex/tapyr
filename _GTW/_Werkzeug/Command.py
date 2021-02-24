@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2019 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2021 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -90,6 +90,7 @@
 #    17-Jan-2017 (CT) Add `css_nav_side`, `css_nav_type`
 #    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    19-Apr-2019 (CT) Move `static_root` defaults to `Command`
+#    24-Feb-2021 (CT) Add guard to `_handle_generate_static_pages`
 #    ««revision-date»»···
 #--
 
@@ -501,7 +502,7 @@ class GT2W_Command (GTW.OMP.Command) :
         if not cao.argv :
             for r, url in sorted (pyk.iteritems (app.redirects)) :
                 p = app.resource_from_href (url)
-                if p.static_p and not p.auth_required :
+                if p is not None and p.static_p and not p.auth_required :
                     _generate (cao, p, root, r + p.static_page_suffix)
     # end def _handle_generate_static_pages
 
