@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2020 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2020-2021 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -17,6 +17,7 @@
 #     3-Jun-2020 (CT) Creation
 #    25-Jun-2020 (CT) Add module docstring
 #    28-Jun-2020 (CT) Add support for `rows`
+#     2-May-2021 (CT) Add function `create_file`
 #    ««revision-date»»···
 #--
 
@@ -1007,6 +1008,20 @@ class TTP_Command (TFL.Command.Root_Command) :
     # end def _pdf_opts
 
 Command = TTP_Command # end class
+
+def create_file (contents, filename, * pdf_options) :
+    """Create a pdf-file of `contents` with name `filename`."""
+    tn  = Filename (".pdf", filename).name
+    cmd = [sys.executable, "-m", "_TFL.text_to_pdf", "-Output='%s'" % tn] \
+        + list (pdf_options) + ["STDIN"]
+    subprocess.run \
+        ( cmd
+        , encoding = "utf-8"
+        , env      = dict (sos.environ)
+        , input    = contents
+        )
+    return tn
+# end def create_file
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
