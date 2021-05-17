@@ -18,6 +18,7 @@
 #     8-Aug-2004 (CT) Creation
 #    19-Feb-2017 (CT) Add `hectopascal`
 #     5-Jun-2020 (CT) Add `Command`
+#    17-May-2021 (CT) Add `kilopascal`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ class Pressure (TFL.Units.Kind) :
         ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
         # SI prefixes
           Unit ("hectopascal",           TFL.Units.hecto, "hPa")
+	, Unit ("kilopascal",            TFL.Units.kilo,  "kPa")
         # Usual units
         , Unit ("torr",                  133.3223684,     "torr")
         , Unit ("atmosphere",              1.01325E+5,    "atm")
