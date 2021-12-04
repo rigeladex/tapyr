@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2020 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2020-2021 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -15,6 +15,7 @@
 #
 # Revision Dates
 #     1-Jun-2020 (CT) Creation
+#     4-Dec-2021 (CT) Add `-format` option to sub-command `by_id`
 #    ««revision-date»»···
 #--
 
@@ -84,7 +85,7 @@ class _UCD_ (TFL.Meta.Object) :
                 result [id] = r"u%04x" % i
         result = "\n".join \
             ( ( "# -*- coding: utf-8 -*-"
-              , "# Copyright (C) 2020 Mag. Christian Tanzer All rights reserved"
+              , "# Copyright (C) 2020-2021 Mag. Christian Tanzer All rights reserved"
               , "# Generated automatically, do not change manually!"
               , ""
               , "id_to_chr_map = \\"
@@ -100,12 +101,14 @@ class _UCD_ (TFL.Meta.Object) :
             yield ("%04x: %s" % (ord (c), c))
     # end def by_code
 
-    def by_id (self, sort_key = None) :
+    def by_id (self, sort_key = None, format = None) :
         """Generate all characters in `id_to_chr_map` sorted by id."""
         import unicodedata
+        if format is None :
+            format = "%(id)-70s %(cat)-04s %(code)04x : %(char)s"
         for id, c in sorted (id_to_chr_map.items (), key = sort_key) :
             cat = unicodedata.category (c)
-            yield ("%-70s %-04s %04x : %s" % (id, cat, ord (c), c))
+            yield (format % dict (id = id, cat = cat, code = ord (c), char = c))
     # end def by_id
 
     def get (self, name, default = None) :
@@ -167,7 +170,7 @@ _Command_by_code = TFL.CAO.Cmd \
 def _main_by_id (cmd) :
     """Print all characters in `id_to_chr_map` sorted by id."""
     sk = (lambda x : x [1]) if cmd.sort_by_code else None
-    for line in UCD.by_id (sk) :
+    for line in UCD.by_id (sk, format = cmd.format) :
         print (line)
 # end def _main_by_id
 
@@ -175,8 +178,8 @@ _Command_by_id = TFL.CAO.Cmd \
     ( handler       = _main_by_id
     , name          = "by_id"
     , opts          =
-        ( "-sort_by_code:B?Sort by character code instead of id"
-        ,
+        ( "-format:S?Format to use for output"
+        , "-sort_by_code:B?Sort by character code instead of id"
         )
     )
 
