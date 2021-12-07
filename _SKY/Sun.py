@@ -43,6 +43,7 @@
 #    19-Aug-2019 (CT) Use `print_prepr`
 #    29-Jun-2020 (CT) Change option `-year` to honor `-transit`
 #     6-Dec-2021 (CT) Add `day_abbr` to `transit` line
+#     7-Dec-2021 (CT) Use symbols for `rise`, `transit`, and `set` events
 #    ««revision-date»»···
 #--
 
@@ -334,15 +335,15 @@ def _main (cmd) :
             lm = date.month
             dl = rts.day_length
             print \
-                ( "%s, ☀ rise : %s, transit : %s, ☀ set : %s; ☀ hours : %s"
+                ( "%s, ☀ ↑ : %s, ☀ ↷ : %s, ☀ ↓ : %s; ☀ hours : %s"
                 % ( date, rts.rise, rts.transit, rts.set
                   , "%02d:%02d:%02d" % (dl.h, dl.m, dl.s)
                   )
                 )
             if cmd.transit :
                 print \
-                    ( "%s     az %6.2f°   height %6.2f°     az %6.2f°"
-                      % ( "%10s  " % d.day_abbr
+                    ( "%s  az  %6.2f° alt  %6.2f°  az  %6.2f°"
+                      % ( "%10s " % d.day_abbr
                         , rts.rise.azimuth.degrees
                         , rts.transit.altitude.degrees
                         , rts.set.azimuth.degrees
