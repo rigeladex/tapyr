@@ -42,6 +42,7 @@
 #                     + Use `loc.longitude_meuss`
 #    19-Aug-2019 (CT) Use `print_prepr`
 #    29-Jun-2020 (CT) Change option `-year` to honor `-transit`
+#     6-Dec-2021 (CT) Add `day_abbr` to `transit` line
 #    ««revision-date»»···
 #--
 
@@ -341,7 +342,7 @@ def _main (cmd) :
             if cmd.transit :
                 print \
                     ( "%s     az %6.2f°   height %6.2f°     az %6.2f°"
-                      % ( " " * 12
+                      % ( "%10s  " % d.day_abbr
                         , rts.rise.azimuth.degrees
                         , rts.transit.altitude.degrees
                         , rts.set.azimuth.degrees
