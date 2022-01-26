@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2022 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package LNX.
@@ -18,16 +18,50 @@
 # Revision Dates
 #    10-Nov-2010 (CT) Creation
 #    22-Mar-2018 (CT) Make Python-3 compatible
+#    26-Jan-2022 (CT) Add support for parsing output of `uptime` command
+#                     - in case `/proc/uptime` isn't available
 #    ««revision-date»»···
 #--
 
+from   _TFL           import sos
 import datetime
 
+if sos.path.exists ("/proc/uptime") :
+    def uptime_seconds () :
+        with open ("/proc/uptime") as f :
+            return float (f.readline ().split () [0])
+else :
+    from   _TFL.Regexp import Regexp, re
+    import subprocess
+    spu = dict \
+        ( days         = 86400
+        , hours        =  3600
+        , minutes      =    60
+        , seconds      =     1
+        )
+    uptime_pat = Regexp \
+        ( r"\s+ [0-9:]+ \s+ up \s+"
+          r"(?P<days>  \d+) \s+ days \s+"
+          r"(?P<hours> \d+):(?P<minutes> \d+)(?: :(?P<seconds> \d+))?"
+        , re.VERBOSE
+        )
+    def uptime_seconds () :
+        uptime_res = subprocess.run \
+            ( ["uptime"]
+            , capture_output = True
+            , text           = True
+            )
+        if uptime_pat.match (uptime_res.stdout) :
+            result = sum \
+                (   float (v) * spu [u]
+                for u, v in uptime_pat.groupdict ().items () if v
+                )
+            return result
+
 def up_since () :
-    now = datetime.datetime.now ()
-    with open ("/proc/uptime") as f :
-        since = float (f.readline ().split () [0])
-    return now - datetime.timedelta (seconds = since)
+    now   = datetime.datetime.now ()
+    delta = uptime_seconds ()
+    return now - datetime.timedelta (seconds = delta)
 # end def up_since
 
 if __name__ != "__main__" :
