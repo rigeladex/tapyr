@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2017 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2022 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -49,6 +49,7 @@
 #    18-Sep-2017 (CT) Use `math.fsum`, not `sum`
 #                     + Use `fmod`, not `%`, for floats
 #    18-Sep-2017 (CT) Add `isclose`
+#     3-Mar-2022 (CT) Add `isclose` guard to `standard_deviation`
 #    ««revision-date»»···
 #--
 
@@ -286,11 +287,14 @@ def standard_deviation (seq) :
        >>> s = (1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27)
        >>> "%5.3f" % (standard_deviation (s),)
        '0.016'
+       >>> "%5.3f" % (standard_deviation ((83.2, 83.2, 83.2)), )
+       '0.000'
     """
     n     = len (seq)
     a1    = fsum (v * v for v in seq) * n
     a2    = fsum (seq) ** 2
-    return sqrt ((a1 - a2) / (n * (n - 1)))
+    diff  = 0 if isclose (a1, a2) else a1 - a2
+    return sqrt (diff / (n * (n - 1)))
 # end def standard_deviation
 
 if __name__ != "__main__" :
