@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2018 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2022 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is part of the package LNX.
@@ -18,6 +18,8 @@
 # Revision Dates
 #    13-May-2011 (CT) Creation
 #    22-Mar-2018 (CT) Make Python-3 compatible
+#    15-Mar-2022 (CT) Move `cvs` to end of `VCS_Typer` call
+#                     * damn case-insensitive file systems
 #    ««revision-date»»···
 #--
 
@@ -51,10 +53,10 @@ class VCS_Typer (TFL.Meta.Object) :
 # end class VCS_Typer
 
 vcs_typer = VCS_Typer \
-    ( cvs      = "CVS"
-    , git      = ".git"
+    ( git      = ".git"
     , hg       = ".hg"
     , svn      = ".svn"
+    , cvs      = "CVS"
     )
 
 def _main (cmd) :
