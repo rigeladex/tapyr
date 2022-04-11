@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2020 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2020-2022 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    21-May-2020 (CT) Creation
+#    11-Apr-2022 (CT) Fix `_Anniversary_Day_.description`
 #    ««revision-date»»···
 #--
 
@@ -58,7 +59,11 @@ class _Anniversary_Day_ (CAL.Day_Rule._Ruled_Day_) :
     @TFL.Meta.Once_Property
     def description (self) :
         age = self.age
-        return "%s %s %s" % (self.desc, age, _Tn ("year", "years", age))
+        if isinstance (age, int) :
+            result = "%s %s %s" % (self.desc, age, _Tn ("year", "years", age))
+        else :
+            result = self.desc
+        return result
     # end def description
 
     @TFL.Meta.Once_Property
