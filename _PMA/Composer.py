@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2020 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2022 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -66,6 +66,7 @@
 #                     * with the default policy (`Lib.policy.compat32`),
 #                       unicode headers are broken
 #    25-Mar-2020 (CT) Add option `-content_transfer_encoding`, default `8bit`
+#    10-May-2022 (CT) Use `PMA.Sender.mail_host` as default value, if existing
 #    ««revision-date»»···
 #--
 
@@ -505,7 +506,8 @@ def _main (cmd) :
     Sender = PMA.Sender_Tester if cmd.Debug else PMA.Sender
     smtp   = Sender \
         ( local_hostname            = cmd.mail_local_hostname
-        , mail_host                 = cmd.mail_host
+        , mail_host                 = cmd.mail_host or
+                                      getattr (PMA.Sender, "mail_host", None)
         , mail_port                 = cmd.mail_port
         , password                  = cmd.mail_word
         , user                      = cmd.mail_user
