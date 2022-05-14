@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2020 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2022 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -52,6 +52,7 @@
 #                       dies with an exception
 #                         TypeError: 'Header' object is not subscriptable
 #                     * Although such a usage is officially documented
+#    14-May-2022 (CT) Add a `Message-Id` header, if necessary
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,7 @@ import datetime
 import logging
 import smtplib
 import sys
+import uuid
 
 class SMTP (TFL.Meta.Object) :
     """Send emails via SMTP"""
@@ -227,6 +229,8 @@ class SMTP (TFL.Meta.Object) :
                 for v in vs :
                     vh = self.header (v, charset, header_name = k)
                     email [k] = vh
+        if "Message-Id" not in email :
+            self._add_message_id (email)
         ### In Python 3, `email.as_string` is useless because it returns a
         ### base64 encoded body if there are any non-ASCII characters
         ### (setting Content-Transfer-Encoding to "8bit" does *not* help)
@@ -261,9 +265,19 @@ class SMTP (TFL.Meta.Object) :
             else :
                 results = list (pyk.as_str (r) for r in addrs.addresses)
         else :
-            results = list (r.strip ()     for r in splitter (","))
+            results = list (r.strip () for r in splitter (","))
         return results
     # end def _addresses_from_header
+
+    def _add_message_id (self, email) :
+        from email.parser import Parser
+        from email.policy import default
+        parser   = Parser (policy = default).parsestr
+        from_adr = parser ("From: %s" % email ["From"]) ["from"].addresses [0]
+        domain   = from_adr.domain
+        id       = uuid.uuid1 ()
+        email ["Message-Id"] = "<%s@%s>" % (id, domain or "unknown")
+    # end def _add_message_id
 
 # end class SMTP
 
@@ -312,6 +326,7 @@ class SMTP_Tester (SMTP) :
        Email via localhost from sender@example.com to ['receiver@example.com']
        <BLANKLINE>
        Date: Tue, 20 Oct 2015 14:42:23 -0000
+       Message-Id: <2546a47c-d37f-11ec-a757-f2f1999dd7e8@example.com>
        Content-Type: text/plain; charset="utf-8"
        Content-Transfer-Encoding: 8bit
        Subject: Test email with some =?utf-8?b?w6TDtsO8w58=?= diacritics
@@ -338,6 +353,7 @@ From: sender@example.com
 To: receiver@example.com
 Subject: Test email with some äöüß diacritics
 Date: Tue, 20 Oct 2015 14:42:23 -0000
+Message-Id: <2546a47c-d37f-11ec-a757-f2f1999dd7e8@example.com>
 
 Test email containing diacritics like ö, ä, ü, and ß.
 """
