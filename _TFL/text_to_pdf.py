@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2020-2021 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2020-2022 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -18,6 +18,7 @@
 #    25-Jun-2020 (CT) Add module docstring
 #    28-Jun-2020 (CT) Add support for `rows`
 #     2-May-2021 (CT) Add function `create_file`
+#    20-Jun-2022 (CT) Add macOS specific default for `display_program`
 #    ««revision-date»»···
 #--
 
@@ -180,6 +181,9 @@ import subprocess
 import sys
 import reportlab.lib.pagesizes
 import time
+
+is_macOS_p = "Darwin" == subprocess.run \
+    (["uname"], capture_output = True, text = True).stdout.strip ()
 
 media   = {k : ps for k, ps in pagesizes.__dict__.items () if k.isupper ()}
 
@@ -713,7 +717,7 @@ class TTP_Command (TFL.Command.Root_Command) :
     _defaults               = dict \
         ( Baselineskip          = 1
         , columns               = 1
-        , display_program       = "atril"
+        , display_program       = "open" if is_macOS_p else "atril"
         , Body_color            = "black"
         , Font_Family           = "Courier"
         , font_size             = 11
