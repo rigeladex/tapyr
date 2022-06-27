@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2020 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2020-2022 Christian Tanzer All rights reserved
 # Generated automatically, do not change manually!
 
 id_to_chr_map = \

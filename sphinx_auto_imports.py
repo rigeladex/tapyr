@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015 Mag. Christian Tanzer All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Copyright (C) 2015 Christian Tanzer All rights reserved
+# tanzer@gg32.com                                      https://www.gg32.com
 #
 #++
 # Name

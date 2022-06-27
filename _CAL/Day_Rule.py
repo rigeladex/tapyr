@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2020 Mag. Christian Tanzer All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Copyright (C) 2016-2020 Christian Tanzer All rights reserved
+# tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
-# <http://www.c-tanzer.at/license/bsd_3c.html>.
+# <https://www.gg32.com/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
 #
 #++

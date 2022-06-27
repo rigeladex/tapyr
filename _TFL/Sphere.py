@@ -4,7 +4,7 @@
 #
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # This module is licensed under the terms of the BSD 3-Clause License
-# <http://www.c-tanzer.at/license/bsd_3c.html>.
+# <https://www.gg32.com/license/bsd_3c.html>.
 # ****************************************************************************
 #
 #++
