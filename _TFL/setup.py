@@ -60,7 +60,7 @@ if __name__ == "__main__" :
     , license              = license
     , author               = "Christian Tanzer"
     , author_email         = "tanzer@swing.co.at"
-    , url                  = "https://github.com/Tapyr/tapyr"
+    , url                  = "https://codeberg.org/tanzer/tapyr"
     , packages             = packages
     , package_dir          = { p_name : "." }
     , package_data         = { p_name : data_files }

@@ -310,7 +310,7 @@ epub_title = NOW.strftime ("Tapyr doc, %Y-%m-%d")
 epub_author = author
 epub_publisher = author
 epub_copyright = copyright
-epub_identifier = "https://github.com/Tapyr/tapyr"
+epub_identifier = "https://codeberg.org/tanzer/tapyr"
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = project

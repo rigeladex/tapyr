@@ -1,9 +1,9 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
-// Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+// Copyright (C) 2011-2014 Christian Tanzer All rights reserved
+// tanzer@gg32.com                                      https://www.gg32.com
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
-// <http://www.c-tanzer.at/license/bsd_3c.html>.
+// <https://www.gg32.com/license/bsd_3c.html>.
 // #*** </License> ***********************************************************#
 //
 //++
@@ -110,7 +110,7 @@ var $GTW;
         , author      : "christian.tanzer@swing.co.at"
         , copyright   : "Copyright (C) 2011-2014 Christian Tanzer"
         , license     : "BSD 3-Clause license"
-        , license_url : "http://www.c-tanzer.at/license/bsd_3c.html"
+        , license_url : "https://www.gg32.com/license/bsd_3c.html"
         , version     : "1.1"
         }
     );

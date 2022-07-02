@@ -4,11 +4,13 @@ README for the Tapyr repository
 :Authors:
 
     Christian Tanzer
-    <tanzer@swing.co.at>
+    <tanzer@sgg32.com>
 
-This is `Christian Tanzer's <https://github.com/tanzer>`_
-Python `repository <https://github.com/Tapyr/tapyr>`_
-aka `Tapyr`. Tapyr is BSD licensed.
+This is `Christian Tanzer's <https://codeberg.org/tanzer>`_
+Python `repository <https://codeberg.org/tanzer/tapyr>`_
+aka `Tapyr`.
+
+Tapyr is BSD licensed <https://www.gg32.com/license/bsd_3c.html>`_.
 
 Tapyr comprises a number of package namespaces (see `TFL.Package_Namespace`),
 including:
@@ -42,4 +44,4 @@ including:
 Contact
 -------
 
-Christian Tanzer <tanzer@swing.co.at>
+Christian Tanzer <tanzer@gg32.com>
