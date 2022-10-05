@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -39,6 +39,7 @@
 #    26-Sep-2016 (CT) Add `as_date`, `as_time`
 #    26-Sep-2016 (CT) Move `sidereal_time` to `CAL.Sky.Earth`
 #     1-Nov-2020 (CT) Make space before `time_pattern.tzinfo` optional
+#     5-Oct-2022 (CT) Add `_default_format`
 #    ««revision-date»»···
 #--
 
@@ -166,6 +167,7 @@ class Date_Time (CAL.Date, CAL.Time) :
     """
 
     _Type            = datetime.datetime
+    _default_format  = "%Y-%m-%d %H:%M:%S"
     _init_arg_names  = \
         CAL.Date._init_arg_names + CAL.Time._init_arg_names
     _kind            = "datetime"
