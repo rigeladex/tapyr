@@ -41,6 +41,7 @@
 #     1-Nov-2020 (CT) Make space before `time_pattern.tzinfo` optional
 #     5-Oct-2022 (CT) Add `_default_format`
 #     6-Oct-2022 (CT) Add `midnight`, `noon`
+#     6-Oct-2022 (CT) Use `timezone_context` to fix tz-specific doctests
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,8 @@ class Date_Time (CAL.Date, CAL.Time) :
 
        >>> from _CAL.Delta import Date_Time_Delta as Delta
        >>> from _TFL.json_dump import to_string as jsonified
+       >>> from _CAL.date_time_localizer import timezone_context
+
        >>> d = Date_Time (2004, 10, 15, 16,  3, 14)
        >>> print (d)
        2004-10-15 16:03:14
@@ -113,23 +116,23 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> Date_Time (2000,1,1,12).JD
        2451545.0
 
-       >>> dt = Date_Time (2008, 1, 7, 10, 16, 42, 0)
-       >>> dt
+       >>> with timezone_context ("CET") :
+       ...   dt1 = Date_Time (2008, 1, 7, 10, 16, 42, 0)
+       ...   dt1
+       ...   dt1.as_utc ()
+       ...   dt4 = Date_Time (2008, 4, 7, 10, 16, 42, 0)
+       ...   dt4
+       ...   dt4.as_utc ()
+       ...   dt3 = Date_Time.from_string ("2012-03-29 10:06:46 -0400")
+       ...   dt3
+       ...   dt3.as_local ()
+       ...   dt3.as_utc ()
        Date_Time (2008, 1, 7, 10, 16, 42, 0)
-       >>> dt.as_utc ()
        Date_Time (2008, 1, 7, 9, 16, 42, 0)
-       >>> dt = Date_Time (2008, 4, 7, 10, 16, 42, 0)
-       >>> dt
        Date_Time (2008, 4, 7, 10, 16, 42, 0)
-       >>> dt.as_utc ()
        Date_Time (2008, 4, 7, 8, 16, 42, 0)
-
-       >>> dt = Date_Time.from_string ("2012-03-29 10:06:46 -0400")
-       >>> dt
        Date_Time (2012, 3, 29, 10, 6, 46, 0)
-       >>> dt.as_local ()
        Date_Time (2012, 3, 29, 16, 6, 46, 0)
-       >>> dt.as_utc ()
        Date_Time (2012, 3, 29, 14, 6, 46, 0)
 
        >>> td = Date_Time (2014, 9, 19, 17, 23, 42)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2020 Christian Tanzer All rights reserved
+# Copyright (C) 2012-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
@@ -22,6 +22,7 @@
 #                     + Python 3.7 gives `FutureWarning: Possible nested set`
 #                       otherwise (https://bugs.python.org/issue30349)
 #    19-Aug-2019 (CT) Use `print_prepr`
+#     6-Oct-2022 (CT) Add `timezone_context`; use it to fix tz-specific tests
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,9 @@ from   _TFL.pyk            import pyk
 import _CAL.Date_Time
 import _TFL.CAO
 import _TFL.I18N
+
+import os
+import time
 
 date_time_localizer_pattern = Regexp \
     ( ( r"(?P<head> ^|[\[(\s])"
@@ -58,11 +62,12 @@ def date_time_localizer \
         (s, format = "%Y-%m-%d %H:%M", pattern = None, count = 0) :
     """Convert date-times in `s` into local time without tzoffset.
 
-    >>> print_prepr (date_time_localizer ("09d82ac 2012-03-29 21:06:26 +0200 martin@mangari.org"))
+    >>> with timezone_context ("CET") :
+    ...   print_prepr (date_time_localizer ("09d82ac 2012-03-29 21:06:26 +0200 martin@mangari.org"))
+    ...   print_prepr (date_time_localizer ("f6baffa [2012-03-29 10:06:46 -0400] martin@mangari.org"))
+    ...   print_prepr (date_time_localizer ("f99a29d (2005-03-22 09:34:40 +0000) tanzer@swing.co.at"))
     '09d82ac 2012-03-29 21:06 martin@mangari.org'
-    >>> print_prepr (date_time_localizer ("f6baffa [2012-03-29 10:06:46 -0400] martin@mangari.org"))
     'f6baffa [2012-03-29 16:06] martin@mangari.org'
-    >>> print_prepr (date_time_localizer ("f99a29d (2005-03-22 09:34:40 +0000) tanzer@swing.co.at"))
     'f99a29d (2005-03-22 10:34) tanzer@swing.co.at'
 
     """
@@ -79,6 +84,19 @@ def date_time_localizer \
         return result
     return pattern.sub (repl, s, count)
 # end def date_time_localizer
+
+@TFL.Contextmanager
+def timezone_context (tzname) :
+    """Temporarily change the local timezone to `tzname`."""
+    old_tzname = time.tzname [0]
+    try :
+        os.environ ["TZ"] = tzname
+        time.tzset  ()
+        yield
+    finally :
+        os.environ ["TZ"] = old_tzname
+        time.tzset  ()
+# end def timezone_context
 
 def _main (cmd) :
     import fileinput
