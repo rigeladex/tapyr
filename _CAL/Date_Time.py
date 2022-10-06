@@ -40,6 +40,7 @@
 #    26-Sep-2016 (CT) Move `sidereal_time` to `CAL.Sky.Earth`
 #     1-Nov-2020 (CT) Make space before `time_pattern.tzinfo` optional
 #     5-Oct-2022 (CT) Add `_default_format`
+#     6-Oct-2022 (CT) Add `midnight`, `noon`
 #    ««revision-date»»···
 #--
 
@@ -190,6 +191,16 @@ class Date_Time (CAL.Date, CAL.Time) :
         )
 
     from _CAL.Delta import Date_Time_Delta as Delta
+
+    @Once_Property
+    def midnight (self) :
+        return self.replace (hour=0, minute=0, second=0, microsecond=0)
+    # end def midnight
+
+    @Once_Property
+    def noon (self) :
+        return self.replace (hour=12, minute=0, second=0, microsecond=0)
+    # end def noon
 
     def as_date (self) :
         """Return `self` converted to pure `Date`."""
