@@ -1,1 +1,2 @@
-/swing/system/git/dirin
+. /swing/login/git_ini 2> /dev/null
+export LSE_FRAME_TITLE_PREFIX=TPR
