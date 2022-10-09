@@ -42,6 +42,7 @@
 #     5-Oct-2022 (CT) Add `_default_format`
 #     6-Oct-2022 (CT) Add `midnight`, `noon`
 #     6-Oct-2022 (CT) Use `timezone_context` to fix tz-specific doctests
+#     9-Oct-2022 (CT) Simplify `as_local` (support only Python 3.9+)
 #    ««revision-date»»···
 #--
 
@@ -119,16 +120,20 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> with timezone_context ("CET") :
        ...   dt1 = Date_Time (2008, 1, 7, 10, 16, 42, 0)
        ...   dt1
+       ...   dt1.as_local ()
        ...   dt1.as_utc ()
-       ...   dt4 = Date_Time (2008, 4, 7, 10, 16, 42, 0)
-       ...   dt4
-       ...   dt4.as_utc ()
+       ...   dt2 = Date_Time (2008, 4, 7, 10, 16, 42, 0)
+       ...   dt2
+       ...   dt2.as_local ()
+       ...   dt2.as_utc ()
        ...   dt3 = Date_Time.from_string ("2012-03-29 10:06:46 -0400")
        ...   dt3
        ...   dt3.as_local ()
        ...   dt3.as_utc ()
        Date_Time (2008, 1, 7, 10, 16, 42, 0)
+       Date_Time (2008, 1, 7, 10, 16, 42, 0)
        Date_Time (2008, 1, 7, 9, 16, 42, 0)
+       Date_Time (2008, 4, 7, 10, 16, 42, 0)
        Date_Time (2008, 4, 7, 10, 16, 42, 0)
        Date_Time (2008, 4, 7, 8, 16, 42, 0)
        Date_Time (2012, 3, 29, 10, 6, 46, 0)
@@ -212,12 +217,7 @@ class Date_Time (CAL.Date, CAL.Time) :
 
     def as_local (self) :
         """Return `self` converted to local time."""
-        from dateutil.tz import tzlocal
-        local = self
-        if not local.tzinfo :
-            local = self.replace (tzinfo = tzlocal ())
-        return self.__class__ \
-            (** {self._kind : local._body.astimezone (tzlocal ())})
+        return self.__class__ (** {self._kind : self._body.astimezone ()})
     # end def as_local
 
     def as_time (self) :
