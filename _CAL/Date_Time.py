@@ -43,6 +43,7 @@
 #     6-Oct-2022 (CT) Add `midnight`, `noon`
 #     6-Oct-2022 (CT) Use `timezone_context` to fix tz-specific doctests
 #     9-Oct-2022 (CT) Simplify `as_local` (support only Python 3.9+)
+#    10-Oct-2022 (CT) Add property `yyyy_mm_dd_HH_MM`
 #    ««revision-date»»···
 #--
 
@@ -173,6 +174,10 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> Date_Time.from_string_x ("18:40", date = td, time = tt, future = True)
        Date_Time (2014, 9, 19, 18, 40, 0, 0)
 
+       >>> print (Date_Time (2004, 10, 15, 16,  3, 14).yyyy_mm_dd_HH_MM)
+       2004-10-15 16:03
+       >>> print (Date_Time (2004, 10, 15, 16,  3, 34).yyyy_mm_dd_HH_MM)
+       2004-10-15 16:04
     """
 
     _Type            = datetime.datetime
@@ -209,6 +214,13 @@ class Date_Time (CAL.Date, CAL.Time) :
     def noon (self) :
         return self.replace (hour=12, minute=0, second=0, microsecond=0)
     # end def noon
+
+    @Once_Property
+    def yyyy_mm_dd_HH_MM (self) :
+        "Return formatted date/time value with rounded minutes"
+        dt = self + datetime.timedelta (seconds = 30)
+        return dt.formatted ("%Y-%m-%d %H:%M")
+    # end def yyyy_mm_dd_HH_MM
 
     def as_date (self) :
         """Return `self` converted to pure `Date`."""
