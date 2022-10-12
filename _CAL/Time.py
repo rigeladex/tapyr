@@ -33,6 +33,9 @@
 #    26-Sep-2016 (CT) Correct `microsecond` in `from_decimal_hours`, `seconds`
 #    25-Sep-2018 (CT) Dry `as_degrees`: use `.seconds`, not home-grown code
 #    12-Oct-2022 (CT) Add `Time.hh_mm_ss` and `.formatted`
+#    12-Oct-2022 (CT) Remove default `format` from `formatted`
+#                     - The default broke Date_Time calls to `formatted`
+#                       without argument
 #    ««revision-date»»···
 #--
 
@@ -227,7 +230,7 @@ class Time (CAL._DTW_) :
         return result
     # end def seconds
 
-    def formatted (self, format = "%H:%M:%S") :
+    def formatted (self, format = None) :
         if format == "%H:%M:%S" :
             return "%02d:%02d:%02d" % self.hh_mm_ss
         elif format == "%H:%M" :

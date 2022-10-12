@@ -44,6 +44,7 @@
 #     6-Oct-2022 (CT) Use `timezone_context` to fix tz-specific doctests
 #     9-Oct-2022 (CT) Simplify `as_local` (support only Python 3.9+)
 #    10-Oct-2022 (CT) Add property `yyyy_mm_dd_HH_MM`
+#    12-Oct-2022 (CT) Add doctest for `formatted`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,10 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> d = Date_Time (2004, 10, 15, 16,  3, 14)
        >>> print (d)
        2004-10-15 16:03:14
+       >>> print (d.formatted ())
+       2004-10-15 16:03:14
+       >>> print (d.formatted ("%b"))
+       Oct
        >>> print (jsonified ([d, Delta (3)]))
        ["2004-10-15T16:03:14", "3 days, 0:00:00"]
 
