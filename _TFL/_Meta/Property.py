@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2017 Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -58,6 +58,7 @@
 #    25-Jul-2016 (CT) Add `Class_and_Instance_Lazy_Property_NI`
 #     5-Jun-2017 (CT) Add `Optional_Computed_Property`,
 #                     `Optional_Computed_Once_Property`
+#    12-Oct-2022 (CT) Fix doctests boken by Python-3.10
 #    ««revision-date»»···
 #--
 
@@ -779,14 +780,14 @@ class Property (property, metaclass = TFL.Meta.M_Class) :
          137
          >>> u.foo
          137
-         >>> T.foo = 23
+         >>> T.foo = 23 # doctest:+ELLIPSIS
          Traceback (most recent call last):
            ...
-         AttributeError: can't set attribute
-         >>> t.foo = 1764
+         AttributeError: can't set attribute...
+         >>> t.foo = 1764 # doctest:+ELLIPSIS
          Traceback (most recent call last):
            ...
-         AttributeError: can't set attribute
+         AttributeError: can't set attribute...
          >>> u.foo = 23 * 23
          >>> u.foo
          529

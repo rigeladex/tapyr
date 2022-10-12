@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 Christian Tanzer All rights reserved
+# Copyright (C) 2016-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -33,6 +33,7 @@
 #                     and `Float_Range_Discrete`
 #     4-Apr-2017 (CT) Add guard for `eps` and `last` to `__iter__`
 #    19-Aug-2019 (CT) Use `print_prepr`
+#    12-Oct-2022 (CT) Fix doctests boken by Python-3.10
 #    ««revision-date»»···
 #--
 
@@ -1620,24 +1621,24 @@ _test_int_range = r"""
     [1, 2) 1 2
     [2, 4] 2 4
 
-    >>> with expect_except (AttributeError) :
+    >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
     ...     ii_24.lower  = -2
     ...     ii_24.upper  = 20
     ...     ii_24.btype  = "()"
     ...     ii_24.length = 0
-    AttributeError: can't set attribute
+    AttributeError: can't set attribute...
 
-    >>> with expect_except (AttributeError) :
+    >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
     ...     ii_24.upper  = 20
-    AttributeError: can't set attribute
+    AttributeError: can't set attribute...
 
-    >>> with expect_except (AttributeError) :
+    >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
     ...     ii_24.btype  = "()"
-    AttributeError: can't set attribute
+    AttributeError: can't set attribute...
 
-    >>> with expect_except (AttributeError) :
+    >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
     ...     ii_24.length = 0
-    AttributeError: can't set attribute
+    AttributeError: can't set attribute...
 
     >>> for r in (ii_24, ix_24, xi_24, xx_24) :
     ...     print (r, portable_repr (r.range_pattern.match (str (r)).groupdict ()))
