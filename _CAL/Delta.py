@@ -50,6 +50,9 @@
 #    19-Apr-2016 (CT) Add `Month_Delta.__mul__`
 #    26-Jun-2016 (CT) Add `Time_Delta.__float__`
 #    12-Oct-2022 (CT) Add `Time_Delta.hh_mm_ss` and `.formatted`
+#    12-Oct-2022 (CT) Move `Time_Delta.formatted` to `_DT_Delta_`
+#                     + and generalize so that it works for
+#                       `Date_Delta` and `Date_Time_Delta`, too
 #    ««revision-date»»···
 #--
 
@@ -155,11 +158,12 @@ class _Delta_ (_Delta_Mixin_, CAL._DTW_) :
 class _DT_Delta_ (_Delta_) :
     """Root class for datetime.timedelta wrapping classes"""
 
-    _Type            = datetime.timedelta
-    _kind            = "delta"
-    _timetuple_slice = lambda s, tt : (0, ) * len (s._init_arg_names)
+    _Type              = datetime.timedelta
+    _kind              = "delta"
+    _supported_formats = set (("%H:%M:%S", "%H:%M", "%H"))
+    _timetuple_slice   = lambda s, tt : (0, ) * len (s._init_arg_names)
 
-    Zero             = datetime.timedelta (0)
+    Zero               = datetime.timedelta (0)
 
     def delta_op (self, rhs, op) :
         """Return result of `op` applied to `self` and delta `rhs`"""
@@ -178,6 +182,31 @@ class _DT_Delta_ (_Delta_) :
             ### assume it is an of a `datetime` class
             return op (dot, self._body)
     # end def dt_op
+
+    def formatted (self, format = "%H:%M:%S") :
+        if format not in self._supported_formats :
+            raise ValueError ("Unsupported format %s for %s" % (format, self))
+        if self._body.seconds :
+            if format == "%H:%M:%S" :
+                tr  = "%2d:%02d:%02d" % self.hh_mm_ss
+            elif format == "%H:%M" :
+                tr  = "%2d:%02d" % self.hh_mm
+            elif format == "%H" :
+                hh, mm  = self.hh_mm
+                if mm > 30 :
+                    hh += 1
+                tr  = "%dh" % hh
+        else :
+            tr = ""
+        days    = self._body.days
+        dr      = ("%dd" % days) if days else ""
+        if not self._body.seconds :
+            tr     = ""
+            result = dr
+        else :
+            result = "+".join ((dr, tr)) if dr else tr
+        return result
+    # end def formatted
 
     def __abs__ (self) :
         if self._body < self.Zero :
@@ -227,6 +256,9 @@ class Time_Delta (_DT_Delta_) :
     3:00:00
     >>> print (t.formatted ("%H:%M"))
     3:00
+    >>> print (t.formatted ("%H"))
+    3h
+
     >>> t.h, t.m, t.s, t.seconds
     (3, 0, 0, 10800)
     >>> abs (t) is t
@@ -355,15 +387,6 @@ class Time_Delta (_DT_Delta_) :
         return result
     # end def delta_op
 
-    def formatted (self, format = "%H:%M:%S") :
-        if format == "%H:%M:%S" :
-            return "%2d:%02d:%02d" % self.hh_mm_ss
-        elif format == "%H:%M" :
-            return "%2d:%02d" % self.hh_mm
-        else :
-            raise ValueError ("Unsupported format %s for %s" % (format, self))
-    # end def formatted
-
     def __float__ (self) :
         return self.seconds + self.microseconds / 1e6
     # end def __float__
@@ -426,6 +449,14 @@ class Date_Delta (_DT_Delta_) :
     ...     print (Date_Delta.from_string ("-2 Wochen -3 Tage"))
     11 days, 0:00:00
     -17 days, 0:00:00
+
+    >>> dd = Date_Delta (42)
+    >>> print (dd.formatted ())
+    42d
+    >>> print (dd.formatted ("%H:%M"))
+    42d
+    >>> print (dd.formatted ("%H"))
+    42d
 
     """
 
@@ -526,6 +557,14 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
     16 days, 16:44:45
     16 days, 16:44:45
 
+    >>> dtd = Date_Time_Delta (29.53 * 0.5)
+    >>> print (dtd.formatted ())
+    14d+18:21:36
+    >>> print (dtd.formatted ("%H:%M"))
+    14d+18:22
+    >>> print (dtd.formatted ("%H"))
+    14d+18h
+
     """
 
     _init_arg_names = ("days", ) + Time_Delta._init_arg_names + ("weeks", )
@@ -560,7 +599,6 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
           r"$"
         , flags = re.VERBOSE | re.IGNORECASE
         )
-
 
 # end class Date_Time_Delta
 
