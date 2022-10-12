@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2018 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -32,6 +32,7 @@
 #    20-Jul-2016 (CT) Change `Time.pattern` to bare `hour` without any `minute`
 #    26-Sep-2016 (CT) Correct `microsecond` in `from_decimal_hours`, `seconds`
 #    25-Sep-2018 (CT) Dry `as_degrees`: use `.seconds`, not home-grown code
+#    12-Oct-2022 (CT) Add `Time.hh_mm_ss` and `.formatted`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,10 @@ class Time (CAL._DTW_) :
        >>> t4 = Time (23, 59, 59)
        >>> print (t4, t4.seconds)
        23:59:59 86399
+       >>> print (t4.formatted ())
+       23:59:59
+       >>> print (t4.formatted ("%H:%M"))
+       24:00
 
        >>> Time (0, 0, 0, 0).as_degrees
        0.0
@@ -98,6 +103,7 @@ class Time (CAL._DTW_) :
        Time (12, 1, 2, 0)
        >>> Time.from_string ("12:01:03.12678")
        Time (12, 1, 3, 12678)
+
     """
 
     _Type            = datetime.time
@@ -180,6 +186,13 @@ class Time (CAL._DTW_) :
     @Once_Property
     def hh_mm (self) :
         """Return tuple of (hour, minute) with `minute` rounded."""
+        hh, mm, ss = self.hh_mm_ss
+        if ss >= 30 :
+            mm += 1
+        if mm >= 60 :
+            mm -= 60
+            hh += 1
+        return (hh, mm)
         hh = self.hour
         mm = self.minute + (self.second + 30) // 60
         if mm >= 60 :
@@ -191,6 +204,21 @@ class Time (CAL._DTW_) :
     # end def hh_mm
 
     @Once_Property
+    def hh_mm_ss (self) :
+        """Return tuple of (hour, minute, seconds) with `second` rounded."""
+        hh = self.hour
+        mm = self.minute
+        ss = int (self.second + self.microsecond / 1000000. + 0.5)
+        if ss >= 60 :
+            ss -= 60
+            mm +=  1
+        if mm >= 60 :
+            mm -= 60
+            hh +=  1
+        return (hh, mm, ss)
+    # end def hh_mm_ss
+
+    @Once_Property
     def seconds (self) :
         """Seconds since midnight."""
         result = self.hour * 3600 + self.minute * 60 + self.second
@@ -198,6 +226,15 @@ class Time (CAL._DTW_) :
             result += (self.microsecond / 1000000.)
         return result
     # end def seconds
+
+    def formatted (self, format = "%H:%M:%S") :
+        if format == "%H:%M:%S" :
+            return "%02d:%02d:%02d" % self.hh_mm_ss
+        elif format == "%H:%M" :
+            return "%02d:%02d" % self.hh_mm
+        else :
+            return self.__super.formatted (format)
+    # end def formatted
 
     @classmethod
     def _from_string_match_kw (cls, s, match) :
