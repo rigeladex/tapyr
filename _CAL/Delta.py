@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2016 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -49,6 +49,7 @@
 #    11-Feb-2016 (CT) Factor `_Delta_Mixin_`
 #    19-Apr-2016 (CT) Add `Month_Delta.__mul__`
 #    26-Jun-2016 (CT) Add `Time_Delta.__float__`
+#    12-Oct-2022 (CT) Add `Time_Delta.hh_mm_ss` and `.formatted`
 #    ««revision-date»»···
 #--
 
@@ -222,6 +223,10 @@ class Time_Delta (_DT_Delta_) :
     >>> t = Time_Delta (3)
     >>> print (t)
     3:00:00
+    >>> print (t.formatted ())
+    3:00:00
+    >>> print (t.formatted ("%H:%M"))
+    3:00
     >>> t.h, t.m, t.s, t.seconds
     (3, 0, 0, 10800)
     >>> abs (t) is t
@@ -236,8 +241,21 @@ class Time_Delta (_DT_Delta_) :
     >>> hms = Time_Delta (2, 15, 42)
     >>> print (hms)
     2:15:42
+    >>> print (hms.formatted ())
+    2:15:42
+    >>> print (hms.formatted ("%H:%M"))
+    2:16
     >>> hms.h, hms.m, hms.s, hms.seconds
     (2, 15, 42, 8142)
+
+    >>> hmsm = Time_Delta (2, 15, 30, 501)
+    >>> print (hmsm)
+    2:15:30.501000
+    >>> print (hmsm.formatted ())
+    2:15:31
+    >>> print (hmsm.formatted ("%H:%M"))
+    2:16
+
     >>> md = Time_Delta (minutes = 42)
     >>> print (md)
     0:42:00
@@ -303,6 +321,33 @@ class Time_Delta (_DT_Delta_) :
         , flags = re.VERBOSE | re.IGNORECASE
         )
 
+    @Once_Property
+    def hh_mm (self) :
+        """Return tuple of (hour, minute) with `minute` rounded."""
+        hh, mm, ss = self.hh_mm_ss
+        if ss >= 30 :
+            mm += 1
+        if mm >= 60 :
+            mm -= 60
+            hh += 1
+        return (hh, mm)
+    # end def hh_mm
+
+    @Once_Property
+    def hh_mm_ss (self) :
+        """Return tuple of (hour, minute, seconds) with `second` rounded."""
+        hh = self.h
+        mm = self.m
+        ss = int ((float (self) % 60) + 0.5)
+        if ss >= 60 :
+            ss -= 60
+            mm +=  1
+        if mm >= 60 :
+            mm -= 60
+            hh +=  1
+        return (hh, mm, ss)
+    # end def hh_mm_ss
+
     def delta_op (self, rhs, op) :
         result = self.__super.delta_op (rhs, op)
         if result._body.days :
@@ -310,16 +355,14 @@ class Time_Delta (_DT_Delta_) :
         return result
     # end def delta_op
 
-    @Once_Property
-    def hh_mm (self) :
-        """Return tuple of (hour, minute) with `minute` rounded."""
-        hh = self.h
-        mm = self.m + (self.s + 30) // 60
-        if mm >= 60 :
-            mm -= 60
-            hh += 1
-        return (hh, mm)
-    # end def hh_mm
+    def formatted (self, format = "%H:%M:%S") :
+        if format == "%H:%M:%S" :
+            return "%2d:%02d:%02d" % self.hh_mm_ss
+        elif format == "%H:%M" :
+            return "%2d:%02d" % self.hh_mm
+        else :
+            raise ValueError ("Unsupported format %s for %s" % (format, self))
+    # end def formatted
 
     def __float__ (self) :
         return self.seconds + self.microseconds / 1e6
