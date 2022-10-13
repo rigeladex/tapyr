@@ -54,6 +54,7 @@
 #                     + and generalize so that it works for
 #                       `Date_Delta` and `Date_Time_Delta`, too
 #    13-Oct-2022 (CT) Add optional argument `day_digits` to `formatted`
+#    13-Oct-2022 (CT) Change output format for `"%H"` to `"%2dh"`
 #    ««revision-date»»···
 #--
 
@@ -196,7 +197,7 @@ class _DT_Delta_ (_Delta_) :
                 hh, mm  = self.hh_mm
                 if mm > 30 :
                     hh += 1
-                tr  = "%dh" % hh
+                tr  = "%2dh" % hh
         else :
             tr = ""
         days    = self._body.days
@@ -564,7 +565,7 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
     >>> print (dtd.formatted ("%H:%M", day_digits = 2))
      7d+ 9:11
     >>> print (dtd.formatted ("%H", day_digits = 2))
-     7d+9h
+     7d+ 9h
     >>> dtd = Date_Time_Delta (29.53 * 0.5)
     >>> print (dtd.formatted ())
     14d+18:21:36
