@@ -53,6 +53,7 @@
 #    12-Oct-2022 (CT) Move `Time_Delta.formatted` to `_DT_Delta_`
 #                     + and generalize so that it works for
 #                       `Date_Delta` and `Date_Time_Delta`, too
+#    13-Oct-2022 (CT) Add optional argument `day_digits` to `formatted`
 #    ««revision-date»»···
 #--
 
@@ -183,7 +184,7 @@ class _DT_Delta_ (_Delta_) :
             return op (dot, self._body)
     # end def dt_op
 
-    def formatted (self, format = "%H:%M:%S") :
+    def formatted (self, format = "%H:%M:%S", day_digits = 1) :
         if format not in self._supported_formats :
             raise ValueError ("Unsupported format %s for %s" % (format, self))
         if self._body.seconds :
@@ -199,7 +200,7 @@ class _DT_Delta_ (_Delta_) :
         else :
             tr = ""
         days    = self._body.days
-        dr      = ("%dd" % days) if days else ""
+        dr      = ("%*dd" % (day_digits, days)) if days else ""
         if not self._body.seconds :
             tr     = ""
             result = dr
@@ -557,6 +558,13 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
     16 days, 16:44:45
     16 days, 16:44:45
 
+    >>> dtd = Date_Time_Delta (29.53 * 0.25)
+    >>> print (dtd.formatted (day_digits = 2))
+     7d+ 9:10:48
+    >>> print (dtd.formatted ("%H:%M", day_digits = 2))
+     7d+ 9:11
+    >>> print (dtd.formatted ("%H", day_digits = 2))
+     7d+9h
     >>> dtd = Date_Time_Delta (29.53 * 0.5)
     >>> print (dtd.formatted ())
     14d+18:21:36
