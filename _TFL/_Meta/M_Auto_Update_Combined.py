@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015-2020 Christian Tanzer All rights reserved
+# Copyright (C) 2015-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.Meta.
@@ -21,6 +21,7 @@
 #     6-Mar-2015 (CT) Add `except` to `_m_update_combine`
 #     5-Aug-2015 (CT) Improve `__doc__`
 #    19-Aug-2019 (CT) Use `print_prepr`
+#    14-Oct-2022 (CT) Save uncombined value of auto-combined attribute
 #    ««revision-date»»···
 #--
 
@@ -111,8 +112,8 @@ class M_Auto_Update_Combined (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.M_Class) :
     # end def __init__
 
     def _m_update_combine (cls, bases, dct) :
+        undef = update_combined_many.Undef
         def _gen (cls, bases, name) :
-            undef = update_combined_many.Undef
             for c in reversed ((cls, ) + bases) :
                 yield getattr (c, name, undef)
         for name in cls._attrs_to_update_combine :
@@ -124,6 +125,7 @@ class M_Auto_Update_Combined (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.M_Class) :
                     , "for class", cls
                     )
                 raise
+            setattr (cls, "_%s__uncombined__" % name, dct.get (name, undef))
             setattr (cls, name, v)
         for name in cls._attrs_uniq_to_update_combine :
             v = update_combined_many (* _gen (cls, bases, name))
