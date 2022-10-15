@@ -22,6 +22,7 @@
 #     5-Aug-2015 (CT) Improve `__doc__`
 #    19-Aug-2019 (CT) Use `print_prepr`
 #    14-Oct-2022 (CT) Save uncombined value of auto-combined attribute
+#    15-Oct-2022 (CT) Filter identical values before combining
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ their names in either :attr:`_attrs_to_update_combine` or
 from   _TFL                           import TFL
 from   _TFL.pyk                       import pyk
 
-from   _TFL.predicate                 import uniq
+from   _TFL.predicate                 import uniq, uniq_p
 from   _TFL.update_combined           import update_combined_many
 
 import _TFL._Meta.M_Auto_Combine_Sets
@@ -114,22 +115,28 @@ class M_Auto_Update_Combined (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.M_Class) :
     def _m_update_combine (cls, bases, dct) :
         undef = update_combined_many.Undef
         def _gen (cls, bases, name) :
-            for c in reversed ((cls, ) + bases) :
-                yield getattr (c, name, undef)
+            yield from uniq_p \
+                ( (getattr (c, name, undef) for c in reversed ((cls, ) + bases))
+                , lambda x : id (x)
+                )
         for name in cls._attrs_to_update_combine :
+            old = dct.get (name, undef)
             try :
-                v = update_combined_many (* _gen (cls, bases, name))
+                new = update_combined_many (* _gen (cls, bases, name))
             except Exception as exc :
                 print \
                     ( "*** Exception when trying to update/combined", name
                     , "for class", cls
                     )
                 raise
-            setattr (cls, "_%s__uncombined__" % name, dct.get (name, undef))
-            setattr (cls, name, v)
+            setattr (cls, "_%s__uncombined__" % name, old)
+            setattr (cls, name, new)
         for name in cls._attrs_uniq_to_update_combine :
-            v = update_combined_many (* _gen (cls, bases, name))
-            setattr (cls, name, v.__class__ (uniq (v)))
+            old = dct.get (name, undef)
+            ucm = update_combined_many (* _gen (cls, bases, name))
+            new = ucm.__class__ (uniq (ucm))
+            setattr (cls, "_%s__uncombined__" % name, old)
+            setattr (cls, name, new)
     # end def _m_update_combine
 
 # end class M_Auto_Update_Combined
