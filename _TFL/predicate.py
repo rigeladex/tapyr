@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -1174,6 +1174,49 @@ def rsplit_hst (string, * seps) :
 def string_cross_sum (string) :
     return cross_sum (string, ord)
 # end def string_cross_sum
+
+def subclasses_transitive (cls) :
+    """Returns all subclasses of `cls`, transitively (including `cls` itself).
+
+    >>> class A :
+    ...     pass
+    >>> class B (A) :
+    ...     pass
+    >>> class C (A) :
+    ...     pass
+    >>> class D (B) :
+    ...     pass
+    >>> class E (C) :
+    ...     pass
+    >>> class F (B, C) :
+    ...     pass
+    >>> class G (D, E) :
+    ...     pass
+
+    >>> print (", ".join (c.__name__ for c in subclasses_transitive (A)))
+    A, B, D, G, F, C, E
+    >>> print (", ".join (c.__name__ for c in subclasses_transitive (B)))
+    B, D, G, F
+    >>> print (", ".join (c.__name__ for c in subclasses_transitive (C)))
+    C, E, G, F
+    >>> print (", ".join (c.__name__ for c in subclasses_transitive (D)))
+    D, G
+    >>> print (", ".join (c.__name__ for c in subclasses_transitive (E)))
+    E, G
+    >>> print (", ".join (c.__name__ for c in subclasses_transitive (F)))
+    F
+
+    """
+    seen = set ()
+    def _gen (c) :
+        yield c
+        for s in c.__subclasses__ () :
+            if s not in seen :
+                seen.add (s)
+                yield from _gen (s)
+    result = tuple (_gen (cls))
+    return result
+# end def subclasses_transitive
 
 def successor_of (element, iterable, pairwise = pairwise) :
     """Returns the successor of `element` in `iterable`"""
