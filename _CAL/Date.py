@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2016 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -67,6 +67,8 @@
 #    14-May-2016 (CT) Strip leading `+` from delta arg for `_Date_Arg_`
 #    26-Sep-2016 (CT) Move `sidereal_time` to `CAL.Sky`
 #    30-Nov-2016 (CT) Use `CAL.G8R.Months.LC`, not `CAL.G8R.Months`
+#    21-Oct-2022 (CT) Add and use `date_pattern_abbr`
+#                     * support bare `year` and `year-month` in `from_string`
 #    ««revision-date»»···
 #--
 
@@ -173,6 +175,11 @@ class Date (CAL._DTW_) :
        >>> print (Date.from_string ("Oct 5, 2004"))
        2004-10-05
 
+       >>> print (Date.from_string ("2022"))
+       2022-01-01
+       >>> print (Date.from_string ("2022-12"))
+       2022-12-01
+
        >>> from _TFL.json_dump import to_string as jsonified
        >>> print (jsonified ([d]))
        ["2004-01-31"]
@@ -244,18 +251,18 @@ class Date (CAL._DTW_) :
     ### Julian date offsets to Rata Die (Jan 1, 1)
     ###     http://en.wikipedia.org/wiki/Julian_day_number
     ###     http://en.wikipedia.org/wiki/Epoch_%28astronomy%29
-    JD_offset    = dict \
-        ( CJD    =   1721424    ### Chronological JD (based on Jan  1, 4713 BC)
-        , CJS    =   1721424
-        , JD     =   1721424.5  ### Julian day (starts at noon)
-        , JD2000 = -  730120.5  ### JD relative to J2000.0 (noon)
-        , MJD    = -  678576    ### Modified      JD (based on Nov 17, 1858)
-        , MJS    = -  678576
-        , TJD    = -  718576    ### Truncated     JD (based on May 24, 1968)
-        , TJS    = -  718576
+    JD_offset       = dict \
+        ( CJD       =   1721424    ### Chronological JD (base Jan  1, 4713 BC)
+        , CJS       =   1721424
+        , JD        =   1721424.5  ### Julian day (starts at noon)
+        , JD2000    = -  730120.5  ### JD relative to J2000.0 (noon)
+        , MJD       = -  678576    ### Modified      JD (base Nov 17, 1858)
+        , MJS       = -  678576
+        , TJD       = -  718576    ### Truncated     JD (base May 24, 1968)
+        , TJS       = -  718576
         )
 
-    months = \
+    months          = \
         { _ ("jan") :  1, _ ("january")   :   1,  1 : "jan"
         , _ ("feb") :  2, _ ("february")  :   2,  2 : "feb"
         , _ ("mar") :  3, _ ("march")     :   3,  3 : "mar"
@@ -270,13 +277,13 @@ class Date (CAL._DTW_) :
         , _ ("dec") : 12, _ ("december")  :  12, 12 : "dec"
         }
 
-    _Type            = datetime.date
-    _default_format  = "%Y-%m-%d"
-    _kind            = "date"
-    _init_arg_names  = ("year", "month", "day")
-    _timetuple_slice = lambda s, tt : tt [:3]
+    _Type               = datetime.date
+    _default_format     = "%Y-%m-%d"
+    _kind               = "date"
+    _init_arg_names     = ("year", "month", "day")
+    _timetuple_slice    = lambda s, tt : tt [:3]
 
-    date_pattern     = Multi_Regexp \
+    date_pattern        = Multi_Regexp \
         ( r"(?P<year>  \d{4,4})"
           r"([-/]?)"
           r"(?P<month> \d{2,2})"
@@ -295,13 +302,27 @@ class Date (CAL._DTW_) :
         , flags = re.VERBOSE | re.IGNORECASE
         )
 
-    day              = property (TFL.Getter._body.day)
-    is_weekday       = property (lambda s : s.weekday < 5)
-    month            = property (TFL.Getter._body.month)
-    wk_ordinal       = property (lambda s : (s.ordinal - s.weekday) // 7)
-    year             = property (TFL.Getter._body.year)
+    _date_pattern_abbr  = \
+        ( r"(?P<year>  \d{4,4})"
+          r"([-/]?)"
+          r"(?P<month> \d{2,2})?"
+        )
+    date_pattern_abbr   = Regexp \
+        ( _date_pattern_abbr
+        , flags = re.VERBOSE | re.IGNORECASE
+        )
+    date_pattern_abbr_s = Regexp \
+        ( _date_pattern_abbr + "$"
+        , flags = re.VERBOSE | re.IGNORECASE
+        )
 
-    yad              = None ### set for negative `day` arguments
+    day                 = property (TFL.Getter._body.day)
+    is_weekday          = property (lambda s : s.weekday < 5)
+    month               = property (TFL.Getter._body.month)
+    wk_ordinal          = property (lambda s : (s.ordinal - s.weekday) // 7)
+    year                = property (TFL.Getter._body.year)
+
+    yad                 = None ### set for negative `day` arguments
 
     from _CAL.Delta import Date_Delta as Delta
 
@@ -380,9 +401,15 @@ class Date (CAL._DTW_) :
 
     @classmethod
     def from_string (cls, s, check_tail = True) :
-        match = cls.date_pattern.match (s)
-        if match and ((not check_tail) or match.end () == len (s.rstrip ())) :
+        def _check (match) :
+            return (not check_tail) or match.end () == len (s.rstrip ())
+        if (match := cls.date_pattern.match (s)) and _check (match) :
             return cls (** cls._from_string_match_kw (s, match))
+        elif (match := cls.date_pattern_abbr.match (s)) and _check (match) :
+            kwds = cls._from_string_match_kw (s, match)
+            kwds.setdefault ("month", 1)
+            kwds ["day"] = 1
+            return cls (** kwds)
         else :
             raise ValueError (s)
     # end def from_string

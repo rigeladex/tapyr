@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 Christian Tanzer All rights reserved
+# Copyright (C) 2016-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package _CAL.
@@ -19,6 +19,7 @@
 #    19-Apr-2016 (CT) Creation
 #    17-Jun-2016 (CT) Fix `__iter__`, add tests
 #     5-Jan-2017 (CT) Fix doctest of `Week` (set `Week.now`)
+#    21-Oct-2022 (CT) Add support for `CAL.Date.date_pattern_abbr`
 #    ««revision-date»»···
 #--
 
@@ -275,6 +276,22 @@ class Interval (_Period_) :
     >>> print (Interval.from_string ("2016-04-18..2016-04-19"))
     2016-04-18..2016-04-19
 
+    >>> y = Interval.from_string ("2022 .. 2023")
+    >>> print (y)
+    2022
+    >>> print (len (y))
+    365
+
+    >>> print (Interval.from_string ("2021 .. 2026"))
+    2021..2025
+
+    >>> q = Interval.from_string ("2022-04 .. 2022-07")
+    >>> print (q)
+    2022-04-01..2022-06-30
+
+    >>> print (len (q))
+    91
+
     """
 
     format           = "%s..%s"
@@ -324,8 +341,16 @@ class Interval (_Period_) :
     @classmethod
     def _from_string_match_kw \
             (cls, s, match, add_year = False, future_p = False) :
-        s      = CAL.Date.from_string (match.group ("start"))
-        f      = CAL.Date.from_string (match.group ("finis"))
+        ms          = match.group ("start").strip ()
+        mf          = match.group ("finis").strip ()
+        s           = CAL.Date.from_string (ms)
+        f           = CAL.Date.from_string (mf)
+        is_m_or_y   = \
+            (   CAL.Date.date_pattern_abbr_s.match (ms)
+            and CAL.Date.date_pattern_abbr_s.match (mf)
+            )
+        if is_m_or_y :
+            f -= 1
         result = dict (start = s, finis = f)
         return result
     # end def _from_string_match_kw
@@ -341,7 +366,14 @@ class Interval (_Period_) :
     # end def __repr__
 
     def __str__ (self) :
-        return self.format % (self.start, self.finis)
+        s = self.start
+        f = self.finis
+        if s.month == s.day == 1 and f.month == 12 and f.day == 31 :
+            s = s.year
+            f = f.year
+            if s == f :
+                return str (s)
+        return self.format % (s, f)
     # end def __str__
 
     def __sub__ (self, rhs) :
@@ -470,10 +502,8 @@ class Quarter (_Period_) :
     >>> Quarter.from_string ("2016-01-29")
     Quarter (2016, 1)
 
-    >>> Quarter.from_string ("2015-01")
-    Traceback (most recent call last):
-      ...
-    ValueError: 2015-01
+    >>> Quarter.from_string ("2022-12")
+    Quarter (2022, 4)
 
     """
 
@@ -760,6 +790,11 @@ def from_string (s, add_year = False, future_p = False) :
 
     >>> print (from_string ("2016-12-29..2017-01-03"))
     2016-12-29..2017-01-03
+
+    >>> from_string ("2022 .. 2023")
+    Interval (Date (2022, 1, 1), Date (2022, 12, 31))
+    >>> print (from_string ("2022 .. 2023"))
+    2022
 
     >>> print (from_string ("2016-13-29..2016-01-03"))
     Traceback (most recent call last):

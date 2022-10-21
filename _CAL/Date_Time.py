@@ -146,6 +146,9 @@ class Date_Time (CAL.Date, CAL.Time) :
        Date_Time (2012, 3, 29, 16, 6, 46, 0)
        Date_Time (2012, 3, 29, 14, 6, 46, 0)
 
+       >>> print (Date_Time.from_string ("2022 09:42"))
+       2022-01-01 09:42:00
+
        >>> td = Date_Time (2014, 9, 19, 17, 23, 42)
        >>> tt = CAL.Time  (17, 23, 42)
 
