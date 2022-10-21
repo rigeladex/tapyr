@@ -20,22 +20,25 @@
 #    17-Jun-2016 (CT) Fix `__iter__`, add tests
 #     5-Jan-2017 (CT) Fix doctest of `Week` (set `Week.now`)
 #    21-Oct-2022 (CT) Add support for `CAL.Date.date_pattern_abbr`
+#    21-Oct-2022 (CT) Add `_Period_Arg_`, `full_years`
 #    ««revision-date»»···
 #--
 
 from   _CAL                       import CAL
 from   _TFL                       import TFL
 
-import _CAL.Date
-import _CAL.Delta
 from   _CAL.Year                  import _Ordinal_
-
 
 from   _TFL.pyk                   import pyk
 from   _TFL.Regexp                import *
+from   _TFL._Meta.Property        import Alias_Property, Class_Property
+
+import _CAL.Date
+import _CAL.Delta
+
+import _TFL.CAO
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
-from   _TFL._Meta.Property        import Alias_Property, Class_Property
 
 class _Period_ (_Ordinal_) :
     """Base class for calendary periods."""
@@ -282,12 +285,17 @@ class Interval (_Period_) :
     >>> print (len (y))
     365
 
-    >>> print (Interval.from_string ("2021 .. 2026"))
+    >>> y5 = Interval.from_string ("2021 .. 2026")
+    >>> print (y5)
     2021..2025
+    >>> y5.full_years
+    (2021, 2022, 2023, 2024, 2025)
 
     >>> q = Interval.from_string ("2022-04 .. 2022-07")
     >>> print (q)
     2022-04-01..2022-06-30
+    >>> q.full_years
+    ()
 
     >>> print (len (q))
     91
@@ -317,6 +325,18 @@ class Interval (_Period_) :
     def finis (self, value) :
         self._finis = value
     # end def finis
+
+    @TFL.Meta.Once_Property
+    def full_years (self) :
+        """If `self` covers 1/more full years, return tuple of year numbers."""
+        s = self.start
+        f = self.finis
+        if s.month == s.day == 1 and f.month == 12 and f.day == 31 :
+            s = s.year
+            f = f.year
+            return tuple (range (s, f+1))
+        return ()
+    # end def full_years
 
     @TFL.Meta.Once_Property
     def month (self) :
@@ -366,13 +386,13 @@ class Interval (_Period_) :
     # end def __repr__
 
     def __str__ (self) :
-        s = self.start
-        f = self.finis
-        if s.month == s.day == 1 and f.month == 12 and f.day == 31 :
-            s = s.year
-            f = f.year
-            if s == f :
-                return str (s)
+        s   = self.start
+        f   = self.finis
+        ys  = self.full_years
+        if ys :
+            if len (ys) == 1 :
+                return str (ys [0])
+            s, * _, f   = ys
         return self.format % (s, f)
     # end def __str__
 
@@ -826,6 +846,20 @@ def from_string (s, add_year = False, future_p = False) :
             raise
     return result
 # end def from_string
+
+class _Period_Arg_ (TFL.CAO.Str) :
+    """Argument or option with a calendary period as value."""
+
+    _real_name = "Period"
+
+    def cook (self, value, cao = None) :
+        result = None
+        if value :
+            return from_string (value)
+        return result
+    # end def cook
+
+# end class _Period_Arg_
 
 if __name__ != "__main__" :
     CAL._Export_Module ()
