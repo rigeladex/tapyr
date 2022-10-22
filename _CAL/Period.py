@@ -21,6 +21,7 @@
 #     5-Jan-2017 (CT) Fix doctest of `Week` (set `Week.now`)
 #    21-Oct-2022 (CT) Add support for `CAL.Date.date_pattern_abbr`
 #    21-Oct-2022 (CT) Add `_Period_Arg_`, `full_years`
+#    22-Oct-2022 (CT) Add support for `Relative_Delta` to `Interval`
 #    ««revision-date»»···
 #--
 
@@ -300,6 +301,12 @@ class Interval (_Period_) :
     >>> print (len (q))
     91
 
+    >>> print (Interval.from_string ("2022-10 .. +2weeks"))
+    2022-10-01..2022-10-15
+
+    >>> print (Interval.from_string ("2022-10 .. +WED(+2)"))
+    2022-10-01..2022-10-12
+
     """
 
     format           = "%s..%s"
@@ -364,7 +371,12 @@ class Interval (_Period_) :
         ms          = match.group ("start").strip ()
         mf          = match.group ("finis").strip ()
         s           = CAL.Date.from_string (ms)
-        f           = CAL.Date.from_string (mf)
+        if mf.startswith (("+", "-")) :
+            import _CAL.Relative_Delta
+            delta   = CAL.Relative_Delta.from_string (mf.lstrip ("+"))
+            f       = s + delta
+        else :
+            f       = CAL.Date.from_string (mf)
         is_m_or_y   = \
             (   CAL.Date.date_pattern_abbr_s.match (ms)
             and CAL.Date.date_pattern_abbr_s.match (mf)
