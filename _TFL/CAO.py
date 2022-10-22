@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2020 Christian Tanzer All rights reserved
+# Copyright (C) 2009-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -176,6 +176,7 @@
 #                     + Factor out `Config.Loader`
 #     5-Jun-2020 (CT) Add `Config_Bundle`
 #     5-Jun-2020 (CT) Redefine `Config_Bundle.raw_default`
+#    22-Oct-2022 (CT) Factor `Config_File`
 #    ««revision-date»»···
 #--
 
@@ -666,9 +667,9 @@ class _Number_ (_Spec_) :
 class Bool (_Spec_O_) :
     """Option with a boolean value"""
 
-    implied_value = "True"
-    needs_value   = False
-    type_abbr     = "B"
+    implied_value       = "True"
+    needs_value         = False
+    type_abbr           = "B"
 
     def cook (self, value, cao = None) :
         if value is None :
@@ -695,8 +696,8 @@ class Bool (_Spec_O_) :
 class Binary (Bool) :
     """Option with a required boolean value"""
 
-    needs_value = True
-    type_abbr   = "Y"
+    needs_value         = True
+    type_abbr           = "Y"
 
 # end class Binary
 
@@ -799,7 +800,7 @@ class Cmd_Choice (_Spec_Base_) :
 class Decimal (_Number_) :
     """Argument or option with a decimal value"""
 
-    type_abbr     = "D"
+    type_abbr           = "D"
 
     def _cook (self, value) :
         if value is not None :
@@ -820,9 +821,9 @@ class File_System_Encoding (_Encoding_) :
 class Float (_Number_) :
     """Argument or option with a floating point value"""
 
-    type_abbr     = "F"
+    type_abbr           = "F"
 
-    range_pat     = Regexp \
+    range_pat           = Regexp \
         ( r"""^\s*"""
           r"""(?P<head> (?: 0[xX])? \d+ (?: \. \d* )?)"""
           r"""\s*"""
@@ -1310,16 +1311,16 @@ class Input_Encoding (_Encoding_) :
 class Int (_Number_) :
     """Argument or option with a integer value"""
 
-    type_abbr     = "I"
+    type_abbr           = "I"
 
-    _cook         = int
+    _cook               = int
 
 # end class Int
 
 class Int_X (_Number_) :
     """Argument or option with a integer value, allowing base specification"""
 
-    type_abbr     = "X"
+    type_abbr           = "X"
 
     def _cook (self, value) :
         if isinstance (value, pyk.string_types) :
@@ -1354,13 +1355,13 @@ class Key (_Spec_) :
 class Money (Decimal) :
     """Argument or option with a decimal value denoting a monetary amount"""
 
-    auto_split     = None
-    type_abbr      = "$"
-    comma_dec_pat  = Regexp \
+    auto_split          = None
+    type_abbr           = "$"
+    comma_dec_pat       = Regexp \
         ( r"([0-9.]+) , (\d{2})$"
         , re.VERBOSE
         )
-    period_dec_pat = Regexp \
+    period_dec_pat      = Regexp \
         ( r"([0-9,]+) \. (\d{2})$"
         , re.VERBOSE
         )
@@ -1387,8 +1388,8 @@ class Output_Encoding (_Encoding_) :
 class Path (_Spec_) :
     """Argument or option with a filename or directory name as value"""
 
-    auto_split    = ":"
-    type_abbr     = "P"
+    auto_split          = ":"
+    type_abbr           = "P"
 
     def cook (self, value, cao = None) :
         ### Need to redefine `cook` because instances without `auto_split`
@@ -1410,7 +1411,7 @@ class Path (_Spec_) :
 class Abs_Path (Path) :
     """Path converted to absolute"""
 
-    type_abbr     = "Q"
+    type_abbr           = "Q"
 
     def cook (self, value, cao = None) :
         ### Need to redefine `cook` because instances without `auto_split`
@@ -1430,13 +1431,13 @@ class Abs_Path (Path) :
 class Rel_Path (Path) :
     """Path that can be relative to a specific base directory."""
 
-    type_abbr     = "R"
+    type_abbr           = "R"
 
-    single_match  = False
-    skip_missing  = True
-    _base_dir     = None
-    _base_dirs    = ()
-    _help_dn      = "Base"
+    single_match        = False
+    skip_missing        = True
+    _base_dir           = None
+    _base_dirs          = ()
+    _help_dn            = "Base"
 
     def __init__ (self, * args, ** kw) :
         self.pop_to_self (kw, "base_dir", "base_dirs", prefix = "_")
@@ -1536,10 +1537,10 @@ class Rel_Path (Path) :
 
 # end class Rel_Path
 
-class Config (_Config_, Rel_Path) :
-    """Option specifying a config-file"""
+class Config_File (Rel_Path) :
+    """Option specifying a config-file that isn't merged options."""
 
-    type_abbr           = "C"
+    type_abbr           = "Z"
     _help_dn            = "Config"
     _pre_load_cb        = None
     _pre_load_cb_run    = False
@@ -1604,6 +1605,13 @@ class Config (_Config_, Rel_Path) :
         return result
     # end def cook
 
+# end class Config_File
+
+class Config (_Config_, Config_File) :
+    """Option specifying a config-file automatically merged into options."""
+
+    type_abbr           = "C"
+
 # end class Config
 
 class Config_Bundle (_Config_, Bool) :
@@ -1649,7 +1657,7 @@ class Percent (Float) :
        Cooked value is float between 0.0 and 1.0.
     """
 
-    type_abbr     = "%"
+    type_abbr           = "%"
 
     def _cook (self, value) :
         if isinstance (value, pyk.string_types) :
@@ -1696,7 +1704,7 @@ class SHA (_User_Config_Entry_, Set) :
 class Str (_Spec_) :
     """Argument or option with a string value"""
 
-    type_abbr     = "S"
+    type_abbr           = "S"
 
     def cook (self, value, cao = None) :
         result = pyk.decoded (value, self.user_config.input_encoding)
@@ -1708,15 +1716,15 @@ class Str (_Spec_) :
 class Str_AS (Str) :
     """Argument or option with a string value, auto-splitting"""
 
-    auto_split    = ","
-    type_abbr     = "T"
+    auto_split          = ","
+    type_abbr           = "T"
 
 # end class Str
 
 class Unicode (Str) :
     """Argument or option with a string value"""
 
-    type_abbr     = "U"
+    type_abbr           = "U"
 
 # end class Unicode
 
@@ -1761,10 +1769,10 @@ class _Regexp_Arg_Mixin_ (TFL.Meta.Object) :
 class _Regexp_Arg_ (_Regexp_Arg_Mixin_, Str) :
     """Argument or option specifying a Regexp."""
 
-    _real_name    = "Regexp"
+    _real_name          = "Regexp"
 
-    auto_split    = "\n"
-    type_abbr     = "~"
+    auto_split          = "\n"
+    type_abbr           = "~"
 
     def cook (self, value, cao = None) :
         if value :
@@ -1795,12 +1803,12 @@ class _Regexp_Arg_D_ (_Regexp_Arg_Mixin_, Str) :
 class _Re_Replacer_Arg_ (_Regexp_Arg_Mixin_, Str) :
     """Argument or option specifying a regexp replacement."""
 
-    _real_name      = "Re_Replacer"
+    _real_name          = "Re_Replacer"
 
-    R_Type_combined = Multi_Re_Replacer
+    R_Type_combined     = Multi_Re_Replacer
 
-    auto_split    = "\n"
-    type_abbr     = "/"
+    auto_split          = "\n"
+    type_abbr           = "/"
 
     def cook (self, value, cao = None) :
         if value :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2020 Christian Tanzer All rights reserved
+# Copyright (C) 2012-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -59,6 +59,7 @@
 #                     + Don't pass `** defaults` in `sub_commands`
 #    10-Sep-2018 (CT) Add `_do_shell`
 #    31-May-2020 (CT) Add `explanation` to `Command`
+#    22-Oct-2022 (CT) Add `Config_File_Option`
 #    ««revision-date»»···
 #--
 
@@ -270,12 +271,12 @@ class TFL_Config_Dirs_Option (Rel_Path_Option) :
 
 Config_Dirs_Option = TFL_Config_Dirs_Option # end class
 
-class TFL_Config_Option (Rel_Path_Option) :
+class TFL_Config_File_Option (Rel_Path_Option) :
     """File(s) specifying defaults for options"""
 
     rank                    = -90
 
-    type                    = TFL.CAO.Config
+    type                    = TFL.CAO.Config_File
 
     _config_dirs_name       = "config_dirs"
 
@@ -288,6 +289,13 @@ class TFL_Config_Option (Rel_Path_Option) :
             result = cdo.base_dirs + result
         return tuple (uniq (result))
     # end def base_dirs
+
+Config_File_Option = TFL_Config_File_Option # end class
+
+class TFL_Config_Option (Config_File_Option) :
+    """File(s) specifying defaults for options"""
+
+    type                    = TFL.CAO.Config
 
 Config_Option = TFL_Config_Option # end class
 
@@ -606,6 +614,11 @@ class TFL_Root_Command (Command) :
         """File(s) specifying defaults for options."""
 
     Config = TFL_Config # end class
+
+    class TFL_Config_File (Config_File_Option) :
+        """File(s) specifying defaults for options."""
+
+    Config_File = TFL_Config_File # end class
 
 Root_Command = TFL_Root_Command # end class
 
