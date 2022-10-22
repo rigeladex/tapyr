@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -40,6 +40,9 @@
 #    14-May-2020 (CT) Add `Config` option
 #    18-May-2020 (CT) Add `show_by_event`, factor `show_by_year`
 #    29-May-2020 (CT) Use `"\v"`, not blank line as separator between events
+#    22-Oct-2022 (CT) Call `CAL._Export` unconditionally
+#                     * `_main_year` accesses `CAL.holidays` to allow config
+#                       files to modify/override the standard holidays
 #    ««revision-date»»···
 #--
 
@@ -375,8 +378,11 @@ _Command = TFL.CAO.Cmd \
     , min_args      = 1
     )
 
-if __name__ != "__main__" :
-    CAL._Export ("*")
-else :
+### `_main_year` needs access to features of this module via `CAL` to allow
+### overriding of `holidays` by config files
+### --> export unconditionally
+CAL._Export ("*")
+
+if __name__ == "__main__" :
     _Command ()
 ### __END__ CAL.Holiday
