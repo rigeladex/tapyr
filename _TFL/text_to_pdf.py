@@ -19,6 +19,7 @@
 #    28-Jun-2020 (CT) Add support for `rows`
 #     2-May-2021 (CT) Add function `create_file`
 #    20-Jun-2022 (CT) Add macOS specific default for `display_program`
+#    23-Oct-2022 (CT) Add `Subtitle` and `Extra_Info`
 #    ««revision-date»»···
 #--
 
@@ -129,12 +130,14 @@ Besides literal values, the following special values for `<left>`,
     :         Default for the component (might be empty, see below)
     $b        Basename of the file containing the text document
     $c        Time of creation of PDF document
-    $n        Full name of the file containing the text document
     $m        Time of last modification of the text document
+    $n        Full name of the file containing the text document
     $p        Number of current page
     $p#       Number of current page and total number of pages
     $s        Subject
     $t        Title
+    $u        Subtitle
+    $x        Extra_Info
   ==========  =========================================================
 
 The one-character `$` values can be combined, e.g., `$tsn`; the first
@@ -382,8 +385,10 @@ class PDF_Doc (TFL.Meta.Object) :
             , page_size         = media ["A4"]
             , rows_per_page     = 1
             , subject           = None
+            , subtitle          = None
             , title             = None
             , vt_limit          = 5
+            , extra_info        = None
             ) :
         self.txt                = txt
         self.output             = output
@@ -409,8 +414,10 @@ class PDF_Doc (TFL.Meta.Object) :
         self.page_compression   = page_compression
         self.rows_per_page      = rows_per_page
         self.subject            = subject
+        self.subtitle           = subtitle
         self.title              = title
         self.vt_limit           = vt_limit
+        self.extra_info         = extra_info
         page_size               = \
             ( reportlab.lib.pagesizes.landscape if landscape else
                 reportlab.lib.pagesizes.portrait
@@ -743,6 +750,9 @@ class TTP_Command (TFL.Command.Root_Command) :
         , "-Display:B"
               "?Display pdf output with program by -display_program"
         , "-display_program:S"
+        , "-Extra_Info:S"
+            "?Extra information about the document that can be "
+            "displayed in the header of footer"
         , "-Font_Family:S"
               "?Font family to use for body of pdf document "
               "(must be fixed width)"
@@ -765,6 +775,7 @@ class TTP_Command (TFL.Command.Root_Command) :
         , "-Output:Q?Write output to specified file"
         , "-show_options:B?Show option values passed to pdf-converter"
         , "-Subject:S?Subject of document"
+        , "-Subtitle:S?Subtitle of document"
         , "-time_format:S?Format used for time header"
         , "-Title:S?Title of document"
         , "-verbose:B"
@@ -896,21 +907,27 @@ class TTP_Command (TFL.Command.Root_Command) :
     # end def _display_filename
 
     def _fields__gen \
-            (self, l, m, r, file_name, file_time, subject, title, now) :
+            ( self, l, m, r, file_name, file_time
+            , subject, subtitle, title, extra_info, now
+            ) :
         def resolved (x) :
             result = None
             if x == "b" :
                 result = Filename (file_name).base
             elif x == "c" :
                 result = now
-            elif x == "n" :
-                result = file_name
             elif x == "m" :
                 result = file_time
+            elif x == "n" :
+                result = file_name
             elif x == "s" :
                 result = subject
             elif x == "t" :
                 result = title
+            elif x == "u" :
+                result = subtitle
+            elif x == "x" :
+                result = extra_info
             return result
         for x in (l, m, r) :
             r = None
@@ -923,7 +940,9 @@ class TTP_Command (TFL.Command.Root_Command) :
     # end def _fields__gen
 
     def _footer_fields \
-            (self, footer, file_name, file_time, subject, title, now) :
+            ( self, footer, file_name, file_time
+            , subject, subtitle, title, extra_info, now
+            ) :
         l, m, r  = "", "", ""
         if footer.strip () :
             l, _, x = split_hst (footer, "|")
@@ -933,7 +952,9 @@ class TTP_Command (TFL.Command.Root_Command) :
                     m, r = r, m
             l, m, r = tuple \
                 ( self._fields__gen
-                    (l, m, r, file_name, file_time, subject, title, now)
+                    ( l, m, r, file_name, file_time
+                    , subject, subtitle, title, extra_info, now
+                    )
                 )
         return \
             ( l if l != ":" else (Filename (file_name).base if title else "")
@@ -943,7 +964,9 @@ class TTP_Command (TFL.Command.Root_Command) :
     # end def _footer_fields
 
     def _header_fields \
-            (self, header, file_name, file_time, subject, title, now) :
+            ( self, header, file_name, file_time
+            , subject, subtitle, title, extra_info, now
+            ) :
         l, m, r  = "", "", ""
         if header.strip () :
             l, _, x = split_hst (header, "|")
@@ -953,7 +976,9 @@ class TTP_Command (TFL.Command.Root_Command) :
                     m, r = r, m
             l, m, r = tuple \
                 ( self._fields__gen
-                    (l, m, r, file_name, file_time, subject, title, now)
+                    ( l, m, r, file_name, file_time
+                    , subject, subtitle, title, extra_info, now
+                    )
                 )
         return \
             ( l if l != ":" else (title or file_name)
@@ -982,8 +1007,10 @@ class TTP_Command (TFL.Command.Root_Command) :
         hfs         = fs * cmd.Header_size_factor
         ffs         = fs * cmd.Footer_size_factor
         now         = time.strftime (self.time_fmt, time.localtime ())
-        subject     = cmd.Subject or ""
-        title       = cmd.Title   or ""
+        subject     = cmd.Subject     or ""
+        subtitle    = cmd.Subtitle    or ""
+        title       = cmd.Title       or ""
+        extra_info  = cmd.Extra_Info  or ""
         result      = dict \
             ( body_color        = getattr (Color, cmd.Body_color, None)
             , columns_per_page  = cmd.columns
@@ -992,11 +1019,15 @@ class TTP_Command (TFL.Command.Root_Command) :
             , font_size         = fs
             , footer_color      = getattr (Color, cmd.Footer_color, None)
             , footer_fields     = self._footer_fields
-                (cmd.footer, display_fn, ft, subject, title, now)
+                ( cmd.footer, display_fn, ft
+                , subject, subtitle, title, extra_info, now
+                )
             , footer_font_size  = ffs
             , header_color      = getattr (Color, cmd.Header_color, None)
             , header_fields     = self._header_fields
-                (cmd.header, display_fn, ft, subject, title, now)
+                ( cmd.header, display_fn, ft
+                , subject, subtitle, title, extra_info, now
+                )
             , header_font_size  = hfs
             , landscape         = cmd.landscape
             , line_height       = fs + cmd.Baselineskip
