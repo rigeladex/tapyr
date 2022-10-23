@@ -22,6 +22,8 @@
 #    21-Oct-2022 (CT) Add support for `CAL.Date.date_pattern_abbr`
 #    21-Oct-2022 (CT) Add `_Period_Arg_`, `full_years`
 #    22-Oct-2022 (CT) Add support for `Relative_Delta` to `Interval`
+#    23-Oct-2022 (CT) Add support for year-ranges in `_Period_Arg_`
+#                     + create list of `Year` objects, not one `Interval`
 #    ««revision-date»»···
 #--
 
@@ -862,7 +864,20 @@ def from_string (s, add_year = False, future_p = False) :
 class _Period_Arg_ (TFL.CAO.Str) :
     """Argument or option with a calendary period as value."""
 
-    _real_name = "Period"
+    _real_name      = "Period"
+
+    auto_split      = ","
+
+    range_pat       = Regexp \
+        ( r"""^\s*"""
+          r"""(?P<head> \d{4})"""
+          r"""\s*"""
+          r"""\.\."""
+          r"""\s*"""
+          r"""(?P<tail> \d{4})"""
+          r"""\s*$"""
+        , re.VERBOSE
+        )
 
     def cook (self, value, cao = None) :
         result = None
@@ -870,6 +885,15 @@ class _Period_Arg_ (TFL.CAO.Str) :
             return from_string (value)
         return result
     # end def cook
+
+    def _resolve_range_1 (self, value, cao, pat) :
+        cook     = int
+        r_head   = pat.head
+        r_tail   = pat.tail
+        head     = cook  (r_head)
+        tail     = cook  (r_tail) + 1
+        yield from (str (s) for s in range (head, tail))
+    # end def _resolve_range_1
 
 # end class _Period_Arg_
 
