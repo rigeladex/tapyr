@@ -60,6 +60,7 @@
 #    10-Sep-2018 (CT) Add `_do_shell`
 #    31-May-2020 (CT) Add `explanation` to `Command`
 #    22-Oct-2022 (CT) Add `Config_File_Option`
+#    23-Oct-2022 (CT) Add `Config_File_Option.pre_load_cb`, `.x_context`
 #    ««revision-date»»···
 #--
 
@@ -280,6 +281,9 @@ class TFL_Config_File_Option (Rel_Path_Option) :
 
     _config_dirs_name       = "config_dirs"
 
+    pre_load_cb             = None
+    x_context               = {}
+
     @TFL.Meta.Once_Property
     def base_dirs (self) :
         result  = self.__super.base_dirs
@@ -289,6 +293,16 @@ class TFL_Config_File_Option (Rel_Path_Option) :
             result = cdo.base_dirs + result
         return tuple (uniq (result))
     # end def base_dirs
+
+    @TFL.Meta.Once_Property
+    def kw (self) :
+        result = self.__super.kw
+        if plcb := self.pre_load_cb :
+            result.update (pre_load_cb = plcb)
+        if xc := self.x_context :
+            result.update (x_context = xc)
+        return result
+    # end def kw
 
 Config_File_Option = TFL_Config_File_Option # end class
 
