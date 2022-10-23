@@ -61,6 +61,7 @@
 #    31-May-2020 (CT) Add `explanation` to `Command`
 #    22-Oct-2022 (CT) Add `Config_File_Option`
 #    23-Oct-2022 (CT) Add `Config_File_Option.pre_load_cb`, `.x_context`
+#    23-Oct-2022 (CT) Add `active_sub_cmd` to `_wrapped_handler_context`
 #    ««revision-date»»···
 #--
 
@@ -368,6 +369,7 @@ class TFL_Command (TFL.Meta.Object, metaclass = _M_Command_) :
     max_args                = -1
     put_keywords            = False
 
+    active_sub_cmd          = None ### `LET` during execution of `handler`
     _args                   = ()
     _buns                   = ()
     _cao                    = None ### `LET` during execution of `handler`
@@ -533,7 +535,7 @@ class TFL_Command (TFL.Meta.Object, metaclass = _M_Command_) :
         with self.LET (_cao = cao) :
             root = self._root
             if root is not None and root is not self :
-                with root.LET (_cao = cao) :
+                with root.LET (_cao = cao, active_sub_cmd = self) :
                     yield
             else :
                 yield
