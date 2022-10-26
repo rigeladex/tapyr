@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2020 Martin Glueck All rights reserved
+# Copyright (C) 2012-2022 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -30,6 +30,7 @@
 #    12-Jun-2015 (CT) Adapt to changes of authentication templates
 #     7-Oct-2015 (CT) Pass `"xxx"`, not `b"xxx"`, to `.PQ`
 #    24-Apr-2020 (CT) Adapt to `webmaster` change in GTW.RST.Resource
+#    26-Oct-2022 (CT) Fix doctests (PY 3.11), changes of `TFL.SMTP`
 #    ««revision-date»»···
 #--
 
@@ -75,8 +76,6 @@ _login_logout = r"""
     'http://localhost/after/login'
 
     >>> resp = Scaffold.test_post ("/Auth/logout.html", data = dict (next = "/after/logout"))
-    >>> resp
-    <Test_Response streamed [303 SEE OTHER]>
     >>> resp.headers ["Location"] ### logout
     'http://localhost/after/logout'
 
@@ -206,13 +205,16 @@ _register        = r"""
     Email via localhost from webmaster to ['new-account@foo.bar']
     Content-type: text/plain; charset=utf-8
     Date: ...
+    Content-Transfer-Encoding: 7bit
     Subject: Email confirmation for localhost
     To: new-account@foo.bar
     From: webmaster
+    Message-Id: ...
     <BLANKLINE>
     Confirm new email address new-account@foo.bar
     <BLANKLINE>
     To verify the new email address, please click the following link: http://localhost/Auth/action?...
+
     >>> show_errors (resp)
     <BLANKLINE>
 
@@ -376,10 +378,12 @@ _password_reset  = r"""
     >>> resp   = Scaffold.test_post ("/Auth/request_reset_password.html", data = data)# doctest:+ELLIPSIS
     Email via localhost from webmaster to ['a2@foo.bar']
     Content-type: text/plain; charset=utf-8
-    ...
+    Date: ...
+    Content-Transfer-Encoding: 7bit
     Subject: Password reset for user a2@foo.bar on website localhost
     To: a2@foo.bar
     From: webmaster
+    Message-Id: ...
     <BLANKLINE>
     Password of a2@foo.bar reset
     <BLANKLINE>
