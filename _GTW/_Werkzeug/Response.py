@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2020 Christian Tanzer All rights reserved
+# Copyright (C) 2012-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -24,6 +24,7 @@
 #    21-Oct-2015 (CT) Use `as_str`, node `encoded`, for header `key`
 #    30-Mar-2020 (CT) Adapt to werkzeug 1.0
 #                     - no werkzeug.contrib.wrappers.DynamicCharsetResponseMixin
+#    26-Oct-2022 (CT) Use `url_encode`, not `Href`, for `encoded_url`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ import _TFL._Meta.M_Class
 import _TFL.json_dump
 
 from   werkzeug.wrappers          import Response
-from   werkzeug.urls              import Href
+from   werkzeug.urls              import url_encode
 
 class _WZG_Response_ ( Response, metaclass = TFL.Meta.M_Class) :
     """Extend werkzeug's Response class."""
@@ -61,11 +62,16 @@ class _WZG_Response_ ( Response, metaclass = TFL.Meta.M_Class) :
 
     def encoded_url (self, * args, ** kw) :
         if args :
+            raise NotImplementedError ("encoded_url with `* args`")
+            ### This used to be implemented on top of werkzeug.urls.Href which
+            ### was removed in werkzeug 2.1
+            ###
+            ### As it wasn't used in GTW, I didn't bother
             result = Href (args [0])
             return result (* args [1:], ** kw)
         else :
-            result = Href ()
-            return result (** kw) [2:]
+            result = "?" + url_encode (kw)
+            return result
     # end def encoded_url
 
     def write (self, data) :
