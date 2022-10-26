@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2017 Christian Tanzer All rights reserved
+# Copyright (C) 2013-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -19,6 +19,7 @@
 #     4-Jun-2013 (CT) Creation
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
+#    26-Oct-2022 (CT) Fix doctests broken by Python-3.11 (AttributeError)
 #    ««revision-date»»···
 #--
 
@@ -164,18 +165,16 @@ _test_set = """
     >>> print (p.type_name, p.ui_display)
     PAP.Person Tanzer Christian
 
-    >>> p.__class__.type_name = "not PAP.Person"
-    Traceback (most recent call last):
-      ...
-    AttributeError: can't set attribute
+    >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
+    ...     p.__class__.type_name = "not PAP.Person"
+    AttributeError: ...
 
     >>> PAP.Person.type_name
     'PAP.Person'
 
-    >>> PAP.Person.E_Type.type_name = "not PAP.Person"
-    Traceback (most recent call last):
-      ...
-    AttributeError: can't set attribute
+    >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
+    ...     PAP.Person.E_Type.type_name = "not PAP.Person"
+    AttributeError: ...
 
     >>> PAP.Person.type_name
     'PAP.Person'

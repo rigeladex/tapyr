@@ -58,7 +58,10 @@
 #    25-Jul-2016 (CT) Add `Class_and_Instance_Lazy_Property_NI`
 #     5-Jun-2017 (CT) Add `Optional_Computed_Property`,
 #                     `Optional_Computed_Once_Property`
-#    12-Oct-2022 (CT) Fix doctests boken by Python-3.10
+#    12-Oct-2022 (CT) Fix doctests broken by Python-3.10
+#    26-Oct-2022 (CT) Fix doctests broken by Python-3.11
+#                     * Unfortunately, nothing of the AttributeError's message
+#                       is left anymore
 #    ««revision-date»»···
 #--
 
@@ -780,14 +783,12 @@ class Property (property, metaclass = TFL.Meta.M_Class) :
          137
          >>> u.foo
          137
-         >>> T.foo = 23 # doctest:+ELLIPSIS
-         Traceback (most recent call last):
-           ...
-         AttributeError: can't set attribute...
-         >>> t.foo = 1764 # doctest:+ELLIPSIS
-         Traceback (most recent call last):
-           ...
-         AttributeError: can't set attribute...
+         >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
+         ...     T.foo = 23
+         AttributeError: ...
+         >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
+         ...     t.foo = 1764
+         AttributeError: ...
          >>> u.foo = 23 * 23
          >>> u.foo
          529

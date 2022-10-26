@@ -33,7 +33,10 @@
 #                     and `Float_Range_Discrete`
 #     4-Apr-2017 (CT) Add guard for `eps` and `last` to `__iter__`
 #    19-Aug-2019 (CT) Use `print_prepr`
-#    12-Oct-2022 (CT) Fix doctests boken by Python-3.10
+#    12-Oct-2022 (CT) Fix doctests broken by Python-3.10
+#    26-Oct-2022 (CT) Fix doctests broken by Python-3.11
+#                     * Unfortunately, nothing of the AttributeError's message
+#                       is left anymore
 #    ««revision-date»»···
 #--
 
@@ -1626,19 +1629,19 @@ _test_int_range = r"""
     ...     ii_24.upper  = 20
     ...     ii_24.btype  = "()"
     ...     ii_24.length = 0
-    AttributeError: can't set attribute...
+    AttributeError: ...
 
     >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
     ...     ii_24.upper  = 20
-    AttributeError: can't set attribute...
+    AttributeError: ...
 
     >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
     ...     ii_24.btype  = "()"
-    AttributeError: can't set attribute...
+    AttributeError: ...
 
     >>> with expect_except (AttributeError) : # doctest:+ELLIPSIS
     ...     ii_24.length = 0
-    AttributeError: can't set attribute...
+    AttributeError: ...
 
     >>> for r in (ii_24, ix_24, xi_24, xx_24) :
     ...     print (r, portable_repr (r.range_pattern.match (str (r)).groupdict ()))
