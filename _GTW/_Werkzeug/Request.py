@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2020 Christian Tanzer All rights reserved
+# Copyright (C) 2012-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -32,6 +32,8 @@
 #    21-Oct-2015 (CT) Change `body` to run `.data` through `pyk.decoded`
 #    30-Mar-2020 (CT) Adapt to werkzeug 1.0
 #                     - no werkzeug.contrib.wrappers.DynamicCharsetRequestMixin
+#    26-Oct-2022 (CT) Use `hmac.compare_digest`, not werkzeug's `safe_str_cmp`
+#                     - werkzeug deprecated that and removed it in 2.0
 #    ««revision-date»»···
 #--
 
@@ -47,16 +49,16 @@ from   _TFL._Meta.Once_Property   import Once_Property
 import _TFL._Meta.M_Class
 
 from   werkzeug.exceptions           import HTTPException as HTTP_Exception
-from   werkzeug.security             import safe_str_cmp as _wz_safe_str_cmp
 from   werkzeug.wrappers             import Request
 
+import hmac
 import json
 import logging
 
 def safe_str_cmp (lhs, rhs) :
     l = pyk.encoded (lhs, "iso-8859-1")
     r = pyk.encoded (rhs, "iso-8859-1")
-    return _wz_safe_str_cmp (l, r)
+    return hmac.compare_digest (l, r)
 # end def safe_str_cmp
 
 class _WZG_Request_ (Request, metaclass = TFL.Meta.M_Class) :
