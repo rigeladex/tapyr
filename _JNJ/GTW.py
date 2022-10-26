@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2017 Christian Tanzer All rights reserved
+# Copyright (C) 2009-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -65,6 +65,8 @@
 #    11-Oct-2016 (CT) Change `GTW.HTML` to `TFL.HTML`
 #    14-Nov-2016 (CT) Add `isinstance`, `pyk`
 #    19-Jan-2017 (CT) Add `split_hst`
+#    26-Oct-2022 (CT) Use `markupsafe.escape`, not `jinja2.utils.escape`
+#                     * `jinja2` deprecated, refers to `markupsafe.escape`
 #    ««revision-date»»···
 #--
 
@@ -355,7 +357,7 @@ class GTW (TFL.Meta.Object) :
            This is similar to jinja's `xmlattr` filter but ensures
            deterministic output by sorting by attribute name.
         """
-        from jinja2.utils import escape
+        from markupsafe import escape
         d      = self.filtered_dict (* ds, ** kw)
         result = " ".join \
             ( '%s="%s"' % (escape (k), escape (v))
