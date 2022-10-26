@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -55,6 +55,7 @@
 #    15-Aug-2015 (CT)  Add `eval_function_body`
 #    16-Oct-2015 (CT)  Add `__future__` imports
 #    19-Apr-2020 (CT)  Use `functools.update_wrapper`
+#    26-Oct-2022 (CT)  Use `getfullargspec`, not `getargspec` (PY 3.11)
 #    ««revision-date»»···
 #--
 
@@ -158,11 +159,13 @@ def Annotated (RETURN = _AR_undefined, ** kw) :
            TypeError: Function `foo` doesn't have an argument named `qux`
     """
     def decorator (f) :
-        from inspect import getargspec
+        from inspect import getfullargspec
         f.func_annotations             = fa = {}
-        args, varargs, varkw, defaults = getargspec (f)
-        if varargs : args.append (varargs)
-        if varkw   : args.append (varkw)
+        args, varargs, varkw, dflts, kwonlyargs, kwonlydflts, annnots = \
+            getfullargspec (f)
+        if varargs    : args.append (varargs)
+        if varkw      : args.append (varkw)
+        if kwonlyargs : args.extend (kwonlyargs)
         arg_set = set (args)
         for k, v in kw.items () :
             if k in arg_set :
