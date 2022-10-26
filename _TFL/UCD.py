@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2020-2021 Christian Tanzer All rights reserved
+# Copyright (C) 2020-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -16,11 +16,13 @@
 # Revision Dates
 #     1-Jun-2020 (CT) Creation
 #     4-Dec-2021 (CT) Add `-format` option to sub-command `by_id`
+#    26-Oct-2022 (CT) Add moon symbols
 #    ««revision-date»»···
 #--
 
 ### https://docs.python.org/3/library/unicodedata.html
 ### https://www.unicode.org/reports/tr44/#General_Category_Values
+### https://codepoints.net/miscellaneous_symbols_and_pictographs
 
 from   _TFL                     import TFL
 
@@ -55,6 +57,17 @@ _ignore_prefixes = \
 class _UCD_ (TFL.Meta.Object) :
     """Provide access to unicode characters by id and by unicode name."""
 
+    char_code_ranges = \
+        ( range (0x1, 0xf001)
+            ### Base plane
+        , range (0x1F311, 0x1F31A)
+            ### Moon symbols in Supplementary Multilingual Plane
+        )
+
+    def char_code_iter (self) :
+        return itertools.chain (* self.char_code_ranges)
+    # end def char_code_iter
+
     def create_map \
             ( self
             , ignore_categories = {"Cc", "Cs", "Co", "Cn", "Zl"}
@@ -70,8 +83,8 @@ class _UCD_ (TFL.Meta.Object) :
         import unicodedata
         ignore_categories = Regexp ("|".join (sorted (ignore_categories)))
         ignore_prefixes   = Regexp ("|".join (sorted (ignore_prefixes)))
-        result            = {}
-        for i in range (0x1, 0xf000) :
+        id_to_char_map    = {}
+        for i in self.char_code_iter () :
             c   = chr (i)
             cat = unicodedata.category (c)
             if ignore_categories.match (cat) :
@@ -81,15 +94,19 @@ class _UCD_ (TFL.Meta.Object) :
             except ValueError :
                 continue
             id = sanitized_filename (ucd_name.lower ()).replace ("-", "_")
-            if not ignore_prefixes.search (id) :
-                result [id] = r"u%04x" % i
+            if id.startswith ("new_moon") or not ignore_prefixes.search (id) :
+                char    = (r"u%04x" if i <= 0xffff else r"U%08x") % i
+                id_to_char_map   [id] = char
         result = "\n".join \
             ( ( "# -*- coding: utf-8 -*-"
-              , "# Copyright (C) 2020-2021 Christian Tanzer All rights reserved"
+              , "# Copyright (C) 2020-2022 Christian Tanzer All rights reserved"
               , "# Generated automatically, do not change manually!"
               , ""
               , "id_to_chr_map = \\"
-              , formatted_repr (result).replace (": 'u", r": '\u")
+              , formatted_repr (id_to_char_map)
+                  .replace (": 'u", r": '\u")
+                  .replace (": 'U", r": '\U")
+              , ""
               )
             )
         return result
@@ -186,13 +203,13 @@ _Command_by_id = TFL.CAO.Cmd \
 def _main_table (cmd) :
     """Print all characters in `id_to_chr_map` as table sorted by code."""
     cols            = 16
-    col_head_fmt    = "___%1.1x"
-    row_head_fmt    = "%04x"
+    col_head_fmt    = "____%1.1x"
+    row_head_fmt    = "%05x"
     header          = " ".join \
-        (("code", ) + tuple (col_head_fmt % i for i in range (0, cols)))
+        (("code ", ) + tuple (col_head_fmt % i for i in range (0, cols)))
     def _gen () :
         chr_map = {ord (c) : c for c in id_to_chr_map.values ()}
-        for i in range (0x0, 0xf000) :
+        for i in UCD.char_code_iter () :
             c = chr_map.get (i, "")
             yield i, c if c.isprintable () else ""
     items   = iter (_gen ())
@@ -209,8 +226,8 @@ def _main_table (cmd) :
                         print ("\v")
                     print (header)
                 s_lines = 1
-                code    = (row_head_fmt % more [0] [0]) [:3] + "_"
-                chars   = ("  %-2s" % c for i, c in more)
+                code    = (row_head_fmt % more [0] [0]) [:4] + "_"
+                chars   = ("  %-3s" % c for i, c in more)
                 print (code, * chars)
             lines  += 1
             if lines > 15 :
@@ -227,7 +244,7 @@ _Command_table = TFL.CAO.Cmd \
 def _main_ucd_category (cmd) :
     """Show all characters of a specific category in `unicodedata`."""
     import unicodedata
-    for i in range (0x1, 0xf000) :
+    for i in UCD.char_code_iter () :
         c   = chr (i)
         cat = unicodedata.category (c)
         if cat.startswith (cmd.category) :
@@ -273,7 +290,8 @@ One font supporting many glyphs is `DejaVuSansMono.ttf`.
 
 For instance::
 
-    python -m _TFL.UCD table | python -m _TFL.text_to_pdf -landscape -Display -purge -Font DejaVuSansMono.ttf -vt_limit=17 STDIN
+    python -m _TFL.UCD table \
+      | python -m _TFL.text_to_pdf -landscape -Display -Font DejaVuSansMono.ttf -vt_limit=17 STDIN
     """
     , min_args      = 1
     )
