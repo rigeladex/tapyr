@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2017 Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
-#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <https://www.gg32.com/license/bsd_3c.html>.
 # ****************************************************************************
@@ -13,6 +12,8 @@
 #
 # Purpose
 #    Model a SVG document
+#
+#    See: https://www.w3.org/TR/SVG11/expanded-toc.html
 #
 # Revision Dates
 #     5-Sep-2005 (CT) Creation
@@ -31,6 +32,7 @@
 #    17-Feb-2017 (CT) Change `_convert_points` to use `%s`, not `%d`
 #                     + Ditto for `_convert_points_path`
 #     4-Mar-2017 (CT) Add and use `_convert_view_box`
+#     5-Nov-2022 (CT) Add `Linear_Gradient`
 #    ««revision-date»»···
 #--
 
@@ -353,6 +355,19 @@ Line                        = TFL.SDG.XML.Elem_Type \
     , ** dict (_shape_attr, ** _marker_use_attr)
     )
 
+Linear_Gradient             = TFL.SDG.XML.Elem_Type \
+    ( "linearGradient"
+    , elid                  = None
+    , gradientTransform     = None
+    , gradientUnits         = "userSpaceOnUse"
+    , spreadMethod          = None
+    , x1                    = None
+    , x2                    = None
+    , xlink_href            = None
+    , y1                    = None
+    , y2                    = None
+    )
+
 Marker                      = TFL.SDG.XML.Elem_Type \
     ( "marker"
     , marker_height         = None
@@ -398,6 +413,7 @@ Radial_Gradient             = TFL.SDG.XML.Elem_Type \
     , elid                  = None
     , fx                    = None
     , fy                    = None
+    , gradientTransform     = None
     , gradientUnits         = "userSpaceOnUse"
     , r                     = None
     , spreadMethod          = None
