@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2017 Christian Tanzer All rights reserved
+# Copyright (C) 2010-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -34,6 +34,8 @@
 #    19-Feb-2017 (CT) Add `relative_luminance`, `contrast_ratio`
 #     4-Apr-2017 (CT) Add `__repr__` to `_Color_`
 #                     + Add `reprified` to `_Color_`, `SVG_Color`
+#     8-Nov-2022 (CT) Add support for hexadecimal `alpha` to `RGB_X`
+#                     + Factor `hex_tuple`, `CSS_hex_tuple`
 #    ««revision-date»»···
 #--
 
@@ -175,17 +177,20 @@ class Value (TFL.Meta.Object) :
 
     @Once_Property
     def hex (self) :
-        r, g, b = tuple ("%2.2X" % (int (x*255), ) for x in self.rgb)
+        r, g, b = self.hex_tuple
         return "#%s%s%s" % (r, g, b)
     # end def hex
 
     @Once_Property
     def hex_CSS (self) :
-        r, g, b = tuple ("%2.2X" % (int (x*255), ) for x in self.rgb)
-        if all (x [0] == x [1] for x in (r, g, b)) :
-            r, g, b = tuple (x [0] for x in (r, g, b))
+        r, g, b = self.CSS_hex_tuple (* self.hex_tuple)
         return "#%s%s%s" % (r, g, b)
     # end def hex
+
+    @Once_Property
+    def hex_tuple (self) :
+        return tuple ("%2.2X" % (int (x*255), ) for x in self.rgb)
+    # end def hex_tuple
 
     @Once_Property
     def hsl (self) :
@@ -268,6 +273,13 @@ class Value (TFL.Meta.Object) :
             except KeyError :
                 pass
     # end def preferred_value
+
+    def CSS_hex_tuple (self, * values) :
+        result = values
+        if all (x [0] == x [1] for x in values) :
+            result = tuple (x [0] for x in values)
+        return result
+    # end def CSS_hex_tuple
 
     def __eq__ (self, rhs) :
         return self.rgb == getattr (rhs, "rgb", None)
@@ -695,6 +707,7 @@ class RGB_X (RGB) :
           r"(?P<red>[0-9a-zA-Z]%(q)s)"
           r"(?P<green>[0-9a-zA-Z]%(q)s)"
           r"(?P<blue>[0-9a-zA-Z]%(q)s)"
+          r"(?P<alpha>[0-9a-zA-Z]%(q)s)?"
           r"$"
         )
     _pat = TFL.Multi_Regexp (_fmt % dict (q = "{2}"), _fmt % dict (q = ""))
@@ -705,6 +718,10 @@ class RGB_X (RGB) :
             r, g, b = pat.red, pat.green, pat.blue
             if len (r) == 1 :
                 r, g, b = r*2, g*2, b*2
+            if a := pat.alpha :
+                if len (a) == 1 :
+                    a   = a*2
+                alpha   = int (a, 16) / 255.0
             self.__super.__init__ \
                 ( * tuple ((int (x, 16) / 255.0) for x in (r, g, b))
                 , alpha = alpha
@@ -723,14 +740,21 @@ class RGB_X (RGB) :
     # end def as_RGB_X
 
     def formatted (self) :
-        if self.alpha is None :
-            return self._formatted_values ()
-        else :
-            return self.as_RGB_8.formatted ()
+        return self._formatted_values ()
     # end def formatted
 
+    def reprified (self) :
+        return "%s (%s)" % \
+            ( self.__class__.__name__
+            , portable_repr (self._formatted_values ())
+            )
+    # end def reprified
+
     def _formatted_values (self) :
-        return self.value.hex_CSS
+        values = self.value.hex_tuple
+        if (alpha := self.alpha) is not None :
+            values += ("%2.2X" % (int (alpha*255), ), )
+        return "#" + "".join (self.value.CSS_hex_tuple (* values))
     # end def _formatted_values
 
 # end class RGB_X
@@ -966,9 +990,9 @@ Classes modelling various color representations::
     >>> ha = ca.as_HSL
     >>> ua = ca.as_HUSL
     >>> print (ca, da, ha, ua)
-    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0, 100%, 50%, 0.25) husla(12, 100%, 53%, 0.25)
+    rgba(255, 0, 0, 0.25) #FF00003F hsla(0, 100%, 50%, 0.25) husla(12, 100%, 53%, 0.25)
     >>> (ca, da, ha, ua)
-    (RGB_8 (255, 0, 0, 0.25), RGB_X ('#F00', 0.25), HSL (0, 100, 50, 0.25), HUSL (12, 100, 53, 0.25))
+    (RGB_8 (255, 0, 0, 0.25), RGB_X ('#FF00003F'), HSL (0, 100, 50, 0.25), HUSL (12, 100, 53, 0.25))
 
     >>> b  = RGB (0, 0, 0)
     >>> hb = b.as_HSL
@@ -1000,9 +1024,9 @@ Classes modelling various color representations::
     >>> (cn, hn, un)
     (RGB_X ('#0FF'), RGB_X ('#0FF'), RGB_X ('#0FF'))
     >>> print (ca, da, ha, ua)
-    rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25)
+    #FF00003F #FF00003F #FF00003F #FF00003F
     >>> (ca, da, ha, ua)
-    (RGB_X ('#F00', 0.25), RGB_X ('#F00', 0.25), RGB_X ('#F00', 0.25), RGB_X ('#F00', 0.25))
+    (RGB_X ('#FF00003F'), RGB_X ('#FF00003F'), RGB_X ('#FF00003F'), RGB_X ('#FF00003F'))
 
     >>> _Color_.formatter = HSL
     >>> print (b, ~b, hb, ~hb, ub, ~ub)
@@ -1014,7 +1038,7 @@ Classes modelling various color representations::
 
     >>> _Color_.formatter = RGB_X
     >>> print (SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5))
-    #808080 #8B0000 rgba(0, 0, 255, 0.5)
+    #808080 #8B0000 #0000FF7F
 
     >>> _Color_.formatter = None
     >>> print (SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5))
