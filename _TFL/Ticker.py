@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2018 Christian Tanzer All rights reserved
+# Copyright (C) 2017-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -22,6 +22,7 @@
 #     2-Dec-2018 (CT) Improve computation of `sub_ticks`
 #                     + Move computation of `major_delta`, `sub_ticks` to `Base`
 #     5-Dec-2018 (CT) Add `label_delta`
+#     9-Nov-2022 (CT) Add `label_formatter`
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,7 @@ class Axis (TFL.Meta.Object) :
     minimum and maximum data values, :attr:`data_min` and :attr:`data_max`, to
     be displayed.
 
-    >>> ax1 = Axis (base_10, 0, 100)
+    >>> ax1 = Axis (base_10, 0, 100, labels = True)
 
     >>> print (ax1.data_min, ax1.data_max)
     0 100
@@ -69,6 +70,16 @@ class Axis (TFL.Meta.Object) :
     Major tick marks:
     >>> print (ax1.major_range)
     [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+
+    Labels:
+    >>> print (ax1.labels)
+    ('0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100')
+
+    Custom labels:
+    >>> ax1.label_formatter = lambda x : "%03d" % x
+    >>> ax1.labels = True  ### clear cache
+    >>> print (ax1.labels)
+    ('000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100')
 
     Medium tick marks:
     >>> print (ax1.medium_range)
@@ -124,9 +135,12 @@ class Axis (TFL.Meta.Object) :
     >>> print (ax5.major_delta, ax5.medium_delta, ax5.minor_delta)
     0.25 0.05 0.01
 
-    >>> ax6 = Axis (base_10, 0, 10, major_delta = 2.5, margin = 0)
+    >>> ax6 = Axis (base_10, 0, 10, major_delta = 2.5, margin = 0, labels = True, label_formatter = lambda x : "*%.1f" % x)
     >>> print (ax6.major_delta, ax6.medium_delta, ax6.minor_delta)
     2.5 0.5 0.1
+
+    >>> print (ax6.labels)
+    ('*0.0', '*2.5', '*5.0', '*7.5', '*10.0')
 
     >>> ax7 = Axis (base_month, 0, 42, margin = 0)
     >>> print (ax7.major_delta, ax7.medium_delta, ax7.minor_delta)
@@ -148,10 +162,12 @@ class Axis (TFL.Meta.Object) :
     max_major_ticks         = 20
     max_ticks               = 100
     minor_lines             = ""
+    _label_formatter        = None
     _labels                 = None
 
     def __init__ \
             ( self, base, data_min, data_max
+            , *
             , ax_min            = None
             , ax_max            = None
             , margin            = 1
@@ -187,7 +203,7 @@ class Axis (TFL.Meta.Object) :
         if minor_ticks is not None :
             self.minor_ticks    = minor_ticks
         self.round_extrema      = round_extrema
-        self.pop_to_self     (kwds, "labels", prefix = "_")
+        self.pop_to_self     (kwds, "label_formatter", "labels", prefix = "_")
         self.__dict__.update (** kwds)
     # end def __init__
 
@@ -220,12 +236,24 @@ class Axis (TFL.Meta.Object) :
     # end def data_length
 
     @property
+    def label_formatter (self) :
+        result = self._label_formatter
+        return formatted_repr if result is None else result
+    # end def label_formatter
+
+    @label_formatter.setter
+    def label_formatter (self, value) :
+        self._label_formatter = value
+    # end def label_formatter
+
+    @property
     def labels (self) :
         ld     = self.label_delta
         result = self._labels
         if result is True :
-            result = self._labels = \
-                tuple (formatted_repr (m) for m in self.major_range)
+            formatter   = self.label_formatter
+            result      = self._labels = \
+                tuple (formatter (m) for m in self.major_range)
         if ld > 1 :
             def _gen (result, ld) :
                 for r in result [::ld] :
