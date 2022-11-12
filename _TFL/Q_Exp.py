@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2020 Christian Tanzer All rights reserved
+# Copyright (C) 2009-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -76,6 +76,7 @@
 #    24-May-2016 (CT) Add `_display_filter_q_`
 #    20-Jul-2016 (CT) Add `_Exp_.OVERLAPS`
 #    15-May-2017 (CT) Add `TUPLE`
+#    12-Nov-2022 (CT) Add `Q.FCT`
 #    ««revision-date»»···
 #--
 
@@ -188,6 +189,11 @@ class Base (TFL.Meta.Object) :
         getter = getattr (self, s)
         return self.APPLY (getter, * args)
     # end def APPLY_string
+
+    def FCT (self, getter, * args, ** kwds) :
+        """Call result of `getter` with arguments `args`."""
+        return self._Call_ (getter, operator.call, * args, ** kwds)
+    # end def FCT
 
     def OR (self, * args) :
         """Logical OR of `args`."""
@@ -1264,6 +1270,9 @@ will evaluate like:
 
   - `Q.SELF` evaluates to the object the q-expression is applied to.
 
+  - `Q.FCT (Q.qux, ···)` calls the result of `Q.qux` with the arguments passed
+    to `Q.FCT` (positional and keyword arguments).
+
 Python handles `a < b < c` as `(a < b) and (b < c)`. Unfortunately, there is
 no way to simulate this by defining operator methods. Therefore,
 Q-expressions raise a TypeError to signal that an expression like
@@ -1391,6 +1400,18 @@ This module implements a query expression language::
     Q.foo * -1
     >>> -1 * Q.foo
     -1 * Q.foo
+
+    >>> Q.day (r2.dt)
+    14
+
+    >>> Q.FCT (Q.isoformat) (r2.dt)
+    '2010-12-14T11:36:00'
+
+    >>> Q.FCT (Q.strftime, "%Y-%m-%d %a") (r2.dt)
+    '2010-12-14 Tue'
+
+    >>> Q.FCT (Q.toordinal) (r2.dt)
+    734120
 
     >>> qm = Q.foo.D.MONTH (2, 2010)
     >>> qm, qm.lhs, normalized_op_name (qm.op.__name__)
