@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -67,6 +67,7 @@
 #    10-Oct-2014 (CT)  Use `pyk.encoded` in `_write_to_stream`,
 #                      unless `stream is sys.stdout`
 #    19-Apr-2020 (CT)  Use "``" for doc strings, not "`'"
+#    18-Nov-2022 (CT)  Add support for `children` in `_autoconvert`
 #    ««revision-date»»···
 #--
 
@@ -457,6 +458,8 @@ class Node (TFL.Meta.Object, metaclass = TFL.SDG.M_Node) :
         if not self.name :
             self.name = "__%s_%d" % (self.__class__.__name__, self.id)
         self._reset_children ()
+        if ac := self._autoconvert.get ("children") :
+            children = [ac (self, "children", c) for c in children]
         self.add (* children)
     # end def __init__
 

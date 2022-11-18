@@ -33,6 +33,7 @@
 #                     + Ditto for `_convert_points_path`
 #     4-Mar-2017 (CT) Add and use `_convert_view_box`
 #     5-Nov-2022 (CT) Add `Linear_Gradient`
+#    18-Nov-2022 (CT) Add `Style`
 #    ««revision-date»»···
 #--
 
@@ -109,6 +110,7 @@
 from   _TFL                   import TFL
 
 from   _TFL.Caller            import Scope
+from   _TFL._SDG._XML.Cdata   import Cdata
 
 import _TFL.Decorator
 import _TFL._SDG._XML.Document
@@ -184,6 +186,28 @@ class _SVG_Document_ (TFL.SDG.XML.Document) :
          width="100%" xmlns="http://www.w3.org/2000/svg"
          xmlns:xlink="http://www.w3.org/1999/xlink"
     >
+    </svg>
+
+    >>> svg = Document (
+    ...     Root (view_box="10 60 450 260", width="100%", height="100%"))
+    >>> styl = Style   ("rect { fill: yellow; stroke: blue; }")
+    >>> defs = svg.add (Defs  (styl))
+    >>> svg.write_to_xml_stream (output_width = 65)
+    <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+    <!DOCTYPE svg PUBLIC
+        "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+    <svg height="100%" version="1.1" viewBox="10 60 450 260"
+         width="100%" xmlns="http://www.w3.org/2000/svg"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+      <defs>
+        <style type="text/css">
+          <![CDATA[
+            rect { fill: yellow; stroke: blue; }
+          ]]>
+        </style>
+      </defs>
     </svg>
 
     """
@@ -291,6 +315,14 @@ def _convert_points_path (self, k, value) :
         result = " ".join (parts)
     return result
 # end def _convert_points_path
+
+def _convert_style_sheet (self, k, value) :
+    sheet = value
+    if isinstance (value, (list, tuple)) :
+        sheet = "\n".join ("%s" % (x, ) for x in value)
+    result = sheet if isinstance (sheet, Cdata) else Cdata (sheet)
+    return result
+# end def _convert_style_sheet
 
 Circle                      = TFL.SDG.XML.Elem_Type \
     ( "circle"
@@ -446,6 +478,12 @@ Root                        = TFL.SDG.XML.Elem_Type \
     , y                     = None
     , _autoconvert          = dict (view_box = _convert_view_box)
     , ** _viewport_attr
+    )
+
+Style                       = TFL.SDG.XML.Elem_Type \
+    ( "style"
+    , type                  = "text/css"
+    , _autoconvert          = dict (children = _convert_style_sheet)
     )
 
 ### nested `svg` element
