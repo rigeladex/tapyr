@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2019 Christian Tanzer All rights reserved
+# Copyright (C) 2017-2022 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.SDG.XML.SVG.
@@ -38,6 +38,7 @@
 #    28-Aug-2018 (CT) Add `Parameters.major_ticks.color`
 #                     + Ditto for `.medium_ticks`, `.minor_ticks`
 #    19-Aug-2019 (CT) Use `print_prepr`
+#    18-Nov-2022 (CT) Add support for `closepath` to `Viewport.path`
 #    ««revision-date»»···
 #--
 
@@ -842,6 +843,7 @@ class Plot (_Plot_Element_) :
             , wc_x_max      = xta.ax_max
             , wc_y_min      = yta.ax_min
             , wc_y_max      = yta.ax_max
+            , ** kwds
             )
         return result
     # end def add_viewport_ta
@@ -1025,7 +1027,11 @@ class Viewport (_Plot_Element_) :
     def path (self, points, ** kwds) :
         """Add a SVG path element through `points` to the plot."""
         self._convert_kwds (kwds)
-        result = SVG.Path  (d = self._converted_points (points), ** kwds)
+        close   = points [-1] if points [-1] in ("z", "Z") else None
+        c_pnts  = self._converted_points (points [: -bool (close)])
+        if close :
+            c_pnts += (close, )
+        result  = SVG.Path  (d = c_pnts, ** kwds)
         return result
     # end def polygon
 
