@@ -77,6 +77,7 @@
 #    20-Jul-2016 (CT) Add `_Exp_.OVERLAPS`
 #    15-May-2017 (CT) Add `TUPLE`
 #    12-Nov-2022 (CT) Add `Q.FCT`
+#    18-Nov-2022 (CT) Fix lack of `operator.call` in PY 3.10 and earlier
 #    ««revision-date»»···
 #--
 
@@ -96,6 +97,12 @@ from   _TFL.pyk                   import pyk
 
 import datetime
 import operator
+
+try :
+    from operator import call as operator_call
+except ImportError :
+    def operator_call (obj, /, *args, **kwargs) :
+        return obj (*args, **kwargs)
 
 def normalized_op_name (name) :
     return name.strip ("_")
@@ -192,7 +199,7 @@ class Base (TFL.Meta.Object) :
 
     def FCT (self, getter, * args, ** kwds) :
         """Call result of `getter` with arguments `args`."""
-        return self._Call_ (getter, operator.call, * args, ** kwds)
+        return self._Call_ (getter, operator_call, * args, ** kwds)
     # end def FCT
 
     def OR (self, * args) :
