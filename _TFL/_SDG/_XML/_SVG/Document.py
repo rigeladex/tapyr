@@ -34,6 +34,7 @@
 #     4-Mar-2017 (CT) Add and use `_convert_view_box`
 #     5-Nov-2022 (CT) Add `Linear_Gradient`
 #    18-Nov-2022 (CT) Add `Style`
+#    18-Nov-2022 (CT) Add support for `closepath` to `_convert_points_path`
 #    ««revision-date»»···
 #--
 
@@ -308,10 +309,13 @@ def _convert_points (self, k, value) :
 def _convert_points_path (self, k, value) :
     result = value
     if isinstance (value, (list, tuple)) :
+        close = value [-1] if value [-1] in ("z", "Z") else None
         x, y  = value [0]
-        parts = ["M %s %s L" % (x, y)]
+        parts = ["M %s,%s" % (x, y)]
         parts.extend \
-            ("%s %s" % (x, y) for x, y in value [1:])
+            ("%s,%s" % (x, y) for x, y in value [1: -bool (close)])
+        if close :
+            parts.append (close)
         result = " ".join (parts)
     return result
 # end def _convert_points_path
@@ -551,8 +555,8 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", design_size = 10, ref_x = None, st
     >>> svg = Document (Root (view_box="0 0 1000 500"))
     >>> svg.add (Defs (mrk))
     >>> svg.add (Rect (x = 5, y = 5, width = 990, height = 490, fill = "none", stroke = "orange", stroke_width = 5))
-    >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head)", d = "M 100 200 L 500 200 900 400"))
-    >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head)", d = "M 100 100 L 500 100 900 50"))
+    >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head)", d = "M 100 200 500 200 900 400"))
+    >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head)", d = "M 100 100 500 100 900 50"))
     >>> svg.write_to_xml_stream ()
     <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
@@ -566,20 +570,20 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", design_size = 10, ref_x = None, st
                 markerUnits="strokeWidth" markerWidth="3" orient="auto"
                 refX="10" refY="5" stroke="black" viewBox="0 0 10 10"
         >
-          <path d="M 0  0 L 10 5 0 2 z">
+          <path d="M 0,0 10,5 0,2 z">
           </path>
-          <path d="M 0 10 L 10 5 0 8 z">
+          <path d="M 0,10 10,5 0,8 z">
           </path>
         </marker>
       </defs>
       <rect fill="none" height="490" stroke="orange" stroke-width="5"
             width="990" x="5" y="5"
       />
-      <path d="M 100 200 L 500 200 900 400" fill="none"
+      <path d="M 100 200 500 200 900 400" fill="none"
             marker-end="url(#SVG:Arrow_Head)" stroke="red" stroke-width="25"
       >
       </path>
-      <path d="M 100 100 L 500 100 900 50" fill="none"
+      <path d="M 100 100 500 100 900 50" fill="none"
             marker-start="url(#SVG:Arrow_Head)" stroke="blue" stroke-width="10"
       >
       </path>
@@ -592,9 +596,8 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", design_size = 10, ref_x = None, st
     if ref_x is None :
         ref_x = size
     result = cls \
-        ( Path (d = "M 0  0 L %(size)s %(size_2)s 0 2 z" % scope)
-        , Path
-            (d = "M 0 %(size)s L %(size)s %(size_2)s 0 %(size - 2)s z" % scope)
+        ( Path (d = ((0, 0),    (size, size_2), (0, 2),        "z"))
+        , Path (d = ((0, size), (size, size_2), (0, size - 2), "z"))
         , elid          = elid
         , fill          = "none"
         , marker_units  = "strokeWidth"
@@ -619,8 +622,8 @@ def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", design_size = 12, ref_x = None
     >>> svg = Document (Root (view_box="0 0 1000 500"))
     >>> svg.add (Defs (mrk))
     >>> svg.add (Rect (x = 5, y = 5, width = 990, height = 490, fill = "none", stroke = "orange", stroke_width = 5))
-    >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head_A)", d = "M 100 200 L 500 200 900 400"))
-    >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head_A)", d = "M 100 100 L 500 100 900 50"))
+    >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head_A)", d = "M 100 200 500 200 900 400"))
+    >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head_A)", d = "M 100 100 500 100 900 50"))
     >>> svg.write_to_xml_stream ()
     <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
@@ -647,11 +650,11 @@ def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", design_size = 12, ref_x = None
       <rect fill="none" height="490" stroke="orange" stroke-width="5"
             width="990" x="5" y="5"
       />
-      <path d="M 100 200 L 500 200 900 400" fill="none"
+      <path d="M 100 200 500 200 900 400" fill="none"
             marker-end="url(#SVG:Arrow_Head_A)" stroke="red" stroke-width="25"
       >
       </path>
-      <path d="M 100 100 L 500 100 900 50" fill="none"
+      <path d="M 100 100 500 100 900 50" fill="none"
             marker-start="url(#SVG:Arrow_Head_A)" stroke="blue"
             stroke-width="10"
       >
