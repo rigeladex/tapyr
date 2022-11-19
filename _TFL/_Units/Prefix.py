@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2014 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2022 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -17,6 +17,8 @@
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
 #    26-Nov-2014 (CT) Correct spelling of `deca` (not `deka`!)
+#    19-Nov-2022 (CT) Add new prefixes `ronna` and `quetta`
+#                     + and their siblings `ronto` and `quecto`
 #    ««revision-date»»···
 #--
 
@@ -27,6 +29,8 @@ import _TFL._Units
 
 ### http://en.wikipedia.org/wiki/SI_prefix
 
+quecto = 1E-30
+ronto  = 1E-27
 yocto  = 1E-24
 zepto  = 1E-21
 atto   = 1E-18
@@ -47,9 +51,13 @@ peta   = 1E+15
 exa    = 1E+18
 zetta  = 1E+21
 yotta  = 1E+24
+ronna  = 1E+27
+quetta = 1E+30
 
 prefix_abbreviations = dict \
-    ( y              = yocto
+    ( q              = quecto
+    , r              = ronto
+    , y              = yocto
     , z              = zepto
     , a              = atto
     , f              = femto
@@ -69,11 +77,15 @@ prefix_abbreviations = dict \
     , E              = exa
     , Z              = zetta
     , Y              = yotta
+    , R              = ronna
+    , Q              = quetta
     )
 
 if __name__ != "__main__" :
     TFL.Units._Export \
         ( "prefix_abbreviations"
+        , "quecto"
+        , "ronto"
         , "yocto"
         , "zepto"
         , "atto"
@@ -94,5 +106,7 @@ if __name__ != "__main__" :
         , "exa"
         , "zetta"
         , "yotta"
+        , "ronna"
+        , "quetta"
         )
 ### __END__ Prefix
