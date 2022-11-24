@@ -23,10 +23,16 @@
 #                     + Move computation of `major_delta`, `sub_ticks` to `Base`
 #     5-Dec-2018 (CT) Add `label_delta`
 #     9-Nov-2022 (CT) Add `label_formatter`
+#    12-Nov-2022 (CT) Add `Axis_datetime`, `Axis_datetime_year`,
+#                     `Axis_Date_Time`, `Axis_day_hour`, `Axis_Obj`
+#                     + Factor `labels_all`
+#                     + Allow `major_range`, `medium_range`, `minor_range`
+#                       to be set by caller
 #    ««revision-date»»···
 #--
 
 from   _TFL                       import TFL
+from   _TFL.Decorator             import subclass_responsibility
 from   _TFL.Divisor_Dag           import Divisor_Dag
 from   _TFL.formatted_repr        import formatted_repr
 from   _TFL.Math_Func             import log, log2, log10, sign
@@ -34,6 +40,7 @@ from   _TFL.portable_repr         import portable_repr
 from   _TFL.predicate             import \
     is_int, pairwise, rounded_down, rounded_to, rounded_up, uniq
 from   _TFL.pyk                   import pyk
+from   _TFL.Q_Exp                 import Q
 from   _TFL.Range                 import Float_Range_Discrete as F_Range
 
 from   _TFL._Meta.Once_Property   import Once_Property
@@ -41,7 +48,8 @@ from   _TFL._Meta.Property        import Optional_Computed_Once_Property
 
 import _TFL._Meta.Object
 
-import itertools
+from   itertools import chain as ichain, zip_longest as izip_l
+
 import operator
 
 class Axis (TFL.Meta.Object) :
@@ -74,6 +82,16 @@ class Axis (TFL.Meta.Object) :
     Labels:
     >>> print (ax1.labels)
     ('0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100')
+
+    Labels separated by `label_delta`:
+    >>> ax1.label_delta = 2
+    >>> print (ax1.labels)
+    ('0', '', '20', '', '40', '', '60', '', '80', '', '100', '')
+
+    >>> print (ax1.labels_all)
+    ('0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100')
+
+    >>> ax1.label_delta = 1
 
     Custom labels:
     >>> ax1.label_formatter = lambda x : "%03d" % x
@@ -162,8 +180,16 @@ class Axis (TFL.Meta.Object) :
     max_major_ticks         = 20
     max_ticks               = 100
     minor_lines             = ""
+
     _label_formatter        = None
     _labels                 = None
+    _major_range            = None
+    _medium_range           = None
+    _minor_range            = None
+    _prefixed_names         = \
+        ( "label_formatter", "labels"
+        , "major_range", "medium_range", "minor_range"
+        )
 
     def __init__ \
             ( self, base, data_min, data_max
@@ -203,7 +229,7 @@ class Axis (TFL.Meta.Object) :
         if minor_ticks is not None :
             self.minor_ticks    = minor_ticks
         self.round_extrema      = round_extrema
-        self.pop_to_self     (kwds, "label_formatter", "labels", prefix = "_")
+        self.pop_to_self     (kwds, * self._prefixed_names, prefix = "_")
         self.__dict__.update (** kwds)
     # end def __init__
 
@@ -247,13 +273,24 @@ class Axis (TFL.Meta.Object) :
     # end def label_formatter
 
     @property
-    def labels (self) :
-        ld     = self.label_delta
+    def labels_all (self) :
+        """Labels for all major tick marks specified by `major_range`"""
         result = self._labels
         if result is True :
             formatter   = self.label_formatter
             result      = self._labels = \
                 tuple (formatter (m) for m in self.major_range)
+        return result
+    # end def labels_all
+
+    @property
+    def labels (self) :
+        """Labels for major tick marks separated by `label_delta`.
+
+        The labels in between `label_delta` are empty.
+        """
+        ld     = self.label_delta
+        result = self.labels_all
         if ld > 1 :
             def _gen (result, ld) :
                 for r in result [::ld] :
@@ -296,28 +333,38 @@ class Axis (TFL.Meta.Object) :
         return result
     # end def major_min
 
-    @Once_Property
+    @property
     def major_range (self) :
         """Range of values of major tick marks."""
-        ax_min       = self.ax_min
-        ax_max       = self.ax_max
-        data_min     = self.data_min
-        data_max     = self.data_max
-        major_delta  = self.major_delta
-        major_min    = self.major_min + self.major_offset
-        major_max    = self.major_max
-        margin_delta = self.margin_delta
-        if major_min - ax_min > major_delta :
-            major_min -= major_delta * int ((major_min - ax_min) / major_delta)
-        if ax_max - major_max > major_delta :
-            major_max += major_delta * int ((ax_max - major_max) / major_delta)
-        bounds       = "".join \
-            ( ( "[" if data_min != ax_min or not margin_delta else "("
-              , "]" if data_max != ax_max or not margin_delta else ")"
-              )
-            )
-        result = F_Range (major_min, major_max, bounds, delta = major_delta)
-        return list (result)
+        result = self._major_range
+        if result is None :
+            ax_min       = self.ax_min
+            ax_max       = self.ax_max
+            data_min     = self.data_min
+            data_max     = self.data_max
+            major_delta  = self.major_delta
+            major_min    = self.major_min + self.major_offset
+            major_max    = self.major_max
+            margin_delta = self.margin_delta
+            if major_min - ax_min > major_delta :
+                major_min -= major_delta * \
+                    int ((major_min - ax_min) / major_delta)
+            if ax_max - major_max > major_delta :
+                major_max += major_delta * \
+                    int ((ax_max - major_max) / major_delta)
+            bounds       = "".join \
+                ( ( "[" if data_min != ax_min or not margin_delta else "("
+                  , "]" if data_max != ax_max or not margin_delta else ")"
+                  )
+                )
+            result = self._major_range = list \
+                (F_Range (major_min, major_max, bounds, delta = major_delta))
+        return result
+    # end def major_range
+
+    @major_range.setter
+    def major_range (self, value) :
+        self._major_range = value
     # end def major_range
 
     @Once_Property
@@ -338,10 +385,19 @@ class Axis (TFL.Meta.Object) :
         return self.major_lines and bool (self.medium_range)
     # end def medium_lines
 
-    @Once_Property
+    @property
     def medium_range (self) :
         """Range of values of medium tick marks."""
-        return list (self._gen_tick_marks (self.medium_delta, self.major_range))
+        result  = self._medium_range
+        if result is None :
+            result  = self._medium_range = list \
+                (self._gen_tick_marks (self.medium_delta, self.major_range))
+        return result
+    # end def medium_range
+
+    @medium_range.setter
+    def medium_range (self, value) :
+        self._medium_range  = value
     # end def medium_range
 
     @Optional_Computed_Once_Property
@@ -358,16 +414,21 @@ class Axis (TFL.Meta.Object) :
         return delta / (minor_ticks + 1.0) if minor_ticks else 0
     # end def minor_delta
 
-    @Once_Property
+    @property
     def minor_range (self) :
         """Range of values of minor tick marks."""
-        delta  = self.minor_delta
-        result = []
-        if delta :
-            higher_range = sorted \
-                (itertools.chain (self.major_range, self.medium_range))
-            result       = list (self._gen_tick_marks (delta, higher_range))
+        result  = self._minor_range
+        if result is None :
+            higher_range    = sorted \
+                (ichain (self.major_range, self.medium_range))
+            result          = self._minor_range = list \
+                (self._gen_tick_marks (self.minor_delta, higher_range))
         return result
+    # end def minor_range
+
+    @minor_range.setter
+    def minor_range (self, value) :
+        self._minor_range   = value
     # end def minor_range
 
     @Optional_Computed_Once_Property
@@ -409,7 +470,7 @@ class Axis (TFL.Meta.Object) :
                     while cmp_op (t, r) :
                         yield t
                         t += delta
-            return itertools.chain \
+            return ichain \
                 ( reversed
                     (list (_gen (-delta, [higher_tick_marks [0], self.ax_min])))
                 , _gen (delta, higher_tick_marks)
@@ -430,6 +491,239 @@ class Axis (TFL.Meta.Object) :
     # end def __str__
 
 # end class Axis
+
+class _Axis_Obj_ (Axis) :
+    """Base class for Axis with tick marks for specific objects."""
+
+    def __init__ \
+            ( self, base, data_min, data_max
+            , major_tick_objs
+            , *
+            , medium_tick_objs  = None
+            , minor_tick_objs   = None
+            , q_tick_position   = None
+            , ** kwds
+            ) :
+        self.major_tick_objs    = major_tick_objs
+        if q_tick_position is not None :
+            self.q_tick_position= q_tick_position
+        qtp                     = self.q_tick_position
+        major_range             = [qtp (t) for t in major_tick_objs]
+        major_delta             = abs (major_range [1] - major_range [0]) \
+            if len (major_range) > 1 else None
+        if medium_tick_objs :
+            kwds ["medium_range"]   = mera = [qtp (t) for t in medium_tick_objs]
+            kwds ["medium_delta"]   = abs (mera [0] - major_range [0])
+        if minor_tick_objs :
+            kwds ["minor_range"]    = mira = [qtp (t) for t in minor_tick_objs]
+            kwds ["minor_delta"]    = abs (mira [0] - major_range [0])
+        self.__super.__init__ \
+            ( base, data_min, data_max
+            , major_delta   = major_delta
+            , major_range   = major_range
+            , ** kwds
+            )
+    # end def __init__
+
+    @subclass_responsibility
+    def labels_all (self) :
+        """Labels for all major tick marks specified by `major_range`"""
+    # end def labels_all
+
+# end class _Axis_Obj_
+
+class Axis_datetime (_Axis_Obj_) :
+    """Axis with tick marks for `datetime` objects.
+
+    >>> from datetime import datetime as DT
+    >>> nl      = chr (10)
+
+    >>> dt_head = DT (2022, 10, 1)
+    >>> dt_tail = DT (2023,  2, 1)
+    >>> dts = (dt_head, DT (2022, 11, 1), DT (2022, 12, 1), DT (2023, 1, 1), dt_tail)
+    >>> ax1 = Axis_datetime (base_month, dt_head, dt_tail, dts)
+    >>> ax2 = Axis_datetime (base_month, dt_head, dt_tail, dts, label_part_formatters = Axis_datetime.label_part_formatters_qy)
+
+    >>> print (ax1.major_range)
+    [738429, 738460, 738490, 738521, 738552]
+
+    >>> print (" | ".join (ax1.labels).replace (nl, " ").rstrip ())
+    Oct 2022 | Nov  | Dec  | Jan 2023 | Feb
+
+    >>> print (" | ".join (ax2.labels).replace (nl, " ").rstrip ())
+    Q4 2022 |   |   | Q1 2023 |
+
+    """
+
+    Q_quarter           = ((Q.month - 1) // 3) + 1
+    Q_quarter_formatter = lambda dt : "Q%d" % Axis_datetime.Q_quarter (dt)
+
+    label_part_formatters       = \
+      label_part_formatters_by  = \
+        ( Q.FCT (Q.strftime, "%b")
+        , Q.FCT (Q.strftime, "%Y")
+        )
+
+    label_part_formatters_dby   = \
+        ( Q.FCT (Q.strftime, "%d")
+        , Q.FCT (Q.strftime, "%b")
+        , Q.FCT (Q.strftime, "%Y")
+        )
+
+    label_part_formatters_qy    = \
+        ( Q_quarter_formatter
+        , Q.FCT (Q.strftime, "%Y")
+        )
+
+    q_tick_position     = Q.FCT (Q.toordinal)
+
+    _labels             = True
+
+    @property
+    def labels_all (self) :
+        """Labels for all major tick marks specified by `major_range`"""
+        result  = self._labels
+        if result is True :
+            lpfs    = self.label_part_formatters
+            def _gen () :
+                lst = ()
+                for mto in self.major_tick_objs :
+                    nxt = tuple (lpf (mto) for lpf in lpfs)
+                    ps  = tuple \
+                        ((n if n != l else "") for n, l in izip_l (nxt, lst))
+                    lst = nxt
+                    yield "\n".join (ps)
+            result  = self._labels = tuple (_gen ())
+        return result
+    # end def labels_all
+
+# end class Axis_datetime
+
+class Axis_datetime_year (Axis_datetime) :
+    """Axis with tick marks for `datetime` objects covering a year.
+
+    >>> from datetime import datetime as DT, timedelta as TD
+    >>> nl      = chr (10)
+    >>> head    = DT  (2022, 1, 1)
+    >>> days    = [head + TD (d) for d in range (365)]
+    >>> qtp     = Axis_datetime.q_tick_position
+    >>> qtp_r   = lambda x, qtp = qtp, base = qtp (head) - 1 : qtp (x) - base
+    >>> axy     = Axis_datetime_year (base_month, days, q_tick_position = qtp_r)
+
+    >>> print (len (axy.major_range), len (axy.medium_range), len (axy.minor_range))
+    12 24 36
+    >>> print (axy.major_range  [: 5])
+    [1, 32, 60, 91, 121]
+    >>> print (axy.medium_range [:10])
+    [11, 21, 42, 52, 70, 80, 101, 111, 131, 141]
+    >>> print (axy.minor_range  [:15])
+    [6, 16, 26, 37, 47, 57, 65, 75, 85, 96, 106, 116, 126, 136, 146]
+
+    >>> print ("| ".join (axy.labels).replace (nl, " ").rstrip ())
+    Jan 2022| Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec
+
+    """
+
+    def __init__ (self, base, days, data_min = None, data_max = None, ** kwds) :
+        qtp = kwds.pop ("q_tick_position", self.q_tick_position)
+        if data_min is None :
+            data_min    = qtp (days [ 0])
+        if data_max is None :
+            data_max    = qtp (days [-1])
+        major_tick_objs     = [d for d in days if d.day == 1]
+        medium_tick_objs    = [d for d in days if d.day in (11, 21)]
+        minor_tick_objs     = [d for d in days if d.day in (6, 16, 26)]
+        self.__super.__init__ \
+            ( base, data_min, data_max, major_tick_objs
+            , medium_tick_objs  = medium_tick_objs
+            , minor_tick_objs   = minor_tick_objs
+            , q_tick_position   = qtp
+            , ** kwds
+            )
+    # end def __init__
+
+# end class Axis_datetime_year
+
+class Axis_Date_Time (Axis_datetime) :
+    """Axis with tick marks for `CAL.Date_Time` objects."""
+
+    q_tick_position = Q.JD
+
+# end class Axis_Date_Time
+
+class Axis_day_hour (Axis) :
+    """Axis with hourly tick marks."""
+
+    major_lines             = True
+    _labels                 = True
+
+    def __init__ \
+            ( self
+            , base          = None
+            , data_min      =   0
+            , data_max      =  24
+            , label_delta   =   3
+            , major_delta   =   1
+            , medium_lines  =  ""
+            , medium_ticks  =   1
+            , margin        =   0
+            , max_ticks     = 240
+            , minor_ticks   =   1
+            , ** kwds
+            ) :
+        if base is None :
+            base = Base (24)
+        self.__super.__init__ \
+            ( base, data_min, data_max
+            , label_delta   = label_delta
+            , major_delta   = major_delta
+            , medium_lines  = medium_lines
+            , medium_ticks  = medium_ticks
+            , margin        = margin
+            , max_ticks     = max_ticks
+            , minor_ticks   = minor_ticks
+            , ** kwds
+            )
+    # end def __init__
+
+    @staticmethod
+    def _label_formatter (value) :
+        h = int (value)
+        m = (value - h) * 60
+        return "%02d:%02.0f" % (h, m)
+    # end def _label_formatter
+
+# end class Axis_day_hour
+
+class Axis_Obj (Axis) :
+    """Axis with tick marks for specific objects."""
+
+    def __init__ \
+            ( self, base, data_min, data_max
+            , major_tick_objs
+            , q_tick_position
+            , q_tick_label
+            , ** kwds
+            ) :
+        self.q_tick_label   = q_tick_label
+        self.__super.__init__ \
+            ( base, data_min, data_max, major_tick_objs, q_tick_position
+            , ** kwds
+            )
+    # end def __init__
+
+    @property
+    def labels_all (self) :
+        """Labels for all major tick marks specified by `major_range`"""
+        result = self._labels
+        if result is True :
+            qtl     = self.q_tick_label
+            result  = self._labels = \
+                tuple (qtl (mto) for mto in self.major_tick_objs)
+        return result
+    # end def labels_all
+
+# end class Axis_Obj
 
 class Base (TFL.Meta.Object) :
     """Number base for tick mark determination.
@@ -473,7 +767,7 @@ class Base (TFL.Meta.Object) :
         self.base   = base
         self.deltas = \
             ( None if deltas is None else sorted
-                (uniq (itertools.chain (deltas, ([] if scale else [1, base]))))
+                (uniq (ichain (deltas, ([] if scale else [1, base]))))
             )
         self.lra    = log_round_amount
         self.scale  = scale
@@ -567,7 +861,7 @@ class Base (TFL.Meta.Object) :
         med_cands   = sorted ((d - 1 for d in delta_divs), reverse = True)
         minor_divs  = sorted \
             ( (   d
-              for d in set (itertools.chain (b_divs, deltas))
+              for d in set (ichain (b_divs, deltas))
               if  1 < d <= limit
               )
             , reverse = True
