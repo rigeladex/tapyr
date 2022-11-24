@@ -39,6 +39,7 @@
 #                     + Ditto for `.medium_ticks`, `.minor_ticks`
 #    19-Aug-2019 (CT) Use `print_prepr`
 #    18-Nov-2022 (CT) Add support for `closepath` to `Viewport.path`
+#    19-Nov-2022 (CT) Add `Grid.late_decoration`, `add_decorations`
 #    ««revision-date»»···
 #--
 
@@ -375,7 +376,7 @@ class _Device_Coordinate_ (_Coordinate_) :
         return 0.0
     # end def window_offset
 
-# end class _Normalized_Coordinate_
+# end class _Device_Coordinate_
 
 class _Normalized_Coordinate_ (_Device_Coordinate_) :
     """Base class for single x or y normalized ([0, 1]) coordinates."""
@@ -516,6 +517,7 @@ class Grid (_Plot_Element_) :
     """Grid of a viewport."""
 
     all_sides                   = "trbl"
+    _decorated                  = False
 
     def __init__ \
             ( self, vp
@@ -525,23 +527,39 @@ class Grid (_Plot_Element_) :
             , sides             = "trbl"
             , xta               = None ### Ticker.Axis for x
             , yta               = None ### Ticker.Axis for y
+            , early_decoration  = True
             ) :
-        self.P  = P  = vp.P if P is None else P
-        self.vp = vp
+        self.vp                 = vp
+        self.P                  = P = vp.P if P is None else P
         if font_size is None :
-            font_size = P.font_size
-        self.svg = svg = vp.group \
-            ( font_size    = font_size * 1.5
-            , klass        = klass
-            , stroke       = P.color.axis
+            font_size           = P.font_size
+        self.sides              = sides
+        self.xta                = xta
+        self.yta                = yta
+        self.early_decoration   = early_decoration
+        self.svg                = svg  = vp.group \
+            ( font_size         = font_size * 1.5
+            , klass             = klass
+            , stroke            = P.color.axis
             )
+        if early_decoration :
+            self.add_decorations ()
+    # end def __init__
+
+    def add_decorations (self) :
+        if self._decorated :
+            return
+        self._decorated = True
+        P       = self.P
+        sides   = self.sides
+        svg     = self.svg
         if sides == self.all_sides :
             svg.add (self.box ())
         elif sides :
-            svg.add (* self.sides (sides))
+            svg.add (* self.add_sides (sides))
         for (ta, ticker, labeler) in \
-            [ (xta, self.x_ticks, self.x_labels)
-            , (yta, self.y_ticks, self.y_labels)
+            [ (self.xta, self.x_ticks, self.x_labels)
+            , (self.yta, self.y_ticks, self.y_labels)
             ] :
             if ta is not None :
                 svg.add \
@@ -575,17 +593,9 @@ class Grid (_Plot_Element_) :
                         ( labeler
                             (ta.major_range, ta.labels, fill = ta.label_fill)
                         )
-    # end def __init__
+    # end def add_decorations
 
-    def box (self) :
-        """Return box around `self.vp`."""
-        return self.vp.rect \
-            ( NC.left, NC.bottom, NC.right, NC.top
-            , stroke_width = self.P.grid_stroke_width
-            )
-    # end def box
-
-    def sides (self, sides = "trbl", delta = 0, ** kwds) :
+    def add_sides (self, sides = "trbl", delta = 0, ** kwds) :
         """Generate lines for each side in `sides`."""
         vp      = self.vp
         sw      = self.P.grid_stroke_width
@@ -602,7 +612,24 @@ class Grid (_Plot_Element_) :
         if "l" in sides :
             x   = NC.left + delta
             yield vp.line (x, NC.bottom, x, NC.top)
-    # end def sides
+    # end def add_sides
+
+    def box (self) :
+        """Return box around `self.vp`."""
+        return self.vp.rect \
+            ( NC.left, NC.bottom, NC.right, NC.top
+            , stroke_width = self.P.grid_stroke_width
+            )
+    # end def box
+
+    @TFL.Contextmanager
+    def late_decoration (self) :
+        try :
+            yield
+        finally :
+            if not self._decorated :
+                self.add_decorations ()
+    # end def late_decoration
 
     def x_labels \
             ( self, x_range, x_labels
