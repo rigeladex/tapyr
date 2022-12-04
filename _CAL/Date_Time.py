@@ -46,6 +46,8 @@
 #    10-Oct-2022 (CT) Add property `yyyy_mm_dd_HH_MM`
 #    12-Oct-2022 (CT) Add doctest for `formatted`
 #     4-Dec-2022 (CT) Add `JT` (time of day as decimal fraction)
+#     4-Dec-2022 (CT) Add `dst_adjustment`
+#                     + Add optional argument `tz` to `as_local`
 #    ««revision-date»»···
 #--
 
@@ -227,6 +229,18 @@ class Date_Time (CAL.Date, CAL.Time) :
     from _CAL.Delta import Date_Time_Delta as Delta
 
     @Once_Property
+    def dst_adjustment (self) :
+        """Daylight saving time (DST) adjustment, as a timedelta object.
+
+        if DST information isn't known, return None.
+        """
+        result = self._body.dst ()
+        if result is not None :
+            result = self.Delta (seconds = result.seconds)
+        return result
+    # end def dst_adjustment
+
+    @Once_Property
     def JT (self) :
         """Time of day based on JD as decimal fraction.
 
@@ -259,9 +273,14 @@ class Date_Time (CAL.Date, CAL.Time) :
         return CAL.Date (date = self._body.date ())
     # end def as_date
 
-    def as_local (self) :
-        """Return `self` converted to local time."""
-        return self.__class__ (** {self._kind : self._body.astimezone ()})
+    def as_local (self, tz = None) :
+        """Return `self` converted to local time.
+
+        If `astimezone` is called without explicit `tz`, the returned result
+        does not have daylight saving time (DST) information. Therefore,
+        passing the local `tz` is recommended if `dst_adjustment` is needed.
+        """
+        return self.__class__ (** {self._kind : self._body.astimezone (tz)})
     # end def as_local
 
     def as_time (self) :
