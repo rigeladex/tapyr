@@ -45,6 +45,7 @@
 #     9-Oct-2022 (CT) Simplify `as_local` (support only Python 3.9+)
 #    10-Oct-2022 (CT) Add property `yyyy_mm_dd_HH_MM`
 #    12-Oct-2022 (CT) Add doctest for `formatted`
+#     4-Dec-2022 (CT) Add `JT` (time of day as decimal fraction)
 #    ««revision-date»»···
 #--
 
@@ -122,6 +123,18 @@ class Date_Time (CAL.Date, CAL.Time) :
        2451180.0
        >>> Date_Time (2000,1,1,12).JD
        2451545.0
+
+        >>> dt = Date_Time (2022, 12, 4, 12)
+        >>> print (dt, dt.JD2000, dt.JT)
+        2022-12-04 12:00:00 8373.0 0.0
+
+        >>> dt_mn = dt + 0.5
+        >>> print (dt_mn, dt_mn.JD2000, dt_mn.JT)
+        2022-12-05 00:00:00 8373.5 0.5
+
+        >>> dt_xx = dt + 0.95
+        >>> print (dt_xx, "%.2f" % dt_xx.JD2000, "%.2f" % dt_xx.JT)
+        2022-12-05 10:48:00 8373.95 0.95
 
        >>> with timezone_context ("CET") :
        ...   dt1 = Date_Time (2008, 1, 7, 10, 16, 42, 0)
@@ -212,6 +225,17 @@ class Date_Time (CAL.Date, CAL.Time) :
         )
 
     from _CAL.Delta import Date_Time_Delta as Delta
+
+    @Once_Property
+    def JT (self) :
+        """Time of day based on JD as decimal fraction.
+
+        Julian dates start at noon, therefore a result of `0` means noon, a
+        result of `0.5` meeans midnight, and so on.
+        """
+        JD = self.JD2000
+        return JD - int (JD)
+    # end def JT
 
     @Once_Property
     def midnight (self) :
