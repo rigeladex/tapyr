@@ -78,6 +78,7 @@
 #    15-May-2017 (CT) Add `TUPLE`
 #    12-Nov-2022 (CT) Add `Q.FCT`
 #    18-Nov-2022 (CT) Fix lack of `operator.call` in PY 3.10 and earlier
+#     7-Dec-2022 (CT) Add `Q.APPLY_LATE`
 #    ««revision-date»»···
 #--
 
@@ -914,6 +915,26 @@ class _Bool_Bin_Op_ (_Distributive_, _Exp_) :
 
 # end class _Bool_Bin_Op_
 
+@TFL.Add_To_Class ("APPLY_LATE", Base)
+class _Q_Apply_Late_ (TFL.Meta.Object) :
+    """Model a query expression that applies to a nested query expression."""
+
+    def __init__ (self, qo, qi) :
+        self.qo = qo
+        self.qi = qi
+    # end def __init__
+
+    def __call__ (self, obj) :
+        return self.qo (self.qi (obj))
+    # end def __call__
+
+    def __repr__ (self) :
+        qs = self.qo, self.qi
+        return "Q.APPLY_LATE (%s)" % (", ".join (repr (q) for q in qs))
+    # end def __repr__
+
+# end class _Q_Apply_Late_
+
 @TFL.Add_New_Method (Base)
 class _AND_ (_Bool_Bin_Op_, TFL.Filter_And) :
     """Boolean AND operator"""
@@ -1649,6 +1670,15 @@ Q-expressions::
 
     >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 23) (r1)
     False
+
+`Q.APPLY_LATE` allows a query to apply to the result of a nested query:
+
+    >>> import dateutil.tz
+    >>> tz  = dateutil.tz.gettz ("Europe/Lisbon")
+    >>> dt  = datetime (2022, 10, 7, 12, 0, 0, tzinfo = tz)
+    >>> qal = Q.APPLY_LATE (Q.hour, Q.SELF - Q.FCT (Q.dst))
+    >>> Q.hour (dt), qal (dt)
+    (12, 11)
 
 """
 
