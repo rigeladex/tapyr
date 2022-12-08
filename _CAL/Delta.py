@@ -55,6 +55,7 @@
 #                       `Date_Delta` and `Date_Time_Delta`, too
 #    13-Oct-2022 (CT) Add optional argument `day_digits` to `formatted`
 #    13-Oct-2022 (CT) Change output format for `"%H"` to `"%2dh"`
+#     8-Dec-2022 (CT) Add `total_seconds` to `_DT_Delta_`
 #    ««revision-date»»···
 #--
 
@@ -167,6 +168,12 @@ class _DT_Delta_ (_Delta_) :
 
     Zero               = datetime.timedelta (0)
 
+    @Once_Property
+    def total_seconds (self) :
+        """Return the total number of seconds contained in `self`"""
+        return self._body.total_seconds ()
+    # end def total_seconds
+
     def delta_op (self, rhs, op) :
         """Return result of `op` applied to `self` and delta `rhs`"""
         result = op (self._body, rhs._body)
@@ -263,6 +270,8 @@ class Time_Delta (_DT_Delta_) :
 
     >>> t.h, t.m, t.s, t.seconds
     (3, 0, 0, 10800)
+    >>> t.total_seconds
+    10800.0
     >>> abs (t) is t
     True
     >>> abs (t) == t
@@ -403,6 +412,8 @@ class Date_Delta (_DT_Delta_) :
     42 days, 0:00:00
     >>> d.days, d.weeks
     (42, 6)
+    >>> d.total_seconds
+    3628800.0
     >>> d2 = Date_Delta (5)
     >>> x = d - d2
     >>> print (x)
@@ -501,6 +512,8 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
     5 days, 8:03:33
     >>> d.days, d.h, d.m, d.s
     (5, 8, 3, 33)
+    >>> d.total_seconds
+    461013.0
     >>> d2 = Date_Time_Delta (days = 2, hours = 12)
     >>> print (d2)
     2 days, 12:00:00
