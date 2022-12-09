@@ -28,6 +28,7 @@
 #                     + Factor `labels_all`
 #                     + Allow `major_range`, `medium_range`, `minor_range`
 #                       to be set by caller
+#     9-Dec-2022 (CT) Add `shifted_labels`
 #    ««revision-date»»···
 #--
 
@@ -459,6 +460,26 @@ class Axis (TFL.Meta.Object) :
         return result
     # end def adjust_major_offset
 
+    def shifted_labels (self, delta) :
+        """Return copy of `self` with labels shifted by `delta`.
+
+        This if useful for diagrams displaying date vs. time for some quantity,
+        e.g., daily sunrise, where the change from winter to summer time would
+        display as a discontinuity.
+
+        To avoid that discontinuity, ony can display all times in winter time,
+        but add axes with shifted labels for the dates of change between winter
+        and summer times.
+        """
+        cls             = self.__class__
+        result          = cls.__new__ (cls)
+        formatter       = self.label_formatter
+        shifted_labels  = tuple \
+            (formatter (m + delta) for m in self.major_range)
+        result.__dict__ = dict (self.__dict__, _labels   = shifted_labels)
+        return result
+    # end def shifted_labels
+
     def _gen_tick_marks (self, delta, higher_tick_marks) :
         if delta :
             def _gen (delta, higher_tick_marks) :
@@ -652,7 +673,21 @@ class Axis_Date_Time (Axis_datetime) :
 # end class Axis_Date_Time
 
 class Axis_day_hour (Axis) :
-    """Axis with hourly tick marks."""
+    """Axis with hourly tick marks.
+
+    >>> adh = Axis_day_hour (data_min = 2, data_max = 9)
+    >>> adh.major_range
+    [2, 3, 4, 5, 6, 7, 8, 9]
+    >>> adh.labels
+    ('02:00', '', '', '05:00', '', '', '08:00', '', '')
+
+    >>> adh_shifted = adh.shifted_labels (delta = 1)
+    >>> adh_shifted.major_range
+    [2, 3, 4, 5, 6, 7, 8, 9]
+    >>> adh_shifted.labels
+    ('03:00', '', '', '06:00', '', '', '09:00', '', '')
+
+    """
 
     major_lines             = True
     _labels                 = True
