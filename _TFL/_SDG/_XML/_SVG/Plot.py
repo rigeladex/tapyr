@@ -41,6 +41,11 @@
 #    18-Nov-2022 (CT) Add support for `closepath` to `Viewport.path`
 #    19-Nov-2022 (CT) Add `Grid.late_decoration`, `add_decorations`
 #    24-Nov-2022 (CT) Add `polygradient`
+#     9-Dec-2022 (CT) Modularize `Grid`
+#                     + Add `xtra_decorations`
+#                     + Add optional `title` to `x_labels`, `y_labels`
+#                     + Fix `add_sides` (pass `** kwds` to `vp.line`)
+#                     + Factor `add_x_axis`, `add_y_axis`, `_add_axis`
 #    ««revision-date»»···
 #--
 
@@ -532,6 +537,7 @@ class Grid (_Plot_Element_) :
             , xta               = None ### Ticker.Axis for x
             , yta               = None ### Ticker.Axis for y
             , early_decoration  = True
+            , * xtra_decorations
             ) :
         self.vp                 = vp
         self.P                  = P = vp.P if P is None else P
@@ -546,6 +552,7 @@ class Grid (_Plot_Element_) :
             , klass             = klass
             , stroke            = P.color.axis
             )
+        self.xtra_decorations   = list (xtra_decorations)
         if early_decoration :
             self.add_decorations ()
     # end def __init__
@@ -554,49 +561,16 @@ class Grid (_Plot_Element_) :
         if self._decorated :
             return
         self._decorated = True
-        P       = self.P
         sides   = self.sides
         svg     = self.svg
         if sides == self.all_sides :
             svg.add (self.box ())
         elif sides :
             svg.add (* self.add_sides (sides))
-        for (ta, ticker, labeler) in \
-            [ (self.xta, self.x_ticks, self.x_labels)
-            , (self.yta, self.y_ticks, self.y_labels)
-            ] :
-            if ta is not None :
-                svg.add \
-                    ( * ticker
-                        ( ta.major_range
-                        , P.major_ticks
-                        , ta.major_lines
-                        , sides
-                        )
-                    )
-                if ta.medium_range :
-                    svg.add \
-                        ( * ticker
-                            ( ta.medium_range
-                            , P.medium_ticks
-                            , ta.medium_lines
-                            , sides
-                            )
-                        )
-                if ta.minor_range :
-                    svg.add \
-                        ( * ticker
-                            ( ta.minor_range
-                            , P.minor_ticks
-                            , ta.minor_lines
-                            , sides
-                            )
-                        )
-                if ta.labels :
-                    svg.add \
-                        ( labeler
-                            (ta.major_range, ta.labels, fill = ta.label_fill)
-                        )
+        self.add_x_axis (self.xta, self.P, sides, svg)
+        self.add_y_axis (self.yta, self.P, sides, svg)
+        if xtra_decorations := self.xtra_decorations :
+            svg.add (* xtra_decorations)
     # end def add_decorations
 
     def add_sides (self, sides = "trbl", delta = 0, ** kwds) :
@@ -606,17 +580,27 @@ class Grid (_Plot_Element_) :
         kwds    = dict (dict (stroke_width = sw), ** kwds)
         if "t" in sides :
             y   = NC.top + delta
-            yield vp.line (NC.left, y, NC.right, y)
+            yield vp.line (NC.left, y, NC.right, y, ** kwds)
         if "r" in sides :
             x   = NC.right + delta
-            yield vp.line (x, NC.bottom, x, NC.top)
+            yield vp.line (x, NC.bottom, x, NC.top, ** kwds)
         if "b" in sides :
             y   = NC.bottom + delta
-            yield vp.line (NC.left, y, NC.right, y)
+            yield vp.line (NC.left, y, NC.right, y, ** kwds)
         if "l" in sides :
             x   = NC.left + delta
-            yield vp.line (x, NC.bottom, x, NC.top)
+            yield vp.line (x, NC.bottom, x, NC.top, ** kwds)
     # end def add_sides
+
+    def add_x_axis (self, xta, P, sides, svg) :
+        """Add an x-axis for ticker `xta`."""
+        self._add_axis (xta, self.x_ticks, self.x_labels, P, sides, svg)
+    # end def add_x_axis
+
+    def add_y_axis (self, yta, P, sides, svg) :
+        """Add an y-axis for ticker `yta`."""
+        self._add_axis (yta, self.y_ticks, self.y_labels, P, sides, svg)
+    # end def add_y_axis
 
     def box (self) :
         """Return box around `self.vp`."""
@@ -643,6 +627,7 @@ class Grid (_Plot_Element_) :
             , klass        = "x labels"
             , stroke_width = 0
             , text_anchor  = "begin"
+            , title        = None
             , y            = NC.Y (1.0)
             , ** kwds
             ) :
@@ -655,6 +640,8 @@ class Grid (_Plot_Element_) :
             , text_anchor  = text_anchor
             , ** kwds
             )
+        if title :
+            result.add (SVG.Title (title))
         if dy is None :
             dy = DC.Y (P.line_height)
         dyd = DC.Y (P.line_height) * 1.25
@@ -710,6 +697,7 @@ class Grid (_Plot_Element_) :
             , klass        = "y labels"
             , stroke_width = 0
             , text_anchor  = "end"
+            , title        = None
             , x            = NC.X (0.0)
             , ** kwds
             ) :
@@ -722,10 +710,12 @@ class Grid (_Plot_Element_) :
             , text_anchor  = text_anchor
             , ** kwds
             )
+        if title :
+            result.add (SVG.Title (title))
         if dx is None :
             dx = - DC.X (P.font_char_width)
         if dy is None :
-            dy =   DC.Y (P.font_size * 0.25)
+            dy =   DC.Y (P.font_size * 0.4)
         dyd = DC.Y (P.line_height) * 1.25
         for yi, y_label in zip (y_range, y_labels) :
             yls = y_label.split ("\n")
@@ -770,6 +760,41 @@ class Grid (_Plot_Element_) :
             if lines_p :
                 yield (vp.line (left + tlen, yi, right - tlen, yi, ** l_kwds))
     # end def y_ticks
+
+    def _add_axis (self, ta, ticker, labeler, P, sides, svg) :
+        if ta is not None :
+            svg.add \
+                ( * ticker
+                    ( ta.major_range
+                    , P.major_ticks
+                    , ta.major_lines
+                    , sides
+                    )
+                )
+            if ta.medium_range :
+                svg.add \
+                    ( * ticker
+                        ( ta.medium_range
+                        , P.medium_ticks
+                        , ta.medium_lines
+                        , sides
+                        )
+                    )
+            if ta.minor_range :
+                svg.add \
+                    ( * ticker
+                        ( ta.minor_range
+                        , P.minor_ticks
+                        , ta.minor_lines
+                        , sides
+                        )
+                    )
+            if ta.labels :
+                svg.add \
+                    ( labeler
+                        (ta.major_range, ta.labels, fill = ta.label_fill)
+                    )
+    # end def _add_axis
 
 # end class Grid
 
