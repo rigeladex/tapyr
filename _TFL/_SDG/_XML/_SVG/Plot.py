@@ -46,6 +46,7 @@
 #                     + Add optional `title` to `x_labels`, `y_labels`
 #                     + Fix `add_sides` (pass `** kwds` to `vp.line`)
 #                     + Factor `add_x_axis`, `add_y_axis`, `_add_axis`
+#    12-Dec-2022 (CT) Fix support for `closepath` in `Viewport.path`
 #    ««revision-date»»···
 #--
 
@@ -1083,8 +1084,8 @@ class Viewport (_Plot_Element_) :
     def path (self, points, ** kwds) :
         """Add a SVG path element through `points` to the plot."""
         self._convert_kwds (kwds)
-        close   = points [-1] if points [-1] in ("z", "Z") else None
-        c_pnts  = self._converted_points (points [: -bool (close)])
+        close   = points [-1] if points [-1] in ("z", "Z") else False
+        c_pnts  = self._converted_points (points [:-1] if close else points)
         if close :
             c_pnts += (close, )
         result  = SVG.Path  (d = c_pnts, ** kwds)

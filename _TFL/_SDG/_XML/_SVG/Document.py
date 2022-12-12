@@ -35,6 +35,7 @@
 #     5-Nov-2022 (CT) Add `Linear_Gradient`
 #    18-Nov-2022 (CT) Add `Style`
 #    18-Nov-2022 (CT) Add support for `closepath` to `_convert_points_path`
+#    12-Dec-2022 (CT) Fix support for `closepath` in `_convert_points_path`
 #    ««revision-date»»···
 #--
 
@@ -313,7 +314,9 @@ def _convert_points_path (self, k, value) :
         x, y  = value [0]
         parts = ["M %s,%s" % (x, y)]
         parts.extend \
-            ("%s,%s" % (x, y) for x, y in value [1: -bool (close)])
+            (   "%s,%s" % (x, y)
+            for x, y in (value [1:-1] if close else value [1:])
+            )
         if close :
             parts.append (close)
         result = " ".join (parts)
