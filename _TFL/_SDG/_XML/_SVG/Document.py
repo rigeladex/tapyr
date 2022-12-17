@@ -36,6 +36,7 @@
 #    18-Nov-2022 (CT) Add `Style`
 #    18-Nov-2022 (CT) Add support for `closepath` to `_convert_points_path`
 #    12-Dec-2022 (CT) Fix support for `closepath` in `_convert_points_path`
+#    17-Dec-2022 (CT) Add `dominant_baseline`
 #    ««revision-date»»···
 #--
 
@@ -126,6 +127,7 @@ TFL.SDG.XML.Node.attr_name_translate.update \
     , base_profile            = "baseProfile"
     , clip_path               = "clip-path"
     , clip_rule               = "clip-rule"
+    , dominant_baseline       = "dominant-baseline"
     , elid                    = "id"
     , fill_opacity            = "fill-opacity"
     , fill_rule               = "fill-rule"
@@ -271,6 +273,7 @@ _shape_attr                 = dict \
 _text_attr                  = dict \
     ( alignment_baseline    = None
     , baseline_shift        = None
+    , dominant_baseline     = None
     , dx                    = None
     , dy                    = None
     , font                  = None
