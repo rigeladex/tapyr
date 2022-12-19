@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #     9-Dec-2022 (CT) Creation
+#    19-Dec-2022 (CT) Fix typos
 #    ««revision-date»»···
 #--
 
@@ -35,13 +36,12 @@ def pdf (target) :
         display_program = "open"
     else :
         display_program = "atril"
-    subprocess.run (display_program, target)
+    subprocess.run ([display_program, target])
 # end def pdf
 
 def svg (target) :
     """Display svg file `target`."""
     if is_macOS_p :
-        import subprocess
         subprocess.run (["open", target])
     else :
         import webbrowser
