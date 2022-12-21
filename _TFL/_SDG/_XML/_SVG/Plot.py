@@ -47,6 +47,7 @@
 #                     + Fix `add_sides` (pass `** kwds` to `vp.line`)
 #                     + Factor `add_x_axis`, `add_y_axis`, `_add_axis`
 #    12-Dec-2022 (CT) Fix support for `closepath` in `Viewport.path`
+#    21-Dec-2022 (CT) Add `dx1`, `dx2`, `dy1`, `dy2` to `Viewport.line`
 #    ««revision-date»»···
 #--
 
@@ -951,11 +952,15 @@ class Viewport (_Plot_Element_) :
 
     _length_attr_map     = dict \
         ( dx             = WC.X
+        , dx1            = WC.X
+        , dx2            = WC.X
         , dy             = WC.Y
+        , dy1            = WC.Y
+        , dy2            = WC.Y
         , font_size      = DC.Y
         , height         = WC.Y
-        , marker_width   = DC.X
         , marker_height  = DC.Y
+        , marker_width   = DC.X
         , path_length    = DC.X
         , r              = WC.X
         , ref_x          = WC.X
@@ -1066,11 +1071,15 @@ class Viewport (_Plot_Element_) :
     def line (self, x1, y1, x2, y2, ** kwds) :
         """Add a line from (x1, y1) to (x2, y2) to the plot."""
         self._convert_kwds (kwds)
+        dx1 = kwds.pop ("dx1", 0)
+        dx2 = kwds.pop ("dx2", 0)
+        dy1 = kwds.pop ("dy1", 0)
+        dy2 = kwds.pop ("dy2", 0)
         result = SVG.Line \
-            ( x1 = WC.X (x1).as_pos (self)
-            , y1 = WC.Y (y1).as_pos (self)
-            , x2 = WC.X (x2).as_pos (self)
-            , y2 = WC.Y (y2).as_pos (self)
+            ( x1 = WC.X (x1).as_pos (self) + dx1
+            , y1 = WC.Y (y1).as_pos (self) + dy1
+            , x2 = WC.X (x2).as_pos (self) + dx2
+            , y2 = WC.Y (y2).as_pos (self) + dy2
             , ** kwds
             )
         return result
