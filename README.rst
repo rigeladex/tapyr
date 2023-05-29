@@ -4,7 +4,7 @@ README for the Tapyr repository
 :Authors:
 
     Christian Tanzer
-    <tanzer@sgg32.com>
+    <tanzer@gg32.com>
 
 This is `Christian Tanzer's <https://codeberg.org/tanzer>`_
 Python `repository <https://codeberg.org/tanzer/tapyr>`_
