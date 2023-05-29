@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2020 Christian Tanzer All rights reserved
+# Copyright (C) 2017-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package TFL_STP.
@@ -19,6 +19,7 @@
 #    23-Feb-2017 (CT) Creation
 #    27-Feb-2017 (CT) Add Python 3.6 to `classifiers`
 #    25-Mar-2020 (CT) Restrict Python versions to >=3.7
+#    29-May-2023 (CT) Restrict Python versions to >=3.8
 #    ««revision-date»»···
 #--
 
@@ -61,7 +62,7 @@ if __name__ == "__main__" :
         , "Intended Audience :: Developers"
         , "Topic :: Software Development :: Libraries :: Python Modules"
         ]
-    , python_requires      = ">=3.7"
+    , python_requires      = ">=3.8"
     , setup_requires       = []
     , install_requires     = []
     , zip_safe             = False ### no eggs, please

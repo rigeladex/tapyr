@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 2016-2023 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # Web: https://www.gg32.com/en/ Email: tanzer@swing.co.at
 # All rights reserved
@@ -23,6 +23,7 @@
 #    25-Feb-2017 (CT) Pass `data_dirs` to `packages_plus_data_files`
 #    27-Feb-2017 (CT) Add Python 3.6 to `classifiers`
 #    25-Mar-2020 (CT) Restrict Python versions to >=3.7
+#    29-May-2023 (CT) Restrict Python versions to >=3.8
 #    ««revision-date»»···
 #--
 
@@ -67,7 +68,7 @@ if __name__ == "__main__" :
         , "Topic :: Software Development :: Libraries :: Python Modules"
         , "Topic :: Text Processing :: Markup :: HTML"
         ]
-    , python_requires      = ">=3.7"
+    , python_requires      = ">=3.8"
     , setup_requires       = ["TFL_STP>=3"]
     , install_requires     = ["TFL>=3", "CHJ>=3", "jinja2"]
     , extras_require       = dict ()
