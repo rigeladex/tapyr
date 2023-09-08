@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2016 Christian Tanzer All rights reserved
+# Copyright (C) 2013-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -36,6 +36,8 @@
 #                     improve Python-3 compatibility
 #    21-Oct-2015 (CT) Add `pyk.decoded` for `ro.content` to `traverse`
 #     5-May-2016 (CT) Improve `date_cleaner` regexp
+#     8-Sep-2023 (CT) Assign exception instance to local variable
+#                     (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -129,7 +131,8 @@ def run_server \
     while True :
         try :
             s.connect (("localhost", 9999))
-        except socket.error as exc :
+        except socket.error as x :
+            exc = x
             if i < 30 :
                 i += 1
                 time.sleep (1)

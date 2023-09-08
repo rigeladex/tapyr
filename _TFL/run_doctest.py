@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2023 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -62,6 +62,7 @@
 #    27-Mar-2020 (CT) Use `subprocess.run`, not `subprocess.Popen`
 #                     + Add `py_version` to summary output
 #    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
+#     8-Sep-2023 (CT) Use r-strings for reg-exps (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -97,16 +98,16 @@ summary        = TFL.Record \
     , total    = 0
     )
 
-format_f = """%(module.__file__)s fails %(f)s of %(t)s doc-tests in %(cases)s test-cases%(et)s%(py_version)s"""
-format_s = """%(module.__file__)s passes all of %(t)s doc-tests in %(cases)s test-cases%(et)s%(py_version)s"""
-format_x = """%s  %s raises exception `%r` during doc-tests%s"""
+format_f = r"""%(module.__file__)s fails %(f)s of %(t)s doc-tests in %(cases)s test-cases%(et)s%(py_version)s"""
+format_s = r"""%(module.__file__)s passes all of %(t)s doc-tests in %(cases)s test-cases%(et)s%(py_version)s"""
+format_x = r"""%s  %s raises exception `%r` during doc-tests%s"""
 sum_pat  = Regexp \
-    ( "(?P<module>.+?) (?:fails (?P<failed>\d+)|passes all) of "
-      "(?P<total>\d+) doc-tests (?:in (?P<cases>\d+) test-cases)?"
-      "[^<]+(?P<py_version>[^>]+>)"
+    ( r"(?P<module>.+?) (?:fails (?P<failed>\d+)|passes all) of "
+      r"(?P<total>\d+) doc-tests (?:in (?P<cases>\d+) test-cases)?"
+      r"[^<]+(?P<py_version>[^>]+>)"
     )
 exc_pat  = Regexp \
-    ("(?P<module>.*?) +[^<]+(?P<py_version>[^>]+>) raises exception `(?P<exc>[^`]+)` during doc-tests")
+    (r"(?P<module>.*?) +[^<]+(?P<py_version>[^>]+>) raises exception `(?P<exc>[^`]+)` during doc-tests")
 
 def has_doctest (fn) :
     with open (fn, "rb") as f :

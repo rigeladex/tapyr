@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2019 Martin Glueck All rights reserved
+# Copyright (C) 2010-2023 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -21,6 +21,7 @@
 #    27-Sep-2012 (CT) Move test code from `MOM.DBW.SAW.__doc__` in here
 #    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    19-Aug-2019 (CT) Use `print_prepr`
+#     8-Sep-2023 (CT) Use r-strings for reg-exps (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -34,7 +35,7 @@ from   _TFL.formatted_repr        import formatted_repr as formatted
 from   _TFL.Regexp                import Dict_Replacer, re
 
 filter_dbw_pat = re.compile \
-    (  "\#\#\#\sDBW-specific\sstart.+?\#\#\#\sDBW-specific\sfinish"
+    (  r"\#\#\#\sDBW-specific\sstart.+?\#\#\#\sDBW-specific\sfinish"
     , re.DOTALL | re.X | re.MULTILINE
     )
 

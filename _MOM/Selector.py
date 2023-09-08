@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Christian Tanzer All rights reserved
+# Copyright (C) 2016-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -30,6 +30,7 @@
 #     8-Jun-2016 (CT) ...Finish creation
 #    14-Jun-2016 (CT) Use `.sig`, not `.primary`, as `Attr_Selector`
 #    14-Jun-2016 (CT) Change `Entity_PS.elements` to iterate over `aq.Atoms`
+#     8-Sep-2023 (CT) Use r-strings for reg-exps (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -207,7 +208,7 @@ class _Entity_ (_Selector_Base_) :
     def atoms (self) :
         def _gen (self) :
             for e in self.elements :
-                yield from e.atoms 
+                yield from e.atoms
         return tuple (_gen (self))
     # end def atoms
 
@@ -535,7 +536,7 @@ class Completer (TFL.Meta.Object) :
             for k, v in sorted (pyk.iteritems (ets), key = _sk) :
                 head = k.split ("/") [0] if "/" in k else ""
                 yield Regexp \
-                    ("%s\[(?!%s\])" % (re.escape (head), re.escape (v)))
+                    (r"%s\[(?!%s\])" % (re.escape (head), re.escape (v)))
         pats   = _gen (self, ets)
         result = first (pats) if len (ets) == 1 else Multi_Regexp (* pats)
         return result

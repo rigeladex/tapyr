@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2023 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -47,6 +47,8 @@
 #     5-Apr-2020 (CT) Add `__main__` script
 #     6-Apr-2020 (CT) Skip sym-links in `__main__` script; print totals
 #     3-Jun-2020 (CT) Add `Untabified`
+#     8-Sep-2023 (CT) Use r-string for `Dict_Replacer.__doc__`
+#                     (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -318,12 +320,12 @@ class Re_Replacer (TFL.Meta.Object) :
 # end class Re_Replacer
 
 class Dict_Replacer (Re_Replacer) :
-    """Replace all keys (which are assumed to be plain strings, not regexpes)
+    r"""Replace all keys (which are assumed to be plain strings, not regexpes)
        of a dictionary with the corresponding values.
 
        >>> dr = Dict_Replacer ({"--" : "\\endash", "---" : "\\emdash"})
        >>> print (dr ("TeX interprets `--` as an en-dash and `---` as an em-dash"))
-       TeX interprets `\\endash` as an en-dash and `\\emdash` as an em-dash
+       TeX interprets `\endash` as an en-dash and `\emdash` as an em-dash
     """
 
     _group = 0

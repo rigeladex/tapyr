@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2013 Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2023 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -23,6 +23,8 @@
 #    12-Aug-2003 (CT) Import for `StringIO` added
 #    12-Aug-2003 (CT) `Alias_Property` replaced by explicit function
 #                     delegation to avoid doctest hiccups
+#     8-Sep-2023 (CT) Use `\\.` not `\.` in reg-exps in docstrings
+#                     (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -39,7 +41,7 @@ class FN_Matcher (TFL.Meta.Object) :
 
        >>> names = ["%s.%s" % (a,b) for a in ("a","b","c","d","e") \
                                     for b in ("x","y","z")]
-       >>> FN_Matcher (re.compile ("[a-c]\.[^x]")) (names)
+       >>> FN_Matcher (re.compile (r"[a-c]\\.[^x]")) (names)
        ['a.y', 'a.z', 'b.y', 'b.z', 'c.y', 'c.z']
     """
 
@@ -118,9 +120,9 @@ class FN_Matchers (FN_Matcher) :
        ['a.x', 'b.x', 'c.x', 'd.x', 'e.x']
        >>> FN_Matchers ("a.*") (names)
        ['a.x', 'a.y', 'a.z']
-       >>> FN_Matchers (re.compile ("[a-c]\.[^x]"))  (names)
+       >>> FN_Matchers (re.compile (r"[a-c]\\.[^x]"))  (names)
        ['a.y', 'a.z', 'b.y', 'b.z', 'c.y', 'c.z']
-       >>> FN_Matchers (re.compile ("[a-c]\.[^x]"), "b.x")  (names)
+       >>> FN_Matchers (re.compile (r"[a-c]\\.[^x]"), "b.x")  (names)
        ['a.y', 'a.z', 'b.x', 'b.y', 'b.z', 'c.y', 'c.z']
     """
 

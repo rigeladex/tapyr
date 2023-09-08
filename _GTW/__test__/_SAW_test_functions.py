@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2018 Christian Tanzer All rights reserved
+# Copyright (C) 2013-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package _GTW.__test__.
@@ -32,6 +32,7 @@
 #                       respectively
 #    20-Mar-2018 (CT) Add `formatted_select_xqpi`, `show_query_xqpi`
 #                     + add `formatter` to `formatted_select`
+#     8-Sep-2023 (CT) Use r-strings for reg-exps (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -125,7 +126,7 @@ def formatted_select (ETW, name = "select", select = None, formatter = str) :
                 yield p
             elif "WHERE" in l :
                 rerep = TFL.Re_Replacer \
-                    ( "((?:\s+)*(?:AND|OR)\s+)"
+                    ( r"((?:\s+)*(?:AND|OR)\s+)"
                     , "\n       \\1"
                     )
                 p  = rerep (l)
@@ -301,7 +302,7 @@ def show_q_able_names (apt, pred = pred) :
                 ### filter attribute-aliases
                 yield "%s%-30s: %s" % ("    " * level, k, ", ".join (q.q_able_names))
                 if q.q_able_attrs :
-                    yield from _gen (q.q_able_attrs, level + 1) 
+                    yield from _gen (q.q_able_attrs, level + 1)
     sk = lambda x : (x.e_type.i_rank, )
     for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk):
         if not pred (ETW) :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2016 Christian Tanzer All rights reserved
+# Copyright (C) 2011-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -105,6 +105,7 @@
 #    19-Jul-2016 (CT) Add `Time`; derive `Date` from `_Structured_`
 #     7-Oct-2016 (CT) Add `Time.Table` with `Filter.Time_*`  entries
 #     7-Oct-2016 (CT) Change `_Structured_._atoms` to look at `E_Type.edit_attr`
+#     8-Sep-2023 (CT) Use r-strings for reg-exps (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -176,7 +177,7 @@ class regexp :
 
     id_seps          = Regexp \
         ( "".join
-            ( ( "(?: \.|"
+            ( ( r"(?: \.|"
               ,   id_sep
               , r")"
               )
@@ -193,7 +194,7 @@ class regexp :
               ,     r")"
               ,   r"""['"]?""" ### use of a backreference would break `split`
               , r"\]"
-              , "(?: \.|"
+              , r"(?: \.|"
               ,   id_sep
               , r")?" ### remove trailing separator, if any, from `split` result
               )
@@ -419,7 +420,7 @@ class _Container_ (_Base_) :
         rc = self._recursion_limit
         for c in self.Attrs :
             if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
-                yield from c.Unwrapped.Atoms 
+                yield from c.Unwrapped.Atoms
     # end def _unwrapped_atoms
 
 # end class _Container_
@@ -698,7 +699,7 @@ class _Co_Mixin_ (_Container_, _Type_) :
 
     def _attrs_transitive (self, seen_etypes) :
         yield self
-        yield from self.__super._attrs_transitive (seen_etypes) 
+        yield from self.__super._attrs_transitive (seen_etypes)
     # end def _attrs_transitive
 
     def __getattr__ (self, name) :
@@ -725,7 +726,7 @@ class _Structured_ (_Co_Mixin_) :
 
     def _atoms (self, seen_etypes) :
         if self.E_Type.edit_attr :
-            yield from self.__super._atoms (seen_etypes) 
+            yield from self.__super._atoms (seen_etypes)
         else :
             yield self
     # end def _atoms

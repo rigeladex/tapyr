@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2020 Martin Glueck All rights reserved
+# Copyright (C) 2010-2023 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -23,6 +23,8 @@
 #    16-Oct-2015 (CT) Add `__future__` imports
 #    19-Aug-2019 (CT) Use `print_prepr`
 #    23-Apr-2020 (CT) Use `importlib.import_module`, not `__import__`
+#     8-Sep-2023 (CT) Use `config.read_file`, not `.readfp`
+#                     (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -109,7 +111,7 @@ class Config_File (TFL.Meta.Object) :
             config = pyk.config_parser.RawConfigParser (dict_type = odict)
             if not hasattr (filename, "read") :
                 filename = open ((filename))
-            config.readfp (filename)
+            config.read_file (filename)
         return config
     # end def _as_config_parser
 

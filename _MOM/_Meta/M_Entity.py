@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2016 Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2023 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -240,6 +240,7 @@
 #                     for `MOM.An_Entity.Essence`
 #    20-Oct-2016 (CT) Add `M_E_Type.iea_type_restrictions`
 #                     and `M_E_Type.iea_type_restriction_map`
+#     8-Sep-2023 (CT) Add dunder guard to `M_E_Type.__getattr__`
 #    ««revision-date»»···
 #--
 
@@ -404,7 +405,7 @@ class M_E_Mixin \
                 def _gen_children (cls) :
                     yield cls
                     for c in pyk.itervalues (cls.children) :
-                        yield from _gen_children (c) 
+                        yield from _gen_children (c)
                 for c in _gen_children (cls) :
                     yield c.type_name, c
             result = cls._children_transitive = dict (_gen (cls))
@@ -1324,6 +1325,8 @@ class M_E_Type (M_E_Mixin) :
 
     def __getattr__ (cls, name) :
         ### just to ease up-chaining in descendents
+        if name.startswith ("__") and name.endswith ("__") :
+            return getattr (cls.__m_super, name)
         head = repr (cls) if name == "_type_name" else cls.type_name
         raise AttributeError ("%s.%s" % (head, name))
     # end def __getattr__

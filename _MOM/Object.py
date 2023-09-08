@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2023 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -31,6 +31,8 @@
 #     1-Aug-2012 (CT) Add `_Object_Destroyed_Mixin_`
 #    17-Jun-2013 (CT) Remove `Named_Object`
 #    16-Dec-2015 (CT) Add `_UI_Spec_Defaults`
+#     8-Sep-2023 (CT) Use r-strings for `epk_split_characters`
+#                     (PY 3.12 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -61,7 +63,7 @@ class _MOM_Object_ \
     is_partial            = True
     entity_kind           = "object"
 
-    epk_split_characters  = "[;,+-/|\s]"
+    epk_split_characters  = r"[;,+-/|\s]"
 
     _UI_Spec_Defaults     = dict \
         ( show_in_admin   = True
