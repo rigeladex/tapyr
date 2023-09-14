@@ -57,6 +57,7 @@
 #                     failing header value
 #                     * Python mail.policy gives an error message that doesn't
 #                       match the input
+#    14-Sep-2023 (CT) Fix typos in last change
 #    ««revision-date»»···
 #--
 
@@ -237,17 +238,17 @@ class SMTP (TFL.Meta.Object) :
                     except Exception as exc :
                         ### 12-Sep-2023 18:15
                         ### Suddenly get an exception::
-"""
-  File "/swing/Project/Python/_TFL/SMTP.py", line 232, in send_message
-    email [k] = vh
-    ~~~~~^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/email/message.py", line 436, in __setitem__
-    self._headers.append(self.policy.header_store_parse(name, val))
-                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/email/policy.py", line 146, in header_store_parse
-    raise ValueError("Header values may not contain linefeed "
-ValueError: Header values may not contain linefeed or carriage return characters
-"""
+                        """
+                          File "/swing/Project/Python/_TFL/SMTP.py", line 232, in send_message
+                            email [k] = vh
+                            ~~~~~^^^^
+                          File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/email/message.py", line 436, in __setitem__
+                            self._headers.append(self.policy.header_store_parse(name, val))
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/email/policy.py", line 146, in header_store_parse
+                            raise ValueError("Header values may not contain linefeed "
+                        ValueError: Header values may not contain linefeed or carriage return characters
+                        """
                         print \
                             ( "Exception `%s`"
                               "\n  from mail header `%s`"
@@ -257,13 +258,13 @@ ValueError: Header values may not contain linefeed or carriage return characters
                             % (exc, k, v, "\n" in v, "\r" in v)
                             )
                         ### The print statement shows ::
-"""
-Exception `Header values may not contain linefeed or carriage return characters`
-  from mail header `To`
-  with value `Alan Third <alan@idiocy.org>, Christian Tanzer <tanzer@gg32.com>, Gerd Möllmann <gerd.moellmann@gmail.com>, 65843-done@debbugs.gnu.org`
-  linefeed in header : False
-  c-return in header : False
-"""
+                        """
+                        Exception `Header values may not contain linefeed or carriage return characters`
+                          from mail header `To`
+                          with value `Alan Third <alan@idiocy.org>, Christian Tanzer <tanzer@gg32.com>, Gerd Möllmann <gerd.moellmann@gmail.com>, 65843-done@debbugs.gnu.org`
+                          linefeed in header : False
+                          c-return in header : False
+                        """
                         ### WTF ???
                         raise
         if "Message-Id" not in email :
