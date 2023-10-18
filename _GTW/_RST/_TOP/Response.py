@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Christian Tanzer All rights reserved
+# Copyright (C) 2012-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -31,6 +31,8 @@
 #    10-Jun-2015 (CT) Add `indicate_notifications`, `notifications_added`
 #    10-Jun-2015 (CT) Use `GTW.Notification_Collection` in `add_notification`,
 #                     not `_set_session_cookie`
+#    18-Oct-2023 (CT) Don't use `datetime.utcfromtimestamp`
+#                     * deprecated in Python 3.12
 #    ««revision-date»»···
 #--
 
@@ -101,7 +103,7 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
                 ### -> this response contains embedded notifications
                 ### -> clear the Etag and the last_modified to prevent caching
                 self.set_etag ("")
-                self.last_modified = datetime.datetime.utcfromtimestamp (0)
+                self.last_modified = datetime.datetime (1970, 1, 1, 0, 0, 0)
     # end def indicate_notifications
 
     def _set_session_cookie (self) :
