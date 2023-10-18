@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 Christian Tanzer All rights reserved
+# Copyright (C) 2016-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -20,6 +20,8 @@
 #    29-Jul-2016 (CT) Add `A_Time.Pickler` to convert `datetime.time`
 #     9-Sep-2016 (CT) Add `A_Time.completer`
 #    21-Sep-2016 (CT) Add `A_Time_X`, factor `_A_DT_`, `_A_Time_`
+#    18-Oct-2023 (CT) Use `CAL.Date_Time.datetime_utcnow`, not `datetime.utcnow`
+#                     * `datetime.utcnow` deprecated as of Python 3.12
 #    ««revision-date»»···
 #--
 
@@ -152,7 +154,7 @@ class _A_Date_ (_A_DT_) :
     # end class _Doc_Map_
 
     def _checkers (self, e_type, kind) :
-        yield from self.__super._checkers (e_type, kind) 
+        yield from self.__super._checkers (e_type, kind)
         if self.not_in_future :
             name   = self.name
             p_name = "%s__not_in_future" % name
@@ -479,7 +481,8 @@ class A_Date_Time (_A_Date_) :
 
     @classmethod
     def now (cls) :
-        return datetime.datetime.utcnow ()
+        from _CAL.Date_Time import datetime_utcnow
+        return datetime_utcnow ()
     # end def now
 
     @TFL.Meta.Class_and_Instance_Method

@@ -412,6 +412,8 @@
 #    20-Oct-2016 (CT) Add default for `_A_Id_Entity_.E_Type_Parent`
 #    14-Dec-2016 (CT) DRY `A_Enum.Choices`
 #     8-Sep-2023 (CT) Use r-strings for reg-exps (PY 3.12 compatibility)
+#    18-Oct-2023 (CT) Change `A_Date_Slug` to use `datetime.now`, not `.utcnow`
+#                     * `.utcnow` deprecated as of Python 3.12
 #    ««revision-date»»···
 #--
 
@@ -2781,8 +2783,7 @@ class A_Date_Slug (_A_String_) :
     max_length     = 32
 
     def computed_default (self) :
-        now    = datetime.datetime.utcnow ()
-        now   += TFL.user_config.time_zone.utcoffset (now)
+        now    = datetime.datetime.now (TFL.user_config.time_zone)
         result = "%s_%06d_%s" % \
             ( now.strftime ("%Y%m%d_%H%M%S")
             , now.microsecond

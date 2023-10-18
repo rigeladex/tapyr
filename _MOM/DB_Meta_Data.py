@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Christian Tanzer All rights reserved
+# Copyright (C) 2010-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -25,18 +25,20 @@
 #     7-Jun-2013 (CT) Change `COPY` to iterate over `other`, not `other._kw`
 #    12-Oct-2015 (CT) Add Python-3 future imports
 #    16-Feb-2016 (CT) Store `root_pid`, not `root_epk`
+#    18-Oct-2023 (CT) Use `CAL.Date_Time.datetime_utcnow`, not `datetime.utcnow`
+#                     * `datetime.utcnow` deprecated as of Python 3.12
 #    ««revision-date»»···
 #--
 
-from   _MOM       import MOM
-from   _TFL       import TFL
+from   _MOM                     import MOM
+from   _TFL                     import TFL
 
-from   _TFL.pyk   import pyk
+from   _CAL.Date_Time           import datetime_utcnow
+from   _TFL.pyk                 import pyk
 
 import _TFL.Environment
 import _TFL.Record
 
-import datetime
 import uuid
 
 class _MOM_DB_Meta_Data_ (TFL.Record) :
@@ -61,7 +63,7 @@ class _MOM_DB_Meta_Data_ (TFL.Record) :
         Version = app_type.Version
         result  = cls \
             ( creator       = kw.pop ("creator", None) or TFL.Record
-                ( date          = pyk.decoded (datetime.datetime.utcnow ())
+                ( date          = pyk.decoded (datetime_utcnow ())
                 , tool_version  = Version.id
                 , user          =
                     getattr (scope, "user", None) or TFL.Environment.username

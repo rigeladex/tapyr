@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2016 Christian Tanzer All rights reserved
+# Copyright (C) 2010-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -28,6 +28,7 @@
 #     5-May-2015 (CT) Add tests for `as_json_cargo`
 #     5-May-2015 (CT) Add test for `scope.add_after_commit_callback`
 #     5-May-2016 (CT) Use `A_Date.now`
+#    18-Oct-2023 (CT) Add replacers to `time_cleaner`
 #    ««revision-date»»···
 #--
 
@@ -48,11 +49,19 @@ time_cleaner = Multi_Re_Replacer \
         , r"'c_time' : <datetime>"
         )
     , Re_Replacer
+        ( r"'c_time' : datetime.datetime\(\d+, \d+, \d+, \d+, \d+, \d+\)"
+        , r"'c_time' : <datetime>"
+        )
+    , Re_Replacer
         ( r"'time' : '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+'"
         , r"'time' : <datetime>"
         )
     , Re_Replacer
         ( r"'time' : datetime.datetime\(\d+, \d+, \d+, \d+, \d+, \d+, \d+\)"
+        , r"'time' : <datetime>"
+        )
+    , Re_Replacer
+        ( r"'time' : datetime.datetime\(\d+, \d+, \d+, \d+, \d+, \d+\)"
         , r"'time' : <datetime>"
         )
     )

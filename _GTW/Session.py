@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2023 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -54,10 +54,14 @@
 #    13-Mar-2015 (CT) Don't return False from `username`
 #    10-Jun-2015 (CT) Import `M_Auto_Update_Combined`, not `M_Auto_Combine_Sets`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#    18-Oct-2023 (CT) Use `CAL.Date_Time.datetime_utcnow`, not `datetime.utcnow`
+#                     * `datetime.utcnow` deprecated as of Python 3.12
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
+
+from   _CAL.Date_Time           import datetime_utcnow
 
 from   _TFL                     import TFL
 from   _TFL.Decorator           import getattr_safe
@@ -279,7 +283,7 @@ class Session (TFL.Meta.Object, metaclass = M_Session) :
 
     def _expired (self, expiry) :
         if expiry :
-            return datetime.datetime.utcnow () > expiry
+            return datetime_utcnow () > expiry
     # end def _expired
 
     def _expiry (self, ttl = None, ttl_name = "user_session_ttl") :
@@ -287,7 +291,7 @@ class Session (TFL.Meta.Object, metaclass = M_Session) :
             ttl = self._settings.get (ttl_name, 3600)
         if not isinstance (ttl, datetime.timedelta) :
             ttl  = datetime.timedelta (seconds = ttl)
-        return datetime.datetime.utcnow () + ttl
+        return datetime_utcnow () + ttl
     # end def _expiry
 
     def _new_sid (self, salt) :

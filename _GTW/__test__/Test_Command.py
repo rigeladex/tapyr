@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2019 Christian Tanzer All rights reserved
+# Copyright (C) 2012-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -39,6 +39,7 @@
 #     3-Jun-2016 (CT) Add `esf_completer`, `show_esf_form`
 #    24-Feb-2017 (CT) Import `MOM.Inspect`, not `MOM.inspect`
 #    19-Aug-2019 (CT) Use `print_prepr`
+#    18-Oct-2023 (CT) Set `user_config.time_zone` to `UTC`, explicitly
 #    ««revision-date»»···
 #--
 
@@ -70,9 +71,12 @@ import _JNJ.Templateer
 
 import _TFL.Filename
 import _TFL.Generators
+import _TFL.User_Config
 
 from    werkzeug.test     import Client, EnvironBuilder
 from    werkzeug.wrappers import BaseResponse
+
+TFL.user_config.time_zone = "UTC"
 
 def esf_completer (scope, AQ, trigger, value, qdct = {}) :
     ESW    = AQ.ESW

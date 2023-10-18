@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2020 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2023 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 # This module is part of the package MOM.SCM.
@@ -88,6 +88,8 @@
 #     8-May-2015 (CT) Add `M_Change` managing `M_Table`,
 #                     remove `module` from `as_json_cargo`, `from_json_cargo`
 #    25-Oct-2015 (CT) Use `pyk.pickle_protocol`
+#    18-Oct-2023 (CT) Use `CAL.Date_Time.datetime_utcnow`, not `datetime.utcnow`
+#                     * `datetime.utcnow` deprecated as of Python 3.12
 #    ««revision-date»»···
 #--
 
@@ -97,6 +99,7 @@ from   _TFL                  import TFL
 import _MOM._SCM.History_Mixin
 import _MOM._SCM.Recorder
 
+from   _CAL.Date_Time        import datetime_utcnow
 from   _TFL.pyk              import pyk
 from   _TFL.portable_repr    import portable_repr
 
@@ -104,7 +107,6 @@ import _TFL._Meta.Property
 import _TFL._Meta.Once_Property
 import _TFL.json_dump
 
-import datetime
 import itertools
 import weakref
 
@@ -157,7 +159,7 @@ class _Change_ (_Ancestor, metaclass = M_Change) :
 
     def __init__ (self) :
         self.__super.__init__ ()
-        self.time = datetime.datetime.utcnow ()
+        self.time = datetime_utcnow ()
     # end def __init__
 
     def add_change (self, child) :

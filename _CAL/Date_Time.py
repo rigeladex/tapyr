@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2022 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2023 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -48,6 +48,9 @@
 #     4-Dec-2022 (CT) Add `JT` (time of day as decimal fraction)
 #     4-Dec-2022 (CT) Add `dst_adjustment`
 #                     + Add optional argument `tz` to `as_local`
+#    18-Oct-2023 (CT) Add `datetime_utcnow`
+#                     * drop-in replacement for `datetime.utcnow`
+#                     * `datetime.utcnow` deprecated as of Python 3.12
 #    ««revision-date»»···
 #--
 
@@ -441,6 +444,15 @@ class _Date_Time_Arg_ (TFL.CAO.Opt.Date) :
     _CAL_Type  = Date_Time
 
 # end class _Date_Time_Arg_
+
+def datetime_utcnow () :
+    """Return the current UTC date and time, with tzinfo None.
+
+    Drop-in replacement for the `datetime.utcnow` function deprecated by
+    Python 3.12.
+    """
+    return Date_Time ().as_utc ()._body.replace (tzinfo=None)
+# end def datetime_utcnow
 
 if __name__ != "__main__" :
     CAL._Export ("*")

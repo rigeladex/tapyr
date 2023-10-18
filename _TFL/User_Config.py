@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2016 Christian Tanzer All rights reserved
+# Copyright (C) 2011-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -25,6 +25,9 @@
 #    21-Jun-2012 (CT) Fix typo
 #    12-Oct-2014 (CT) Add `sha`
 #    10-Oct-2016 (CT) Remove unnecessary import of `MOM`
+#    18-Oct-2023 (CT) Change default `time_zone` to `get_tz ()`, if any
+#                     * Better than former default of "UTC"
+#                     * Set `time_zone` to "UTC", if `None` is passed
 #    ««revision-date»»···
 #--
 
@@ -84,7 +87,8 @@ class User_Config (threading.local) :
     def time_zone (self) :
         if self.tz is not None :
             if self._time_zone is None :
-                self._time_zone = self.tz.tzutc ()
+                ltz = self.get_tz ()
+                self._time_zone = self.tz.tzutc () if ltz is None else ltz
             elif isinstance (self._time_zone, pyk.string_types) :
                 self._time_zone = self.get_tz (self._time_zone)
         return self._time_zone
@@ -92,6 +96,8 @@ class User_Config (threading.local) :
 
     @time_zone.setter
     def time_zone (self, value) :
+        if value is None :
+            value = "UTC"
         if isinstance (value, pyk.string_types) :
             value = self.get_tz (value)
         self._time_zone = value

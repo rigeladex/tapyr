@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2015 Martin Glueck All rights reserved
+# Copyright (C) 2010-2023 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -35,19 +35,25 @@
 #    11-Jun-2015 (CT) Move `description.default` to `Account_EMail_Verification`
 #     8-Oct-2015 (CT) Change `Account_Token_Manager.__call__` to allow `()`
 #                     (`example` does that and triggers a warning otherwise)
+#    18-Oct-2023 (CT) Use `CAL.Date_Time.datetime_utcnow`, not `datetime.utcnow`
+#                     * `datetime.utcnow` deprecated as of Python 3.12
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 
+from   _CAL.Date_Time         import datetime_utcnow
+
 from   _GTW._OMP._Auth        import Auth
+
 import _GTW._OMP._Auth.Entity
 import _GTW._OMP._Auth.Account
 
 from   _TFL.I18N              import _, _T, _Tn
-import  uuid
+
 import  datetime
+import  uuid
 
 class Action_Expired (Exception) : pass
 
@@ -137,7 +143,7 @@ class Account_Token_Manager (_Ancestor_Essence.M_E_Type.Manager) :
             if not expires :
                 etype   = self._etype
                 expires = \
-                    datetime.datetime.utcnow () + etype.expire_duration_default
+                    datetime_utcnow () + etype.expire_duration_default
             return self.__super.__call__ \
                 (account, token = token, expires = expires, ** kw)
     # end def __call__
@@ -184,7 +190,7 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
     # end class _Attributes
 
     def handle (self, nav = None) :
-        if self.expires < datetime.datetime.utcnow () :
+        if self.expires < datetime_utcnow () :
             raise Action_Expired
     # end def handle
 
