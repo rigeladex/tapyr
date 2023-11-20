@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2022 Christian Tanzer All rights reserved
+# Copyright (C) 2010-2023 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 # This module is part of the package LNX.
@@ -20,6 +20,7 @@
 #    22-Mar-2018 (CT) Make Python-3 compatible
 #    26-Jan-2022 (CT) Add support for parsing output of `uptime` command
 #                     - in case `/proc/uptime` isn't available
+#    20-Nov-2023 (CT) Fix `uptime` parsing bug (less than a day up-time)
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,7 @@ else :
         )
     uptime_pat = Regexp \
         ( r"\s+ [0-9:]+ \s+ up \s+"
-          r"(?P<days>  \d+) \s+ days \s+"
+          r"(?: (?P<days>  \d+) \s+ days \s+)?"
           r"(?P<hours> \d+):(?P<minutes> \d+)(?: :(?P<seconds> \d+))?"
         , re.VERBOSE
         )
