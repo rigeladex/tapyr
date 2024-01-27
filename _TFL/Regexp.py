@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2023 Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2024 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -49,6 +49,7 @@
 #     3-Jun-2020 (CT) Add `Untabified`
 #     8-Sep-2023 (CT) Use r-string for `Dict_Replacer.__doc__`
 #                     (PY 3.12 compatibility)
+#    27-Jan-2024 (CT) Add method `RE_flag`
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ class Regexp (TFL.Meta.Object) :
     >>> print (", ".join (pat.groups ()))
     last_name, EQ
 
-    >>> sav = pat.Copy()
+    >>> sav = pat.Copy ()
     >>> _   = pat.match ("owner__last_name___STARTSWITH")
     >>> print (", ".join (pat.groups ()))
     owner__last_name, STARTSWITH
@@ -121,6 +122,11 @@ class Regexp (TFL.Meta.Object) :
         result.last_match = self.last_match
         return result
     # end def Copy
+
+    def RE_flag (self, flags) :
+        """Recompile regular expression with `flags`."""
+        self._pattern = re.compile (self._pattern.pattern, flags)
+    # end def RE_flag
 
     def match (self, string, pos = 0, endpos = None) :
         """Try to match `self._pattern` at the beginning of `string`.
@@ -221,6 +227,12 @@ class Multi_Regexp (TFL.Meta.Object) :
         self.add (* patterns, ** kw)
     # end def __init__
 
+    def RE_flag (flags) :
+        """Recompile regular expressions with `flags`."""
+        for p in self.patterns :
+            p.RE_flag (flags)
+    # end def RE_flag
+
     def add (self, * patterns, ** kw) :
         add = self.patterns.append
         for p in patterns :
@@ -300,6 +312,11 @@ class Re_Replacer (TFL.Meta.Object) :
         return result
     # end def __call__
 
+    def RE_flag (self, flags) :
+        """Recompile regular expression with `flags`."""
+        self.regexp.RE_flag (flags)
+    # end def RE_flag
+
     def subn (self, text, count = 0) :
         """Return a tuple (replaced_text, number_of_subs_made)."""
         try :
@@ -363,6 +380,12 @@ class Multi_Re_Replacer (TFL.Meta.Object) :
             result = rerep (result, count)
         return result
     # end def __call__
+
+    def RE_flag (self, flags) :
+        """Recompile regular expressions with `flags`."""
+        for rerep in self.rereps :
+            rerep.RE_flag (flags)
+    # end def RE_flag
 
     def add (self, * rereps) :
         self.rereps.extend (rereps)
