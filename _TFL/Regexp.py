@@ -50,6 +50,7 @@
 #     8-Sep-2023 (CT) Use r-string for `Dict_Replacer.__doc__`
 #                     (PY 3.12 compatibility)
 #    27-Jan-2024 (CT) Add method `RE_flag`
+#    27-Jan-2024 (CT) Add `__call__` to `Regexp`, `Multi_Regexp`
 #    ««revision-date»»···
 #--
 
@@ -114,6 +115,10 @@ class Regexp (TFL.Meta.Object) :
         self._pattern    = pattern
         self.last_match  = None
     # end def __init__
+
+    def __call__ (self, string, pos = 0, endpos = None) :
+        return self.search (string, pos, endpos)
+    # end def __call__
 
     def Copy (self) :
         """Return a copy with `last_match` saved for later use."""
@@ -227,7 +232,11 @@ class Multi_Regexp (TFL.Meta.Object) :
         self.add (* patterns, ** kw)
     # end def __init__
 
-    def RE_flag (flags) :
+    def __call__ (self, string, pos = 0, endpos = None) :
+        return self.search (string, pos, endpos)
+    # end def __call__
+
+    def RE_flag (self, flags) :
         """Recompile regular expressions with `flags`."""
         for p in self.patterns :
             p.RE_flag (flags)
