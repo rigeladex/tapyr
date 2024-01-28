@@ -51,6 +51,7 @@
 #                     (PY 3.12 compatibility)
 #    27-Jan-2024 (CT) Add method `RE_flag`
 #    27-Jan-2024 (CT) Add `__call__` to `Regexp`, `Multi_Regexp`
+#    28-Jan-2024 (CT) Add `__repr__` to `Regexp`
 #    ««revision-date»»···
 #--
 
@@ -220,6 +221,10 @@ class Regexp (TFL.Meta.Object) :
     def __bool__ (self) :
         return bool (self.last_match)
     # end def __bool__
+
+    def __repr__ (self) :
+        return "%r" % (self._pattern, )
+    # end def __repr__
 
 # end class Regexp
 
