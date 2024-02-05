@@ -1,6 +1,6 @@
 {#- jinja template: html/main_nav.m.jnj -#}
 {#
-## Copyright (C) 2017 Christian Tanzer All rights reserved
+## Copyright (C) 2017-2024 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -19,6 +19,7 @@
 ## Revision Dates
 ##    10-Jan-2017 (CT) Creation (factor from `navigation.jnj`)
 ##    16-Jan-2017 (CT) Pass `tag` to `AT.login_link`
+##     5-Feb-2024 (CT) Change `entry` to use `.eff_href`, not `.abs_href`
 ##    ««revision-date»»···
 ##--
 #}
@@ -48,7 +49,7 @@
 {%- macro entry (link, level) -%}
   {%- if link.short_title %}
     {% if NAV.permissive or NAV.allow (link, request.user) %}
-      {%- set href = link.abs_href or link.href %}
+      {%- set href = link.eff_href or link.href %}
       {%- set isc  = link.is_current_page and link.is_current_page (nav_page) %}
       {%- if link.a_attr_dict %}
         {%- set a_kw = link.a_attr_dict %}

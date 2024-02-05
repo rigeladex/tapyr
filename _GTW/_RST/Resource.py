@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2020 Christian Tanzer All rights reserved
+# Copyright (C) 2012-2024 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -159,6 +159,7 @@
 #    27-Mar-2018 (CT) Change `_password_elider_*` to match all password fields
 #    24-Apr-2020 (CT) Add guard for `domain` to `webmaster`
 #                     - `"webmaster@"` triggers an exception in Py-3 `email`
+#     5-Feb-2024 (CT) Add `eff_href`
 #    ««revision-date»»···
 #--
 
@@ -435,6 +436,11 @@ class _RST_Base_ (TFL.Meta.Object, metaclass = _RST_Meta_) :
         ### Redefine as necessary
         pass
     # end def change_info
+
+    @property
+    def eff_href (self) :
+        return self.abs_href
+    # end def eff_href
 
     @property
     @getattr_safe
@@ -1116,6 +1122,11 @@ class RST_A_Link (_Ancestor) :
             result.update (download = dl_target)
         return result
     # end def a_attr_dict
+
+    @property
+    def eff_href (self) :
+        return self.target_url
+    # end def eff_href
 
     @property
     @getattr_safe

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Christian Tanzer All rights reserved
+# Copyright (C) 2012-2024 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -34,6 +34,8 @@
 #    26-Jan-2015 (CT) Derive `_M_Response_` from `M_Auto_Update_Combined`,
 #                     not `M_Auto_Combine_Sets`
 #     8-Oct-2015 (CT) Change `__getattr__` to *not* handle `__XXX__`
+#     5-Feb-2024 (CT) Change `_get_rel` to use `.eff_href`, not `.abs_href`
+#                     * Otherwise, `rel_*` are broken for `A_Link` instances
 #    ««revision-date»»···
 #--
 
@@ -187,7 +189,7 @@ class _RST_Response_ \
             elif isinstance (result, pyk.string_types) :
                 return result
             elif result is not None :
-                return result.abs_href
+                return result.eff_href
     # end def _get_rel
 
     def __getattr__ (self, name) :

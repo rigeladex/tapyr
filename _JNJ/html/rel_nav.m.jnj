@@ -1,6 +1,6 @@
 {#- jinja template: html/rel_nav.m.jnj -#}
 {#
-## Copyright (C) 2017 Christian Tanzer All rights reserved
+## Copyright (C) 2017-2024 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -18,6 +18,8 @@
 ##
 ## Revision Dates
 ##    10-Jan-2017 (CT) Creation
+##     5-Feb-2024 (CT) Change `_rel_link` to use `.eff_href`, not `.abs_href`
+##                     * Otherwise, `rel_*` are broken for `A_Link` instances
 ##    ««revision-date»»···
 ##--
 #}
@@ -184,7 +186,7 @@
     {%- set short_title = href.short_title or default_short_title %}
   {% endif -%}
   {{ rel_link
-      (page, href.abs_href or href, title, symbol, short_title, ** kwargs)
+      (page, href.eff_href or href, title, symbol, short_title, ** kwargs)
   }}
 {%- endmacro -%} {#- _rel_link -#}
 
