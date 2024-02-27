@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2020-2022 Christian Tanzer All rights reserved
+# Copyright (C) 2020-2024 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
@@ -18,12 +18,13 @@
 # Revision Dates
 #    21-May-2020 (CT) Creation
 #    11-Apr-2022 (CT) Fix `_Anniversary_Day_.description`
+#    27-Feb-2024 (CT) Add `Wedding.symbol`
 #    ««revision-date»»···
 #--
 
-from   _CAL                    import CAL
-from   _TFL                    import TFL
-from   _TFL.pyk                import pyk
+from   _CAL                     import CAL
+from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 from   _TFL.I18N                import _, _T, _Tn
 
@@ -114,9 +115,11 @@ class Obit (Anniversary) :
     symbol      = "\u2020" ### dagger
 
 # end class Obit
-#
+
 class Wedding (Anniversary) :
     """Day when two persons where married."""
+
+    symbol      = "\u26ad" ### marriage_symbol
 
     def __init__ (self, n1, n2, * args, ** kwds) :
         self.n1 = n1
