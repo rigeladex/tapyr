@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2022 Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2024 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -43,6 +43,11 @@
 #    22-Oct-2022 (CT) Call `CAL._Export` unconditionally
 #                     * `_main_year` accesses `CAL.holidays` to allow config
 #                       files to modify/override the standard holidays
+#    27-Feb-2024 (CT) Add `import _CAL.Holiday` to `__main__`
+#                     * Remove unconditional `CAL._Export`
+#                     * The unconditional `CAL._Export` triggered an exception
+#                       due to the export conflicts between `__main__` and
+#                       `_CAL` (same name for different objects)
 #    ««revision-date»»···
 #--
 
@@ -378,11 +383,12 @@ _Command = TFL.CAO.Cmd \
     , min_args      = 1
     )
 
-### `_main_year` needs access to features of this module via `CAL` to allow
-### overriding of `holidays` by config files
-### --> export unconditionally
-CAL._Export ("*")
-
 if __name__ == "__main__" :
+    ### `_main_year` needs to access to features of this module via `CAL`
+    ### to allow overriding of `holidays` by config files
+    ### --> im, port _CAL.Holiday here
+    import _CAL.Holiday
     _Command ()
+else :
+    CAL._Export ("*")
 ### __END__ CAL.Holiday
