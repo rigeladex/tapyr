@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2023 Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2024 Christian Tanzer. All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -51,6 +51,9 @@
 #    18-Oct-2023 (CT) Add `datetime_utcnow`
 #                     * drop-in replacement for `datetime.utcnow`
 #                     * `datetime.utcnow` deprecated as of Python 3.12
+#    29-Feb-2024 (CT) Add `_Command`
+#                     + Define `_CAL_Type` as lass/instance property to
+#                       return `CAL.Date_Time` (avoid `__main__.Date_Time`)
 #    ««revision-date»»···
 #--
 
@@ -60,7 +63,8 @@ from   _CAL                     import CAL
 import _CAL.Date
 import _CAL.Time
 
-from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL._Meta.Once_Property import \
+    Once_Property, Class_and_Instance_Once_Property
 import _TFL.CAO
 from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import *
@@ -441,7 +445,16 @@ class _Date_Time_Arg_ (TFL.CAO.Opt.Date) :
 
     _real_name = "Date_Time"
 
-    _CAL_Type  = Date_Time
+    @Class_and_Instance_Once_Property
+    def _CAL_Type (soc) :
+        """Import `Date_Time` from `CAL.Date_Time`
+
+        Otherwise, `__main__.Date_Time` vs. `CAL.Date_Time` confusion is
+        possible.
+        """
+        from _CAL.Date_Time import Date_Time
+        return Date_Time
+    # end def _CAL_Type
 
 # end class _Date_Time_Arg_
 
@@ -454,6 +467,40 @@ def datetime_utcnow () :
     return Date_Time ().as_utc ()._body.replace (tzinfo=None)
 # end def datetime_utcnow
 
+def _main (cmd) :
+    from _TFL.Caller import Scope
+    base = cmd.base
+    if cmd.offset :
+        base += cmd.offset
+    if cmd.delta_to :
+        print (base - cmd.delta_to)
+    else :
+        print (base.formatted (cmd.format))
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , args        =
+        ( TFL.CAO.Opt.Date_Time
+            ( name          = "base"
+            , default       = "now"
+            , description   = "Base date_time to operate on"
+            )
+        ,
+        )
+    , opts        =
+        ( TFL.CAO.Opt.Date_Time
+            ( name          = "delta_to"
+            , description   = "Print `base - delta_to`"
+            )
+        , "-format:S=%Y%m%d?Format for date-time (not used for -delta_to)"
+        , "-offset:I=0?delta to `base` in days"
+        )
+    , max_args    = 1
+    )
+
 if __name__ != "__main__" :
     CAL._Export ("*")
+else :
+    _Command ()
 ### __END__ CAL.Date_Time
