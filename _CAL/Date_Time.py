@@ -54,6 +54,7 @@
 #    29-Feb-2024 (CT) Add `_Command`
 #                     + Define `_CAL_Type` as lass/instance property to
 #                       return `CAL.Date_Time` (avoid `__main__.Date_Time`)
+#    29-Feb-2024 (CT) Add option `-relative_delta`
 #    ««revision-date»»···
 #--
 
@@ -468,10 +469,14 @@ def datetime_utcnow () :
 # end def datetime_utcnow
 
 def _main (cmd) :
-    from _TFL.Caller import Scope
     base = cmd.base
     if cmd.offset :
-        base += cmd.offset
+        base  += cmd.offset
+    if cmd.relative_delta :
+        ### need to do this by hand here to avoid module-level circular import
+        import _CAL.Relative_Delta
+        delta  = CAL.Relative_Delta.from_string (cmd.relative_delta)
+        base  += delta
     if cmd.delta_to :
         print (base - cmd.delta_to)
     else :
@@ -495,6 +500,7 @@ _Command = TFL.CAO.Cmd \
             )
         , "-format:S=%Y%m%d?Format for date-time (not used for -delta_to)"
         , "-offset:I=0?delta to `base` in days"
+        , "-relative_delta:S?Relative delta to `base`"
         )
     , max_args    = 1
     )
