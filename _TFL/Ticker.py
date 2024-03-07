@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2022 Christian Tanzer All rights reserved
+# Copyright (C) 2017-2024 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -29,6 +29,9 @@
 #                     + Allow `major_range`, `medium_range`, `minor_range`
 #                       to be set by caller
 #     9-Dec-2022 (CT) Add `shifted_labels`
+#     7-Mar-2024 (CT) Add `frac_base` to support composite `Base`
+#                     * Improve fractional scaling for bases like
+#                       `base_hour_f`
 #    ««revision-date»»···
 #--
 
@@ -788,6 +791,14 @@ class Base (TFL.Meta.Object) :
     >>> print (b.scaled (0.0005))
     10 ^ -4 : (0.0001, 0.0002, 0.0005, 0.001)
 
+    >>> h = base_hour_f
+    >>> print (h.scaled (24 * 7))
+    24 ^ 1 : (24, 32, 36, 48, 64, 72, 96, 144)
+    >>> print (h.scaled (4))
+    24 ^ -1 : (0.0166666666667, 0.0833333333333, 0.166666666667, 0.25, 0.5, 1)
+    >>> print ("___", * tuple (d * 60 for d in h.scaled (4).deltas), "minutes")
+    ___ 1.0 5.0 10.0 15.0 30.0 60.0 minutes
+
     """
 
     scale_factor = 1
@@ -799,14 +810,15 @@ class Base (TFL.Meta.Object) :
             , scale            = 0
             , ** kwds
             ) :
-        self.base   = base
-        self.deltas = \
+        self.base       = base
+        self.deltas     = \
             ( None if deltas is None else sorted
                 (uniq (ichain (deltas, ([] if scale else [1, base]))))
             )
-        self.lra    = log_round_amount
-        self.scale  = scale
-        self._kwds  = kwds
+        self.lra        = log_round_amount
+        self.scale      = scale
+        self.frac_base  = kwds.get ("frac_base")
+        self._kwds      = kwds
         self.pop_to_self     (kwds, "base_deltas")
         self.__dict__.update (kwds)
         if base == 10 :
@@ -861,15 +873,21 @@ class Base (TFL.Meta.Object) :
 
     def scaled (self, delta) :
         """`Base` scaled to range of `delta`"""
-        scale = self.log_rounded (delta) - 1
+        fracb   = self.frac_base
+        scale   = self.log_rounded (delta) - 1
         if scale :
-            base          = self.base
-            factor        = base ** scale
-            scaled_deltas = tuple (delta * factor for delta in self.deltas)
-            if scale > 0 :
-                sds       = set (scaled_deltas)
-                sds.update  (Divisor_Dag (base * factor).divisors)
-                scaled_deltas = sorted (d for d in sds if factor <= d <= delta)
+            base    = self.base
+            factor  = base ** scale
+            if fracb and scale < 0 :
+                scaled_deltas   = fracb.scaled (delta).deltas
+            else :
+                scaled_deltas   = tuple \
+                    (delta * factor for delta in self.deltas)
+                if scale > 0 :
+                    sds = set (scaled_deltas)
+                    sds.update  (Divisor_Dag (base * factor).divisors)
+                    scaled_deltas   = sorted \
+                        (d for d in sds if factor <= d <= delta)
             result        = self.__class__ \
                 ( base, scaled_deltas, self.lra, scale
                 , base_deltas  = self.base_deltas
@@ -990,14 +1008,16 @@ class Base_Integral (Base) :
 
 base_10         = Base          ( 10)
 base_12         = Base          ( 12)
-base_16         = Base          ( 16, (4, 8))
+base_16         = Base          ( 16, (4,  8))
 base_day        = Base_Integral ( 28, (7, 14))
 base_degree     = Base          (360, (3, 15, 22.5, 30, 45, 60, 90, 180))
-base_hour       = Base_Integral ( 24, (3, 6, 12))
-base_hour_f     = Base          ( 24, (3, 6, 12))
-base_month      = Base_Integral ( 12, (3, 6),    log_round_amount = 0.0)
+base_hour       = Base_Integral ( 24, (3,  6, 12))
+base_minute     = Base          ( 60, (5, 10, 15, 30))
+base_month      = Base_Integral ( 12, (3,  6),   log_round_amount = 0.0)
 base_quarter    = Base_Integral (  4,            log_round_amount = 0.0)
 base_week       = Base_Integral ( 52,            log_round_amount = 0.0)
+
+base_hour_f     = Base          ( 24, (3,  6, 12), frac_base = base_minute)
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
