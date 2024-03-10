@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2022 Christian Tanzer All rights reserved
+# Copyright (C) 2009-2024 Christian Tanzer All rights reserved
 # tanzer@gg32.com                                      https://www.gg32.com
 # ****************************************************************************
 #
@@ -177,6 +177,8 @@
 #     5-Jun-2020 (CT) Add `Config_Bundle`
 #     5-Jun-2020 (CT) Redefine `Config_Bundle.raw_default`
 #    22-Oct-2022 (CT) Factor `Config_File`
+#    10-Mar-2024 (CT) Add `Help.Txt_Wrapper` and use in `_help_ao`
+#                     + Fix PY 3.12 `SyntaxWarning: invalid escape sequence`
 #    ««revision-date»»···
 #--
 
@@ -302,12 +304,12 @@ class Arg (TFL.Meta.M_Class) :
 
     _spec_pat  = None
     _spec_form = \
-        ( """ (?P<name> [^:=# ?]+) """
-          """ (?:  : (?P<type>        [%s]    )? (?P<auto_split> [,; :]?))?"""
-          """ (?:  = (?P<default>     [^\#?]* ))? """
-          """ (?: \# (?P<max_number>  \d+     ))? """
-          """ (?: \? (?P<description> .+      ))? """
-          """ $ """
+        ( r""" (?P<name> [^:=# ?]+) """
+          r""" (?:  : (?P<type>        [%s]   )? (?P<auto_split> [,; :]?))?"""
+          r""" (?:  = (?P<default>     [^#?]* ))? """
+          r""" (?: \# (?P<max_number>  \d+    ))? """
+          r""" (?: \? (?P<description> .+     ))? """
+          r""" $ """
         )
 
     def __init__ (cls, name, bases, dct) :
@@ -885,6 +887,32 @@ class Help (_Spec_O_) :
             "would by used by this command invocation."
         )
 
+    class Txt_Wrapper (TFL.Meta.Object) :
+
+        def __init__ (self, ** kwds) :
+            self.txt_wrapper = textwrap.TextWrapper (** kwds)
+        # end def __init__
+
+        def __call__ (self, txt) :
+            lines   = txt.lstrip ().split ("\n")
+            wrap    = self.txt_wrapper.wrap
+            for line in lines :
+                if line :
+                    yield from wrap (line)
+                else :
+                    ### `wrap` returns an empty list for an empty string
+                    yield ""
+        # end def __call__
+
+        def __setattr__ (self, name, value) :
+            if name == "txt_wrapper" or name.startswith ("__") :
+                super ().__setattr__ (name, value)
+            else :
+                setattr (self.txt_wrapper, name, value)
+        # end def __setattr__
+
+    # end class Txt_Wrapper
+
     def __init__ (self) :
         self.__super.__init__ \
             ( name          = "help"
@@ -971,6 +999,13 @@ class Help (_Spec_O_) :
         h1 = head + (" " * 4)
         h2 = h1   + (" " * 4)
         w2 = self.line_length - len (h2)
+        tw = self.Txt_Wrapper \
+            ( drop_whitespace       = False
+            , initial_indent        = h1
+            , replace_whitespace    = False
+            , subsequent_indent     = h1
+            , width                 = w2
+            )
         for item in ao._help_items () :
             if isinstance (item, (list, dict, tuple)) :
                 print \
@@ -978,9 +1013,10 @@ class Help (_Spec_O_) :
             else :
                 hx      = h1
                 hanging = ":" in item [:w2]
-                for l in textwrap.wrap (item, w2) :
-                    print (hx, l, sep = "")
-                    hx = h2 if hanging else h1
+                tw.subsequent_indent = h2 if hanging else h1
+                for l in tw (item) :
+                    print (l)
+                tw.subsequent_indent = h1
     # end def _help_ao
 
     def _help_args (self, cao, indent = 0, heading = False) :
@@ -2233,10 +2269,10 @@ class CAO (TFL.Meta.Object) :
         , re.VERBOSE
         )
     _key_pat = Regexp \
-        ( """\s*"""
-          """(?P<name> [^= ]+)"""
-          """\s* [=] \s* """
-          """(?P<value> .*)"""
+        ( r"""\s*"""
+          r"""(?P<name> [^= ]+)"""
+          r"""\s* [=] \s* """
+          r"""(?P<value> .*)"""
         , re.VERBOSE
         )
     _opt_pat = Regexp \
